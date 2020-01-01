@@ -1,0 +1,144 @@
+import { withStyles } from "@material-ui/core";
+import { VpnKeyOutlined as PasswordIcon } from "@material-ui/icons";
+import { colors } from "assets/jss/app-theme";
+import classNames from "classnames";
+import Avatar from "components/Avatar";
+import Card from "components/Card";
+import CardContent from "components/Card/CardContent";
+import CardHeader from "components/Card/CardHeader";
+import UsersDefination from "definations/users";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+// Externals
+import compose from "recompose/compose";
+import AuthService from "services/auth";
+import BaseForm from "views/forms/BaseForm";
+// Component styles
+import styles from "./styles";
+
+class Password extends Component {
+  state = {};
+
+  constructor(props) {
+    super(props);
+    this.defination = UsersDefination;
+    this.defination.scope.columns = {
+      current_password: {
+        type: "string",
+        label: "Current Password",
+        input: {
+          type: "password",
+          default: "",
+          required: true
+        },
+        restricted: {
+          display: (entry, user) => {
+            return true;
+          },
+          input: (values, user) => {
+            return false;
+          }
+        }
+      },
+      password: {
+        type: "string",
+        label: "New Password",
+        input: {
+          type: "password",
+          default: "",
+          required: true
+        },
+        restricted: {
+          display: (entry, user) => {
+            return true;
+          },
+          input: (values, user) => {
+            return false;
+          }
+        }
+      },
+      repeat_password: {
+        type: "string",
+        label: "Confirm Password",
+        input: {
+          type: "password",
+          default: "",
+          required: true
+        },
+        restricted: {
+          display: (entry, user) => {
+            return true;
+          },
+          input: (values, user) => {
+            return false;
+          }
+        }
+      }
+    };
+
+    this.handlePasswordFormSubmit = this.handlePasswordFormSubmit.bind(this);
+  }
+
+  handlePasswordFormSubmit(data, event) {
+    return AuthService.resetPassword(data)
+      .then(res => {
+        return true;
+      })
+      .catch(err => {
+        throw err;
+        return err;
+      });
+  }
+
+  render() {
+    const { classes, className, auth } = this.props;
+
+    const rootClassName = classNames(classes.root, className);
+
+    return (
+      <Card elevation={0} outlineColor="#cfd8dc" className={rootClassName}>
+        <CardHeader
+          avatar={
+            <Avatar
+              aria-label="Password"
+              color={"rgba(" + colors.hex.default + ", 0.2)"}
+            >
+              <PasswordIcon />
+            </Avatar>
+          }
+          title="Password"
+          subheader="Change password below"
+        />
+        <CardContent className="p-0">
+          <BaseForm
+            defination={this.defination}
+            onSubmit={this.handlePasswordFormSubmit}
+            form={auth.user._id + "_password_form"}
+            submit_btn_text="Update Password"
+            show_discard={false}
+            show_title={false}
+            onSubmitSuccessMessage="Password updated successfully"
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+}
+
+Password.propTypes = {
+  className: PropTypes.string,
+  classes: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default compose(
+  withStyles(styles),
+  connect(
+    mapStateToProps,
+    {}
+  )
+)(Password);

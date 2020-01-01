@@ -1,0 +1,421 @@
+import { IconButton } from '@material-ui/core';
+import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon, ShopOutlined as DefinationContextIcon } from '@material-ui/icons';
+import Button from 'components/Button';
+import React from "react";
+import { Link } from 'react-router-dom';
+
+
+
+export default  {
+	name: "retailitems",
+	label: "Retail items",
+	icon: <DefinationContextIcon />,
+	color: "#40003e",
+	model: 'RetailItem',
+	views: {
+		single: {
+			default: "cardview",
+			cardview: {
+				avatar: false,
+				title: ["name"],
+				subtitle: ["currency", "cost"],
+				tags: ["available"],
+				body: ["description", "stock", "taxable", "discountable", "available", "variations"],
+			}
+		},
+		listing: {
+			default: "tableview",
+			listview: {
+				avatar: false,
+				primary: ["name"],
+				secondary: ["currency", "cost", "available"]
+			},
+			tableview: {
+				avatar: false,
+				title: ["name"],
+			},
+		},
+	},
+	scope:{
+		columns: {
+			item_type: {
+				type: "string",
+				label: "Type",
+				input: {
+					type: "radio",
+					default: "service",
+					required: true,
+				},
+				restricted: {
+					display: (entry, user) => {						
+						return false
+					},
+					input: (values, user) => {
+						if (user && user.role==="admin") {
+							return false;
+						}						
+						return true;
+					}					
+				},
+				possibilities : {
+					"service": "Service",
+					"product": "Product",
+				},	
+			},
+			name: {
+				type: "string",
+				label: "Name",
+				input: {
+					type: "text",
+					default: "",
+					required: true,
+				},
+				restricted: {
+					display: (entry, user) => {						
+						return false
+					},
+					input: (values, user) => {
+						if (user && user.role==="admin") {
+							return false;
+						}						
+						return true;
+					}					
+				},
+			},
+
+			description: {
+				type: "string",
+				label: "Description",
+				input: {
+					type: "textarea",
+					default: "",
+					required: true,
+				},
+				restricted: {
+					display: (entry, user) => {						
+						return false
+					},
+					input: (values, user) => {
+						if (user && user.role==="admin") {
+							return false;
+						}						
+						return true;
+					}					
+				},
+			},
+
+			variations: {
+				type: "object",
+				label: "Variations",
+				icon: "label",
+				input: {
+					type: "dynamic",
+					default: {},
+					required: true,
+				},
+				blueprint: {
+
+				},
+				restricted: {
+					display: (entry, user) => {						
+						return false
+					},
+					input: (values, user) => {
+						if (user && user.role==="admin") {
+							return false;
+						}						
+						return true;
+					}					
+				},
+			},
+
+			featured_image: {
+				type: "string",
+				label: "Featured Image",
+				icon: "folder",
+				input: {
+					type: "file",
+				},
+				reference: {
+					name: "attachments",
+					service_query: {},
+					resolves:{
+						value: "_id",
+						display: {
+							primary: ["name"],
+							secondary: [],
+							avatar: false,
+						}							
+					},
+				},		
+			},
+
+			currency: {
+				type: "string",
+				label: "Currency",
+				input: {
+					type: "select",
+					required: true,
+				},
+				reference: {
+					name: "currencies",
+					service_query: {},
+					resolves: {
+						value: "_id",
+						display: {
+							primary: ["name"],
+							secondary: ["html_symbol"],
+							avatar: false
+						}
+					}
+				},			
+			},
+
+			cost: {
+				type: "integer",
+				label: "Cost",
+				icon: "folder",
+				input: {
+					type: "number",
+					default: 1.00,
+				},			
+			},
+
+			cost_with_tax: {
+				type: "integer",
+				label: "Cost with Tax",
+				icon: "folder",
+				input: {
+					type: "number",
+					default: 1.00,
+				},			
+			},
+
+			sku: {
+				type: "string",
+				label: "SKU",
+				input: {
+					type: "text",
+					default: "",
+					required: true,
+				},
+				restricted: {
+					display: (entry, user) => {						
+						return false
+					},
+					input: (values, user) => {
+						if (user && user.role==="admin") {
+							return false;
+						}						
+						return true;
+					}					
+				},
+			},
+
+			quantity: {
+				type: "integer",
+				label: "Quantity",
+				icon: "folder",
+				input: {
+					type: "number",
+					default: 1,
+				},
+				restricted: {
+					display: (values, user) => {
+						if (values) {
+							if (values.item_type==="product") {
+								return false;
+							}
+						}					
+						return true
+					},
+					input: (values, user) => {
+						if (values) {
+							if (values.item_type==="product") {
+								return false
+							}
+						}					
+						return true;
+					}					
+				},			
+			},
+
+			taxable: {
+				type: "boolean",
+				label: "Taxable",
+				icon: "folder",
+				input: {
+					type: "checkbox",
+					default: false,
+				},			
+			},
+
+			discountable: {
+				type: "boolean",
+				label: "Discountable",
+				icon: "folder",
+				input: {
+					type: "checkbox",
+					default: false,
+				},			
+			},
+
+			available: {
+				type: "boolean",
+				label: "Available",
+				icon: "folder",
+				input: {
+					type: "checkbox",
+					default: true,
+				},			
+			},
+		},
+		identity: {
+			primary: ["name"],
+			secondary: [],
+			avatar: false,
+		},		
+		dependencies: [],
+		dependants: {
+			orders: {
+				column: "items",
+				query: {}
+			},
+			actionlogs: {
+				column: "record",
+				query: { context: "RetailItem" }
+			},
+		},
+	},
+	access:{
+		restricted: (user) => {
+			if (user) {
+				return false;
+			}
+			return true;
+		},
+		view:{
+			summary: (user) => {
+				if (user) {
+					return true;
+				}
+				return false;
+			},
+			all: (user) => {
+				if (user) {
+					return true;
+				}
+				return false;
+			},
+			single: (user, record) => {
+				if (user && record) {
+					return true;
+				}
+				return false;
+			},
+		},
+		actions: {
+			view_single: {
+				restricted: (user) => {
+					if (user) {
+						return false;
+					}
+					return true;
+				},
+				uri: (id)=>{
+					return "retailitems/view/"+id
+				},
+				link: {
+					inline: {						
+						default: (id, className) => {
+
+						},
+						listing: (id, className="grey_text") => {
+							return (
+								<Link to={ "retailitems/view/"+id } className={ className }>
+									<IconButton color="inherit" aria-label="edit">
+										<OpenInNewIcon fontSize="small"/>
+									</IconButton>
+								</Link>
+							)
+						},
+					}					
+				}
+			},
+			create: {
+				restricted: (user) => {
+					return user && user.role === 'admin'? false : true;
+				},
+				uri: "retailitems/add",
+				link: {
+					inline: {
+						default: (props) => {
+							return ( 
+								<Link to={"retailitems/add/"} {...props}>
+									<Button color="primary" outlined aria-label="add">
+										<AddIcon className="float-left"/> New Item
+									</Button>
+								</Link>
+							)
+						},
+						listing: (props) => {
+							return ""
+						},
+					}					
+				}
+			},
+			update: {
+				restricted: (user) => {
+					if (user) {
+						return false;
+					}
+					return true;
+				},
+				uri: (id)=>{
+					return "retailitems/edit/"+id
+				},
+				link: {
+					inline: {
+						default: (id, className="grey_text") => {
+
+						},
+						listing: (id, className="grey_text") => {
+							return (
+								<Link to={ "retailitems/edit/"+id } className={ className? className : ""}>
+									<IconButton color="inherit" aria-label="edit">
+										<EditIcon  fontSize="small"/>
+									</IconButton>
+								</Link>
+							)
+						},
+					}					
+				}
+			},
+			delete: {
+				restricted: (user) => {
+					if (user) {
+						return false;
+					}
+					return true;
+				},
+				uri: (id)=>{
+					return "retailitems/delete/"+id
+				},
+				link: {
+					inline: {
+						default: (id, className="error_text") => {
+
+						},
+						listing: (id, className="error_text", onClick) => {
+							return (
+								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
+									<DeleteIcon fontSize="small"/>
+								</IconButton>
+							)
+						},
+					}					
+				}
+			},
+		}			
+	},	
+};
