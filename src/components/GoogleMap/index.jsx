@@ -14,6 +14,7 @@ import {
 	withScriptjs
 } from "react-google-maps";
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
+import { SearchBox } from "react-google-maps/lib/components/places/SearchBox";
 import LocationSearchInput from './LocationSearchInput';
 
 import { compose } from "recompose";
@@ -111,7 +112,182 @@ const mapStyles = [
 	}
 ];
 //
-
+const greyMapStyle = [
+    {
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#e9e9e9"
+            },
+            {
+                "lightness": 17
+            }
+        ]
+    },
+    {
+        "featureType": "landscape",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#f5f5f5"
+            },
+            {
+                "lightness": 20
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#ffffff"
+            },
+            {
+                "lightness": 17
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#ffffff"
+            },
+            {
+                "lightness": 29
+            },
+            {
+                "weight": 0.2
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#ffffff"
+            },
+            {
+                "lightness": 18
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#ffffff"
+            },
+            {
+                "lightness": 16
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#f5f5f5"
+            },
+            {
+                "lightness": 21
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#dedede"
+            },
+            {
+                "lightness": 21
+            }
+        ]
+    },
+    {
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#ffffff"
+            },
+            {
+                "lightness": 16
+            }
+        ]
+    },
+    {
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "saturation": 36
+            },
+            {
+                "color": "#333333"
+            },
+            {
+                "lightness": 40
+            }
+        ]
+    },
+    {
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#f2f2f2"
+            },
+            {
+                "lightness": 19
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#fefefe"
+            },
+            {
+                "lightness": 20
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#fefefe"
+            },
+            {
+                "lightness": 17
+            },
+            {
+                "weight": 1.2
+            }
+        ]
+    }
+];
 const styles = theme => ({
 	root: {
 		margin: "0"
@@ -136,13 +312,13 @@ var iconPin = {
 	scale: 0.07 //to reduce the size of icons
 };
 const current_position_marker_icon = {
-	path:google.maps.SymbolPath.CIRCLE,
+	path:"M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0",
 	fillColor: "#0076d6",
 	fillOpacity: 1,
 	strokeOpacity: 0.3,
 	strokeWeight: 8,
 	strokeColor: "#0076d6",
-	scale: 8//to reduce the size of icons
+	scale: 0.1//to reduce the size of icons
 };
 const labelSize = 200;
 const labelPadding = 8;
@@ -171,17 +347,23 @@ let showInfoWindow = (content, position) => {
 	return <InfoWindow position={position}>{content}</InfoWindow>;
 };
 
+
 let _map = null;
+let _searchBox = null;
 const DefaultMapComponent = compose(
 	withScriptjs,
 	withGoogleMap
 )(props => (
 	<GoogleMap
+		className="relative"
 		defaultZoom={props.defaultZoom}
 		defaultCenter={props.defaultCenter}
-		defaultOptions={{ styles: mapStyles }}
+		defaultOptions={{ styles: props.disabled || props.readonly? greyMapStyle : mapStyles }}
 		ref={map => (_map = map)}
 	>
+		
+
+		
 		
 		{ props.draw && <DrawingManager
 			defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
@@ -295,10 +477,9 @@ const DefaultMapComponent = compose(
 		{JSON.isJSON(props.marker) && <Marker {...props.marker } /> }
 		{JSON.isJSON(props.circle) && <Marker {...props.circle} /> }
 
-		<KmlLayer
-      url="http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml"
-      options={{ preserveViewport: true }}
-    />
+
+		{ props.showSearchBar && <LocationSearchInput controlPosition={google.maps.ControlPosition.BOTTOM_CENTER} {...props.searchBarProps}/> }
+
 	</GoogleMap>
 ));
 
@@ -317,7 +498,7 @@ class CustomGoogleMap extends Component {
 	constructor( props ) {
 		super( props );
 		this.state={...this.state, ...props};
-		this.state.defaultCenter = this.getDefaultCenter();
+		
 		if (this.state.isMulti && !Array.isArray(this.state.value)) {
 			if (this.state.value) {
 				this.state.value = [this.state.value];
@@ -330,10 +511,78 @@ class CustomGoogleMap extends Component {
 		this.onLocationSearchSelect = this.onLocationSearchSelect.bind(this);
 		this.onLocationBtnClick = this.onLocationBtnClick.bind(this);
 		this.onValueObjectDragEnd = this.onValueObjectDragEnd.bind(this);
+
+		let { isInput, input, value, isMulti, markers, circles } = this.state;
+		
+		if (isInput) {
+			if (input === "coordinates") {
+				if (!Array.isArray(markers)) {
+					markers = []; 
+				}				
+				if (isMulti) {
+					markers = markers.concat(value.map((coordinates, index)=>{
+						return {
+							position: coordinates,
+							title: JSON.readable(coordinates),
+							draggable: true, 
+							onDragEnd: this.onValueObjectDragEnd(index)
+						}
+					}));
+				}
+				else{
+					markers = markers.concat([{
+							position: value,
+							title: JSON.readable(value),
+							draggable: true, 
+							onDragEnd: this.onValueObjectDragEnd(null)
+					}]);
+				}
+			}
+			if (input === "marker") {
+				if (!Array.isArray(markers)) {
+					markers = []; 
+				}				
+				if (isMulti) {
+					markers = markers.concat(value.map((marker, index)=>{
+						return {
+							...marker,
+							draggable: true, 
+							onDragEnd: this.onValueObjectDragEnd(index)
+						}
+					}));
+				}
+				else{
+					markers = markers.concat([{
+						...value, 
+						draggable: true, 
+						onDragEnd: this.onValueObjectDragEnd(null)
+					}]);
+				}
+			}
+			else if (input == "circle") {
+				if (!Array.isArray(circles)) {
+					circles = []; 
+				}
+				if (isMulti) {
+					circles = circles.concat(value);
+				}
+				else{
+					circles = circles.concat([value]);
+				}
+				
+			}
+		}
+		this.state.markers = markers;
+		this.state.circles = circles;
+		this.state.defaultCenter = this.getDefaultCenter();
 	}
 
-	/*componentDidMount() {
-		const { showCurrentPosition, isInput, isMulti, value, input } = this.props;
+	componentDidMount() {
+		const defaultCenter = this.getDefaultCenter();
+		console.log("defaultCenter", defaultCenter);
+		this.setState({defaultCenter: defaultCenter});
+
+		/*const { showCurrentPosition, isInput, isMulti, value, input } = this.props;
 		if (showCurrentPosition) {
 			this.currentPosition();
 		}
@@ -360,8 +609,8 @@ class CustomGoogleMap extends Component {
 				_map.panTo(panTo);
 			}
 			
-		}
-	}*/
+		}*/
+	}
 
 	currentPosition() {
 		const { user } = this.props;
@@ -392,26 +641,30 @@ class CustomGoogleMap extends Component {
 			circle,
 			marker,
 			polyline,
-		} = this.props;
-		if (showCurrentPosition) {
-			return this.state.current_device_position.coordinates;
-		} else if (Array.isArray(markers) && markers.length > 0) {
-			return markers[markers.length - 1].position;
+		} = this.state;
+		let defaultCenter = this.state.current_device_position.coordinates;
+		if (Array.isArray(markers) && markers.length > 0) {
+			if (JSON.isJSON(markers[markers.length - 1].position)) {
+				defaultCenter = markers[markers.length - 1].position;
+			}			
 		} else if (Array.isArray(polylines) && polylines.length > 0) {
-			return polylines[polylines.length - 1].path[0];
+			if (JSON.isJSON(polylines[polylines.length - 1].path[0])) {
+				defaultCenter = polylines[polylines.length - 1].path[0];
+			}	
+			
 		} else if (Array.isArray(circles) && circles.length > 0) {
-			return circles[circles.length - 1].center;
+			defaultCenter = circles[circles.length - 1].center;
 		}
 		else if (JSON.isJSON(circle)) {
-			return circle.center;
+			defaultCenter = circle.center;
 		}
 		else if (JSON.isJSON(marker)) {
-			return marker.position;
+			defaultCenter = marker.position;
 		}
 		else if (JSON.isJSON(polyline)) {
-			return polyline.path[0];
+			defaultCenter = polyline.path[0];
 		}
-		
+		return defaultCenter;
 	}
 
 	onLocationSearchSelect(value){
@@ -483,8 +736,8 @@ class CustomGoogleMap extends Component {
 
 	render() {
 		let { classes, className, mapHeight, isInput, input, value, onChange, defaultCenter, current_device_position, isMulti, markers, circles, showSearchBar, ...rest } = this.state;
-		
-		if (isInput) {
+		console.log("markers", markers);
+		/*if (isInput) {
 			if (input === "coordinates") {
 				if (!Array.isArray(markers)) {
 					markers = []; 
@@ -541,22 +794,27 @@ class CustomGoogleMap extends Component {
 				}
 				
 			}
-		}
+		}*/
 		
         
 
 		return (
-			<div className="relative" style={{minHeight: mapHeight}}>
-				{ showSearchBar && <LocationSearchInput className={classes.locationSearchInput+" center_horizontally"} onSelect={this.onLocationSearchSelect} onLeftBtnClick={this.onLocationBtnClick}/> }				
+			<div className="relative p-0 m-0" style={{minHeight: mapHeight}}>				
 				<DefaultMapComponent
 					className={classes.googleMap}
 					defaultCenter={defaultCenter}
 					currentDevicePosition={current_device_position}
-					loadingElement={<div style={{ height: `100%` }} />}
+					loadingElement={<div style={{ height: "100%" }} />}
 					containerElement={<div style={{ height: mapHeight + "px" }} />}
-					mapElement={<div style={{ height: `100%` }} />}
+					mapElement={<div style={{ height: "100%" }} />}
 					markers = {markers}
 					circles = {circles}
+					showSearchBar = {showSearchBar}
+					searchBarProps = {{
+						className: classes.locationSearchInput+" absolute mb-4",
+						onSelect: this.onLocationSearchSelect,
+						onLeftBtnClick:this.onLocationBtnClick,
+					}}
 					{ ...rest }
 				/>
 				
@@ -585,6 +843,8 @@ CustomGoogleMap.propTypes = {
 	value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
 	onChange: PropTypes.func,
 	isMulti: PropTypes.bool,
+	disabled: PropTypes.bool,
+	readonly: PropTypes.bool,
 	showSearchBar: PropTypes.bool,
 };
 
@@ -600,7 +860,9 @@ CustomGoogleMap.defaultProps = {
 	isInput: false,
 	input: "coordinates",
 	value: [],
-	showSearchBar: false,
+	showSearchBar: true,
+	disabled: false,
+	readonly: false,
 };
 
 export default withRoot(withStyles(styles)(CustomGoogleMap));

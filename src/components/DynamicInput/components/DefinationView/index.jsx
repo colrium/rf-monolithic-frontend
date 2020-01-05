@@ -419,7 +419,7 @@ class DefinationView extends React.Component {
 											<Collapse in={this.state.expandedGroups.includes(name)} timeout="auto" >
 												<GridContainer>                                                
 														{ Array.isArray(properties.fields) && properties.fields.map((entry, index) => (                                                        
-															<GridItem xs={12} md={entry.input.size? entry.input.size : 12} className={classNames(classes.inputWrapper, "m-0 p-0")} key={"group-field-" + index}>
+															<GridItem xs={12} md={entry.input.size? Number.parseNumber(entry.input.size) : 12} className={classNames(classes.inputWrapper, "m-0 p-0")} key={"group-field-" + index}>
 																<div className={classes.inputContainer}>
 																	<GridContainer className="m-0">
 																		<GridItem xs={12} className="m-0 p-0">

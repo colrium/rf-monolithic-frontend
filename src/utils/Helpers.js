@@ -323,7 +323,7 @@ class ServiceData {
 					}
 					else{
 						if (JSON.isJSON(entries[i][field])) {
-							resolved_entry[field] = JSON.readable(entries[i][field]);
+							resolved_entry[field] = JSON.prettyStringify(entries[i][field]);
 						}
 						else{
 							resolved_entry[field] = entries[i][field];

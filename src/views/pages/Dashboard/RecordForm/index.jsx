@@ -12,7 +12,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import Button from "components/Button";
-import ProgressIndicator from "components/ProgressIndicator";
+import Skeleton from '@material-ui/lab/Skeleton';
 //
 import * as definations from "definations";
 import * as services from "services";
@@ -123,15 +123,7 @@ class Page extends React.Component {
 							justify="center"
 							alignItems="center"
 						>
-							<GridItem xs={1}>
-								<ProgressIndicator
-									size={24}
-									thickness={4}
-									className={classes.progress}
-									color="secondary"
-									disableShrink
-								/>
-							</GridItem>
+							<Skeleton variant="rect" width={"100%"} height={"100%"} />
 						</GridContainer>
 					) : (
 							<GridContainer className="p-0 m-0">

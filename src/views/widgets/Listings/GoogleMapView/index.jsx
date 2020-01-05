@@ -1,3 +1,7 @@
+import React from "react";
+import Skeleton from '@material-ui/lab/Skeleton';
+import { connect } from 'react-redux';
+import compose from 'recompose/compose';
 import { Icon } from '@material-ui/core';
 import withStyles from "@material-ui/core/styles/withStyles";
 import EmptyStateImage from 'assets/img/empty-state-table.svg';
@@ -5,12 +9,8 @@ import GoogleMap from 'components/GoogleMap';
 import GridContainer from 'components/Grid/GridContainer';
 import GridItem from 'components/Grid/GridItem';
 import Typography from 'components/Typography';
-import ProgressIndicator from "components/ProgressIndicator";
 import PropTypes from 'prop-types';
-import React from "react";
-//Redux imports
-import { connect } from 'react-redux';
-import compose from 'recompose/compose';
+
 import * as Actions from 'state/actions';
 import styles from './styles';
 
@@ -136,10 +136,8 @@ class GoogleMapView extends React.Component {
 			<GridContainer className={classes.root}>
 					<GridItem className="p-0 m-0" xs={12}>
 						{this.state.loading? (
-							<GridContainer className={classes.full_height} justify="center" alignItems="center">
-								<GridItem xs={1}>
-									<ProgressIndicator size={24} thickness={4} className={classes.progress} color="secondary" disableShrink	/>
-								</GridItem>
+							<GridContainer className="h-full p-0" justify="center" alignItems="center">
+								<Skeleton variant="rect" width={"100%"} height={600} />
 							</GridContainer>
 							) : (
 							<GridContainer className="p-0 m-0">

@@ -83,7 +83,7 @@ class GoogleMapOverview extends React.Component {
 
 
 	render() {
-		const { classes } = this.props;
+		const { classes, showAll } = this.props;
 		return (
 							<Card elevation={0} outlineColor="#cfd8dc">
 

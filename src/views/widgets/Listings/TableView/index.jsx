@@ -7,7 +7,7 @@ import Avatar from 'components/Avatar';
 import GridContainer from 'components/Grid/GridContainer';
 import GridItem from 'components/Grid/GridItem';
 import Typography from 'components/Typography';
-import ProgressIndicator from "components/ProgressIndicator";
+import Skeleton from '@material-ui/lab/Skeleton';
 //
 import { formats } from 'config/data';
 import MUIDataTable from "mui-datatables";
@@ -390,8 +390,23 @@ class TableView extends React.Component {
 					<GridItem className="p-0 m-0" xs={12}>
 						{this.state.loading? (
 							<GridContainer className={classes.full_height} justify="center" alignItems="center">
-								<GridItem xs={1}>
-									<ProgressIndicator size={24} thickness={4} className={classes.progress} color="secondary" disableShrink	/>
+								<GridItem xs={12} className="flex relative flex-row">
+									<div className="flex-grow">
+										<Skeleton variant="text" width={150}/>
+									</div>
+									<div className="flex">
+										<Skeleton variant="circle" width={32} height={32} className="float-right mx-2"/>
+										<Skeleton variant="circle" width={32} height={32} className="float-right mx-2"/>
+										<Skeleton variant="circle" width={32} height={32} className="float-right mx-2"/>
+										<Skeleton variant="circle" width={32} height={32} className="float-right mx-2"/>
+									</div>
+								</GridItem>
+								
+								<GridItem xs={12}>
+									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
+									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
+									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
+									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
 								</GridItem>
 							</GridContainer>
 							) : (

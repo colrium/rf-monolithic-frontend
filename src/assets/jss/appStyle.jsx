@@ -99,6 +99,7 @@ export default {
 			outline: "none !important",
 		},
 	},
+
 	a: {
 		color: "inherit",
 		textDecoration: "none",
@@ -158,6 +159,14 @@ export default {
 	},
 	".ps__thumb-y": {
 		backgroundColor: colors.hex.secondary+" !important",
+	},
+	".break-flex" : {
+		flexBasis: "100%",
+  		height: 0,
+	},
+	".break-flex-column" : {
+		flexBasis: "100%",
+  		width: 0,
 	},
 	...muiGlobalStyles,
 	...color_based_styles

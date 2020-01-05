@@ -14,7 +14,14 @@ const initialState = {
 	drawer_displayed: true,
 	footer_displayed: true,
 	homepage_state: {
-		sections: ["quicklinks", "dynamic_aggregates", "dynamic_maps", "calendar"],
+		sections: {
+			"quicklinks" : false,
+			"static_aggregates": true,
+			"static_map": true, 
+			"compact_aggregates": false, 
+			"compact_maps": false, 
+			"calendar": true,
+		}
 	},
 };
 

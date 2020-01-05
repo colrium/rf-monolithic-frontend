@@ -1,10 +1,9 @@
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import compose from 'recompose/compose';
 import { withStyles } from '@material-ui/core';
-//
 import { colors } from "assets/jss/app-theme";
-// Externals
 import classNames from 'classnames';
-//
-//
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import CardActions from 'components/Card/CardActions';
@@ -15,23 +14,13 @@ import GridItem from 'components/Grid/GridItem';
 import Typography from 'components/Typography';
 import * as definations from 'definations';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import compose from 'recompose/compose';
+import Color from 'color';
 import * as services from 'services';
 //
+import LazyModule from "components/LazyModule";
 import AggregatesPieChart from 'views/widgets/Charts/AggregatesPieChart';
 //
 import styles from './styles';
-
-
-
-
-
-
-
-
-
 
 class Overview extends Component {
 
@@ -48,7 +37,11 @@ class Overview extends Component {
 		this.handleShowOptionsMenu = this.handleShowOptionsMenu.bind(this);
 		this.handleCloseOptionsMenu = this.handleCloseOptionsMenu.bind(this);
 		this.handleOnResolveAggregates = this.handleOnResolveAggregates.bind(this);
-			
+		this.backgroundColors = {};
+		for (let [name, defination] of Object.entries(definations)) {
+			this.backgroundColors[name] = Color(defination.color? defination.color: colors.hex.primary).rgb().array().join(",");
+		}
+		console.log("this.backgroundColors", this.backgroundColors);	
 	}
 
 
@@ -95,26 +88,25 @@ class Overview extends Component {
 		const rootClassName = classNames(classes.root, className);
 
 		return (
-			<GridContainer className={rootClassName}>
+			<GridContainer className="p-0" className={rootClassName}>
 				{ Object.entries(definations).map(([name, defination], index) => (
 					!defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) && name in services && (
-						<GridItem xs={12} sm={6} md={4} key={name+"-aggregates"}>
-							<Card elevation={0} outlineColor="#cfd8dc">
-								<CardHeader avatar={
-						          <Avatar aria-label="recipe" style={{background:defination.color}}>
-						            {defination.icon}
-						          </Avatar>
-						        }
-						        title={this.state.counts[name]? this.state.counts[name]+"": "0"}
-						        subheader={ defination.label }>
-									
-								</CardHeader>
-								<CardContent >
-									<AggregatesPieChart defination={defination} service={ services[name] } color={defination.color? defination.color: colors.hex.primary } dynamic showTitle showMenu monochrome />
+						<GridItem xs={12} key={name+"-aggregates"}>
+							<Card elevation={0} className="rounded p-0" style={{background: "rgba("+this.backgroundColors[name]+", 0.2)"}}>
+								<CardContent className="p-0">
+									<AggregatesPieChart
+										defination={defination} 
+										service={ services[name] } 
+										color={defination.color? defination.color: colors.hex.primary} 
+										dynamic 
+										showTitle 
+										showMenu 
+										monochrome
+									/>
 								</CardContent>
 								<CardActions>
 									<Typography className={classes.caption} variant="caption" >
-										{defination.label} Overview
+										{defination.icon} Total {defination.label} : {this.state.counts[name]? this.state.counts[name]+"": "0"}
 									</Typography>
 								</CardActions>
 								

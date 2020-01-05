@@ -3,20 +3,18 @@ import { Icon, Menu, MenuItem } from '@material-ui/core';
 import withStyles from "@material-ui/core/styles/withStyles";
 import { MoreVert as AggregateMenuIcon } from '@material-ui/icons';
 import EmptyStateImage from 'assets/img/empty-state.svg';
-//
-import { colors } from 'assets/jss/app-theme';
-import Button from 'components/Button';
-//
-import ProgressIndicator from "components/ProgressIndicator";
-import GridContainer from 'components/Grid/GridContainer';
-import GridItem from 'components/Grid/GridItem';
-import Typography from 'components/Typography';
-import PropTypes from 'prop-types';
 import React from "react";
-//
+import PropTypes from 'prop-types';
 import { defaults, Pie } from 'react-chartjs-2';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
+import Skeleton from '@material-ui/lab/Skeleton';
+import { colors } from 'assets/jss/app-theme';
+import Button from 'components/Button';
+import GridContainer from 'components/Grid/GridContainer';
+import GridItem from 'components/Grid/GridItem';
+import Typography from 'components/Typography';
+
 //
 import { UtilitiesHelper } from 'utils/Helpers';
 import styles from './styles';
@@ -198,8 +196,8 @@ class AggregatesPieChart extends React.Component {
 				<GridContainer className={className+" p-0 m-0"}>
 					<GridItem xs={12} className="p-0 m-0">
 						{this.state.loading? (
-							<GridContainer className={classes.full_height} justify="center" alignItems="center">
-								<ProgressIndicator size={24} thickness={4} className={classes.progress} color="secondary" disableShrink />
+							<GridContainer className="h-full" justify="center" alignItems="center">
+								<Skeleton variant="circle" width={150} height={150} />
 							</GridContainer>
 							) : (
 							<GridContainer className="p-0 m-0">

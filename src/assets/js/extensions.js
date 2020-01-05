@@ -108,6 +108,12 @@ String.prototype.humanize = function(){
 	return target.replace(/([A-Z])/g, ' $1').trim().replace(/^[\s_]+|[\s_]+$/g, '').replace(/[_\s]+/g, ' ').replace(/^[a-z]/, function(m) { return m.toUpperCase(); });
 }
 
+String.prototype.hasHTML = function(){
+	var target = this;
+	return /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/.test(target);
+}
+
+
 
 
 
@@ -117,8 +123,12 @@ if(JSON.isJSON){
 JSON.isJSON = function(input) {
 	return input !== undefined && input !== null? (input.constructor === ({}).constructor) : false;
 };
-JSON.readable = function(input, highLightSytax = true, linebreaker="\n", spacer="\t") {
-    function syntaxHighlight(json) {
+JSON.prettyStringify = function(input, spaces=4) {
+	let spacing = "";
+	for (var i = 0; i < spaces; i++) {
+		spacing = spacing+" ";
+	}
+	function syntaxHighlight(json) {
 		json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 		return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
 			var cls = 'number';
@@ -138,16 +148,15 @@ JSON.readable = function(input, highLightSytax = true, linebreaker="\n", spacer=
 	}
 	let str = "";
 	if (JSON.isJSON(input)) {
-		let readableKeysInput = {};
-		for (let [key, value] of Object.entries(input)) {
-			readableKeysInput[key.humanize()] = value;			
-		}
-		str = JSON.stringify(readableKeysInput, undefined, 4);
-		if (highLightSytax) {
-			str = syntaxHighlight(str);
-		}
-
-		/*str = str + "Object("+ linebreaker +" "+ spacer;
+		str = syntaxHighlight(JSON.stringify(input, undefined, spaces));
+		str = str.replaceAll(spacing, " \t \t ");
+	}
+	return str;
+};
+JSON.readable = function(input, highLightSytax = true, linebreaker="\n", spacer="\t") {    
+	let str = "";
+	if (JSON.isJSON(input)) {
+		str = str + "Object("+ linebreaker +" "+ spacer;
 		for (let [key, value] of Object.entries(input)) {
 			str = str + " " + linebreaker +" "+ spacer +" "+ key.humanize()+" = ";
 			if (JSON.isJSON(value)) {
@@ -174,7 +183,7 @@ JSON.readable = function(input, highLightSytax = true, linebreaker="\n", spacer=
 			}
 			str = str + linebreaker;
 		}
-		str = str + linebreaker + ")";*/
+		str = str + linebreaker + ")";
 	}
 	return str;
 };

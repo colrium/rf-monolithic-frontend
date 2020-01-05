@@ -1,10 +1,13 @@
+import React from "react";
+import ReactHtmlParser from 'react-html-parser';
+import classNames from "classnames";
+import PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import { colors } from "assets/jss/app-theme.jsx";
 import typographyStyle from "assets/jss/components/typographyStyle.jsx";
-import classNames from "classnames";
-import PropTypes from "prop-types";
-import React from "react";
+
+
 import withRoot from "utils/withRoot";
 
 function CustomTypography({ ...props }) {
@@ -50,9 +53,9 @@ function CustomTypography({ ...props }) {
 		[classes.mutedText]: mutedText,
 		[classes.title]: title,
 		[classes.subtitle]: subtitle,
-		[classes.tiny]: tiny,
-		[classes.small]: small,
-		[classes.large]: large,
+		["text-xs"]: tiny,
+		["text-sm"]: small,
+		["text-lg"]: large,
 		[classes.mute]: mute,
 		[classes.underline]: underline,
 		[classes.overline]: overline,
@@ -69,35 +72,23 @@ function CustomTypography({ ...props }) {
 		[className]: className
 	});
 	let {children} = props;
+	let isHTML = false;
 	let splitted = false; 
 	if (String.isString(children)) {
-		splitted = children.indexOf("\n") === -1? false : true;
-		if (splitted) {
-			children = children.split("\n");
-		}		
+		isHTML = children.hasHTML();		
+		if (children.indexOf("\t") !== -1 || children.indexOf("\n") !== -1) {
+			isHTML = true;
+			children = children.replaceAll("\n", "<br />");
+			children = children.replaceAll("\t", "&nbsp; &nbsp;");
+		}
 	}
 
 	return (
-		<Typography className={typographyClasses} {...rest}>
-			{splitted? children.map((child, index)=> {
-				let tabbed = child.indexOf("\t") === -1? false : true;
-				if (tabbed) {
-					let tabbed_children = child.split("\t")
-					return (
-						tabbed_children.map((tabbed_child, cursor) => (
-							<span key={"typography-tabbed_child-"+cursor}> &nbsp; &nbsp; {tabbed_child} </span>
-						))
-					);
-				}
-				else {
-					return (
-						<span key={"typography-child-"+index}>{child} <br /> </span>
-					);
-				}
-					
-			}) : children}
-		</Typography>
+			<Typography className={typographyClasses} {...rest} >
+				{ isHTML? ReactHtmlParser(children) : children }
+			</Typography>
 	);
+		
 }
 
 CustomTypography.propTypes = {
