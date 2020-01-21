@@ -12,6 +12,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#40003e",
 	model: 'RetailItem',
+	endpoint: "/retail/items",
 	views: {
 		single: {
 			default: "cardview",
@@ -104,37 +105,19 @@ export default  {
 				},
 			},
 
-			variations: {
-				type: "object",
-				label: "Variations",
-				icon: "label",
-				input: {
-					type: "dynamic",
-					default: {},
-					required: true,
-				},
-				blueprint: {
-
-				},
-				restricted: {
-					display: (entry, user) => {						
-						return false
-					},
-					input: (values, user) => {
-						if (user && user.role==="admin") {
-							return false;
-						}						
-						return true;
-					}					
-				},
-			},
+			
 
 			featured_image: {
 				type: "string",
 				label: "Featured Image",
-				icon: "folder",
 				input: {
 					type: "file",
+					props: {
+						acceptedFiles : ['image/*'],
+						filesLimit: 1,
+						dropzoneText: "Click to select Featured Image \n or \n Drag and drop the Featured Image file here",
+						dropzoneIcon: "image",
+					}
 				},
 				reference: {
 					name: "attachments",
@@ -189,6 +172,62 @@ export default  {
 					type: "number",
 					default: 1.00,
 				},			
+			},
+
+			variants: {
+				type: "object",
+				label: "Variants",
+				icon: "label",
+				input: {
+					type: "dynamic",
+					default: {},
+					props: {
+						mode: "defination",
+						appendProps: {
+							field: [
+								{
+									name: "cost_effect_type", 
+									label: "Cost Effect Type",
+									input: {
+										type: "radio",
+										defaultValue: "amount",
+										size: 12,
+									},
+									possibilities: {
+										"amount": "Amount",
+										"percentage": "Percentage",
+									}
+								},
+
+								{
+									name: "cost_effect", 
+									label: "Cost Effect",
+									valueDependent: true,
+									input: {
+										type: "number",
+										defaultValue: 0.00,
+										size: 6,
+										inputProps: {
+											step: "0.1"
+										}
+									},
+								}
+							],
+						}
+					},
+					required: true,
+				},
+				restricted: {
+					display: (entry, user) => {						
+						return false
+					},
+					input: (values, user) => {
+						if (user && user.role==="admin") {
+							return false;
+						}						
+						return true;
+					}					
+				},
 			},
 
 			sku: {
@@ -269,6 +308,31 @@ export default  {
 					default: true,
 				},			
 			},
+			images: {
+				type: ["string"],
+				label: "Images",
+				input: {
+					type: "file",
+					props: {
+						acceptedFiles : ['image/*'],
+						filesLimit: 20,
+						dropzoneText: "Click to select Image \n or \n Drag and drop an image file here",
+						dropzoneIcon: "image",
+					}
+				},
+				reference: {
+					name: "attachments",
+					service_query: {},
+					resolves:{
+						value: "_id",
+						display: {
+							primary: ["name"],
+							secondary: [],
+							avatar: false,
+						}							
+					},
+				},		
+			},
 		},
 		identity: {
 			primary: ["name"],
@@ -296,9 +360,6 @@ export default  {
 		},
 		view:{
 			summary: (user) => {
-				if (user) {
-					return true;
-				}
 				return false;
 			},
 			all: (user) => {

@@ -18,6 +18,7 @@ export default {
 	icon: <DefinationContextIcon />,
 	color: "#00bcd4",
 	model: "Vacancy",
+	endpoint: "/recruitment/vacancies",
 	views: {
 		single: {
 			default: "cardview",
@@ -336,9 +337,6 @@ export default {
 		},
 		view: {
 			summary: user => {
-				if (user) {
-					return user.isAdmin;
-				}
 				return false;
 			},
 			all: user => {

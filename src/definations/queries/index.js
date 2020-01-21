@@ -15,6 +15,7 @@ export default {
 	icon: <DefinationContextIcon />,
 	color: colors.hex.accent,
 	model: "SurveyQuery",
+	endpoint: "/queries",
 	views: {
 		single: {
 			default: "cardview",
@@ -151,9 +152,6 @@ export default {
 		},
 		view: {
 			summary: user => {
-				if (user) {
-					return true;
-				}
 				return false;
 			},
 			all: user => {

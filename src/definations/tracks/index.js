@@ -18,6 +18,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#880e4f",
 	model: 'Track',
+	endpoint: "/tracks",
 	views: {
 		single: {
 			default: "cardview",
@@ -467,9 +468,6 @@ export default  {
 		},
 		view:{
 			summary: (user) => {
-				if (user) {
-					return true;
-				}
 				return false;
 			},
 			all: (user) => {

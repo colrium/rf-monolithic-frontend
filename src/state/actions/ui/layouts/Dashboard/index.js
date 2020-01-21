@@ -4,7 +4,8 @@ import {
 	SET_DASHBOARD_APPBAR_DISPLAYED, 
 	SET_DASHBOARD_DRAWER_DISPLAYED, 
 	SET_DASHBOARD_FOOTER_DISPLAYED,
-	SET_DASHBOARD_HOMEPAGE_STATE, 
+	SET_DASHBOARD_HOMEPAGE_STATE,
+	SET_DASHBOARD_LIGHTBOX,
 } from "state/actions";
 
 
@@ -48,6 +49,13 @@ export function setDashboardHomePageState(homepage_state) {
 	return {
 		type: SET_DASHBOARD_HOMEPAGE_STATE,
 		homepage_state
+	};
+}
+
+export function setLightBoxOpen(lightbox) {
+	return {
+		type: SET_DASHBOARD_LIGHTBOX,
+		lightbox
 	};
 }
 

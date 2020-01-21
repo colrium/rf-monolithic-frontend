@@ -6,8 +6,8 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import Button from "components/Button";
-import {proposalrequests as defination} from "definations";
-import {proposalrequests as service} from "services";
+import {quoterequests as defination} from "definations";
+import {quoterequests as service} from "services";
 import BaseForm from "views/forms/BaseForm";
 
 
@@ -17,7 +17,7 @@ class Step extends React.Component {
 		return (
 			<GridContainer className="p-0 m-0">
 							<GridItem xs={12}>
-								<Typography variant="body2" className="default_text">Enter proposal details below</Typography>	
+								<Typography variant="body2" className="default_text">Enter Quote details below</Typography>	
 							</GridItem>
 							<GridItem xs={12}>
 								<BaseForm 
@@ -29,7 +29,7 @@ class Step extends React.Component {
 									SubmitBtn= {Button}
 									onSubmitSuccess={onComplete}
 									submitBtnProps={{
-										children: <div><Send /> Submit Proposal Request</div>,
+										children: <div><Send /> Submit Quote Request</div>,
 										color: "primary",
 										round: true,
 										outlined: false

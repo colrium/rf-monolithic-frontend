@@ -1,4 +1,4 @@
-import { OPEN_DIALOG, CLOSE_DIALOG} from "state/actions/types";
+import { OPEN_DIALOG, CLOSE_DIALOG} from "state/actions";
 const initialState = {
 	state: false,
 	options: {
@@ -21,7 +21,8 @@ const dialog = function (state = initialState, action) {
 		case CLOSE_DIALOG: {
 			return {
 				...state,
-				state: false
+				state: false,
+				options: initialState.options
 			};
 		}
 		default: {

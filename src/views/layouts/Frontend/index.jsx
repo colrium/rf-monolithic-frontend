@@ -21,10 +21,11 @@ class Frontend extends Component {
 				{ showHeader && <Header navItems={navItems} />}
 				<main className={showHeader? classes.mainContent : ""}>
 					<ActionDialog />
-					{ children }				
+					{ children }
+									
             	</main>
-            	
-				{showFooter && <Footer color="accent"/>}
+            	{showFooter && <Footer color="accent"/>}
+				
 			</div>
 		);
 	}

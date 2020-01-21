@@ -15,7 +15,6 @@ import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import withStyles from "@material-ui/core/styles/withStyles";
-import TextField from "@material-ui/core/TextField";
 import Tooltip from "@material-ui/core/Tooltip";
 import AddIcon from "@material-ui/icons/Add";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -37,7 +36,7 @@ import {
 	TimeInput,
 	WysiwygInput,
 	CheckboxInput,
-	RadioGroupInput,
+	PasswordInput,
 	SliderInput,
 	TranferListInput,
 	InputFormHelper,
@@ -45,6 +44,7 @@ import {
 	SelectInput,
 	FileInput,
 	DynamicInput,
+	MapInput,
 } from "components/FormInputs";
 
 import withRoot from "utils/withRoot";
@@ -72,16 +72,16 @@ class DefinationView extends React.Component {
 		password: "Password",
 		checkbox: "Checkbox",
 		select: "Select",
-		multiselect: "Multi Select",
 		transferlist: "Transferlist",
 		file: "File",
+		wysiwyg: "WYSIWYG",
 		map: "Map"
 	};
-
+	
 	constructor( props ) {
 		super( props );
-		const { value, onChange, name, readOnly, required, disabled, helperText, enableGrouping } = props;
-		this.state = { ...this.state, value: value, onChange: onChange, name: name, readOnly: readOnly,  required: required, disabled: disabled, helperText: helperText, enableGrouping: enableGrouping };
+		const { value, onChange, name, readOnly, required, disabled, helperText, enableGrouping, appendProps } = props;
+		this.state = { ...this.state, value: value, nextValue: value, value, onChange: onChange, name: name, readOnly: readOnly,  required: required, disabled: disabled, helperText: helperText, enableGrouping: enableGrouping, appendProps: appendProps };
 		
 		this.handleOnItemMove = this.handleOnItemMove.bind(this);
 		this.handleOnAddContextClick = this.handleOnAddContextClick.bind(this);
@@ -90,7 +90,6 @@ class DefinationView extends React.Component {
 		this.handleContextRemove = this.handleContextRemove.bind(this);
 		this.handleAddContextDialogClose = this.handleAddContextDialogClose.bind(this);
 		this.onContextParamsChange = this.onContextParamsChange.bind(this);
-		this.onContextValueChange = this.onContextValueChange.bind(this);
 		this.handleOnAddMenuOpen = this.handleOnAddMenuOpen.bind(this);
 		this.handleOnAddMenuClose = this.handleOnAddMenuClose.bind(this);
 		this.handleOnInputMenuOpen = this.handleOnInputMenuOpen.bind(this);
@@ -114,7 +113,8 @@ class DefinationView extends React.Component {
 			required,
 			disabled,
 			helperText,
-			enableGrouping
+			enableGrouping,
+			appendProps,
 		} = this.props;
 		if ( snapshot.refreshRequired ) {
 			this.setState( prevState => ({
@@ -125,7 +125,8 @@ class DefinationView extends React.Component {
 				required: required,
 				disabled: disabled,
 				helperText: helperText,
-				enableGrouping: enableGrouping
+				enableGrouping: enableGrouping,
+				appendProps: appendProps,
 			}));
 		}
 	}
@@ -161,6 +162,7 @@ class DefinationView extends React.Component {
 		const addContextMenuAnchor = event.currentTarget;
 		this.setState( { active: true, addContextMenuAnchor: addContextMenuAnchor } );
 	};
+
 	handleOnAddMenuClose () {
 		this.setState( { active: false, addContextMenuAnchor: null } );
 	}
@@ -196,9 +198,11 @@ class DefinationView extends React.Component {
 
 	handleOnAddContextClick = ( type, group_name ) => event => {
 		if (type === "group" && ( this.state.enableGrouping || this.state.defination.enableGrouping )) {
+			let context = { type: type, size: "12", multientries: true, joinedfields: false, fields: [] };
+
 			this.setState({
 				active: true,
-				context: { type: type, size: "12", multientries: true, joinedfields: false, fields: [] },
+				context: context,
 				addContextMenuAnchor: null,
 				inputMenuAnchor: null,
 				contextDialogOpen: true
@@ -209,23 +213,24 @@ class DefinationView extends React.Component {
 			if ( group_name ) {
 				context.group = group_name;
 			}
-			this.setState( {
+			this.setState({
 				active: true,
 				context: context,
 				addContextMenuAnchor: null,
 				inputMenuAnchor: null,
 				contextDialogOpen: true
-			} );
+			});
 		}
+		
 	};
 
 	handleOnEditContextClick = event => {
-		this.setState( {
+		this.setState({
 			active: true,
 			addContextMenuAnchor: null,
 			inputMenuAnchor: null,
 			contextDialogOpen: true
-		} );
+		});
 	}
 
 	handleContextSave = event => {
@@ -241,7 +246,7 @@ class DefinationView extends React.Component {
 						delete context.value;
 					}
 					
-					this.setState({
+					/*this.setState({
 							value: {
 								...prevState.value,
 								[context.group]: {
@@ -255,11 +260,9 @@ class DefinationView extends React.Component {
 						},
 						() => {
 							this.triggerOnChange();
-						});
-				} 
-				else {
+						});*/
 					this.setState({
-							value: { ...prevState.value, [context.name]: { ...context } },
+							value: prevState.nextValue,
 							context: {},
 							addContextMenuAnchor: null,
 							contextDialogOpen: false
@@ -267,6 +270,25 @@ class DefinationView extends React.Component {
 						() => {
 							this.triggerOnChange();
 						});
+				} 
+				else {
+					/*this.setState({
+							value: { ...prevState.value, [context.name]: { ...context } },
+							context: {},
+							addContextMenuAnchor: null,
+							contextDialogOpen: false
+						},
+						() => {
+							this.triggerOnChange();
+						});*/
+					this.setState({
+							value: prevState.nextValue,
+							context: {},
+							addContextMenuAnchor: null,
+							contextDialogOpen: false
+					}, () => {
+							this.triggerOnChange();
+					});
 				}
 			} 
 			else {
@@ -276,7 +298,8 @@ class DefinationView extends React.Component {
 				if ( !context.size ) {
 					context.size = "12";
 				}
-				let new_value = {...this.state.value, [context.name]: { ...context }}
+				//let new_value = {...this.state.value, [context.name]: { ...context }}
+				let new_value = this.state.nextValue;
 				this.setState({
 						value: new_value,
 						context: {},
@@ -301,7 +324,6 @@ class DefinationView extends React.Component {
 			if (!value) {
 				value = this.state.value;
 			}
-			console.log("triggerOnChange value", value);
 			onChange(value);			
 		}
 	}
@@ -330,15 +352,108 @@ class DefinationView extends React.Component {
 	};
 
 	onContextParamsChange ( name, value ) {
-		this.setState( prevState => ( {
-			context: { ...prevState.context, [name]: value }
-		}));
+		let context = JSON.parse(JSON.stringify(this.state.context));		
+		let nextValue = JSON.parse(JSON.stringify(this.state.value));
+		
+		if (name=="name") {
+			context.label = value;
+			value = value.variablelize();
+			context.name = value;
+			let appendableProps = this.getAppendableProps(context);
+
+			for (let appendableProp of appendableProps) {
+				if (!(appendableProp.name in context)) {
+					context[appendableProp.name] = JSON.isJSON(appendableProp.input)? (appendableProp.input.value? appendableProp.input.value : appendableProp.input.defaultValue) : undefined;
+				}
+			}
+
+			if (value !== this.state.context.name) {
+				if (this.state.context.group) {
+					let parentGroup = nextValue[this.state.context.group];
+					let newGroupFields = [ context ];
+					if (parentGroup) {
+						if (Array.isArray(parentGroup.fields)) {
+							newGroupFields = parentGroup.fields.map((field, index)=>{
+								if (field.name !== this.state.context.name) {
+									return field;
+								}
+								else{
+									return context;
+								}
+								
+							});
+						}
+						parentGroup.fields = newGroupFields;					
+					}
+					nextValue[this.state.context.group] = parentGroup;
+				}
+				else{
+					const positionOfKey = JSON.positionOfKey(nextValue, this.state.context.name);
+					if (positionOfKey !== -1) {
+						delete nextValue[this.state.context.name];
+						nextValue[value] = context;
+						nextValue = JSON.moveKey(nextValue, value, positionOfKey);
+					}
+					else{
+						nextValue[value] = context;
+					}
+						
+				}
+			}
+			else{
+				if (this.state.context.group) {
+					let parentGroup = nextValue[this.state.context.group];
+					let newGroupFields = [ context ];
+					if (parentGroup) {
+						if (Array.isArray(parentGroup.fields)) {
+							newGroupFields = parentGroup.fields.map((field, index)=>{
+								if (field.name !== this.state.context.name) {
+									return field;
+								}
+								else{
+									return context;
+								}
+								
+							});
+						}
+						parentGroup.fields = newGroupFields;					
+					}
+					nextValue[this.state.context.group] = parentGroup;
+				}
+				else{
+					nextValue[value] = context;
+				}
+			}
+		}
+		else{
+			context[name] = value;
+			if (this.state.context.group) {
+					let parentGroup = nextValue[this.state.context.group];
+					let newGroupFields = [ context ];
+					if (parentGroup) {
+						if (Array.isArray(parentGroup.fields)) {
+							newGroupFields = parentGroup.fields.map((field, index)=>{
+								if (field.name !== this.state.context.name) {
+									return field;
+								}
+								else{
+									return context;
+								}
+								
+							});
+						}
+						parentGroup.fields = newGroupFields;					
+					}
+					nextValue[this.state.context.group] = parentGroup;
+			}
+			else{
+				nextValue[value] = context;
+			}
+		}
+		this.setState( prevState => ({context: context, nextValue: nextValue }));
 	}
 
-	onContextValueChange ( name, value ) {
-		JSON.moveKey(this.state.context, name, 0)
-		this.setState( prevState => ({context: { ...prevState.context, [name]: value } }));
-	}
+	
 
 	handleAddContextDialogClose () {
 		this.setState( { contextDialogOpen: false } );
@@ -347,11 +462,9 @@ class DefinationView extends React.Component {
 	renderInputsDefination () {
 		const { classes } = this.props;
 		let { value, disabled, readOnly, context, inputMenuAnchor } = this.state;
-		
 		return (
 			<GridContainer className="m-0 p-1">                
 				{Object.entries( value ).map( ( [name, properties], cursor ) => (
-
 						<GridItem className="m-0 p-1 rounded hover:bg-gray-200" xs={12} md={properties.type === "field"? (properties.input.size? Number.parseNumber(properties.input.size) : 12) : (properties.size? Number.parseNumber(properties.size) : 12) } key={"field-" + cursor}>
 							
 								{properties.type === "field" && <div className={classes.inputWrapper}>
@@ -485,17 +598,16 @@ class DefinationView extends React.Component {
 						autoFocus
 						variant="outlined"
 						defaultValue={context.label}
-						onChange={event => {
-							let value = event.target.value;
-							if ( value.trim().length > 0 ) {
-								this.onContextParamsChange("name", value.variablelize());
-								this.onContextParamsChange( "label", value );
+						onChange={value => {
+							if ( value.trim().length > 0 ) {								
+								this.onContextParamsChange( "name", value );
 							}
 						}}
 						label="Group Name"
 						type="text"
 						fullWidth
 						required
+						validate
 					/>
 				</GridItem>
 				<GridItem xs={12}>
@@ -508,8 +620,7 @@ class DefinationView extends React.Component {
 							variant: "outlined",
 							required: true
 						}}
-						onChange={type_value => {
-							let value = type_value;
+						onChange={value => {
 							if (String.isString(value)) {
 								if (value.trim().length > 0) {
 									this.onContextParamsChange("size", value);
@@ -525,9 +636,8 @@ class DefinationView extends React.Component {
 					<CheckboxInput
 						label="Joined Fields"
 						checked={ context.joinedfields? true : false }
-						onChange={event => {
-							let joinedfields = event.target.checked;
-							this.onContextParamsChange("joinedfields", joinedfields);
+						onChange={value => {
+							this.onContextParamsChange("joinedfields", value);
 						}}
 						color="primary"
 					/>
@@ -535,9 +645,8 @@ class DefinationView extends React.Component {
 				<GridItem xs={12}>
 					<CheckboxInput
 						checked={ context.multientries? true : false }
-						onChange={event => {
-							let multientries = event.target.checked;
-							this.onContextParamsChange("multientries", multientries);
+						onChange={value => {
+							this.onContextParamsChange("multientries", value);
 						}}
 						color="primary"
 						label="Multi Entries"
@@ -548,28 +657,265 @@ class DefinationView extends React.Component {
 		);
 	}
 
-	renderFieldContextDefination () {
-		const { classes } = this.props;
+	mapInputPropsDefinationHelper(){
 		const { context } = this.state;
-		
+		let typeValue = context.input ? (context.input.props? (context.input.props.type? context.input.props.type : undefined) : undefined) : undefined;
 		return (
 			<GridContainer className="p-0 m-0">
 				<GridItem xs={12}>
-					<TextField
+						<SelectInput
+								textFieldProps={{
+									label: "Type",
+									InputLabelProps: {
+										shrink: true
+									},
+									variant: "outlined",
+									required: true
+								}}
+								onChange={value => {
+									if (String.isString(value)) {
+										if (value.trim().length > 0) {
+											this.onContextParamsChange("input", (context.input ? { ...context.input, props: (context.input.props? { ...context.input.props, type: value } : {type: value}) } : { type: "text", size: 12, props: { type: value }, required: false, disabled: false }));
+										}
+									}                            
+								}}
+								options={{"coordinates":"Coordinates", "address":"Address"}}
+								value={["coordinates", "address"].includes(typeValue)? typeValue : "coordinates"}
+								placeholder="Select Map data type"
+						/>
+				</GridItem>
+			</GridContainer>
+		);
+	}
+
+	inputDefaultValueDefinationHelper(){
+		const { context } = this.state;
+		return (
+			<GridContainer className="p-0 m-0">
+				<GridItem xs={12}>
+						<SelectInput
+								textFieldProps={{
+									label: "Type",
+									InputLabelProps: {
+										shrink: true
+									},
+									variant: "outlined",
+									required: true
+								}}
+								onChange={value => {
+									if (String.isString(value)) {
+										if (value.trim().length > 0) {
+											this.onContextParamsChange("input", context.input ? { ...context.input, props: context.input.props? { ...context.input.props, type: value } : {type: value} } : { type: "text", size: 12, props: { type: value }, required: false, disabled: false });
+										}
+									}                            
+								}}
+								options={{"coordinates":"Coordinates", "address":"Address"}}
+								value={context.input ? (["coordinates", "address"].includes(context.input.props.type)? context.input.props.type : "coordinates") : "coordinates"}
+								placeholder="Select Map data type"
+						/>
+				</GridItem>
+			</GridContainer>
+		);
+	}
+
+	inputPossibilitiesDefinationHelper(){
+		const { context } = this.state;
+		return (
+			<GridContainer className="p-0 m-0">
+				{ ["select", "transferlist", "radio", "checkbox"].includes(context.input ? context.input.type : undefined) && <GridItem xs={12}>
+							<TextInput
+								variant="outlined"
+								onChange={value => {
+									let possibilities = {};
+									value.split( "," ).map( ( possibility, index ) => {
+										if ( possibility.length > 0 ) {
+											possibilities[possibility.variablelize()] = possibility.trim();
+										}
+									} );
+									if ( Object.keys( possibilities ).length > 0 ) {
+										this.onContextParamsChange( "possibilities", possibilities );
+									}
+								}}
+								label="Options"
+								defaultValue={context.possibilities ? Object.values( context.possibilities).join(", ") : ""}
+								type="text"
+								multiline
+								rows={3}
+								helperText="Enter options each separated by a comma (,)"
+								fullWidth
+							/>
+				</GridItem> }
+			</GridContainer>
+		);
+	}
+
+	getAppendableProps(context=false){
+		const { appendProps } = this.state;
+		if (!context) {
+			context = this.state.context;
+		}
+		let appendableProps = [];
+		if (JSON.isJSON(appendProps)) {
+			if (context.name in appendProps) {
+				if (Array.isArray(appendProps[context.name])) {
+					appendableProps = appendableProps.concat(appendProps[context.name]);
+				}
+				else if (JSON.isJSON(appendProps[context.name])) {
+					appendableProps = appendableProps.concat([appendProps[context.name]]);
+				}
+			}
+			else if (context.type in appendProps) {
+				if (Array.isArray(appendProps[context.type])) {
+					appendableProps = appendableProps.concat(appendProps[context.type]);
+				}
+				else if (JSON.isJSON(appendProps[context.type])) {
+					appendableProps = appendableProps.concat([appendProps[context.type]]);
+				}
+			}
+		}
+		return appendableProps;
+	}
+
+	appendPropsDefinationHelper(){
+		const { context, appendProps } = this.state;
+		let appendableProps = this.getAppendableProps();
+		
+		return (
+			<GridContainer className="p-0 m-0">
+				{ appendableProps.map((appendableProp, cursor)=>{
+					const { name, label, input, size, possibilities } = appendableProp;	
+					console.log("appendableProp", appendableProp);			
+					if (JSON.isJSON(appendableProp.input)) {
+						const { type, size, value, defaultValue, ...inputProps } = input;
+						let inputValue = context[name]? context[name] : (value? value : defaultValue);
+						return (
+							<GridItem xs={12} md={ Number.parseNumber(size, 12) } key={"appendableProp-"+cursor}>
+								{["text", "email", "phone", "number"].includes(type? type : undefined) && <TextInput
+									onChange={(value) => {
+										this.onContextParamsChange( name, value );
+									}}
+									name={name}
+									label={label}
+									type={type}
+									defaultValue={inputValue}
+									{ ...inputProps }
+								/> }
+
+								{ type == "select" && <SelectInput
+									textFieldProps={{
+										label: {label},
+										InputLabelProps: {
+											shrink: true
+										},
+										variant: "outlined",
+										required: true
+									}}
+									onChange={value => {
+										this.onContextParamsChange( name, value );                   
+									}}
+									options={possibilities}
+									value={inputValue}
+									placeholder={"Select "+label}
+								/> }
+
+								{ type == "radio" && <RadioInput
+									onChange={value => {
+										this.onContextParamsChange( name, value );                   
+									}}
+									options={possibilities}
+									value={inputValue}
+									name={name}
+									label={label}
+								/> }
+
+
+							</GridItem>
+						);
+					}
+					else{
+						return (
+							<GridItem xs={12} className="p-0 m-0" key={"appendableProp-"+cursor}> {label} render Error</GridItem>
+						);
+					}						
+				}) }
+					
+			</GridContainer>
+		);
+	}
+
+	inputDefaultValueDefinationHelper(){
+		const { context } = this.state;
+		return (
+			<GridContainer className="p-0 m-0 mb-4">
+				{ ["select", "transferlist", "radio", "checkbox"].includes(context.input ? context.input.type : undefined) && <GridItem xs={12} className="p-0 m-0">
+					<SelectInput
+						textFieldProps={{
+							label: "Default Value",
+							InputLabelProps: {
+								shrink: true
+							},
+							variant: "outlined",
+							required: true
+						}}
+						onChange={value => {
+							this.onContextParamsChange("input", context.input ? { ...context.input, default: value } : { default: value });                       
+						}}
+						options={context.possibilities}
+						value={context.input ? (context.input.default : undefined) : undefined}
+						placeholder="Select Default"
+					/>
+				</GridItem> }
+
+				{ !["select", "transferlist", "multiselect", "radio", "checkbox", "map"].includes(context.input? context.input.type : undefined) && <GridItem xs={12} className="p-0 m-0">
+					<TextInput
+						onChange={(value) => {
+							if ( value.trim().length > 0 ) {
+								this.onContextParamsChange( "input", context.input ? { ...context.input, default: value } : { default: value } );
+							}
+						}}
+						label="Default"
+						type="text"
+						fullWidth
+					/>
+				</GridItem> }
+
+				{ (["map"].includes(context.input? context.input.type : undefined) && (context.input? (context.input.props? (context.input.props.type? context.input.props.type : false) : false ) : false)) && <GridItem xs={12} className="p-0 m-0">
+					<MapInput
+						onChange={(value) => {
+							if ( value.trim().length > 0 ) {
+								this.onContextParamsChange( "input", context.input ? { ...context.input, default: value } : { default: value } );
+							}
+						}}
+						label="Default"
+						type={ context.input.props.type }
+						fullWidth
+					/>
+				</GridItem> }
+			</GridContainer>
+		);
+	}
+
+	renderFieldContextDefination () {
+		const { classes } = this.props;
+		const { context } = this.state;
+		return (
+			<GridContainer className="p-0 m-0">
+				<GridItem xs={12}>
+					<TextInput
 						autoFocus
 						variant="outlined"
 						defaultValue={context.label ? context.label : ""}
-						onBlur={event => {
-							let value = event.target.value;
-							if ( value.trim().length > 0 ) {
-								this.onContextParamsChange("name", value.variablelize() );
-								this.onContextParamsChange( "label", value );
+						onChange={value => {
+							if (String.isString(value)) {
+								if ( value.trim().length > 0 ) {									
+									this.onContextParamsChange( "name", value );									
+								}
 							}
 						}}
 						label="Name"
 						type="text"
 						required
-						fullWidth
+						validate
 					/>
 				</GridItem>
 
@@ -583,8 +929,7 @@ class DefinationView extends React.Component {
 							variant: "outlined",
 							required: true
 						}}
-						onChange={type_value => {
-							let value = type_value;
+						onChange={value => {
 							if (String.isString(value)) {
 								if (value.trim().length > 0) {
 									this.onContextParamsChange("input", context.input ? { ...context.input, type: value } : { type: value });
@@ -611,86 +956,33 @@ class DefinationView extends React.Component {
 							let value = type_value;
 							if (String.isString(value)) {
 								if (value.trim().length > 0) {
-									this.onContextParamsChange("input", context.input ? { ...context.input, size: value } : { size: value }	);
+									this.onContextParamsChange("input", context.input ? { ...context.input, size: Number.parseNumber(value) } : { size: Number.parseNumber(value) }	);
 								}
 							}                            
 						}}
 						options={{"12":"100%", "10":"5/6", "8":"2/3", "6":"1/2", "4":"1/3", "3":"1/4", "2":"1/6"}}
-						value={context.input ? (["12", "10", "8", "6", "4", "2"].includes(context.input.size)? context.input.size : "12") : "12"}
+						value={context.input ? (["12", "10", "8", "6", "4", "2"].includes(context.input.size? context.input.size.toString() : "12")? context.input.size.toString() : "12") : "12"}
 						placeholder="Select Input Size"
 					/>
 				</GridItem>
 
-				{ (context.input? context.input.type : undefined) !== "map" && <GridItem xs={12}>
-					<TextInput
-						variant="outlined"
-						onBlur={event => {
-							let value = event.target.value;
-							if ( value.trim().length > 0 ) {
-								this.onContextParamsChange( "input", context.input ? { ...context.input, default: value } : { default: value } );
-							}
-						}}
-						label="Default"
-						type="text"
-						fullWidth
-					/>
-				</GridItem> }
 
+				<GridItem xs={12}>
+					{this.inputPossibilitiesDefinationHelper()}
+				</GridItem>
 
-				{ ["select", "transferlist", "radio", "checkbox"].includes(context.input ? context.input.type : undefined) && <GridItem xs={12}>
-							<TextInput
-								variant="outlined"
-								onBlur={event => {
-									let value = event.target.value;
-									let possibilities = {};
-									value.split( "," ).map( ( possibility, index ) => {
-										if ( possibility.length > 0 ) {
-											possibilities[possibility.variablelize()] = possibility.trim();
-										}
-									} );
-									if ( Object.keys( possibilities ).length > 0 ) {
-										this.onContextParamsChange( "possibilities", possibilities );
-									}
-								}}
-								label="Options"
-								defaultValue={context.possibilities ? Object.values( context.possibilities).join(", ") : ""}
-								type="text"
-								multiline
-								rows={3}
-								helperText="Enter options each separated by a comma (,)"
-								fullWidth
-							/>
-				</GridItem> }
+				<GridItem xs={12}>
+					{this.inputDefaultValueDefinationHelper()}
+				</GridItem>
 
 				{ (context.input? context.input.type : undefined) === "map" && <GridItem xs={12}>
-					<SelectInput
-						textFieldProps={{
-							label: "Type",
-							InputLabelProps: {
-								shrink: true
-							},
-							variant: "outlined",
-							required: true
-						}}
-						onChange={type_value => {
-							let value = type_value;
-							if (String.isString(value)) {
-								if (value.trim().length > 0) {
-									this.onContextParamsChange("input", context.input ? { ...context.input, props: context.input.props? { ...context.input.props, type: value } : {type: value} } : { type: "text", size: 12, props: { type: value }, required: false, disabled: false });
-								}
-							}                            
-						}}
-						options={{"coordinates":"Coordinates", "address":"Address"}}
-						value={context.input ? (["coordinates", "address"].includes(context.input.props.type)? context.input.props.type : "coordinates") : "coordinates"}
-						placeholder="Select Map data type"
-					/>
+					{ this.mapInputPropsDefinationHelper() }
 				</GridItem> }	
 
 				{ ["select", "transferlist", "checkbox", "map"].includes(context.input ? context.input.type : undefined) && <GridItem xs={12}>
 					<CheckboxInput
 						checked={ context.input? (context.input.props? (context.input.props.isMulti? context.input.props.isMulti : false ) : false) : false }
-						onChange={event => {
-							let isMulti = event.target.checked;
+						onChange={isMulti => {
 							this.onContextParamsChange("input", context.input ? { ...context.input, props: context.input.props? { ...context.input.props, isMulti: isMulti } : {isMulti: isMulti} } : { type: "text", size: 12, props: { isMulti: isMulti }, required: false, disabled: false });
 						}}
 						color="primary"
@@ -701,8 +993,7 @@ class DefinationView extends React.Component {
 				<GridItem xs={12}>
 					<CheckboxInput
 						checked={ context.input ? (context.input.required ? context.input.required : false) : false }
-						onChange={event => {
-							let required = event.target.checked;
+						onChange={required => {
 							this.onContextParamsChange("input", context.input ? { ...context.input, required: required }  : { required: required });
 						}}
 						color="primary"
@@ -713,13 +1004,15 @@ class DefinationView extends React.Component {
 				<GridItem xs={12}>
 					<CheckboxInput
 						checked={ context.input ? (context.input.disabled ? context.input.disabled : false) : false }
-						onChange={event => {
-							let disabled = event.target.checked;
+						onChange={disabled => {
 							this.onContextParamsChange( "input", context.input ? { ...context.input, disabled: disabled } : { disabled: disabled } );
 						}}
 						color="primary"
 						label="Disabled"
 					/>						
+				</GridItem>
+				<GridItem xs={12}>
+					{this.appendPropsDefinationHelper()}
 				</GridItem>
 			</GridContainer>
 		);
@@ -836,6 +1129,7 @@ DefinationView.propTypes = {
 	helperTexts: PropTypes.object,
 	errors: PropTypes.object,
 	enableGrouping: PropTypes.bool,
+	appendProps: PropTypes.object,
 };
 
 DefinationView.defaultProps = {
@@ -844,6 +1138,7 @@ DefinationView.defaultProps = {
 	readOnly: false,
 	disabled: false,
 	enableGrouping: true,
+	appendProps:{ field: [], group: []},
 };
 
 export default withRoot( withStyles( styles )( DefinationView ) );

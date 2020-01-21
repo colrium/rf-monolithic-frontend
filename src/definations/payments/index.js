@@ -11,6 +11,7 @@ export default {
 	icon: <DefinationContextIcon />,
 	color: "#001f40",
 	model: "Payment",
+	endpoint: "/payments",
 	views: {
 		single: {
 			default: "cardview",

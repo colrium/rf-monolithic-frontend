@@ -3,7 +3,6 @@ import {
 	SET_LANDINGPAGE_LAYOUT_DIRECTION, 
 	SET_LANDINGPAGE_NAVBAR_DISPLAYED, 
 	SET_LANDINGPAGE_FOOTER_DISPLAYED,
-	SET_LANDINGPAGE_ORDERPAGE_STATE, 
 } from "state/actions";
 
 const initialState = {
@@ -11,12 +10,6 @@ const initialState = {
 	layout_direction: "ltr",
 	navbar_displayed: true,
 	footer_displayed: true,
-	orderpage_state: {
-		order_progress: {
-			step_name: "start",
-			steps_data: {},
-		},
-	},
 };
 
 export default (state = initialState, action = {}) => {
@@ -43,12 +36,6 @@ export default (state = initialState, action = {}) => {
 			return {
 				...state,
 				footer_displayed: action.footer_displayed,
-			};
-		}
-		case SET_LANDINGPAGE_ORDERPAGE_STATE: {
-			return {
-				...state,
-				orderpage_state: action.orderpage_state,
 			};
 		}
 		default: {

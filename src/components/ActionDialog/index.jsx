@@ -1,5 +1,5 @@
 import React from "react";
-
+import ReactHtmlParser from 'react-html-parser';
 import { Dialog } from "@material-ui/core";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -15,6 +15,13 @@ function ActionDialog(props) {
   const dispatch = useDispatch();
   const state = useSelector(state => state.dialog.state);
   const options = useSelector(state => state.dialog.options);
+  let { title, body, actions } = options;
+  if (String.isString(title)) {
+    title = title.hasHTML()? ReactHtmlParser(title) : title;
+  }
+  if (String.isString(body)) {
+    body = body.hasHTML()? ReactHtmlParser(body) : body;
+  }
 
   return (
     <Dialog
@@ -22,20 +29,19 @@ function ActionDialog(props) {
       onClose={ev => dispatch(Actions.closeDialog())}
       aria-labelledby="action-dialog-title"
     >
-      {options.title ? (
-        <DialogTitle id="action-dialog-title" variant="h4">{options.title}</DialogTitle>
+      {title ? (<DialogTitle id="action-dialog-title" variant="h4">
+        { title }
+      </DialogTitle>
       ) : (
         <DialogTitle id="action-dialog-title" variant="h4">Heads up!</DialogTitle>
       )}
-      {options.body ? (
+      {body ? (
         <DialogContent>
           <DialogContentText id="action-dialog-content">
-            {options.body}
+            {body}
           </DialogContentText>
         </DialogContent>
-      ) : (
-        ""
-      )}
+      ) : ("")}
 
       {options.actions ? (
         <DialogActions>

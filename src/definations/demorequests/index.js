@@ -12,6 +12,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#541400",
 	model: 'DemoRequest',
+	endpoint: "/demo-requests",
 	views: {
 		single: {
 			default: "cardview",
@@ -185,9 +186,6 @@ export default  {
 		},
 		view:{
 			summary: (user) => {
-				if (user) {
-					return user.isAdmin || user.isCustomer;
-				}
 				return false;
 			},
 			all: (user) => {

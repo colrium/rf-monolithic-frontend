@@ -1,92 +1,110 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Check from '@material-ui/icons/Check';
+import IconButton from '@material-ui/core/IconButton';
+import BackIcon from '@material-ui/icons/ArrowBack';
 import withRoot from 'utils/withRoot';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import Button from "components/Button";
 import ScrollBars from "components/ScrollBars";
-import ProgressIndicator from "components/ProgressIndicator";
-import LazyImage from "components/LazyImage";
-import LogoChevron from "assets/img/realfield/logo-chevron.svg";
-import { retailitems as retailItemsService, attachments as AttachmentsService } from "services";
+import GridView from "./GridView";
+import ItemView from "./ItemView";
 
 
 class Step extends React.Component {
 	state = {
-		retailitems: [],
-		loading: true,
-		load_err: false,
-		view: "catalog",
-		viewing: "retailitems",
+		view: "gridview",
+		prev_view: "gridview",
+		items: [],
+		context: null,
+		params: {}
 	};
 
 	constructor(props) {
 		super(props);
+		const {context, view} = props;
+		if (context) {
+			this.state.context = context;
+		}
+		if (view) {
+			this.state.view = view;
+		}
+		this.handleOnItemSelect = this.handleOnItemSelect.bind(this);
+		this.handleOnItemAdd = this.handleOnItemAdd.bind(this);
+		this.handleOnBackClick = this.handleOnBackClick.bind(this);
 	}
 
 	componentDidMount(){
-		this.loadItems({p:1});
+		
 	}
 
-	loadItems(params){
-		retailItemsService.getRecords(params).then(res => {
-			this.setState(prevState=>({retailitems: res.body.data, loading: false, load_err: null}));
-		}).catch(err => {
-			this.setState(prevState=>({retailitems: [], loading: false, load_err: err}));
-		});
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		const { context, view } = this.props;
+		if (!Object.areEqual(this.state.context, context) || !Object.areEqual(this.state.view, view)) {
+			this.setState({view: view, context: context});
+		}
 	}
 
+	handleOnItemSelect = (item, event)=> {
+		const { onContextChange } = this.props;
+		this.setState(prevState => ({ view : "itemview", context : item, prev_view: prevState.view }));
+		if (Function.isFunction(onContextChange)) {
+			onContextChange(item, "itemview");
+		}
+		console.log("handleOnItemSelect item", item);
+	}
+
+	handleOnItemAdd = selection => {
+		const { onAddToCart, onContextChange } = this.props;
+		if (Function.isFunction(onAddToCart)) {
+			onAddToCart(selection);
+		}
+		if (Function.isFunction(onContextChange)) {
+			onContextChange(null, this.state.prev_view);
+		}
+		this.setState(prevState => ({ view : prevState.prev_view, prev_view: prevState.view, context:{} }));
+	}
+
+	handleOnBackClick = event => {
+		const { onContextChange } = this.props;
+		if (Function.isFunction(onContextChange)) {
+			onContextChange(null, this.state.prev_view);
+		}
+		this.setState(prevState => ({ view : prevState.prev_view, prev_view: prevState.view}));
+
+	}
+
+	handleOnComplete(){
+		const { onComplete } = this.props;
+		if (Function.isFunction(onComplete)) {
+			let completionData = this.state.items;
+			onComplete(completionData);
+		}
+	}
 
 
 	render() {
 		const { onComplete, onCancel } = this.props;
 		return (
 			<GridContainer className="p-0 m-0">
-				<GridContainer className="flex-2">
-					<GridItem xs={12}>
-						<Typography variant="h3" className="primary_text">Select Items</Typography>	
-					</GridItem>
+				<GridContainer className="p-0 m-0">
+					{!["gridview"].includes(this.state.view) && <GridItem xs={6} className="float-left">
+						<IconButton aria-label="back" onClick={this.handleOnBackClick}>
+							<BackIcon fontSize="inherit" />
+						</IconButton>
+					</GridItem>}
 				</GridContainer>
-				{ this.state.loading && <GridContainer className="flex-10" justify="center" alignItems="center">
-					<ProgressIndicator size={34} thickness={2} type="logo" color="secondary" />
-				</GridContainer> }
-
-				{ !this.state.loading && Array.isArray(this.state.retailitems) && <ScrollBars className="flex-10 overflow-x-hidden overflow-y-scroll">
-					<GridContainer className="p-4 m-0">
-						{this.state.retailitems.map((retailitem, cursor) => (
-							retailitem.available && <GridItem xs={12} md={4} className="flex flex-col" key={retailitem._id}>
-								<div className="bg-white shadow-xl rounded-lg overflow-hidden">
-									<div className="bg-cover bg-center h-56 p-0">
-										<LazyImage className="w-full h-full" src={retailitem.featured_image? AttachmentsService.getAttachmentFileUrl(retailitem.featured_image) : LogoChevron } />
-									</div>
-									<div className="p-4">
-										<p className="uppercase truncate tracking-wide text-sm  text-gray-700">{retailitem.name}</p>
-										{ retailitem.cost > 0 && JSON.isJSON(retailitem.currency) && <p className="text-3xl text-gray-900 my-4">{retailitem.currency.html_symbol +" "+retailitem.cost }</p> }
-										<p className="text-gray-700">{retailitem.description? retailitem.description.shorten(50) : ""}</p>
-									</div>
-									<div className="flex p-4 border-t border-gray-300 text-gray-700">
-										<div className="flex-1 inline-flex items-center">											
-											<p className=" text-gray-900 font-bold">Type</p>
-										</div>
-										<div className="flex-1 inline-flex items-left">
-											<p className="capitalize">{ retailitem.item_type }</p>
-										</div>
-									</div>
-									<div className="px-4 pt-3 pb-4 border-t border-gray-300 bg-gray-100">
-										<Button className="w-full" color="primary">View</Button>
-									</div>
-								</div>
-							</GridItem> ))}
-					</GridContainer> 
-				</ScrollBars>}
-
+				<GridContainer className="p-0 m-0">
+					{ this.state.view === "gridview" && <GridView onItemSelect={this.handleOnItemSelect} params={this.state.params }/> }
+					{ this.state.view === "itemview" && <ItemView onItemAdd={this.handleOnItemAdd} item={this.state.context }/> }
+				</GridContainer>
 				<GridContainer className="p-4">
-					<GridItem xs={12} md={6} className="flex justify-start">
-						<Button onClick={onComplete} color="primary" round ><Check /> Proceed to Checkout</Button>
-					</GridItem>
-					<GridItem xs={12} md={6} className="flex justify-end">
+					{this.state.items.length > 0 && <GridItem xs={12} md={6} className="flex justify-start">
+						<Button onClick={onComplete} color="primary" round ><Check /> Proceed </Button>
+					</GridItem> }
+					<GridItem xs={12} md={this.state.items.length > 0? 6 : 12} className="flex justify-end">
 						<Button onClick={onCancel} color="inverse" round > Back </Button>
 					</GridItem>
 				</GridContainer>

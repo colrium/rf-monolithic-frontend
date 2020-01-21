@@ -39,6 +39,7 @@ export default {
 	icon: <DefinationContextIcon />,
 	color: "#4a148c",
 	model: "ActionTrail",
+	endpoint: "/logs/actions",
 	views: {
 		single: {
 			default: "cardview",

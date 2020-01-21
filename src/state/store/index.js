@@ -1,6 +1,6 @@
 import { app } from "assets/jss/app-theme";
-import { applyMiddleware, compose, createStore } from "redux";
-import thunk from "redux-thunk";
+import {  compose, createStore } from "redux";
+import middleware from "state/middleware";
 import reducers from "state/reducers";
 
 
@@ -55,7 +55,7 @@ let storeState = { ...persistedState, ...volatile_state};
 const store = createStore(
 	reducers,
 	storeState,
-	compose( applyMiddleware(thunk), window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f )
+	compose( middleware, window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f )
 );
 //Subscribe store for peristent states
 store.subscribe(() => applyPermanence(store.getState()));

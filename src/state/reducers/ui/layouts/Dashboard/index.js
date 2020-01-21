@@ -5,6 +5,7 @@ import {
 	SET_DASHBOARD_DRAWER_DISPLAYED, 
 	SET_DASHBOARD_FOOTER_DISPLAYED,
 	SET_DASHBOARD_HOMEPAGE_STATE,
+	SET_DASHBOARD_LIGHTBOX,
 } from "state/actions";
 
 const initialState = {
@@ -13,6 +14,11 @@ const initialState = {
 	appbar_displayed: true,
 	drawer_displayed: true,
 	footer_displayed: true,
+	lightbox: {
+		open: false,
+		src: null,
+		alt:null,
+	},
 	homepage_state: {
 		sections: {
 			"quicklinks" : false,
@@ -61,6 +67,12 @@ export default (state = initialState, action = {}) => {
 			return {
 				...state,
 				homepage_state: action.homepage_state,
+			};
+		}
+		case SET_DASHBOARD_LIGHTBOX: {
+			return {
+				...state,
+				lightbox: action.lightbox,
 			};
 		}
 		default: {

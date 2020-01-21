@@ -11,6 +11,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#400a00",
 	model: 'Team',
+	endpoint: "/teams",
 	views: {
 		single: {
 			default: "cardview",
@@ -346,9 +347,6 @@ export default  {
 		},
 		view:{
 			summary: (user) => {
-				if (user) {
-					return true;
-				}
 				return false;
 			},
 			all: (user) => {

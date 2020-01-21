@@ -21,6 +21,7 @@ export default {
 	icon: <DefinationContextIcon />,
 	color: "#004038",
 	model: "Order",
+	endpoint: "/retail/orders",
 	views: {
 		single: {
 			default: "order",
@@ -183,7 +184,28 @@ export default {
 							avatar: false
 						}
 					}
-				}
+				},
+				restricted: {
+					display: () => {
+						return true;
+					},
+					input: (values, user) => {
+						if (user) {
+							return user.isAdmin;
+						}
+						return true;
+					}
+				},
+			},
+
+			notes: {
+				type: "string",
+				label: "Notes",
+				input: {
+					type: "text",
+					default: "",
+					required: true
+				},
 			},
 
 			apply_coupon: {
@@ -291,7 +313,7 @@ export default {
 				label: "Date Made",
 				icon: "event",
 				input: {
-					type: "date",
+					type: "datetime",
 					default: "",
 					required: false
 				},

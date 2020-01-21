@@ -21,6 +21,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#001987",
 	model: 'Event',
+	endpoint: "/events",
 	views: {
 		single: {
 			default: "cardview",

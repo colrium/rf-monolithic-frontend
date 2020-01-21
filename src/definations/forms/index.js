@@ -34,6 +34,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#001987",
 	model: 'Form',
+	endpoint: "/forms",
 	views: {
 		single: {
 			default: "cardview",
@@ -338,9 +339,6 @@ export default  {
 		},
 		view:{
 			summary: (user) => {
-				if (user) {
-					return user.isAdmin;
-				}
 				return false;
 			},
 			all: (user) => {

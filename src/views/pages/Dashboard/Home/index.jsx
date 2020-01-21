@@ -6,6 +6,7 @@ import { colors } from "assets/jss/app-theme";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import LazyModule from "components/LazyModule";
+
 //Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
@@ -61,7 +62,7 @@ class Page extends React.Component {
 					</GridContainer> }
 
 					{ (homepageSections.static_aggregates || homepageSections.static_map) && <GridContainer>
-						{ homepageSections.static_aggregates && <GridItem xs={12} sm={12} md={(auth.user.isCustomer || !homepageSections.static_map) ? 12 : 5} style={{maxHeight: 900, overflowX:"hidden", overflowY:"auto"}}>
+						{ homepageSections.static_aggregates && <GridItem xs={12} sm={12} md={(auth.user.isCustomer || !homepageSections.static_map) ? 12 : 4} style={{maxHeight: 900, overflowX:"hidden", overflowY:"auto"}}>
 							<LazyModule 
 								resolve={() => import("views/widgets/Overview/AggregatesOverview")} 
 								placeholder={[
@@ -73,7 +74,7 @@ class Page extends React.Component {
 							/>
 							
 						</GridItem> }
-						{ !auth.user.isCustomer && homepageSections.static_map && <GridItem xs={12} sm={12} md={!homepageSections.static_aggregates ? 12 : 7}>
+						{ !auth.user.isCustomer && homepageSections.static_map && <GridItem xs={12} sm={12} md={!homepageSections.static_aggregates ? 12 : 8}>
 							<LazyModule 
 								resolve={() => import("views/widgets/Overview/GoogleMapOverview")}
 								placeholderType="skeleton"
@@ -91,7 +92,7 @@ class Page extends React.Component {
 					
 
 					{ (homepageSections.compact_aggregates || homepageSections.compact_maps) &&  <GridContainer>
-						{homepageSections.compact_aggregates && <GridItem xs={12} sm={12} md={(auth.user.isCustomer || !homepageSections.compact_maps) ? 12 : 5}>
+						{homepageSections.compact_aggregates && <GridItem xs={12} sm={12} md={(auth.user.isCustomer || !homepageSections.compact_maps) ? 12 : 4}>
 							<LazyModule 
 								resolve={() => import("views/widgets/Overview/CompactAggregatesOverview")} 
 								placeholder={[
@@ -104,7 +105,7 @@ class Page extends React.Component {
 							/>
 							
 						</GridItem>}
-						{ (!auth.user.isCustomer && homepageSections.compact_maps) && <GridItem xs={12} md={!homepageSections.compact_aggregates ? 12 : 5}>
+						{ (!auth.user.isCustomer && homepageSections.compact_maps) && <GridItem xs={12} md={!homepageSections.compact_aggregates ? 12 : 8}>
 							<LazyModule 
 								resolve={() => import("views/widgets/Overview/GoogleMapOverview")}
 								placeholderType="skeleton"

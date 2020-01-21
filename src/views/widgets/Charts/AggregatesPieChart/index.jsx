@@ -14,7 +14,7 @@ import Button from 'components/Button';
 import GridContainer from 'components/Grid/GridContainer';
 import GridItem from 'components/Grid/GridItem';
 import Typography from 'components/Typography';
-
+import { apiCallRequest } from 'state/actions';
 //
 import { UtilitiesHelper } from 'utils/Helpers';
 import styles from './styles';
@@ -51,13 +51,28 @@ class AggregatesPieChart extends React.Component {
 	componentDidMount(){		
 		this.prepareForData();	
 		this.loadAggregates();
+		this.prepareChartData();
 	}
 
 	componentDidUpdate(prevProps) {
-		if(!Object.entries(this.props.defination).equals(Object.entries(prevProps.defination))){
+		if(!Object.areEqual(this.props.defination, prevProps.defination)){
 			this.prepareForData();
-			this.loadAggregates();
+			this.loadAggregates();			
 		}
+		else if (!Object.areEqual(prevProps.api, this.props.api)) {
+			this.prepareChartData();			
+		}
+		else if (Array.isArray(this.props.cache)) {
+			if (!this.props.cache.equals(prevProps.cache)) {
+				this.prepareChartData();
+			}			
+		}
+		else if (Array.isArray(prevProps.cache)) {
+			if (!prevProps.cache.equals(this.props.cache)) {
+				this.prepareChartData();
+			}			
+		}
+		
 	} 
 
 	prepareForData(){
@@ -102,36 +117,25 @@ class AggregatesPieChart extends React.Component {
 	}
 
 
-	
-
-	loadAggregates(query_data) {
-		const { monochrome, color, colors, aggregate, defination, service, auth, onLoadAggregates } = this.props;
-
-		if (!query_data) {
-			query_data = { g: this.state.aggregate }
-		}
-
-		let new_aggregate = "g" in query_data? query_data.g : ("group" in query_data? query_data.group : false);
-		this.setState(state => ({ aggregate: new_aggregate, loading: true }));
-
-		service.getAggregatesCount(query_data).then(response => {
-			let response_data = response.body.data;
+	prepareChartData(){
+		const { monochrome, color, colors, aggregate, defination, service, auth, onLoadAggregates, cache, api } = this.props;
+		if (Array.isArray(cache)) {
 			let possibilities = defination.scope.columns[this.state.aggregate] ? defination.scope.columns[this.state.aggregate].possibilities : {};
 			if (typeof possibilities === "function") {
 				possibilities = possibilities(false, auth.user);
 			}
 			//generate color scheme if monochromatic 
 			if (monochrome) {
-				let no_of_colors = response_data.length > 0 ? response_data.length : 1;
-				let monochrome_colors = UtilitiesHelper.monochromeColorScheme(color, no_of_colors);
+				let no_of_colors = cache.length > 0 ? cache.length : 1;
+				let monochrome_colors = UtilitiesHelper.monochromeColorScheme(api.loading || api.error ? "#595959" : color, no_of_colors);
 				this.colors = monochrome_colors;
 			}
 			else if (colors) {
-				this.colors = colors;
+				this.colors = api.loading || api.error ? UtilitiesHelper.monochromeColorScheme("#595959") : colors;
 			}
 			else {
-				let no_of_colors = response_data.length > 0 ? response_data.length : 1;
-				let rotation_colors = UtilitiesHelper.rotationColorScheme(color, no_of_colors);
+				let no_of_colors = cache.length > 0 ? cache.length : 1;
+				let rotation_colors = UtilitiesHelper.rotationColorScheme(api.loading || api.error ? "#595959" : color, no_of_colors);
 				this.colors = rotation_colors;
 			}
 
@@ -140,17 +144,17 @@ class AggregatesPieChart extends React.Component {
 			let onload_callback_data = [];
 
 			if (typeof possibilities === "object") {
-				for (var i = 0; i < response_data.length; i++) {
-					if (response_data[i]._id in possibilities) {
-						chart_data_labels.push(possibilities[response_data[i]._id]);
-						chart_data_data.push(response_data[i].count);
+				for (var i = 0; i < cache.length; i++) {
+					if (cache[i]._id in possibilities) {
+						chart_data_labels.push(possibilities[cache[i]._id]);
+						chart_data_data.push(cache[i].count);
 						if (onLoadAggregates) {
 							onload_callback_data.push({
-								name: response_data[i]._id,
-								label: possibilities[response_data[i]._id],
-								count: response_data[i].count,
+								name: cache[i]._id,
+								label: possibilities[cache[i]._id],
+								count: cache[i].count,
 								color: this.colors[i]
-							})
+							});
 						}
 
 					}
@@ -165,14 +169,44 @@ class AggregatesPieChart extends React.Component {
 				}]
 			}
 
-			this.setState(state => ({ aggregates: response_data, chart_data: chart_data, loading: false }));
+			this.setState(state => ({ aggregates: cache, chart_data: chart_data, loading: false }));
 			if (onLoadAggregates) {
 				onLoadAggregates(onload_callback_data);
 			}
-		}).catch(err => {
-			this.setState(state => ({ load_error: err, loading: false }));
-		});
-			
+		}
+		else{
+			let chart_data_labels = [];
+			let chart_data_data = [];
+			let onload_callback_data = [];
+
+			let chart_data = {
+				labels: chart_data_labels,
+				datasets: [{
+					data: chart_data_data,
+					backgroundColor: this.colors,
+				}]
+			}
+
+			this.setState(state => ({ aggregates: cache, chart_data: chart_data, loading: false }));
+			if (onLoadAggregates) {
+				onLoadAggregates(onload_callback_data);
+			}
+		}			
+	}
+
+	loadAggregates(query_data) {
+		const { apiCallRequest, defination } = this.props;
+
+		if (!query_data) {
+			query_data = { g: this.state.aggregate };
+		}
+
+		let new_aggregate = "g" in query_data? query_data.g : ("group" in query_data? query_data.group : false);
+		this.setState(state => ({ aggregate: new_aggregate }));
+
+		if (defination) {
+			apiCallRequest(defination.name+"_aggregates", { uri: defination.endpoint, type:"aggregates", params:query_data, data: {} }, true);
+		}		
 	}
 
 	handleShowAggregateMenu = event => {
@@ -187,34 +221,16 @@ class AggregatesPieChart extends React.Component {
 	handleAggregateMenuItemClick = column => event => {
 		//this.handleCloseAggregateMenu();
 		this.setState({ aggregateMenuEl: null });
-		this.loadAggregates({g: column})
+		this.loadAggregates({g: column});
 	}
 
 	render() {
-		const { classes, className, aggregate, dynamic, defination, service, showTitle, showMenu } = this.props;
+		const { classes, className, aggregate, dynamic, defination, service, showTitle, showMenu, api, cache } = this.props;
 		return (
 				<GridContainer className={className+" p-0 m-0"}>
 					<GridItem xs={12} className="p-0 m-0">
-						{this.state.loading? (
-							<GridContainer className="h-full" justify="center" alignItems="center">
-								<Skeleton variant="circle" width={150} height={150} />
-							</GridContainer>
-							) : (
-							<GridContainer className="p-0 m-0">
-								{this.state.load_error? (
-									<GridContainer >
-										<GridItem xs={12}>
-											<Typography color="error" variant="h3" center fullWidth>
-												<Icon fontSize="large">error</Icon>
-											</Typography>
-											<Typography color="error" variant="body1" center fullWidth>
-												An error occured. 
-												{this.state.load_error.msg}
-											</Typography>
-										</GridItem>
-										
-									</GridContainer>
-									): (
+						<GridContainer className="p-0 m-0">
+								
 									<GridContainer className="p-0 m-0">
 										{(showMenu || showTitle) && (
 											<GridItem xs={12}>
@@ -258,12 +274,16 @@ class AggregatesPieChart extends React.Component {
 												</GridContainer> 
 												) }
 										</GridItem>
-												
-										
-									</GridContainer>								
-								)}
+									</GridContainer>
+
+									{(api.complete && api.error) && <GridContainer >
+										<GridItem xs={12}>
+											<Typography color="error" variant="body2" center fullWidth>												
+												{"An error occured. \n "+api.error.msg}
+											</Typography>
+										</GridItem>										
+									</GridContainer>}
 							</GridContainer>
-						)}
 					</GridItem>
 				</GridContainer>
 		);
@@ -293,10 +313,16 @@ AggregatesPieChart.defaultProps = {
 	monochrome: true,
 };
 
-const mapStateToProps = state => ({
-	auth: state.auth
-});
+
+const mapStateToProps = (state, ownProps) => {
+	const { defination } = ownProps;
+	return {
+		auth: state.auth,
+		cache: defination? state.cache.data[defination.name+"_aggregates"] : null,
+		api: defination? (state.api[defination.name]? state.api[defination.name] : {}) : {},
+	}
+};
 
 
-export default compose(withStyles(styles), connect(mapStateToProps, {}))(AggregatesPieChart);
+export default compose(withStyles(styles), connect(mapStateToProps, { apiCallRequest }))(AggregatesPieChart);
 

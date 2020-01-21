@@ -157,7 +157,7 @@ let theme = createMuiTheme({
 			main :secondaryColor
 		},
 		error: {
-			main :accentColor
+			main :errorColor
 		},
 	},
 	typography: {

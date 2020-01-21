@@ -12,6 +12,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#1e0040",
 	model: 'Response',
+	endpoint: "/responses",
 	views: {
 		single: {
 			default: "cardview",

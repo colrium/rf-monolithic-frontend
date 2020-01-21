@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react"
-import styled from "styled-components"
+import styled from "styled-components";
+import LightBox from "components/LightBox";
+import ErrorImage from "assets/img/icons/file-error.svg";
 
-const placeHolder = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII="
+const placeHolder = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAD0lEQVR42mNkwAIYh7IgAAVVAAuInjI5AAAAAElFTkSuQmCC"
 
 const Image = styled.img`
 	display: block;
@@ -24,21 +26,22 @@ const Image = styled.img`
 	}
 `
 
-export default ({ src, alt, ...rest }) => {
-	const [imageSrc, setImageSrc] = useState(placeHolder)
-	const [imageRef, setImageRef] = useState()
+const LazyImage = ({ src, alt, onClick, lightbox, className, ...rest }) => {
+	const [imageSrc, setImageSrc] = useState(placeHolder);	
+	const [imageRef, setImageRef] = useState();
+	const [lightboxOpen, setLightboxOpen] = useState(false);
 
 	const onLoad = event => {
-		event.target.classList.add("loaded")
+		event.target.classList.add("loaded");
 	}
 
 	const onError = event => {
-		event.target.classList.add("has-error")
+		event.target.src = ErrorImage;
 	}
 
 	useEffect(() => {
-		let observer
-		let didCancel = false
+		let observer = undefined;
+		let didCancel = false;
 
 		if (imageRef && imageSrc !== src) {
 			if (IntersectionObserver) {
@@ -46,38 +49,58 @@ export default ({ src, alt, ...rest }) => {
 					entries => {
 						entries.forEach(entry => {
 							if ( !didCancel && (entry.intersectionRatio > 0 || entry.isIntersecting) ) {
-								setImageSrc(src)
-								observer.unobserve(imageRef)
+								setImageSrc(src);
+								observer.unobserve(imageRef);
 							}
 						})
-					},
-					{
-						threshold: 0.01,
-						rootMargin: "75%",
-					}
-				)
-				observer.observe(imageRef)
-			} else {
+					}, { threshold: 0.01, rootMargin: "75%", });
+				observer.observe(imageRef);
+			} 
+			else {
 				// Old browsers fallback
-				setImageSrc(src)
+				setImageSrc(src);
+				observer.unobserve(imageRef);
 			}
 		}
 		return () => {
 			didCancel = true
 			// on component cleanup, we remove the listner
-			if (observer && observer.unobserve) {
-				observer.unobserve(imageRef)
+			if (observer) {
+				observer.unobserve(imageRef);
 			}
 		}
-	}, [src, imageSrc, imageRef])
+	}, [src, imageSrc, imageRef]);
 	return (
-		<Image
-			ref={setImageRef}
-			src={imageSrc}
-			alt={alt}
-			onLoad={onLoad}
-			onError={onError}
-			{...rest}
-		/>
-	)
+			<div className="inline">
+				{ (lightbox && lightboxOpen) && <LightBox
+					src={src}
+					alt={alt}
+					open={lightboxOpen}
+					onClose={()=>setLightboxOpen(false)}
+				/> }
+				<Image
+					ref={setImageRef}
+					src={imageSrc}
+					alt={alt}
+					onLoad={onLoad}
+					onError={onError}
+					onClick={event =>{
+						if (Function.isFunction(onClick)) {
+							onClick(event);
+						}
+						else{
+							setLightboxOpen(true);
+						}
+					}}
+					className={(lightbox? "cursor-pointer " : "cursor-auto")+" "+(className? className : "")}
+					{...rest}
+				/>
+			</div>
+	);
 }
+
+LazyImage.defaultProps = {
+	lightbox: true,
+}
+
+export default LazyImage;

@@ -155,18 +155,29 @@ export default {
 		transform: "translateX(-50%)",
 	},
 	".ps__thumb-x": {
-		backgroundColor: colors.hex.secondary+" !important",
+		backgroundColor: "#707070 !important",
 	},
 	".ps__thumb-y": {
-		backgroundColor: colors.hex.secondary+" !important",
+		backgroundColor: "#707070 !important",
 	},
-	".break-flex" : {
-		flexBasis: "100%",
-  		height: 0,
+	".h-screen-1/4": {
+		height: "25vh !important",
+	},
+	".h-screen-1/5": {
+		height: "20vh !important",
+	},
+	".h-screen-2/4": {
+		height: "50vh !important",
+	},
+	".h-screen-2/5" : {
+		height: "40vh !important",
+	},
+	".h-screen-3/4": {
+		height: "75vh !important",
 	},
 	".break-flex-column" : {
 		flexBasis: "100%",
-  		width: 0,
+		width: 0,
 	},
 	...muiGlobalStyles,
 	...color_based_styles

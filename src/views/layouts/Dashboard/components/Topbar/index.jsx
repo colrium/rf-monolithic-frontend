@@ -1,21 +1,12 @@
 import React, { Component } from "react";
 import classNames from "classnames";
 import { connect } from "react-redux";
+import { bindActionCreators } from 'redux';
 import { Link } from "react-router-dom";
 import Hidden from '@material-ui/core/Hidden';
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import {
-	AppBar,
-	Badge,
-	Box,
-	Breadcrumbs,
-	IconButton,
-	Popover,
-	Snackbar,
-	Toolbar,
-	withStyles
-} from '@material-ui/core';
+import { AppBar, Badge, Box, Breadcrumbs, IconButton, Popover, Snackbar, Toolbar, withStyles } from '@material-ui/core';
 import { PowerSettingsNew as LogoutIcon, NotificationsOutlined as NotificationsIcon } from "@material-ui/icons";
 import CloseSideBarIcon from "@material-ui/icons/ChevronLeft";
 import OpenSideBarIcon from "@material-ui/icons/Menu";
@@ -59,13 +50,16 @@ class Topbar extends Component {
 		super(props);
 		this.onCloseConnectionSnackbar = this.onCloseConnectionSnackbar.bind(this);
 		this.onCloseNotificationSnackbar = this.onCloseNotificationSnackbar.bind(this);
+		this.handleCloseNotifications = this.handleCloseNotifications.bind(this);
+		this.handleSignOut = this.handleSignOut.bind(this);
 		this.initSocketActionsListener();
+		
 	}
 
 	componentDidMount() {
 		this.signal = true;
 		let that = this;
-		window.addEventListener('scroll', function(){
+		window.addEventListener('scroll', async function(){
 			if (window.scrollY > 0) {
 				that.setState({ prominent: false });
 			}
@@ -80,13 +74,13 @@ class Topbar extends Component {
 		this.signal = false;
 		this.ignoreConnectionState = true;
 		let that = this;
-		window.removeEventListener('scroll', function(){
+		window.removeEventListener('scroll', async function(){
 			that.setState({ prominent: false });		
 		});
 	}
 
 	initSocketActionsListener() {
-		const { sockets, auth, setCurrentUser, dispatch} = this.props;
+		const { sockets, auth, setCurrentUser } = this.props;
 		if (sockets.default) {
 			sockets.default.on("connect", () => {
 				if (this.state.connectionSnackBarOpened && !this.ignoreConnectionState) {
@@ -287,10 +281,10 @@ class Topbar extends Component {
 			});
 	}
 
-	handleSignOut = () => {
+	handleSignOut(){
 		const { logout } = this.props;
-		AuthService.logout();
-		logout();		
+		logout();
+		AuthService.logout();				
 	};
 
 	handleShowNotifications = event => {
@@ -308,7 +302,7 @@ class Topbar extends Component {
 		});
 	};
 
-	handleCloseNotifications = () => {
+	handleCloseNotifications() {
 		this.setState({
 			notificationsEl: null
 		});
@@ -479,12 +473,9 @@ const mapStateToProps = state => ({
 	dashboard: state.dashboard,
 	sockets: state.sockets,
 });
-export default withRoot(
-	compose(
-		withStyles(styles),
-		connect(
-			mapStateToProps,
-			{ logout, setCurrentUser }
-		)
-	)(Topbar)
-);
+const mapDispatchToProps = dispatch => bindActionCreators({
+    logout: logout,
+    setCurrentUser: setCurrentUser,
+}, dispatch);
+
+export default withRoot(compose( withStyles(styles), connect( mapStateToProps, mapDispatchToProps))(Topbar));

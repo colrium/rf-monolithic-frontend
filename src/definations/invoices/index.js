@@ -11,6 +11,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#545000",
 	model: 'Invoice',
+	endpoint: "/invoices",
 	views: {
 		single: {
 			default: "invoiceview",

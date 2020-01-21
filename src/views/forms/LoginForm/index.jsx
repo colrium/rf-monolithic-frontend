@@ -644,13 +644,7 @@ class LoginForm extends React.Component {
 				>
 					<SnackbarContent
 						onClose={this.handleSnackbarClose}
-						color={
-							this.state.loginerror
-								? "error"
-								: this.state.loginsuccess
-									? "success"
-									: "inverse"
-						}
+						color={ this.state.loginerror ? "error" : this.state.loginsuccess ? "success" : "inverse" }
 						message={this.state.alert ? this.state.alert : ""}
 					/>
 				</Snackbar>

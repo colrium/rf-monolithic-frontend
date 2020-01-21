@@ -13,6 +13,7 @@ import Status from 'components/Status';
 import Typography from 'components/Typography';
 import { formats } from 'config/data';
 import React from "react";
+import ReactHtmlParser from 'react-html-parser';
 import { Link } from 'react-router-dom';
 import { attachments as AttachmentsService } from 'services';
 
@@ -53,6 +54,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: '#4a148c',
 	model: 'Commission',
+	endpoint: "/commissions",
 	views: {
 		single: {
 			default: "cardview",
@@ -198,7 +200,7 @@ export default  {
 							lead:  entry.lead && <Chip size="small" avatar={entry.lead.avatar? (<Avatar alt={entry.lead.first_name} src={AttachmentsService.getAttachmentFileUrl(entry.lead.avatar)} />) : null} label={entry.lead.first_name+' '+entry.lead.last_name} />,
 
 							individual:  entry.involvement==='individual' && entry.individual && <Chip size="small" avatar={entry.individual.avatar? (<Avatar alt={entry.individual.first_name} src={AttachmentsService.getAttachmentFileUrl(entry.individual.avatar)} />) : null} label={entry.individual.first_name+' '+entry.individual.last_name} />,
-							focus_center: entry.focus_center? JSON.readable(entry.focus_center) : "",
+							focus_center: entry.focus_center? ReactHtmlParser(JSON.prettyStringify(entry.focus_center)) : "",
 							focus_radius_metric: entry.focus_radius_metric? entry.focus_radius_metric : "",
 							focus_radius: entry.focus_radius? entry.focus_radius : "",
 							requirements: entry.survey? entry.requirements : "",

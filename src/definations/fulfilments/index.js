@@ -12,6 +12,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#001987",
 	model: 'Fulfilment',
+	endpoint: "/retail/fulfilments",
 	views: {
 		single: {
 			default: "cardview",

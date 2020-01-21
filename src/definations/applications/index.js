@@ -16,6 +16,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#009688",
 	model: 'Application',
+	endpoint: "/recruitment/applications",
 	views: {
 		single: {
 			default: "cardview",
@@ -61,7 +62,7 @@ export default  {
 						acceptedFiles: ['image/*'],
 						dropzoneText: "Drag & drop your passport size photo here",
 						filesLimit: 1,
-						dropzoneIcon: "person_outline",
+						dropzoneIcon: "portrait",
 					}					
 				},
 				reference: {
@@ -238,7 +239,7 @@ export default  {
 						acceptedFiles: ['image/*', 'video/*', 'audio/*', 'application/*'],
 						dropzoneText: "Drag & drop your passport size photo here",
 						filesLimit: 1,
-						dropzoneIcon: "attach",
+						dropzoneIcon: "attach_file",
 					}
 				},
 				reference: {
@@ -335,9 +336,6 @@ export default  {
 		},
 		view:{
 			summary: (user) => {
-				if (user) {
-					return user.isAdmin || user.isCollector;
-				}
 				return false;
 			},
 			all: (user) => {

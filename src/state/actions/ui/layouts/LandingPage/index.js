@@ -3,7 +3,6 @@ import {
 	SET_LANDINGPAGE_LAYOUT_DIRECTION, 
 	SET_LANDINGPAGE_NAVBAR_DISPLAYED, 
 	SET_LANDINGPAGE_FOOTER_DISPLAYED,
-	SET_LANDINGPAGE_ORDERPAGE_STATE, 
 } from "state/actions";
 
 
@@ -35,9 +34,3 @@ export function setLandingPageFooterDisplayed(displayed) {
 	};
 }
 
-export function setLandingPageOrderPageState(orderpage_state) {
-	return {
-		type: SET_LANDINGPAGE_ORDERPAGE_STATE,
-		orderpage_state
-	};
-}

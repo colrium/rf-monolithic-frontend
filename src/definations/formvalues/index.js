@@ -13,7 +13,8 @@ export default  {
 	label: "Form Values",
 	icon: <DefinationContextIcon />,
 	color: "#001987",
-	model: 'Form',
+	model: 'FormValue',
+	endpoint: "/forms-values",
 	views: {
 		single: {
 			default: "cardview",
@@ -263,9 +264,6 @@ export default  {
 		},
 		view:{
 			summary: (user) => {
-				if (user) {
-					return true;
-				}
 				return false;
 			},
 			all: (user) => {

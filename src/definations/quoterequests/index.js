@@ -7,11 +7,12 @@ import { Link } from 'react-router-dom';
 
 
 export default  {
-	name: "proposalrequests",
-	label: "Proposal Requests",
+	name: "quoterequests",
+	label: "Quote Requests",
 	icon: <DefinationContextIcon />,
 	color: "#541400",
 	model: 'ProposalRequest',
+	endpoint: "/quote-requests",
 	views: {
 		single: {
 			default: "cardview",
@@ -178,9 +179,9 @@ export default  {
 				},
 			},
 
-			proposal: {
+			quote: {
 				type: "string",
-				label: "Proposal",
+				label: "Quote",
 				input: {
 					type: "textarea",
 				},
@@ -196,7 +197,7 @@ export default  {
 					}					
 				},
 			},
-			proposal_files: {
+			quote_files: {
 				type: "string",
 				label: "Files",
 				input: {
@@ -234,9 +235,6 @@ export default  {
 		},
 		view:{
 			summary: (user) => {
-				if (user) {
-					return user.isAdmin || user.isCustomer;
-				}
 				return false;
 			},
 			all: (user) => {
@@ -261,7 +259,7 @@ export default  {
 					return true;
 				},
 				uri: (id)=>{
-					return ("proposalrequests/view/"+id).toUriWithDashboardPrefix();
+					return ("quoterequests/view/"+id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {						
@@ -270,7 +268,7 @@ export default  {
 						},
 						listing: (id, className="grey_text") => {
 							return (
-								<Link to={ ("proposalrequests/view/"+id).toUriWithDashboardPrefix() } className={ className }>
+								<Link to={ ("quoterequests/view/"+id).toUriWithDashboardPrefix() } className={ className }>
 									<IconButton color="inherit" aria-label="edit">
 										<OpenInNewIcon fontSize="small"/>
 									</IconButton>
@@ -287,14 +285,14 @@ export default  {
 					}
 					return true;
 				},
-				uri: "proposalrequests/add",
+				uri: "quoterequests/add",
 				link: {
 					inline: {
 						default: (props) => {
 							return ( 
-								<Link to={("proposalrequests/add/").toUriWithDashboardPrefix()} {...props}>
+								<Link to={("quoterequests/add/").toUriWithDashboardPrefix()} {...props}>
 									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Demo Request
+										<AddIcon className="float-left"/> New Quote Request
 									</Button>
 								</Link>
 							)
@@ -313,7 +311,7 @@ export default  {
 					return true;
 				},
 				uri: (id)=>{
-					return ("proposalrequests/edit/"+id).toUriWithDashboardPrefix()
+					return ("quoterequests/edit/"+id).toUriWithDashboardPrefix()
 				},
 				link: {
 					inline: {
@@ -322,7 +320,7 @@ export default  {
 						},
 						listing: (id, className="grey_text") => {
 							return (
-								<Link to={ ("proposalrequests/edit/"+id).toUriWithDashboardPrefix() } className={ className? className : ""}>
+								<Link to={ ("quoterequests/edit/"+id).toUriWithDashboardPrefix() } className={ className? className : ""}>
 									<IconButton color="inherit" aria-label="edit">
 										<EditIcon  fontSize="small"/>
 									</IconButton>
@@ -340,7 +338,7 @@ export default  {
 					return true;
 				},
 				uri: (id)=>{
-					return ("proposalrequests/delete/"+id).toUriWithDashboardPrefix();
+					return ("quoterequests/delete/"+id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

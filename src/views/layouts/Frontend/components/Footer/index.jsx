@@ -64,7 +64,7 @@ function Footer(props) {
 	const { classes, className, color, columnWidgets, absoluteFooter } = props;
 	const inverseColor = ["inverse", "transparent"].includes(color)? "default" : "inverse";
 	return (
-		<footer className={"relative bottom-0 w-full "+color} style={{backgroundImage: "url(" + require('assets/img/realfield/logo-rotated.png') + ")", backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", backgroundPosition: "right center", backgroundSize: "auto 180px" }}>
+		<footer className={" w-full "+color} style={{backgroundImage: "url(" + require('assets/img/realfield/logo-rotated.png') + ")", backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", backgroundPosition: "right center", backgroundSize: "auto 180px" }}>
 			
 			<div className="fixed flex items-center flex-col bottom-0 right-0 mr-8 mb-24 z-50">
 				<ScrollTop {...props}>

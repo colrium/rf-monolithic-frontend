@@ -89,7 +89,7 @@ class Dashboard extends Component {
 					<ActionDialog />
 					{children}
 
-					{ dashboard.footer_displayed && <Footer /> }
+					{ /* dashboard.footer_displayed && <Footer /> */ }
 				</main>
 
 				

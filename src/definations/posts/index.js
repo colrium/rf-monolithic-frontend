@@ -11,6 +11,7 @@ export default {
 	icon: <DefinationContextIcon />,
 	color: "#001f40",
 	model: "Post",
+	endpoint: "/posts",
 	views: {
 		single: {
 			default: "cardview",
@@ -194,9 +195,6 @@ export default {
 		},
 		view: {
 			summary: (user) => {
-				if (user) {
-					return user.isAdmin;
-				}
 				return false;
 			},
 			all: (user) => {

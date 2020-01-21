@@ -16,7 +16,7 @@ class Corona extends React.Component {
 
 		this.state = { routes_key : props.location.key};
 		
-		this.contexts = ["events", "notifications", "surveys", "queries", "commissions", "responses", "teams", "tracks", "invoices", "payments", "orders", "retailitems", "coupons", "currencies", "fulfilments", "vacancies", "applications", "users", "forms", "attachments", "actionlogs", "responses", "posts", "demorequests", "proposalrequests"];
+		this.contexts = ["events", "notifications", "surveys", "queries", "commissions", "responses", "teams", "tracks", "invoices", "payments", "orders", "orderitems", "retailitems", "coupons", "currencies", "fulfilments", "vacancies", "applications", "users", "forms", "attachments", "actionlogs", "responses", "posts", "demorequests", "quoterequests"];
 		this.indexUri = Array.isArray(nav.entries) ? (nav.entries.length > 0 ? nav.entries[(nav.entries.length - 1)].uri : "/home".toUriWithDashboardPrefix()) : "/home".toUriWithDashboardPrefix();
 	}
 

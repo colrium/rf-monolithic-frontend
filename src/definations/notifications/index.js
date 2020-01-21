@@ -11,6 +11,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#0e4000",
 	model: 'Notification',
+	endpoint: "/notifications",
 	views: {
 		single: {
 			default: "cardview",

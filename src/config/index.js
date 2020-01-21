@@ -91,3 +91,5 @@ export const intercom = {
 export const dashboardBaseUri = "/dashboard";
 export const landingPageBaseUri = "/page";
 export const orderFormBaseUri = "/order";
+
+export const logRedux = false;

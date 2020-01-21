@@ -14,6 +14,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: colors.hex.primarydark,
 	model: 'Survey',
+	endpoint: "/surveys",
 	views: {
 		single: {
 			default: "cardview",

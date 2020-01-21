@@ -8,6 +8,7 @@ export { default as tracks } from './tracks';
 
 export { default as events } from './events';
 export { default as orders } from './orders';
+export { default as orderitems } from './orderitems';
 export { default as retailitems } from './retailitems';
 export { default as fulfilments } from './fulfilments';
 
@@ -25,7 +26,7 @@ export { default as actionlogs } from './actionlogs';
 export { default as attachments } from './attachments';
 
 export { default as demorequests } from './demorequests';
-export { default as proposalrequests } from './proposalrequests';
+export { default as quoterequests } from './quoterequests';
 
 export { default as users } from './users';
 export { default as posts } from './posts';

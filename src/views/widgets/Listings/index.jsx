@@ -32,6 +32,7 @@ class ListingView extends React.Component {
 		query: {},
 		viewMenuAnchorEl: null,
 	};
+	mounted = false;
 
 	constructor(props) {
 		super(props);
@@ -40,37 +41,61 @@ class ListingView extends React.Component {
 		this.state.defination = defination;
 		this.state.service = service;
 		this.state.query = query? {...query, p:1} : {p:1};
-
 		this.handleViewItemClick = this.handleViewItemClick.bind(this);		
 	}
 
 	componentDidMount(){
+		this.mounted = true;
 		this.prepareForRender();
 	}
 
+	componentWillUnmount() {
+		this.mounted = false;
+	}
+
 	getSnapshotBeforeUpdate(prevProps) {
+		this.mounted = false;
 		return { prepareForRenderRequired: !Object.areEqual(prevProps, this.props) };
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
+		this.mounted = true;
 		if (snapshot.prepareForRenderRequired) {
 			this.prepareForRender();
 		}
 	} 
 
-	handleViewItemClick = name => event => {
-		this.setState({ view: name, viewMenuAnchorEl: null });
+	handleViewItemClick = name => event => {		
+		if (this.mounted) {
+			this.setState({ view: name, viewMenuAnchorEl: null });
+		}
+		else{
+			this.state.view = name;
+			this.state.viewMenuAnchorEl = null;
+		}
 	};
 
 	handleShowViewsMenu = event => {
-		this.setState({ viewMenuAnchorEl: event.currentTarget });
+		const viewMenuAnchorEl = event.currentTarget;
+		if (this.mounted) {
+			this.setState({ viewMenuAnchorEl: viewMenuAnchorEl });
+		}
+		else{
+			this.state.viewMenuAnchorEl = viewMenuAnchorEl;
+		}		
+		
 	};
 
 	handleCloseViewsMenu = () => {
-		this.setState({ viewMenuAnchorEl: null });
+		if (this.mounted) {
+			this.setState({ viewMenuAnchorEl: null });
+		}
+		else{
+			this.state.viewMenuAnchorEl = null;
+		}		
 	};
 	
-	prepareForRender(){
+	async prepareForRender(){
 		const { defination, service, query, view, showViewOptions, showAddBtn } = this.props;
 		if (defination && service) {
 			let all_views = {
@@ -90,7 +115,13 @@ class ListingView extends React.Component {
 					views[name] = label;
 				}			
 			}
-			this.setState(state=>({ defination: defination, service: service, query: query? {...query, p:1} : {p:1}, views: views, view: view? view : default_view, showViewOptions: showViewOptions, showAddBtn: showAddBtn }));
+			if (this.mounted) {
+				this.setState(state=>({ defination: defination, service: service, query: query? {...query, p:1} : {p:1}, views: views, view: view? view : default_view, showViewOptions: showViewOptions, showAddBtn: showAddBtn }));
+			}
+			else{
+				this.state = {...this.state, defination: defination, service: service, query: query? {...query, p:1} : {p:1}, views: views, view: view? view : default_view, showViewOptions: showViewOptions, showAddBtn: showAddBtn };
+			}	
+			
 		}
 			
 	}
@@ -98,7 +129,8 @@ class ListingView extends React.Component {
 	
 
 	render() {
-		const { classes, auth, query } = this.props;
+		const { classes, auth, query, defination, service } = this.props;
+		const { view } = this.state;
 		return (
 			<GridContainer className="p-0 m-0">
 				<GridContainer className="p-0 m-0">
@@ -110,9 +142,9 @@ class ListingView extends React.Component {
 						</ButtonGroup>
 
 					</GridItem> }
-					{ this.state.showAddBtn && this.state.defination && !this.state.defination.access.actions.create.restricted(auth.user) && (
+					{ this.state.showAddBtn && defination && !defination.access.actions.create.restricted(auth.user) && (
 						<GridItem  sm={12} md={this.state.showViewOptions? 4 : 12}>
-							{ this.state.defination.access.actions.create.link.inline.default({className: "float-right" }) }
+							{ defination.access.actions.create.link.inline.default({className: "float-right" }) }
 						</GridItem>
 					)}
 						
@@ -120,10 +152,10 @@ class ListingView extends React.Component {
 				</GridContainer>
 
 				<GridItem xs={12} className="p-0 m-0">
-					{this.state.view === "tableview" && <TableView defination={this.state.defination} service={this.state.service} query={this.state.query}/>}
-					{this.state.view === "calendarview" && <CalendarView defination={this.state.defination} service={this.state.service} query={this.state.query}/>}
-					{this.state.view === "googlemapview" && <GoogleMapView defination={this.state.defination} service={this.state.service} query={this.state.query}/>}
-					{this.state.view === "listview" && <ListView defination={this.state.defination} service={this.state.service} query={this.state.query}/>}
+					{ view === "tableview" && <TableView defination={defination} service={this.state.service} query={this.state.query}/>}
+					{ view === "calendarview" && <CalendarView defination={defination} service={this.state.service} query={this.state.query}/>}
+					{ view === "googlemapview" && <GoogleMapView defination={defination} service={this.state.service} query={this.state.query}/>}
+					{ view === "listview" && <ListView defination={defination} service={this.state.service} query={this.state.query}/>}
 				</GridItem>
 			</GridContainer>
 		);

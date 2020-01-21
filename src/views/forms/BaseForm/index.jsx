@@ -19,6 +19,7 @@ import {
 import Skeleton from '@material-ui/lab/Skeleton';
 import {
 	TextInput,
+	PasswordInput,
 	DateInput,
 	DateTimeInput,
 	RadioInput,
@@ -108,18 +109,7 @@ class BaseForm extends React.Component {
 		];
 
 		this.handleChange = this.handleChange.bind(this);
-		this.handleDateChange = this.handleDateChange.bind(this);
-		this.handleDateTimeChange = this.handleDateTimeChange.bind(this);
-		this.handleCheckBoxChange = this.handleCheckBoxChange.bind(this);
-		this.handleSliderChange = this.handleSliderChange.bind(this);
-		this.handleMultiSelectChange = this.handleMultiSelectChange.bind(this);
-		this.handleSelectChange = this.handleSelectChange.bind(this);
-		this.handleShowPassword = this.handleShowPassword.bind(this);
-		this.handleOnFileChange = this.handleOnFileChange.bind(this);
-		this.handleOnDynamicInputChange = this.handleOnDynamicInputChange.bind(this);
 		this.onCloseSnackbar = this.onCloseSnackbar.bind(this);
-		this.handleRadioChange = this.handleRadioChange.bind(this);
-		this.handleWysiwygChange = this.handleWysiwygChange.bind(this);
 		
 		this.handleResetForm = this.handleResetForm.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -140,6 +130,7 @@ class BaseForm extends React.Component {
 
 
 	getSnapshotBeforeUpdate(prevProps, prevState) {
+		this.mounted = false;
 		return {
 			preparationRequired: !Object.areEqual(prevProps.defination, this.props.defination),
 			applyChangeEffectsRequired: !Object.areEqual(prevState.field_values, this.state.field_values),
@@ -148,7 +139,7 @@ class BaseForm extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-
+		this.mounted = true;
 		if (snapshot.preparationRequired) {
 			//this.prepareForForm();
 			this.loadFieldValuePosibilities();
@@ -249,7 +240,6 @@ class BaseForm extends React.Component {
 		for (const [name, onChangeEffect] of Object.entries(this.state.onChangeEffects)) {
 			if (Function.isFunction(onChangeEffect)) {
 				const field = await onChangeEffect(instance);
-				console.log(name, "onChangeEffect field", field);
 				if (JSON.isJSON(field)) {
 					fields[name] = field;
 					if (field.input.value && field_values[name] !== field.input.value) {
@@ -331,8 +321,8 @@ class BaseForm extends React.Component {
 		
 		if (Object.size(value_possibilities) > 0 ) {
 			//console.log("loadFieldValuePosibilities fields_to_load", fields_to_load, "value_possibilities", value_possibilities);
+			
 			this.state.value_possibilities = { ...this.state.value_possibilities, ...value_possibilities };
-			//this.setState(prevState => ({ value_possibilities: { ...prevState.value_possibilities, ...value_possibilities } }));
 		}
 		
 		if (Object.size(fields_to_load) > 0) {
@@ -406,26 +396,38 @@ class BaseForm extends React.Component {
 										possibilities[resolved_data[j][name].value] = resolved_data[j][name].resolve;
 									}
 								}
+								if (this.mounted) {
+									this.setState(state => ({
+										value_possibilities: {
+											...state.value_possibilities,
+											[name]: possibilities
+										},
+										loading: { ...state.loading, [name]: false }
+									}));
+								}
+								else{
+									this.state.value_possibilities = { ...this.state.value_possibilities, [name]: possibilities };
+									this.state.loading = { ...this.state.loading, [name]: false }
+								}
+									
 
-								this.setState(state => ({
-									value_possibilities: {
-										...state.value_possibilities,
-										[name]: possibilities
-									},
-									loading: { ...state.loading, [name]: false }
-								}));
-
-							})
-								.catch(err => {
+							}).catch(err => {
+								if (this.mounted) {
 									this.setState(state => ({
 										loading: { ...state.loading, [name]: false },
 										openSnackBar: true,
 										snackbarMessage: "Error fetching " + field.label + " ::: " + err.msg,
 										snackbarColor: "warning"
 									}));
+								}
+								else{
+									this.state.loading = { ...this.state.loading, [name]: false };
+									this.state.openSnackBar = true;
+									this.state.snackbarMessage = "Error fetching " + field.label + " ::: " + err.msg;
+									this.state.snackbarColor = "warning";
+								}
 
-
-								});
+							});
 						}
 					}
 				}
@@ -668,60 +670,7 @@ class BaseForm extends React.Component {
 		});
 	}
 
-	handleChange = (name) => event => {
-		let value = event.target.value;		
-		this.setFieldValue(name, value);
-	};
-
-	handleWysiwygChange = (name) => value =>{
-		this.setFieldValue(name, value);
-	}
-
-	handleRadioChange = name => event => {
-		let value = event.target.value;
-		this.setFieldValue(name, value);
-	};
-
-	handleDateTimeChange = name => value => {
-		this.setFieldValue(name, value._i);
-	};
-
-	handleDateChange = name => value => {
-		console.log(name, "value", value._d);
-		this.setFieldValue(name, value._d);
-	};
-
-	handleCheckBoxChange = name => event => {
-		let value = event.target.checked;
-		this.setFieldValue(name, value);
-	};
-
-	handleSliderChange = name => (event, value) => {
-		this.setFieldValue(name, value);
-	};
-
-	handleSelectChange = name => value => {
-		this.setFieldValue(name, value);
-	};
-
-	handleMultiSelectChange = name => value => {
-		this.setFieldValue(name, value);
-	};
-
-	handleShowPassword = name => event => {
-		this.setState(state => ({
-			show_passwords: {
-				...state.show_passwords,
-				[name]: !state.show_passwords[name]
-			}
-		}));
-	};
-
-	handleOnFileChange = name => value => {
-		this.setFieldValue(name, value);
-	};
-
-	handleOnDynamicInputChange = name => value => {
+	handleChange = (name) => (value, event = null) => {	
 		this.setFieldValue(name, value);
 	};
 
@@ -757,9 +706,9 @@ class BaseForm extends React.Component {
 		}
 		return  Promise.all([method_data]).then(data => {
 					return method_data;
-				}).catch(err => {
-					console.error("called metho error", err);
-				});
+		}).catch(err => {
+			console.error("called method error", err);
+		});
 	}
 
 	renderFieldInput(name, field, restricted = false) {
@@ -789,7 +738,7 @@ class BaseForm extends React.Component {
 						component={RadioInput}
 						label={field.label}
 						defaultValue={value}
-						onChange={this.handleRadioChange(name)}
+						onChange={this.handleChange(name)}
 						required={field.input.required}
 						disabled={restricted}
 						options={this.state.value_possibilities[name]}
@@ -816,7 +765,7 @@ class BaseForm extends React.Component {
 							disabled: restricted,
 							required: field.input.required
 						}}
-						onChange={this.handleSelectChange(name)}
+						onChange={this.handleChange(name)}
 						options={this.state.value_possibilities[name]}
 						placeholder={"Select " + field.label.singularize()}
 						{...inputProps}
@@ -844,7 +793,7 @@ class BaseForm extends React.Component {
 							disabled: restricted,
 							required: field.input.required
 						}}
-						onChange={this.handleMultiSelectChange(name)}
+						onChange={this.handleChange(name)}
 						options={this.state.value_possibilities[name]}
 						placeholder={"Select " + field.label}
 						isMulti
@@ -878,13 +827,10 @@ class BaseForm extends React.Component {
 					type={field.input.type}
 					disabled={restricted}
 					component={TextInput}
-					defaultValue={value}
-					onChange={e => {
-						/* Do nothing */
-					}}
+					defaultValue={value}					
 					label={field.label}
 					variant={text_fields_variant}
-					onBlur={this.handleChange(name)}
+					onChange={this.handleChange(name)}
 					required={field.input.required}
 					fullWidth
 					{...inputProps}
@@ -897,31 +843,12 @@ class BaseForm extends React.Component {
 					name={name}
 					type={this.state.show_passwords[name] ? "text" : "password"}
 					disabled={restricted}
-					component={TextInput}
+					component={PasswordInput}
 					label={field.label}
 					variant={text_fields_variant}
-					onBlur={this.handleChange(name)}
+					onChange={this.handleChange(name)}
 					defaultValue={value}
-					onChange={e => {
-						/* Do nothing */
-					}}
 					required={field.input.required}
-					InputProps={{
-						endAdornment: (
-							<InputAdornment position="end">
-								<IconButton
-									aria-label="Toggle password visibility"
-									onClick={this.handleShowPassword(name)}
-								>
-									{this.state.show_passwords[name] ? (
-										<HidePasswordIcon />
-									) : (
-											<ShowPasswordIcon />
-										)}
-								</IconButton>
-							</InputAdornment>
-						)
-					}}
 					fullWidth
 					{...inputProps}
 				/>
@@ -938,7 +865,7 @@ class BaseForm extends React.Component {
 					multiline
 					rows={4}
 					defaultValue={value}
-					onBlur={this.handleChange(name)}
+					onChange={this.handleChange(name)}
 					required={field.input.required}
 					fullWidth
 					{...inputProps}
@@ -957,7 +884,7 @@ class BaseForm extends React.Component {
 					multiline
 					rows={4}
 					defaultValue={value}
-					onChange={this.handleWysiwygChange(name)}					
+					onChange={this.handleChange(name)}					
 					controls={[
 						"bold",
 						"italic",
@@ -989,7 +916,7 @@ class BaseForm extends React.Component {
 					openTo="date"
 					invalidDateMessage=""
 					value={value}
-					onChange={this.handleDateChange(name)}
+					onChange={this.handleChange(name)}
 					required={field.input.required}
 					inputVariant={text_fields_variant}
 					color="primary"
@@ -1008,7 +935,7 @@ class BaseForm extends React.Component {
 					variant="inline"
 					inputVariant={text_fields_variant}
 					value={value}
-					onChange={this.handleDateTimeChange(name)}
+					onChange={this.handleChange(name)}
 					required={field.input.required}
 					{...inputProps}
 				/>
@@ -1023,7 +950,7 @@ class BaseForm extends React.Component {
 					value={value}
 					component={CheckboxInput}
 					label={field.label}
-					onChange={this.handleCheckBoxChange(name)}
+					onChange={this.handleChange(name)}
 					required={field.input.required}
 					{...inputProps}
 				/>
@@ -1094,7 +1021,7 @@ class BaseForm extends React.Component {
 						max={max_value}
 						step={step_value}
 						defaultValue={default_value}
-						onChange={this.handleSliderChange(name)}
+						onChange={this.handleChange(name)}
 						{...inputProps}
 					/>
 				);
@@ -1117,7 +1044,7 @@ class BaseForm extends React.Component {
 					label={field.label}
 					component={FileInput}
 					value={value}
-					onChange={this.handleOnFileChange(name)}
+					onChange={this.handleChange(name)}
 					required={field.input.required}
 					{...inputProps}
 				/>
@@ -1130,7 +1057,7 @@ class BaseForm extends React.Component {
 					label={field.label}
 					component={MapInput}
 					value={value}
-					onChange={this.handleOnFileChange(name)}
+					onChange={this.handleChange(name)}
 					required={field.input.required}
 					{...inputProps}
 				/>
@@ -1152,7 +1079,7 @@ class BaseForm extends React.Component {
 					component={DynamicInput}
 					label={field.label}
 					value={value}
-					onChange={this.handleOnDynamicInputChange(name)}
+					onChange={this.handleChange(name)}
 					disabled={restricted}
 					variant={text_fields_variant}
 					required={field.input.required}

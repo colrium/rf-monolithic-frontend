@@ -40,8 +40,7 @@ class Overview extends Component {
 		this.backgroundColors = {};
 		for (let [name, defination] of Object.entries(definations)) {
 			this.backgroundColors[name] = Color(defination.color? defination.color: colors.hex.primary).rgb().array().join(",");
-		}
-		console.log("this.backgroundColors", this.backgroundColors);	
+		}	
 	}
 
 

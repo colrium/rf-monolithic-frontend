@@ -116,13 +116,7 @@ const Scrollbars = React.forwardRef(function Scrollbars(props, ref) {
         <div
             id={props.id}
             className={clsx(props.className)}
-            style={
-                (props.customScrollbars && (props.enable || true) && !isMobile) ?
-                    {
-                        position: 'relative',
-                        overflow: 'hidden'
-                    } : {}
-            }
+            style={ (props.customScrollbars && (props.enable || true) && !isMobile) ? { position:"relative", overflowY: "hidden",  overflowX: "hidden", } : {} }
             ref={ref}
         >
             {props.children}
@@ -136,8 +130,6 @@ const mapStateToProps = state => ({
 
 Scrollbars.propTypes = {
     customScrollbars: PropTypes.bool,
-    onScrollY : PropTypes.func,
-    onScrollX : PropTypes.func,
     onScrollUp : PropTypes.func,
     onScrollDown : PropTypes.func,
     onScrollLeft : PropTypes.func,

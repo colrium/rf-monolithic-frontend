@@ -188,9 +188,9 @@ export const items = [
 			},
 
 			{
-				icon: definations.proposalrequests.icon,
-				text: definations.proposalrequests.label,
-				route: "/proposalrequests".toUriWithDashboardPrefix(),
+				icon: definations.quoterequests.icon,
+				text: definations.quoterequests.label,
+				route: "/quoterequests".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isAdmin;
 				}

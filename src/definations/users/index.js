@@ -18,6 +18,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: "#01579b",
 	model: 'User',
+	endpoint: "/users",
 	views: {
 		single: {
 			default: "cardview",

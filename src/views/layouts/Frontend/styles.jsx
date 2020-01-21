@@ -5,7 +5,8 @@ export default theme => ({
 			easing: theme.transitions.easing.sharp,
 			duration: 100
 		}),
-		minHeight: "70vh"
+		minHeight: "100vh",
+		paddingBottom: "64px",
 
 	},
 	mainContentShift: {

@@ -131,7 +131,7 @@ JSON.prettyStringify = function(input, spaces=4) {
 	function syntaxHighlight(json) {
 		json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 		return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-			var cls = 'number';
+			var cls = 'text-gray-700';
 			if (/^"/.test(match)) {
 				if (/:$/.test(match)) {
 					cls = 'text-red-700';
@@ -233,6 +233,37 @@ JSON.moveKey = function (object, key, position=0) {
 	return newObject;
 };
 
+//This is to ensure equating objects doesnt change original
+JSON.fromJSON = function(input){
+	let newObject = {};
+	if (JSON.isJSON(input)) {
+		newObject = JSON.parse(JSON.stringify(input));
+	}
+	return newObject;
+}
+
+JSON.updateJSON = function (original={}, updater={}) {
+	let newObject = {};
+	if (JSON.isJSON(original) && JSON.isJSON(updater)) {
+		newObject = JSON.fromJSON(original);
+
+		for (let [key, value] of Object.entries(original)) {
+			if (key in updater) {
+				newObject[key] = updater[key];
+			}
+		}
+	}
+	return newObject;
+};
+JSON.removeProperty = function(input, key){
+	let newObject = {};
+	if (JSON.isJSON(input)) {
+		newObject = JSON.fromJSON(input);		
+		delete newObject[key];
+		console.log("JSON.removeProperty input ", input, "newObject", newObject);
+	}
+	return newObject;
+}
 
 
 
@@ -247,7 +278,7 @@ if(Function.isFunction){
 	console.warn("Overriding existing Function.isFunction.");
 }
 Function.isFunction = function(input) {
-	return input !== undefined && input !== null? (input.constructor === Function) : false;
+	return input !== undefined && input !== null? (input.constructor === Function || typeof input === "function") : false;
 };
 
 if(Number.isNumber){
@@ -265,7 +296,7 @@ Error.isError = function(input) {
 };
 
 
-if(RegExp.isNumber){
+if(RegExp.isRegExp){
 	console.warn("Overriding existing RegExp.isRegExp.");
 }
 RegExp.isRegExp = function(input) {
@@ -292,7 +323,7 @@ Number.isInt = function(input) {
 if(Number.parseNumber){
 	console.warn("Overriding existing Number.parseNumber.");
 }
-Number.parseNumber = function(input) {
+Number.parseNumber = function(input, fallback=null) {
 	if (Number.isFloat(input)) {
 		return parseFloat(input);
 	}
@@ -300,7 +331,7 @@ Number.parseNumber = function(input) {
 		return parseInt(input);
 	}
 	else{
-		return NaN;
+		return fallback;
 	}
 };
 
@@ -386,59 +417,97 @@ Object.difference = function (a, b, comprehensive = true) {
 		missing_from_first: [],
 		missing_from_second: []
 	};
-
-	lodash.reduce(a, function (result, value, key) {
-		if (b.hasOwnProperty(key)) {
-			if (lodash.isEqual(value, b[key])) {
-				return result;
-			} else {
-				if (typeof (a[key]) != typeof ({}) || typeof (b[key]) != typeof ({})) {
-					//dead end.
-					result.different.push(key);
+	if (JSON.isJSON(a) && JSON.isJSON(b)) {
+		lodash.reduce(a, function (result, value, key) {
+			if (b.hasOwnProperty(key)) {
+				if (lodash.isEqual(value, b[key])) {
 					return result;
 				} else {
-					var deeper = Object.difference(a[key], b[key]);
-					result.different = result.different.concat(lodash.map(deeper.different, (sub_path) => {
-						return key + "." + sub_path;
-					}));
-					if (comprehensive) {
-						result.missing_from_second = result.missing_from_second.concat(lodash.map(deeper.missing_from_second, (sub_path) => {
+					if (typeof (a[key]) != typeof ({}) || typeof (b[key]) != typeof ({})) {
+						//dead end.
+						result.different.push(key);
+						return result;
+					} else {
+						var deeper = Object.difference(a[key], b[key]);
+						result.different = result.different.concat(lodash.map(deeper.different, (sub_path) => {
 							return key + "." + sub_path;
 						}));
+						if (comprehensive) {
+							result.missing_from_second = result.missing_from_second.concat(lodash.map(deeper.missing_from_second, (sub_path) => {
+								return key + "." + sub_path;
+							}));
 
-						result.missing_from_first = result.missing_from_first.concat(lodash.map(deeper.missing_from_first, (sub_path) => {
-							return key + "." + sub_path;
-						}));
+							result.missing_from_first = result.missing_from_first.concat(lodash.map(deeper.missing_from_first, (sub_path) => {
+								return key + "." + sub_path;
+							}));
+						}
+
+
+						return result;
 					}
+				}
+			} else {
+				if (comprehensive) {
+					result.missing_from_second.push(key);
+				}
+				return result;
+			}
+		}, result);
 
-
+		lodash.reduce(b, function (result, value, key) {
+			if (JSON.isJSON(a)) {
+				if (a.hasOwnProperty(key)) {
+					return result;
+				}
+				else {
+					if (comprehensive) {
+						result.missing_from_first.push(key);
+					}
 					return result;
 				}
 			}
-		} else {
-			if (comprehensive) {
-				result.missing_from_second.push(key);
-			}
+			else{
+				return result;
+			}		
+			
+		}, result);
+		if (comprehensive) {
 			return result;
 		}
-	}, result);
-
-	lodash.reduce(b, function (result, value, key) {
-		if (a.hasOwnProperty(key)) {
-			return result;
-		} else {
-			if (comprehensive) {
-				result.missing_from_first.push(key);
-			}
+		else {
+			return result.different;
+		}
+	}
+	else if (JSON.isJSON(a) && !JSON.isJSON(b)) {
+		let different = Object.keys(a);
+		result.different = different;
+		result.missing_from_second = different;
+		if (comprehensive) {
 			return result;
 		}
-	}, result);
-	if (comprehensive) {
-		return result;
+		else {
+			return result.different;
+		}
+	}
+	else if (!JSON.isJSON(a) && JSON.isJSON(b)) {
+		let different = Object.keys(b);
+		result.different = different;
+		result.missing_from_first = different;
+		if (comprehensive) {
+			return result;
+		}
+		else {
+			return result.different;
+		}
 	}
 	else {
-		return result.different;
-	}
+		if (comprehensive) {
+			return result;
+		}
+		else {
+			return result.different;
+		}
+	}	
 
 };
 

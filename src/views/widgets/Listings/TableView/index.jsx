@@ -8,6 +8,8 @@ import GridContainer from 'components/Grid/GridContainer';
 import GridItem from 'components/Grid/GridItem';
 import Typography from 'components/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 //
 import { formats } from 'config/data';
 import MUIDataTable from "mui-datatables";
@@ -18,7 +20,7 @@ import clsx from "clsx";
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
 import { attachments as AttachmentsService } from 'services';
-import { closeDialog, openDialog } from 'state/actions';
+import { closeDialog, openDialog, apiCallRequest } from 'state/actions';
 //
 import { FilesHelper, ServiceDataHelper, UtilitiesHelper } from 'utils/Helpers';
 import withRoot from 'utils/withRoot';
@@ -35,6 +37,11 @@ class TableView extends React.Component {
 		query: { p : 1 },
 		dt_columns: [],
 		records: [],
+		raw_data: [],
+		mouseX: null,
+		mouseY: null,
+		actionsView: "contextMenu",
+		context: null,
 	};
 	constructor(props) {
 		super(props);
@@ -42,28 +49,39 @@ class TableView extends React.Component {
 		this.state.defination = defination;
 		this.state.service = service;
 		this.state.query = query? {...query, p:1} : {p:1};
+		this.mounted = false;
 		this.handleDeleteItemConfirm = this.handleDeleteItemConfirm.bind(this);
 		this.handleDeleteItem = this.handleDeleteItem.bind(this);
+		this.handleOnRowContextMenu = this.handleOnRowContextMenu.bind(this);
 	}
 
 	componentDidMount(){
+		this.mounted = true;
 		this.loadContext();
+		this.prepareData();
 	}
 
 	getSnapshotBeforeUpdate(prevProps) {
+		this.mounted = false;
 		return {
 			contextReloadRequired: (!Object.areEqual(prevProps.defination, this.props.defination) && !Object.areEqual(prevProps.service, this.props.service)), 
-			dataReloadRequired: !Object.areEqual(prevProps.query, this.props.query)
+			dataReloadRequired: !Object.areEqual(prevProps.query, this.props.query),
+			dataPreparationRequired: !prevProps.cache.equals(this.props.cache),
 		};
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		if (snapshot.contextReloadRequired) {
+		this.mounted = true;
+		if (snapshot.contextReloadRequired) {			
 			this.loadContext();
+			this.prepareData();
 		}
 		if (snapshot.dataReloadRequired) {
 			const { query } = this.props;
 			this.setState({query: query? {...query, p:1} : {p:1}}, this.loadData);
+		}
+		if (snapshot.dataPreparationRequired) {
+			this.prepareData();
 		}
 	} 
 	
@@ -91,23 +109,40 @@ class TableView extends React.Component {
 
 	handleDeleteItem = item_id => event => {
 		const { openDialog, closeDialog } = this.props;
-
-		openDialog({
-			title: "Deleting ",
-			body: "Please wait. Executing safe delete...",
-			actions: {}
-		});
-
+		closeDialog();
 		this.state.service.delete(item_id).then((res) => {
-			closeDialog();
-			this.loadData();
 
 		}).catch(e=>{
-			console.log("TableView delete error", e);
-			closeDialog();
+			openDialog({
+				title: "Delete failed",
+				body: e.msg,
+				actions: {}
+			});
 		})
 
 
+	}
+
+	handleOnRowContextMenu = index => event => {
+		event.preventDefault();
+		const mouseX = event.clientX - 2;
+		const mouseY = event.clientY - 4;
+
+		console.log("this.state.raw_data[index]", this.state.raw_data[index])
+		this.setState(prevState => ({
+			mouseX: mouseX,
+			mouseY: mouseY,
+			context: prevState.raw_data[index],
+		}));
+	}
+
+	handleOnRowContextMenuClose = event => {
+		event.preventDefault();
+
+		this.setState({
+			mouseX: null,
+			mouseY: null,
+		});
 	}
 
 	loadContext(){
@@ -224,7 +259,6 @@ class TableView extends React.Component {
 										sort: true,
 										customBodyRender: (value, tableMeta, updateValue) => {
 											if (Array.isArray(value)) {
-												console.log("value", value);
 												return (
 													<GridContainer spacing={2}>
 														{ value.map((entry, cursor) => (
@@ -261,13 +295,8 @@ class TableView extends React.Component {
 									}
 								});	
 							}
-						}
-							
-					}
-
-						
-
-								
+						}	
+					}		
 				}
 			}
 
@@ -283,7 +312,7 @@ class TableView extends React.Component {
 	parseData(entry){
 		const {defination, auth} = this.props;		
 		let parsed_data = entry;
-		let columns = this.state.defination.scope.columns
+		let columns = defination.scope.columns
 		parsed_data["_id"] = entry._id;
 		for (let [field_name, field] of Object.entries(columns)) {
 			if (field.input.type === "date") {
@@ -338,58 +367,76 @@ class TableView extends React.Component {
 	}
 	
 	loadData(){
-		const { auth } = this.props;
-		let columns = this.state.defination? this.state.defination.scope.columns : {}
-		this.setState(state => ({ loading: true }));
-		if (this.state.service) {
-			this.state.service.getRecords(this.state.query).then((res) => {
-				let raw_data = res.body.data;
-				let resolved_data = [];
+		const { auth, cache, defination, apiCallRequest } = this.props;
+		if (defination) {
+			apiCallRequest(defination.name, { uri: defination.endpoint, type:"records", params:this.state.query, data: {} }, true);
+		}
+	}
 
-				if (UtilitiesHelper.isOfType(this.state.defination.views.listing.tableview.resolveData, "function")) {
-					this.state.defination.views.listing.tableview.resolveData(raw_data, true).then((resolve)=>{
-						this.setState(state => ({ records: resolve, loading: false }));
+	prepareData(){
+		const { auth, cache, defination } = this.props;
+		let cached_data = Array.isArray(cache)? cache : [];
+		let columns = defination? defination.scope.columns : {}
+		let resolved_data = [];
+
+		if (Function.isFunction(defination.views.listing.tableview.resolveData)) {
+					defination.views.listing.tableview.resolveData(cached_data, true).then((resolve)=>{
+						if (this.mounted) {
+							this.setState(state => ({ raw_data: cached_data, records: resolve, loading: false }));
+						}
+						else {
+							this.state.records = resolve;
+							this.state.loading = false;
+						}						
 					}).catch(e=>{
-						console.log("this.defination.views.listing.tableview.resolveData error", e);
-						this.setState(state => ({ records: [], loading: false }));						
+						if (this.mounted) {
+							this.setState(state => ({ raw_data: [], records: [], loading: false }));
+						}
+						else {
+							this.state.records = [];
+							this.state.loading = false;
+						}						
 					});
-				}
-				else{
-					resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(raw_data, columns, auth.user);
+		}
+		else{
+					resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(cached_data, columns, auth.user);
 					let that = this;
-					console.log("resolved_data", resolved_data);
 					let all_records = resolved_data.map(entry => {
 						return that.parseData(entry);
 					});
-					this.setState(state => ({ records: all_records, loading: false }));
-				}
-					
-				
-			}).catch((err)=>{
-				console.error("TableView loadData Error", err);
-				this.setState(state => ({ load_error: err, loading: false }));
-			});
+					this.setState(state => ({ records: all_records }));
 		}
-			
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, defination, api } = this.props;
 		const table_options = {
 					filterType: 'dropdown',
 					downloadOptions: {
-						filename: (this.state.defination? this.state.defination.label: "Records")+' - '+new Date().format('d M Y H:i:s A')+'.csv', 
+						filename: (defination? defination.label: "Records")+' - '+new Date().format('d M Y H:i:s A')+'.csv', 
 						separator: ','
 					},
 					resizableColumns: false,
-					selectableRows: false,
+					selectableRows: "none",
 					responsive: "scroll",
+					/*customRowRender: (data, dataIndex, rowIndex) => {
+						console.log("customRowRender data", data);
+						console.log("customRowRender dataIndex", dataIndex);
+						console.log("customRowRender rowIndex", rowIndex);
+						return (
+							<tr onContextMenu={ this.handleOnRowContextMenu(dataIndex) }>
+								{data.map((value, index)=>(
+									<td key={"row-"+index}>{ value }</td>
+								))}
+							</tr>
+						);
+					}*/
 				};
 		return (
 			<GridContainer className={classes.root}>
+
 					<GridItem className="p-0 m-0" xs={12}>
-						{this.state.loading? (
-							<GridContainer className={classes.full_height} justify="center" alignItems="center">
+						{/* api.loading && <GridContainer className={classes.full_height} justify="center" alignItems="center">
 								<GridItem xs={12} className="flex relative flex-row">
 									<div className="flex-grow">
 										<Skeleton variant="text" width={150}/>
@@ -408,50 +455,51 @@ class TableView extends React.Component {
 									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
 									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
 								</GridItem>
-							</GridContainer>
-							) : (
+							</GridContainer> */ }
+
 							<GridContainer className="p-0 m-0">
-								{this.state.load_error? (
-									<GridContainer >
-										<GridItem xs={12}>
-											<Typography color="error" variant="h1" center fullWidth>
-												<Icon fontSize="large">error</Icon>
-											</Typography>
-										</GridItem>
-										<GridItem xs={12}>										
-											<Typography color="error" variant="body1" center fullWidth>
-												An error occured. 
-												<br />
-												 {this.state.load_error.code && ' Code :'+this.state.load_error.code}
-												<br />
-												{this.state.load_error.msg}
-											</Typography>
-										</GridItem>
-									</GridContainer>
-									): (
+								
 									<GridContainer className="p-0 m-0">										
 										<GridItem className="p-0 m-0" xs={12}>
-										{ this.state.defination && Array.isArray(this.state.records) && this.state.records.length > 0? (
+										{/* this.state.actionsView === "contextMenu" && <Menu											
+											open={this.state.mouseY !== null}
+											onClose={this.handleOnRowContextMenuClose}
+											anchorReference="anchorPosition"
+											anchorPosition={ this.state.mouseY !== null && this.state.mouseX !== null? { top: this.state.mouseY, left: this.state.mouseX } : undefined }
+										>
+											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Copy</MenuItem>
+											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Print</MenuItem>
+											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Highlight</MenuItem>
+											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Email</MenuItem>
+										</Menu> */}
+
+										{ defination && Array.isArray(this.state.records) && this.state.records.length > 0? (
 											<MUIDataTable
-												title={this.state.defination.label}
+												title={(api.loading? "Loading ": "")+defination.label+(api.loading? "...": "")}
 												data={this.state.records}
 												columns={this.state.dt_columns}
 												options={table_options}
+
 											/>
 										) : (
 											<GridContainer className="p-0 m-0" justify="center" alignItems="center">
 												<img alt="Empty list" className={classes.emptyImage} src={EmptyStateImage} />
 												<Typography className={classes.emptyText} color="grey" variant="body2" center fullWidth>
-													No {this.state.defination.label? this.state.defination.label : "Records"} found
+													No {defination.label? defination.label : "Records"} found
 												</Typography>
 											</GridContainer>
 										)}
 											
 										</GridItem>
 									</GridContainer>								
-								)}
-							</GridContainer>																
-						)}
+									{(api? (api.complete && api.error) : false ) && <GridContainer >
+											<GridItem xs={12}>
+												<Typography color="error" variant="body2" center fullWidth>												
+													{"An error occured. \n "+api.error.msg+" \n Displaying cached data."}
+												</Typography>
+											</GridItem>										
+									</GridContainer>}
+							</GridContainer>
 					</GridItem>
 			</GridContainer>
 		);
@@ -474,9 +522,14 @@ TableView.defaultProps = {
 };
 
 
-const mapStateToProps = state => ({
-	auth: state.auth
-});
+const mapStateToProps = (state, ownProps) => {
+	const { defination } = ownProps;
+	return {
+		auth: state.auth,
+		cache: defination? (state.cache.data[defination.name]? state.cache.data[defination.name] : []) : [],
+		api: defination? (state.api[defination.name]? state.api[defination.name] : {}) : {},
+	}
+};
 
 
-export default withRoot(compose(withStyles(styles), connect(mapStateToProps, { openDialog, closeDialog }))(TableView));
+export default withRoot(compose(withStyles(styles), connect(mapStateToProps, { openDialog, closeDialog, apiCallRequest }))(TableView));

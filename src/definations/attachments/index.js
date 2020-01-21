@@ -18,6 +18,7 @@ export default  {
 	icon: <DefinationContextIcon />,
 	color: colors.hex.warning,
 	model: 'Attachment',
+	endpoint: "/attachments",
 	views: {
 		single: {
 			default: "cardview",

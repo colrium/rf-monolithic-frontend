@@ -1,5 +1,5 @@
 /*global google*/
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import ReactDOMServer from "react-dom/server";
 
@@ -15,6 +15,7 @@ import {
 } from "react-google-maps";
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
 import { SearchBox } from "react-google-maps/lib/components/places/SearchBox";
+import Skeleton from '@material-ui/lab/Skeleton';
 import LocationSearchInput from './LocationSearchInput';
 
 import { compose } from "recompose";
@@ -350,138 +351,140 @@ let showInfoWindow = (content, position) => {
 
 let _map = null;
 let _searchBox = null;
-const DefaultMapComponent = compose(
-	withScriptjs,
-	withGoogleMap
-)(props => (
-	<GoogleMap
-		className="relative"
-		defaultZoom={props.defaultZoom}
-		defaultCenter={props.defaultCenter}
-		defaultOptions={{ styles: props.disabled || props.readonly? greyMapStyle : mapStyles }}
-		ref={map => (_map = map)}
-	>
-		
+const DefaultMapComponent = compose( withScriptjs, withGoogleMap)(props => {
+	let [state, setState] = useState(props);
 
-		
-		
-		{ props.draw && <DrawingManager
-			defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
-			defaultOptions={{
-				drawingControl: true,
-				drawingControlOptions: {
-					position: google.maps.ControlPosition.TOP_CENTER,
-					drawingModes: [
-						google.maps.drawing.OverlayType.CIRCLE,
-						google.maps.drawing.OverlayType.POLYGON,
-						google.maps.drawing.OverlayType.POLYLINE,
-						google.maps.drawing.OverlayType.RECTANGLE,
-					],
-				},
-				circleOptions: {
-					fillColor: colors.hex.accent,
-					fillOpacity: 0.6,
-					strokeColor: colors.hex.accent,
-					strokeWeight: 2,
-					clickable: false,
-					editable: true,
-					zIndex: 1,
-				},
-			}}
-		/>}
-		{Array.isArray(props.polylines) &&
-			props.polylines.map((polyline, index) => (
-				<Polyline
-					path={polyline.path}
-					geodesic={true}
-					options={{
-						strokeColor: polyline.color ? polyline.color : colors.hex.accent,
-						strokeOpacity: polyline.opacity ? polyline.opacity : 0.75,
-						strokeWeight: polyline.weight ? polyline.weight : 4
-					}}
-					onClick={event => {
-						//let infowindow = showInfoWindow((polyline.title? polyline.title : "Uknown"), event.latLng);
+	useEffect(() => {
+	   setState(props);
+	}, [props]);
 
-						var infowindow = new google.maps.InfoWindow({
-							content:
-								(polyline.infoWindow
-									? ReactDOMServer.renderToStaticMarkup(polyline.infoWindow)
-									: polyline.title
-										? polyline.title
-										: "") +
-								("<br/> Crow fleight distance from Start: " +
-									calcCrowFlyDistance(
-										event.latLng.lat(),
-										event.latLng.lng(),
-										polyline.path[0].lat,
-										polyline.path[0].lng
-									).toFixed(2) +
-									" Km"),
-							position: event.latLng
-						});
+	return (
+		<GoogleMap
+			className="relative"
+			defaultZoom={state.defaultZoom}
+			defaultCenter={state.defaultCenter}
+			defaultOptions={{ styles: state.mapStyles? state.mapStyles : mapStyles }}
+			ref={map => (_map = map)}
+		>
+			
+			{ state.draw && <DrawingManager
+				defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
+				defaultOptions={{
+					drawingControl: true,
+					drawingControlOptions: {
+						position: google.maps.ControlPosition.TOP_CENTER,
+						drawingModes: [
+							google.maps.drawing.OverlayType.CIRCLE,
+							google.maps.drawing.OverlayType.POLYGON,
+							google.maps.drawing.OverlayType.POLYLINE,
+							google.maps.drawing.OverlayType.RECTANGLE,
+						],
+					},
+					circleOptions: {
+						fillColor: colors.hex.accent,
+						fillOpacity: 0.6,
+						strokeColor: colors.hex.accent,
+						strokeWeight: 2,
+						clickable: false,
+						editable: true,
+						zIndex: 1,
+					},
+				}}
+			/>}
+			{Array.isArray(state.polylines) &&
+				state.polylines.map((polyline, index) => (
+					<Polyline
+						path={polyline.path}
+						geodesic={true}
+						options={{
+							strokeColor: polyline.color ? polyline.color : colors.hex.accent,
+							strokeOpacity: polyline.opacity ? polyline.opacity : 0.75,
+							strokeWeight: polyline.weight ? polyline.weight : 4
+						}}
+						onClick={event => {
+							//let infowindow = showInfoWindow((polyline.title? polyline.title : "Uknown"), event.latLng);
 
-						infowindow.open(
-							_map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
-						);
-					}}
-					key={"polyline-" + index}
-				/>
-			))}
-
-		{Array.isArray(props.circles) && props.circles.map(({infoWindow, ...rest}, index) => (
-				<Circle
-					{...rest}
-					onClick={event => {
-						if (infoWindow) {
-							new google.maps.InfoWindow({
-								content: ReactDOMServer.renderToStaticMarkup(infoWindow),
+							var infowindow = new google.maps.InfoWindow({
+								content:
+									(polyline.infoWindow
+										? ReactDOMServer.renderToStaticMarkup(polyline.infoWindow)
+										: polyline.title
+											? polyline.title
+											: "") +
+									("<br/> Crow fleight distance from Start: " +
+										calcCrowFlyDistance(
+											event.latLng.lat(),
+											event.latLng.lng(),
+											polyline.path[0].lat,
+											polyline.path[0].lng
+										).toFixed(2) +
+										" Km"),
 								position: event.latLng
-							}).open(
+							});
+
+							infowindow.open(
 								_map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 							);
-						}
+						}}
+						key={"polyline-" + index}
+					/>
+				))}
 
-
-					}}
-					key={"circle-" + index}
-				/>
-			
-		))}
-
-		{Array.isArray(props.markers) && props.markers.map(
-				({position, title, infoWindow, ...rest}, index) =>
-					typeof google !== undefined && (
-						<Marker
-							animation={google.maps.Animation.DROP}
-							position={position}
-							title={title}
-							key={"marker-" + index}
-							onClick={event => {
-
-								var infowindow = new google.maps.InfoWindow({
-									content: infoWindow ? ReactDOMServer.renderToStaticMarkup(infoWindow) : title ? title : "",
+			{Array.isArray(state.circles) && state.circles.map(({infoWindow, ...rest}, index) => (
+					<Circle
+						{...rest}
+						onClick={event => {
+							if (infoWindow) {
+								new google.maps.InfoWindow({
+									content: ReactDOMServer.renderToStaticMarkup(infoWindow),
 									position: event.latLng
-								});
-
-								infowindow.open(
+								}).open(
 									_map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 								);
-							}}
-							{...rest}
-						/>
-					)
-			)}
-
-		{ JSON.isJSON(props.currentDevicePosition) && props.showCurrentPosition && <Marker position={props.currentDevicePosition.coordinates} title={props.currentDevicePosition.title} icon={current_position_marker_icon} /> }
-
-		{JSON.isJSON(props.marker) && <Marker {...props.marker } /> }
-		{JSON.isJSON(props.circle) && <Marker {...props.circle} /> }
+							}
 
 
-		{ props.showSearchBar && <LocationSearchInput controlPosition={google.maps.ControlPosition.BOTTOM_CENTER} {...props.searchBarProps}/> }
+						}}
+						key={"circle-" + index}
+					/>
+				
+			))}
 
-	</GoogleMap>
-));
+			{Array.isArray(state.markers) && state.markers.map(
+					({position, title, infoWindow, ...rest}, index) =>
+						typeof google !== undefined && (
+							<Marker
+								animation={google.maps.Animation.DROP}
+								position={position}
+								title={title}
+								key={"marker-" + index}
+								onClick={event => {
+
+									var infowindow = new google.maps.InfoWindow({
+										content: infoWindow ? ReactDOMServer.renderToStaticMarkup(infoWindow) : title ? title : "",
+										position: event.latLng
+									});
+
+									infowindow.open(
+										_map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+									);
+								}}
+								{...rest}
+							/>
+						)
+				)}
+
+			{ JSON.isJSON(state.currentDevicePosition) && state.showCurrentPosition && <Marker position={state.currentDevicePosition.coordinates} title={state.currentDevicePosition.title} icon={current_position_marker_icon} /> }
+
+			{JSON.isJSON(state.marker) && <Marker {...state.marker } /> }
+			{JSON.isJSON(state.circle) && <Marker {...state.circle} /> }
+
+
+			{ state.showSearchBar && <LocationSearchInput controlPosition={google.maps.ControlPosition.BOTTOM_CENTER} {...state.searchBarProps}/> }
+
+		</GoogleMap>
+	);
+});
 
 class CustomGoogleMap extends Component {
 	state = {
@@ -493,7 +496,8 @@ class CustomGoogleMap extends Component {
 		circles: [],
 		polylines:[],
 		polylines:[],
-		value: []
+		value: [],
+		hasError: false,
 	};
 	constructor( props ) {
 		super( props );
@@ -512,10 +516,10 @@ class CustomGoogleMap extends Component {
 		this.onLocationBtnClick = this.onLocationBtnClick.bind(this);
 		this.onValueObjectDragEnd = this.onValueObjectDragEnd.bind(this);
 
-		let { isInput, input, value, isMulti, markers, circles } = this.state;
+		let { isInput, type, value, isMulti, markers, circles } = this.state;
 		
 		if (isInput) {
-			if (input === "coordinates") {
+			if (type === "coordinates") {
 				if (!Array.isArray(markers)) {
 					markers = []; 
 				}				
@@ -538,7 +542,7 @@ class CustomGoogleMap extends Component {
 					}]);
 				}
 			}
-			if (input === "marker") {
+			if (type === "marker") {
 				if (!Array.isArray(markers)) {
 					markers = []; 
 				}				
@@ -559,7 +563,7 @@ class CustomGoogleMap extends Component {
 					}]);
 				}
 			}
-			else if (input == "circle") {
+			else if (type == "circle") {
 				if (!Array.isArray(circles)) {
 					circles = []; 
 				}
@@ -577,39 +581,133 @@ class CustomGoogleMap extends Component {
 		this.state.defaultCenter = this.getDefaultCenter();
 	}
 
+	componentDidCatch(error) {		
+		this.setState({ hasError: error }, () => console.error("GoogleMap Error", error));
+	}
+
 	componentDidMount() {
 		const defaultCenter = this.getDefaultCenter();
-		console.log("defaultCenter", defaultCenter);
 		this.setState({defaultCenter: defaultCenter});
+	}
 
-		/*const { showCurrentPosition, isInput, isMulti, value, input } = this.props;
-		if (showCurrentPosition) {
-			this.currentPosition();
+	componentDidUpdate(prevProps, prevState) {
+		if (!Object.areEqual(prevProps, this.props)) {
+			this.setState({...JSON.updateJSON(this.state, this.props), ...this.appendInputValue});
 		}
+
+	}
+
+	appendInputValue(append_value=false){
+		let valueState = this.state;
+		let { isInput, type, isMulti } = this.state;
+		let { markers, value, circles, polylines, marker, circle, polyline } = this.state;		
+		
 		if (isInput) {
-			let panTo = this.getDefaultCenter();
-			if (isMulti && Array.isArray(value)) {
-				if (value.length > 0) {
-					panTo = value[value.length-1];
-					if (input === "marker") {
-						panTo = value[value.length-1].position;
-					}
+			if (isMulti && !Array.isArray(value)) {
+				if (value) {
+					value = [value];
+				}
+				else {
+					value = [];
+				}
+			}
+			if (append_value) {
+				if (isMulti) {
+					value.concat([append_value]);
+				}
+				else{
+					value = append_value;
+				}
+			}
+				
+
+			if (type === "coordinates") {
+				if (!Array.isArray(markers)) {
+					markers = []; 
+				}				
+				if (isMulti) {
+					markers = markers.concat(value.map((coordinates, index)=>{
+						return {
+							position: coordinates,
+							title: JSON.readable(coordinates),
+							draggable: true, 
+							onDragEnd: this.onValueObjectDragEnd(index)
+						}
+					}));
+				}
+				else{
+					markers = markers.concat([{
+							position: value,
+							title: JSON.readable(value),
+							draggable: true, 
+							onDragEnd: this.onValueObjectDragEnd(null)
+					}]);
+				}
+			}
+			if (type === "marker") {
+				if (!Array.isArray(markers)) {
+					markers = []; 
+				}				
+				if (isMulti) {
+					markers = markers.concat(value.map((marker, index)=>{
+						return {
+							...marker,
+							draggable: true, 
+							onDragEnd: this.onValueObjectDragEnd(index)
+						}
+					}));
+				}
+				else{
+					markers = markers.concat([{
+						...value, 
+						draggable: true, 
+						onDragEnd: this.onValueObjectDragEnd(null)
+					}]);
+				}
+			}
+			else if (type == "circle") {
+				if (!Array.isArray(circles)) {
+					circles = []; 
+				}
+				if (isMulti) {
+					circles = circles.concat(value);
+				}
+				else{
+					circles = circles.concat([value]);
 				}
 				
 			}
-			else {
-				if (value) {
-					panTo = value;
-					if (input === "marker") {
-						panTo = value.position;
-					}
-				}
-			}
-			if (_map) {
-				_map.panTo(panTo);
-			}
-			
-		}*/
+		}
+
+		let defaultCenter = this.state.current_device_position.coordinates;
+		if (Array.isArray(markers) && markers.length > 0) {
+			if (JSON.isJSON(markers[markers.length - 1].position)) {
+				defaultCenter = markers[markers.length - 1].position;
+			}			
+		} 
+		else if (Array.isArray(polylines) && polylines.length > 0) {
+			if (JSON.isJSON(polylines[polylines.length - 1].path[0])) {
+				defaultCenter = polylines[polylines.length - 1].path[0];
+			}			
+		} 
+		else if (Array.isArray(circles) && circles.length > 0) {
+			defaultCenter = circles[circles.length - 1].center;
+		}
+		else if (JSON.isJSON(circle)) {
+			defaultCenter = circle.center;
+		}
+		else if (JSON.isJSON(marker)) {
+			defaultCenter = marker.position;
+		}
+		else if (JSON.isJSON(polyline)) {
+			defaultCenter = polyline.path[0];
+		}
+
+		valueState.markers = markers;
+		valueState.circles = circles;
+		valueState.defaultCenter = defaultCenter;
+
+		return valueState;
 	}
 
 	currentPosition() {
@@ -668,26 +766,32 @@ class CustomGoogleMap extends Component {
 	}
 
 	onLocationSearchSelect(value){
-		const { onChange, isInput, input, isMulti } = this.state;
+		const { onChange, isInput, type, isMulti } = this.state;
 		if (_map) {
 			_map.panTo(value.coordinates);
 		}
 		if (isInput) {
 			let new_value = value.coordinates;
-			if (input === "coordinates") {
+			if (type === "coordinates") {
 				new_value = value.coordinates;
 				if (isMulti) {
 					new_value = this.state.value.concat([value.coordinates]);
 				}
 			}
-			else if (input === "marker") {
+			else if (type === "marker") {
 				new_value = {position: value.coordinates, title: value.address};
 				if (isMulti) {
 					new_value = this.state.value.concat([{position: value.coordinates, title: value.address}]);
 				}
 			}
-				
-			this.setState(prevState => ({value: new_value}));
+			else if (type === "address") {
+				new_value = value.address;
+				if (isMulti) {
+					new_value = this.state.value.concat([{position: value.coordinates, title: value.address}]);
+				}
+			}
+			this.setState({...this.appendInputValue(new_value)});	
+			
 			
 			if (Function.isFunction(onChange)) {
 				onChange(new_value);
@@ -704,19 +808,19 @@ class CustomGoogleMap extends Component {
 	}
 
 	onValueObjectDragEnd  = index => event => {
-		const { onChange, isInput, input, isMulti } = this.state;
+		const { onChange, isInput, type, isMulti } = this.state;
 		if (_map) {
 			_map.panTo({lat: event.latLng.lat(), lng: event.latLng.lng()});
 		}
 		if (isInput) {
 			let new_value = {lat: event.latLng.lat(), lng: event.latLng.lng()};
-			if (input === "coordinates") {
+			if (type === "coordinates") {
 				if (isMulti) {
 					new_value = this.state.value;
 					new_value[index] = { lat: event.latLng.lat(), lng: event.latLng.lng() };
 				}
 			}
-			else if (input === "marker") {				
+			else if (type === "marker") {				
 				if (isMulti) {
 					new_value = this.state.value;
 					new_value[index] = {position: { lat: event.latLng.lat(), lng: event.latLng.lng() }, title: JSON.readable({ lat: event.latLng.lat(), lng: event.latLng.lng() })};
@@ -735,91 +839,38 @@ class CustomGoogleMap extends Component {
 	}
 
 	render() {
-		let { classes, className, mapHeight, isInput, input, value, onChange, defaultCenter, current_device_position, isMulti, markers, circles, showSearchBar, ...rest } = this.state;
-		console.log("markers", markers);
-		/*if (isInput) {
-			if (input === "coordinates") {
-				if (!Array.isArray(markers)) {
-					markers = []; 
-				}				
-				if (isMulti) {
-					markers = markers.concat(value.map((coordinates, index)=>{
-						return {
-							position: coordinates,
-							title: JSON.readable(coordinates),
-							draggable: true, 
-							onDragEnd: this.onValueObjectDragEnd(index)
-						}
-					}));
-				}
-				else{
-					markers = markers.concat([{
-							position: value,
-							title: JSON.readable(value),
-							draggable: true, 
-							onDragEnd: this.onValueObjectDragEnd(null)
-					}]);
-				}
-			}
-			if (input === "marker") {
-				if (!Array.isArray(markers)) {
-					markers = []; 
-				}				
-				if (isMulti) {
-					markers = markers.concat(value.map((marker, index)=>{
-						return {
-							...marker,
-							draggable: true, 
-							onDragEnd: this.onValueObjectDragEnd(index)
-						}
-					}));
-				}
-				else{
-					markers = markers.concat([{
-						...value, 
-						draggable: true, 
-						onDragEnd: this.onValueObjectDragEnd(null)
-					}]);
-				}
-			}
-			else if (input == "circle") {
-				if (!Array.isArray(circles)) {
-					circles = []; 
-				}
-				if (isMulti) {
-					circles = circles.concat(value);
-				}
-				else{
-					circles = circles.concat([value]);
-				}
-				
-			}
-		}*/
-		
-        
+		let { classes, className, mapHeight, isInput, type, value, onChange, defaultCenter, current_device_position, isMulti, markers, circles, polylines, showSearchBar, ...rest } = this.state;
 
-		return (
-			<div className="relative p-0 m-0" style={{minHeight: mapHeight}}>				
-				<DefaultMapComponent
-					className={classes.googleMap}
-					defaultCenter={defaultCenter}
-					currentDevicePosition={current_device_position}
-					loadingElement={<div style={{ height: "100%" }} />}
-					containerElement={<div style={{ height: mapHeight + "px" }} />}
-					mapElement={<div style={{ height: "100%" }} />}
-					markers = {markers}
-					circles = {circles}
-					showSearchBar = {showSearchBar}
-					searchBarProps = {{
-						className: classes.locationSearchInput+" absolute mb-4",
-						onSelect: this.onLocationSearchSelect,
-						onLeftBtnClick:this.onLocationBtnClick,
-					}}
-					{ ...rest }
-				/>
-				
-			</div>
-		);
+        
+		if (this.state.hasError) {
+			return <Skeleton variant="rect" width={"100%"} height={mapHeight} />
+		}
+		else{
+			return (
+				<div className="relative p-0 m-0" style={{minHeight: mapHeight}}>			
+					<DefaultMapComponent
+						className={classes.googleMap}
+						defaultCenter={defaultCenter}
+						currentDevicePosition={current_device_position}
+						loadingElement={<div style={{ height: "100%" }} />}
+						containerElement={<div style={{ height: mapHeight + "px" }} />}
+						mapElement={<div style={{ height: "100%" }} />}
+						markers = {markers}
+						circles = {circles}
+						polylines = {polylines}
+						showSearchBar = {showSearchBar}
+						searchBarProps = {{
+							className: classes.locationSearchInput+" absolute mb-4",
+							onSelect: this.onLocationSearchSelect,
+							onLeftBtnClick:this.onLocationBtnClick,
+						}}
+						{ ...rest }
+					/>
+					
+				</div>
+			);
+		}
+			
 	}
 }
 
@@ -839,7 +890,7 @@ CustomGoogleMap.propTypes = {
 	center: PropTypes.object,
 	draw: PropTypes.bool,
 	isInput: PropTypes.bool,
-	input: PropTypes.oneOf(["coordinates", "region", "circle", "polyline", "marker"]),
+	type: PropTypes.oneOf(["coordinates", "region", "circle", "polyline", "marker"]),
 	value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
 	onChange: PropTypes.func,
 	isMulti: PropTypes.bool,
@@ -858,7 +909,8 @@ CustomGoogleMap.defaultProps = {
 	circles: [],	
 	draw: false,
 	isInput: false,
-	input: "coordinates",
+	isMulti: false,
+	type: "coordinates",
 	value: [],
 	showSearchBar: true,
 	disabled: false,

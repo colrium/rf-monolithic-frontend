@@ -1,7 +1,7 @@
 import Auth from "utils/Auth";
 import AuthService from "services/auth";
 import { authTokenLocation } from "config";
-import { SET_AUTHENTICATED, SET_ACCESS_TOKEN, SET_USER } from "state/actions/types";
+import { SET_AUTHENTICATED, SET_ACCESS_TOKEN, SET_USER, clearDataCache, clearBlobCache } from "state/actions";
 
 
 export function setAuthenticated(authenticated) {

@@ -50,20 +50,7 @@ class DynamicInput extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		const {
-			mode,
-			blueprint,
-			value,
-			onChange,
-			label,
-			name,
-			readOnly,
-			required,
-			disabled,
-			icon,
-			helperText,
-			enableGrouping
-		} = props;
+		const { mode, blueprint, value, onChange, label, name, readOnly, required, disabled, icon, helperText, enableGrouping, appendProps, } = props;
 		this.state = {
 			...this.state,
 			mode: mode,
@@ -77,7 +64,8 @@ class DynamicInput extends React.Component {
 			disabled: disabled,
 			icon: icon,
 			helperText: helperText,
-			enableGrouping: enableGrouping
+			enableGrouping: enableGrouping,
+			appendProps: appendProps
 		};
 		
 	}
@@ -86,23 +74,18 @@ class DynamicInput extends React.Component {
 
 	getSnapshotBeforeUpdate ( prevProps ) {
 		return { refreshRequired: !Object.areEqual( prevProps, this.props ) };
+
+	}
+
+	getSnapshotBeforeUpdate(prevProps) {
+		this.mounted = false;
+		if (!Object.areEqual(prevProps, this.props)) {
+			this.state = JSON.updateJSON(this.state, this.props);
+		}
 	}
 
 	componentDidUpdate ( prevProps, prevState, snapshot ) {
-		const {
-			mode,
-			blueprint,
-			value,
-			onChange,
-			label,
-			name,
-			readOnly,
-			required,
-			disabled,
-			icon,
-			helperText,
-			enableGrouping
-		} = this.props;
+		/*const { mode, blueprint, value, onChange, label, name, readOnly, required, disabled, icon, helperText, enableGrouping, appendProps } = this.props;
 		if ( snapshot.refreshRequired ) {
 			this.setState( prevState => ( {
 				mode: mode,
@@ -116,9 +99,10 @@ class DynamicInput extends React.Component {
 				disabled: disabled,
 				icon: icon,
 				helperText: helperText,
-				enableGrouping: enableGrouping
-			} ) );
-		}
+				enableGrouping: enableGrouping,
+				appendProps: appendProps,
+			}));
+		}*/
 	}
 
 
@@ -134,12 +118,12 @@ class DynamicInput extends React.Component {
 			active,
 		} = this.state;
 		return (
-			<Card elevation={0} className={"p-0 m-0 bg-transparent"+(variant==="outlined"? (active? "border-2 primary outlined" : " border border-gray-400 hover:border-black") : "")}>
-				<CardHeader
+			<Card elevation={0} className={"p-0 m-0 bg-transparent"+(variant==="outlined" && mode==="defination"? (active? "border-2 primary outlined" : " border border-gray-400 hover:border-black") : "")}>
+				{ String.isString(label) && <CardHeader
 					title={ label &&  <Typography color={ disabled || readOnly ? "grey" : active ? "primary" : "grey" } >
 								{ label} { required && <span> * </span>}
 							</Typography> }
-				/>
+				/> }
 
 				<CardContent className="p-0 m-0">
 					{mode === "defination" && <DefinationView className={ className }  {...this.state}/> }
@@ -166,7 +150,8 @@ DynamicInput.propTypes = {
 	error: PropTypes.string,
 	icon: PropTypes.node,
 	enableGrouping: PropTypes.bool,
-	mode: PropTypes.oneOf( ["defination", "generation"] )
+	mode: PropTypes.oneOf( ["defination", "generation"] ),
+	appendProps: PropTypes.object,
 };
 
 DynamicInput.defaultProps = {

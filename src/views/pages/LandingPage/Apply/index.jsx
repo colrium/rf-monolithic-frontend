@@ -45,7 +45,7 @@ class Page extends React.Component {
 
 							<GridContainer alignItems="center" justify="center">
 								<GridItem xs={12} sm={12} md={10}>
-									<BaseForm defination={defination}  service={service} form="applications-form" show_title={false} text_fields_variant="filled" onSubmitSuccessMessage="Your Application has been submitted."/>
+									<BaseForm defination={defination}  service={service} form="applications-form" show_title={false} text_fields_variant="outlined" onSubmitSuccessMessage="Your Application has been submitted."/>
 								</GridItem>
 							</GridContainer>
 						</GridItem>
