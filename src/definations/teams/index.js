@@ -12,6 +12,7 @@ export default  {
 	color: "#400a00",
 	model: 'Team',
 	endpoint: "/teams",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

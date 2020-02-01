@@ -12,6 +12,7 @@ export default  {
 	color: "#0e4000",
 	model: 'Notification',
 	endpoint: "/notifications",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

@@ -35,6 +35,7 @@ export default  {
 	color: "#001987",
 	model: 'Form',
 	endpoint: "/forms",
+	cache: false,
 	views: {
 		single: {
 			default: "cardview",

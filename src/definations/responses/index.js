@@ -13,6 +13,7 @@ export default  {
 	color: "#1e0040",
 	model: 'Response',
 	endpoint: "/responses",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

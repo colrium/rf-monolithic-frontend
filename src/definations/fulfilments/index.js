@@ -13,6 +13,7 @@ export default  {
 	color: "#001987",
 	model: 'Fulfilment',
 	endpoint: "/retail/fulfilments",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

@@ -5,10 +5,11 @@ import { createBrowserHistory } from "history";
 import { BrowserRouter, Router, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { deviceDetect, isMobile, isMobileOnly, isTablet, isBrowser, isSmartTV, isWearable, mobileVendor, mobileModel } from "react-device-detect";
-
 import Intercom from 'react-intercom';
 
 import { ThemeProvider } from '@material-ui/styles';
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 import {create as createJss} from 'jss'
 import preset from 'jss-preset-default';
@@ -21,6 +22,8 @@ import NestedJSS from 'jss-plugin-nested';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 
+import {SettingsProvider} from "contexts/Settings";
+import {PreferencesProvider} from "contexts/Preferences";
 
 import { setDefaultSocket, setAuthSocket, setIdentity, setOperatingSystem, setBrowser, setScreenSize, setWindowSize } from "state/actions";
 import { authSocket, defaultSocket } from "utils/Sockets";
@@ -52,7 +55,6 @@ const setupJss = () => {
 const sheets = setupJss();
 
 
-//Auth.getInstance();
 
 
 class App extends React.Component {	
@@ -79,7 +81,7 @@ class App extends React.Component {
 			setBrowser({ name: deviceDetails.browserName, version: deviceDetails.browserFullVersion });
 			setScreenSize({ width: window.screen.width, height: window.screen.height, orientation: window.screen.width > window.screen.height? "landscape" : "potrait" });
 			setWindowSize({ width: window.innerWidth, height: window.innerHeight, name: window.innerWidth < 600? "xs" : (window.innerWidth >= 600 && window.innerWidth < 960? "sm" : (window.innerWidth >= 960 && window.innerWidth < 1280? "md" : (window.innerWidth > 1280 && window.innerWidth < 1920? "lg" : "xl")))});
-			window.addEventListener('resize', function(){
+			window.addEventListener('resize', async function(){
 				setWindowSize({ width: window.innerWidth, height: window.innerHeight, name: window.innerWidth < 600? "xs" : (window.innerWidth >= 600 && window.innerWidth < 960? "sm" : (window.innerWidth >= 960 && window.innerWidth < 1280? "md" : (window.innerWidth >= 1280 && window.innerWidth < 1920? "lg" : "xl"))) });
 			});
 		}
@@ -97,24 +99,31 @@ class App extends React.Component {
 		Auth.destroyInstance();
 	}
 
-	onWindowResize(){
+	async onWindowResize(){
 		const { setWindowSize }  = this.props;
-		setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+		setWindowSize({ width: window.innerWidth, height: window.innerHeight, name: window.innerWidth < 600? "xs" : (window.innerWidth >= 600 && window.innerWidth < 960? "sm" : (window.innerWidth >= 960 && window.innerWidth < 1280? "md" : (window.innerWidth >= 1280 && window.innerWidth < 1920? "lg" : "xl"))) });
 	}
 
 	render() {
 		return (
-			<ThemeProvider theme={theme}>
-				<JssProvider jss={jss}  generateClassName={generateClassName} registry={sheets}>
-					<MuiPickersUtilsProvider utils={MomentUtils}>
-						<BrowserRouter>
-							<Router history={createBrowserHistory()}> 
-								<Routes /> 
-							</Router>
-						</BrowserRouter>
-					</MuiPickersUtilsProvider>
-				</JssProvider>
-			</ThemeProvider>		
+			<SettingsProvider>
+				<PreferencesProvider>
+					<ThemeProvider theme={theme}>
+						<MuiThemeProvider theme={theme}>
+							<CssBaseline />
+							<JssProvider jss={jss}  generateClassName={generateClassName} registry={sheets}>
+								<MuiPickersUtilsProvider utils={MomentUtils}>
+									<BrowserRouter>
+										<Router history={createBrowserHistory()}> 
+											<Routes /> 
+										</Router>
+									</BrowserRouter>
+								</MuiPickersUtilsProvider>
+							</JssProvider>
+						</MuiThemeProvider>						
+					</ThemeProvider>
+				</PreferencesProvider>
+			</SettingsProvider>	
 		);
 	}
 }

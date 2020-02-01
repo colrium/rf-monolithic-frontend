@@ -19,6 +19,7 @@ export default  {
 	color: colors.hex.warning,
 	model: 'Attachment',
 	endpoint: "/attachments",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

@@ -12,6 +12,7 @@ export default {
 	color: "#001f40",
 	model: "Post",
 	endpoint: "/posts",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",
@@ -157,7 +158,7 @@ export default {
 						if (values) {
 							if (String.isString(values.title) && String.isString(values.type)) {
 								if (values.type.length > 0) {
-									return "/"+values.type.variablelize()+"/"+values.title.variablelize().replaceAll("_", "-");
+									return values.title.variablelize().replaceAll("_", "-");
 								}
 							}
 						}

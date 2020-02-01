@@ -20,8 +20,7 @@ const sockets = ({ dispatch, getState }) => next => (action) => {
 			actionSocket.on("create", async ({ context, action }) => {
 				let defination = definations[modelToDefinations[context]];
 				if (defination) {
-
-					if (defination.access.view.single(auth.user, action.result )) {
+					if (defination.cache && defination.access.view.single(auth.user, action.result )) {
 						let newDataCache = Array.isArray(dataCache[defination.name])? dataCache[defination.name] : [];
 						newDataCache.unshift(action.result);
 						dispatch(setDataCache(defination.name, newDataCache));
@@ -36,58 +35,58 @@ const sockets = ({ dispatch, getState }) => next => (action) => {
 			actionSocket.on("update", async ({ context, action }) => {
 				let defination = definations[modelToDefinations[context]];
 				if (defination) {
-					let newDataCache = Array.isArray(dataCache[defination.name])? dataCache[defination.name] : [];
-					if (newDataCache.length > 0) {
-						let cacheEntryFound = false
-						newDataCache = newDataCache.map((cacheEntry, index) => {
-							if (cacheEntry._id === action.record ) {
-								cacheEntryFound = true;
-								return action.result;
+					if (defination.cache) {
+						let newDataCache = Array.isArray(dataCache[defination.name])? dataCache[defination.name] : [];
+						if (newDataCache.length > 0) {
+							let cacheEntryFound = false
+							newDataCache = newDataCache.map((cacheEntry, index) => {
+								if (cacheEntry._id === action.record ) {
+									cacheEntryFound = true;
+									return action.result;
+								}
+								else{
+									return cacheEntry;
+								}
+							});
+							if (!cacheEntryFound) {
+								if (defination.access.view.single(auth.user, action.result )) {
+									newDataCache.unshift(action.result);
+								}
 							}
-							else{
-								return cacheEntry;
-							}
-						});
-						if (!cacheEntryFound) {
-							if (defination.access.view.single(auth.user, action.result )) {
-								newDataCache.unshift(action.result);
-							}
+						}											
+						dispatch(setDataCache(defination.name, newDataCache));
+						let aggregatesApiCallRequest = api[(defination.name+"_aggregates")];
+						if (aggregatesApiCallRequest) {
+							dispatch(apiCallRequest(defination.name+"_aggregates", aggregatesApiCallRequest.options, aggregatesApiCallRequest.cache));
 						}
-					}											
-					dispatch(setDataCache(defination.name, newDataCache));
-					let aggregatesApiCallRequest = api[(defination.name+"_aggregates")];
-					if (aggregatesApiCallRequest) {
-						dispatch(apiCallRequest(defination.name+"_aggregates", aggregatesApiCallRequest.options, aggregatesApiCallRequest.cache));
 					}
+						
 				}
 			});
 
 			actionSocket.on("delete", async ({ context, action }) => {
 				let defination = definations[modelToDefinations[context]];
 				if (defination) {
-					let newDataCache = Array.isArray(dataCache[defination.name])? dataCache[defination.name] : [];
-					if (newDataCache.length > 0) {
-						newDataCache = newDataCache.filter((cacheEntry, index) => {
-							if (cacheEntry._id === action.record ) {
-								return false;
-							}
-							return true;
-						});
+					if (defination.cache) {
+						let newDataCache = Array.isArray(dataCache[defination.name])? dataCache[defination.name] : [];
+						if (newDataCache.length > 0) {
+							newDataCache = newDataCache.filter((cacheEntry, index) => {
+								if (cacheEntry._id === action.record ) {
+									return false;
+								}
+								return true;
+							});
+						}						
+						dispatch(setDataCache(defination.name, newDataCache));
+						let aggregatesApiCallRequest = api[(defination.name+"_aggregates")];
+						if (aggregatesApiCallRequest) {
+							dispatch(apiCallRequest(defination.name+"_aggregates", aggregatesApiCallRequest.options, aggregatesApiCallRequest.cache));
+						}
 					}						
-					dispatch(setDataCache(defination.name, newDataCache));
-					let aggregatesApiCallRequest = api[(defination.name+"_aggregates")];
-					if (aggregatesApiCallRequest) {
-						dispatch(apiCallRequest(defination.name+"_aggregates", aggregatesApiCallRequest.options, aggregatesApiCallRequest.cache));
-					}
 				}
 			});
 
 			action.socket = actionSocket;
-
-
-			console.log(action.type, " modelToDefinations", modelToDefinations);
-			console.log(action.type, " action", action);
-			console.log(action.type, "auth", auth);
 		}
 		next(action);
 

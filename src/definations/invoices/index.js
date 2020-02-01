@@ -12,6 +12,7 @@ export default  {
 	color: "#545000",
 	model: 'Invoice',
 	endpoint: "/invoices",
+	cache: true,
 	views: {
 		single: {
 			default: "invoiceview",

@@ -14,6 +14,7 @@ import Button from 'components/Button';
 import GridContainer from 'components/Grid/GridContainer';
 import GridItem from 'components/Grid/GridItem';
 import Typography from 'components/Typography';
+import LazyModule from "components/LazyModule";
 import { apiCallRequest } from 'state/actions';
 //
 import { UtilitiesHelper } from 'utils/Helpers';

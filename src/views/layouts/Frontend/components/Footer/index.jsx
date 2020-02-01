@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Intercom from 'react-intercom';
 import { Link } from "react-router-dom";
@@ -10,6 +10,13 @@ import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Fab from '@material-ui/core/Fab';
+import IconButton from '@material-ui/core/IconButton';
+import FacebookIcon from '@material-ui/icons/Facebook';
+import YouTubeIcon from '@material-ui/icons/YouTube';
+import TwitterIcon from '@material-ui/icons/Twitter';
+import LinkedInIcon from '@material-ui/icons/LinkedIn';
+import InstagramIcon from '@material-ui/icons/Instagram';
+import WhatsAppIcon from '@material-ui/icons/WhatsApp';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Zoom from '@material-ui/core/Zoom';
 import GridContainer from "components/Grid/GridContainer";
@@ -19,6 +26,7 @@ import Typography from "components/Typography";
 import RequestDemoForm from "views/forms/RequestDemoForm";
 import withRoot from "utils/withRoot";
 import {intercom} from "config";
+import { withSettingsContext } from "contexts/Settings";
 import { app, colors } from "assets/jss/app-theme";
 import logo from 'assets/img/realfield/logo.svg';
 import styles from "./styles";
@@ -61,8 +69,13 @@ ScrollTop.propTypes = {
 };
 
 function Footer(props) {
-	const { classes, className, color, columnWidgets, absoluteFooter } = props;
+	let [state, setState] = useState(props);
+	useEffect(() => {  setState(props); }, [props]);
+	let { classes, className, color, columnWidgets, absoluteFooter, settingsContext } = state;
 	const inverseColor = ["inverse", "transparent"].includes(color)? "default" : "inverse";
+	
+	
+	
 	return (
 		<footer className={" w-full "+color} style={{backgroundImage: "url(" + require('assets/img/realfield/logo-rotated.png') + ")", backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", backgroundPosition: "right center", backgroundSize: "auto 180px" }}>
 			
@@ -74,19 +87,20 @@ function Footer(props) {
 				</ScrollTop>
 				<Intercom appID={intercom.app.id} { ...intercom.app.user } />
 			</div>
+			
 			<GridContainer className={className}>
 				{!columnWidgets && <GridContainer>
 					<GridItem sm={12} className="p-0 m-0 mb-8">
 						<GridContainer className="p-0 m-0">
 							<GridItem sm={12} md={4}>
-								<Typography className="w-full pl-4 block pb-8" variant="body1">We're not smart, we are here to give you the data to be smart</Typography>
+								{ !String.isEmpty(settingsContext.settings.general["site-tagline"]) && <Typography className="w-full pl-4 block pb-8" variant="body1">{settingsContext.settings.general["site-tagline"] }</Typography>}
 								<Link className="pl-4 block" to={"/home".toUriWithLandingPagePrefix()} color="inherit"><Button  color="inherit" simple>{<img src={logo} className="h-8" alt="logo"/>}</Button></Link>
 							</GridItem>
 							<GridItem className="pl-4" sm={12} md={4}>
 								<Typography className="w-full pl-4 block pb-4" color={inverseColor} variant="h3">Links</Typography>
-								<Link to={"/blog".toUriWithLandingPagePrefix()} className="block"><Button className={inverseColor+"_text"} simple >Blog</Button></Link>
-								<Link to={"/press".toUriWithLandingPagePrefix()}  className="block"><Button className={inverseColor+"_text"} simple >Press</Button></Link>
-								<Link to={"/faq".toUriWithLandingPagePrefix()}  className="block"><Button className={inverseColor+"_text"} simple >FAQ</Button></Link>
+								{ settingsContext.settings.reading["enable-blog"] && <Link to={"/blog".toUriWithLandingPagePrefix()} className="block"><Button className={inverseColor+"_text"} simple >Blog</Button></Link>}
+								{ settingsContext.settings.reading["enable-press"] && <Link to={"/press".toUriWithLandingPagePrefix()}  className="block"><Button className={inverseColor+"_text"} simple >Press</Button></Link>}
+								{ settingsContext.settings.reading["enable-faq"] && <Link to={"/faq".toUriWithLandingPagePrefix()}  className="block"><Button className={inverseColor+"_text"} simple >FAQ</Button></Link>}
 							</GridItem>
 
 							<GridItem className="pl-4" sm={12} md={4}>
@@ -105,13 +119,27 @@ function Footer(props) {
 								<RequestDemoForm className="w-full pl-4 block pb-4" color={inverseColor} />
 							</GridItem>
 							<GridItem className="pl-4 block" sm={12} md={4}>
-								<Typography className="w-full pl-4 block" color={inverseColor} variant="h3">Social</Typography>
+								{ settingsContext.settings.social && <GridContainer className="p-0 m-0">
+									<Typography className="w-full pl-4 block" color={inverseColor} variant="h3">Social</Typography>
+								</GridContainer> }
+								{ settingsContext.settings.social && <GridContainer className="p-0 m-0">
+									{Object.entries(settingsContext.settings.social).map(([name, url], index)=>(
+										(!String.isEmpty(url) && String.isUrl(url)) && <IconButton className="text-white" aria-label={name} href={url} target="_blank" key={name+"-button"}> 
+											{ name === "twitter" &&  <TwitterIcon />}
+											{ name === "linkedin" && <LinkedInIcon /> }
+											{ name === "instagram" && <InstagramIcon />}
+											{ name === "whatsapp" && <WhatsAppIcon /> }
+											{ name === "facebook" && <FacebookIcon />  }
+											{ name === "youtube" && <YouTubeIcon />  }											
+										</IconButton>											
+									))}
+								</GridContainer> }
 							</GridItem>
 
 							<GridItem className="pl-4 block" sm={12} md={4}>
 								<Typography className="w-full pl-4 block pb-4" color={inverseColor} variant="h3">Contact</Typography>
-								<Typography className="w-full pl-4 block pb-4" color={inverseColor} variant="body2">(556) 677-6755</Typography>
-								<Typography className="w-full pl-4 block pb-4" color={inverseColor} variant="body2">getstarted@realfield.io</Typography>
+								{!String.isEmpty(settingsContext.settings["contact-phone"]) && <Typography className="w-full pl-4 block pb-4" color={inverseColor} variant="body2">{settingsContext.settings["contact-phone"]}</Typography>}
+								{!String.isEmpty(settingsContext.settings["contact-email"]) && <Typography className="w-full pl-4 block pb-4" color={inverseColor} variant="body2">{settingsContext.settings["contact-email"]}</Typography>}
 							</GridItem>
 						</GridContainer>
 					</GridItem>
@@ -147,4 +175,4 @@ Footer.defaultProps = {
 	color: "primary",
 };
 
-export default withRoot(withStyles(styles)(Footer));
+export default withSettingsContext(withStyles(styles)(Footer));

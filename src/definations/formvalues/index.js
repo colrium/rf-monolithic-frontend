@@ -15,6 +15,7 @@ export default  {
 	color: "#001987",
 	model: 'FormValue',
 	endpoint: "/forms-values",
+	cache: false,
 	views: {
 		single: {
 			default: "cardview",

@@ -12,6 +12,7 @@ export default {
 	color: "#001f40",
 	model: "Payment",
 	endpoint: "/payments",
+	cache: false,
 	views: {
 		single: {
 			default: "cardview",

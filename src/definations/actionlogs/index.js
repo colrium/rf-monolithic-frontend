@@ -40,6 +40,7 @@ export default {
 	color: "#4a148c",
 	model: "ActionTrail",
 	endpoint: "/logs/actions",
+	cache: false,
 	views: {
 		single: {
 			default: "cardview",

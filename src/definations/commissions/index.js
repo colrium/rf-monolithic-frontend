@@ -55,6 +55,7 @@ export default  {
 	color: '#4a148c',
 	model: 'Commission',
 	endpoint: "/commissions",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

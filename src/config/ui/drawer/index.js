@@ -1,4 +1,4 @@
-import { AccountCircleOutlined as ProfileIcon, DashboardOutlined as DashboardIcon, HelpOutlined as HelpSupportIcon, HistoryOutlined as ActionsLogIcon, SettingsOutlined as SettingsIcon } from "@material-ui/icons";
+import { AccountCircleOutlined as ProfileIcon, DashboardOutlined as DashboardIcon, HelpOutlined as HelpSupportIcon, HistoryOutlined as ActionsLogIcon, SettingsApplicationsOutlined as SettingsIcon } from "@material-ui/icons";
 import * as definations from "definations";
 import React from "react";
 
@@ -236,30 +236,7 @@ export const items = [
 		]
 	},
 
-	{
-		text: "Administration",
-		section: true,
-		restricted: user => {
-			return !user.isAdmin;
-		},
-		links: [
-			{
-				icon: definations.users.icon,
-				text: definations.users.label,
-				route: "/users".toUriWithDashboardPrefix()
-			},
-			{
-				icon: definations.forms.icon,
-				text: definations.forms.label,
-				route: "/forms".toUriWithDashboardPrefix()
-			}
-			/* {
-				icon: <SettingsIcon />,
-				text: "System Settings",
-				route: "/settings".toUriWithDashboardPrefix()
-			} */
-		]
-	},
+	
 
 	
 	{
@@ -308,6 +285,32 @@ export const items = [
 			}
 		]
 	},
+
+	{
+		text: "Administration",
+		section: true,
+		restricted: user => {
+			return !user.isAdmin;
+		},
+		links: [
+			{
+				icon: definations.users.icon,
+				text: definations.users.label,
+				route: "/users".toUriWithDashboardPrefix()
+			},
+			{
+				icon: definations.forms.icon,
+				text: definations.forms.label,
+				route: "/forms".toUriWithDashboardPrefix()
+			},
+			{
+				icon: definations.settings.icon,
+				text: definations.settings.label,
+				route: "/settings".toUriWithDashboardPrefix()
+			}
+		]
+	},
+
 	{
 		text: "Help & Support",
 		section: true,

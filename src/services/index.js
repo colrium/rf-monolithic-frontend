@@ -30,6 +30,8 @@ export { default as quoterequests } from './quoterequests';
 
 export { default as users } from './users';
 export { default as posts } from './posts';
+export { default as settings } from './settings';
+export { default as preferences } from './preferences';
 
 export { default as forms } from './forms';
 export { default as formvalues } from './formvalues';

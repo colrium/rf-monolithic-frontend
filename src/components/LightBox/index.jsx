@@ -42,8 +42,8 @@ const LightBox = ({ src, alt, open, onClose, className, ...rest }) => {
 			}
 		}
 		return () => {
-			didCancel = true
-			// on component cleanup, we remove the listner
+			didCancel = true;
+			// on component cleanup, we remove the listener
 			if (observer) {
 				observer.unobserve(imageRef);
 			}
@@ -53,8 +53,8 @@ const LightBox = ({ src, alt, open, onClose, className, ...rest }) => {
 		<Modal
 				aria-labelledby="transition-modal-title"
 				aria-describedby="light-modal-description"
-				className="rounded m-auto text-center"
-				style={{maxWidth:"80vw", maxHeight:"80vh", justifyContent: "center", display: "flex"}}
+				className={"rounded m-auto h-auto p-4 text-center "+(className? className : "")}
+				style={{maxWidth:"80vw"}}
 				open={open}
 				onClose={onClose}
 				closeAfterTransition
@@ -68,7 +68,8 @@ const LightBox = ({ src, alt, open, onClose, className, ...rest }) => {
 						ref={setImageRef}
 						src={imageSrc}
 						alt={alt}
-						className={className}
+						className={"h-auto"}
+						style={{maxWidth:"100%"}}
 						{...rest}
 					/>
 				</Fade>

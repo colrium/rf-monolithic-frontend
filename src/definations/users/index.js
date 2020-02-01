@@ -19,6 +19,7 @@ export default  {
 	color: "#01579b",
 	model: 'User',
 	endpoint: "/users",
+	cache: false,
 	views: {
 		single: {
 			default: "cardview",

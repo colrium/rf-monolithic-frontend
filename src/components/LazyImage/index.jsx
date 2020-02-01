@@ -71,7 +71,7 @@ const LazyImage = ({ src, alt, onClick, lightbox, className, ...rest }) => {
 		}
 	}, [src, imageSrc, imageRef]);
 	return (
-			<div className="inline">
+			<div className={className? className : "inline-block"}>
 				{ (lightbox && lightboxOpen) && <LightBox
 					src={src}
 					alt={alt}
@@ -92,7 +92,7 @@ const LazyImage = ({ src, alt, onClick, lightbox, className, ...rest }) => {
 							setLightboxOpen(true);
 						}
 					}}
-					className={(lightbox? "cursor-pointer " : "cursor-auto")+" "+(className? className : "")}
+					className={(lightbox? "cursor-pointer " : "cursor-auto")+" w-full h-full"}
 					{...rest}
 				/>
 			</div>

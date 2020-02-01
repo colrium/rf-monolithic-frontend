@@ -4,45 +4,45 @@ import { colors } from "assets/jss/app-theme.jsx";
 import gridStyle from "assets/jss/components/gridStyle.jsx";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
-import withRoot from "utils/withRoot";
+import React, {useState, useEffect} from "react";
 
 function GridContainer({ ...props }) {
-  const {
-    classes,
-    children,
-    color,
-    fullwidth,
-    fullheight,
-    className,
-    ...rest
-  } = props;
-  const gridClasses = classNames({
-    [color]: color,
-    [classes.fullwidth]: fullwidth,
-    [classes.fullheight]: fullheight,
-    [classes.griditem]: true,
-    [className]: className
-  });
-  return (
-    <Grid container {...rest} className={gridClasses}>
-      {children}
-    </Grid>
-  );
+	let [state, setState ] = useState(props);
+	useEffect(() => { setState(props); }, [props]);
+	let { classes,
+		children,
+		color,
+		fullwidth,
+		fullheight,
+		className,
+		...rest
+	} = state;
+	let gridClasses = classNames({
+		[color]: color,
+		[classes.fullwidth]: fullwidth,
+		[classes.fullheight]: fullheight,
+		[classes.griditem]: true,
+		[className]: className
+	});
+	return (
+		<Grid container {...rest} className={gridClasses}>
+			{children}
+		</Grid>
+	);
 }
 
 GridContainer.defaultProps = {
-  className: ""
+	className: ""
 };
 
 GridContainer.propTypes = {
-  classes: PropTypes.object.isRequired,
-  children: PropTypes.node,
-  className: PropTypes.string,
-  color: PropTypes.oneOf(colors.names),
-  fullwidth: PropTypes.bool,
-  fullheight: PropTypes.bool,
-  grid: PropTypes.bool
+	classes: PropTypes.object.isRequired,
+	children: PropTypes.node,
+	className: PropTypes.string,
+	color: PropTypes.oneOf(colors.names),
+	fullwidth: PropTypes.bool,
+	fullheight: PropTypes.bool,
+	grid: PropTypes.bool
 };
 
-export default withRoot(withStyles(gridStyle)(GridContainer));
+export default withStyles(gridStyle)(GridContainer);

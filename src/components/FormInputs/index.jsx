@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
 	Checkbox,
 	CircularProgress,
@@ -31,7 +31,10 @@ import WysiwygEditor from 'components/WysiwygEditor';
 
 import withRoot from "utils/withRoot";
 
-export const TextInput = ({ label, touched, invalid, error, onChange, variant, validate, value, defaultValue, helperText, ...rest }) => {
+export const TextInput = (props) => {
+	let [state, setState] = useState(props);
+	useEffect(() => {  setState(props); }, [props]);
+	let { label, touched, invalid, error, onChange, variant, validate, value, defaultValue, helperText, ...rest } = state;
 	const [inputValue, setInputValue] = useState(value? value : defaultValue);
 	const [inputError, setInputError] = useState(error);
 	const [isInvalid, setIsInvalid] = useState(invalid);
@@ -269,13 +272,14 @@ export const TimeInput = ({ label, touched, invalid, error, onChange, value, def
 						}
 					}
 			}}
+			margin="dense"
 			value = {inputValue}
 			{...rest}
 		/>
 	);
 };
 
-export const WysiwygInput = ({ label, touched, invalid, error, onChange, value, defaultValue, ...rest}) => {
+export const WysiwygInput = ({ label, touched, invalid, error, variant, onChange, value, defaultValue, ...rest}) => {
 	const [inputValue, setInputValue] = useState(value? value : defaultValue);
 	return <WysiwygEditor 
 				label={label}
@@ -295,6 +299,7 @@ export const WysiwygInput = ({ label, touched, invalid, error, onChange, value, 
 					}
 				}}
 				value = {inputValue}
+				variant={variant? variant : "outlined"}
 				{...rest}
 			/>;
 }

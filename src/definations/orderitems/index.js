@@ -22,6 +22,7 @@ export default {
 	color: "#004038",
 	model: "OrderItem",
 	endpoint: "/retail/order-items",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",
@@ -252,9 +253,6 @@ export default {
 		},
 		view: {
 			summary: user => {
-				if (user) {
-					return true;
-				}
 				return false;
 			},
 			all: user => {

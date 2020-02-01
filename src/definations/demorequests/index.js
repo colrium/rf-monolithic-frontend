@@ -13,6 +13,7 @@ export default  {
 	color: "#541400",
 	model: 'DemoRequest',
 	endpoint: "/demo-requests",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

@@ -22,6 +22,7 @@ export default  {
 	color: "#001987",
 	model: 'Event',
 	endpoint: "/events",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

@@ -22,6 +22,7 @@ export default {
 	color: "#004038",
 	model: "Order",
 	endpoint: "/retail/orders",
+	cache: true,
 	views: {
 		single: {
 			default: "order",
@@ -165,46 +166,16 @@ export default {
 					}
 				}
 			},
-			items: {
-				type: ["string"],
-				label: "Items",
-				input: {
-					type: "multiselect",
-					default: "",
-					required: true
-				},
-				reference: {
-					name: "retailitems",
-					service_query: {},
-					resolves: {
-						value: "_id",
-						display: {
-							primary: ["name"],
-							secondary: ["sku"],
-							avatar: false
-						}
-					}
-				},
-				restricted: {
-					display: () => {
-						return true;
-					},
-					input: (values, user) => {
-						if (user) {
-							return user.isAdmin;
-						}
-						return true;
-					}
-				},
-			},
+			
 
 			notes: {
 				type: "string",
 				label: "Notes",
 				input: {
-					type: "text",
+					type: "textarea",
 					default: "",
-					required: true
+					required: false,
+
 				},
 			},
 
@@ -223,8 +194,12 @@ export default {
 				type: "string",
 				label: "Coupon",
 				input: {
-					type: "select",
-					default: "",
+					type: (values, user) => {
+						if (values) {
+							return values.apply_coupon ? "select" : "hidden";
+						}
+						return true;
+					},
 					required: false,
 					size: 8
 				},
@@ -232,9 +207,9 @@ export default {
 					display: () => {
 						return false;
 					},
-					input: values => {
+					input: (values, user) => {
 						if (values) {
-							return "apply_coupon" in values ? false : true;
+							return values.apply_coupon ? false : true;
 						}
 						return true;
 					}
@@ -345,6 +320,10 @@ export default {
 		],
 		dependants: {
 			fulfilments: {
+				column: "order",
+				query: {}
+			},
+			orderitems: {
 				column: "order",
 				query: {}
 			},

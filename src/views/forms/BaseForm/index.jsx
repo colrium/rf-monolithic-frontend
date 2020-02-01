@@ -159,9 +159,12 @@ class BaseForm extends React.Component {
 		
 		let field_values = {};
 		let initializeRedux = true;
-		if (form_state && JSON.isJSON(form_state.values)) {
-			field_values = form_state.values;
-			initializeRedux = false;
+		if (form_state) {
+			if (JSON.isJSON(form_state.values)) {
+				console.log("form_state.values", form_state.values);
+				field_values = form_state.values;
+				initializeRedux = false;
+			}				
 		} 
 		else if (JSON.isJSON(initialValues) && Object.size(initialValues) > 0) {
 			field_values = initialValues;
@@ -181,6 +184,9 @@ class BaseForm extends React.Component {
 						}				
 						else{
 							field_values[name] = properties.input.default;
+						}
+						if (!initializeRedux) {
+							initializeRedux = true;
 						}
 					}
 				}
@@ -742,6 +748,7 @@ class BaseForm extends React.Component {
 						required={field.input.required}
 						disabled={restricted}
 						options={this.state.value_possibilities[name]}
+						validate
 						{...inputProps}
 					/>
 				);
@@ -768,6 +775,7 @@ class BaseForm extends React.Component {
 						onChange={this.handleChange(name)}
 						options={this.state.value_possibilities[name]}
 						placeholder={"Select " + field.label.singularize()}
+						validate
 						{...inputProps}
 					/>
 				);
@@ -797,6 +805,7 @@ class BaseForm extends React.Component {
 						options={this.state.value_possibilities[name]}
 						placeholder={"Select " + field.label}
 						isMulti
+						validate
 						{...inputProps}
 					/>
 				);
@@ -814,6 +823,7 @@ class BaseForm extends React.Component {
 						defaultValue={value}
 						onChange={this.handleChange(name)}
 						value_options={this.state.value_possibilities[name]}
+						validate
 						{...inputProps}
 					/>
 				);
@@ -833,6 +843,7 @@ class BaseForm extends React.Component {
 					onChange={this.handleChange(name)}
 					required={field.input.required}
 					fullWidth
+					validate
 					{...inputProps}
 				/>
 			);
@@ -850,6 +861,7 @@ class BaseForm extends React.Component {
 					defaultValue={value}
 					required={field.input.required}
 					fullWidth
+					validate
 					{...inputProps}
 				/>
 			);
@@ -868,6 +880,7 @@ class BaseForm extends React.Component {
 					onChange={this.handleChange(name)}
 					required={field.input.required}
 					fullWidth
+					validate
 					{...inputProps}
 				/>
 			);
@@ -898,6 +911,7 @@ class BaseForm extends React.Component {
 					]}
 					required={field.input.required}
 					fullWidth
+					validate
 					{...inputProps}
 				/>
 			);
@@ -937,6 +951,7 @@ class BaseForm extends React.Component {
 					value={value}
 					onChange={this.handleChange(name)}
 					required={field.input.required}
+					validate
 					{...inputProps}
 				/>
 			);
@@ -952,6 +967,7 @@ class BaseForm extends React.Component {
 					label={field.label}
 					onChange={this.handleChange(name)}
 					required={field.input.required}
+					validate
 					{...inputProps}
 				/>
 			);
@@ -1022,6 +1038,7 @@ class BaseForm extends React.Component {
 						step={step_value}
 						defaultValue={default_value}
 						onChange={this.handleChange(name)}
+						validate
 						{...inputProps}
 					/>
 				);
@@ -1046,6 +1063,7 @@ class BaseForm extends React.Component {
 					value={value}
 					onChange={this.handleChange(name)}
 					required={field.input.required}
+					validate
 					{...inputProps}
 				/>
 			);
@@ -1059,6 +1077,7 @@ class BaseForm extends React.Component {
 					value={value}
 					onChange={this.handleChange(name)}
 					required={field.input.required}
+					validate
 					{...inputProps}
 				/>
 			);
@@ -1083,6 +1102,7 @@ class BaseForm extends React.Component {
 					disabled={restricted}
 					variant={text_fields_variant}
 					required={field.input.required}
+					validate
 					{...inputProps}
 				/>
 			);

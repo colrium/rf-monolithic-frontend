@@ -13,6 +13,7 @@ export default  {
 	color: "#541400",
 	model: 'ProposalRequest',
 	endpoint: "/quote-requests",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

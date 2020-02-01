@@ -8,6 +8,7 @@ import { builderIO } from "config";
 
 const NotFound = asyncComponent(() => import("views/pages/System/NotFound"));
 const Preferences = asyncComponent(() => import("views/pages/Dashboard/Preferences"));
+const Settings = asyncComponent(() => import("views/pages/Dashboard/Settings"));
 const RecordForm = asyncComponent(() => import("views/pages/Dashboard/RecordForm"));
 const RecordsListing = asyncComponent(() => import("views/pages/Dashboard/RecordsListing"));
 const RecordView = asyncComponent(() => import("views/pages/Dashboard/RecordView"));
@@ -47,6 +48,8 @@ export default class DashboardRoutes extends Component {
 
 				<Route path={"/account".toUriWithDashboardPrefix()} component={Account}  authRestrict />
 				<Route path={"/preferences".toUriWithDashboardPrefix()} component={Preferences}  authRestrict />
+				<Route path={"/settings".toUriWithDashboardPrefix()} component={Settings}  authRestrict />
+
 				<Route path={"/*".toUriWithDashboardPrefix()} component={NotFound}  />
 				
 			</Switch>

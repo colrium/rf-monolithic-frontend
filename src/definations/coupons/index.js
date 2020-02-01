@@ -13,6 +13,7 @@ export default  {
 	color: "#541400",
 	model: 'Coupon',
 	endpoint: "/coupons",
+	cache: false,
 	views: {
 		single: {
 			default: "cardview",

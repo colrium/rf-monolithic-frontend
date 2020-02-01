@@ -246,7 +246,15 @@ let theme = createMuiTheme({
 	appDrawer: {
 		width: app.drawer.width,
 	},
-	overrides: {		
+	overrides: {
+		MuiButtonBase: {
+			disableRipple: false, // No more ripple, on the whole application 💣!
+		},	
+		MuiInputBase: {
+			legend: {
+				display: 'inline-block',
+			},
+		},	
 		MuiFormControl: {
 			root: {
 				width: '100%',

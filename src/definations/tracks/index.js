@@ -19,6 +19,7 @@ export default  {
 	color: "#880e4f",
 	model: 'Track',
 	endpoint: "/tracks",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

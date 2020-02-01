@@ -15,7 +15,7 @@ import withRoot from "utils/withRoot";
 //
 import styles from "views/pages/styles";
 
-
+import { withPreferencesContext } from "contexts/Preferences";
 
 
 class Page extends React.Component {
@@ -35,14 +35,14 @@ class Page extends React.Component {
 	}
 
 	render() {
-		const { classes, auth, location } = this.props;
+		const { classes, auth, location, preferencesContext:{preferences} } = this.props;
 		let homepageSections = {
-			"quicklinks" : false,
-			"static_aggregates": true,
-			"static_map": true, 
-			"compact_aggregates": false, 
-			"compact_maps": false, 
-			"calendar": true,
+			"quicklinks" : preferences.dashboard["quicklinks"],
+			"static_aggregates": preferences.dashboard["static-aggregates"],
+			"static_map": preferences.dashboard["static-map"], 
+			"compact_aggregates": preferences.dashboard["compact-aggregates"], 
+			"compact_maps": preferences.dashboard["compact-maps"], 
+			"calendar": preferences.dashboard["calendar"],
 		}
 		return (
 			<GridContainer className={classes.root}>
@@ -62,7 +62,7 @@ class Page extends React.Component {
 					</GridContainer> }
 
 					{ (homepageSections.static_aggregates || homepageSections.static_map) && <GridContainer>
-						{ homepageSections.static_aggregates && <GridItem xs={12} sm={12} md={(auth.user.isCustomer || !homepageSections.static_map) ? 12 : 4} style={{maxHeight: 900, overflowX:"hidden", overflowY:"auto"}}>
+						{ homepageSections.static_aggregates && <GridItem xs={12} sm={12} md={!homepageSections.static_map ? 12 : 4} style={{maxHeight: 900, overflowX:"hidden", overflowY:"auto"}}>
 							<LazyModule 
 								resolve={() => import("views/widgets/Overview/AggregatesOverview")} 
 								placeholder={[
@@ -74,7 +74,7 @@ class Page extends React.Component {
 							/>
 							
 						</GridItem> }
-						{ !auth.user.isCustomer && homepageSections.static_map && <GridItem xs={12} sm={12} md={!homepageSections.static_aggregates ? 12 : 8}>
+						{homepageSections.static_map && <GridItem xs={12} sm={12} md={!homepageSections.static_aggregates ? 12 : 8}>
 							<LazyModule 
 								resolve={() => import("views/widgets/Overview/GoogleMapOverview")}
 								placeholderType="skeleton"
@@ -92,7 +92,7 @@ class Page extends React.Component {
 					
 
 					{ (homepageSections.compact_aggregates || homepageSections.compact_maps) &&  <GridContainer>
-						{homepageSections.compact_aggregates && <GridItem xs={12} sm={12} md={(auth.user.isCustomer || !homepageSections.compact_maps) ? 12 : 4}>
+						{homepageSections.compact_aggregates && <GridItem xs={12} sm={12} md={!homepageSections.compact_maps ? 12 : 4}>
 							<LazyModule 
 								resolve={() => import("views/widgets/Overview/CompactAggregatesOverview")} 
 								placeholder={[
@@ -105,7 +105,7 @@ class Page extends React.Component {
 							/>
 							
 						</GridItem>}
-						{ (!auth.user.isCustomer && homepageSections.compact_maps) && <GridItem xs={12} md={!homepageSections.compact_aggregates ? 12 : 8}>
+						{ homepageSections.compact_maps && <GridItem xs={12} md={!homepageSections.compact_aggregates ? 12 : 8}>
 							<LazyModule 
 								resolve={() => import("views/widgets/Overview/GoogleMapOverview")}
 								placeholderType="skeleton"
@@ -151,12 +151,4 @@ Page.propTypes = {
 	classes: PropTypes.object.isRequired
 };
 
-export default withRoot(
-	compose(
-		withStyles(styles),
-		connect(
-			mapStateToProps,
-			{ appendNavHistory }
-		)
-	)(Page)
-);
+export default withPreferencesContext( compose( withStyles(styles), connect(mapStateToProps, { appendNavHistory } ))(Page));

@@ -94,12 +94,13 @@ String.prototype.pluralize = function () {
 	return lodash.pluralize(target);
 };
 
-String.prototype.variablelize = function () {
+String.prototype.variablelize = function (connector="_") {
+	console.log("connector", connector);
 	var target = this;
 	target = target.replaceAll(/([A-Z])/g, ' $1');
 	target = target.trim();
 	target = target.replaceAll(/\s\s+/g, ' ');
-	target = target.replaceAll(' ', '_');
+	target = target.replaceAll(' ', connector);
 	return target.toLowerCase();
 };
 
@@ -111,6 +112,27 @@ String.prototype.humanize = function(){
 String.prototype.hasHTML = function(){
 	var target = this;
 	return /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/.test(target);
+}
+
+String.isUrl = function(target, protocol=true){
+	if (String.isString(target)) {
+		if (protocol) {
+			return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(target);
+		}
+		else {
+			return /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi.test(target);
+		}
+	}
+	return false;
+	
+}
+
+String.isEmpty = function(target){
+	if (String.isString(target)) {
+		return target.trim().length > 0? false : true;
+	}
+	return true;
+	
 }
 
 
@@ -411,6 +433,8 @@ Object.size = function(obj) {
 	return size;
 };
 
+
+
 Object.difference = function (a, b, comprehensive = true) {
 	var result = {
 		different: [],
@@ -532,6 +556,13 @@ Object.areEqual = function() {
 	return equal;
 };
 
+Object.isFunctionalComponent = Component => {
+	return Function.isFunction(Component) && !(Component.prototype && Component.prototype.render);
+};
+
+Object.isReactComponent = Component => {
+	return Component.prototype && Component.prototype.render;
+};
 	
 
 Date.prototype.format = function(format) {

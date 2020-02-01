@@ -29,6 +29,7 @@ class Corona extends React.Component {
 
 	render() {
 		const { nav, layout, setDashboardAppBarDisplayed, setDashboardDrawerDisplayed, setDashboardFooterDisplayed } = this.props;
+		
 		if (this.layout == "dashboard") {
 
 			setDashboardAppBarDisplayed(true);

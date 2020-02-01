@@ -17,6 +17,7 @@ export default  {
 	color: "#009688",
 	model: 'Application',
 	endpoint: "/recruitment/applications",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

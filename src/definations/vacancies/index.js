@@ -19,6 +19,7 @@ export default {
 	color: "#00bcd4",
 	model: "Vacancy",
 	endpoint: "/recruitment/vacancies",
+	cache: false,
 	views: {
 		single: {
 			default: "cardview",

@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
+import GridContainer from "components/Grid/GridContainer";
+import GridItem from "components/Grid/GridItem";
 import { Editor } from 'react-draft-wysiwyg';
 import { EditorState, convertFromHTML, ContentState, convertToRaw } from 'draft-js';
 import { stateToHTML } from "draft-js-export-html";
@@ -63,7 +65,7 @@ class IconAndPopoverComponent extends Component {
 		this.state.id = String.isString(config.title)? config.title.variablelize() : String.uid(8);
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		console.log("IconPopoverComponent this.props", props);
+		//console.log("IconPopoverComponent this.props", props);
 	}
 
 	handleOnPopoverOpen(event){
@@ -111,7 +113,7 @@ class BlockTypeComponent extends Component {
 		this.state.id = "block-type-options";
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		console.log("BlockTypeComponent this.props", props);
+		//console.log("BlockTypeComponent this.props", props);
 	}
 
 	handleOnPopoverOpen(event){
@@ -164,7 +166,7 @@ class FontFamilyComponent extends Component {
 		this.state.id = "font-family-option";
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		console.log("FontFamilyComponent this.props", props);
+		//console.log("FontFamilyComponent this.props", props);
 	}
 
 	handleOnPopoverOpen(event){
@@ -216,7 +218,7 @@ class FontSizeComponent extends Component {
 		this.state.id = "font-size-option";
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		console.log("FontSizeComponent this.props", props);
+		//console.log("FontSizeComponent this.props", props);
 	}
 
 	handleOnPopoverOpen(event){
@@ -267,7 +269,7 @@ class LinkAddComponent extends Component {
 		this.state.id = "link-option";
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		console.log("LinkAddComponent this.props", props);
+		//console.log("LinkAddComponent this.props", props);
 	}
 
 	handleOnPopoverOpen(event){
@@ -330,7 +332,7 @@ class WysiwygEditor extends React.Component {
 	let converted_value = value? value : defaultValue ;
 	//check if HTML
 	const isHTMLvalue = String.isString(converted_value) && /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/.test(converted_value);
-	if (isHTMLvalue) {
+	if (String.isString(converted_value)) {
 		const contentHTML = convertFromHTML(converted_value);
 		const contentState = ContentState.createFromBlockArray(contentHTML.contentBlocks);
 		this.state.contentState = contentState;
@@ -356,92 +358,98 @@ class WysiwygEditor extends React.Component {
 
 
   render() {
-  	const { editorState, className, variant } = this.state;
-  	let toolbarClassName = variant === "outlined" ? "inline-block border-gray-400 border-0 border-b" : "";
+  	const { editorState, className, variant, label } = this.state;
+  	let toolbarClassName = variant === "outlined" ? "inline-block border-gray-400 border-b" : "";
   	let wrapperClassName = variant === "outlined" ? "border-gray-400 border rounded" : "rounded-t py-4";
+  	let containerClassName = ((variant === "outlined" ? " border-2 border-gray-400 rounded p-0" : "rounded-t py-4")+className? (" "+className) : "");
   	let editorClassName = "px-2 md:py-4 ";
 	return (
-		<Editor
-			toolbarClassName={toolbarClassName}
-			wrapperClassName={wrapperClassName}
-			editorClassName={editorClassName}
-			defaultEditorState={editorState}
-			onEditorStateChange={this.onEditorStateChange}
-			onContentStateChange={this.onContentStateChange}
-			toolbar={{
-				blockType: {
-					component: BlockTypeComponent,
-					title: "Type",
-					className: 'demo-option-custom-wide', 
-					dropdownClassName: 'demo-dropdown-custom' 
-				},
-				fontSize: {
-					component: FontSizeComponent,
-					title: "Font Size",
-				},				
-				fontFamily: { 
-					component: FontFamilyComponent,
-					title: "Font family",
-				},
-				inline: {
-					component: IconsOnlyComponent,
-					className: 'inline-block',
-					bold: { icon: <BoldIcon />, className: 'demo-option-custom' },
-					italic: { icon: <ItalicIcon />, className: 'demo-option-custom' },
-					underline: { icon: <UnderlinedIcon />, className: 'demo-option-custom' },
-					strikethrough: { icon: <StrikethroughIcon />, className: 'demo-option-custom' },
-					monospace: { className: 'demo-option-custom' },
-					superscript: { icon: <SuperscriptIcon />, className: 'demo-option-custom' },
-					subscript: { icon: <SubscriptIcon />, className: 'demo-option-custom' },
-				},
-				list: {
-					component: IconsOnlyComponent,
-					className: 'inline-block',
-					unordered: { icon: <UnorderedListIcon />, className: 'demo-option-custom' },
-					ordered: { icon: <OrderedListIcon />, className: 'demo-option-custom' },
-					indent: { icon: <IndentIcon />, className: 'demo-option-custom' },
-					outdent: { icon: <OutdentIcon />, className: 'demo-option-custom' },
-				},
-				textAlign: {
-					component: IconsOnlyComponent,
-					className: 'inline-block',
-					left: { icon: <LeftAlignIcon />, className: 'demo-option-custom' },
-					center: { icon: <CenterAlignIcon />, className: 'demo-option-custom' },
-					right: { icon: <RightAlignIcon />, className: 'demo-option-custom' },
-					justify: { icon: <JustifyAlignIcon />, className: 'demo-option-custom' },
-				},
-				
-				colorPicker: { 
-					component: IconsOnlyComponent,					
-					className: 'demo-option-custom', 
-					popupClassName: 'demo-popup-custom' 
-				},
-				link: {
-					component: LinkAddComponent,
-					popupClassName: 'demo-popup-custom',
-					link: { icon: <InsertLinkIcon />},
-					unlink: { icon: <RemoveLinkIcon />},
-				},
-				emoji: {
-					component: IconsOnlyComponent, 
-					className: 'demo-option-custom', 
-					popupClassName: 'demo-popup-custom' 
-				},
-				embedded: { 
-					component: IconsOnlyComponent,
-					className: 'demo-option-custom', 
-					popupClassName: 'demo-popup-custom' 
-				},
-				image: { component: InsertPhotoIconComponent, className: 'demo-option-custom', popupClassName: 'demo-popup-custom' },
-				remove: { component: EraseIconComponent, className: 'demo-option-custom' },
-				history: {
-					component: IconsOnlyComponent,
-					undo: { icon: <UndoIcon />, className: 'demo-option-custom' },
-					redo: { icon: <RedoIcon />, className: 'demo-option-custom' },
-				},
-			}}
-			
-		/>
+		<GridContainer className={containerClassName}>
+			{ label && <GridItem xs={12} className="p-0 px-2"> <Typography variant="body1">{label}</Typography></GridItem> }
+			<GridItem xs={12} className="p-0">
+				<Editor
+					toolbarClassName={toolbarClassName}
+					wrapperClassName={wrapperClassName}
+					editorClassName={editorClassName}
+					defaultEditorState={editorState}
+					onEditorStateChange={this.onEditorStateChange}
+					onContentStateChange={this.onContentStateChange}
+					toolbar={{
+						blockType: {
+							component: BlockTypeComponent,
+							title: "Type",
+							className: 'demo-option-custom-wide', 
+							dropdownClassName: 'demo-dropdown-custom' 
+						},
+						fontSize: {
+							component: FontSizeComponent,
+							title: "Font Size",
+						},				
+						fontFamily: { 
+							component: FontFamilyComponent,
+							title: "Font family",
+						},
+						inline: {
+							component: IconsOnlyComponent,
+							className: 'inline-block',
+							bold: { icon: <BoldIcon />, className: 'demo-option-custom' },
+							italic: { icon: <ItalicIcon />, className: 'demo-option-custom' },
+							underline: { icon: <UnderlinedIcon />, className: 'demo-option-custom' },
+							strikethrough: { icon: <StrikethroughIcon />, className: 'demo-option-custom' },
+							monospace: { className: 'demo-option-custom' },
+							superscript: { icon: <SuperscriptIcon />, className: 'demo-option-custom' },
+							subscript: { icon: <SubscriptIcon />, className: 'demo-option-custom' },
+						},
+						list: {
+							component: IconsOnlyComponent,
+							className: 'inline-block',
+							unordered: { icon: <UnorderedListIcon />, className: 'demo-option-custom' },
+							ordered: { icon: <OrderedListIcon />, className: 'demo-option-custom' },
+							indent: { icon: <IndentIcon />, className: 'demo-option-custom' },
+							outdent: { icon: <OutdentIcon />, className: 'demo-option-custom' },
+						},
+						textAlign: {
+							component: IconsOnlyComponent,
+							className: 'inline-block',
+							left: { icon: <LeftAlignIcon />, className: 'demo-option-custom' },
+							center: { icon: <CenterAlignIcon />, className: 'demo-option-custom' },
+							right: { icon: <RightAlignIcon />, className: 'demo-option-custom' },
+							justify: { icon: <JustifyAlignIcon />, className: 'demo-option-custom' },
+						},
+						
+						colorPicker: { 
+							component: IconsOnlyComponent,					
+							className: 'demo-option-custom', 
+							popupClassName: 'demo-popup-custom' 
+						},
+						link: {
+							component: LinkAddComponent,
+							popupClassName: 'demo-popup-custom',
+							link: { icon: <InsertLinkIcon />},
+							unlink: { icon: <RemoveLinkIcon />},
+						},
+						emoji: {
+							component: IconsOnlyComponent, 
+							className: 'demo-option-custom', 
+							popupClassName: 'demo-popup-custom' 
+						},
+						embedded: { 
+							component: IconsOnlyComponent,
+							className: 'demo-option-custom', 
+							popupClassName: 'demo-popup-custom' 
+						},
+						image: { component: InsertPhotoIconComponent, className: 'demo-option-custom', popupClassName: 'demo-popup-custom' },
+						remove: { component: EraseIconComponent, className: 'demo-option-custom' },
+						history: {
+							component: IconsOnlyComponent,
+							undo: { icon: <UndoIcon />, className: 'demo-option-custom' },
+							redo: { icon: <RedoIcon />, className: 'demo-option-custom' },
+						},
+					}}
+					
+				/>
+			</GridItem>
+		</GridContainer>
 	);
   }
 }

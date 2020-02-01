@@ -13,6 +13,7 @@ export default  {
 	color: "#40003e",
 	model: 'RetailItem',
 	endpoint: "/retail/items",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

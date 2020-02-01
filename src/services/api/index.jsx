@@ -9,7 +9,8 @@ class ApiService{
 	service_uri = '';
 	useRedux = false;
 
-	constructor(){
+	constructor(service_uri=""){
+		this.service_uri = service_uri;
 		this.apiInstance = this.endpoint();
 	}
 	setAuthorizationToken(){
@@ -155,10 +156,10 @@ class ApiService{
 		});
 	}
 
-	async update(id, data) {
+	async update(id, data, params={}) {
 		let endpoint_uri = this.service_uri+'/'+id;
 		let that = this;
-		return await this.apiInstance.put(endpoint_uri, data).then(function (response) {
+		return await this.apiInstance.put(endpoint_uri, data, { params: params }).then(function (response) {
 			return {
 				err: false,
 				body: response.data,

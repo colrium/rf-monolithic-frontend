@@ -36,9 +36,13 @@ class LazyModule extends React.Component {
 	}
 
 	onViewportVisibilityChange(inViewPort) {
+		const { onVisible } = this.props
 		if (inViewPort && !this.state.module ) {
 			this.loadModule();
 			this.setState({ inViewPort: inViewPort });
+			if (Function.isFunction(onVisible)) {
+				onVisible();
+			}
 		}
 	}
 
@@ -61,6 +65,7 @@ LazyModule.propTypes = {
 	path: PropTypes.string,
 	placeholderType: PropTypes.string,
 	placeholder: PropTypes.oneOfType([PropTypes.node, PropTypes.object, PropTypes.array, PropTypes.string]),
+	onVisible: PropTypes.func,
 	offset: PropTypes.number,  
 };
 LazyModule.defaultProps = {

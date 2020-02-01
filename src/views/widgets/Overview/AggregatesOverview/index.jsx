@@ -18,7 +18,6 @@ import Color from 'color';
 import * as services from 'services';
 //
 import LazyModule from "components/LazyModule";
-import AggregatesPieChart from 'views/widgets/Charts/AggregatesPieChart';
 //
 import styles from './styles';
 
@@ -93,7 +92,13 @@ class Overview extends Component {
 						<GridItem xs={12} key={name+"-aggregates"}>
 							<Card elevation={0} className="rounded p-0" style={{background: "rgba("+this.backgroundColors[name]+", 0.2)"}}>
 								<CardContent className="p-0">
-									<AggregatesPieChart
+									<LazyModule 
+										resolve={() => import("views/widgets/Charts/AggregatesPieChart")} 
+										placeholder={[
+											{ variant: "rect", width: "30%", height: 50, className:"m-auto float-right"},
+											{ variant: "circle", width: 150, height: 150, className:"m-auto mt-4"},
+											{ variant: "text", width: "50%", className:"m-auto mt-4"},
+										]}
 										defination={defination} 
 										service={ services[name] } 
 										color={defination.color? defination.color: colors.hex.primary} 

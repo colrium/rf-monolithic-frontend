@@ -16,6 +16,7 @@ export default {
 	color: colors.hex.accent,
 	model: "SurveyQuery",
 	endpoint: "/queries",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",

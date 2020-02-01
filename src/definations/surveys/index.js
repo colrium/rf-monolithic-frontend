@@ -15,6 +15,7 @@ export default  {
 	color: colors.hex.primarydark,
 	model: 'Survey',
 	endpoint: "/surveys",
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",
