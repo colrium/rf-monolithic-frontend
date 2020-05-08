@@ -1,19 +1,24 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, EventOutlined as DefinationContextIcon, OpenInNewOutlined as OpenInNewIcon } from '@material-ui/icons';
-import Button from 'components/Button';
-import { formats } from 'config/data';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	EventOutlined as DefinationContextIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
+import { formats } from "config/data";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-
-
-
-export default  {
+export default {
 	name: "formvalues",
 	label: "Form Values",
 	icon: <DefinationContextIcon />,
 	color: "#001987",
-	model: 'FormValue',
+	model: "FormValue",
 	endpoint: "/forms-values",
 	cache: false,
 	views: {
@@ -21,17 +26,29 @@ export default  {
 			default: "cardview",
 			cardview: {
 				title: ["name"],
-				resolveData: (entry) => {
-
-				},
+				resolveData: entry => {},
 				subtitle: ["code"],
-				body: ["status", "customer", "expiration_date", "value_type", "value", "use"],
+				body: [
+					"status",
+					"customer",
+					"expiration_date",
+					"value_type",
+					"value",
+					"use",
+				],
 			},
 			calendarview: {
 				title: ["name"],
 				subtitle: ["code"],
-				body: ["status", "customer", "expiration_date", "value_type", "value", "use"],
-			}
+				body: [
+					"status",
+					"customer",
+					"expiration_date",
+					"value_type",
+					"value",
+					"use",
+				],
+			},
 		},
 		listing: {
 			default: "calendarview",
@@ -46,9 +63,8 @@ export default  {
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
-
 			start: {
 				type: "string",
 				label: "Start",
@@ -64,7 +80,9 @@ export default  {
 				label: "End",
 				input: {
 					type: "datetime",
-					default: new Date().addDays(1).format(formats.dateformats.datetime),
+					default: new Date()
+						.addDays(1)
+						.format(formats.dateformats.datetime),
 				},
 			},
 			title: {
@@ -76,15 +94,15 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {				
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 			description: {
@@ -104,8 +122,6 @@ export default  {
 					default: "",
 				},
 			},
-
-
 
 			context: {
 				type: "string",
@@ -135,13 +151,13 @@ export default  {
 				reference: {
 					name: "users",
 					service_query: { role: "collector" },
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 			},
@@ -156,13 +172,13 @@ export default  {
 				reference: {
 					name: "users",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 			},
@@ -172,18 +188,18 @@ export default  {
 				label: "Image",
 				input: {
 					type: "file",
-					accepts:['image/*'],
+					accepts: ["image/*"],
 				},
 				reference: {
 					name: "attachments",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["name"],
 							secondary: [],
 							avatar: false,
-						}							
+						},
 					},
 				},
 			},
@@ -197,18 +213,18 @@ export default  {
 				},
 				input: {
 					type: "file",
-					accepts:['image/*', 'video/*', 'audio/*', 'application/*'],
+					accepts: ["image/*", "video/*", "audio/*", "application/*"],
 				},
 				reference: {
 					name: "attachments",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["name"],
 							secondary: [],
 							avatar: false,
-						}							
+						},
 					},
 				},
 			},
@@ -233,10 +249,8 @@ export default  {
 					event: "Event",
 					task: "Task",
 					schedule: "Schedule",
-				}
+				},
 			},
-
-			
 
 			all_day: {
 				type: "boolean",
@@ -246,28 +260,27 @@ export default  {
 					default: true,
 				},
 			},
-
 		},
 		identity: {
 			primary: ["title"],
 			secondary: ["start"],
 			avatar: false,
-		},		
+		},
 		dependencies: [],
-		dependants: [],		
+		dependants: [],
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return false;
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return true;
 				}
@@ -282,106 +295,129 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("formvalues/view/"+id).toUriWithDashboardPrefix();
+				uri: id => {
+					return ("formvalues/view/" + id).toUriWithDashboardPrefix();
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "formvalues/view/"+id } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={"formvalues/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
-					return user? false : true;
+				restricted: user => {
+					return user ? false : true;
 				},
-				uri: ("formvalues/add").toUriWithDashboardPrefix(),
+				uri: "formvalues/add".toUriWithDashboardPrefix(),
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
-								<Link to={("formvalues/add/").toUriWithDashboardPrefix()} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Event
+						default: props => {
+							return (
+								<Link
+									to={"formvalues/add/".toUriWithDashboardPrefix()}
+									{...props}
+								>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Event
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("formvalues/edit/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return ("formvalues/edit/" + id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("formvalues/edit/"+id).toUriWithDashboardPrefix() } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={(
+										"formvalues/edit/" + id
+									).toUriWithDashboardPrefix()}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("formvalues/delete/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"formvalues/delete/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
-	},	
+		},
+	},
 };

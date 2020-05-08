@@ -1,11 +1,7 @@
+/** @format */
+
 // Material helpers
-import {
-	Avatar,
-	LinearProgress,
-	Typography,
-	withStyles
-} from "@material-ui/core";
-import { PersonOutlined as UserIcon } from "@material-ui/icons";
+import { LinearProgress, Typography, withStyles } from "@material-ui/core";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 // Shared components
@@ -18,10 +14,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 // Externals
 import compose from "recompose/compose";
-import { attachments as AttachmentsService } from "services";
 import AuthService from "services/auth";
 import { updateCurrentUser } from "state/actions/auth";
-import withRoot from "utils/withRoot";
+import {withErrorHandler} from "hoc/ErrorHandler";
 //
 import BaseForm from "views/forms/BaseForm";
 // Component styles
@@ -31,7 +26,7 @@ class AccountProfile extends Component {
 	state = {
 		avatar: false,
 		includedFields: ["avatar", "documents"],
-		formValues: null
+		formValues: null,
 	};
 
 	constructor(props) {
@@ -41,7 +36,7 @@ class AccountProfile extends Component {
 		if (auth.user.avatar) {
 			this.state.formValues = {
 				avatar: auth.user.avatar,
-				documents: auth.user.douments
+				documents: auth.user.douments,
 			};
 		}
 
@@ -57,8 +52,8 @@ class AccountProfile extends Component {
 						this.setState(state => ({
 							formValues: {
 								avatar: formValues.avatar,
-								documents: formValues.documents
-							}
+								documents: formValues.documents,
+							},
 						}));
 					}
 				}
@@ -89,9 +84,10 @@ class AccountProfile extends Component {
 		return (
 			<Portlet className={rootClassName}>
 				<PortletContent>
-					
 					<div className={classes.progressWrapper}>
-						<Typography variant="body1">Profile Completeness: 70%</Typography>
+						<Typography variant="body1">
+							Profile Completeness: 70%
+						</Typography>
 						<LinearProgress value={70} variant="determinate" />
 					</div>
 
@@ -119,15 +115,12 @@ class AccountProfile extends Component {
 }
 
 const mapStateToProps = state => ({
-	auth: state.auth
+	auth: state.auth,
 });
 
-export default withRoot(
+export default withErrorHandler(
 	compose(
 		withStyles(styles),
-		connect(
-			mapStateToProps,
-			{ updateCurrentUser }
-		)
+		connect(mapStateToProps, { updateCurrentUser })
 	)(AccountProfile)
 );

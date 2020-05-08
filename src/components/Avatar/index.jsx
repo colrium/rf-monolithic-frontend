@@ -1,20 +1,29 @@
+/** @format */
+
 import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import withRoot from "utils/withRoot";
+import withRoot from "hoc/withRoot";
 
-function CustomAvatar({ classes, className, color, textColor, children, ...rest }) {
+function CustomAvatar({
+	classes,
+	className,
+	color,
+	textColor,
+	children,
+	...rest
+}) {
 	const avatarClasses = classNames({
-		[className]: className
+		[className]: className,
 	});
 	return (
 		<Avatar
 			className={avatarClasses}
 			style={{
 				backgroundColor: color + " !important",
-				color: textColor + " !important"
+				color: textColor + " !important",
 			}}
 			{...rest}
 		>
@@ -23,10 +32,9 @@ function CustomAvatar({ classes, className, color, textColor, children, ...rest 
 	);
 }
 
-
 CustomAvatar.defaultProps = {
 	color: colors.hex.primary,
-	textColor: colors.hex.inverse
+	textColor: colors.hex.inverse,
 };
 
 export default withRoot(CustomAvatar);

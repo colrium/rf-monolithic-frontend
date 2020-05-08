@@ -1,6 +1,17 @@
-/* eslint-disable react/display-name */
+/**
+ * /* eslint-disable react/display-name
+ *
+ * @format
+ */
+
 import { IconButton } from "@material-ui/core";
-import { Add as AddIcon, AttachMoneyOutlined as DefinationContextIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon } from "@material-ui/icons";
+import {
+	Add as AddIcon,
+	AttachMoneyOutlined as DefinationContextIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -16,13 +27,12 @@ export default {
 	views: {
 		single: {
 			default: "cardview",
-			cardview: {}
+			cardview: {},
 		},
 		listing: {
 			default: "tableview",
 			tableview: {},
-			
-		}
+		},
 	},
 	scope: {
 		columns: {
@@ -31,7 +41,7 @@ export default {
 				label: "Name",
 				input: {
 					type: "text",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -42,7 +52,7 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 			},
 			symbol: {
@@ -62,7 +72,7 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 			},
 			html_symbol: {
@@ -82,7 +92,7 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 			},
 			exchange_rate: {
@@ -91,7 +101,7 @@ export default {
 				input: {
 					type: "number",
 					default: 1,
-					required: true,					
+					required: true,
 					size: 6,
 				},
 				restricted: {
@@ -103,7 +113,7 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 			},
 			exchange_rate_date: {
@@ -123,7 +133,7 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 			},
 			active: {
@@ -142,17 +152,17 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
-			}
+			},
 		},
 		identity: {
 			primary: ["symbol"],
 			secondary: ["html_symbol"],
-			avatar: false
+			avatar: false,
 		},
 		dependencies: [],
-		dependants: []
+		dependants: [],
 	},
 	access: {
 		restricted: user => {
@@ -162,10 +172,10 @@ export default {
 			return true;
 		},
 		view: {
-			summary: (user) => {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return user.isAdmin;
 				}
@@ -194,18 +204,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={"currencies/view/" + id} className={className}>
-									<IconButton color="inherit" aria-label="edit">
+								<Link
+									to={"currencies/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			create: {
 				restricted: user => {
@@ -220,17 +236,22 @@ export default {
 						default: props => {
 							return (
 								<Link to={"currencies/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left" /> New Currency
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Currency
 									</Button>
 								</Link>
 							);
 						},
 						listing: () => {
 							return "";
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			update: {
 				restricted: user => {
@@ -244,21 +265,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
 								<Link
 									to={"currencies/edit/" + id}
 									className={className ? className : ""}
 								>
-									<IconButton color="inherit" aria-label="edit">
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			delete: {
 				restricted: user => {
@@ -272,7 +296,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton
@@ -284,10 +308,10 @@ export default {
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							);
-						}
-					}
-				}
-			}
-		}
-	}
+						},
+					},
+				},
+			},
+		},
+	},
 };

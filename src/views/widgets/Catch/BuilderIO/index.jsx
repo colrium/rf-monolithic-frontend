@@ -1,21 +1,21 @@
+/** @format */
+
+import { builder, BuilderComponent } from "@builder.io/react";
+import withStyles from "@material-ui/core/styles/withStyles";
+import ProgressIndicator from "components/ProgressIndicator";
+import { builderIO } from "config";
+import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import PropTypes from "prop-types";
-import { builder, BuilderComponent } from '@builder.io/react'
-
-
-import withStyles from "@material-ui/core/styles/withStyles";
-
-import { builderIO } from "config";
-
-import withRoot from "utils/withRoot";
-import ProgressIndicator from "components/ProgressIndicator";
+import { withErrorHandler } from "hoc/ErrorHandler";
 import NotFound from "views/widgets/Catch/NotFound";
 import styles from "./styles";
 
 
-const BuilderIO = (props) => {
+
+
+const BuilderIO = props => {
 	const { apiKey, name, className } = props;
 	builder.init(apiKey);
 	const [notFound, setNotFound] = useState(false);
@@ -31,8 +31,10 @@ const BuilderIO = (props) => {
 		>
 			<ProgressIndicator />
 		</BuilderComponent>
-	) : (<NotFound />);
-}
+	) : (
+		<NotFound />
+	);
+};
 /* class BuilderIO extends React.Component {
 	state = { notFound: false };
 
@@ -66,7 +68,9 @@ BuilderIO.propTypes = {
 };
 
 const mapStateToProps = state => ({
-	auth: state.auth
+	auth: state.auth,
 });
 
-export default withRoot(compose(withStyles(styles), connect(mapStateToProps, {}))(BuilderIO));
+export default withErrorHandler(
+	compose(withStyles(styles), connect(mapStateToProps, {}))(BuilderIO)
+);

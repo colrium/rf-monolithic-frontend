@@ -1,4 +1,6 @@
-const error = ({ dispatch, getState }) => next => (action) => {
+/** @format */
+
+const error = ({ dispatch, getState }) => next => action => {
 	try {
 		next(action);
 	} catch (e) {

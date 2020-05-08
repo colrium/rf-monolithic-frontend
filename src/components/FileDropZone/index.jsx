@@ -1,8 +1,10 @@
+/** @format */
+
 import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { withStyles } from "@material-ui/core/styles";
 import { CloudUploadOutlined as CloudUploadIcon } from "@material-ui/icons";
-import Icon from '@material-ui/core/Icon';
+import Icon from "@material-ui/core/Icon";
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import PreviewList from "components/FileDropZone/PreviewList";
@@ -14,8 +16,8 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Dropzone from "react-dropzone";
 import { attachments as AttachmentsService } from "services";
-import { UtilitiesHelper } from "utils/Helpers";
-import withRoot from "utils/withRoot";
+import { UtilitiesHelper } from "hoc/Helpers";
+import withRoot from "hoc/withRoot";
 import styles from "./styles";
 
 function setNativeValue(element, value) {
@@ -37,7 +39,7 @@ class FileDropZone extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			fileObjects: []
+			fileObjects: [],
 		};
 		this.handleRemove = this.handleRemove.bind(this);
 	}
@@ -45,7 +47,10 @@ class FileDropZone extends Component {
 	getSnapshotBeforeUpdate(prevProps) {
 		return {
 			reloadRequired: !Object.areEqual(prevProps, this.props),
-			reloadValueRequired: !Object.areEqual(prevProps.value, this.props.value)
+			reloadValueRequired: !Object.areEqual(
+				prevProps.value,
+				this.props.value
+			),
 		};
 	}
 
@@ -68,7 +73,7 @@ class FileDropZone extends Component {
 			activeColor,
 			error,
 			helperText,
-			filesLimit
+			filesLimit,
 		} = this.props;
 
 		let isMultiple = filesLimit > 1;
@@ -87,12 +92,12 @@ class FileDropZone extends Component {
 				...prevState,
 				dropzoneText: dropzoneText,
 				label: label,
-				value: new_value ? new_value : (isMultiple? [] : null),
+				value: new_value ? new_value : isMultiple ? [] : null,
 				isMultiple: isMultiple,
 				helperText: helperText,
 				error: error,
 				defaultColor: defaultColor,
-				activeColor: activeColor
+				activeColor: activeColor,
 			},
 			() => {
 				this.getAttachments();
@@ -111,50 +116,52 @@ class FileDropZone extends Component {
 			}
 			let newFileObjects = [];
 			if (Array.isArray(this.state.fileObjects)) {
-				newFileObjects = this.state.fileObjects.map((fileObject, index) => {
-					if (fileObject.attachment) {
-						if (fileObject.progress) {
-							return fileObject;
-						} else if (
-							fileObject.attachment._id != undefined &&
-							attachments.includes(fileObject.attachment._id)
-						) {
-							attachments.removeItem(fileObject.attachment._id);
+				newFileObjects = this.state.fileObjects.map(
+					(fileObject, index) => {
+						if (fileObject.attachment) {
+							if (fileObject.progress) {
+								return fileObject;
+							} else if (
+								fileObject.attachment._id != undefined &&
+								attachments.includes(fileObject.attachment._id)
+							) {
+								attachments.removeItem(
+									fileObject.attachment._id
+								);
+								return fileObject;
+							}
+						} else if (fileObject.progress) {
 							return fileObject;
 						}
-					} else if (fileObject.progress) {
-						return fileObject;
 					}
-				});
+				);
 			}
 			if (Array.isArray(attachments)) {
 				for (var i = 0; i < attachments.length; i++) {
 					const attachment = attachments[i];
 					if (String.isString(attachments[i])) {
-						
-						AttachmentsService.getRecordById(attachments[i], { p: 1 })
-							.then(res => {
+						AttachmentsService.getRecordById(attachments[i], { p: 1, }).then(res => {
 								newFileObjects = newFileObjects.concat([
-									{ attachment: res.body.data }
+									{ attachment: res.body.data },
 								]);
-								this.setState(state => ({ fileObjects: newFileObjects }));
-							})
-							.catch(e => {
+								this.setState(state => ({
+									fileObjects: newFileObjects,
+								}));
+						}).catch(e => {
 								let new_value = null;
 								if (this.state.isMultiple) {
 									new_value = [];
 									if (Array.isArray(attachments)) {
-										new_value = attachments.filter(function(entry){
+										new_value = attachments.filter(function(entry) {
 											return attachment !== entry;
 										});
-									}
-									else{
+									} else {
 										new_value = [];
 									}
 								}
-								
-								this.setState({ fileObjects: newFileObjects, value: new_value }, () => this.triggerOnChange(new_value));
-							});
+
+								this.setState({ fileObjects: newFileObjects, value: new_value, }, () => this.triggerOnChange(new_value));
+						});
 					}
 				}
 			}
@@ -170,11 +177,14 @@ class FileDropZone extends Component {
 
 	onDrop(files) {
 		const _this = this;
-		if (this.state.fileObjects.length + files.length > this.props.filesLimit) {
+		if (
+			this.state.fileObjects.length + files.length >
+			this.props.filesLimit
+		) {
 			this.setState({
 				openSnackBar: true,
 				snackbarMessage: `Maximum allowed number of files exceeded. Only ${this.props.filesLimit} allowed`,
-				snackbarColor: "error"
+				snackbarColor: "error",
 			});
 		} else {
 			var count = 0;
@@ -199,10 +209,14 @@ class FileDropZone extends Component {
 						let fileObject = {
 							file: file,
 							data: event.target.result,
-							progress: _this.props.upload ? true : false
+							progress: _this.props.upload ? true : false,
 						};
 						_this.setState(
-							{ fileObjects: prevFileObjects.concat([fileObject]) },
+							{
+								fileObjects: prevFileObjects.concat([
+									fileObject,
+								]),
+							},
 							() => {
 								if (this.props.onDrop) {
 									this.props.onDrop(file);
@@ -216,13 +230,21 @@ class FileDropZone extends Component {
 
 									if (_this.props.uploadData) {
 										if (
-											UtilitiesHelper.isOfType(_this.props.uploadData, "object")
+											UtilitiesHelper.isOfType(
+												_this.props.uploadData,
+												"object"
+											)
 										) {
 											for (let [
 												upload_data_key,
-												upload_data_value
-											] of Object.entries(_this.props.uploadData)) {
-												upload_data.append(upload_data_key, upload_data_value);
+												upload_data_value,
+											] of Object.entries(
+												_this.props.uploadData
+											)) {
+												upload_data.append(
+													upload_data_key,
+													upload_data_value
+												);
 											}
 										}
 									}
@@ -231,38 +253,77 @@ class FileDropZone extends Component {
 
 									AttachmentsService.upload(upload_data, {})
 										.then(upload_res => {
-											let fileObjects = _this.state.fileObjects;
-											let fileObjectIndex = fileObjects.indexOf(fileObject);
+											let fileObjects =
+												_this.state.fileObjects;
+											let fileObjectIndex = fileObjects.indexOf(
+												fileObject
+											);
 											if (fileObjectIndex !== -1) {
-												fileObjects[fileObjectIndex].progress = false;
-												fileObjects[fileObjectIndex].attachment =
+												fileObjects[
+													fileObjectIndex
+												].progress = false;
+												fileObjects[
+													fileObjectIndex
+												].attachment =
 													upload_res.body.data;
 												fileObjects = fileObjects;
 
-												_this.setState(state => ({ fileObjects: fileObjects }));
+												_this.setState(state => ({
+													fileObjects: fileObjects,
+												}));
 
 												if (this.state.isMultiple) {
 													let value_arr = [];
-													if (Array.isArray(fileObjects)) {
-														for (let j = 0; j < fileObjects.length; j++) {
-															if (fileObjects[j].attachment) {
-																value_arr.push(fileObjects[j].attachment._id);
+													if (
+														Array.isArray(
+															fileObjects
+														)
+													) {
+														for (
+															let j = 0;
+															j <
+															fileObjects.length;
+															j++
+														) {
+															if (
+																fileObjects[j]
+																	.attachment
+															) {
+																value_arr.push(
+																	fileObjects[
+																		j
+																	].attachment
+																		._id
+																);
 															}
 														}
 													}
-													_this.setState({ value: value_arr });
+													_this.setState({
+														value: value_arr,
+													});
 													if (this.props.onChange) {
-														this.props.onChange(value_arr);
+														this.props.onChange(
+															value_arr
+														);
 													}
 												} else {
-													_this.setState({ value: upload_res.body.data._id });
+													_this.setState({
+														value:
+															upload_res.body.data
+																._id,
+													});
 													if (this.props.onChange) {
-														this.props.onChange(upload_res.body.data._id);
+														this.props.onChange(
+															upload_res.body.data
+																._id
+														);
 													}
 												}
 
 												message +=
-													(message.length > 0 ? "<br />" : "") +
+													(message.length > 0
+														? "<br />"
+														: "") +
 													`File ${file.name} successfully uploaded. `;
 												count++; // we cannot rely on the index because this is asynchronous
 												if (count === files.length) {
@@ -270,7 +331,8 @@ class FileDropZone extends Component {
 													this.setState({
 														openSnackBar: true,
 														snackbarMessage: message,
-														snackbarColor: "inverse"
+														snackbarColor:
+															"inverse",
 													});
 												}
 											}
@@ -286,13 +348,15 @@ class FileDropZone extends Component {
 												),
 												openSnackBar: true,
 												snackbarMessage: `File ${file.name} upload failed. `,
-												snackbarColor: "error"
+												snackbarColor: "error",
 											}));
 										});
 								} else {
 									if (this.props.onChange) {
 										this.props.onChange(
-											_this.state.fileObjects.map(fileObject => fileObject.file)
+											_this.state.fileObjects.map(
+												fileObject => fileObject.file
+											)
 										);
 									}
 									message += `File ${file.name} successfully added. `;
@@ -302,7 +366,7 @@ class FileDropZone extends Component {
 										this.setState({
 											openSnackBar: true,
 											snackbarMessage: message,
-											snackbarColor: "inverse"
+											snackbarColor: "inverse",
 										});
 									}
 								}
@@ -338,24 +402,29 @@ class FileDropZone extends Component {
 							newfileObjects = [];
 						}
 						if (this.state.isMultiple) {
-							newValue = this.state.value.removeAtIndex(fileIndex);
+							newValue = this.state.value.removeAtIndex(
+								fileIndex
+							);
 							if (!Array.isArray(newValue)) {
 								newValue = [];
 							}
-						}
-						else{
+						} else {
 							newValue = null;
 						}
-					} 
-					
+					}
+
 					this.triggerOnChange(newValue);
-					
+
 					this.setState({
-						fileObjects: newfileObjects, 
-						value: newValue, 
+						fileObjects: newfileObjects,
+						value: newValue,
 						openSnackBar: true,
-						snackbarMessage: "Attached file " + fileObject.attachment.name + " deleted",
-						snackbarColor: "info" });
+						snackbarMessage:
+							"Attached file " +
+							fileObject.attachment.name +
+							" deleted",
+						snackbarColor: "info",
+					});
 				})
 				.catch(err => {
 					console.log("err", err);
@@ -407,8 +476,9 @@ class FileDropZone extends Component {
 				}
 				this.setState({
 					openSnackBar: true,
-					snackbarMessage: "File " + fileObject.file.name + " removed",
-					snackbarColor: "inverse"
+					snackbarMessage:
+						"File " + fileObject.file.name + " removed",
+					snackbarColor: "inverse",
 				});
 			});
 		}
@@ -424,7 +494,9 @@ class FileDropZone extends Component {
 			if (rejectedFile.size > this.props.maxFileSize) {
 				message +=
 					"File is too big. Size limit is " +
-					UtilitiesHelper.convertBytesToMbsOrKbs(this.props.maxFileSize) +
+					UtilitiesHelper.convertBytesToMbsOrKbs(
+						this.props.maxFileSize
+					) +
 					". ";
 			}
 		});
@@ -434,116 +506,188 @@ class FileDropZone extends Component {
 		this.setState({
 			openSnackBar: true,
 			snackbarMessage: message,
-			snackbarColor: "error"
+			snackbarColor: "error",
 		});
 	}
 	onCloseSnackbar = () => {
 		this.setState({
-			openSnackBar: false
+			openSnackBar: false,
 		});
 	};
 	render() {
-		const { classes, className, readOnly, disabled, dropzoneIcon } = this.props;
-		const showPreviews = this.props.showPreviews && this.state.fileObjects.length > 0;
-		const showPreviewsInDropzone = this.props.showPreviewsInDropzone && this.state.fileObjects.length > 0;
-		const showDragDrop = Array.isArray(this.state.value)? (this.state.value.length < this.props.filesLimit) : (this.props.filesLimit === 1 && (( String.isString(this.state.value) ? this.state.value.trim().length > 0 : false ) || JSON.isJSON(this.state.value)) ? false : true) ;
+		const {
+			classes,
+			className,
+			readOnly,
+			disabled,
+			dropzoneIcon,
+		} = this.props;
+		const showPreviews =
+			this.props.showPreviews && this.state.fileObjects.length > 0;
+		const showPreviewsInDropzone =
+			this.props.showPreviewsInDropzone &&
+			this.state.fileObjects.length > 0;
+		const showDragDrop = Array.isArray(this.state.value)
+			? this.state.value.length < this.props.filesLimit
+			: this.props.filesLimit === 1 &&
+			  ((String.isString(this.state.value)
+					? this.state.value.trim().length > 0
+					: false) ||
+					JSON.isJSON(this.state.value))
+			? false
+			: true;
 		return (
 			<Box>
-				{!showDragDrop && this.state.label && <GridContainer className={classes.labelContainer}>
-					<Typography
-						variant="body1"
-						color={this.props.defaultColor }
+				{!showDragDrop && this.state.label && (
+					<GridContainer className={classes.labelContainer}>
+						<Typography
+							variant="body1"
+							color={this.props.defaultColor}
+						>
+							{this.state.label +
+								(this.props.required ? "*" : "")}
+						</Typography>
+					</GridContainer>
+				)}
+				{showDragDrop && (
+					<Dropzone
+						accept={this.props.acceptedFiles.join(",")}
+						onDrop={this.onDrop.bind(this)}
+						onDropRejected={this.handleDropRejected.bind(this)}
+						acceptClassName={classes.stripes}
+						rejectClassName={classes.rejectStripes}
+						maxSize={this.props.maxFileSize}
 					>
-						{this.state.label + (this.props.required? "*" : "")}
-					</Typography>
-				</GridContainer>}
-				{showDragDrop && <Dropzone
-					accept={this.props.acceptedFiles.join(",")}
-					onDrop={this.onDrop.bind(this)}
-					onDropRejected={this.handleDropRejected.bind(this)}
-					acceptClassName={classes.stripes}
-					rejectClassName={classes.rejectStripes}
-					maxSize={this.props.maxFileSize}
-				>
-					{({ getRootProps, getInputProps, isDragActive, inputRef }) => {
-						//let { getRootProps, getInputProps, isDragActive, inputRef } = dropZoneParams
-						this.fileInputElement = inputRef.current;
-						return (
-							<GridContainer className={classes.dropZoneContainer}>
-								{ this.state.label &&  <GridContainer className={classes.labelContainer}>
-										<Typography
-											variant="body1"
-											color={
-												isDragActive
-													? this.props.activeColor
-													: this.props.defaultColor
-											}
-										>
-										{this.state.label + (this.props.required ? "*" : "")}
-										</Typography>
-									</GridContainer> }
-
-								<div
-									{...getRootProps()}
-									className={classes.dropZone}
-									style={{
-										border:
-											"1px " +
-											(isDragActive
-												? "solid " + colors.hex[this.state.activeColor]
-												: "dashed " + colors.hex[this.state.defaultColor])
-									}}
+						{({
+							getRootProps,
+							getInputProps,
+							isDragActive,
+							inputRef,
+						}) => {
+							//let { getRootProps, getInputProps, isDragActive, inputRef } = dropZoneParams
+							this.fileInputElement = inputRef.current;
+							return (
+								<GridContainer
+									className={classes.dropZoneContainer}
 								>
-									<GridContainer
-										direction="row"
-										justify="center"
-										alignItems="center"
-										className={classes.dropZoneInner}
-									>
-										<GridItem xs={12}>
-											<GridContainer
-												direction="column"
-												justify="center"
-												alignItems="center"
+									{this.state.label && (
+										<GridContainer
+											className={classes.labelContainer}
+										>
+											<Typography
+												variant="body1"
+												color={
+													isDragActive
+														? this.props.activeColor
+														: this.props
+																.defaultColor
+												}
 											>
-												{ !readOnly && !disabled &&  <input {...getInputProps()} /> }
-												<GridContainer className={classes.dropzoneTextStyle}>
-													<Typography
-														className={classes.uploadIcon}
-														color={
-															isDragActive
-																? this.state.activeColor
-																: this.state.defaultColor
-														}
-														fullWidth
-														center
-														paragraph
-													>
-														{String.isString(dropzoneIcon) && <Icon>{ dropzoneIcon }</Icon> }
-														{ React.isValidElement(dropzoneIcon) && dropzoneIcon } 
-													</Typography>
+												{this.state.label +
+													(this.props.required
+														? "*"
+														: "")}
+											</Typography>
+										</GridContainer>
+									)}
 
-													<Typography
-														variant="body2"
-														color={
-															isDragActive
-																? this.state.activeColor
-																: this.state.defaultColor
+									<div
+										{...getRootProps()}
+										className={classes.dropZone}
+										style={{
+											border:
+												"1px " +
+												(isDragActive
+													? "solid " +
+													  colors.hex[
+															this.state
+																.activeColor
+													  ]
+													: "dashed " +
+													  colors.hex[
+															this.state
+																.defaultColor
+													  ]),
+										}}
+									>
+										<GridContainer
+											direction="row"
+											justify="center"
+											alignItems="center"
+											className={classes.dropZoneInner}
+										>
+											<GridItem xs={12}>
+												<GridContainer
+													direction="column"
+													justify="center"
+													alignItems="center"
+												>
+													{!readOnly && !disabled && (
+														<input
+															{...getInputProps()}
+														/>
+													)}
+													<GridContainer
+														className={
+															classes.dropzoneTextStyle
 														}
-														className={classNames(
-															classes.dropzoneParagraph,
-															this.props.dropzoneParagraphClass
-														)}
-														fullWidth
-														center
-														paragraph
 													>
-														{this.props.dropzoneText}
-													</Typography>
+														<Typography
+															className={
+																classes.uploadIcon
+															}
+															color={
+																isDragActive
+																	? this.state
+																			.activeColor
+																	: this.state
+																			.defaultColor
+															}
+															fullWidth
+															center
+															paragraph
+														>
+															{String.isString(
+																dropzoneIcon
+															) && (
+																<Icon>
+																	{
+																		dropzoneIcon
+																	}
+																</Icon>
+															)}
+															{React.isValidElement(
+																dropzoneIcon
+															) && dropzoneIcon}
+														</Typography>
+
+														<Typography
+															variant="body2"
+															color={
+																isDragActive
+																	? this.state
+																			.activeColor
+																	: this.state
+																			.defaultColor
+															}
+															className={classNames(
+																classes.dropzoneParagraph,
+																this.props
+																	.dropzoneParagraphClass
+															)}
+															fullWidth
+															center
+															paragraph
+														>
+															{
+																this.props
+																	.dropzoneText
+															}
+														</Typography>
+													</GridContainer>
 												</GridContainer>
-											</GridContainer>
 
-											{/* <GridContainer>
+												{/* <GridContainer>
 													{showPreviewsInDropzone && (
 														<PreviewList
 															fileObjects={this.state.fileObjects}
@@ -553,41 +697,46 @@ class FileDropZone extends Component {
 														/>
 													)}
 												</GridContainer> */}
-											
-										</GridItem>
-									</GridContainer>
-								</div>
+											</GridItem>
+										</GridContainer>
+									</div>
 
-								{this.props.helperText && (
-									<GridContainer>
-										<Typography
-											variant="body2"
-											color={ this.props.error ? "error" : this.props.defaultColor }
-										>
-											{this.props.helperText}
-										</Typography>
-									</GridContainer>
-								)}
-							</GridContainer>
-						);
-					}}
-				</Dropzone> }
+									{this.props.helperText && (
+										<GridContainer>
+											<Typography
+												variant="body2"
+												color={
+													this.props.error
+														? "error"
+														: this.props
+																.defaultColor
+												}
+											>
+												{this.props.helperText}
+											</Typography>
+										</GridContainer>
+									)}
+								</GridContainer>
+							);
+						}}
+					</Dropzone>
+				)}
 				{showPreviews && !disabled && (
 					<GridContainer className="p-0">
-							<PreviewList
-								className="p-0"
-								fileObjects={this.state.fileObjects}
-								handleRemove={this.handleRemove}
-								showFileNames={this.props.showFileNamesInPreview}
-								title={this.props.label}
-							/>
+						<PreviewList
+							className="p-0"
+							fileObjects={this.state.fileObjects}
+							handleRemove={this.handleRemove}
+							showFileNames={this.props.showFileNamesInPreview}
+							title={this.props.label}
+						/>
 					</GridContainer>
 				)}
 				{this.props.showAlerts && (
 					<Snackbar
 						anchorOrigin={{
 							vertical: "bottom",
-							horizontal: "right"
+							horizontal: "right",
 						}}
 						open={this.state.openSnackBar}
 						autoHideDuration={6000}
@@ -623,10 +772,10 @@ FileDropZone.defaultProps = {
 	defaultColor: "grey",
 	activeColor: "primarydark",
 	clearOnUnmount: true,
-	onChange: () => { },
-	onDrop: () => { },
-	onDropRejected: () => { },
-	onDelete: () => { }
+	onChange: () => {},
+	onDrop: () => {},
+	onDropRejected: () => {},
+	onDelete: () => {},
 };
 FileDropZone.propTypes = {
 	classes: PropTypes.object.isRequired,
@@ -657,6 +806,6 @@ FileDropZone.propTypes = {
 	onChange: PropTypes.func,
 	onDrop: PropTypes.func,
 	onDropRejected: PropTypes.func,
-	onDelete: PropTypes.func
+	onDelete: PropTypes.func,
 };
 export default withRoot(withStyles(styles)(FileDropZone));

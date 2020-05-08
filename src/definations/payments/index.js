@@ -1,6 +1,17 @@
-/* eslint-disable react/display-name */
+/**
+ * /* eslint-disable react/display-name
+ *
+ * @format
+ */
+
 import { IconButton } from "@material-ui/core";
-import { Add as AddIcon, AttachMoneyOutlined as DefinationContextIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon } from "@material-ui/icons";
+import {
+	Add as AddIcon,
+	AttachMoneyOutlined as DefinationContextIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -20,27 +31,33 @@ export default {
 				title: ["currency", "amount"],
 				subtitle: ["reference"],
 				tags: ["context", "method", "status"],
-				body: ["invoice", "order", "account_type", "account", "date_made"]
-			}
+				body: [
+					"invoice",
+					"order",
+					"account_type",
+					"account",
+					"date_made",
+				],
+			},
 		},
 		listing: {
 			default: "tableview",
 			listview: {
 				avatar: false,
 				primary: ["currency", "amount"],
-				secondary: ["context", "method", "date_made"]
+				secondary: ["context", "method", "date_made"],
 			},
 			tableview: {
 				avatar: false,
-				title: ["currency", "amount"]
+				title: ["currency", "amount"],
 			},
 			calendarview: {
 				type: "date",
 				date: ["date_made"],
 				title: ["currency", "amount"],
-				tags: ["context", "method", "status"]
-			}
-		}
+				tags: ["context", "method", "status"],
+			},
+		},
 	},
 	scope: {
 		columns: {
@@ -50,7 +67,7 @@ export default {
 				input: {
 					type: "radio",
 					default: "order",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -61,12 +78,12 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 				possibilities: {
 					order: "Order",
-					invoice: "Invoice",					
-				}
+					invoice: "Invoice",
+				},
 			},
 			invoice: {
 				type: "string",
@@ -78,7 +95,7 @@ export default {
 							return values.context === "invoice";
 						}
 						return false;
-					}
+					},
 				},
 
 				reference: {
@@ -89,9 +106,9 @@ export default {
 						display: {
 							primary: ["reference"],
 							secondary: ["status"],
-							avatar: false
-						}
-					}
+							avatar: false,
+						},
+					},
 				},
 				restricted: {
 					display: (values, user) => {
@@ -106,8 +123,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			order: {
 				type: "string",
@@ -119,7 +136,7 @@ export default {
 							return values.context === "order";
 						}
 						return false;
-					}
+					},
 				},
 
 				reference: {
@@ -130,9 +147,9 @@ export default {
 						display: {
 							primary: ["reference"],
 							secondary: ["date_made"],
-							avatar: false
-						}
-					}
+							avatar: false,
+						},
+					},
 				},
 				restricted: {
 					display: (values, user) => {
@@ -146,8 +163,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			currency: {
 				type: "string",
@@ -156,7 +173,7 @@ export default {
 					type: "select",
 					default: "",
 					required: true,
-					size: 4
+					size: 4,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -167,7 +184,7 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 				reference: {
 					name: "currencies",
@@ -177,9 +194,9 @@ export default {
 						display: {
 							primary: ["name"],
 							secondary: ["html_symbol"],
-							avatar: false
-						}
-					}
+							avatar: false,
+						},
+					},
 				},
 			},
 			amount: {
@@ -189,7 +206,7 @@ export default {
 					type: "number",
 					default: "0",
 					required: true,
-					size: 8
+					size: 8,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -200,8 +217,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			method: {
@@ -211,7 +228,7 @@ export default {
 					type: "select",
 					default: "",
 					required: true,
-					size: 6
+					size: 6,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -222,7 +239,7 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 				possibilities: {
 					cash: "Cash",
@@ -232,7 +249,7 @@ export default {
 					bank_transfer: "Bank Transfer",
 					mobile_money: "Mobile money",
 					other: "Other",
-				}
+				},
 			},
 			reference: {
 				type: "string",
@@ -241,7 +258,7 @@ export default {
 					type: "text",
 					default: "",
 					required: false,
-					size: 6
+					size: 6,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -252,8 +269,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			account_type: {
 				type: "string",
@@ -273,8 +290,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			account: {
 				type: "string",
@@ -293,8 +310,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			date_made: {
 				type: "string",
@@ -302,7 +319,7 @@ export default {
 				input: {
 					type: "date",
 					default: "",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -313,8 +330,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			made_by: {
 				type: "float",
@@ -322,7 +339,7 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: false
+					required: false,
 				},
 				reference: {
 					name: "users",
@@ -332,9 +349,9 @@ export default {
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
-							avatar: false
-						}
-					}
+							avatar: false,
+						},
+					},
 				},
 				restricted: {
 					display: (values, user) => {
@@ -345,8 +362,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			status: {
 				type: "string",
@@ -354,7 +371,7 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -365,21 +382,21 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 				possibilities: {
 					complete: "Complete",
-					incomplete: "Incomplete"
-				}
-			}
+					incomplete: "Incomplete",
+				},
+			},
 		},
 		identity: {
 			primary: ["currency", "amount"],
 			secondary: [],
-			avatar: false
+			avatar: false,
 		},
 		dependencies: [],
-		dependants: []
+		dependants: [],
 	},
 	access: {
 		restricted: user => {
@@ -389,13 +406,13 @@ export default {
 			return true;
 		},
 		view: {
-			summary: (user) => {
+			summary: user => {
 				if (user) {
 					return user.isAdmin || user.isCustomer;
 				}
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return user.isAdmin || user.isCustomer;
 				}
@@ -406,7 +423,10 @@ export default {
 					return user.isAdmin;
 				}
 				if (user && record) {
-					return user.isAdmin || (user.isCustomer && record.made_by === user._id);
+					return (
+						user.isAdmin ||
+						(user.isCustomer && record.made_by === user._id)
+					);
 				}
 				return false;
 			},
@@ -424,18 +444,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={"payments/view/" + id} className={className}>
-									<IconButton color="inherit" aria-label="edit">
+								<Link
+									to={"payments/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			create: {
 				restricted: user => {
@@ -450,17 +476,22 @@ export default {
 						default: props => {
 							return (
 								<Link to={"payments/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left" /> New Payment
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Payment
 									</Button>
 								</Link>
 							);
 						},
 						listing: () => {
 							return "";
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			update: {
 				restricted: user => {
@@ -474,21 +505,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
 								<Link
 									to={"payments/edit/" + id}
 									className={className ? className : ""}
 								>
-									<IconButton color="inherit" aria-label="edit">
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			delete: {
 				restricted: user => {
@@ -502,7 +536,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton
@@ -514,10 +548,10 @@ export default {
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							);
-						}
-					}
-				}
-			}
-		}
-	}
+						},
+					},
+				},
+			},
+		},
+	},
 };

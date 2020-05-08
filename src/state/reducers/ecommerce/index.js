@@ -1,4 +1,6 @@
-import { 
+/** @format */
+
+import {
 	SET_CART,
 	ADD_TO_CART,
 	REMOVE_FROM_CART,
@@ -26,7 +28,7 @@ const initialState = {
 	checkout_data: {},
 };
 
-function addEntryToCart(cart, entry){
+function addEntryToCart(cart, entry) {
 	let newCart = JSON.parse(JSON.stringify(cart));
 	if (!Array.isArray(newCart.entries)) {
 		newCart.entries = [];
@@ -36,16 +38,16 @@ function addEntryToCart(cart, entry){
 	let newOptionsTotal = Number.parseNumber(newCart.options_total, 0);
 	if (JSON.isJSON(entry.item)) {
 		newTotal = newTotal + Number.parseNumber(entry.item.cost, 0);
-
 	}
 	newTotal = newTotal + Number.parseNumber(entry.options_cost, 0);
-	newOptionsTotal = newOptionsTotal + Number.parseNumber(entry.options_cost, 0);
+	newOptionsTotal =
+		newOptionsTotal + Number.parseNumber(entry.options_cost, 0);
 	newCart.total = newTotal;
 	newCart.options_total = newOptionsTotal;
 	return newCart;
 }
 
-function removeEntryFromCart(cart, entry){
+function removeEntryFromCart(cart, entry) {
 	let newCart = JSON.parse(JSON.stringify(cart));
 	let newTotal = Number.parseNumber(newCart.total, 0);
 	let newOptionsTotal = Number.parseNumber(newCart.options_total, 0);
@@ -54,25 +56,30 @@ function removeEntryFromCart(cart, entry){
 			if (JSON.isJSON(entry)) {
 				if (!Object.areEqual(item, entry)) {
 					return true;
-				}
-				else{
+				} else {
 					if (JSON.isJSON(item.item)) {
-						newTotal = newTotal - Number.parseNumber(item.item.cost, 0);
+						newTotal =
+							newTotal - Number.parseNumber(item.item.cost, 0);
 					}
-					newTotal = newTotal - Number.parseNumber(item.options_cost, 0);
-					newOptionsTotal = newOptionsTotal - Number.parseNumber(item.options_cost, 0);
+					newTotal =
+						newTotal - Number.parseNumber(item.options_cost, 0);
+					newOptionsTotal =
+						newOptionsTotal -
+						Number.parseNumber(item.options_cost, 0);
 				}
-			}
-			else if (Number.isNumber(entry)) {
+			} else if (Number.isNumber(entry)) {
 				if (entry !== index) {
 					return true;
-				}
-				else{
+				} else {
 					if (JSON.isJSON(item.item)) {
-						newTotal = newTotal - Number.parseNumber(item.item.cost, 0);
+						newTotal =
+							newTotal - Number.parseNumber(item.item.cost, 0);
 					}
-					newTotal = newTotal - Number.parseNumber(item.options_cost, 0);
-					newOptionsTotal = newOptionsTotal - Number.parseNumber(item.options_cost, 0);
+					newTotal =
+						newTotal - Number.parseNumber(item.options_cost, 0);
+					newOptionsTotal =
+						newOptionsTotal -
+						Number.parseNumber(item.options_cost, 0);
 				}
 			}
 			return false;
@@ -112,7 +119,7 @@ export default (state = initialState, action = {}) => {
 		case SET_CART_NOTE: {
 			return {
 				...state,
-				cart: {...state.cart, note: action.note},
+				cart: { ...state.cart, note: action.note },
 			};
 		}
 		case EMPTY_CART: {
@@ -120,7 +127,7 @@ export default (state = initialState, action = {}) => {
 				...state,
 				cart: initialState.cart,
 			};
-		}		
+		}
 		case SET_ORDER_PROGRESS: {
 			return {
 				...state,
@@ -147,5 +154,3 @@ export default (state = initialState, action = {}) => {
 		}
 	}
 };
-
-

@@ -1,13 +1,16 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class QueriesApiService extends ApiService{
-	constructor(){
+class QueriesApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = 'queries';
+		this.service_uri = "queries";
 	}
-	
 }
 
 export default new QueriesApiService();

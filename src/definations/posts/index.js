@@ -1,6 +1,17 @@
-/* eslint-disable react/display-name */
+/**
+ * /* eslint-disable react/display-name
+ *
+ * @format
+ */
+
 import { IconButton } from "@material-ui/core";
-import { Add as AddIcon, VerticalSplitOutlined as DefinationContextIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon } from "@material-ui/icons";
+import {
+	Add as AddIcon,
+	VerticalSplitOutlined as DefinationContextIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -16,13 +27,12 @@ export default {
 	views: {
 		single: {
 			default: "cardview",
-			cardview: {
-			}
+			cardview: {},
 		},
 		listing: {
 			default: "tableview",
 			tableview: {},
-		}
+		},
 	},
 	scope: {
 		columns: {
@@ -31,7 +41,7 @@ export default {
 				label: "Name",
 				input: {
 					type: "hidden",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -42,15 +52,15 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			title: {
 				type: "string",
 				label: "Title",
 				input: {
 					type: "text",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (values, user) => {
@@ -61,8 +71,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			type: {
 				type: "string",
@@ -74,22 +84,22 @@ export default {
 					position: "sidebar",
 				},
 				possibilities: {
-					"blog": "Blog",
-					"category": "Category",
-					"press": "Press",
-					"faq": "FAQ",
+					blog: "Blog",
+					category: "Category",
+					press: "Press",
+					faq: "FAQ",
 					"knowledge-base": "Knowledge Base",
-					"newsletter": "Newsletter",
-					"anouncement": "Anouncement",
-					"notice": "Notice",
-					"policy": "Policy",
-					"agreement": "Agreement",
-					"note": "Note",
-					"scrumboard": "Scrumboard",
-					"academy": "Academy",
+					newsletter: "Newsletter",
+					anouncement: "Anouncement",
+					notice: "Notice",
+					policy: "Policy",
+					agreement: "Agreement",
+					note: "Note",
+					scrumboard: "Scrumboard",
+					academy: "Academy",
 				},
 			},
-			
+
 			content: {
 				type: "string",
 				label: "Content",
@@ -98,7 +108,7 @@ export default {
 					required: true,
 					props: {
 						rows: 30,
-					}					
+					},
 				},
 				restricted: {
 					display: (values, user) => {
@@ -109,7 +119,7 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 			},
 
@@ -122,15 +132,15 @@ export default {
 
 				reference: {
 					name: "posts",
-					service_query: {status: "publish"},
+					service_query: { status: "publish" },
 					resolves: {
 						value: "_id",
 						display: {
 							primary: ["title"],
 							secondary: [],
-							avatar: false
-						}
-					}
+							avatar: false,
+						},
+					},
 				},
 				restricted: {
 					display: (values, user) => {
@@ -144,8 +154,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			slug: {
@@ -156,15 +166,19 @@ export default {
 					required: true,
 					value: (values, user) => {
 						if (values) {
-							if (String.isString(values.title) && String.isString(values.type)) {
+							if (
+								String.isString(values.title) &&
+								String.isString(values.type)
+							) {
 								if (values.type.length > 0) {
-									return values.title.variablelize().replaceAll("_", "-");
+									return values.title
+										.variablelize()
+										.replaceAll("_", "-");
 								}
 							}
 						}
 						return "";
-							
-					},		
+					},
 				},
 				restricted: {
 					display: (values, user) => {
@@ -175,17 +189,17 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
+					},
 				},
 			},
 		},
 		identity: {
 			primary: ["title"],
 			secondary: [],
-			avatar: false
+			avatar: false,
 		},
 		dependencies: [],
-		dependants: []
+		dependants: [],
 	},
 	access: {
 		restricted: user => {
@@ -195,10 +209,10 @@ export default {
 			return true;
 		},
 		view: {
-			summary: (user) => {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return user.isAdmin;
 				}
@@ -224,18 +238,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={"posts/view/" + id} className={className}>
-									<IconButton color="inherit" aria-label="edit">
+								<Link
+									to={"posts/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			create: {
 				restricted: user => {
@@ -250,17 +270,22 @@ export default {
 						default: props => {
 							return (
 								<Link to={"posts/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left" /> New Post
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Post
 									</Button>
 								</Link>
 							);
 						},
 						listing: () => {
 							return "";
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			update: {
 				restricted: user => {
@@ -274,21 +299,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
 								<Link
 									to={"posts/edit/" + id}
 									className={className ? className : ""}
 								>
-									<IconButton color="inherit" aria-label="edit">
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			delete: {
 				restricted: user => {
@@ -302,7 +330,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton
@@ -314,10 +342,10 @@ export default {
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							);
-						}
-					}
-				}
-			}
-		}
-	}
+						},
+					},
+				},
+			},
+		},
+	},
 };

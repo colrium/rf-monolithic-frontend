@@ -1,69 +1,89 @@
-import React, { useState, useEffect } from "react";
-import Typography from '@material-ui/core/Typography';
+import React, { /*useEffect,*/ useState } from "react";
+import { connect } from "react-redux";
+import { useGlobals } from "contexts/Globals";
+
+import Typography from "@material-ui/core/Typography";
+import { CheckboxInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { TextInput, CheckboxInput } from "components/FormInputs";
-import { withSettingsContext } from "contexts/Settings";
-
-
-
 
 function Widget(props) {
-	let [state, setState] = useState(props);
-	let [settings, setSettings] = useState(state.settingsContext.settings.reading);
-	let [alerts, setAlerts] = useState({});
-	useEffect(() => {  setState(props); }, [props]);
-	useEffect(() => {  setSettings(props.settingsContext.settings.reading); }, [props.settingsContext.settings.reading]);
+	/*let [state, setState] = useState(props);
+	useEffect(() => {
+		setState(props);
+	}, [props]);*/
 
+	let [alerts, setAlerts] = useState({});	
+	let [loading, setLoading] = useState({});
+	let [errors, setErrors] = useState({});
 
-	const handleOnChange = name => async value => {	
-		let new_value = {...settings, [name]: value};	
-		state.settingsContext.updateSettings("Reading", new_value).then(newContext => {
-			setAlerts({...alerts, [name.variablelize("-")]: name+" saved"});
+	
+	let { app: { settings } } = props;
+	const { updateSettings } = useGlobals();
+
+	let context_settings = settings.reading;
+
+	const handleOnChange = name => async value => {
+		setLoading({...loading, [name] : true});
+		setErrors({...errors, [name] : false});
+		let new_value = { ...context_settings, [name]: value };
+		updateSettings("reading", new_value).then(new_settings => {
+			setLoading({...loading, [name] : false});
+			setAlerts({ [name]: name.humanize() + " saved", });
+		}).catch(e => {
+			setLoading({...loading, [name] : false});
+			setErrors({...errors, [name] : e.msg});
+			console.error("update reading settings error", e);
 		});
-	}
-
+	};
 
 	return (
-			<GridContainer className="px-2">
-				<GridItem xs={12} className="mb-2">
-					<Typography variant="h3"> Reading settings</Typography>
-				</GridItem>
+		<GridContainer className="px-2">
+			<GridItem xs={12} className="mb-2">
+				<Typography variant="h3"> Reading settings</Typography>
+			</GridItem>
 
-				<GridItem xs={12} className="mb-4">
-					<CheckboxInput
-						name="enable-blog"
-						label="Enable blog"
-						defaultValue={settings["enable-blog"]}
-						onChange={handleOnChange("Enable blog")}
-						helperText={alerts["enable-blog"]}
-					/>
-				</GridItem>
+			<GridItem xs={12} className="mb-4">
+				<CheckboxInput
+					name="enable-blog"
+					label="Enable blog"
+					defaultValue={context_settings["enable-blog"]}
+					onChange={handleOnChange("enable-blog")}
+					helperText={alerts["enable-blog"]}
+					disabled={loading["enable-blog"]}
+					error={errors["enable-blog"]}
+				/>
+			</GridItem>
 
-				<GridItem xs={12} className="mb-4">
-					<CheckboxInput
-						name="enable-press"
-						label="Enable press"
-						defaultValue={settings["enable-press"]}
-						onChange={handleOnChange("Enable press")}
-						helperText={alerts["enable-press"]}
-					/>
-				</GridItem>
+			<GridItem xs={12} className="mb-4">
+				<CheckboxInput
+					name="enable-press"
+					label="Enable press"
+					defaultValue={context_settings["enable-press"]}
+					onChange={handleOnChange("enable-press")}
+					helperText={alerts["enable-press"]}
+					disabled={loading["enable-press"]}
+					error={errors["enable-press"]}
+				/>
+			</GridItem>
 
-				<GridItem xs={12} className="mb-4">
-					<CheckboxInput
-						name="enable-faq"
-						label="Enable FAQ"
-						defaultValue={settings["enable-faq"]}
-						onChange={handleOnChange("Enable faq")}
-						helperText={alerts["enable-faq"]}
-					/>
-				</GridItem>	
-			</GridContainer>
+			<GridItem xs={12} className="mb-4">
+				<CheckboxInput
+					name="enable-faq"
+					label="Enable FAQ"
+					defaultValue={context_settings["enable-faq"]}
+					onChange={handleOnChange("enable-faq")}
+					helperText={alerts["enable-faq"]}
+					disabled={loading["enable-faq"]}
+					error={errors["enable-faq"]}
+				/>
+			</GridItem>
+		</GridContainer>
 	);
-
-
 }
 
+const mapStateToProps = state => ({
+	app: state.app,
+});
 
-export default withSettingsContext(Widget);
+export default connect(mapStateToProps, {})(React.memo(Widget));

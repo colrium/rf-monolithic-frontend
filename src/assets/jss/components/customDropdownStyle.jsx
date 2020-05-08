@@ -1,6 +1,8 @@
+/** @format */
+
 const customDropdownStyle = theme => ({
 	popperClose: {
-		pointerEvents: "none"
+		pointerEvents: "none",
 	},
 	dropdown: {
 		borderRadius: "3px",
@@ -15,10 +17,10 @@ const customDropdownStyle = theme => ({
 		textAlign: "left",
 		listStyle: "none",
 		backgroundColor: "#fff",
-		backgroundClip: "padding-box"
+		backgroundClip: "padding-box",
 	},
 	menuList: {
-		padding: "0"
+		padding: "0",
 	},
 	dropdownItem: {
 		fontSize: "13px",
@@ -32,20 +34,20 @@ const customDropdownStyle = theme => ({
 		fontWeight: "400",
 		height: "fit-content",
 		color: "#333",
-		whiteSpace: "nowrap"
+		whiteSpace: "nowrap",
 	},
 	dropdownItemRTL: {
-		textAlign: "right"
+		textAlign: "right",
 	},
 	dropdownDividerItem: {
 		margin: "5px 0",
 		backgroundColor: "rgba(0, 0, 0, 0.12)",
 		height: "1px",
-		overflow: "hidden"
+		overflow: "hidden",
 	},
 	buttonIcon: {
 		width: "20px",
-		height: "20px"
+		height: "20px",
 	},
 	caret: {
 		transition: "all 150ms ease-in",
@@ -56,13 +58,13 @@ const customDropdownStyle = theme => ({
 		verticalAlign: "middle",
 		borderTop: "4px solid",
 		borderRight: "4px solid transparent",
-		borderLeft: "4px solid transparent"
+		borderLeft: "4px solid transparent",
 	},
 	caretActive: {
-		transform: "rotate(180deg)"
+		transform: "rotate(180deg)",
 	},
 	caretRTL: {
-		marginRight: "4px"
+		marginRight: "4px",
 	},
 	dropdownHeader: {
 		display: "block",
@@ -75,12 +77,12 @@ const customDropdownStyle = theme => ({
 		marginTop: "10px",
 		"&:hover,&:focus": {
 			backgroundColor: "transparent",
-			cursor: "auto"
-		}
+			cursor: "auto",
+		},
 	},
 	noLiPadding: {
-		padding: "0"
-	}
+		padding: "0",
+	},
 });
 
 export default customDropdownStyle;

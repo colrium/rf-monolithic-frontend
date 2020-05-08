@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 // nodejs library to set properties for components
 import PropTypes from "prop-types";
@@ -6,32 +8,36 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Badge from "@material-ui/core/Badge";
 
 import { colors } from "assets/jss/app-theme";
-import withRoot from "utils/withRoot";
+import withRoot from "hoc/withRoot";
 
 import styles from "./styles";
 
 function CustomBadge({ ...props }) {
-  const { classes, color, textColor, position, children, ...rest } = props;
-  const positionClasses = {
-    "top-left": classes.topLeft,
-    "top-center": classes.topCenter,
-    "top-right": classes.topRight,
-    "bottom-left": classes.bottomLeft,
-    "bottom-center": classes.bottomCenter,
-    "bottom-right": classes.bottomRight,
-    "center-left": classes.centerLeft,
-    center: classes.center,
-    "center-right": classes.centerRight
-  };
-  let badgeClasses = classes.badge;
-  if (position in positionClasses) {
-    badgeClasses = classNames(classes.badge, positionClasses[position]);
-  }
-  return (
-    <Badge {...rest} className={classes.root} classes={{ badge: badgeClasses }}>
-      {children}
-    </Badge>
-  );
+	const { classes, color, textColor, position, children, ...rest } = props;
+	const positionClasses = {
+		"top-left": classes.topLeft,
+		"top-center": classes.topCenter,
+		"top-right": classes.topRight,
+		"bottom-left": classes.bottomLeft,
+		"bottom-center": classes.bottomCenter,
+		"bottom-right": classes.bottomRight,
+		"center-left": classes.centerLeft,
+		center: classes.center,
+		"center-right": classes.centerRight,
+	};
+	let badgeClasses = classes.badge;
+	if (position in positionClasses) {
+		badgeClasses = classNames(classes.badge, positionClasses[position]);
+	}
+	return (
+		<Badge
+			{...rest}
+			className={classes.root}
+			classes={{ badge: badgeClasses }}
+		>
+			{children}
+		</Badge>
+	);
 }
 
 /* CustomBadge.propTypes = {
@@ -52,9 +58,9 @@ function CustomBadge({ ...props }) {
 }; */
 
 CustomBadge.defaultProps = {
-  color: colors.hex.primary,
-  textColor: colors.hex.inverse,
-  position: "top-right"
+	color: colors.hex.primary,
+	textColor: colors.hex.inverse,
+	position: "top-right",
 };
 
 export default withRoot(withStyles(styles)(CustomBadge));

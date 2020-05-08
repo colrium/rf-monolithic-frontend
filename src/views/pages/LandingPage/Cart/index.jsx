@@ -1,15 +1,11 @@
-import React from "react";
-import withRoot from 'utils/withRoot';
-import { Link } from "react-router-dom";
+/** @format */
+
+import { app } from "assets/jss/app-theme";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import Button from "components/Button";
-import Typography from "components/Typography";
+import React from "react";
+import { withErrorHandler } from "hoc/ErrorHandler";
 import CartView from "views/widgets/Ecommerce/Cart";
-import {app} from "assets/jss/app-theme";
-
-
-
 
 class Page extends React.Component {
 	constructor(props) {
@@ -17,28 +13,30 @@ class Page extends React.Component {
 		this.onProceedToCheckout = this.onProceedToCheckout.bind(this);
 	}
 
-	componentDidMount(){
+	componentDidMount() {
 		document.title = app.title("Cart");
 	}
 
-	onProceedToCheckout(){
-		const {history} = this.props;
+	onProceedToCheckout() {
+		const { history } = this.props;
 		if (history) {
 			history.push("/checkout".toUriWithLandingPagePrefix());
 		}
 	}
 
-
 	render() {
 		const { classes, ...rest } = this.props;
 		return (
-					<GridContainer className="relative min-h-screen">
-						<GridItem xs={12} sm={10} md={8} className="m-auto" >
-							<CartView className="w-full" onProceedToCheckout={this.onProceedToCheckout}/>
-						</GridItem>
-					</GridContainer>
+			<GridContainer className="relative min-h-screen">
+				<GridItem xs={12} sm={10} md={8} className="m-auto">
+					<CartView
+						className="w-full"
+						onProceedToCheckout={this.onProceedToCheckout}
+					/>
+				</GridItem>
+			</GridContainer>
 		);
 	}
 }
 
-export default withRoot(Page);
+export default withErrorHandler(Page);

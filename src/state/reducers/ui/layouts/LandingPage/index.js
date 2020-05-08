@@ -1,9 +1,6 @@
-import { 
-	SET_LANDINGPAGE_LANGUAGE,
-	SET_LANDINGPAGE_LAYOUT_DIRECTION, 
-	SET_LANDINGPAGE_NAVBAR_DISPLAYED, 
-	SET_LANDINGPAGE_FOOTER_DISPLAYED,
-} from "state/actions";
+/** @format */
+
+import { SET_LANDINGPAGE_FOOTER_DISPLAYED, SET_LANDINGPAGE_LANGUAGE, SET_LANDINGPAGE_LAYOUT_DIRECTION, SET_LANDINGPAGE_NAVBAR_DISPLAYED } from "state/actions";
 
 const initialState = {
 	language: "en_us",
@@ -43,5 +40,3 @@ export default (state = initialState, action = {}) => {
 		}
 	}
 };
-
-

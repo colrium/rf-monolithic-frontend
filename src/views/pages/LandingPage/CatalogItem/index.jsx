@@ -1,17 +1,13 @@
-import React from "react";
-import withRoot from 'utils/withRoot';
-import { Link } from "react-router-dom";
+/** @format */
+
+import { app } from "assets/jss/app-theme";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import Button from "components/Button";
-import Typography from "components/Typography";
-import CatalogItem from "views/widgets/Ecommerce/Item";
+import React from "react";
+import { retailitems as service } from "services";
+import { withErrorHandler } from "hoc/ErrorHandler";
 import RequestError from "views/widgets/Catch/RequestError";
-import {retailitems as service } from "services";
-import {app} from "assets/jss/app-theme";
-
-
-
+import CatalogItem from "views/widgets/Ecommerce/Item";
 
 class Page extends React.Component {
 	state = {
@@ -22,60 +18,75 @@ class Page extends React.Component {
 	};
 	constructor(props) {
 		super(props);
-		const { match: { params }, history } = props;
+		const {
+			match: { params },
+			history,
+		} = props;
 		if ("id" in params) {
 			this.state.item_id = params.id;
-		}
-		else{
+		} else {
 			if (history) {
 				history.push("/catalog".toUriWithLandingPagePrefix());
 			}
 		}
 	}
 
-	componentDidMount(){
+	componentDidMount() {
 		document.title = app.title("Catalog");
 		this.getRecord();
 	}
 
 	async getRecord() {
 		const { history } = this.props;
-		service.getRecordById(this.state.item_id).then(response => {
-			let item = response.body.data;
-			this.setState(state => ({ item: item, loading: false }));
-		}).catch(err => {
-			console.log(err)
-			if (err.code === 404) {
-				history.push("/not-found");
-			} 
-			else {
-				this.setState(state => ({ error: err, loading: false }));
-			}
-		});
+		service
+			.getRecordById(this.state.item_id)
+			.then(response => {
+				let item = response.body.data;
+				this.setState(state => ({ item: item, loading: false }));
+			})
+			.catch(err => {
+				console.log(err);
+				if (err.code === 404) {
+					history.push("/not-found");
+				} else {
+					this.setState(state => ({ error: err, loading: false }));
+				}
+			});
 	}
-	
 
 	render() {
 		const { item, loading, error } = this.state;
 		if (error) {
 			return (
-				<GridContainer style={{minHeight: "90vh"}} className="relative">
-					<GridItem xs={12} sm={12} md={10} className="m-auto" >
-						<RequestError code={error.code? error.code : 503} description={error.msg}/>
+				<GridContainer
+					style={{ minHeight: "90vh" }}
+					className="relative"
+				>
+					<GridItem xs={12} sm={12} md={10} className="m-auto">
+						<RequestError
+							code={error.code ? error.code : 503}
+							description={error.msg}
+						/>
+					</GridItem>
+				</GridContainer>
+			);
+		} else {
+			return (
+				<GridContainer
+					style={{ minHeight: "90vh" }}
+					className="relative"
+				>
+					<GridItem xs={12} sm={12} md={10} className="m-auto">
+						<CatalogItem
+							item={this.state.item}
+							loading={loading}
+							className="w-full"
+						/>
 					</GridItem>
 				</GridContainer>
 			);
 		}
-		else {
-			return (
-				<GridContainer style={{minHeight: "90vh"}} className="relative">
-					<GridItem xs={12} sm={12} md={10} className="m-auto" >
-						<CatalogItem item={this.state.item} loading={loading} className="w-full"/>
-					</GridItem>
-				</GridContainer>
-			);
-		}			
 	}
 }
 
-export default withRoot(Page);
+export default withErrorHandler(Page);

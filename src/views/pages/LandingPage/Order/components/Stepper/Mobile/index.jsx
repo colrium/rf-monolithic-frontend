@@ -1,12 +1,14 @@
-import React from 'react';
-import MobileStepper from '@material-ui/core/MobileStepper';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import Button from 'components/Button';
-import withRoot from 'utils/withRoot';
+/** @format */
+
+import MobileStepper from "@material-ui/core/MobileStepper";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import Button from "components/Button";
+import React from "react";
+import withRoot from "hoc/withRoot";
 
 function MobileSteps(props) {
-	const {direction, steps, step, backText, nextText } = props;
+	const { direction, steps, step, backText, nextText } = props;
 	const [activeStep, setActiveStep] = React.useState(step);
 
 	const handleNext = () => {
@@ -25,14 +27,32 @@ function MobileSteps(props) {
 			activeStep={activeStep}
 			className="flex-grow min-w-full"
 			nextButton={
-				<Button color={activeStep === steps? "grey" : "primary"} onClick={handleNext} disabled={activeStep === steps} simple>
+				<Button
+					color={activeStep === steps ? "grey" : "primary"}
+					onClick={handleNext}
+					disabled={activeStep === steps}
+					simple
+				>
 					{nextText}
-					{direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+					{direction === "rtl" ? (
+						<KeyboardArrowLeft />
+					) : (
+						<KeyboardArrowRight />
+					)}
 				</Button>
 			}
 			backButton={
-				<Button color={activeStep === 0? "grey" : "primary"} onClick={handleBack} disabled={activeStep === 0} simple>
-					{direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+				<Button
+					color={activeStep === 0 ? "grey" : "primary"}
+					onClick={handleBack}
+					disabled={activeStep === 0}
+					simple
+				>
+					{direction === "rtl" ? (
+						<KeyboardArrowRight />
+					) : (
+						<KeyboardArrowLeft />
+					)}
 					{backText}
 				</Button>
 			}

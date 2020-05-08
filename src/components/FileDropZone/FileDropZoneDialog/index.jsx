@@ -1,3 +1,5 @@
+/** @format */
+
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -14,20 +16,20 @@ class DropzoneDialog extends React.Component {
 		this.state = {
 			open: false,
 			files: [],
-			disabled: true
+			disabled: true,
 		};
 	}
 	componentWillUnmount() {
 		if (this.props.clearOnUnmount) {
 			this.setState({
-				files: []
+				files: [],
 			});
 		}
 	}
 	componentDidUpdate(prevProps, prevState) {
 		if (this.props.open !== prevProps.open) {
 			this.setState({
-				open: this.props.open
+				open: this.props.open,
 			});
 			if (this.props.onClose && !this.props.open) {
 				this.props.onClose();
@@ -35,7 +37,7 @@ class DropzoneDialog extends React.Component {
 		}
 		if (this.state.files.length !== prevState.files.length) {
 			this.setState({
-				disabled: this.state.files.length === 0
+				disabled: this.state.files.length === 0,
 			});
 		}
 	}
@@ -49,7 +51,7 @@ class DropzoneDialog extends React.Component {
 	onChange(files) {
 		this.setState(
 			{
-				files: files
+				files: files,
 			},
 			() => {
 				if (this.props.onChange) {
@@ -85,7 +87,10 @@ class DropzoneDialog extends React.Component {
 	render() {
 		return (
 			<Box>
-				<Dialog open={this.state.open} onClose={this.handleClose.bind(this)}>
+				<Dialog
+					open={this.state.open}
+					onClose={this.handleClose.bind(this)}
+				>
 					<DialogTitle>{this.props.dialogTitle}</DialogTitle>
 					<DialogContent>
 						<FileDropZone
@@ -94,7 +99,9 @@ class DropzoneDialog extends React.Component {
 							filesLimit={this.props.filesLimit}
 							maxFileSize={this.props.maxFileSize}
 							showPreviews={this.props.showPreviews}
-							showPreviewsInDropzone={this.props.showPreviewsInDropzone}
+							showPreviewsInDropzone={
+								this.props.showPreviewsInDropzone
+							}
 							showFileNames={this.props.showFileNames}
 							showAlerts={this.props.showAlerts}
 							onChange={this.onChange.bind(this)}
@@ -102,20 +109,25 @@ class DropzoneDialog extends React.Component {
 							onDropRejected={this.onDropRejected.bind(this)}
 							onDelete={this.onDelete.bind(this)}
 							clearOnUnmount={this.props.clearOnUnmount}
-							showFileNamesInPreview={this.props.showFileNamesInPreview}
+							showFileNamesInPreview={
+								this.props.showFileNamesInPreview
+							}
 						/>
 					</DialogContent>
 					<DialogActions>
-						<Button color="primary" onClick={this.handleClose.bind(this)}>
+						<Button
+							color="primary"
+							onClick={this.handleClose.bind(this)}
+						>
 							Cancel
-            </Button>
+						</Button>
 						<Button
 							color="primary"
 							disabled={this.state.disabled}
 							onClick={this.handleSaveClick.bind(this)}
 						>
 							Submit
-            </Button>
+						</Button>
 					</DialogActions>
 				</Dialog>
 			</Box>
@@ -133,12 +145,12 @@ DropzoneDialog.defaultProps = {
 	showAlerts: true,
 	clearOnUnmount: true,
 	dialogTitle: "Upload file",
-	onSave: () => { },
-	onDelete: () => { },
-	onClose: () => { },
-	onChange: () => { },
-	onDrop: () => { },
-	onDropRejected: () => { }
+	onSave: () => {},
+	onDelete: () => {},
+	onClose: () => {},
+	onChange: () => {},
+	onDrop: () => {},
+	onDropRejected: () => {},
 };
 DropzoneDialog.propTypes = {
 	open: PropTypes.bool.isRequired,
@@ -156,7 +168,7 @@ DropzoneDialog.propTypes = {
 	showFileNamesInPreview: PropTypes.bool,
 	showAlerts: PropTypes.bool,
 	clearOnUnmount: PropTypes.bool,
-	dialogTitle: PropTypes.string
+	dialogTitle: PropTypes.string,
 };
 
 export default DropzoneDialog;

@@ -1,3 +1,5 @@
+/** @format */
+
 // Material helpers
 import { withStyles } from "@material-ui/core";
 //
@@ -13,7 +15,7 @@ import compose from "recompose/compose";
 import { appendNavHistory } from "state/actions/ui/nav";
 // Shared layouts
 //Redux imports
-import withRoot from "utils/withRoot";
+import {withErrorHandler} from "hoc/ErrorHandler";
 // Component styles
 import styles from "views/pages/styles";
 // Custom components
@@ -29,7 +31,7 @@ class Account extends Component {
 				title: "My Account",
 				view: null,
 				color: colors.hex.primary,
-				scrollTop: 0
+				scrollTop: 0,
 			});
 		}
 	}
@@ -50,8 +52,7 @@ class Account extends Component {
 						<AccountProfile />
 					</GridItem>
 				</GridContainer>
-				
-				
+
 				<GridContainer>
 					<GridItem xs={12}>
 						<AccountDetails />
@@ -63,19 +64,16 @@ class Account extends Component {
 }
 
 Account.propTypes = {
-	classes: PropTypes.object.isRequired
+	classes: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-	auth: state.auth
+	auth: state.auth,
 });
 
-export default withRoot(
+export default withErrorHandler(
 	compose(
 		withStyles(styles),
-		connect(
-			mapStateToProps,
-			{ appendNavHistory }
-		)
+		connect(mapStateToProps, { appendNavHistory })
 	)(Account)
 );

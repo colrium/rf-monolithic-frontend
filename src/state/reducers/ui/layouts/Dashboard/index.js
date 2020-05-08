@@ -1,12 +1,6 @@
-import { 
-	SET_DASHBOARD_LANGUAGE, 
-	SET_DASHBOARD_LAYOUT_DIRECTION, 
-	SET_DASHBOARD_APPBAR_DISPLAYED, 
-	SET_DASHBOARD_DRAWER_DISPLAYED, 
-	SET_DASHBOARD_FOOTER_DISPLAYED,
-	SET_DASHBOARD_HOMEPAGE_STATE,
-	SET_DASHBOARD_LIGHTBOX,
-} from "state/actions";
+/** @format */
+
+import { SET_DASHBOARD_APPBAR_DISPLAYED, SET_DASHBOARD_DRAWER_DISPLAYED, SET_DASHBOARD_FOOTER_DISPLAYED, SET_DASHBOARD_HOMEPAGE_STATE, SET_DASHBOARD_LANGUAGE, SET_DASHBOARD_LAYOUT_DIRECTION, SET_DASHBOARD_LIGHTBOX } from "state/actions";
 
 const initialState = {
 	language: "en_us",
@@ -17,17 +11,17 @@ const initialState = {
 	lightbox: {
 		open: false,
 		src: null,
-		alt:null,
+		alt: null,
 	},
 	homepage_state: {
 		sections: {
-			"quicklinks" : false,
-			"static_aggregates": true,
-			"static_map": true, 
-			"compact_aggregates": false, 
-			"compact_maps": false, 
-			"calendar": true,
-		}
+			quicklinks: false,
+			static_aggregates: true,
+			static_map: true,
+			compact_aggregates: false,
+			compact_maps: false,
+			calendar: true,
+		},
 	},
 };
 
@@ -80,5 +74,3 @@ export default (state = initialState, action = {}) => {
 		}
 	}
 };
-
-

@@ -1,11 +1,15 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class PreferencesApiService extends ApiService{
-	constructor(){
+class PreferencesApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = 'preferences';
+		this.service_uri = "preferences";
 	}
 }
 

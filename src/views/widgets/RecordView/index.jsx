@@ -1,3 +1,5 @@
+/** @format */
+
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -12,7 +14,7 @@ import ListingView from "views/widgets/Listings";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Box from '@material-ui/core/Box';
+import Box from "@material-ui/core/Box";
 //
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -21,6 +23,7 @@ import React from "react";
 //Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
+import { withErrorHandler } from "hoc/ErrorHandler";
 //
 import CardView from "./CardView";
 import * as definations from "definations";
@@ -54,7 +57,7 @@ TabPanel.propTypes = {
 function a11yProps(index) {
 	return {
 		id: `scrollable-force-tab-${index}`,
-		'aria-controls': `scrollable-force-tabpanel-${index}`,
+		"aria-controls": `scrollable-force-tabpanel-${index}`,
 	};
 }
 
@@ -71,21 +74,21 @@ class RecordView extends React.Component {
 		this.prepareForView();
 		this.handleExpandClick = this.handleExpandClick.bind(this);
 		this.handleViewMenuItemClick = this.handleViewMenuItemClick.bind(this);
-		this.handleRelatedTabValueChange = this.handleRelatedTabValueChange.bind(this);
+		this.handleRelatedTabValueChange = this.handleRelatedTabValueChange.bind(
+			this
+		);
 		this.handleCloseViewsMenu = this.handleCloseViewsMenu.bind(this);
 	}
 
-	componentDidMount() {
-		
-	}
+	componentDidMount() {}
 
 	handleViewMenuItemClick = name => event => {
 		this.setState({ view: name, viewMenuAnchorEl: null });
 	};
 
-	handleRelatedTabValueChange(event, value){
-		this.setState({ relatedTab: value});
-	};
+	handleRelatedTabValueChange(event, value) {
+		this.setState({ relatedTab: value });
+	}
 
 	handleShowViewsMenu = event => {
 		this.setState({ viewMenuAnchorEl: event.currentTarget });
@@ -105,7 +108,7 @@ class RecordView extends React.Component {
 			cardview: "Card View",
 			googlemapview: "Google Map View",
 			vectormapview: "Vector Map View",
-			calendarview: "Calendar View"
+			calendarview: "Calendar View",
 		};
 		let views = {};
 		let view = "cardview";
@@ -119,35 +122,28 @@ class RecordView extends React.Component {
 		}
 		let relatedTab = null;
 		if (JSON.isJSON(defination.scope.dependants)) {
-			for (let [key, value] of Object.entries(defination.scope.dependants)) {
+			for (let [key, value] of Object.entries(
+				defination.scope.dependants
+			)) {
 				if (definations[key].name !== defination.name) {
 					if (!String.isString(relatedTab)) {
 						if (!definations[key].access.restricted(auth.user)) {
 							relatedTab = definations[key].name;
 						}
-					}
-					else {
+					} else {
 						break;
 					}
 				}
-
 			}
 		}
 
-		
 		this.state.views = views;
 		this.state.view = view;
 		this.state.relatedTab = relatedTab;
 	}
 
 	render() {
-		const {
-			classes,
-			auth,
-			defination,
-			record,
-			service
-		} = this.props;
+		const { classes, auth, defination, record, service } = this.props;
 		return (
 			<GridContainer className={classes.root}>
 				<GridContainer>
@@ -166,15 +162,19 @@ class RecordView extends React.Component {
 							open={Boolean(this.state.viewMenuAnchorEl)}
 							onClose={this.handleCloseViewsMenu}
 						>
-							{Object.entries(this.state.views).map(([name, label], index) => (
-								<MenuItem
-									key={name}
-									selected={name === this.state.view}
-									onClick={this.handleViewMenuItemClick(name)}
-								>
-									{label}
-								</MenuItem>
-							))}
+							{Object.entries(this.state.views).map(
+								([name, label], index) => (
+									<MenuItem
+										key={name}
+										selected={name === this.state.view}
+										onClick={this.handleViewMenuItemClick(
+											name
+										)}
+									>
+										{label}
+									</MenuItem>
+								)
+							)}
 						</Menu>
 					</GridItem>
 				</GridContainer>
@@ -194,7 +194,8 @@ class RecordView extends React.Component {
 							<GridItem xs={2} md={1}>
 								<IconButton
 									className={clsx(classes.expand, {
-										[classes.expandOpen]: this.state.expanded
+										[classes.expandOpen]: this.state
+											.expanded,
 									})}
 									onClick={this.handleExpandClick}
 									aria-expanded={this.state.expanded}
@@ -204,42 +205,106 @@ class RecordView extends React.Component {
 								</IconButton>
 							</GridItem>
 							<GridItem xs={10} md={11}>
-								<Typography className={classes.relationsSectionTitle} color={this.state.expanded? "default" : "grey"} variant="body2"> Related to this {defination.label.singularize()} </Typography>
+								<Typography
+									className={classes.relationsSectionTitle}
+									color={
+										this.state.expanded ? "default" : "grey"
+									}
+									variant="body2"
+								>
+									{" "}
+									Related to this{" "}
+									{defination.label.singularize()}{" "}
+								</Typography>
 							</GridItem>
 						</GridContainer>
-						
 					</GridItem>
 					<GridItem xs={12}>
-						<Collapse in={this.state.expanded} timeout="auto" >
-							{ JSON.isJSON(defination.scope.dependants) ? (
-								<AppBar position="static" color="default" elevation={0}>
-									<Tabs 
-										value={this.state.relatedTab} 
-										onChange={this.handleRelatedTabValueChange} 
+						<Collapse in={this.state.expanded} timeout="auto">
+							{JSON.isJSON(defination.scope.dependants) ? (
+								<AppBar
+									position="static"
+									color="default"
+									elevation={0}
+								>
+									<Tabs
+										value={this.state.relatedTab}
+										onChange={
+											this.handleRelatedTabValueChange
+										}
 										indicatorColor="primary"
 										textColor="primary"
 										variant="fullWidth"
-										aria-label="related data tabs" 
+										aria-label="related data tabs"
 									>
-										{Object.entries(defination.scope.dependants).map(([dependant, properties], cursor) => (
-											!definations[dependant].access.restricted(auth.user) && <Tab value={dependant} label={definations[dependant].label} icon={definations[dependant].icon} key={cursor + "_tab"} {...a11yProps(dependant)}/>
-										))}
+										{Object.entries(
+											defination.scope.dependants
+										).map(
+											([dependant, properties], cursor) =>
+												!definations[
+													dependant
+												].access.restricted(
+													auth.user
+												) && (
+													<Tab
+														value={dependant}
+														label={
+															definations[
+																dependant
+															].label
+														}
+														icon={
+															definations[
+																dependant
+															].icon
+														}
+														key={cursor + "_tab"}
+														{...a11yProps(
+															dependant
+														)}
+													/>
+												)
+										)}
 									</Tabs>
-								</AppBar>) : <Typography color="grey" paragraph> No Related data </Typography> }
+								</AppBar>
+							) : (
+								<Typography color="grey" paragraph>
+									{" "}
+									No Related data{" "}
+								</Typography>
+							)}
 
-							{JSON.isJSON(defination.scope.dependants) && Object.entries(defination.scope.dependants).map(([dependant, properties], cursor) => (
-								!definations[dependant].access.restricted(auth.user) && <TabPanel className="p-0" value={this.state.relatedTab} index={dependant} key={"tab-" + cursor} >
-											<ListingView
-												defination={definations[dependant]}
-												service={services[dependant]}
-												query={{ ...properties.query, [properties.column]: record._id }}
-												show_actions={false}
-												showAddBtn={false}
-											/>
-								</TabPanel>
-							))}
+							{JSON.isJSON(defination.scope.dependants) &&
+								Object.entries(defination.scope.dependants).map(
+									([dependant, properties], cursor) =>
+										!definations[
+											dependant
+										].access.restricted(auth.user) && (
+											<TabPanel
+												className="p-0"
+												value={this.state.relatedTab}
+												index={dependant}
+												key={"tab-" + cursor}
+											>
+												<ListingView
+													defination={
+														definations[dependant]
+													}
+													service={
+														services[dependant]
+													}
+													query={{
+														...properties.query,
+														[properties.column]:
+															record._id,
+													}}
+													show_actions={false}
+													showAddBtn={false}
+												/>
+											</TabPanel>
+										)
+								)}
 						</Collapse>
-						
 					</GridItem>
 				</GridContainer>
 			</GridContainer>
@@ -252,19 +317,17 @@ RecordView.propTypes = {
 	defination: PropTypes.object.isRequired,
 	service: PropTypes.any.isRequired,
 	record: PropTypes.object.isRequired,
-	showRelated: PropTypes.bool
+	showRelated: PropTypes.bool,
 };
 
 RecordView.defaultProps = {};
 
 const mapStateToProps = state => ({
-	auth: state.auth
+	auth: state.auth,
 });
 
 export default compose(
 	withStyles(styles),
-	connect(
-		mapStateToProps,
-		{}
-	)
+	connect(mapStateToProps, {}),
+	withErrorHandler
 )(RecordView);

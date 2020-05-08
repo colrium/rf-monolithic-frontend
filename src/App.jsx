@@ -1,40 +1,61 @@
+/** @format */
+
 import React from "react";
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import { createBrowserHistory } from "history";
 import { BrowserRouter, Router, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
-import { deviceDetect, isMobile, isMobileOnly, isTablet, isBrowser, isSmartTV, isWearable, mobileVendor, mobileModel } from "react-device-detect";
-import Intercom from 'react-intercom';
+import {
+	deviceDetect,
+	isMobile,
+	isMobileOnly,
+	isTablet,
+	isBrowser,
+	isSmartTV,
+	isWearable,
+	mobileVendor,
+	mobileModel,
+} from "react-device-detect";
 
-import { ThemeProvider } from '@material-ui/styles';
+import CacheBuster from 'hoc/CacheBuster';
+
+import Intercom from "react-intercom";
+
+import { ThemeProvider } from "@material-ui/styles";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import ProgressDialog from "components/ProgressDialog";
 
-import {create as createJss} from 'jss'
-import preset from 'jss-preset-default';
-import { SheetsRegistry } from 'react-jss';
-import { JssProvider } from 'react-jss';
-import {createGenerateClassName} from 'react-jss'
-import VendorPrefixer from 'jss-plugin-vendor-prefixer';
-import NestedJSS from 'jss-plugin-nested';
+import { create as createJss } from "jss";
+import preset from "jss-preset-default";
+import { SheetsRegistry } from "react-jss";
+import { JssProvider } from "react-jss";
+import { createGenerateClassName } from "react-jss";
+import VendorPrefixer from "jss-plugin-vendor-prefixer";
+import NestedJSS from "jss-plugin-nested";
 
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import MomentUtils from "@date-io/moment";
 
-import {SettingsProvider} from "contexts/Settings";
-import {PreferencesProvider} from "contexts/Preferences";
+import GlobalsProvider from "contexts/Globals";
 
-import { setDefaultSocket, setAuthSocket, setIdentity, setOperatingSystem, setBrowser, setScreenSize, setWindowSize } from "state/actions";
-import { authSocket, defaultSocket } from "utils/Sockets";
-import Auth from "utils/Auth";
+import {
+	setDefaultSocket,
+	setAuthSocket,
+	setIdentity,
+	setOperatingSystem,
+	setBrowser,
+	setScreenSize,
+	setWindowSize,
+} from "state/actions";
+import { authSocket, defaultSocket } from "hoc/Sockets";
+import Auth from "hoc/Auth";
 
-
-import appStyle from 'assets/jss/appStyle';
-import {app, theme} from "assets/jss/app-theme";
+import appStyle from "assets/jss/appStyle";
+import { app, theme, theme_dark } from "assets/jss/app-theme";
 //
-import Routes from 'routes';
-
+import Routes from "routes";
 
 
 import "assets/scss/style.scss?v=1.4.0";
@@ -42,35 +63,67 @@ import "assets/css/tui-calendar.min.css";
 
 const jss = createJss();
 jss.use(VendorPrefixer(), NestedJSS());
-const generateClassName = createGenerateClassName()
+const generateClassName = createGenerateClassName();
 
 const setupJss = () => {
 	jss.setup(preset());
 	const sheetsRegistry = new SheetsRegistry();
-	const globalStyleSheet = jss.createStyleSheet({'@global': { ...appStyle  }}).attach();
+	const globalStyleSheet = jss
+		.createStyleSheet({ "@global": { ...appStyle } })
+		.attach();
 	sheetsRegistry.add(globalStyleSheet);
 	return sheetsRegistry;
-}
+};
 
 const sheets = setupJss();
 
-
-
-
-class App extends React.Component {	
+class App extends React.Component {
 	constructor(props) {
 		super(props);
-		const { setDefaultSocket, setAuthSocket, setIdentity, setOperatingSystem, setBrowser, setScreenSize, setWindowSize }  = props;	
+		this.initializeAppState();		
+	}
+
+	initializeAppState(){
+		const {
+			setDefaultSocket,
+			setAuthSocket,
+			setIdentity,
+			setOperatingSystem,
+			setBrowser,
+			setScreenSize,
+			setWindowSize,
+			setNavLoading
+		} = this.props;
+		
+		const deviceDetails = deviceDetect();		
+
+		setIdentity({
+			type: isMobileOnly
+				? "mobile"
+				: isTablet
+				? "tablet"
+				: isWearable
+				? "wearable"
+				: isSmartTV
+				? "smarttv"
+				: isBrowser
+				? "browser"
+				: "unknown",
+			vendor: isMobile ? mobileVendor : "uknown",
+			model: isMobile ? mobileModel : "Uknown",
+		});
+		setOperatingSystem({
+			name:
+				"osName" in deviceDetails
+					? deviceDetails.osName.toLowerCase()
+					: "uknown",
+			version:
+				"osVersion" in deviceDetails
+					? deviceDetails.osVersion
+					: "uknown",
+		});
 
 		
-		const defaultSocketInstance = defaultSocket();
-		const authSocketInstance = authSocket();
-		setDefaultSocket(defaultSocketInstance);
-		setAuthSocket(authSocketInstance);
-		const deviceDetails = deviceDetect();
-
-		setIdentity({type: isMobileOnly? "mobile" : (isTablet? "tablet" : (isWearable? "wearable" : (isSmartTV? "smarttv" : (isBrowser? "browser" : "unknown")))), vendor: isMobile? mobileVendor : "uknown", model: isMobile? mobileModel : "Uknown", });
-		setOperatingSystem({name: "osName" in deviceDetails? deviceDetails.osName.toLowerCase() : "uknown", version: "osVersion" in deviceDetails? deviceDetails.osVersion : "uknown" });
 
 		if (deviceDetails.isBrowser) {
 			const browser = {
@@ -78,55 +131,126 @@ class App extends React.Component {
 				version: Number.parseNumber(deviceDetails.browserMajorVersion),
 			};
 
-			setBrowser({ name: deviceDetails.browserName, version: deviceDetails.browserFullVersion });
-			setScreenSize({ width: window.screen.width, height: window.screen.height, orientation: window.screen.width > window.screen.height? "landscape" : "potrait" });
-			setWindowSize({ width: window.innerWidth, height: window.innerHeight, name: window.innerWidth < 600? "xs" : (window.innerWidth >= 600 && window.innerWidth < 960? "sm" : (window.innerWidth >= 960 && window.innerWidth < 1280? "md" : (window.innerWidth > 1280 && window.innerWidth < 1920? "lg" : "xl")))});
-			window.addEventListener('resize', async function(){
-				setWindowSize({ width: window.innerWidth, height: window.innerHeight, name: window.innerWidth < 600? "xs" : (window.innerWidth >= 600 && window.innerWidth < 960? "sm" : (window.innerWidth >= 960 && window.innerWidth < 1280? "md" : (window.innerWidth >= 1280 && window.innerWidth < 1920? "lg" : "xl"))) });
+			setBrowser({
+				name: deviceDetails.browserName,
+				version: deviceDetails.browserFullVersion,
+			});
+			setScreenSize({
+				width: window.screen.width,
+				height: window.screen.height,
+				orientation:
+					window.screen.width > window.screen.height
+						? "landscape"
+						: "potrait",
+			});
+			setWindowSize({
+				width: window.innerWidth,
+				height: window.innerHeight,
+				name:
+					window.innerWidth < 600
+						? "xs"
+						: window.innerWidth >= 600 && window.innerWidth < 960
+						? "sm"
+						: window.innerWidth >= 960 && window.innerWidth < 1280
+						? "md"
+						: window.innerWidth > 1280 && window.innerWidth < 1920
+						? "lg"
+						: "xl",
+			});
+			window.addEventListener("resize", async function() {
+				setWindowSize({
+					width: window.innerWidth,
+					height: window.innerHeight,
+					name:
+						window.innerWidth < 600
+							? "xs"
+							: window.innerWidth >= 600 &&
+							  window.innerWidth < 960
+							? "sm"
+							: window.innerWidth >= 960 &&
+							  window.innerWidth < 1280
+							? "md"
+							: window.innerWidth >= 1280 &&
+							  window.innerWidth < 1920
+							? "lg"
+							: "xl",
+				});
 			});
 		}
-		
 	}
-	
 
 	componentWillUnmount() {
 		const { setWindowSize } = this.props;
-		if (isBrowser) {			
-			window.removeEventListener('resize', function () {
-				setWindowSize({ width: 1, height: 1});
+		if (isBrowser) {
+			window.removeEventListener("resize", function() {
+				setWindowSize({ width: 1, height: 1 });
 			});
 		}
 		Auth.destroyInstance();
 	}
 
-	async onWindowResize(){
-		const { setWindowSize }  = this.props;
-		setWindowSize({ width: window.innerWidth, height: window.innerHeight, name: window.innerWidth < 600? "xs" : (window.innerWidth >= 600 && window.innerWidth < 960? "sm" : (window.innerWidth >= 960 && window.innerWidth < 1280? "md" : (window.innerWidth >= 1280 && window.innerWidth < 1920? "lg" : "xl"))) });
+	async onWindowResize() {
+		const { setWindowSize } = this.props;
+		setWindowSize({
+			width: window.innerWidth,
+			height: window.innerHeight,
+			name:
+				window.innerWidth < 600
+					? "xs"
+					: window.innerWidth >= 600 && window.innerWidth < 960
+					? "sm"
+					: window.innerWidth >= 960 && window.innerWidth < 1280
+					? "md"
+					: window.innerWidth >= 1280 && window.innerWidth < 1920
+					? "lg"
+					: "xl",
+		});
 	}
 
 	render() {
+		const {app} = this.props;
+
 		return (
-			<SettingsProvider>
-				<PreferencesProvider>
-					<ThemeProvider theme={theme}>
-						<MuiThemeProvider theme={theme}>
-							<CssBaseline />
-							<JssProvider jss={jss}  generateClassName={generateClassName} registry={sheets}>
-								<MuiPickersUtilsProvider utils={MomentUtils}>
-									<BrowserRouter>
-										<Router history={createBrowserHistory()}> 
-											<Routes /> 
-										</Router>
-									</BrowserRouter>
-								</MuiPickersUtilsProvider>
-							</JssProvider>
-						</MuiThemeProvider>						
-					</ThemeProvider>
-				</PreferencesProvider>
-			</SettingsProvider>	
+			<CacheBuster>
+				{({ loading, isLatestVersion, refreshCacheAndReload }) => {
+					if (loading) return null;
+					if (!loading && !isLatestVersion) {
+						refreshCacheAndReload();
+					}
+
+					return (
+						<GlobalsProvider >
+							<ThemeProvider theme={app.preferences.theme==="dark"? theme_dark :  theme}>
+								<MuiThemeProvider theme={app.preferences.theme==="dark"? theme_dark :  theme}>
+									<CssBaseline />
+									<JssProvider jss={jss} generateClassName={generateClassName} registry={sheets} >
+										<MuiPickersUtilsProvider utils={MomentUtils}>
+											
+												<Router history={createBrowserHistory()} >
+													<Routes />
+												</Router>
+											
+										</MuiPickersUtilsProvider>
+									</JssProvider>
+									<ProgressDialog open={!app.initialized} hideBackdrop={false}/>
+								</MuiThemeProvider>
+							</ThemeProvider>			
+						</GlobalsProvider>
+					);
+				}}
+			</CacheBuster>
 		);
 	}
 }
 
+const mapStateToProps = state => ({
+	app: state.app,
+});
 
-export default connect(null, { setDefaultSocket, setAuthSocket, setIdentity, setOperatingSystem, setBrowser, setScreenSize, setWindowSize })(App);
+export default connect(mapStateToProps, {
+	setIdentity,
+	setOperatingSystem,
+	setBrowser,
+	setScreenSize,
+	setWindowSize,
+})(App);

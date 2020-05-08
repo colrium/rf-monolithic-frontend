@@ -1,7 +1,18 @@
-/* eslint-disable react/display-name */
+/**
+ * /* eslint-disable react/display-name
+ *
+ * @format
+ */
+
 import { IconButton } from "@material-ui/core";
 import Chip from "@material-ui/core/Chip";
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon, ReceiptOutlined as DefinationContextIcon } from "@material-ui/icons";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+	ReceiptOutlined as DefinationContextIcon,
+} from "@material-ui/icons";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
@@ -12,8 +23,6 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { Link } from "react-router-dom";
 import { attachments as AttachmentsService } from "services";
-
-
 
 export default {
 	name: "orderitems",
@@ -26,20 +35,14 @@ export default {
 	views: {
 		single: {
 			default: "cardview",
-			cardview: {
-			},
-			orderview: {
-				
-			}
+			cardview: {},
+			orderview: {},
 		},
 		listing: {
 			default: "tableview",
-			listview: {
-			},
-			tableview: {
-			},
-			
-		}
+			listview: {},
+			tableview: {},
+		},
 	},
 	scope: {
 		columns: {
@@ -59,9 +62,9 @@ export default {
 						display: {
 							primary: ["reference"],
 							secondary: [],
-							avatar: false
-						}
-					}
+							avatar: false,
+						},
+					},
 				},
 				restricted: {
 					display: (values, user) => {
@@ -75,15 +78,15 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 			item: {
 				type: "string",
 				label: "Retail Item",
 				input: {
 					type: "select",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -101,7 +104,7 @@ export default {
 							}
 						}
 						return true;
-					}
+					},
 				},
 				reference: {
 					name: "retailitems",
@@ -111,12 +114,11 @@ export default {
 						display: {
 							primary: ["name"],
 							secondary: ["sku"],
-							avatar: false
-						}
-					}
-				}
+							avatar: false,
+						},
+					},
+				},
 			},
-			
 
 			quantity: {
 				type: "string",
@@ -125,7 +127,6 @@ export default {
 					type: "number",
 					default: 1,
 					required: false,
-
 				},
 			},
 
@@ -135,11 +136,11 @@ export default {
 				input: {
 					type: "select",
 					required: true,
-					size: 4
+					size: 4,
 				},
 				input: {
 					type: "select",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -157,7 +158,7 @@ export default {
 							}
 						}
 						return true;
-					}
+					},
 				},
 				reference: {
 					name: "currencies",
@@ -167,10 +168,10 @@ export default {
 						display: {
 							primary: ["symbol"],
 							secondary: ["html_symbol"],
-							avatar: false
-						}
-					}
-				}
+							avatar: false,
+						},
+					},
+				},
 			},
 			cost: {
 				type: "string",
@@ -179,7 +180,7 @@ export default {
 					type: "number",
 					default: 1,
 					required: false,
-					size: 8
+					size: 8,
 				},
 				restricted: {
 					display: () => {
@@ -190,7 +191,7 @@ export default {
 							return values.apply_coupon ? false : true;
 						}
 						return true;
-					}
+					},
 				},
 			},
 
@@ -201,7 +202,7 @@ export default {
 					type: "dynamic",
 					default: 1,
 					required: false,
-					size: 8
+					size: 8,
 				},
 				restricted: {
 					display: () => {
@@ -212,10 +213,9 @@ export default {
 							return values.apply_coupon ? false : true;
 						}
 						return true;
-					}
+					},
 				},
 			},
-
 
 			options_cost: {
 				type: "string",
@@ -223,7 +223,7 @@ export default {
 				input: {
 					type: "number",
 					default: 0,
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: () => {
@@ -231,18 +231,17 @@ export default {
 					},
 					input: () => {
 						return false;
-					}
-				}
+					},
+				},
 			},
 		},
 		identity: {
 			primary: ["reference"],
 			secondary: ["status"],
-			avatar: false
+			avatar: false,
 		},
 		dependencies: [],
-		dependants: {			
-		}
+		dependants: {},
 	},
 	access: {
 		restricted: user => {
@@ -266,7 +265,7 @@ export default {
 					return true;
 				}
 				return false;
-			}
+			},
 		},
 		actions: {
 			view_single: {
@@ -281,18 +280,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={"orderitems/view/" + id} className={className}>
-									<IconButton color="inherit" aria-label="edit">
+								<Link
+									to={"orderitems/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			create: {
 				restricted: user => {
@@ -304,17 +309,22 @@ export default {
 						default: props => {
 							return (
 								<Link to={"orderitems/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left" /> New Order Item
-                  </Button>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Order Item
+									</Button>
 								</Link>
 							);
 						},
 						listing: () => {
 							return "";
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			update: {
 				restricted: user => {
@@ -328,21 +338,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
 								<Link
 									to={"orderitems/edit/" + id}
 									className={className ? className : ""}
 								>
-									<IconButton color="inherit" aria-label="edit">
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			delete: {
 				restricted: user => {
@@ -356,7 +369,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton
@@ -368,10 +381,10 @@ export default {
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							);
-						}
-					}
-				}
-			}
-		}
-	}
+						},
+					},
+				},
+			},
+		},
+	},
 };

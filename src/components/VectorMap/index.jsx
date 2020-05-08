@@ -1,3 +1,5 @@
+/** @format */
+
 import { withStyles } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -8,7 +10,7 @@ import Color from "color";
 // Externals
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import withRoot from "utils/withRoot";
+import withRoot from "hoc/withRoot";
 // Component styles
 import styles from "./styles";
 
@@ -39,7 +41,7 @@ class VectorMap extends Component {
 		initialSelectedLayers: null,
 		highlightedLayers: null,
 		initialHighlightedLayers: null,
-		disabledLayers: null
+		disabledLayers: null,
 	};
 
 	constructor(props) {
@@ -48,7 +50,7 @@ class VectorMap extends Component {
 			layers,
 			selectedLayers,
 			highlightedLayers,
-			disabledLayers
+			disabledLayers,
 		} = this.props;
 
 		let selectedLayersNodes = [];
@@ -118,7 +120,7 @@ class VectorMap extends Component {
 			this.setState(state => ({
 				selectedLayers: Array.isArray(state.selectedLayers)
 					? state.selectedLayers.concat([layer])
-					: [layer.id]
+					: [layer.id],
 			}));
 		} else {
 			this.setState(state => ({ selectedLayers: [layer] }));
@@ -131,7 +133,7 @@ class VectorMap extends Component {
 			this.setState(state => ({
 				selectedLayers: Array.isArray(state.selectedLayers)
 					? state.selectedLayers.removeItem(layer)
-					: state.selectedLayers
+					: state.selectedLayers,
 			}));
 		} else {
 			this.setState(state => ({ selectedLayers: [] }));
@@ -140,13 +142,13 @@ class VectorMap extends Component {
 
 	handleHighlight = layer => event => {
 		this.setState(state => ({
-			highlightedLayers: state.initialHighlightedLayers.concat([layer])
+			highlightedLayers: state.initialHighlightedLayers.concat([layer]),
 		}));
 	};
 
 	handleUnhighlight = event => {
 		this.setState(state => ({
-			highlightedLayers: state.initialHighlightedLayers
+			highlightedLayers: state.initialHighlightedLayers,
 		}));
 	};
 
@@ -163,13 +165,13 @@ class VectorMap extends Component {
 			multiselect,
 			showLabels,
 			enableSelect,
-			labels
+			labels,
 		} = this.props;
 
 		let layer_styles = {
 			fill: color,
 			stroke: borderStrokeColor,
-			strokeWidth: borderStrokeWidth + "px"
+			strokeWidth: borderStrokeWidth + "px",
 		};
 		let disabled =
 			(Array.isArray(this.state.disabledLayers) &&
@@ -177,13 +179,14 @@ class VectorMap extends Component {
 			(this.state.disabledLayers && this.state.disabledLayers === layer);
 		let selected =
 			(enableSelect &&
-				(Array.isArray(this.state.selectedLayers) &&
-					this.state.selectedLayers.includes(layer))) ||
+				Array.isArray(this.state.selectedLayers) &&
+				this.state.selectedLayers.includes(layer)) ||
 			(this.state.selectedLayers && this.state.selectedLayers === layer);
 		let highlighted =
 			(Array.isArray(this.state.highlightedLayers) &&
 				this.state.highlightedLayers.includes(layer)) ||
-			(this.state.highlightedLayers && this.state.highlightedLayers === layer);
+			(this.state.highlightedLayers &&
+				this.state.highlightedLayers === layer);
 
 		if (disabled) {
 			layer_styles.fill = disabledColor;
@@ -219,14 +222,18 @@ class VectorMap extends Component {
 					if (label_keys.includes(layer.id)) {
 						label = (
 							<Box>
-								<Typography color="inherit">{layer.name}</Typography>
+								<Typography color="inherit">
+									{layer.name}
+								</Typography>
 								{labels[layer.id]}
 							</Box>
 						);
 					} else if (label_keys.includes(layer.name)) {
 						label = (
 							<Box>
-								<Typography color="inherit">{layer.name}</Typography>
+								<Typography color="inherit">
+									{layer.name}
+								</Typography>
 								{labels[layer.name]}
 							</Box>
 						);
@@ -266,7 +273,9 @@ class VectorMap extends Component {
 						style={{
 							...layer_styles,
 							cursor: disabled ? "none" : "pointer",
-							"& :hover": { fill: disabled ? disabledColor : highlightColor }
+							"& :hover": {
+								fill: disabled ? disabledColor : highlightColor,
+							},
 						}}
 						{...layer}
 					/>
@@ -300,7 +309,9 @@ class VectorMap extends Component {
 					style={{
 						...layer_styles,
 						cursor: disabled ? "none" : "pointer",
-						"& :hover": { fill: disabled ? disabledColor : highlightColor }
+						"& :hover": {
+							fill: disabled ? disabledColor : highlightColor,
+						},
 					}}
 					{...layer}
 				/>
@@ -317,7 +328,7 @@ class VectorMap extends Component {
 			layers,
 			tabIndex,
 			selectedLayers,
-			highlightedLayers
+			highlightedLayers,
 		} = this.props;
 		return (
 			<svg
@@ -344,7 +355,7 @@ VectorMap.propTypes = {
 		PropTypes.shape({
 			id: PropTypes.string.isRequired,
 			name: PropTypes.string,
-			d: PropTypes.string.isRequired
+			d: PropTypes.string.isRequired,
 		})
 	).isRequired,
 	tabIndex: PropTypes.string,
@@ -363,7 +374,7 @@ VectorMap.propTypes = {
 	labels: PropTypes.object,
 	enableSelect: PropTypes.bool,
 	onLayerSelectionChange: PropTypes.func,
-	onLayerHighlightChange: PropTypes.func
+	onLayerHighlightChange: PropTypes.func,
 };
 
 VectorMap.defaultProps = {
@@ -373,12 +384,14 @@ VectorMap.defaultProps = {
 	highlightedLayers: [],
 	disabledLayers: [],
 	color: colors.hex.grey,
-	highlightColor: Color(colors.hex.grey).darken(0.3).hex(),
+	highlightColor: Color(colors.hex.grey)
+		.darken(0.3)
+		.hex(),
 	selectedColor: colors.hex.primarydark,
 	borderStrokeWidth: 0.5,
 	borderStrokeColor: colors.hex.inverse,
 	multiselect: false,
 	showLabels: true,
-	enableSelect: true
+	enableSelect: true,
 };
 export default withRoot(withStyles(styles)(VectorMap));

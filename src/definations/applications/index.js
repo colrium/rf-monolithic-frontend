@@ -1,21 +1,25 @@
-import IconButton from '@material-ui/core/IconButton';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, HowToVoteOutlined as DefinationContextIcon, OpenInNewOutlined as OpenInNewIcon } from '@material-ui/icons';
+/** @format */
 
-import Button from 'components/Button';
+import IconButton from "@material-ui/core/IconButton";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	HowToVoteOutlined as DefinationContextIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
+
+import Button from "components/Button";
 import React from "react";
-import { Link } from 'react-router-dom';
-import { CountriesHelper, UtilitiesHelper } from "utils/Helpers";
+import { Link } from "react-router-dom";
+import { CountriesHelper, UtilitiesHelper } from "hoc/Helpers";
 
-
-
-
-
-export default  {
+export default {
 	name: "applications",
 	label: "Applications",
 	icon: <DefinationContextIcon />,
 	color: "#009688",
-	model: 'Application',
+	model: "Application",
 	endpoint: "/recruitment/applications",
 	cache: true,
 	views: {
@@ -30,9 +34,8 @@ export default  {
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
-
 			vacancy: {
 				type: "string",
 				label: "Position",
@@ -42,16 +45,16 @@ export default  {
 				},
 				reference: {
 					name: "vacancies",
-					service_query: { active: 1, below: Date.now()},
-					resolves:{
+					service_query: { active: 1, below: Date.now() },
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["position"],
 							secondary: [],
 							avatar: false,
-						}							
+						},
 					},
-				},		
+				},
 			},
 
 			avatar: {
@@ -60,24 +63,25 @@ export default  {
 				input: {
 					type: "file",
 					props: {
-						acceptedFiles: ['image/*'],
-						dropzoneText: "Drag & drop your passport size photo here",
+						acceptedFiles: ["image/*"],
+						dropzoneText:
+							"Drag & drop your passport size photo here",
 						filesLimit: 1,
 						dropzoneIcon: "portrait",
-					}					
+					},
 				},
 				reference: {
 					name: "attachments",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["name"],
 							secondary: ["size"],
 							avatar: false,
-						}							
+						},
 					},
-				},		
+				},
 			},
 
 			/*honorific: {
@@ -96,8 +100,8 @@ export default  {
 				input: {
 					type: "text",
 					required: true,
-					size: 6
-				},		
+					size: 6,
+				},
 			},
 
 			last_name: {
@@ -107,8 +111,8 @@ export default  {
 					type: "text",
 					default: "",
 					required: true,
-					size: 6
-				},			
+					size: 6,
+				},
 			},
 
 			email_address: {
@@ -129,7 +133,7 @@ export default  {
 					type: "phone",
 					default: "",
 					required: false,
-				},			
+				},
 			},
 
 			gender: {
@@ -141,11 +145,11 @@ export default  {
 					required: false,
 				},
 				possibilities: {
-					"male": "Male",
-					"female": "Female",
-					"bisexual": "Bisexual",
-					"transexual": "Transexual",
-				}		
+					male: "Male",
+					female: "Female",
+					bisexual: "Bisexual",
+					transexual: "Transexual",
+				},
 			},
 
 			dob: {
@@ -155,7 +159,7 @@ export default  {
 					type: "date",
 					default: "",
 					required: false,
-				},			
+				},
 			},
 
 			address: {
@@ -165,7 +169,7 @@ export default  {
 					type: "textarea",
 					default: "",
 					required: false,
-				},			
+				},
 			},
 
 			contacts: {
@@ -175,7 +179,7 @@ export default  {
 					type: "textarea",
 					default: "",
 					required: false,
-				},			
+				},
 			},
 
 			bio: {
@@ -185,7 +189,7 @@ export default  {
 					type: "textarea",
 					default: "",
 					rich_text: true,
-				},			
+				},
 			},
 
 			cover_letter: {
@@ -196,7 +200,7 @@ export default  {
 					default: "",
 					required: false,
 					rich_text: true,
-				},			
+				},
 			},
 
 			education: {
@@ -215,7 +219,7 @@ export default  {
 					undergraduate: "Under Graduate",
 					postgraduate: "Post Graduate",
 					doctorate: "Doctorate",
-				}			
+				},
 			},
 
 			course: {
@@ -226,10 +230,8 @@ export default  {
 					default: "",
 					required: false,
 					rich_text: true,
-				},			
+				},
 			},
-
-
 
 			documents: {
 				type: ["string"],
@@ -237,11 +239,17 @@ export default  {
 				input: {
 					type: "file",
 					props: {
-						acceptedFiles: ['image/*', 'video/*', 'audio/*', 'application/*'],
-						dropzoneText: "Drag & drop your passport size photo here",
+						acceptedFiles: [
+							"image/*",
+							"video/*",
+							"audio/*",
+							"application/*",
+						],
+						dropzoneText:
+							"Drag & drop your passport size photo here",
 						filesLimit: 1,
 						dropzoneIcon: "attach_file",
-					}
+					},
 				},
 				reference: {
 					name: "attachments",
@@ -252,12 +260,10 @@ export default  {
 							primary: ["name"],
 							secondary: [],
 							avatar: false,
-						}
+						},
 					},
 				},
 			},
-
-			
 
 			country: {
 				type: "string",
@@ -268,7 +274,7 @@ export default  {
 					default: "",
 					required: true,
 				},
-				possibilities : CountriesHelper.names(),		
+				possibilities: CountriesHelper.names(),
 			},
 
 			region: {
@@ -278,7 +284,7 @@ export default  {
 					type: "text",
 					default: "",
 					required: false,
-				},				
+				},
 			},
 
 			city: {
@@ -288,7 +294,7 @@ export default  {
 					type: "text",
 					default: "",
 					required: false,
-				},				
+				},
 			},
 
 			subcounty: {
@@ -298,7 +304,7 @@ export default  {
 					type: "text",
 					default: "",
 					required: false,
-				},				
+				},
 			},
 
 			ward: {
@@ -308,38 +314,34 @@ export default  {
 					type: "text",
 					default: "",
 					required: false,
-				},				
+				},
 			},
-			
-
-			
-
 		},
 		identity: {
 			primary: ["title"],
 			secondary: ["application_deadline"],
 			avatar: false,
-		},		
+		},
 		dependencies: [],
 		dependants: {
 			actionlogs: {
 				column: "record",
-				query: { context: "Application" }
+				query: { context: "Application" },
 			},
-		}		
+		},
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return !(user.isAdmin || user.isCollector);
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return user.isAdmin || user.isCollector;
 				}
@@ -351,7 +353,9 @@ export default  {
 						return true;
 					}
 					if (record) {
-						return UtilitiesHelper.isOfType(record.user, "json")? (record.user._id === user._id) : (record.user === user._id)
+						return UtilitiesHelper.isOfType(record.user, "json")
+							? record.user._id === user._id
+							: record.user === user._id;
 					}
 					return false;
 				}
@@ -360,106 +364,133 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "applications/view/"+id
+				uri: id => {
+					return "applications/view/" + id;
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("applications/view/"+id).toUriWithDashboardPrefix() } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={(
+										"applications/view/" + id
+									).toUriWithDashboardPrefix()}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
-					return user? !(user.isAdmin || user.isCollector)  : true;
+				restricted: user => {
+					return user ? !(user.isAdmin || user.isCollector) : true;
 				},
-				uri: ("applications/add").toUriWithDashboardPrefix(),
+				uri: "applications/add".toUriWithDashboardPrefix(),
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
-								<Link to={("applications/add/").toUriWithDashboardPrefix()} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Application
+						default: props => {
+							return (
+								<Link
+									to={"applications/add/".toUriWithDashboardPrefix()}
+									{...props}
+								>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Application
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("applications/edit/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"applications/edit/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("applications/edit/"+id).toUriWithDashboardPrefix() } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={(
+										"applications/edit/" + id
+									).toUriWithDashboardPrefix()}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("applications/delete/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"applications/delete/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
-	},	
+		},
+	},
 };

@@ -1,32 +1,17 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, NoteOutlined as DefinationContextIcon, OpenInNewOutlined as OpenInNewIcon } from '@material-ui/icons';
-import Button from 'components/Button';
-import * as definations from "definations";
+/** @format */
 import React from "react";
-import { Link } from 'react-router-dom';
-import { UtilitiesHelper } from "utils/Helpers";
-
-
-
-let defaultContextModel = false;
-
-let resolveContexModelPossibilities = (values, user)=>{
-	let possibilies = {};
-	if (user) {
-		Object.entries(definations).map(([name, defination], index) => {
-			if (defination.model !== undefined && name !== "forms" && name !== "formvalues" && !defination.access.restricted(user)) {
-				if (UtilitiesHelper.isOfType(defination.label, "function")) {
-					possibilies[defination.model] = defination.label(user);
-				}
-				else{
-					possibilies[defination.model] = defination.label;
-				}				
-			}
-		});
-	}
-
-	return possibilies;
-}
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	NoteOutlined as DefinationContextIcon,
+	OpenInNewOutlined as OpenInNewIcon
+} from "@material-ui/icons";
+import { UtilitiesHelper } from "hoc/Helpers";
+import * as definations from "definations";
+import { Link } from "react-router-dom";
+import Button from "components/Button";
 
 export default  {
 	name: "forms",

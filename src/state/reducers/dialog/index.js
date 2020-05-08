@@ -1,12 +1,14 @@
-import { OPEN_DIALOG, CLOSE_DIALOG} from "state/actions";
+/** @format */
+
+import { OPEN_DIALOG, CLOSE_DIALOG } from "state/actions";
 const initialState = {
 	state: false,
 	options: {
-		children: "Hi"
-	}
+		children: "Hi",
+	},
 };
 
-const dialog = function (state = initialState, action) {
+const dialog = function(state = initialState, action) {
 	switch (action.type) {
 		case OPEN_DIALOG: {
 			return {
@@ -14,15 +16,15 @@ const dialog = function (state = initialState, action) {
 				state: true,
 				options: {
 					...state.options,
-					...action.options
-				}
+					...action.options,
+				},
 			};
 		}
 		case CLOSE_DIALOG: {
 			return {
 				...state,
 				state: false,
-				options: initialState.options
+				options: initialState.options,
 			};
 		}
 		default: {

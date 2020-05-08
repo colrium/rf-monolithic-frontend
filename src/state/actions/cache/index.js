@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	SET_DATA_CACHE,
 	REMOVE_DATA_CACHE,
@@ -6,7 +8,6 @@ import {
 	REMOVE_BLOB_CACHE,
 	CLEAR_BLOB_CACHE,
 } from "state/actions";
-
 
 export function setDataCache(key, data) {
 	return {
@@ -19,7 +20,7 @@ export function setDataCache(key, data) {
 export function removeDataCache(key) {
 	return {
 		type: REMOVE_DATA_CACHE,
-		key
+		key,
 	};
 }
 
@@ -40,7 +41,7 @@ export function setBlobCache(key, blob) {
 export function removeBlobCache(key) {
 	return {
 		type: REMOVE_BLOB_CACHE,
-		key
+		key,
 	};
 }
 

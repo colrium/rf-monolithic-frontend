@@ -1,24 +1,25 @@
-import { Icon, Menu, MenuItem } from '@material-ui/core';
+/** @format */
+
+import { Menu, MenuItem } from "@material-ui/core";
 //
 import withStyles from "@material-ui/core/styles/withStyles";
-import { MoreVert as AggregateMenuIcon } from '@material-ui/icons';
-import EmptyStateImage from 'assets/img/empty-state.svg';
+import { MoreVert as AggregateMenuIcon } from "@material-ui/icons";
+import EmptyStateImage from "assets/img/empty-state.svg";
+import { colors } from "assets/jss/app-theme";
+import Button from "components/Button";
+import GridContainer from "components/Grid/GridContainer";
+import GridItem from "components/Grid/GridItem";
+import Typography from "components/Typography";
+import PropTypes from "prop-types";
 import React from "react";
-import PropTypes from 'prop-types';
-import { defaults, Pie } from 'react-chartjs-2';
-import { connect } from 'react-redux';
-import compose from 'recompose/compose';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { colors } from 'assets/jss/app-theme';
-import Button from 'components/Button';
-import GridContainer from 'components/Grid/GridContainer';
-import GridItem from 'components/Grid/GridItem';
-import Typography from 'components/Typography';
-import LazyModule from "components/LazyModule";
-import { apiCallRequest } from 'state/actions';
+import { defaults, Pie } from "react-chartjs-2";
+import { connect } from "react-redux";
+import compose from "recompose/compose";
+import { apiCallRequest } from "state/actions";
+import { withErrorHandler } from "hoc/ErrorHandler";
 //
-import { UtilitiesHelper } from 'utils/Helpers';
-import styles from './styles';
+import { UtilitiesHelper } from "hoc/Helpers";
+import styles from "./styles";
 
 //
 defaults.global.legend.display = false;
@@ -30,10 +31,12 @@ class AggregatesPieChart extends React.Component {
 		aggregate: "status",
 		aggregates: [],
 		chart_data: {
-				labels: [],
-				datasets: [{
-					data: []
-				}]
+			labels: [],
+			datasets: [
+				{
+					data: [],
+				},
+			],
 		},
 		aggregateMenuEl: null,
 	};
@@ -42,101 +45,138 @@ class AggregatesPieChart extends React.Component {
 
 	constructor(props) {
 		super(props);
-		
-		this.handleShowAggregateMenu = this.handleShowAggregateMenu.bind(this);
-		this.handleCloseAggregateMenu = this.handleCloseAggregateMenu.bind(this);
 
-		
+		this.handleShowAggregateMenu = this.handleShowAggregateMenu.bind(this);
+		this.handleCloseAggregateMenu = this.handleCloseAggregateMenu.bind(
+			this
+		);
 	}
 
-	componentDidMount(){		
-		this.prepareForData();	
+	componentDidMount() {
+		this.prepareForData();
 		this.loadAggregates();
 		this.prepareChartData();
 	}
 
 	componentDidUpdate(prevProps) {
-		if(!Object.areEqual(this.props.defination, prevProps.defination)){
+		if (!Object.areEqual(this.props.defination, prevProps.defination)) {
 			this.prepareForData();
-			this.loadAggregates();			
-		}
-		else if (!Object.areEqual(prevProps.api, this.props.api)) {
-			this.prepareChartData();			
-		}
-		else if (Array.isArray(this.props.cache)) {
+			this.loadAggregates();
+		} else if (!Object.areEqual(prevProps.api, this.props.api)) {
+			this.prepareChartData();
+		} else if (Array.isArray(this.props.cache)) {
 			if (!this.props.cache.equals(prevProps.cache)) {
 				this.prepareChartData();
-			}			
-		}
-		else if (Array.isArray(prevProps.cache)) {
+			}
+		} else if (Array.isArray(prevProps.cache)) {
 			if (!prevProps.cache.equals(this.props.cache)) {
 				this.prepareChartData();
-			}			
+			}
 		}
-		
-	} 
+	}
 
-	prepareForData(){
-		let { dynamic, monochrome, color, colors, defination, service, aggregate, onResolveAggregates } = this.props;
+	prepareForData() {
+		let {
+			dynamic,
+			monochrome,
+			color,
+			colors,
+			defination,
+			service,
+			aggregate,
+			onResolveAggregates,
+		} = this.props;
 
-		if ( dynamic ) {
+		if (dynamic) {
 			this.aggregatables = [];
-			for (let [column, properties] of Object.entries(defination.scope.columns)) {
+			for (let [column, properties] of Object.entries(
+				defination.scope.columns
+			)) {
 				if (properties.possibilities) {
-					this.aggregatables.push({name: column, label: properties.label});
+					this.aggregatables.push({
+						name: column,
+						label: properties.label,
+					});
 				}
 			}
 		}
 
-
-
-		if ( !aggregate && this.aggregatables.length > 0) {
+		if (!aggregate && this.aggregatables.length > 0) {
 			aggregate = this.aggregatables[0].name;
 			if (onResolveAggregates) {
-				onResolveAggregates(defination.name, this.aggregatables)
+				onResolveAggregates(defination.name, this.aggregatables);
 			}
 		}
 
 		if (dynamic) {
 			this.state.aggregate = aggregate;
-			
-			//generate color scheme if monochromatic 
+
+			//generate color scheme if monochromatic
 			if (monochrome) {
-				let no_of_colors = this.aggregatables.length > 0 ? this.aggregatables.length : 1;
-				let monochrome_colors = UtilitiesHelper.monochromeColorScheme(color, no_of_colors);
+				let no_of_colors =
+					this.aggregatables.length > 0
+						? this.aggregatables.length
+						: 1;
+				let monochrome_colors = UtilitiesHelper.monochromeColorScheme(
+					color,
+					no_of_colors
+				);
 				this.colors = monochrome_colors;
-			}
-			else if (colors) {
+			} else if (colors) {
 				this.colors = colors;
-			}
-			else{
-				let no_of_colors = this.aggregatables.length > 0 ? this.aggregatables.length : 1;
-				let rotation_colors = UtilitiesHelper.rotationColorScheme(color, no_of_colors);
+			} else {
+				let no_of_colors =
+					this.aggregatables.length > 0
+						? this.aggregatables.length
+						: 1;
+				let rotation_colors = UtilitiesHelper.rotationColorScheme(
+					color,
+					no_of_colors
+				);
 				this.colors = rotation_colors;
 			}
 		}
 	}
 
-
-	prepareChartData(){
-		const { monochrome, color, colors, aggregate, defination, service, auth, onLoadAggregates, cache, api } = this.props;
+	prepareChartData() {
+		const {
+			monochrome,
+			color,
+			colors,
+			aggregate,
+			defination,
+			service,
+			auth,
+			onLoadAggregates,
+			cache,
+			api,
+		} = this.props;
 		if (Array.isArray(cache)) {
-			let possibilities = defination.scope.columns[this.state.aggregate] ? defination.scope.columns[this.state.aggregate].possibilities : {};
+			let possibilities = defination.scope.columns[this.state.aggregate]
+				? defination.scope.columns[this.state.aggregate].possibilities
+				: {};
 			if (typeof possibilities === "function") {
 				possibilities = possibilities(false, auth.user);
 			}
-			//generate color scheme if monochromatic 
+			//generate color scheme if monochromatic
 			if (monochrome) {
 				let no_of_colors = cache.length > 0 ? cache.length : 1;
-				let monochrome_colors = UtilitiesHelper.monochromeColorScheme(api.loading || api.error ? "#595959" : color, no_of_colors);
+				let monochrome_colors = UtilitiesHelper.monochromeColorScheme(
+					api.loading || api.error ? "#595959" : color,
+					no_of_colors
+				);
 				this.colors = monochrome_colors;
-			}
-			else if (colors) {
-				this.colors = api.loading || api.error ? UtilitiesHelper.monochromeColorScheme("#595959") : colors;
-			}
-			else {
+			} else if (colors) {
+				this.colors =
+					api.loading || api.error
+						? UtilitiesHelper.monochromeColorScheme("#595959")
+						: colors;
+			} else {
 				let no_of_colors = cache.length > 0 ? cache.length : 1;
-				let rotation_colors = UtilitiesHelper.rotationColorScheme(api.loading || api.error ? "#595959" : color, no_of_colors);
+				let rotation_colors = UtilitiesHelper.rotationColorScheme(
+					api.loading || api.error ? "#595959" : color,
+					no_of_colors
+				);
 				this.colors = rotation_colors;
 			}
 
@@ -154,45 +194,55 @@ class AggregatesPieChart extends React.Component {
 								name: cache[i]._id,
 								label: possibilities[cache[i]._id],
 								count: cache[i].count,
-								color: this.colors[i]
+								color: this.colors[i],
 							});
 						}
-
 					}
 				}
 			}
 
 			let chart_data = {
 				labels: chart_data_labels,
-				datasets: [{
-					data: chart_data_data,
-					backgroundColor: this.colors,
-				}]
-			}
+				datasets: [
+					{
+						data: chart_data_data,
+						backgroundColor: this.colors,
+					},
+				],
+			};
 
-			this.setState(state => ({ aggregates: cache, chart_data: chart_data, loading: false }));
+			this.setState(state => ({
+				aggregates: cache,
+				chart_data: chart_data,
+				loading: false,
+			}));
 			if (onLoadAggregates) {
 				onLoadAggregates(onload_callback_data);
 			}
-		}
-		else{
+		} else {
 			let chart_data_labels = [];
 			let chart_data_data = [];
 			let onload_callback_data = [];
 
 			let chart_data = {
 				labels: chart_data_labels,
-				datasets: [{
-					data: chart_data_data,
-					backgroundColor: this.colors,
-				}]
-			}
+				datasets: [
+					{
+						data: chart_data_data,
+						backgroundColor: this.colors,
+					},
+				],
+			};
 
-			this.setState(state => ({ aggregates: cache, chart_data: chart_data, loading: false }));
+			this.setState(state => ({
+				aggregates: cache,
+				chart_data: chart_data,
+				loading: false,
+			}));
 			if (onLoadAggregates) {
 				onLoadAggregates(onload_callback_data);
 			}
-		}			
+		}
 	}
 
 	loadAggregates(query_data) {
@@ -202,18 +252,32 @@ class AggregatesPieChart extends React.Component {
 			query_data = { g: this.state.aggregate };
 		}
 
-		let new_aggregate = "g" in query_data? query_data.g : ("group" in query_data? query_data.group : false);
+		let new_aggregate =
+			"g" in query_data
+				? query_data.g
+				: "group" in query_data
+				? query_data.group
+				: false;
 		this.setState(state => ({ aggregate: new_aggregate }));
 
 		if (defination) {
-			apiCallRequest(defination.name+"_aggregates", { uri: defination.endpoint, type:"aggregates", params:query_data, data: {} }, true);
-		}		
+			apiCallRequest(
+				defination.name + "_aggregates",
+				{
+					uri: defination.endpoint,
+					type: "aggregates",
+					params: query_data,
+					data: {},
+				},
+				true
+			);
+		}
 	}
 
 	handleShowAggregateMenu = event => {
 		let aggregateMenuEl = event.currentTarget;
 		this.setState({ aggregateMenuEl: aggregateMenuEl });
-	}
+	};
 
 	handleCloseAggregateMenu() {
 		this.setState({ aggregateMenuEl: null });
@@ -222,71 +286,179 @@ class AggregatesPieChart extends React.Component {
 	handleAggregateMenuItemClick = column => event => {
 		//this.handleCloseAggregateMenu();
 		this.setState({ aggregateMenuEl: null });
-		this.loadAggregates({g: column});
-	}
+		this.loadAggregates({ g: column });
+	};
 
 	render() {
-		const { classes, className, aggregate, dynamic, defination, service, showTitle, showMenu, api, cache } = this.props;
+		const {
+			classes,
+			className,
+			aggregate,
+			dynamic,
+			defination,
+			service,
+			showTitle,
+			showMenu,
+			api,
+			cache,
+		} = this.props;
 		return (
-				<GridContainer className={className+" p-0 m-0"}>
-					<GridItem xs={12} className="p-0 m-0">
+			<GridContainer className={className + " p-0 m-0"}>
+				<GridItem xs={12} className="p-0 m-0">
+					<GridContainer className="p-0 m-0">
 						<GridContainer className="p-0 m-0">
-								
-									<GridContainer className="p-0 m-0">
-										{(showMenu || showTitle) && (
+							{(showMenu || showTitle) && (
+								<GridItem xs={12}>
+									<GridContainer>
+										{showTitle && !showMenu && (
 											<GridItem xs={12}>
-												<GridContainer>
-													{showTitle && !showMenu && <GridItem xs={12}>
-															<Typography color="default" variant="body1" fullWidth center>
-																{defination.scope.columns[this.state.aggregate]? defination.scope.columns[this.state.aggregate].label : "Unknown"} Aggregate
-															</Typography>
-														</GridItem>}
-													
-													{dynamic && showMenu && <GridItem className="p-0 m-0" xs={12}>
-															<Button aria-controls="aggregate-menu" aria-haspopup="true" onClick={this.handleShowAggregateMenu} color="default" className="float-right" size="md" aria-label="Aggregate Menu" simple>
-																{defination.scope.columns[this.state.aggregate]? defination.scope.columns[this.state.aggregate].label : "Unknown"} Aggregate 
-																<AggregateMenuIcon />
-															</Button>
-															<Menu
-																id="surveys-aggregate-menu"
-																anchorEl={this.state.aggregateMenuEl}
-																keepMounted
-																open={Boolean(this.state.aggregateMenuEl)}
-																onClose={this.handleCloseAggregateMenu}
-															>
-															{this.aggregatables.map((aggregatable, index) => (
-																<MenuItem onClick={this.handleAggregateMenuItemClick(aggregatable.name)} key={"aggregate_"+aggregatable.name}>{ aggregatable.label+" Aggregate" }</MenuItem>
-															))}
-
-															</Menu>
-													</GridItem>}
-												</GridContainer>
-														
+												<Typography
+													color="default"
+													variant="body1"
+													fullWidth
+													center
+												>
+													{defination.scope.columns[
+														this.state.aggregate
+													]
+														? defination.scope
+																.columns[
+																this.state
+																	.aggregate
+														  ].label
+														: "Unknown"}{" "}
+													Aggregate
+												</Typography>
 											</GridItem>
-										)}								
-											
-										<GridItem className="p-0 m-0" xs={12}>
-											{ Array.isArray(this.state.chart_data.labels) && this.state.chart_data.labels.length > 0? (<Pie data={this.state.chart_data} />) : (
-												<GridContainer className="p-0 m-0" justify="center" alignItems="center">
-													<img alt="Empty Aggregates" className={classes.emptyImage} src={EmptyStateImage} />
-													<Typography className={classes.emptyText} color="grey" variant="body2" center fullWidth>
-														No {defination.scope.columns[this.state.aggregate]? defination.scope.columns[this.state.aggregate].label : ""} Aggregates
-													</Typography>
-												</GridContainer> 
-												) }
-										</GridItem>
-									</GridContainer>
+										)}
 
-									{(api.complete && api.error) && <GridContainer >
-										<GridItem xs={12}>
-											<Typography color="error" variant="body2" center fullWidth>												
-												{"An error occured. \n "+api.error.msg}
-											</Typography>
-										</GridItem>										
-									</GridContainer>}
+										{dynamic && showMenu && (
+											<GridItem
+												className="p-0 m-0"
+												xs={12}
+											>
+												<Button
+													aria-controls="aggregate-menu"
+													aria-haspopup="true"
+													onClick={
+														this
+															.handleShowAggregateMenu
+													}
+													color="default"
+													className="float-right"
+													size="md"
+													aria-label="Aggregate Menu"
+													simple
+												>
+													{defination.scope.columns[
+														this.state.aggregate
+													]
+														? defination.scope
+																.columns[
+																this.state
+																	.aggregate
+														  ].label
+														: "Unknown"}{" "}
+													Aggregate
+													<AggregateMenuIcon />
+												</Button>
+												<Menu
+													id="surveys-aggregate-menu"
+													anchorEl={
+														this.state
+															.aggregateMenuEl
+													}
+													keepMounted
+													open={Boolean(
+														this.state
+															.aggregateMenuEl
+													)}
+													onClose={
+														this
+															.handleCloseAggregateMenu
+													}
+												>
+													{this.aggregatables.map(
+														(
+															aggregatable,
+															index
+														) => (
+															<MenuItem
+																onClick={this.handleAggregateMenuItemClick(
+																	aggregatable.name
+																)}
+																key={
+																	"aggregate_" +
+																	aggregatable.name
+																}
+															>
+																{aggregatable.label +
+																	" Aggregate"}
+															</MenuItem>
+														)
+													)}
+												</Menu>
+											</GridItem>
+										)}
+									</GridContainer>
+								</GridItem>
+							)}
+
+							<GridItem className="p-0 m-0" xs={12}>
+								{Array.isArray(this.state.chart_data.labels) &&
+								this.state.chart_data.labels.length > 0 ? (
+									<Pie data={this.state.chart_data} />
+								) : (
+									<GridContainer
+										className="p-0 m-0"
+										justify="center"
+										alignItems="center"
+									>
+										<img
+											alt="Empty Aggregates"
+											className={classes.emptyImage}
+											src={EmptyStateImage}
+										/>
+										<Typography
+											className={classes.emptyText}
+											color="grey"
+											variant="body2"
+											center
+											fullWidth
+										>
+											No{" "}
+											{defination.scope.columns[
+												this.state.aggregate
+											]
+												? defination.scope.columns[
+														this.state.aggregate
+												  ].label
+												: ""}{" "}
+											Aggregates
+										</Typography>
+									</GridContainer>
+								)}
+							</GridItem>
+						</GridContainer>
+
+						{api.complete && api.error && (
+							<GridContainer>
+								<GridItem xs={12}>
+									<Typography
+										color="error"
+										variant="body2"
+										center
+										fullWidth
+									>
+										{"An error occured. \n " +
+											api.error.msg}
+									</Typography>
+								</GridItem>
 							</GridContainer>
-					</GridItem>
-				</GridContainer>
+						)}
+					</GridContainer>
+				</GridItem>
+			</GridContainer>
 		);
 	}
 }
@@ -305,7 +477,6 @@ AggregatesPieChart.propTypes = {
 	aggregate: PropTypes.string,
 	onResolveAggregates: PropTypes.func,
 	onLoadAggregates: PropTypes.func,
-	
 };
 
 AggregatesPieChart.defaultProps = {
@@ -314,16 +485,23 @@ AggregatesPieChart.defaultProps = {
 	monochrome: true,
 };
 
-
 const mapStateToProps = (state, ownProps) => {
 	const { defination } = ownProps;
 	return {
 		auth: state.auth,
-		cache: defination? state.cache.data[defination.name+"_aggregates"] : null,
-		api: defination? (state.api[defination.name]? state.api[defination.name] : {}) : {},
-	}
+		cache: defination
+			? state.cache.data[defination.name + "_aggregates"]
+			: null,
+		api: defination
+			? state.api[defination.name]
+				? state.api[defination.name]
+				: {}
+			: {},
+	};
 };
 
-
-export default compose(withStyles(styles), connect(mapStateToProps, { apiCallRequest }))(AggregatesPieChart);
-
+export default compose(
+	withStyles(styles),
+	connect(mapStateToProps, { apiCallRequest }),
+	withErrorHandler
+)(AggregatesPieChart);

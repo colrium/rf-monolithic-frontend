@@ -1,10 +1,12 @@
+/** @format */
+
 import Card from "@material-ui/core/Card";
 import withStyles from "@material-ui/core/styles/withStyles";
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import withRoot from "utils/withRoot";
+import withRoot from "hoc/withRoot";
 import styles from "./styles";
 
 function CustomCard({ ...props }) {
@@ -24,8 +26,11 @@ function CustomCard({ ...props }) {
 		[classes.card]: true,
 		[classes.cardPlain]: plain,
 		[classes.cardCarousel]: carousel,
-		[classes.coloredOutline]: useMediaQuery('(min-width:768px)') && enforceOutline? outlineColor : false,
-		[className]: className
+		[classes.coloredOutline]:
+			useMediaQuery("(min-width:768px)") && enforceOutline
+				? outlineColor
+				: false,
+		[className]: className,
 	});
 	let cardStyles = {};
 	if (color) {

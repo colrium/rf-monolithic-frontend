@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 import PropTypes from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -20,10 +22,10 @@ import SnackbarContent from "components/Snackbar/SnackbarContent";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import { baseUrls, environment } from "config";
+import {withErrorHandler} from "hoc/ErrorHandler";
 
-
-import { CountriesHelper } from "utils/Helpers";
-import withRoot from "utils/withRoot";
+import { CountriesHelper } from "hoc/Helpers";
+import withRoot from "hoc/withRoot";
 
 const styles = theme => ({
 	root: {
@@ -31,32 +33,32 @@ const styles = theme => ({
 		color: colors.hex.text,
 		position: "relative",
 		paddingTop: "80px",
-		minHeight: "100vh"
+		minHeight: "100vh",
 	},
 	wrapper: {
 		position: "relative",
 		margin: theme.spacing(),
-		padding: theme.spacing()
+		padding: theme.spacing(),
 	},
 	loginContainer: {
 		padding: "0",
-		position: "relative"
+		position: "relative",
 	},
 	margin: {
-		margin: theme.spacing()
+		margin: theme.spacing(),
 	},
 	textField: {
-		flexBasis: 200
+		flexBasis: 200,
 	},
 	inputAdornment: {
-		color: colors.hex.gray
+		color: colors.hex.gray,
 	},
 	submitBtnWrapper: {
 		display: "flex",
 		alignItems: "center",
 		position: "relative",
 		margin: theme.spacing(),
-		padding: theme.spacing()
+		padding: theme.spacing(),
 	},
 	submitBtn: {
 		position: "relative",
@@ -67,13 +69,13 @@ const styles = theme => ({
 		transition:
 			"box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
 		"& .material-icons": {
-			color: colors.hex.inverse
-		}
+			color: colors.hex.inverse,
+		},
 	},
 	btnSubmitting: {
 		cursor: "not-allowed",
 		height: "56px",
-		backgroundColor: "transparent"
+		backgroundColor: "transparent",
 	},
 	signupSuccess: {
 		cursor: "pointer",
@@ -95,8 +97,8 @@ const styles = theme => ({
 				colors.rgb.text +
 				", 0.12), 0 8px 10px -5px rgba(" +
 				colors.hex.success +
-				", 0.2)"
-		}
+				", 0.2)",
+		},
 	},
 	signupError: {
 		cursor: "pointer",
@@ -118,8 +120,8 @@ const styles = theme => ({
 				colors.rgb.text +
 				", 0.12), 0 8px 10px -5px rgba(" +
 				colors.rgb.error +
-				", 0.2)"
-		}
+				", 0.2)",
+		},
 	},
 	submitProgress: {
 		color: colors.hex.accent,
@@ -127,14 +129,14 @@ const styles = theme => ({
 		top: "50%",
 		left: "50%",
 		marginTop: -18,
-		marginLeft: -18
+		marginLeft: -18,
 	},
 	oauthWrapper: {
 		position: "relative",
 		display: "flex",
 		alignItems: "center",
-		padding: theme.spacing()
-	}
+		padding: theme.spacing(),
+	},
 });
 
 class SignupForm extends React.Component {
@@ -159,7 +161,7 @@ class SignupForm extends React.Component {
 		signupsuccess: false,
 		signuperror: false,
 		verifingAccount: false,
-		alert: false
+		alert: false,
 	};
 	constructor(props) {
 		super(props);
@@ -174,8 +176,9 @@ class SignupForm extends React.Component {
 
 	componentDidMount() {
 		let uriQueries = (
-			window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) ||
-			[]
+			window.location.search.match(
+				new RegExp("([^?=&]+)(=([^&]*))?", "g")
+			) || []
 		).reduce(function(result, each, n, every) {
 			let [key, value] = each.split("=");
 			result[key] = value;
@@ -190,7 +193,7 @@ class SignupForm extends React.Component {
 			this.setState({
 				verifingAccount: true,
 				email_address: email,
-				account_verifacation_code: code
+				account_verifacation_code: code,
 			});
 		}
 	}
@@ -204,7 +207,9 @@ class SignupForm extends React.Component {
 	}
 
 	handleClickShowRepeatPassword() {
-		this.setState(state => ({ showRepeatPassword: !state.showRepeatPassword }));
+		this.setState(state => ({
+			showRepeatPassword: !state.showRepeatPassword,
+		}));
 	}
 
 	handleVerifyAccount() {
@@ -216,7 +221,7 @@ class SignupForm extends React.Component {
 			alert: false,
 			submitting: false,
 			signupsuccess: false,
-			signuperror: false
+			signuperror: false,
 		}));
 	}
 
@@ -228,7 +233,7 @@ class SignupForm extends React.Component {
 		if (this.state.verifingAccount) {
 			let formData = {
 				code: this.state.account_verifacation_code,
-				email: this.state.email_address
+				email: this.state.email_address,
 			};
 			let response = await authService.verifyAccount(formData);
 			if (response.err) {
@@ -236,14 +241,14 @@ class SignupForm extends React.Component {
 					submitting: false,
 					signuperror: true,
 					signupsuccess: false,
-					alert: response.err.msg
+					alert: response.err.msg,
 				}));
 			} else {
 				that.setState(state => ({
 					submitting: false,
 					signuperror: false,
 					signupsuccess: true,
-					alert: response.body.message
+					alert: response.body.message,
 				}));
 			}
 		} else {
@@ -254,7 +259,7 @@ class SignupForm extends React.Component {
 					submitting: false,
 					signuperror: true,
 					signupsuccess: false,
-					alert: response.err.msg
+					alert: response.err.msg,
 				}));
 			} else {
 				that.setState(state => ({
@@ -262,7 +267,7 @@ class SignupForm extends React.Component {
 					submitting: false,
 					signuperror: false,
 					signupsuccess: true,
-					alert: response.body.message
+					alert: response.body.message,
 				}));
 			}
 		}
@@ -274,7 +279,7 @@ class SignupForm extends React.Component {
 			[classes.submitBtn]: true,
 			[classes.btnSubmitting]: this.state.btnSubmitting,
 			[classes.signupSuccess]: this.state.signupsuccess,
-			[classes.signupError]: this.state.signuperror
+			[classes.signupError]: this.state.signuperror,
 		});
 		const countries = CountriesHelper.names();
 		return (
@@ -282,7 +287,7 @@ class SignupForm extends React.Component {
 				<Snackbar
 					anchorOrigin={{
 						vertical: "bottom",
-						horizontal: "center"
+						horizontal: "center",
 					}}
 					open={this.state.alert ? true : false}
 					autoHideDuration={this.state.signuperror ? null : 6000}
@@ -322,9 +327,15 @@ class SignupForm extends React.Component {
 								<GridItem xs={12} sm={12} md={12}>
 									<TextField
 										type="text"
-										value={this.state.account_verifacation_code}
-										onChange={this.handleChange("account_verifacation_code")}
-										className={classNames(classes.textField)}
+										value={
+											this.state.account_verifacation_code
+										}
+										onChange={this.handleChange(
+											"account_verifacation_code"
+										)}
+										className={classNames(
+											classes.textField
+										)}
 										variant="filled"
 										label="Account verifacation code"
 										margin="normal"
@@ -340,8 +351,12 @@ class SignupForm extends React.Component {
 										<TextField
 											type="text"
 											value={this.state.first_name}
-											onChange={this.handleChange("first_name")}
-											className={classNames(classes.textField)}
+											onChange={this.handleChange(
+												"first_name"
+											)}
+											className={classNames(
+												classes.textField
+											)}
 											variant="filled"
 											label="First Name"
 											margin="normal"
@@ -353,8 +368,12 @@ class SignupForm extends React.Component {
 										<TextField
 											type="text"
 											value={this.state.last_name}
-											onChange={this.handleChange("last_name")}
-											className={classNames(classes.textField)}
+											onChange={this.handleChange(
+												"last_name"
+											)}
+											className={classNames(
+												classes.textField
+											)}
 											variant="filled"
 											label="Last Name"
 											margin="normal"
@@ -369,8 +388,12 @@ class SignupForm extends React.Component {
 										<TextField
 											type="email"
 											value={this.state.email_address}
-											onChange={this.handleChange("email_address")}
-											className={classNames(classes.textField)}
+											onChange={this.handleChange(
+												"email_address"
+											)}
+											className={classNames(
+												classes.textField
+											)}
 											variant="filled"
 											label="Email"
 											margin="normal"
@@ -382,8 +405,12 @@ class SignupForm extends React.Component {
 										<TextField
 											type="phone"
 											value={this.state.phone}
-											onChange={this.handleChange("phone")}
-											className={classNames(classes.textField)}
+											onChange={this.handleChange(
+												"phone"
+											)}
+											className={classNames(
+												classes.textField
+											)}
 											variant="filled"
 											label="Phone"
 											margin="normal"
@@ -396,10 +423,18 @@ class SignupForm extends React.Component {
 								<GridContainer>
 									<GridItem xs={12} sm={12} md={6}>
 										<TextField
-											type={this.state.showPassword ? "text" : "password"}
+											type={
+												this.state.showPassword
+													? "text"
+													: "password"
+											}
 											value={this.state.password}
-											onChange={this.handleChange("password")}
-											className={classNames(classes.textField)}
+											onChange={this.handleChange(
+												"password"
+											)}
+											className={classNames(
+												classes.textField
+											)}
 											variant="filled"
 											label="Password"
 											margin="normal"
@@ -409,17 +444,25 @@ class SignupForm extends React.Component {
 														{" "}
 														<IconButton
 															aria-label="Toggle password visibility"
-															onClick={this.handleClickShowPassword}
+															onClick={
+																this
+																	.handleClickShowPassword
+															}
 														>
 															{" "}
-															{this.state.showPassword ? (
-																<Icon>visibility</Icon>
+															{this.state
+																.showPassword ? (
+																<Icon>
+																	visibility
+																</Icon>
 															) : (
-																<Icon>visibility_off</Icon>
+																<Icon>
+																	visibility_off
+																</Icon>
 															)}{" "}
 														</IconButton>{" "}
 													</InputAdornment>
-												)
+												),
 											}}
 											fullWidth
 											required
@@ -427,10 +470,18 @@ class SignupForm extends React.Component {
 									</GridItem>
 									<GridItem xs={12} sm={12} md={6}>
 										<TextField
-											type={this.state.showRepeatPassword ? "text" : "password"}
+											type={
+												this.state.showRepeatPassword
+													? "text"
+													: "password"
+											}
 											value={this.state.repeat_password}
-											onChange={this.handleChange("repeat_password")}
-											className={classNames(classes.textField)}
+											onChange={this.handleChange(
+												"repeat_password"
+											)}
+											className={classNames(
+												classes.textField
+											)}
 											variant="filled"
 											label="Confirm Password"
 											margin="normal"
@@ -440,17 +491,25 @@ class SignupForm extends React.Component {
 														{" "}
 														<IconButton
 															aria-label="Toggle password visibility"
-															onClick={this.handleClickShowRepeatPassword}
+															onClick={
+																this
+																	.handleClickShowRepeatPassword
+															}
 														>
 															{" "}
-															{this.state.showRepeatPassword ? (
-																<Icon>visibility</Icon>
+															{this.state
+																.showRepeatPassword ? (
+																<Icon>
+																	visibility
+																</Icon>
 															) : (
-																<Icon>visibility_off</Icon>
+																<Icon>
+																	visibility_off
+																</Icon>
 															)}{" "}
 														</IconButton>{" "}
 													</InputAdornment>
-												)
+												),
 											}}
 											fullWidth
 											required
@@ -463,8 +522,12 @@ class SignupForm extends React.Component {
 										<TextField
 											type="text"
 											value={this.state.job_title}
-											onChange={this.handleChange("job_title")}
-											className={classNames(classes.textField)}
+											onChange={this.handleChange(
+												"job_title"
+											)}
+											className={classNames(
+												classes.textField
+											)}
 											variant="filled"
 											label="Job title"
 											margin="normal"
@@ -475,8 +538,12 @@ class SignupForm extends React.Component {
 										<TextField
 											type="text"
 											value={this.state.company}
-											onChange={this.handleChange("company")}
-											className={classNames(classes.textField)}
+											onChange={this.handleChange(
+												"company"
+											)}
+											className={classNames(
+												classes.textField
+											)}
 											variant="filled"
 											label="Company"
 											margin="normal"
@@ -492,30 +559,41 @@ class SignupForm extends React.Component {
 											label="Project country"
 											className={classes.textField}
 											value={this.state.country}
-											onChange={this.handleChange("country")}
+											onChange={this.handleChange(
+												"country"
+											)}
 											SelectProps={{
 												MenuProps: {
-													className: classes.menu
-												}
+													className: classes.menu,
+												},
 											}}
 											margin="normal"
 											variant="filled"
 											fullWidth
 											required
 										>
-											{Object.keys(countries).map((keyName, i) => (
-												<MenuItem key={keyName} value={keyName}>
-													{countries[keyName]}
-												</MenuItem>
-											))}
+											{Object.keys(countries).map(
+												(keyName, i) => (
+													<MenuItem
+														key={keyName}
+														value={keyName}
+													>
+														{countries[keyName]}
+													</MenuItem>
+												)
+											)}
 										</TextField>
 									</GridItem>
 									<GridItem xs={12} sm={12} md={6}>
 										<TextField
 											type="text"
 											value={this.state.region}
-											onChange={this.handleChange("region")}
-											className={classNames(classes.textField)}
+											onChange={this.handleChange(
+												"region"
+											)}
+											className={classNames(
+												classes.textField
+											)}
 											variant="filled"
 											label="Project region"
 											margin="normal"
@@ -568,7 +646,11 @@ class SignupForm extends React.Component {
 							>
 								<Button
 									variant="contained"
-									color={this.state.submitting ? "inverse" : "accent"}
+									color={
+										this.state.submitting
+											? "inverse"
+											: "accent"
+									}
 									className={loginBtnClassname}
 									type="submit"
 									outlined={this.state.submitting}
@@ -601,7 +683,7 @@ class SignupForm extends React.Component {
 }
 
 SignupForm.propTypes = {
-	classes: PropTypes.object.isRequired
+	classes: PropTypes.object.isRequired,
 };
 
-export default withRoot(withStyles(styles)(SignupForm));
+export default withErrorHandler(withStyles(styles)(SignupForm));

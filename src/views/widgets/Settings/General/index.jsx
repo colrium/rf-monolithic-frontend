@@ -1,62 +1,111 @@
-import React, { useState, useEffect } from "react";
-import Typography from '@material-ui/core/Typography';
+import React, { /*useEffect,*/ useState } from "react";
+import { connect } from "react-redux";
+import { useGlobals } from "contexts/Globals";
+
+import Typography from "@material-ui/core/Typography";
+import { TextInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { TextInput } from "components/FormInputs";
-import { withSettingsContext } from "contexts/Settings";
-
-
-
 
 function Widget(props) {
-	let [state, setState] = useState(props);
-	let [settings, setSettings] = useState(state.settingsContext.settings.general? state.settingsContext.settings.general : {} );
-	let [alerts, setAlerts] = useState({});
-	useEffect(() => {  setState(props); }, [props]);
-	useEffect(() => {  setSettings(props.settingsContext.settings.general); }, [props.settingsContext.settings.general]);
+	/*let [state, setState] = useState(props);
+	useEffect(() => {
+		setState(props);
+	}, [props]);*/
 
-	const handleOnChange = name => value => {		
-		let new_value = {...settings, [name]: value};	
-		state.settingsContext.updateSettings("General", new_value).then(newContext => {
-			setAlerts({...alerts, [name.variablelize("-")]: name+" saved"});
+	let [alerts, setAlerts] = useState({});	
+	let [loading, setLoading] = useState({});
+	let [errors, setErrors] = useState({});
+
+	
+	let { app: { settings } } = props;
+	const { updateSettings } = useGlobals();
+
+	let context_settings = settings.general;
+
+	const handleOnChange = name => async value => {
+		setLoading({...loading, [name] : true});
+		setErrors({...errors, [name] : false});
+		let new_value = { ...context_settings, [name]: value };
+		updateSettings("general", new_value).then(new_settings => {
+			setLoading({...loading, [name] : false});
+			setAlerts({ [name]: name.humanize() + " saved", });
+		}).catch(e => {
+			setLoading({...loading, [name] : false});
+			setErrors({...errors, [name] : e.msg});
+			console.error("update general settings error", e);
 		});
-	}
-
+	};
 
 	return (
-			<GridContainer className="px-2">
-				<GridItem xs={12} className="mb-2">
-					<Typography variant="h3"> General settings</Typography>
-				</GridItem>
+		<GridContainer className="px-2">
+			<GridItem xs={12} className="mb-2">
+				<Typography variant="h3"> General settings</Typography>
+			</GridItem>
 
-				<GridItem xs={12}>
-					<TextInput
-						name="site-title"
-						label="Site title"
-						type="text"
-						defaultValue={settings["site-title"]}
-						onChange={handleOnChange("Site title")}
-						helperText={alerts["site-title"]}						
-					/>
-				</GridItem>	
+			<GridItem xs={12}>
+				<TextInput
+					name="seo-title"
+					label="SEO title"
+					type="text"
+					defaultValue={context_settings["seo-title"]}
+					onChange={handleOnChange("seo-title")}
+					helperText={alerts["seo-title"]}
+					disabled={loading["seo-title"]}
+					error={errors["seo-title"]}
+					required
+				/>
+			</GridItem>
 
-				<GridItem xs={12}>
-					<TextInput
-						name="site-tagline"
-						label="Site tagline"
-						type="text"
-						multiline
-						rows="6"
-						defaultValue={settings["site-tagline"]}
-						onChange={handleOnChange("Site tagline")}
-						helperText={alerts["site-tagline"]}						
-					/>
-				</GridItem>		
-			</GridContainer>
+			<GridItem xs={12}>
+				<TextInput
+					name="seo-tagline"
+					label="SEO tagline"
+					type="text"
+					multiline
+					rows="6"
+					defaultValue={context_settings["seo-tagline"]}
+					onChange={handleOnChange("seo-tagline")}
+					helperText={alerts["seo-tagline"]}
+					disabled={loading["seo-tagline"]}
+					error={errors["seo-tagline"]}
+					required
+				/>
+			</GridItem>
+
+			<GridItem xs={12}>
+				<TextInput
+					name="copyright"
+					label="Copyright"
+					type="text"
+					defaultValue={context_settings["copyright"]}
+					onChange={handleOnChange("copyright")}
+					helperText={alerts["copyright"]}
+					disabled={loading["copyright"]}
+					error={errors["copyright"]}
+					required
+				/>
+			</GridItem>
+
+			<GridItem xs={12}>
+				<TextInput
+					name="trademark"
+					label="Trademark"
+					type="text"
+					defaultValue={context_settings["trademark"]}
+					onChange={handleOnChange("trademark")}
+					helperText={alerts["trademark"]}
+					disabled={loading["trademark"]}
+					error={errors["trademark"]}
+					required
+				/>
+			</GridItem>
+		</GridContainer>
 	);
-
-
 }
 
+const mapStateToProps = state => ({
+	app: state.app,
+});
 
-export default withSettingsContext(Widget);
+export default connect(mapStateToProps, {})(React.memo(Widget));

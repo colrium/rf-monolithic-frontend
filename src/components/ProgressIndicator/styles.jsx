@@ -1,5 +1,7 @@
+/** @format */
+
 export default theme => ({
-    root: {
-        padding: theme.spacing(),
-    },
+	root: {
+		padding: theme.spacing(),
+	},
 });

@@ -1,16 +1,23 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, NotificationsOutlined as DefinationContextIcon, OpenInNewOutlined as OpenInNewIcon } from '@material-ui/icons';
-import Button from 'components/Button';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	NotificationsOutlined as DefinationContextIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-
-export default  {
+export default {
 	name: "notifications",
 	label: "Notifications",
 	icon: <DefinationContextIcon />,
 	color: "#0e4000",
-	model: 'Notification',
+	model: "Notification",
 	endpoint: "/notifications",
 	cache: true,
 	views: {
@@ -21,14 +28,14 @@ export default  {
 				subtitle: ["context"],
 				tags: ["priority", "read"],
 				body: ["body"],
-			}
+			},
 		},
 		listing: {
 			default: "tableview",
 			listview: {
 				avatar: false,
 				primary: ["title"],
-				secondary: ["context", "priority", "read"]
+				secondary: ["context", "priority", "read"],
 			},
 			tableview: {
 				avatar: false,
@@ -36,7 +43,7 @@ export default  {
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
 			title: {
 				type: "string",
@@ -47,13 +54,13 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						return false;
-					}					
-				},		
+					},
+				},
 			},
 			body: {
 				type: "string",
@@ -65,13 +72,13 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						return false;
-					}					
-				},				
+					},
+				},
 			},
 			context: {
 				type: "string",
@@ -82,14 +89,14 @@ export default  {
 					default: "",
 					required: false,
 				},
-				possibilities : {
-					"Commission": "Commission",
-					"Coupon": "Coupon",
-					"Invoice": "Invoice",
-					"Order": "Order",
+				possibilities: {
+					Commission: "Commission",
+					Coupon: "Coupon",
+					Invoice: "Invoice",
+					Order: "Order",
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
@@ -100,8 +107,8 @@ export default  {
 						}
 
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			priority: {
 				type: "string",
@@ -111,13 +118,13 @@ export default  {
 					default: "",
 					required: true,
 				},
-				possibilities : {
-					"low": "Low",
-					"medium": "Medium",
-					"high": "High",
+				possibilities: {
+					low: "Low",
+					medium: "Medium",
+					high: "High",
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
@@ -127,8 +134,8 @@ export default  {
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			notifier: {
 				type: "string",
@@ -141,17 +148,17 @@ export default  {
 				reference: {
 					name: "users",
 					service_query: { role: "admin" },
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						if (user) {
 							if (user.role === "admin") {
 								return false;
@@ -166,8 +173,8 @@ export default  {
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			notify: {
 				type: "string",
@@ -180,17 +187,17 @@ export default  {
 				reference: {
 					name: "users",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						if (user) {
 							if (user.role === "admin") {
 								return false;
@@ -205,8 +212,8 @@ export default  {
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			notified: {
 				type: "boolean",
@@ -216,7 +223,7 @@ export default  {
 					default: "",
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						if (user) {
 							if (user.role === "admin") {
 								return false;
@@ -231,8 +238,8 @@ export default  {
 							}
 						}
 						return true;
-					}				
-				},			
+					},
+				},
 			},
 			read: {
 				type: "boolean",
@@ -242,7 +249,7 @@ export default  {
 					default: "",
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						if (user) {
 							if (user.role === "admin") {
 								return false;
@@ -257,8 +264,8 @@ export default  {
 							}
 						}
 						return true;
-					}				
-				},			
+					},
+				},
 			},
 			channel: {
 				type: "string",
@@ -268,13 +275,13 @@ export default  {
 					type: "radio",
 					default: "all",
 				},
-				possibilities : {
-					"app": "App",
-					"email": "Email",
-					"all": "all",					
+				possibilities: {
+					app: "App",
+					email: "Email",
+					all: "all",
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						if (user) {
 							return !user.isAdmin;
 						}
@@ -285,8 +292,8 @@ export default  {
 							return !user.isAdmin;
 						}
 						return true;
-					}				
-				},				
+					},
+				},
 			},
 
 			date_created: {
@@ -297,7 +304,7 @@ export default  {
 					default: Date.now,
 				},
 				restricted: {
-					display: (entry, user) => {	
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
@@ -305,40 +312,39 @@ export default  {
 							return !user.isAdmin;
 						}
 						return true;
-					}				
-				},			
+					},
+				},
 			},
 		},
 		identity: {
 			primary: ["title"],
 			secondary: ["priority"],
 			avatar: false,
-		},		
-		dependencies: [ 
-			{ 
+		},
+		dependencies: [
+			{
 				name: "users",
-			} 
+			},
 		],
 		dependants: {
 			actionlogs: {
 				column: "record",
-				query: { context: "Notification" }
+				query: { context: "Notification" },
 			},
-		},	
-			
+		},
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return false;
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return true;
 				}
@@ -353,35 +359,39 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "notifications/view/"+id
+				uri: id => {
+					return "notifications/view/" + id;
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "notifications/view/"+id } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={"notifications/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 
 			create: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
@@ -390,73 +400,85 @@ export default  {
 				uri: "notifications/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
+						default: props => {
+							return (
 								<Link to={"notifications/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Notification
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Notification
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "notifications/edit/"+id
+				uri: id => {
+					return "notifications/edit/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "notifications/edit/"+id } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={"notifications/edit/" + id}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "notifications/delete/"+id
+				uri: id => {
+					return "notifications/delete/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text", onClick) => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text", onClick) => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
+		},
 	},
 };

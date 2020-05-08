@@ -1,13 +1,16 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class CouponsApiService extends ApiService{
-	constructor(){
+class CouponsApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = 'coupons';
+		this.service_uri = "coupons";
 	}
-	
 }
 
 export default new CouponsApiService();

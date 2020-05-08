@@ -1,16 +1,23 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon, SupervisorAccountOutlined as DefinationContextIcon } from '@material-ui/icons';
-import Button from 'components/Button';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+	SupervisorAccountOutlined as DefinationContextIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-
-export default  {
+export default {
 	name: "teams",
 	label: "Teams",
 	icon: <DefinationContextIcon />,
 	color: "#400a00",
-	model: 'Team',
+	model: "Team",
 	endpoint: "/teams",
 	cache: true,
 	views: {
@@ -22,14 +29,14 @@ export default  {
 				subtitle: ["description"],
 				tags: ["bias"],
 				body: ["description", "lead", "members", "status"],
-			}
+			},
 		},
 		listing: {
 			default: "tableview",
 			listview: {
 				avatar: "avatar",
 				primary: ["name"],
-				secondary: ["bias", "description"]
+				secondary: ["bias", "description"],
 			},
 			tableview: {
 				avatar: false,
@@ -37,7 +44,7 @@ export default  {
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
 			name: {
 				type: "string",
@@ -49,7 +56,7 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
@@ -64,8 +71,8 @@ export default  {
 							}
 						}
 						return true;
-					}					
-				},		
+					},
+				},
 			},
 			description: {
 				type: "string",
@@ -77,7 +84,7 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
@@ -92,8 +99,8 @@ export default  {
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			bias: {
 				type: "string",
@@ -104,17 +111,17 @@ export default  {
 					default: "",
 					required: false,
 				},
-				possibilities : {
-					"none": "No Bias",
+				possibilities: {
+					none: "No Bias",
 					"all male": "All Male",
 					"all female": "All Female",
-					"mixed": "Mixed",
+					mixed: "Mixed",
 				},
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
 							return user.role === "collector";
-						}						
+						}
 						return false;
 					},
 					input: (values, user) => {
@@ -126,16 +133,20 @@ export default  {
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "lead" in values) {
-									return typeof values.lead === "object" && values.lead._id === user._id? false : (values.lead === user._id? false : true);
+									return typeof values.lead === "object" &&
+										values.lead._id === user._id
+										? false
+										: values.lead === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			lead: {
 				type: "string",
@@ -149,20 +160,20 @@ export default  {
 				reference: {
 					name: "users",
 					service_query: { role: "collector" },
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
 							return user.role !== "admin";
-						}						
+						}
 						return false;
 					},
 					input: (values, user) => {
@@ -174,16 +185,20 @@ export default  {
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "lead" in values) {
-									return typeof values.lead === "object" && values.lead._id === user._id? false : (values.lead === user._id? false : true);
+									return typeof values.lead === "object" &&
+										values.lead._id === user._id
+										? false
+										: values.lead === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			members: {
 				type: ["string"],
@@ -197,20 +212,20 @@ export default  {
 				reference: {
 					name: "users",
 					service_query: { role: "collector" },
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
 							return user.role !== "admin";
-						}						
+						}
 						return false;
 					},
 					input: (values, user) => {
@@ -222,16 +237,20 @@ export default  {
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "lead" in values) {
-									return typeof values.lead === "object" && values.lead._id === user._id? false : (values.lead === user._id? false : true);
+									return typeof values.lead === "object" &&
+										values.lead._id === user._id
+										? false
+										: values.lead === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			avatar: {
 				type: "string",
@@ -239,13 +258,13 @@ export default  {
 				icon: "image",
 				input: {
 					type: "file",
-					accepts:['image/*'],
+					accepts: ["image/*"],
 				},
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
 							return user.role !== "admin";
-						}						
+						}
 						return false;
 					},
 					input: (values, user) => {
@@ -257,28 +276,32 @@ export default  {
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "lead" in values) {
-									return typeof values.lead === "object" && values.lead._id === user._id? false : (values.lead === user._id? false : true);
+									return typeof values.lead === "object" &&
+										values.lead._id === user._id
+										? false
+										: values.lead === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},	
+					},
+				},
 				reference: {
 					name: "attachments",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["name"],
 							secondary: [],
 							avatar: false,
-						}							
+						},
 					},
-				},				
+				},
 			},
 			status: {
 				type: "string",
@@ -289,16 +312,16 @@ export default  {
 					default: "",
 					required: true,
 				},
-				possibilities : {
-					"engaged": "Engaged",
-					"disengaged": "Disengaged",
-					"desolved": "Desolved",					
+				possibilities: {
+					engaged: "Engaged",
+					disengaged: "Disengaged",
+					desolved: "Desolved",
 				},
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
 							return user.role !== "admin";
-						}						
+						}
 						return false;
 					},
 					input: (values, user) => {
@@ -313,44 +336,43 @@ export default  {
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 		},
 		identity: {
 			primary: ["title"],
 			secondary: ["bias"],
 			avatar: false,
-		},		
-		dependencies: [ 
-			{ 
+		},
+		dependencies: [
+			{
 				name: "users",
-			} 
+			},
 		],
 		dependants: {
 			commissions: {
 				column: "team",
-				query: { involvement: "team"}
+				query: { involvement: "team" },
 			},
 			actionlogs: {
 				column: "record",
-				query: { context: "Team" }
+				query: { context: "Team" },
 			},
-		},	
-			
+		},
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return false;
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return true;
 				}
@@ -365,106 +387,122 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "teams/view/"+id
+				uri: id => {
+					return "teams/view/" + id;
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "teams/view/"+id } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={"teams/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
-					return user && user.role === 'admin'? false : true;
+				restricted: user => {
+					return user && user.role === "admin" ? false : true;
 				},
 				uri: "teams/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
+						default: props => {
+							return (
 								<Link to={"teams/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Team
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Team
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "teams/edit/"+id
+				uri: id => {
+					return "teams/edit/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "teams/edit/"+id } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={"teams/edit/" + id}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "teams/delete/"+id
+				uri: id => {
+					return "teams/delete/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text", onClick) => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text", onClick) => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
+		},
 	},
 };

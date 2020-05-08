@@ -1,13 +1,16 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class InvoiceItemsApiService extends ApiService{
-	constructor(){
+class InvoiceItemsApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = 'retail/items';
+		this.service_uri = "retail/items";
 	}
-	
 }
 
 export default new InvoiceItemsApiService();

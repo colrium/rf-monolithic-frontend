@@ -1,3 +1,5 @@
+/** @format */
+
 import { colors } from "assets/jss/app-theme.jsx";
 
 const parallaxStyle = {
@@ -12,11 +14,11 @@ const parallaxStyle = {
 		padding: "0",
 		border: "0",
 		display: "flex",
-		alignItems: "center"
+		alignItems: "center",
 	},
 	light: {
 		"&:before": {
-			background: "rgba("+colors.rgb.inverse+", 0.9)"
+			background: "rgba(" + colors.rgb.inverse + ", 0.9)",
 		},
 		"&:after,&:before": {
 			position: "absolute",
@@ -26,12 +28,12 @@ const parallaxStyle = {
 			display: "block",
 			left: "0",
 			top: "0",
-			content: "''"
-		}
+			content: "''",
+		},
 	},
 	dark: {
 		"&:before": {
-			background: "rgba("+colors.rgb.text+", 0.9)"
+			background: "rgba(" + colors.rgb.text + ", 0.9)",
 		},
 		"&:after,&:before": {
 			position: "absolute",
@@ -41,11 +43,11 @@ const parallaxStyle = {
 			display: "block",
 			left: "0",
 			top: "0",
-			content: "''"
-		}
+			content: "''",
+		},
 	},
 	small: {
-		height: "380px"
+		height: "380px",
 	},
 };
 

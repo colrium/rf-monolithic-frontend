@@ -1,34 +1,37 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon, SettingsApplicationsOutlined as DefinationContextIcon } from '@material-ui/icons';
-import Button from 'components/Button';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+	SettingsApplicationsOutlined as DefinationContextIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-
-
-export default  {
+export default {
 	name: "preferences",
 	label: "Settings",
 	icon: <DefinationContextIcon />,
 	color: "#541400",
-	model: 'Preference',
+	model: "Preference",
 	endpoint: "/preferences",
 	cache: false,
 	views: {
 		single: {
 			default: "cardview",
-			cardview: {
-			}
+			cardview: {},
 		},
 		listing: {
 			default: "tableview",
-			listview: {
-			},
-			tableview: {
-			},
+			listview: {},
+			tableview: {},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
 			name: {
 				type: "string",
@@ -39,15 +42,15 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 			slug: {
@@ -59,15 +62,15 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 
@@ -80,26 +83,26 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "users",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 			},
@@ -113,15 +116,15 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 		},
@@ -129,22 +132,22 @@ export default  {
 			primary: ["name"],
 			secondary: [],
 			avatar: false,
-		},		
+		},
 		dependencies: [],
 		dependants: {},
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
-				return !(user.isAdmin);
+				return !user.isAdmin;
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return user.isAdmin;
 				}
@@ -159,34 +162,42 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
-						return !(user.isAdmin);
+						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("preferences/view/"+id).toUriWithDashboardPrefix();
+				uri: id => {
+					return (
+						"preferences/view/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("preferences/view/"+id).toUriWithDashboardPrefix() } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={(
+										"preferences/view/" + id
+									).toUriWithDashboardPrefix()}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
@@ -195,73 +206,94 @@ export default  {
 				uri: "preferences/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
-								<Link to={("preferences/add/").toUriWithDashboardPrefix()} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Coupon
+						default: props => {
+							return (
+								<Link
+									to={"preferences/add/".toUriWithDashboardPrefix()}
+									{...props}
+								>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Coupon
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("preferences/edit/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"preferences/edit/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("preferences/edit/"+id).toUriWithDashboardPrefix() } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={(
+										"preferences/edit/" + id
+									).toUriWithDashboardPrefix()}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("preferences/delete/"+id).toUriWithDashboardPrefix();
+				uri: id => {
+					return (
+						"preferences/delete/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
-	},	
+		},
+	},
 };

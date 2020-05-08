@@ -1,17 +1,30 @@
-import { IconButton } from '@material-ui/core';
-import { ImageOutlined as ImageIcon, AudiotrackOutlined as AudioIcon, InsertDriveFileOutlined as FileIcon, MovieOutlined as VideoIcon } from '@material-ui/icons';
-import { Add as AddIcon, AssignmentTurnedInOutlined as DefinationContextIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon } from '@material-ui/icons';
-import Button from 'components/Button';
-import React from "react";
-import { Link } from 'react-router-dom';
-import commissionService from 'services/commissions';
+/** @format */
 
-export default  {
+import { IconButton } from "@material-ui/core";
+import {
+	ImageOutlined as ImageIcon,
+	AudiotrackOutlined as AudioIcon,
+	InsertDriveFileOutlined as FileIcon,
+	MovieOutlined as VideoIcon,
+} from "@material-ui/icons";
+import {
+	Add as AddIcon,
+	AssignmentTurnedInOutlined as DefinationContextIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
+import React from "react";
+import { Link } from "react-router-dom";
+import commissionService from "services/commissions";
+
+export default {
 	name: "responses",
 	label: "Responses",
 	icon: <DefinationContextIcon />,
 	color: "#1e0040",
-	model: 'Response',
+	model: "Response",
 	endpoint: "/responses",
 	cache: true,
 	views: {
@@ -21,15 +34,21 @@ export default  {
 				title: ["response_date"],
 				subtitle: ["submitter"],
 				tags: ["response_type", "status"],
-				body: ["commission", "text_response", "response_file", "submission_date", "comments"],
-			}
+				body: [
+					"commission",
+					"text_response",
+					"response_file",
+					"submission_date",
+					"comments",
+				],
+			},
 		},
 		listing: {
 			default: "tableview",
 			listview: {
 				avatar: false,
 				primary: ["response_date"],
-				secondary: ["commission", "response_type", "submitter"]
+				secondary: ["commission", "response_type", "submitter"],
 			},
 			tableview: {
 				avatar: false,
@@ -37,27 +56,29 @@ export default  {
 			},
 			calendarview: {
 				type: "task",
-				resolveData: async (entries, isPopulated=true)=>{
+				resolveData: async (entries, isPopulated = true) => {
 					let resolved_data = [];
 					for (let entry of entries) {
 						resolved_data.push({
 							id: entry._id,
-							calendarId: 'responses',
-							title: entry.response_type ,
-							body: entry.response_type === "text"? entry.text_response : entry.response_file.name,
-							customStyle: {color: "#FFFFFF"},
-							category: 'time',
-							dueDateClass: '',
+							calendarId: "responses",
+							title: entry.response_type,
+							body:
+								entry.response_type === "text"
+									? entry.text_response
+									: entry.response_file.name,
+							customStyle: { color: "#FFFFFF" },
+							category: "time",
+							dueDateClass: "",
 							start: entry.response_date,
-						})
+						});
 					}
 					return resolved_data;
 				},
-				
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
 			commission: {
 				type: "string",
@@ -68,12 +89,14 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						if (values) {
-							if (["accepted", "disputed"].includes(values.status)) {
+							if (
+								["accepted", "disputed"].includes(values.status)
+							) {
 								return true;
 							}
 						}
@@ -83,18 +106,18 @@ export default  {
 							}
 						}
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "commissions",
 					service_query: { p: 1 },
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["start_date"],
 							secondary: ["involvement"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 			},
@@ -111,17 +134,19 @@ export default  {
 					},
 					input: (values, user) => {
 						if (values) {
-							if (["accepted", "disputed"].includes(values.status)) {
+							if (
+								["accepted", "disputed"].includes(values.status)
+							) {
 								return true;
 							}
 							if (String.isString(values.commission)) {
 								if (values.commission.trim().length !== 0) {
 									return false;
-								}								
+								}
 							}
 						}
 						return true;
-					}
+					},
 				},
 				reference: {
 					name: "commissions",
@@ -129,7 +154,11 @@ export default  {
 						if (values) {
 							if (String.isString(values.commission)) {
 								if (values.commission.trim().length !== 0) {
-									return { _id: values.commission, fields: "queries", p: 1 }
+									return {
+										_id: values.commission,
+										fields: "queries",
+										p: 1,
+									};
 								}
 							}
 						}
@@ -141,7 +170,7 @@ export default  {
 							primary: ["question"],
 							secondary: ["response_type"],
 						},
-						emulation: { key: "queries", defination: "responses"},
+						emulation: { key: "queries", defination: "responses" },
 					},
 				},
 			},
@@ -153,20 +182,22 @@ export default  {
 					default: "text",
 					required: true,
 				},
-				possibilities : {
-					"text": "Text",
-					"image": "Image",
-					"audio": "Audio",
-					"video": "Video",
-					"file": "File",
+				possibilities: {
+					text: "Text",
+					image: "Image",
+					audio: "Audio",
+					video: "Video",
+					file: "File",
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						if (values) {
-							if (["accepted", "disputed"].includes(values.status)) {
+							if (
+								["accepted", "disputed"].includes(values.status)
+							) {
 								return true;
 							}
 						}
@@ -174,8 +205,8 @@ export default  {
 							return !user.isAdmin;
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			text_response: {
 				type: "string",
@@ -199,10 +230,10 @@ export default  {
 					},
 				},
 				restricted: {
-					display: (entry, user) => {	
+					display: (entry, user) => {
 						if (entry) {
 							return entry.response_type !== "text";
-						}					
+						}
 						return false;
 					},
 					input: (values, user) => {
@@ -210,7 +241,9 @@ export default  {
 							if (values.response_type !== "text") {
 								return true;
 							}
-							if (["accepted", "disputed"].includes(values.status)) {
+							if (
+								["accepted", "disputed"].includes(values.status)
+							) {
 								return true;
 							}
 						}
@@ -218,8 +251,8 @@ export default  {
 							return !user.isAdmin;
 						}
 						return true;
-					}					
-				},			
+					},
+				},
 			},
 			response_file: {
 				type: "string",
@@ -227,7 +260,11 @@ export default  {
 				input: {
 					type: (values, user) => {
 						if (values) {
-							if (["image", "audio", "video", "file"].includes(values.response_type)) {
+							if (
+								["image", "audio", "video", "file"].includes(
+									values.response_type
+								)
+							) {
 								return "file";
 							}
 						}
@@ -235,75 +272,91 @@ export default  {
 					},
 					required: (values, user) => {
 						if (values) {
-							if (["image", "audio", "video", "file"].includes(values.response_type)) {
+							if (
+								["image", "audio", "video", "file"].includes(
+									values.response_type
+								)
+							) {
 								return true;
 							}
 						}
 						return false;
 					},
-					props: (values, user)=>{
+					props: (values, user) => {
 						if (values) {
 							if (values.response_type === "image") {
 								return {
-									acceptedFiles : ['image/*'],
+									acceptedFiles: ["image/*"],
 									filesLimit: 1,
-									dropzoneText: "Click to select Image \n or \n Drag and drop an image file here",
+									dropzoneText:
+										"Click to select Image \n or \n Drag and drop an image file here",
 									dropzoneIcon: "image",
-								}
-							}
-							else if (values.response_type === "audio") {
+								};
+							} else if (values.response_type === "audio") {
 								return {
-									acceptedFiles: ['audio/*'],
+									acceptedFiles: ["audio/*"],
 									filesLimit: 1,
-									dropzoneText: "Click to select \n or \n Drag and drop an audio file here",
+									dropzoneText:
+										"Click to select \n or \n Drag and drop an audio file here",
 									dropzoneIcon: "music_video",
-								}
-							}
-							else if (values.response_type === "video") {
+								};
+							} else if (values.response_type === "video") {
 								return {
-									acceptedFiles: ['video/*'],
+									acceptedFiles: ["video/*"],
 									filesLimit: 1,
-									dropzoneText: "Click to select \n or \n Drag and drop an video file here",
+									dropzoneText:
+										"Click to select \n or \n Drag and drop an video file here",
 									dropzoneIcon: "movie",
-								}
-							}
-							else{
+								};
+							} else {
 								return {
-									acceptedFiles: ['image/*', 'video/*', 'audio/*', 'application/*'],
+									acceptedFiles: [
+										"image/*",
+										"video/*",
+										"audio/*",
+										"application/*",
+									],
 									filesLimit: 1,
-									dropzoneText: "Click to select \n or \n Drag and drop an file here",
+									dropzoneText:
+										"Click to select \n or \n Drag and drop an file here",
 									dropzoneIcon: "attachment",
-								}
+								};
 							}
 						}
 						return {
-							acceptedFiles: ['image/*', 'video/*', 'audio/*', 'application/*'],
+							acceptedFiles: [
+								"image/*",
+								"video/*",
+								"audio/*",
+								"application/*",
+							],
 							filesLimit: 1,
-							dropzoneText: "Click to select \n or \n Drag and drop an file here",
+							dropzoneText:
+								"Click to select \n or \n Drag and drop an file here",
 							dropzoneIcon: "attachment",
-						}
+						};
 					},
 				},
 				reference: {
 					name: "attachments",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["name"],
 							secondary: [],
 							avatar: false,
-						}							
+						},
 					},
-				},		
+				},
 				restricted: {
-					display: (entry, user) => {	
+					display: (entry, user) => {
 						if (entry) {
 							return entry.response_type === "text";
-						}					
+						}
 						return false;
 					},
-					input: (values, user) => {						
+					input: (values, user) => {
 						if (values) {
 							if (values.response_type === "text") {
 								return true;
@@ -313,8 +366,8 @@ export default  {
 							return !user.isAdmin;
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			coordinates: {
 				type: "object",
@@ -331,10 +384,10 @@ export default  {
 						if (user) {
 							return !user.isAdmin;
 						}
-						
+
 						return true;
-					}					
-				},			
+					},
+				},
 			},
 			submitter: {
 				type: "string",
@@ -346,7 +399,6 @@ export default  {
 							return user._id;
 						}
 						return false;
-						
 					},
 					required: true,
 				},
@@ -358,22 +410,22 @@ export default  {
 						if (user) {
 							return !user.isAdmin;
 						}
-						
+
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "users",
 					service_query: { role: "collector" },
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}							
+						},
 					},
-				},				
+				},
 			},
 			response_date: {
 				type: "string",
@@ -382,20 +434,21 @@ export default  {
 					type: "date",
 					default: new Date(),
 					required: true,
-					props : (values, user) => {
+					props: (values, user) => {
 						if (user) {
-							return user.isAdmin ? { maxDate: new Date() } : { maxDate: new Date() };
+							return user.isAdmin
+								? { maxDate: new Date() }
+								: { maxDate: new Date() };
 						}
 						return { maxDate: new Date() };
-
 					},
 					size: 6,
 				},
 				restricted: {
-					display: (entry, user) => {	
+					display: (entry, user) => {
 						if (entry) {
 							return entry.response_type === "text";
-						}					
+						}
 						return false;
 					},
 					input: (values, user) => {
@@ -403,8 +456,8 @@ export default  {
 							return !user.isAdmin;
 						}
 						return true;
-					}					
-				},			
+					},
+				},
 			},
 			submission_date: {
 				type: "string",
@@ -416,15 +469,15 @@ export default  {
 					size: 6,
 				},
 				restricted: {
-					display: (entry, user) => {					
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						if (user) {
 							return !user.isAdmin;
 						}
-					}					
-				},				
+					},
+				},
 			},
 			comments: {
 				type: "string",
@@ -436,15 +489,17 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {	
+					display: (entry, user) => {
 						if (entry) {
 							return entry.response_type === "text";
-						}					
+						}
 						return false;
 					},
 					input: (values, user) => {
 						if (values) {
-							if (["accepted", "disputed"].includes(values.status)) {
+							if (
+								["accepted", "disputed"].includes(values.status)
+							) {
 								return true;
 							}
 						}
@@ -452,8 +507,8 @@ export default  {
 							return user.role !== "admin";
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			status: {
 				type: "string",
@@ -465,10 +520,10 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {	
+					display: (entry, user) => {
 						if (entry) {
 							return entry.response_type === "text";
-						}					
+						}
 						return false;
 					},
 					input: (values, user) => {
@@ -476,50 +531,49 @@ export default  {
 							return user.role !== "admin";
 						}
 						return true;
-					}					
-				},	
-				possibilities : {
-					"pending": "Pending",
-					"acknowledged": "Acknowledged",
-					"accepted": "Accepted",
-					"disputed": "Disputed",
-					"rejected": "Rejected",
-				},			
+					},
+				},
+				possibilities: {
+					pending: "Pending",
+					acknowledged: "Acknowledged",
+					accepted: "Accepted",
+					disputed: "Disputed",
+					rejected: "Rejected",
+				},
 			},
 		},
 		identity: {
 			primary: ["response_type"],
 			secondary: ["response_date"],
 			avatar: false,
-		},		
-		dependencies: [ 
-			{ 
+		},
+		dependencies: [
+			{
 				name: "commissions",
-			} 
+			},
 		],
 		dependants: {
 			actionlogs: {
 				column: "record",
-				query: { context: "Response" }
+				query: { context: "Response" },
 			},
 		},
-					
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return false;
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				if (user) {
 					return true;
 				}
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return true;
 				}
@@ -534,106 +588,125 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "responses/view/"+id
+				uri: id => {
+					return "responses/view/" + id;
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "responses/view/"+id } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={"responses/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
-					return user && user.role === 'admin' || user.role === 'collector'? false : true;
+				restricted: user => {
+					return (user && user.role === "admin") ||
+						user.role === "collector"
+						? false
+						: true;
 				},
 				uri: "responses/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
+						default: props => {
+							return (
 								<Link to={"responses/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Response
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Response
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "responses/edit/"+id
+				uri: id => {
+					return "responses/edit/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "responses/edit/"+id } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={"responses/edit/" + id}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "responses/delete/"+id
+				uri: id => {
+					return "responses/delete/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
+		},
 	},
 };

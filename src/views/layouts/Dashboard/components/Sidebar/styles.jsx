@@ -1,22 +1,24 @@
+/** @format */
+
 import { colors } from "assets/jss/app-theme";
 
 export default theme => ({
 	root: {
-		backgroundColor: theme.palette.common.white,
+		//backgroundColor: theme.palette.background.paper,
 		display: "flex",
 		flexDirection: "column",
-		height: "100%"
+		height: "100%",
 	},
 
 	headerWrapper: {
 		backgroundColor: "rgba(" + colors.rgb.grey + ", 0.1)",
-		paddingBottom: theme.spacing(2)
+		paddingBottom: theme.spacing(2),
 	},
 	bodyWrapper: {
 		overflowY: "scroll",
 		overflowX: "hidden",
 		paddingTop: theme.spacing(2),
-		paddingBottom: theme.spacing(3)
+		paddingBottom: theme.spacing(3),
 	},
 	logoWrapper: {
 		display: "flex",
@@ -25,34 +27,34 @@ export default theme => ({
 		width: "50%",
 		height: "auto",
 		flexShrink: 0,
-		padding: theme.spacing(3)
+		padding: theme.spacing(3),
 	},
 	logoLink: {
-		fontSize: 0
+		fontSize: 0,
 	},
 	logoImage: {
 		cursor: "pointer",
 		width: "100%",
-		height: "auto"
+		height: "auto",
 	},
 	logoDivider: {
-		marginBottom: theme.spacing(2)
+		marginBottom: theme.spacing(2),
 	},
 	profile: {
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "center",
-		minHeight: "fit-content"
+		minHeight: "fit-content",
 	},
 	avatar: {
 		width: "100px",
-		height: "100px"
+		height: "100px",
 	},
 	textAvatar: {
 		width: "100px",
 		height: "100px",
 		backgroundColor: colors.hex.accent,
-		color: colors.hex.inverse
+		color: theme.palette.text.primary,
 	},
 	iconAvatar: {
 		height: "110px",
@@ -61,7 +63,7 @@ export default theme => ({
 		flexGrow: 1,
 		fontSize: "10rem",
 		backgroundColor: "rgba(" + colors.rgb.default + ", 0.1)",
-		color: colors.hex.accent
+		color: colors.hex.accent,
 	},
 	userMenuBtn: {
 		marginTop: theme.spacing(1.5),
@@ -72,51 +74,51 @@ export default theme => ({
 	},
 	bioText: {},
 	presenceStatus: {
-		margin: " 1rem auto"
+		margin: " 1rem auto",
 	},
 	profileDivider: {
 		marginBottom: theme.spacing(2),
-		marginTop: theme.spacing(2)
+		marginTop: theme.spacing(2),
 	},
 	listSubheader: {
-		color: theme.palette.text.secondary
+		color: theme.palette.text.secondary,
 	},
 	listItem: {
 		cursor: "pointer",
 		"&:hover": {
-			backgroundColor: "rgba(" + colors.rgb.primary + ", 0.1)",
-			borderLeft: "4px solid rgba(" + colors.rgb.primary + ", 0.1)",
+			//backgroundColor: "rgba(" + colors.rgb.primary + ", 0.1)",
+			borderLeft: "4px solid rgba(" + colors.rgb.primary + ", 0.5)",
 			borderRadius: "4px",
 			"& $listItemIcon": {
 				color: theme.palette.text.main,
-				marginLeft: "-4px"
-			}
+				marginLeft: "-4px",
+			},
 		},
 		"& + &": {
-			marginTop: theme.spacing()
-		}
+			marginTop: theme.spacing(),
+		},
 	},
 	activeListItem: {
-		/*borderLeft: `4px solid ${theme.palette.primary.main}`,
+			borderLeft: `4px solid ${theme.palette.primary.main}`,
 			borderRadius: '4px',
-			backgroundColor: "rgba("+colors.rgb.primary+", 0.1)",
+			backgroundColor: theme.palette.background.default,
 			'& $listItemText': {
 				color: theme.palette.text.primary
 			},
 			'& $listItemIcon': {
 				color: theme.palette.primary.main,
 				marginLeft: '-4px'
-			}*/
+			}
 	},
 	listItemIcon: {
-		marginRight: 0
+		marginRight: 0,
 	},
 	listItemText: {
 		fontWeight: 500,
-		color: theme.palette.text.secondary
+		color: theme.palette.text.secondary,
 	},
 	listDivider: {
 		marginBottom: theme.spacing(2),
-		marginTop: theme.spacing(2)
-	}
+		marginTop: theme.spacing(2),
+	},
 });

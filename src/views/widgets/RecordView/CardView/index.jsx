@@ -1,4 +1,9 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
+/**
+ * /* eslint-disable no-mixed-spaces-and-tabs
+ *
+ * @format
+ */
+
 import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
@@ -6,13 +11,13 @@ import CardHeader from "components/Card/CardHeader";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
-
 import { formats } from "config/data";
-
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
-import { ServiceDataHelper } from "utils/Helpers";
+import { ServiceDataHelper } from "hoc/Helpers";
+import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 
 function CardView({ ...props }) {
@@ -52,7 +57,7 @@ function CardView({ ...props }) {
 		let avatar = null;
 		if (resolvedRefRecord.resolver === "defination") {
 			avatar = resolvedRefRecord.avatar;
-		} 
+		}
 		/* else if (resolvedRefRecord.resolver === "helper") {
 		} */
 
@@ -68,7 +73,7 @@ function CardView({ ...props }) {
 			for (var i = 0; i < primaries.length; i++) {
 				title +=
 					defination.scope.columns[primaries[i]].reference &&
-						resolvedRefRecord[primaries[i]]
+					resolvedRefRecord[primaries[i]]
 						? resolvedRefRecord[primaries[i]].resolve
 						: resolvedRefRecord[primaries[i]];
 			}
@@ -86,7 +91,7 @@ function CardView({ ...props }) {
 			for (var i = 0; i < secondaries.length; i++) {
 				subtitle +=
 					defination.scope.columns[secondaries[i]].reference &&
-						resolvedRefRecord[secondaries[i]]
+					resolvedRefRecord[secondaries[i]]
 						? resolvedRefRecord[secondaries[i]].resolve
 						: resolvedRefRecord[secondaries[i]];
 			}
@@ -96,12 +101,19 @@ function CardView({ ...props }) {
 	}
 
 	function resolveDisplayValue(name) {
-		if (defination.scope.columns[name].reference && resolvedRefRecord[name]) {
+		if (
+			defination.scope.columns[name].reference &&
+			resolvedRefRecord[name]
+		) {
 			if (Array.isArray(resolvedRefRecord[name])) {
 				return (
 					<React.Fragment>
 						{resolvedRefRecord[name].map((entry, index) => (
-							<Typography color="default" paragraph key={name + "-" + index}>
+							<Typography
+								color="default"
+								paragraph
+								key={name + "-" + index}
+							>
 								{entry.resolve}
 							</Typography>
 						))}
@@ -119,13 +131,17 @@ function CardView({ ...props }) {
 				return (
 					<React.Fragment>
 						{resolvedRefRecord[name].map((entry, index) => (
-							<Typography color="default" paragraph key={name + "-" + index}>
+							<Typography
+								color="default"
+								paragraph
+								key={name + "-" + index}
+							>
 								{entry}
 							</Typography>
 						))}
 					</React.Fragment>
 				);
-			} else if (!JSON.isJSON(resolvedRefRecord[name])){
+			} else if (!JSON.isJSON(resolvedRefRecord[name])) {
 				if (
 					defination.scope.columns[name].input.type === "date" ||
 					defination.scope.columns[name].input.type === "datetime"
@@ -135,8 +151,8 @@ function CardView({ ...props }) {
 							<Typography color="default" paragraph>
 								{resolvedRefRecord[name]
 									? new Date(resolvedRefRecord[name]).format(
-										formats.dateformats.date
-									)
+											formats.dateformats.date
+									  )
 									: ""}
 							</Typography>
 						);
@@ -145,8 +161,8 @@ function CardView({ ...props }) {
 							<Typography color="default" paragraph>
 								{resolvedRefRecord[name]
 									? new Date(resolvedRefRecord[name]).format(
-										formats.dateformats.datetime
-									)
+											formats.dateformats.datetime
+									  )
 									: ""}
 							</Typography>
 						);
@@ -160,12 +176,13 @@ function CardView({ ...props }) {
 				} else {
 					return (
 						<Typography color="default" paragraph>
-							{resolvedRefRecord[name] ? resolvedRefRecord[name] : ""}
+							{resolvedRefRecord[name]
+								? resolvedRefRecord[name]
+								: ""}
 						</Typography>
 					);
 				}
-			}
-			else{
+			} else {
 				return (
 					<Typography color="default" paragraph>
 						{JSON.stringify(resolvedRefRecord[name])}
@@ -185,28 +202,38 @@ function CardView({ ...props }) {
 					{Object.entries(defination.scope.columns).map(
 						([name, column], index) =>
 							column.restricted && Function.isFunction() ? (
-								!column.restricted.display(record, auth.user) && (
-									<GridContainer className="p-0 m-0" key={index}>
+								!column.restricted.display(
+									record,
+									auth.user
+								) && (
+									<GridContainer
+										className="p-0 m-0"
+										key={index}
+									>
 										<GridItem xs={5}>
 											<Typography color="grey" paragraph>
 												{column.label}
 											</Typography>
 										</GridItem>
 
-										<GridItem xs={7}>{resolveDisplayValue(name)}</GridItem>
+										<GridItem xs={7}>
+											{resolveDisplayValue(name)}
+										</GridItem>
 									</GridContainer>
 								)
 							) : (
-									<GridContainer className="p-0 m-0" key={index}>
-										<GridItem xs={5}>
-											<Typography color="grey" paragraph>
-												{column.label}
-											</Typography>
-										</GridItem>
+								<GridContainer className="p-0 m-0" key={index}>
+									<GridItem xs={5}>
+										<Typography color="grey" paragraph>
+											{column.label}
+										</Typography>
+									</GridItem>
 
-										<GridItem xs={7}>{resolveDisplayValue(name)}</GridItem>
-									</GridContainer>
-								)
+									<GridItem xs={7}>
+										{resolveDisplayValue(name)}
+									</GridItem>
+								</GridContainer>
+							)
 					)}
 				</GridContainer>
 			);
@@ -223,27 +250,22 @@ function CardView({ ...props }) {
 				subheader={resolveSubTitle()}
 			/>
 
-			<CardContent className="p-0 m-0">
-				{resolveValue()}
-			</CardContent>
-			<CardActions>
-
-			</CardActions>
+			<CardContent className="p-0 m-0">{resolveValue()}</CardContent>
+			<CardActions></CardActions>
 		</Card>
-	) : (<GridContainer />);
+	) : (
+		<GridContainer />
+	);
 } /**/
 
 CardView.propTypes = {
 	className: PropTypes.string,
 	record: PropTypes.object.isRequired,
-	defination: PropTypes.object.isRequired
+	defination: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-	auth: state.auth
+	auth: state.auth,
 });
 
-export default connect(
-	mapStateToProps,
-	{}
-)(CardView);
+export default connect(mapStateToProps, {})(withErrorHandler(CardView));

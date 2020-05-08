@@ -1,4 +1,12 @@
-import { AccountCircleOutlined as ProfileIcon, DashboardOutlined as DashboardIcon, HelpOutlined as HelpSupportIcon, HistoryOutlined as ActionsLogIcon, SettingsApplicationsOutlined as SettingsIcon } from "@material-ui/icons";
+/** @format */
+
+import {
+	AccountCircleOutlined as ProfileIcon,
+	DashboardOutlined as DashboardIcon,
+	HelpOutlined as HelpSupportIcon,
+	HistoryOutlined as ActionsLogIcon,
+	SettingsApplicationsOutlined as SettingsIcon,
+} from "@material-ui/icons";
 import * as definations from "definations";
 import React from "react";
 
@@ -6,7 +14,7 @@ export const items = [
 	{
 		icon: <DashboardIcon />,
 		text: "Dashboard",
-		route: "/home".toUriWithDashboardPrefix()
+		route: "/home".toUriWithDashboardPrefix(),
 	},
 	{
 		icon: definations.events.icon,
@@ -17,9 +25,9 @@ export const items = [
 				icon: definations.events.icon,
 				text: "Calendar",
 				route: "/calendar".toUriWithDashboardPrefix(),
-				restricted: false
-			}
-		]
+				restricted: false,
+			},
+		],
 	},
 	{
 		icon: definations.surveys.icon,
@@ -32,7 +40,7 @@ export const items = [
 				route: "/surveys".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !(user.isAdmin || user.isCustomer);
-				}
+				},
 			},
 			{
 				icon: definations.queries.icon,
@@ -40,14 +48,14 @@ export const items = [
 				route: "/queries".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !(user.isAdmin || user.isCustomer);
-				}
+				},
 			},
 			{
 				icon: definations.responses.icon,
 				text: definations.responses.label,
-				route: "/responses".toUriWithDashboardPrefix()
-			}
-		]
+				route: "/responses".toUriWithDashboardPrefix(),
+			},
+		],
 	},
 	{
 		text: definations.commissions.label,
@@ -59,7 +67,7 @@ export const items = [
 			{
 				icon: definations.commissions.icon,
 				text: definations.commissions.label,
-				route: "/commissions".toUriWithDashboardPrefix()
+				route: "/commissions".toUriWithDashboardPrefix(),
 			},
 			{
 				icon: definations.teams.icon,
@@ -67,15 +75,15 @@ export const items = [
 				route: "/teams".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !(user.isAdmin || user.isCollector);
-				}
+				},
 			},
 			{
 				icon: definations.tracks.icon,
 				text: definations.tracks.label,
 				route: "/tracks".toUriWithDashboardPrefix(),
-				restricted: ["collector", "admin"]
-			}
-		]
+				restricted: ["collector", "admin"],
+			},
+		],
 	},
 	{
 		text: "Financial",
@@ -90,7 +98,7 @@ export const items = [
 				route: "/invoices".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !(user.isAdmin || user.isCustomer);
-				}
+				},
 			},
 			{
 				icon: definations.payments.icon,
@@ -98,9 +106,9 @@ export const items = [
 				route: "/payments".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !(user.isAdmin || user.isCustomer);
-				}
-			}
-		]
+				},
+			},
+		],
 	},
 
 	{
@@ -116,7 +124,7 @@ export const items = [
 				route: "/orders".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isCustomer;
-				}
+				},
 			},
 
 			{
@@ -125,10 +133,8 @@ export const items = [
 				route: "/fulfilments".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isCustomer;
-				}
+				},
 			},
-
-
 
 			{
 				icon: definations.coupons.icon,
@@ -136,9 +142,9 @@ export const items = [
 				route: "/coupons".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isCustomer;
-				}
-			}
-		]
+				},
+			},
+		],
 	},
 	{
 		text: "Retail",
@@ -153,10 +159,8 @@ export const items = [
 				route: "/retailitems".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isAdmin;
-				}
+				},
 			},
-
-			
 
 			{
 				icon: definations.orders.icon,
@@ -164,10 +168,8 @@ export const items = [
 				route: "/orders".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isAdmin;
-				}
+				},
 			},
-
-
 
 			{
 				icon: definations.fulfilments.icon,
@@ -175,7 +177,7 @@ export const items = [
 				route: "/fulfilments".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isAdmin;
-				}
+				},
 			},
 
 			{
@@ -184,7 +186,7 @@ export const items = [
 				route: "/demorequests".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isAdmin;
-				}
+				},
 			},
 
 			{
@@ -193,7 +195,7 @@ export const items = [
 				route: "/quoterequests".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isAdmin;
-				}
+				},
 			},
 
 			{
@@ -202,7 +204,7 @@ export const items = [
 				route: "/coupons".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isAdmin;
-				}
+				},
 			},
 
 			{
@@ -211,9 +213,9 @@ export const items = [
 				route: "/currencies".toUriWithDashboardPrefix(),
 				restricted: user => {
 					return !user.isAdmin;
-				}
+				},
 			},
-		]
+		],
 	},
 
 	{
@@ -226,19 +228,16 @@ export const items = [
 			{
 				icon: definations.vacancies.icon,
 				text: definations.vacancies.label,
-				route: "/vacancies".toUriWithDashboardPrefix()
+				route: "/vacancies".toUriWithDashboardPrefix(),
 			},
 			{
 				icon: definations.applications.icon,
 				text: definations.applications.label,
-				route: "/applications".toUriWithDashboardPrefix()
-			}
-		]
+				route: "/applications".toUriWithDashboardPrefix(),
+			},
+		],
 	},
 
-	
-
-	
 	{
 		text: "Other",
 		section: true,
@@ -247,7 +246,7 @@ export const items = [
 			{
 				icon: definations.attachments.icon,
 				text: definations.attachments.label,
-				route: "/attachments".toUriWithDashboardPrefix()
+				route: "/attachments".toUriWithDashboardPrefix(),
 			},
 			{
 				icon: definations.posts.icon,
@@ -264,8 +263,8 @@ export const items = [
 				restricted: user => {
 					return !user.isAdmin;
 				},
-			}
-		]
+			},
+		],
 	},
 
 	{
@@ -276,14 +275,14 @@ export const items = [
 			{
 				icon: <ProfileIcon />,
 				text: "Profile",
-				route: "/account".toUriWithDashboardPrefix()
+				route: "/account".toUriWithDashboardPrefix(),
 			},
 			{
 				icon: <SettingsIcon />,
 				text: "Preferences",
-				route: "/preferences".toUriWithDashboardPrefix()
-			}
-		]
+				route: "/preferences".toUriWithDashboardPrefix(),
+			},
+		],
 	},
 
 	{
@@ -296,19 +295,19 @@ export const items = [
 			{
 				icon: definations.users.icon,
 				text: definations.users.label,
-				route: "/users".toUriWithDashboardPrefix()
+				route: "/users".toUriWithDashboardPrefix(),
 			},
 			{
 				icon: definations.forms.icon,
 				text: definations.forms.label,
-				route: "/forms".toUriWithDashboardPrefix()
+				route: "/forms".toUriWithDashboardPrefix(),
 			},
 			{
 				icon: definations.settings.icon,
 				text: definations.settings.label,
-				route: "/settings".toUriWithDashboardPrefix()
-			}
-		]
+				route: "/settings".toUriWithDashboardPrefix(),
+			},
+		],
 	},
 
 	{
@@ -319,10 +318,10 @@ export const items = [
 				icon: <HelpSupportIcon />,
 				text: "Help & Support",
 				color: "grey",
-				route: "/support".toUriWithDashboardPrefix()
-			}
-		]
-	}
+				route: "/support".toUriWithDashboardPrefix(),
+			},
+		],
+	},
 ];
 
 export const width = 240;

@@ -1,3 +1,5 @@
+/** @format */
+
 export default theme => ({
 	root: {
 		padding: theme.spacing(),
@@ -11,13 +13,13 @@ export default theme => ({
 		transform: "rotate(0deg)",
 		marginLeft: "auto",
 		transition: theme.transitions.create("transform", {
-			duration: theme.transitions.duration.shortest
-		})
+			duration: theme.transitions.duration.shortest,
+		}),
 	},
 	expandOpen: {
-		transform: "rotate(180deg)"
+		transform: "rotate(180deg)",
 	},
-	relationsSectionTitle:  {
+	relationsSectionTitle: {
 		height: "100%",
 		lineHeight: "48px",
 		verticalAlign: "middle",

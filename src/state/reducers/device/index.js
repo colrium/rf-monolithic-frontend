@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	SET_IDENTITY,
 	SET_OPERATING_SYSTEM,
@@ -21,13 +23,13 @@ const initialState = {
 		version: "Uknown",
 	},
 	screen_size: {
-		width: 50,
-		height: 50,
+		width: 1366,
+		height: 768,
 		orientation: "potrait",
 	},
 	window_size: {
-		width: 50,
-		height: 50,
+		width: 1024,
+		height: 768,
 		name: "xs",
 	},
 };

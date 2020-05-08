@@ -1,14 +1,13 @@
-import React, { Component } from "react";
-import classNames from "classnames";
-import PropTypes from "prop-types";
-
-import ScrollBars from "components/ScrollBars";
-import Typography from "components/Typography";
+/** @format */
 
 import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import ScrollBars from "components/ScrollBars";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import {withErrorHandler} from "hoc/ErrorHandler";
 
-import withRoot from "utils/withRoot";
+
+
 
 class PageContent extends Component {
 	render() {
@@ -16,9 +15,7 @@ class PageContent extends Component {
 
 		return (
 			<ScrollBars className={classes.bodyWrapper}>
-				<GridContainer className={ className }>
-					 
-				</GridContainer>
+				<GridContainer className={className}></GridContainer>
 			</ScrollBars>
 		);
 	}
@@ -33,4 +30,4 @@ PageContent.propTypes = {
 	bannerContent: PropTypes.node,
 };
 
-export default withRoot(PageContent);
+export default withErrorHandler(PageContent);

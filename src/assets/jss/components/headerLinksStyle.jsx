@@ -1,4 +1,6 @@
-import { colors} from "assets/jss/app-theme.jsx";
+/** @format */
+
+import { colors } from "assets/jss/app-theme.jsx";
 
 const headerLinksStyle = theme => ({
 	list: {
@@ -8,7 +10,7 @@ const headerLinksStyle = theme => ({
 		listStyle: "none",
 		paddingTop: "0",
 		paddingBottom: "0",
-		color: "inherit"
+		color: "inherit",
 	},
 	listItem: {
 		float: "left",
@@ -20,7 +22,7 @@ const headerLinksStyle = theme => ({
 		padding: "0",
 	},
 	listItemText: {
-		padding: "0 !important"
+		padding: "0 !important",
 	},
 	navLink: {
 		color: "inherit",
@@ -34,7 +36,7 @@ const headerLinksStyle = theme => ({
 		display: "inline-flex",
 		"&:hover,&:focus": {
 			color: "inherit",
-			background: "rgba(200, 200, 200, 0.2)"
+			background: "rgba(200, 200, 200, 0.2)",
 		},
 	},
 	notificationNavLink: {
@@ -47,7 +49,7 @@ const headerLinksStyle = theme => ({
 		textDecoration: "none",
 		margin: "0px",
 		display: "inline-flex",
-		top: "4px"
+		top: "4px",
 	},
 	registerNavLink: {
 		top: "3px",
@@ -57,7 +59,7 @@ const headerLinksStyle = theme => ({
 		lineHeight: "20px",
 		textDecoration: "none",
 		margin: "0px",
-		display: "inline-flex"
+		display: "inline-flex",
 	},
 	navLinkActive: {
 		color: "inherit",
@@ -66,24 +68,24 @@ const headerLinksStyle = theme => ({
 	icons: {
 		width: "20px",
 		height: "20px",
-		marginRight: "3px"
+		marginRight: "3px",
 	},
 	socialIcons: {
 		position: "relative",
 		fontSize: "20px !important",
-		marginRight: "4px"
+		marginRight: "4px",
 	},
 	dropdownLink: {
 		"&,&:hover,&:focus": {
 			color: "inherit",
 			textDecoration: "none",
 			display: "block",
-			padding: "10px 20px"
-		}
+			padding: "10px 20px",
+		},
 	},
 	marginRight5: {
-		marginRight: "5px"
-	}
+		marginRight: "5px",
+	},
 });
 
 export default headerLinksStyle;

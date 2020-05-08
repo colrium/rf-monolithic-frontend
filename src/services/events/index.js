@@ -1,11 +1,15 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class EventsApiService extends ApiService{
-	constructor(){
+class EventsApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = 'events';
+		this.service_uri = "events";
 	}
 }
 

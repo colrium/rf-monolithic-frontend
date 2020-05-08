@@ -1,3 +1,3 @@
-export default theme => ({
-	
-});
+/** @format */
+
+export default theme => ({});

@@ -1,4 +1,9 @@
-/* eslint-disable react/prop-types */
+/**
+ * /* eslint-disable react/prop-types
+ *
+ * @format
+ */
+
 import Chip from "@material-ui/core/Chip";
 import IconButton from "@material-ui/core/IconButton";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -11,8 +16,8 @@ import ClearIcon from "@material-ui/icons/Clear";
 import classNames from "classnames";
 import React, { useState } from "react";
 import Select from "react-select";
-import {colors} from "assets/jss/app-theme";
-import withRoot from "utils/withRoot";
+import { colors } from "assets/jss/app-theme";
+import withRoot from "hoc/withRoot";
 import styles from "./styles";
 
 const NoOptionsMessage = props => (
@@ -40,8 +45,8 @@ const Control = props => (
 				inputRef: props.innerRef,
 				children: props.children,
 				disabled: props.disabled,
-				...props.innerProps
-			}
+				...props.innerProps,
+			},
 		}}
 		disabled={props.disabled}
 		{...props.selectProps.textFieldProps}
@@ -55,7 +60,9 @@ const Option = props => (
 		component="div"
 		style={{
 			fontWeight: props.isSelected ? 500 : 400,
-			color: props.isSelected ? colors.hex.primarydark : colors.hex.default
+			color: props.isSelected
+				? colors.hex.primarydark
+				: colors.hex.default,
 		}}
 		{...props.innerProps}
 	>
@@ -93,7 +100,7 @@ const Menu = props => (
 		square
 		elevation={3}
 		className={props.selectProps.classes.paper}
-		style={{zIndex: "999999999"}}
+		style={{ zIndex: "999999999" }}
 		{...props.innerProps}
 	>
 		{props.children}
@@ -104,13 +111,13 @@ const IndicatorSeparator = () => null;
 
 const ClearIndicator = props => (
 	<IconButton {...props.innerProps} className="w-10 h-10 p-2">
-		<ClearIcon  className="text-xl"/>
+		<ClearIcon className="text-xl" />
 	</IconButton>
 );
 
 const DropdownIndicator = props => (
 	<IconButton {...props.innerProps} className="w-10 h-10 p-2">
-		<ArrowDropDownIcon className="text-xl"/>
+		<ArrowDropDownIcon className="text-xl" />
 	</IconButton>
 );
 
@@ -119,7 +126,7 @@ const MultiValue = props => (
 		tabIndex={-1}
 		label={props.children}
 		className={classNames(props.selectProps.classes.chip, {
-			[props.selectProps.classes.chipFocused]: props.isFocused
+			[props.selectProps.classes.chipFocused]: props.isFocused,
 		})}
 		onDelete={props.removeProps.onClick}
 		deleteIcon={<ClearIcon {...props.removeProps} />}
@@ -140,7 +147,12 @@ function formatData(props) {
 		if (isMulti) {
 			formatedValue = value.map((entry, cursor) => {
 				if (JSON.isJSON(entry)) {
-					if ("value" in entry && entry.value && "label" in entry && entry.label) {
+					if (
+						"value" in entry &&
+						entry.value &&
+						"label" in entry &&
+						entry.label
+					) {
 						return { value: entry.value, label: entry.label };
 					}
 				}
@@ -153,14 +165,24 @@ function formatData(props) {
 				if (Array.isArray(value)) {
 					let position = value.indexOf(entry_key);
 					if (isMulti) {
-						if (position !== -1 && !formatedValue.includes({ value: entry_key, label: entry_value })) {
-							formatedValue.push({ value: entry_key, label: entry_value });
+						if (
+							position !== -1 &&
+							!formatedValue.includes({
+								value: entry_key,
+								label: entry_value,
+							})
+						) {
+							formatedValue.push({
+								value: entry_key,
+								label: entry_value,
+							});
 						}
-					} 
-					else {
+					} else {
 						if (position !== -1) {
-							formatedValue = [{ value: entry_key, label: entry_value }];
-						}						
+							formatedValue = [
+								{ value: entry_key, label: entry_value },
+							];
+						}
 					}
 				}
 				return { value: entry_key, label: entry_value };
@@ -169,7 +191,12 @@ function formatData(props) {
 	} else if (Array.isArray(options)) {
 		formatedOptions = options.map((option, cursor) => {
 			if (JSON.isJSON(option)) {
-				if ("value" in option && option.value && "label" in option && option.label) {
+				if (
+					"value" in option &&
+					option.value &&
+					"label" in option &&
+					option.label
+				) {
 					return { value: option.value, label: option.label };
 				}
 			}
@@ -186,9 +213,13 @@ function Autocomplete(props) {
 
 	const { onChange, textFieldProps, isClearable, ...rest } = newProps;
 	const [internalvalue, setInternalValue] = useState(value);
-	function handleOnChange(value, actionMeta) {		
+	function handleOnChange(value, actionMeta) {
 		if (actionMeta) {
-			if ( actionMeta.action === "select-option" || actionMeta.action === "remove-value" || actionMeta.action === "clear" ) {
+			if (
+				actionMeta.action === "select-option" ||
+				actionMeta.action === "remove-value" ||
+				actionMeta.action === "clear"
+			) {
 				setInternalValue(value);
 				if (Array.isArray(value) || JSON.isJSON(value)) {
 					if (newProps.isMulti) {
@@ -206,7 +237,6 @@ function Autocomplete(props) {
 						if (Function.isFunction(onChange)) {
 							onChange(new_value);
 						}
-						
 					}
 				}
 				if (value === null) {
@@ -264,8 +294,8 @@ Autocomplete.defaultProps = {
 	textFieldProps: {
 		label: "Select",
 		InputLabelProps: {
-			shrink: true
-		}
+			shrink: true,
+		},
 	},
 	components: {
 		Control,
@@ -278,10 +308,10 @@ Autocomplete.defaultProps = {
 		ValueContainer,
 		IndicatorSeparator,
 		ClearIndicator,
-		DropdownIndicator
+		DropdownIndicator,
 	},
 	options: [],
 	disabled: false,
-	setvalue: {}
+	setvalue: {},
 };
 export default withRoot(withStyles(styles)(Autocomplete));

@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	SET_IDENTITY,
 	SET_OPERATING_SYSTEM,
@@ -9,35 +11,34 @@ import {
 export function setIdentity(identity) {
 	return {
 		type: SET_IDENTITY,
-		identity
+		identity,
 	};
 }
 
 export function setOperatingSystem(os) {
 	return {
 		type: SET_OPERATING_SYSTEM,
-		os
+		os,
 	};
 }
 
 export function setBrowser(browser) {
 	return {
 		type: SET_BROWSER,
-		browser
+		browser,
 	};
 }
-
 
 export function setScreenSize(screen_size) {
 	return {
 		type: SET_SCREEN_SIZE,
-		screen_size
+		screen_size,
 	};
 }
 
 export function setWindowSize(window_size) {
 	return {
 		type: SET_WINDOW_SIZE,
-		window_size
+		window_size,
 	};
 }

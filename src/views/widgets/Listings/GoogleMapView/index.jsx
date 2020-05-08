@@ -1,19 +1,19 @@
-import React from "react";
-import Skeleton from '@material-ui/lab/Skeleton';
-import { connect } from 'react-redux';
-import compose from 'recompose/compose';
-import { Icon } from '@material-ui/core';
+/** @format */
+
 import withStyles from "@material-ui/core/styles/withStyles";
-import EmptyStateImage from 'assets/img/empty-state-table.svg';
-import GoogleMap from 'components/GoogleMap';
-import GridContainer from 'components/Grid/GridContainer';
-import GridItem from 'components/Grid/GridItem';
-import Typography from 'components/Typography';
-import PropTypes from 'prop-types';
+import EmptyStateImage from "assets/img/empty-state-table.svg";
+import GoogleMap from "components/GoogleMap";
+import GridContainer from "components/Grid/GridContainer";
+import GridItem from "components/Grid/GridItem";
+import Typography from "components/Typography";
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import compose from "recompose/compose";
+import { apiCallRequest, closeDialog, openDialog } from "state/actions";
+import { withErrorHandler } from "hoc/ErrorHandler";
+import styles from "./styles";
 
-import { apiCallRequest, openDialog, closeDialog } from 'state/actions';
-
-import styles from './styles';
 
 
 class GoogleMapView extends React.Component {
@@ -23,7 +23,7 @@ class GoogleMapView extends React.Component {
 		load_error: false,
 		defination: null,
 		service: null,
-		query: { p : 1 },
+		query: { p: 1 },
 		records: [],
 	};
 	constructor(props) {
@@ -32,20 +32,25 @@ class GoogleMapView extends React.Component {
 
 		this.state.defination = defination;
 		this.state.service = service;
-		this.state.query = query? {...query, p:1} : {p:1};
-		
+		this.state.query = query ? { ...query, p: 1 } : { p: 1 };
+
 		this.handleDeleteItemConfirm = this.handleDeleteItemConfirm.bind(this);
 		this.handleDeleteItem = this.handleDeleteItem.bind(this);
 	}
 
-	componentDidMount(){		
+	componentDidMount() {
 		this.loadContext();
 		this.prepareData();
 	}
 	getSnapshotBeforeUpdate(prevProps) {
 		return {
-			contextReloadRequired: (!Object.areEqual(prevProps.defination, this.props.defination) && !Object.areEqual(prevProps.service, this.props.service)), 
-			dataReloadRequired: !Object.areEqual(prevProps.query, this.props.query),
+			contextReloadRequired:
+				!Object.areEqual(prevProps.defination, this.props.defination) &&
+				!Object.areEqual(prevProps.service, this.props.service),
+			dataReloadRequired: !Object.areEqual(
+				prevProps.query,
+				this.props.query
+			),
 			dataPreparationRequired: prevProps.cache !== this.props.cache,
 		};
 	}
@@ -57,25 +62,28 @@ class GoogleMapView extends React.Component {
 		}
 		if (snapshot.dataReloadRequired) {
 			const { query } = this.props;
-			this.setState({query: query? {...query, p:1} : {p:1}}, this.loadData);
+			this.setState(
+				{ query: query ? { ...query, p: 1 } : { p: 1 } },
+				this.loadData
+			);
 		}
 		if (snapshot.dataPreparationRequired) {
 			this.prepareData();
 		}
-	} 
-
+	}
 
 	handleDeleteItemConfirm = item_id => event => {
 		const { openDialog, closeDialog } = this.props;
 		let that = this;
 		openDialog({
 			title: "Confirm Delete",
-			body: "Are you sure you want delete entry? This action might be irreversible",
+			body:
+				"Are you sure you want delete entry? This action might be irreversible",
 			actions: {
 				cancel: {
 					text: "Cancel",
 					color: "default",
-					onClick: ()=> closeDialog(),
+					onClick: () => closeDialog(),
 				},
 				delete: {
 					text: "Delete",
@@ -83,11 +91,11 @@ class GoogleMapView extends React.Component {
 					onClick: event => {
 						closeDialog();
 						this.handleDeleteItem(item_id);
-					}
-				}
-			}
+					},
+				},
+			},
 		});
-	}
+	};
 
 	handleDeleteItem = item_id => event => {
 		const { openDialog, closeDialog } = this.props;
@@ -98,82 +106,135 @@ class GoogleMapView extends React.Component {
 				close: {
 					text: "Close",
 					color: "default",
-					onClick: ()=> closeDialog(),
-				}
-			}
+					onClick: () => closeDialog(),
+				},
+			},
 		});
-	}
+	};
 
-	loadContext(){
+	loadContext() {
 		const { defination, service, query, cache } = this.props;
 		if (defination) {
-			this.setState({defination: defination, service: service, query: (query? {...query, p:1} : {p:1}), loading: false}, this.loadData);
+			this.setState(
+				{
+					defination: defination,
+					service: service,
+					query: query ? { ...query, p: 1 } : { p: 1 },
+					loading: false,
+				},
+				this.loadData
+			);
 		}
-
 	}
 
-
-	
-	loadData(){
+	loadData() {
 		const { auth, apiCallRequest, defination, cache } = this.props;
 		if (defination) {
-			apiCallRequest(defination.name, { uri: defination.endpoint, type:"records", params:this.state.query, data: {} }, true);
+			apiCallRequest(
+				defination.name,
+				{
+					uri: defination.endpoint,
+					type: "records",
+					params: this.state.query,
+					data: {},
+				},
+				true
+			);
+		} else {
+			this.setState(state => ({
+				records: [],
+				load_error: { msg: "No Context defination or provided" },
+				loading: false,
+			}));
 		}
-		else{
-			this.setState(state => ({ records: [], load_error: {msg: "No Context defination or provided"}, loading: false }));
-		}
-			
 	}
 
-	prepareData(){
+	prepareData() {
 		const { auth, cache, defination } = this.props;
-		let cached_data = Array.isArray(cache)? cache : [];
+		let cached_data = Array.isArray(cache) ? cache : [];
 		let resolved_data = [];
 
-		if (Function.isFunction(defination.views.listing.googlemapview.resolveData)) {
-			defination.views.listing.googlemapview.resolveData(cached_data, true).then((resolve)=>{
-				this.setState(state => ({ records: resolve, loading: false }));
-			}).catch(err=>{
-				console.error("GoogleMapView resolveData err", err);
-				this.setState(state => ({ records: [], loading: false }));						
-			});
+		if (
+			Function.isFunction(
+				defination.views.listing.googlemapview.resolveData
+			)
+		) {
+			defination.views.listing.googlemapview
+				.resolveData(cached_data, true)
+				.then(resolve => {
+					this.setState(state => ({
+						records: resolve,
+						loading: false,
+					}));
+				})
+				.catch(err => {
+					
+					this.setState(state => ({ records: [], loading: false }));
+				});
 		}
 	}
 	render() {
 		const { classes, googleMapProps, api, defination } = this.props;
 		return (
 			<GridContainer className={classes.root}>
-					<GridItem className="p-0 m-0" xs={12}>
-							<GridContainer className="p-0 m-0">
-								
-									<GridContainer className="p-0 m-0">										
-										<GridItem className="p-0 m-0" xs={12}>
-										{ Array.isArray(this.state.records) && this.state.records.length > 0? (
-											<GridContainer className="p-0 m-0">
-													<GridItem xs={12} className="p-0 m-0">
-															<GoogleMap {...googleMapProps} disabled={api? api.loading : true} polylines={defination && defination.views.listing.googlemapview.type === "polyline" ? this.state.records : []} markers={defination.views.listing.googlemapview.type === "marker" ? this.state.records : []} circles ={defination.views.listing.googlemapview.type === "circle" ? this.state.records : []} defaultZoom={5}/>
-													</GridItem>	
-											</GridContainer>
-										) : (
-											<GridContainer className="p-0 m-0" justify="center" alignItems="center">
-												<img alt="Empty list" className={classes.emptyImage} src={EmptyStateImage} />
-												<Typography className={classes.emptyText} color="grey" variant="body2" center fullWidth>
-													No {defination && defination.label? defination.label : "Records"} found
-												</Typography>
-											</GridContainer>
-										)}
-											
+				<GridItem className="p-0 m-0" xs={12}>
+					<GridContainer className="p-0 m-0">
+						<GridContainer className="p-0 m-0">
+							<GridItem className="p-0 m-0" xs={12}>
+								<GridContainer className="p-0 m-0">
+										<GridItem xs={12} className="p-0 m-0">
+											<GoogleMap
+												defaultZoom={5}
+												{...googleMapProps}
+
+												disabled={
+													api ? api.loading : true
+												}
+												polylines={
+													defination &&
+													defination.views.listing
+														.googlemapview.type ===
+														"polyline"
+														? this.state.records
+														: []
+												}
+												markers={
+													defination.views.listing
+														.googlemapview.type ===
+													"marker"
+														? this.state.records
+														: []
+												}
+												circles={
+													defination.views.listing
+														.googlemapview.type ===
+													"circle"
+														? this.state.records
+														: []
+												}
+												
+											/>
 										</GridItem>
-									</GridContainer>								
-									{(api? (api.complete && api.error) : false ) && <GridContainer >
-										<GridItem xs={12}>
-											<Typography color="error" variant="body2" center fullWidth>												
-												{"An error occured. \n "+api.error.msg}
-											</Typography>
-										</GridItem>										
-									</GridContainer>}
+									</GridContainer>
+							</GridItem>
+						</GridContainer>
+						{(api ? api.complete && api.error : false) && (
+							<GridContainer>
+								<GridItem xs={12}>
+									<Typography
+										color="error"
+										variant="body2"
+										center
+										fullWidth
+									>
+										{"An error occured. \n " +
+											api.error.msg}
+									</Typography>
+								</GridItem>
 							</GridContainer>
-					</GridItem>
+						)}
+					</GridContainer>
+				</GridItem>
 			</GridContainer>
 		);
 	}
@@ -190,21 +251,23 @@ GoogleMapView.propTypes = {
 };
 
 GoogleMapView.defaultProps = {
-	googleMapProps : {
+	googleMapProps: {
 		height: "900px",
 	},
 	query: {},
 };
 
-
 const mapStateToProps = (state, ownProps) => {
 	const { defination } = ownProps;
 	return {
 		auth: state.auth,
-		cache: defination? state.cache.data[defination.name] : null,
-		api: defination? (state.api[defination.name]? state.api[defination.name] : {}) : {},
-	}
+		cache: defination ? state.cache.data[defination.name] : null,
+		api: defination ? state.api[defination.name] ? state.api[defination.name] : {} : {},
+	};
 };
 
-
-export default compose(withStyles(styles), connect(mapStateToProps, { apiCallRequest, openDialog, closeDialog }))(GoogleMapView);
+export default compose(
+	withStyles(styles),
+	connect(mapStateToProps, { apiCallRequest, openDialog, closeDialog }),
+	withErrorHandler
+)(GoogleMapView);

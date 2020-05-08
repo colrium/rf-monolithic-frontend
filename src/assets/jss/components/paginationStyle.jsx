@@ -1,16 +1,18 @@
+/** @format */
+
 const paginationStyle = {
 	pagination: {
 		display: "inline-block",
 		paddingLeft: "0",
 		margin: "0 0 20px 0",
-		borderRadius: "4px"
+		borderRadius: "4px",
 	},
 	paginationItem: {
-		display: "inline"
+		display: "inline",
 	},
 	paginationLink: {
 		":first-of-type": {
-			marginleft: "0"
+			marginleft: "0",
 		},
 		border: "0",
 		borderRadius: "30px !important",
@@ -32,20 +34,20 @@ const paginationStyle = {
 		"&:hover,&:focus": {
 			zIndex: "3",
 			backgroundColor: "#eee",
-			borderColor: "#ddd"
+			borderColor: "#ddd",
 		},
 		"&:hover": {
-			cursor: "pointer"
-		}
+			cursor: "pointer",
+		},
 	},
 	disabled: {
 		"&,&:hover,&:focus": {
 			color: "#777",
 			cursor: "not-allowed",
 			backgroundColor: "#fff",
-			borderColor: "#ddd"
-		}
-	}
+			borderColor: "#ddd",
+		},
+	},
 };
 
 export default paginationStyle;

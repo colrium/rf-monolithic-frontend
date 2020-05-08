@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	API_CALL_REQUEST,
 	setApiCallLoading,
@@ -6,11 +8,15 @@ import {
 	setApiCallError,
 	setDataCache,
 } from "state/actions";
-import ApiService from 'services/api';
+import ApiService from "services/api";
 
 const ApiServiceInstance = new ApiService();
 
-const api = ({ dispatch, getState }) => next => (action) => {
+const api = ({ dispatch, getState, ...rest }) => next => action => {
+	next(action);
+	if (action.type !== API_CALL_REQUEST) {
+		return;
+	}
 	function onApiCallStart(action) {
 		const { key } = action;
 		dispatch(setApiCallLoading(key, true));
@@ -19,7 +25,7 @@ const api = ({ dispatch, getState }) => next => (action) => {
 		dispatch(setApiCallResponse(key, null));
 	}
 
-	function onApiCallComplete(action, res, error){
+	function onApiCallComplete(action, res, error) {
 		const { key, options, cache } = action;
 		if (key && options) {
 			if (error) {
@@ -27,8 +33,7 @@ const api = ({ dispatch, getState }) => next => (action) => {
 				dispatch(setApiCallComplete(key, true));
 				dispatch(setApiCallError(key, error));
 				dispatch(setApiCallResponse(key, null));
-			}
-			else if (res) {
+			} else if (res) {
 				dispatch(setApiCallLoading(key, false));
 				dispatch(setApiCallComplete(key, true));
 				dispatch(setApiCallError(key, null));
@@ -36,42 +41,35 @@ const api = ({ dispatch, getState }) => next => (action) => {
 				if (cache) {
 					dispatch(setDataCache(key, res.body.data));
 				}
-			}
-			else {
+			} else {
 				dispatch(setApiCallLoading(key, false));
 				dispatch(setApiCallComplete(key, true));
 				dispatch(setApiCallError(key, null));
-			}		
+			}
 		}
 	}
+
 	if (action.type === API_CALL_REQUEST) {
 		const { key, options, cache } = action;
 		if (key && options) {
 			const { uri, type, params, data } = options;
 			onApiCallStart(action);
 			ApiServiceInstance.setServiceUri(uri);
-			if (type === "records") {				
+			if (type === "records") {
 				ApiServiceInstance.getRecords(params).then(res => {
-					onApiCallComplete(action, res, false)
-				}).catch(e=>{
-					onApiCallComplete(action, false, e);
+					onApiCallComplete(action, res, false);
+				}).catch(e => {
+						onApiCallComplete(action, false, e);
 				});
-			}
-			else if (type === "aggregates") {				
+			} else if (type === "aggregates") {
 				ApiServiceInstance.getAggregatesCount(params).then(res => {
 					onApiCallComplete(action, res, false);
-				}).catch(e=>{
+				}).catch(e => {
 					onApiCallComplete(action, false, e);
 				});
 			}
 		}
-		next(action);
-
-	}
-	else{
-		next(action);
-	}
-		
+	} 
 };
 
 export default api;

@@ -1,3 +1,5 @@
+/** @format */
+
 import Hidden from "@material-ui/core/Hidden";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { app, colors } from "assets/jss/app-theme";
@@ -6,7 +8,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
-import withRoot from "utils/withRoot";
+import { withErrorHandler } from "hoc/ErrorHandler";
 import LoginForm from "views/forms/LoginForm";
 import AnimatedChevronMap from "views/widgets/AnimatedChevronMap";
 
@@ -16,36 +18,36 @@ const styles = theme => ({
 		height: "100vh",
 		padding: "0",
 		margin: "0",
-		overflow: "auto"
+		overflow: "auto",
 	},
 	login_container: {
-		padding: "0"
+		padding: "0",
 	},
 	login_logo: {
 		width: "15rem",
 		height: "auto",
-		marginTop: theme.spacing(2)
+		marginTop: theme.spacing(2),
 	},
 	info_wrapper: {
-		background: "#87c49e"
+		background: "#87c49e",
 	},
 	info_container: {
-		color: colors.inverse,
+		color: theme.palette.text.primary,
 		height: "100%",
-		width: "100%"
+		width: "100%",
 	},
 	form_wrapper: {
 		height: "100%",
-		background: colors.hex.inverse,
-		overflow: "auto"
+		background: theme.palette.background.default,
+		overflow: "auto",
 	},
 	info_map_container: {
-		padding: "0 10%"
+		padding: "0 10%",
 	},
 	form_container: {
 		height: "100%",
-		width: "100%"
-	}
+		width: "100%",
+	},
 });
 
 class Login extends React.Component {
@@ -82,21 +84,38 @@ class Login extends React.Component {
 									justify="center"
 									alignItems="center"
 								>
-									<GridContainer className={classes.info_content}>
-										<GridItem xs={12} className={classes.info_map_container}>
-											<AnimatedChevronMap mapcolor={colors.hex.inverse} />
+									<GridContainer
+										className={classes.info_content}
+									>
+										<GridItem
+											xs={12}
+											className={
+												classes.info_map_container
+											}
+										>
+											<AnimatedChevronMap
+												mapcolor={colors.hex.inverse}
+											/>
 										</GridItem>
 
 										<GridItem xs={12}>
-											<Typography color="inverse" center variant="h5">
+											<Typography
+												color="inverse"
+												center
+												variant="h5"
+											>
 												Realfield.io
 											</Typography>
 										</GridItem>
 
 										<GridItem xs={12}>
-											<Typography color="inverse" center variant="body2">
-												We're not smart, we are here to give you the data to be
-												smart.
+											<Typography
+												color="inverse"
+												center
+												variant="body2"
+											>
+												We're not smart, we are here to
+												give you the data to be smart.
 											</Typography>
 										</GridItem>
 									</GridContainer>
@@ -120,7 +139,10 @@ class Login extends React.Component {
 								<GridItem xs={12}>
 									<img
 										alt={app.name + " logo"}
-										className={classNames(classes.login_logo, "center")}
+										className={classNames(
+											classes.login_logo,
+											"center"
+										)}
 										src={app.logo}
 									/>
 								</GridItem>
@@ -136,4 +158,4 @@ class Login extends React.Component {
 	}
 }
 
-export default withRoot(withStyles(styles)(Login));
+export default withErrorHandler(withStyles(styles)(Login));

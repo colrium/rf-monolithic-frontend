@@ -1,30 +1,33 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, FolderOutlined as DefinationContextIcon, OpenInNewOutlined as OpenInNewIcon } from '@material-ui/icons';
-import { colors } from 'assets/jss/app-theme';
-import Button from 'components/Button';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	FolderOutlined as DefinationContextIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
+import { colors } from "assets/jss/app-theme";
+import Button from "components/Button";
 import * as definations from "definations";
 import React from "react";
-import { Link } from 'react-router-dom';
-import { FilesHelper } from "utils/Helpers";
+import { Link } from "react-router-dom";
+import { FilesHelper } from "hoc/Helpers";
 
-
-
-
-
-
-export default  {
+export default {
 	name: "attachments",
 	label: "Files",
 	icon: <DefinationContextIcon />,
 	color: colors.hex.warning,
-	model: 'Attachment',
+	model: "Attachment",
 	endpoint: "/attachments",
 	cache: true,
 	views: {
 		single: {
 			default: "cardview",
 			cardview: {
-				avatar: (entry, user)=>{
+				avatar: (entry, user) => {
 					if (entry) {
 						return FilesHelper.fileIcon(entry.name);
 					}
@@ -32,23 +35,35 @@ export default  {
 				},
 				title: ["name"],
 				subtitle: ["size", "date_attached"],
-				body: ["title", "caption", "alt_text", "description", "context", "record", "avatar", "mime", "location", "attached_by", "accessibility"],
-			}
+				body: [
+					"title",
+					"caption",
+					"alt_text",
+					"description",
+					"context",
+					"record",
+					"avatar",
+					"mime",
+					"location",
+					"attached_by",
+					"accessibility",
+				],
+			},
 		},
 		listing: {
 			default: "listview",
 			listview: {
-				avatar: (entry, user)=>{
+				avatar: (entry, user) => {
 					if (entry) {
 						return FilesHelper.fileIcon(entry.name);
 					}
 					return FilesHelper.fileIcon("file.unknown");
 				},
 				primary: ["name"],
-				secondary: ["size", "description", "context"]
+				secondary: ["size", "description", "context"],
 			},
 			tableview: {
-				avatar: (entry, user)=>{
+				avatar: (entry, user) => {
 					if (entry) {
 						return FilesHelper.fileIcon(entry.name);
 					}
@@ -59,7 +74,7 @@ export default  {
 		},
 	},
 
-	scope:{
+	scope: {
 		columns: {
 			title: {
 				type: "string",
@@ -69,7 +84,6 @@ export default  {
 					default: "",
 					required: false,
 				},
-				
 			},
 
 			caption: {
@@ -80,7 +94,6 @@ export default  {
 					default: "",
 					required: false,
 				},
-				
 			},
 
 			alt_text: {
@@ -91,7 +104,6 @@ export default  {
 					default: "",
 					required: false,
 				},
-				
 			},
 
 			description: {
@@ -102,7 +114,6 @@ export default  {
 					default: "",
 					required: false,
 				},
-				
 			},
 
 			name: {
@@ -113,7 +124,6 @@ export default  {
 					default: "",
 					required: false,
 				},
-				
 			},
 
 			local_name: {
@@ -127,13 +137,13 @@ export default  {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return user.role !== "admin"
-						}						
+							return user.role !== "admin";
+						}
 						return false;
 					},
 					input: (values, user) => {
 						return true;
-					}					
+					},
 				},
 			},
 
@@ -145,7 +155,6 @@ export default  {
 					default: "",
 					required: false,
 				},
-				
 			},
 
 			record: {
@@ -157,10 +166,12 @@ export default  {
 					required: false,
 				},
 				reference: {
-					name: (values, user)=>{
-						let defination_name = 'attachments';
+					name: (values, user) => {
+						let defination_name = "attachments";
 						if (values.context) {
-							for (let [name, defination] of Object.entries(definations)) {
+							for (let [name, defination] of Object.entries(
+								definations
+							)) {
 								if (defination.model === values.context) {
 									defination_name = name;
 									break;
@@ -170,49 +181,69 @@ export default  {
 						return defination_name;
 					},
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
-							primary: (values, user)=>{
+							primary: (values, user) => {
 								let resolves = [];
 								if (values.context) {
-									for (let [name, defination] of Object.entries(definations)) {
-										if (defination.model === values.context) {
-											resolves = defination.scope.identity.primary;
+									for (let [
+										name,
+										defination,
+									] of Object.entries(definations)) {
+										if (
+											defination.model === values.context
+										) {
+											resolves =
+												defination.scope.identity
+													.primary;
 											break;
 										}
 									}
 								}
 								return resolves;
 							},
-							secondary: (values, user)=>{
+							secondary: (values, user) => {
 								let resolves = [];
 								if (values.context) {
-									for (let [name, defination] of Object.entries(definations)) {
-										if (defination.model === values.context) {
-											resolves = defination.scope.identity.secondary;
+									for (let [
+										name,
+										defination,
+									] of Object.entries(definations)) {
+										if (
+											defination.model === values.context
+										) {
+											resolves =
+												defination.scope.identity
+													.secondary;
 											break;
 										}
 									}
 								}
 								return resolves;
 							},
-							avatar: (values, user)=>{
+							avatar: (values, user) => {
 								let resolves = [];
 								if (values.context) {
-									for (let [name, defination] of Object.entries(definations)) {
-										if (defination.model === values.context) {
-											resolves = defination.scope.identity.avatar;
+									for (let [
+										name,
+										defination,
+									] of Object.entries(definations)) {
+										if (
+											defination.model === values.context
+										) {
+											resolves =
+												defination.scope.identity
+													.avatar;
 											break;
 										}
 									}
 								}
 								return resolves;
 							},
-						}							
+						},
 					},
 				},
-				
 			},
 
 			avatar: {
@@ -223,8 +254,6 @@ export default  {
 					default: "",
 					required: false,
 				},
-
-				
 			},
 
 			size: {
@@ -236,14 +265,13 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {					
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						return true;
-					}					
+					},
 				},
-				
 			},
 
 			mime: {
@@ -255,12 +283,12 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {					
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						return true;
-					}					
+					},
 				},
 			},
 
@@ -272,7 +300,6 @@ export default  {
 					default: "",
 					required: false,
 				},
-				
 			},
 
 			location: {
@@ -284,16 +311,16 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						return false;
-					}					
+					},
 				},
-				possibilities : {
-					"local": "Local",
-					"web": "Web",
+				possibilities: {
+					local: "Local",
+					web: "Web",
 				},
 			},
 
@@ -306,14 +333,13 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {									
+					display: (entry, user) => {
 						return !(entry && entry.location !== "local");
 					},
 					input: (values, user) => {
 						return !(values && values.location !== "local");
-					}					
+					},
 				},
-				
 			},
 
 			date_attached: {
@@ -325,12 +351,12 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {									
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						return true;
-					}					
+					},
 				},
 			},
 
@@ -345,24 +371,23 @@ export default  {
 				reference: {
 					name: "users",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: ["avatar"],
-						}							
+						},
 					},
 				},
 				restricted: {
-					display: (entry, user) => {									
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						return false;
-					}					
-				},	
-				
+					},
+				},
 			},
 
 			accessibility: {
@@ -373,47 +398,47 @@ export default  {
 					default: "anyone",
 					required: false,
 				},
-				possibilities : {
-					"anyone": "Anyone",
-					"authorized": "Authorized users",
-					"admin": "Administrators",
-					"owner": "Owner",
+				possibilities: {
+					anyone: "Anyone",
+					authorized: "Authorized users",
+					admin: "Administrators",
+					owner: "Owner",
 				},
 				restricted: {
-					display: (entry, user) => {									
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
 						return !(user && user.role === "admin");
-					}					
-				},	
-			},	
+					},
+				},
+			},
 		},
 		identity: {
 			primary: ["name"],
 			secondary: ["date_attached"],
 			avatar: false,
-		},		
+		},
 		dependencies: [],
 		dependants: {
 			actionlogs: {
 				column: "record",
-				query: { context: "Attachment" }
+				query: { context: "Attachment" },
 			},
-		}					
+		},
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return false;
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return true;
 				}
@@ -428,118 +453,167 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("attachments/view/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"attachments/view/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
-					inline: {						
+					inline: {
 						default: (id, className) => {
 							return (
-								<Link to={ ("attachments/view/"+id).toUriWithDashboardPrefix() } className={ className }>
-									<IconButton color="inherit" aria-label="view">
-										<OpenInNewIcon/>
+								<Link
+									to={(
+										"attachments/view/" + id
+									).toUriWithDashboardPrefix()}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="view"
+									>
+										<OpenInNewIcon />
 									</IconButton>
 								</Link>
 							);
 						},
-						listing: (id, className="grey_text") => {
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("attachments/view/"+id).toUriWithDashboardPrefix() } className={ className }>
-									<IconButton color="inherit" aria-label="view">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={(
+										"attachments/view/" + id
+									).toUriWithDashboardPrefix()}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="view"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
+				restricted: user => {
 					return true;
 				},
 				uri: "attachments/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
-								<Link to={("attachments/add/").toUriWithDashboardPrefix()} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Attachment
+						default: props => {
+							return (
+								<Link
+									to={"attachments/add/".toUriWithDashboardPrefix()}
+									{...props}
+								>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Attachment
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("attachments/edit/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"attachments/edit/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-							return ( 
-								<Link to={("attachments/edit/"+id).toUriWithDashboardPrefix()} className={ className }>
-									<IconButton color="inherit" aria-label="add">
-										<AddIcon/>
-									</IconButton>
-								</Link>
-							)
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("attachments/edit/"+id).toUriWithDashboardPrefix() } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={(
+										"attachments/edit/" + id
+									).toUriWithDashboardPrefix()}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="add"
+									>
+										<AddIcon />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+						listing: (id, className = "grey_text") => {
+							return (
+								<Link
+									to={(
+										"attachments/edit/" + id
+									).toUriWithDashboardPrefix()}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
+									</IconButton>
+								</Link>
+							);
+						},
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("attachments/delete/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"attachments/delete/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
-	},	
+		},
+	},
 };

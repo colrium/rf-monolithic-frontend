@@ -1,17 +1,23 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon, ShopOutlined as DefinationContextIcon } from '@material-ui/icons';
-import Button from 'components/Button';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+	ShopOutlined as DefinationContextIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-
-
-export default  {
+export default {
 	name: "retailitems",
 	label: "Retail items",
 	icon: <DefinationContextIcon />,
 	color: "#40003e",
-	model: 'RetailItem',
+	model: "RetailItem",
 	endpoint: "/retail/items",
 	cache: true,
 	views: {
@@ -22,15 +28,22 @@ export default  {
 				title: ["name"],
 				subtitle: ["currency", "cost"],
 				tags: ["available"],
-				body: ["description", "stock", "taxable", "discountable", "available", "variations"],
-			}
+				body: [
+					"description",
+					"stock",
+					"taxable",
+					"discountable",
+					"available",
+					"variations",
+				],
+			},
 		},
 		listing: {
 			default: "tableview",
 			listview: {
 				avatar: false,
 				primary: ["name"],
-				secondary: ["currency", "cost", "available"]
+				secondary: ["currency", "cost", "available"],
 			},
 			tableview: {
 				avatar: false,
@@ -38,7 +51,7 @@ export default  {
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
 			item_type: {
 				type: "string",
@@ -49,20 +62,20 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
-				possibilities : {
-					"service": "Service",
-					"product": "Product",
-				},	
+				possibilities: {
+					service: "Service",
+					product: "Product",
+				},
 			},
 			name: {
 				type: "string",
@@ -73,15 +86,15 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 
@@ -94,19 +107,17 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
-
-			
 
 			featured_image: {
 				type: "string",
@@ -114,24 +125,25 @@ export default  {
 				input: {
 					type: "file",
 					props: {
-						acceptedFiles : ['image/*'],
+						acceptedFiles: ["image/*"],
 						filesLimit: 1,
-						dropzoneText: "Click to select Featured Image \n or \n Drag and drop the Featured Image file here",
+						dropzoneText:
+							"Click to select Featured Image \n or \n Drag and drop the Featured Image file here",
 						dropzoneIcon: "image",
-					}
+					},
 				},
 				reference: {
 					name: "attachments",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["name"],
 							secondary: [],
 							avatar: false,
-						}							
+						},
 					},
-				},		
+				},
 			},
 
 			currency: {
@@ -149,10 +161,10 @@ export default  {
 						display: {
 							primary: ["name"],
 							secondary: ["html_symbol"],
-							avatar: false
-						}
-					}
-				},			
+							avatar: false,
+						},
+					},
+				},
 			},
 
 			cost: {
@@ -161,8 +173,8 @@ export default  {
 				icon: "folder",
 				input: {
 					type: "number",
-					default: 1.00,
-				},			
+					default: 1.0,
+				},
 			},
 
 			cost_with_tax: {
@@ -171,8 +183,8 @@ export default  {
 				icon: "folder",
 				input: {
 					type: "number",
-					default: 1.00,
-				},			
+					default: 1.0,
+				},
 			},
 
 			variants: {
@@ -187,7 +199,7 @@ export default  {
 						appendProps: {
 							field: [
 								{
-									name: "cost_effect_type", 
+									name: "cost_effect_type",
 									label: "Cost Effect Type",
 									input: {
 										type: "radio",
@@ -195,39 +207,39 @@ export default  {
 										size: 12,
 									},
 									possibilities: {
-										"amount": "Amount",
-										"percentage": "Percentage",
-									}
+										amount: "Amount",
+										percentage: "Percentage",
+									},
 								},
 
 								{
-									name: "cost_effect", 
+									name: "cost_effect",
 									label: "Cost Effect",
 									valueDependent: true,
 									input: {
 										type: "number",
-										defaultValue: 0.00,
+										defaultValue: 0.0,
 										size: 6,
 										inputProps: {
-											step: "0.1"
-										}
+											step: "0.1",
+										},
 									},
-								}
+								},
 							],
-						}
+						},
 					},
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 
@@ -240,15 +252,15 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 
@@ -263,21 +275,21 @@ export default  {
 				restricted: {
 					display: (values, user) => {
 						if (values) {
-							if (values.item_type==="product") {
+							if (values.item_type === "product") {
 								return false;
 							}
-						}					
-						return true
+						}
+						return true;
 					},
 					input: (values, user) => {
 						if (values) {
-							if (values.item_type==="product") {
-								return false
+							if (values.item_type === "product") {
+								return false;
 							}
-						}					
+						}
 						return true;
-					}					
-				},			
+					},
+				},
 			},
 
 			taxable: {
@@ -287,7 +299,7 @@ export default  {
 				input: {
 					type: "checkbox",
 					default: false,
-				},			
+				},
 			},
 
 			discountable: {
@@ -297,7 +309,7 @@ export default  {
 				input: {
 					type: "checkbox",
 					default: false,
-				},			
+				},
 			},
 
 			available: {
@@ -307,7 +319,7 @@ export default  {
 				input: {
 					type: "checkbox",
 					default: true,
-				},			
+				},
 			},
 			images: {
 				type: ["string"],
@@ -315,55 +327,56 @@ export default  {
 				input: {
 					type: "file",
 					props: {
-						acceptedFiles : ['image/*'],
+						acceptedFiles: ["image/*"],
 						filesLimit: 20,
-						dropzoneText: "Click to select Image \n or \n Drag and drop an image file here",
+						dropzoneText:
+							"Click to select Image \n or \n Drag and drop an image file here",
 						dropzoneIcon: "image",
-					}
+					},
 				},
 				reference: {
 					name: "attachments",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["name"],
 							secondary: [],
 							avatar: false,
-						}							
+						},
 					},
-				},		
+				},
 			},
 		},
 		identity: {
 			primary: ["name"],
 			secondary: [],
 			avatar: false,
-		},		
+		},
 		dependencies: [],
 		dependants: {
 			orders: {
 				column: "items",
-				query: {}
+				query: {},
 			},
 			actionlogs: {
 				column: "record",
-				query: { context: "RetailItem" }
+				query: { context: "RetailItem" },
 			},
 		},
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return false;
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return true;
 				}
@@ -378,106 +391,122 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "retailitems/view/"+id
+				uri: id => {
+					return "retailitems/view/" + id;
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "retailitems/view/"+id } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={"retailitems/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
-					return user && user.role === 'admin'? false : true;
+				restricted: user => {
+					return user && user.role === "admin" ? false : true;
 				},
 				uri: "retailitems/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
+						default: props => {
+							return (
 								<Link to={"retailitems/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Item
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Item
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "retailitems/edit/"+id
+				uri: id => {
+					return "retailitems/edit/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "retailitems/edit/"+id } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={"retailitems/edit/" + id}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "retailitems/delete/"+id
+				uri: id => {
+					return "retailitems/delete/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
-	},	
+		},
+	},
 };

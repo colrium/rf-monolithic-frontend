@@ -1,1 +1,4 @@
-export { default as NotificationList } from './NotificationList';
+/** @format */
+
+export { default as NotificationList } from "./NotificationList";
+

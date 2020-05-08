@@ -1,19 +1,17 @@
-import { withStyles } from "@material-ui/core";
+/** @format */
+
 import { VpnKeyOutlined as PasswordIcon } from "@material-ui/icons";
 import { colors } from "assets/jss/app-theme";
-import classNames from "classnames";
 import Avatar from "components/Avatar";
 import Card from "components/Card";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
 import UsersDefination from "definations/users";
-import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-// Externals
-import compose from "recompose/compose";
 import AuthService from "services/auth";
 import BaseForm from "views/forms/BaseForm";
+import { withErrorHandler } from "hoc/ErrorHandler";
 
 class Password extends Component {
 	state = {};
@@ -28,7 +26,7 @@ class Password extends Component {
 				input: {
 					type: "password",
 					default: "",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -36,8 +34,8 @@ class Password extends Component {
 					},
 					input: (values, user) => {
 						return false;
-					}
-				}
+					},
+				},
 			},
 			password: {
 				type: "string",
@@ -45,7 +43,7 @@ class Password extends Component {
 				input: {
 					type: "password",
 					default: "",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -53,8 +51,8 @@ class Password extends Component {
 					},
 					input: (values, user) => {
 						return false;
-					}
-				}
+					},
+				},
 			},
 			repeat_password: {
 				type: "string",
@@ -62,7 +60,7 @@ class Password extends Component {
 				input: {
 					type: "password",
 					default: "",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -70,12 +68,14 @@ class Password extends Component {
 					},
 					input: (values, user) => {
 						return false;
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 
-		this.handlePasswordFormSubmit = this.handlePasswordFormSubmit.bind(this);
+		this.handlePasswordFormSubmit = this.handlePasswordFormSubmit.bind(
+			this
+		);
 	}
 
 	handlePasswordFormSubmit(data, event) {
@@ -91,7 +91,6 @@ class Password extends Component {
 
 	render() {
 		const { className, auth } = this.props;
-
 
 		return (
 			<Card elevation={0} outlineColor="#cfd8dc" className={className}>
@@ -124,7 +123,7 @@ class Password extends Component {
 }
 
 const mapStateToProps = state => ({
-	auth: state.auth
+	auth: state.auth,
 });
 
-export default connect( mapStateToProps, {} )(Password);
+export default connect(mapStateToProps, {})(withErrorHandler(Password));

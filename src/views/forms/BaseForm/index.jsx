@@ -1,3 +1,4 @@
+/** @format */
 import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
@@ -16,7 +17,7 @@ import {
 	VisibilityOffOutlined as HidePasswordIcon,
 	VisibilityOutlined as ShowPasswordIcon
 } from "@material-ui/icons";
-import Skeleton from '@material-ui/lab/Skeleton';
+import Skeleton from "@material-ui/lab/Skeleton";
 import {
 	TextInput,
 	PasswordInput,
@@ -26,7 +27,6 @@ import {
 	TimeInput,
 	WysiwygInput,
 	CheckboxInput,
-	RadioGroupInput,
 	SliderInput,
 	TranferListInput,
 	InputFormHelper,
@@ -34,7 +34,7 @@ import {
 	SelectInput,
 	FileInput,
 	MapInput,
-	DynamicInput,
+	DynamicInput
 } from "components/FormInputs";
 import { colors } from "assets/jss/app-theme";
 // Externals
@@ -55,13 +55,14 @@ import PropTypes from "prop-types";
 //Redux imports
 import { change, reduxForm, reset } from "redux-form";
 //
-import * as services from "services";
-import * as definations from "definations";
+import {withGlobals} from "contexts/Globals";
+import {withErrorHandler} from "hoc/ErrorHandler";
 //
-import { ServiceDataHelper, UtilitiesHelper } from "utils/Helpers";
+import { ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";
 //
-import withRoot from "utils/withRoot";
+import withRoot from "hoc/withRoot";
 import styles from "./styles";
+
 
 
 const LightInputField = (props) => {
@@ -275,7 +276,7 @@ class BaseForm extends React.Component {
 	}
 
 	loadFieldValuePosibilities() {
-		const { auth, fields, exclude } = this.props;
+		const { auth, fields, exclude, definations, services } = this.props;
 		let fields_to_load = {};
 		let loading_fields = {};
 		let value_possibilities = {};
@@ -1159,8 +1160,7 @@ class BaseForm extends React.Component {
 
 		if (onSubmit) {
 			let submit_callback = onSubmit(form_data, submit_event);
-			Promise.all([submit_callback])
-				.then(res => {
+			Promise.all([submit_callback]).then(res => {
 					this.setState({
 						openSnackBar: true,
 						snackbarMessage: onSubmitSuccessMessage
@@ -1384,12 +1384,13 @@ const mapStateToProps = (state, ownProps) => ({
 	form_state: state.form[ownProps.form]
 });
 
-export default withRoot(
+export default withGlobals(
 	compose(
 		connect(
 			mapStateToProps,
 			{ change, reset }
 		),
-		withStyles(styles)
+		withStyles(styles),
+		withErrorHandler
 	)(reduxForm({enableReinitialize : true})(BaseForm))
 );

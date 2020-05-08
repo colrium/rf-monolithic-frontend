@@ -1,10 +1,12 @@
+/** @format */
+
 import Button from "@material-ui/core/Button";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { colors } from "assets/jss/app-theme.jsx";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import withRoot from "utils/withRoot";
+import withRoot from "hoc/withRoot";
 import styles from "./styles";
 
 function CustomButton({ ...props }) {
@@ -46,7 +48,7 @@ function CustomButton({ ...props }) {
 		outlined: outlined,
 		[classes.left]: left,
 		[classes.right]: right,
-		[className]: className
+		[className]: className,
 	});
 	return (
 		<Button {...rest} className={btnClasses}>
@@ -64,7 +66,7 @@ CustomButton.propTypes = {
 		"uppercase",
 		"wordcase",
 		"nocase",
-		"inheritcase"
+		"inheritcase",
 	]),
 	simple: PropTypes.bool,
 	round: PropTypes.bool,
@@ -75,11 +77,11 @@ CustomButton.propTypes = {
 	outlined: PropTypes.bool,
 	left: PropTypes.bool,
 	right: PropTypes.bool,
-	gradient: PropTypes.bool
+	gradient: PropTypes.bool,
 };
 
 CustomButton.defaultProps = {
-	gradient: false
+	gradient: false,
 };
 
 export default withRoot(withStyles(styles)(CustomButton));

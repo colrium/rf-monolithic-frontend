@@ -1,18 +1,20 @@
+/** @format */
+
 const navPillsStyle = theme => ({
 	root: {
 		marginTop: "20px",
 		paddingLeft: "0",
 		marginBottom: "0",
-		overflow: "visible !important"
+		overflow: "visible !important",
 	},
 	displayNone: {
-		display: "none !important"
+		display: "none !important",
 	},
 	fixed: {
-		overflowX: "visible"
+		overflowX: "visible",
 	},
 	horizontalDisplay: {
-		display: "block"
+		display: "block",
 	},
 	pills: {
 		float: "left",
@@ -27,27 +29,27 @@ const navPillsStyle = theme => ({
 		height: "auto",
 		opacity: "1",
 		maxWidth: "100%",
-		margin: "0 5px"
+		margin: "0 5px",
 	},
 	pillsWithIcons: {
-		borderRadius: "4px"
+		borderRadius: "4px",
 	},
 	tabIcon: {
 		width: "30px",
 		height: "30px",
 		display: "block",
-		margin: "15px 0"
+		margin: "15px 0",
 	},
 	horizontalPills: {
 		width: "100%",
 		float: "none !important",
 		"& + button": {
-			margin: "10px 0"
-		}
+			margin: "10px 0",
+		},
 	},
 	labelContainer: {
 		padding: "0!important",
-		color: "inherit"
+		color: "inherit",
 	},
 	label: {
 		lineHeight: "24px",
@@ -56,15 +58,15 @@ const navPillsStyle = theme => ({
 		fontWeight: "500",
 		position: "relative",
 		display: "block",
-		color: "inherit"
+		color: "inherit",
 	},
 	contentWrapper: {
-		marginTop: "20px"
+		marginTop: "20px",
 	},
 	alignCenter: {
 		alignItems: "center",
-		justifyContent: "center"
-	}
+		justifyContent: "center",
+	},
 });
 
 export default navPillsStyle;

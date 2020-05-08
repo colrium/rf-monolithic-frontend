@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	API_CALL_REQUEST,
 	API_SET_LOADING,
@@ -6,8 +8,7 @@ import {
 	API_SET_ERROR,
 } from "state/actions";
 
-
-export function apiCallRequest(key, options, cache=true) {
+export function apiCallRequest(key, options, cache = true) {
 	return {
 		type: API_CALL_REQUEST,
 		key: key,
@@ -31,7 +32,6 @@ export function setApiCallResponse(key, response) {
 		response: response,
 	};
 }
-
 
 export function setApiCallComplete(key, complete) {
 	return {

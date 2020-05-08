@@ -1,13 +1,16 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class TracksApiService extends ApiService{
-	constructor(){
+class TracksApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = 'tracks';
+		this.service_uri = "tracks";
 	}
-	
 }
 
 export default new TracksApiService();

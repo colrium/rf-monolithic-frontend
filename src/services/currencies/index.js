@@ -1,13 +1,16 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class CurrenciesApiService extends ApiService{
-	constructor(){
+class CurrenciesApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = 'currencies';
+		this.service_uri = "currencies";
 	}
-	
 }
 
 export default new CurrenciesApiService();

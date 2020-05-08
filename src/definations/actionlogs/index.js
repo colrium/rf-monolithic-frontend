@@ -1,4 +1,9 @@
-/* eslint-disable react/display-name */
+/**
+ * /* eslint-disable react/display-name
+ *
+ * @format
+ */
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { IconButton } from "@material-ui/core";
@@ -9,10 +14,10 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 	Add as AddIcon,
 	EditOutlined as EditIcon,
-	DeleteOutlined as DeleteIcon
+	DeleteOutlined as DeleteIcon,
 } from "@material-ui/icons";
 
-import { UtilitiesHelper, FilesHelper } from "utils/Helpers";
+import { UtilitiesHelper, FilesHelper } from "hoc/Helpers";
 
 import * as definations from "definations";
 
@@ -62,7 +67,7 @@ export default {
 									{" "}
 									<DefinationContextIcon />{" "}
 								</Avatar>
-							)
+							),
 						};
 					}
 
@@ -76,21 +81,26 @@ export default {
 					"generator",
 					"record",
 					"catalyst_ip",
-					"action_timestamp"
-				]
-			}
+					"action_timestamp",
+				],
+			},
 		},
 		listing: {
 			default: "listview",
 			listview: {
 				avatar: false,
 				primary: ["action"],
-				secondary: ["description", "catalyst", "catalyst", "action_timestamp"]
+				secondary: [
+					"description",
+					"catalyst",
+					"catalyst",
+					"action_timestamp",
+				],
 			},
 			tableview: {
-				title: ["name"]
-			}
-		}
+				title: ["name"],
+			},
+		},
 	},
 	scope: {
 		columns: {
@@ -100,14 +110,14 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: false
+					required: false,
 				},
 				possibilities: {
 					create: "Create",
 					update: "Update",
 					delete: "Delete",
-					custom: "Custom"
-				}
+					custom: "Custom",
+				},
 			},
 
 			generator: {
@@ -116,11 +126,11 @@ export default {
 				input: {
 					type: "select",
 					default: "user",
-					required: true
+					required: true,
 				},
 				possibilities: {
 					user: "User",
-					system: "System"
+					system: "System",
 				},
 				restricted: {
 					display: () => {
@@ -128,8 +138,8 @@ export default {
 					},
 					input: (values, user) => {
 						return !(user && user.role === "admin");
-					}
-				}
+					},
+				},
 			},
 
 			context: {
@@ -138,9 +148,9 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: false
+					required: false,
 				},
-				possibilities: resolve_context_possibilities
+				possibilities: resolve_context_possibilities,
 			},
 
 			record: {
@@ -149,8 +159,8 @@ export default {
 				input: {
 					type: "text",
 					default: "",
-					required: true
-				}
+					required: true,
+				},
 			},
 
 			catalyst: {
@@ -159,7 +169,7 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: false
+					required: false,
 				},
 				reference: {
 					name: "users",
@@ -174,9 +184,9 @@ export default {
 						display: {
 							primary: ["honorific", "first_name", "last_name"],
 							secondary: ["email_address"],
-							avatar: "avatar"
-						}
-					}
+							avatar: "avatar",
+						},
+					},
 				},
 				restricted: {
 					display: () => {
@@ -184,8 +194,8 @@ export default {
 					},
 					input: values => {
 						return values ? !values.generator === "system" : true;
-					}
-				}
+					},
+				},
 			},
 
 			catalyst_ip: {
@@ -194,7 +204,7 @@ export default {
 				input: {
 					type: "text",
 					default: "",
-					required: false
+					required: false,
 				},
 				restricted: {
 					display: () => {
@@ -202,8 +212,8 @@ export default {
 					},
 					input: () => {
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			description: {
@@ -212,7 +222,7 @@ export default {
 				input: {
 					type: "textarea",
 					default: "",
-					required: false
+					required: false,
 				},
 				restricted: {
 					display: () => {
@@ -220,8 +230,8 @@ export default {
 					},
 					input: () => {
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			action_timestamp: {
@@ -230,7 +240,7 @@ export default {
 				input: {
 					type: "date",
 					default: "",
-					required: false
+					required: false,
 				},
 				restricted: {
 					display: () => {
@@ -238,17 +248,17 @@ export default {
 					},
 					input: values => {
 						return values ? !values.generator === "system" : true;
-					}
-				}
-			}
+					},
+				},
+			},
 		},
 		identity: {
 			primary: ["action"],
 			secondary: ["action_timestamp"],
-			avatar: false
+			avatar: false,
 		},
 		dependencies: [],
-		dependants: {}
+		dependants: {},
 	},
 	access: {
 		restricted: user => {
@@ -272,7 +282,7 @@ export default {
 					return true;
 				}
 				return false;
-			}
+			},
 		},
 		actions: {
 			view_single: {
@@ -290,10 +300,15 @@ export default {
 						default: (id, className) => {
 							return (
 								<Link
-									to={("actionlogs/view/" + id).toUriWithDashboardPrefix()}
+									to={(
+										"actionlogs/view/" + id
+									).toUriWithDashboardPrefix()}
 									className={className}
 								>
-									<IconButton color="inherit" aria-label="view">
+									<IconButton
+										color="inherit"
+										aria-label="view"
+									>
 										<OpenInNewIcon />
 									</IconButton>
 								</Link>
@@ -302,17 +317,22 @@ export default {
 						listing: (id, className = "grey_text") => {
 							return (
 								<Link
-									to={("actionlogs/view/" + id).toUriWithDashboardPrefix()}
+									to={(
+										"actionlogs/view/" + id
+									).toUriWithDashboardPrefix()}
 									className={className}
 								>
-									<IconButton color="inherit" aria-label="view">
+									<IconButton
+										color="inherit"
+										aria-label="view"
+									>
 										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			create: {
 				restricted: user => {
@@ -323,18 +343,26 @@ export default {
 					inline: {
 						default: props => {
 							return (
-								<Link to={"actionlogs/add/".toUriWithDashboardPrefix()} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left" /> New Action Log
-                  </Button>
+								<Link
+									to={"actionlogs/add/".toUriWithDashboardPrefix()}
+									{...props}
+								>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Action Log
+									</Button>
 								</Link>
 							);
 						},
 						listing: () => {
 							return "";
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			update: {
 				restricted: user => {
@@ -353,10 +381,15 @@ export default {
 						default: (id, className = "grey_text") => {
 							return (
 								<Link
-									to={("actionlogs/edit/" + id).toUriWithDashboardPrefix()}
+									to={(
+										"actionlogs/edit/" + id
+									).toUriWithDashboardPrefix()}
 									className={className}
 								>
-									<IconButton color="inherit" aria-label="add">
+									<IconButton
+										color="inherit"
+										aria-label="add"
+									>
 										<AddIcon />
 									</IconButton>
 								</Link>
@@ -365,17 +398,22 @@ export default {
 						listing: (id, className = "grey_text") => {
 							return (
 								<Link
-									to={("actionlogs/edit/" + id).toUriWithDashboardPrefix()}
+									to={(
+										"actionlogs/edit/" + id
+									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
-									<IconButton color="inherit" aria-label="edit">
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			delete: {
 				restricted: user => {
@@ -385,11 +423,13 @@ export default {
 					return true;
 				},
 				uri: id => {
-					return ("actionlogs/delete/" + id).toUriWithDashboardPrefix();
+					return (
+						"actionlogs/delete/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton
@@ -401,10 +441,10 @@ export default {
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							);
-						}
-					}
-				}
-			}
-		}
-	}
+						},
+					},
+				},
+			},
+		},
+	},
 };

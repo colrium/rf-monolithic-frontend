@@ -1,9 +1,6 @@
-import {
-	APPEND_NAV_HISTORY,
-	CLEAR_NAV_HISTORY,
-	SET_NAV_HISTORY_THRESHOLD,
-	SET_NAV_LOADING
-} from "state/actions/types";
+/** @format */
+
+import { APPEND_NAV_HISTORY, CLEAR_NAV_HISTORY, SET_NAV_HISTORY_THRESHOLD, SET_NAV_LOADING } from "state/actions/types";
 
 function initialState() {
 	return {
@@ -15,10 +12,10 @@ function initialState() {
 				title: "Home",
 				view: null,
 				color: null,
-				scrollTop: 0
-			}
+				scrollTop: 0,
+			},
 		],
-		loading: true
+		loading: false,
 	};
 }
 
@@ -54,17 +51,17 @@ export default (state = initialState(), action = {}) => {
 		case APPEND_NAV_HISTORY:
 			return {
 				...state,
-				entries: appendNavHistory(state, action.nav)
+				entries: appendNavHistory(state, action.nav),
 			};
 		case SET_NAV_HISTORY_THRESHOLD:
 			return {
 				...state,
-				threshold: action.threshold ? action.threshold : 1
+				threshold: action.threshold ? action.threshold : 1,
 			};
 		case CLEAR_NAV_HISTORY:
 			return {
 				...state,
-				entries: []
+				entries: [],
 			};
 		case SET_NAV_LOADING:
 			return {

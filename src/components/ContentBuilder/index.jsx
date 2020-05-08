@@ -1,7 +1,9 @@
+/** @format */
+
 import React, { useState } from "react";
 
 // The editor core
-import {Editor} from "@react-page/core/editor";
+import { Editor } from "@react-page/core/editor";
 import "@react-page/core/core/lib/index.css"; // we also want to load the stylesheets
 // Require editor ui stylesheet
 import "@react-page/core/ui/lib/index.css";
@@ -15,10 +17,10 @@ import "@react-page/core/plugins-background/lib/index.css"; // Stylesheets for  
 // Define which plugins we want to use. We only have slate and background available, so load those.
 const plugins = {
 	content: [slate()], // Define plugins for content cells. To import multiple plugins, use [slate(), image, spacer, divider]
-	layout: [background({ defaultPlugin: slate() })] // Define plugins for layout cells
+	layout: [background({ defaultPlugin: slate() })], // Define plugins for layout cells
 };
 
-const ContentBuilder = (props) => {
+const ContentBuilder = props => {
 	const [editorValue, setEditorValue] = useState(initialState);
 	// save the state somewhere
 	const saveToDatabase = useCallback(() => {
@@ -26,7 +28,11 @@ const ContentBuilder = (props) => {
 	}, []);
 	return (
 		<div>
-			<Editor plugins={plugins} value={editorValue} onChange={setEditorValue} />
+			<Editor
+				plugins={plugins}
+				value={editorValue}
+				onChange={setEditorValue}
+			/>
 			<toolbar>
 				<button onClick={saveToDatabase}>Save</button>
 			</toolbar>

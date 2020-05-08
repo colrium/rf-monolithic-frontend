@@ -1,16 +1,18 @@
+/** @format */
+
 import { IconButton } from "@material-ui/core";
 import {
 	Add as AddIcon,
 	BallotOutlined as DefinationContextIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
-	OpenInNewOutlined as OpenInNewIcon
+	OpenInNewOutlined as OpenInNewIcon,
 } from "@material-ui/icons";
 import ImageIcon from "@material-ui/icons/ImageOutlined";
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
-import { CountriesHelper } from "utils/Helpers";
+import { CountriesHelper } from "hoc/Helpers";
 
 export default {
 	name: "vacancies",
@@ -32,8 +34,8 @@ export default {
 					"expiration_date",
 					"value_type",
 					"value",
-					"use"
-				]
+					"use",
+				],
 			},
 			calendarview: {
 				title: ["title"],
@@ -44,17 +46,17 @@ export default {
 					"expiration_date",
 					"value_type",
 					"value",
-					"use"
-				]
-			}
+					"use",
+				],
+			},
 		},
 		listing: {
 			default: "tableview",
 			tableview: {
 				avatar: false,
-				title: ["title"]
-			}
-		}
+				title: ["title"],
+			},
+		},
 	},
 	scope: {
 		columns: {
@@ -64,7 +66,7 @@ export default {
 				input: {
 					type: "text",
 					required: true,
-					default: ""
+					default: "",
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -75,8 +77,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			description: {
@@ -84,7 +86,7 @@ export default {
 				label: "Description",
 				input: {
 					type: "textarea",
-					default: ""
+					default: "",
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -95,8 +97,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			banner: {
@@ -108,8 +110,8 @@ export default {
 					props: {
 						acceptedFiles: ["image/*"],
 						dropzoneText: "Drag & drop vacancy banner image here",
-						dropzoneIcon: <ImageIcon />
-					}
+						dropzoneIcon: <ImageIcon />,
+					},
 				},
 				reference: {
 					name: "attachments",
@@ -119,10 +121,10 @@ export default {
 						display: {
 							primary: ["name"],
 							secondary: ["size"],
-							avatar: false
-						}
-					}
-				}
+							avatar: false,
+						},
+					},
+				},
 			},
 
 			qualifications: {
@@ -132,7 +134,7 @@ export default {
 					type: "textarea",
 					default: "",
 					required: true,
-					rich: true
+					rich: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -143,8 +145,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			requirements: {
@@ -154,7 +156,7 @@ export default {
 					type: "textarea",
 					default: "",
 					required: true,
-					rich: true
+					rich: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -165,8 +167,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			responsibilitiea: {
@@ -175,7 +177,7 @@ export default {
 				input: {
 					type: "textarea",
 					default: "",
-					rich: true
+					rich: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -186,8 +188,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			country: {
@@ -197,9 +199,9 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: true
+					required: true,
 				},
-				possibilities: CountriesHelper.names()
+				possibilities: CountriesHelper.names(),
 			},
 
 			region: {
@@ -208,8 +210,8 @@ export default {
 				input: {
 					type: "text",
 					default: "",
-					required: false
-				}
+					required: false,
+				},
 			},
 
 			city: {
@@ -218,8 +220,8 @@ export default {
 				input: {
 					type: "text",
 					default: "",
-					required: false
-				}
+					required: false,
+				},
 			},
 
 			notes: {
@@ -228,7 +230,7 @@ export default {
 				input: {
 					type: "textarea",
 					default: "",
-					rich: true
+					rich: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -239,8 +241,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			maximum_applications: {
@@ -248,7 +250,7 @@ export default {
 				label: "Maximum No of applications",
 				input: {
 					type: "number",
-					default: "1"
+					default: "1",
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -259,8 +261,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			bias: {
@@ -268,7 +270,7 @@ export default {
 				label: "Bias",
 				input: {
 					type: "text",
-					default: ""
+					default: "",
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -279,8 +281,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			application_deadline: {
@@ -288,7 +290,7 @@ export default {
 				label: "Application Deadline",
 				input: {
 					type: "datetime",
-					default: new Date().addDays(30).toString()
+					default: new Date().addDays(30).toString(),
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -299,8 +301,8 @@ export default {
 							return !user.isAdmin;
 						}
 						return true;
-					}
-				}
+					},
+				},
 			},
 
 			active: {
@@ -308,24 +310,24 @@ export default {
 				label: "Active",
 				input: {
 					type: "checkbox",
-					default: true
-				}
-			}
+					default: true,
+				},
+			},
 		},
 		identity: {
 			primary: ["position"],
 			secondary: ["application_deadline"],
-			avatar: false
+			avatar: false,
 		},
 		dependencies: [],
 		dependants: {
 			applications: {
 				column: "vacancy",
-				query: {}
+				query: {},
 			},
 			actionlogs: {
 				column: "record",
-				query: { context: "Vacancy" }
+				query: { context: "Vacancy" },
 			},
 		},
 	},
@@ -351,7 +353,7 @@ export default {
 					return user.isAdmin;
 				}
 				return false;
-			}
+			},
 		},
 		actions: {
 			view_single: {
@@ -366,18 +368,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className) => { },
+						default: (id, className) => {},
 						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={"vacancies/view/" + id} className={className}>
-									<IconButton color="inherit" aria-label="edit">
+								<Link
+									to={"vacancies/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			create: {
 				restricted: user => {
@@ -389,17 +397,22 @@ export default {
 						default: props => {
 							return (
 								<Link to={"vacancies/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left" /> New Vacancy
-                  </Button>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Vacancy
+									</Button>
 								</Link>
 							);
 						},
 						listing: props => {
 							return "";
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			update: {
 				restricted: user => {
@@ -413,21 +426,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => { },
+						default: (id, className = "grey_text") => {},
 						listing: (id, className = "grey_text") => {
 							return (
 								<Link
 									to={"vacancies/edit/" + id}
 									className={className ? className : ""}
 								>
-									<IconButton color="inherit" aria-label="edit">
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			delete: {
 				restricted: user => {
@@ -441,7 +457,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className = "error_text") => { },
+						default: (id, className = "error_text") => {},
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton
@@ -453,10 +469,10 @@ export default {
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							);
-						}
-					}
-				}
-			}
-		}
-	}
+						},
+					},
+				},
+			},
+		},
+	},
 };

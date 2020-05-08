@@ -1,3 +1,5 @@
+/** @format */
+
 import { colors } from "assets/jss/app-theme.jsx";
 
 const headerStyle = {
@@ -10,21 +12,22 @@ const headerStyle = {
 		color: colors.hex.default,
 		width: "100%",
 		backgroundColor: colors.hex.inverse,
-		boxShadow: "0 4px 18px 0px rgba(0, 0, 0, 0.12), 0 7px 10px -5px rgba(0, 0, 0, 0.15)",
+		boxShadow:
+			"0 4px 18px 0px rgba(0, 0, 0, 0.12), 0 7px 10px -5px rgba(0, 0, 0, 0.15)",
 		transition: "all 150ms ease 0s",
 		alignItems: "center",
 		flexFlow: "row nowrap",
 		justifyContent: "flex-start",
 		position: "relative",
-		zIndex: "unset"
+		zIndex: "unset",
 	},
 	absolute: {
 		position: "absolute",
-		zIndex: "1100"
+		zIndex: "1100",
 	},
 	fixed: {
 		position: "fixed",
-		zIndex: "1100"
+		zIndex: "1100",
 	},
 	container: {
 		minHeight: "50px",
@@ -32,10 +35,10 @@ const headerStyle = {
 		alignItems: "center",
 		justifyContent: "space-between",
 		display: "flex",
-		flexWrap: "nowrap"
+		flexWrap: "nowrap",
 	},
 	flex: {
-		flex: 1
+		flex: 1,
 	},
 	title: {
 		lineHeight: "30px",
@@ -46,84 +49,93 @@ const headerStyle = {
 		padding: "8px 16px",
 		"&:hover,&:focus": {
 			color: "inherit",
-			background: "transparent"
-		}
+			background: "transparent",
+		},
 	},
-	
+
 	appResponsive: {
-		margin: "20px 10px"
+		margin: "20px 10px",
 	},
 	primary: {
 		backgroundColor: colors.hex.primary,
 		color: colors.hex.inverse,
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(156, 39, 176, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(156, 39, 176, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	primarydark: {
 		backgroundColor: colors.hex.primarydark,
 		color: colors.hex.inverse,
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(156, 39, 176, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(156, 39, 176, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	secondary: {
 		backgroundColor: colors.hex.secondary,
 		color: colors.hex.inverse,
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(156, 39, 176, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(156, 39, 176, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	accent: {
 		backgroundColor: colors.hex.accent,
 		color: colors.hex.inverse,
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(156, 39, 176, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(156, 39, 176, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	info: {
 		backgroundColor: colors.hex.info,
 		color: colors.hex.inverse,
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(0, 188, 212, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(0, 188, 212, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	success: {
 		backgroundColor: colors.hex.success,
 		color: colors.hex.inverse,
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(76, 175, 80, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(76, 175, 80, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	warning: {
 		backgroundColor: colors.hex.warning,
 		color: colors.hex.inverse,
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(255, 152, 0, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(255, 152, 0, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	danger: {
 		backgroundColor: colors.hex.danger,
 		color: colors.hex.inverse,
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(244, 67, 54, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(244, 67, 54, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	rose: {
 		backgroundColor: colors.hex.rose,
 		color: colors.hex.inverse,
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(233, 30, 99, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(233, 30, 99, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	transparent: {
 		backgroundColor: "transparent !important",
@@ -132,15 +144,16 @@ const headerStyle = {
 		color: colors.hex.default,
 		"& a": {
 			color: colors.hex.default,
-		}
+		},
 	},
 	dark: {
 		color: colors.hex.inverse,
 		backgroundColor: "#212121 !important",
-		boxShadow: "0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(33, 33, 33, 0.46)",
+		boxShadow:
+			"0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 12px -5px rgba(33, 33, 33, 0.46)",
 		"& a": {
 			color: colors.hex.inverse,
-		}
+		},
 	},
 	white: {
 		border: "0",
@@ -148,10 +161,11 @@ const headerStyle = {
 		marginBottom: "20px",
 		color: "#555",
 		backgroundColor: colors.hex.inverse,
-		boxShadow: "0 4px 18px 0px rgba(0, 0, 0, 0.12), 0 7px 10px -5px rgba(0, 0, 0, 0.15)",
+		boxShadow:
+			"0 4px 18px 0px rgba(0, 0, 0, 0.12), 0 7px 10px -5px rgba(0, 0, 0, 0.15)",
 		"& a": {
 			color: colors.hex.default,
-		}
+		},
 	},
 	drawerPaper: {
 		border: "none",
@@ -171,7 +185,7 @@ const headerStyle = {
 		textAlign: "left",
 		paddingRight: "0px",
 		paddingLeft: "0",
-	}
+	},
 };
 
 export default headerStyle;

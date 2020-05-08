@@ -1,13 +1,22 @@
-/* eslint-disable react/display-name */
+/**
+ * /* eslint-disable react/display-name
+ *
+ * @format
+ */
+
 import { IconButton } from "@material-ui/core";
-import { Add as AddIcon, ContactSupportOutlined as DefinationContextIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon } from "@material-ui/icons";
+import {
+	Add as AddIcon,
+	ContactSupportOutlined as DefinationContextIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
 import { colors } from "assets/jss/app-theme";
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
-import { CountriesHelper } from "utils/Helpers";
-
-
+import { CountriesHelper } from "hoc/Helpers";
 
 export default {
 	name: "queries",
@@ -24,21 +33,21 @@ export default {
 				title: ["question"],
 				subtitle: ["survey"],
 				tags: ["response_type", "status"],
-				body: ["sample_size", "country", "locality"]
-			}
+				body: ["sample_size", "country", "locality"],
+			},
 		},
 		listing: {
 			default: "tableview",
 			listview: {
 				avatar: false,
 				primary: ["question"],
-				secondary: ["survey", "response_type", "status"]
+				secondary: ["survey", "response_type", "status"],
 			},
 			tableview: {
 				avatar: false,
-				title: ["question"]
-			}
-		}
+				title: ["question"],
+			},
+		},
 	},
 	scope: {
 		columns: {
@@ -49,7 +58,7 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: true
+					required: true,
 				},
 				reference: {
 					name: "surveys",
@@ -59,10 +68,10 @@ export default {
 						display: {
 							primary: ["title"],
 							secondary: ["status"],
-							avatar: false
-						}
-					}
-				}
+							avatar: false,
+						},
+					},
+				},
 			},
 			question: {
 				type: "string",
@@ -71,8 +80,8 @@ export default {
 				input: {
 					type: "textarea",
 					default: "",
-					required: true
-				}
+					required: true,
+				},
 			},
 			sample_size: {
 				type: "integer",
@@ -82,9 +91,9 @@ export default {
 					type: "number",
 					default: 1,
 					props: {
-						min: 1
-					}
-				}
+						min: 1,
+					},
+				},
 			},
 			country: {
 				type: "string",
@@ -93,9 +102,9 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: false
+					required: false,
 				},
-				possibilities: CountriesHelper.names()
+				possibilities: CountriesHelper.names(),
 			},
 			locality: {
 				type: "string",
@@ -103,8 +112,8 @@ export default {
 				input: {
 					type: "text",
 					default: "",
-					required: false
-				}
+					required: false,
+				},
 			},
 			response_type: {
 				type: "string",
@@ -112,35 +121,35 @@ export default {
 				input: {
 					type: "radio",
 					default: "text",
-					required: true
+					required: true,
 				},
 				possibilities: {
 					text: "Text",
 					image: "Image",
 					audio: "Audio",
 					video: "Video",
-					file: "File"
-				}
-			}
+					file: "File",
+				},
+			},
 		},
 		identity: {
 			primary: ["question"],
 			secondary: [],
-			avatar: false
+			avatar: false,
 		},
 		dependencies: [],
 		dependants: {
 			responses: {
 				column: "query",
-				query: {}
+				query: {},
 			},
 			commissions: {
 				column: "queries",
-				query: {}
-			},			
+				query: {},
+			},
 			actionlogs: {
 				column: "record",
-				query: { context: "SurveyQuery" }
+				query: { context: "SurveyQuery" },
 			},
 		},
 	},
@@ -166,7 +175,7 @@ export default {
 					return true;
 				}
 				return false;
-			}
+			},
 		},
 		actions: {
 			view_single: {
@@ -181,18 +190,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={"queries/view/" + id} className={className}>
-									<IconButton color="inherit" aria-label="edit">
+								<Link
+									to={"queries/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			create: {
 				restricted: user => {
@@ -204,17 +219,22 @@ export default {
 						default: props => {
 							return (
 								<Link to={"queries/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left" /> New Query
-                  </Button>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Query
+									</Button>
 								</Link>
 							);
 						},
 						listing: () => {
 							return "";
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			update: {
 				restricted: user => {
@@ -228,21 +248,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
 								<Link
 									to={"queries/edit/" + id}
 									className={className ? className : ""}
 								>
-									<IconButton color="inherit" aria-label="edit">
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			delete: {
 				restricted: user => {
@@ -256,7 +279,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton
@@ -268,10 +291,10 @@ export default {
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							);
-						}
-					}
-				}
-			}
-		}
-	}
+						},
+					},
+				},
+			},
+		},
+	},
 };

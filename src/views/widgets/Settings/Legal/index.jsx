@@ -1,79 +1,101 @@
-import React, { useState, useEffect } from "react";
-import Typography from '@material-ui/core/Typography';
+import React, { /*useEffect,*/ useState } from "react";
+import { connect } from "react-redux";
+import { useGlobals } from "contexts/Globals";
+
+import Typography from "@material-ui/core/Typography";
+import { WysiwygInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import { WysiwygInput } from "components/FormInputs";
-import { withSettingsContext } from "contexts/Settings";
-
-
-
 
 function Widget(props) {
-	let [state, setState] = useState(props);
-	let [alerts, setAlerts] = useState({});
-	let [settings, setSettings] = useState(state.settingsContext.settings.legal);
+	/*let [state, setState] = useState(props);
+	useEffect(() => {
+		setState(props);
+	}, [props]);*/
 
-	useEffect(() => {  setState(props); }, [props]);
-	useEffect(() => {  setSettings(props.settingsContext.settings.legal); }, [props.settingsContext.settings.legal]);
+	let [alerts, setAlerts] = useState({});	
+	let [loading, setLoading] = useState({});
+	let [errors, setErrors] = useState({});
 
-	const handleOnChange = name => async value => {		
-		let new_value = {...settings, [name]: value};	
-		state.settingsContext.updateSettings("Legal", new_value).then(newContext => {
-			setAlerts({...alerts, [name.variablelize("-")]: name+" saved"});
+	
+	let { app: { settings } } = props;
+	const { updateSettings } = useGlobals();
+
+	let context_settings = settings.legal;
+
+	const handleOnChange = name => async value => {
+		setLoading({...loading, [name] : true});
+		setErrors({...errors, [name] : false});
+		let new_value = { ...context_settings, [name]: value };
+		updateSettings("legal", new_value).then(new_settings => {
+			setLoading({...loading, [name] : false});
+			setAlerts({ [name]: name.humanize() + " saved", });
+		}).catch(e => {
+			setLoading({...loading, [name] : false});
+			setErrors({...errors, [name] : e.msg});
+			console.error("update legal settings error", e);
 		});
-	}
-
+	};
 
 	return (
-			<GridContainer className="px-2">
-				<GridItem xs={12} className="mb-2">
-					<Typography variant="h3"> Legal settings</Typography>
-				</GridItem>
+		<GridContainer className="px-2">
+			<GridItem xs={12} className="mb-2">
+				<Typography variant="h3"> Legal settings</Typography>
+			</GridItem>
 
-				<GridItem xs={12} className="mb-4">
-					<WysiwygInput
-						name="terms-of-use"
-						label="Terms of use"
-						defaultValue={settings["terms-of-use"]}
-						onChange={handleOnChange("Terms of use")}
-						helperText={alerts["terms-of-use"]}
-					/>
-				</GridItem>
+			<GridItem xs={12} className="mb-4">
+				<WysiwygInput
+					name="terms-of-use"
+					label="Terms of use"
+					defaultValue={context_settings["terms-of-use"]}
+					onChange={handleOnChange("terms-of-use")}
+					helperText={alerts["terms-of-use"]}
+					disabled={loading["terms-of-use"]}
+					error={errors["terms-of-use"]}
+				/>
+			</GridItem>
 
-				<GridItem xs={12} className="mb-4">
-					<WysiwygInput
-						name="end-user-agreement"
-						label="End user agreement"
-						defaultValue={settings["end-user-agreement"]}
-						onChange={handleOnChange("End user agreement")}
-						helperText={alerts["end-user-agreement"]}
-					/>
-				</GridItem>
+			<GridItem xs={12} className="mb-4">
+				<WysiwygInput
+					name="end-user-agreement"
+					label="End user agreement"
+					defaultValue={context_settings["end-user-agreement"]}
+					onChange={handleOnChange("end-user-agreement")}
+					helperText={alerts["end-user-agreement"]}
+					disabled={loading["end-user-agreement"]}
+					error={errors["end-user-agreement"]}
+				/>
+			</GridItem>
 
-				<GridItem xs={12} className="mb-4">
-					<WysiwygInput
-						name="privacy-policy"
-						label="Privacy policy"
-						defaultValue={settings["privacy-policy"]}
-						onChange={handleOnChange("Privacy policy")}
-						helperText={alerts["privacy-policy"]}
-					/>
-				</GridItem>	
+			<GridItem xs={12} className="mb-4">
+				<WysiwygInput
+					name="privacy-policy"
+					label="Privacy policy"
+					defaultValue={context_settings["privacy-policy"]}
+					onChange={handleOnChange("privacy-policy")}
+					helperText={alerts["privacy-policy"]}
+					disabled={loading["privacy-policy"]}
+					error={errors["privacy-policy"]}
+				/>
+			</GridItem>
 
-				<GridItem xs={12} className="mb-4">
-					<WysiwygInput
-						name="cookies-consent"
-						label="Cookies Consent"
-						defaultValue={settings["cookies-consent"]}
-						onChange={handleOnChange("Cookies Consent")}
-						helperText={alerts["cookies-consent"]}
-					/>
-				</GridItem>	
-			</GridContainer>
+			<GridItem xs={12} className="mb-4">
+				<WysiwygInput
+					name="cookies-consent"
+					label="Cookies Consent"
+					defaultValue={context_settings["cookies-consent"]}
+					onChange={handleOnChange("cookies-consent")}
+					helperText={alerts["cookies-consent"]}
+					disabled={loading["cookies-consent"]}
+					error={errors["cookies-consent"]}
+				/>
+			</GridItem>
+		</GridContainer>
 	);
-
-
 }
 
+const mapStateToProps = state => ({
+	app: state.app,
+});
 
-export default withSettingsContext(Widget);
+export default connect(mapStateToProps, {})(React.memo(Widget));

@@ -1,13 +1,16 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class FormValuesApiService extends ApiService{
-	constructor(){
+class FormValuesApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = 'forms-values';
+		this.service_uri = "forms-values";
 	}
-	
 }
 
 export default new FormValuesApiService();

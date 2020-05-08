@@ -1,19 +1,25 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon, PollOutlined as DefinationContextIcon } from '@material-ui/icons';
-import { colors } from 'assets/jss/app-theme';
-import Button from 'components/Button';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+	PollOutlined as DefinationContextIcon,
+} from "@material-ui/icons";
+import { colors } from "assets/jss/app-theme";
+import Button from "components/Button";
 import React from "react";
-import { Link } from 'react-router-dom';
-import { CountriesHelper } from "utils/Helpers";
+import { Link } from "react-router-dom";
+import { CountriesHelper } from "hoc/Helpers";
 
-
-
-export default  {
+export default {
 	name: "surveys",
 	label: "Surveys",
 	icon: <DefinationContextIcon />,
 	color: colors.hex.primarydark,
-	model: 'Survey',
+	model: "Survey",
 	endpoint: "/surveys",
 	cache: true,
 	views: {
@@ -24,16 +30,27 @@ export default  {
 				title: ["title"],
 				subtitle: ["order"],
 				tags: ["mode", "status", "type"],
-				body: ["description", "focus_region", "locality", "country", "requested_start_date", "requested_due_date", "project_objectives", "confidence_level", "error_margin", "sample_size", "files"],
+				body: [
+					"description",
+					"focus_region",
+					"locality",
+					"country",
+					"requested_start_date",
+					"requested_due_date",
+					"project_objectives",
+					"confidence_level",
+					"error_margin",
+					"sample_size",
+					"files",
+				],
 			},
-			
 		},
 		listing: {
 			default: "tableview",
 			listview: {
 				avatar: false,
 				primary: ["title"],
-				secondary: ["project_objectives"]
+				secondary: ["project_objectives"],
 			},
 			tableview: {
 				avatar: false,
@@ -41,27 +58,31 @@ export default  {
 			},
 			calendarview: {
 				type: "task",
-				resolveData: async (entries, isPopulated=true)=>{
+				resolveData: async (entries, isPopulated = true) => {
 					let resolved_data = [];
 					for (let entry of entries) {
 						resolved_data.push({
 							id: entry._id,
-							calendarId: 'surveys',
+							calendarId: "surveys",
 							title: entry.title,
-							body: '<b>Project objectives</b> <br />'+entry.project_objectives+' <br /><br /> <b>Description</b><br />'+entry.description,
-							category: 'time',
-							dueDateClass: '',
+							body:
+								"<b>Project objectives</b> <br />" +
+								entry.project_objectives +
+								" <br /><br /> <b>Description</b><br />" +
+								entry.description,
+							category: "time",
+							dueDateClass: "",
 							start: entry.requested_start_date,
 							end: entry.requested_due_date,
-						})
+						});
 					}
 					return resolved_data;
 				},
 			},
 		},
 	},
-	scope:{
-		columns: {			
+	scope: {
+		columns: {
 			title: {
 				type: "string",
 				label: "Title",
@@ -70,7 +91,7 @@ export default  {
 					type: "text",
 					default: "",
 					required: true,
-				},			
+				},
 			},
 			description: {
 				type: "string",
@@ -80,7 +101,7 @@ export default  {
 					type: "textarea",
 					default: "",
 					required: false,
-				},			
+				},
 			},
 			mode: {
 				type: "string",
@@ -91,35 +112,46 @@ export default  {
 					default: "questionnaire",
 					required: true,
 				},
-				possibilities : {
-					"questionnaire": "Questionnaire",
-					"observance": "Observance",
-					"interview": "Interview",
+				possibilities: {
+					questionnaire: "Questionnaire",
+					observance: "Observance",
+					interview: "Interview",
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						//Cannot change customer if status is 
+						//Cannot change customer if status is
 						if (values) {
-							if (["approved", "commissioned", "completed"].includes(values.status)) {
+							if (
+								[
+									"approved",
+									"commissioned",
+									"completed",
+								].includes(values.status)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},			
+					},
+				},
 			},
 			project_objectives: {
 				type: "string",
@@ -131,29 +163,40 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						//Cannot change customer if status is 
+						//Cannot change customer if status is
 						if (values) {
-							if (["approved", "commissioned", "completed"].includes(values.status)) {
+							if (
+								[
+									"approved",
+									"commissioned",
+									"completed",
+								].includes(values.status)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			order: {
 				type: "string",
@@ -164,19 +207,24 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {					
-						if (user) {							
+					display: (entry, user) => {
+						if (user) {
 							if (user.role === "admin") {
 								return false;
 							}
-							
 						}
 						return true;
 					},
 					input: (values, user) => {
-						//Cannot change customer if status is 
+						//Cannot change customer if status is
 						if (values) {
-							if (["approved", "commissioned", "completed"].includes(values.status)) {
+							if (
+								[
+									"approved",
+									"commissioned",
+									"completed",
+								].includes(values.status)
+							) {
 								return true;
 							}
 						}
@@ -184,26 +232,24 @@ export default  {
 							if (user.role === "admin") {
 								return false;
 							}
-							
 						}
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "orders",
 					service_query: { status: "pending" },
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["reference", "date_made"],
 							secondary: [],
 							avatar: false,
-						}							
+						},
 					},
-				},				
+				},
 			},
 
-			
 			country: {
 				type: "string",
 				label: "Country",
@@ -213,31 +259,42 @@ export default  {
 					default: "",
 					required: true,
 				},
-				possibilities : CountriesHelper.names(),
+				possibilities: CountriesHelper.names(),
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						//Cannot change customer if status is 
+						//Cannot change customer if status is
 						if (values) {
-							if (["approved", "commissioned", "completed"].includes(values.status)) {
+							if (
+								[
+									"approved",
+									"commissioned",
+									"completed",
+								].includes(values.status)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.isAdmin) {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			focus_region: {
 				type: "string",
@@ -246,32 +303,43 @@ export default  {
 					type: "text",
 					default: "",
 					required: true,
-					size: 6
+					size: 6,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						//Cannot change customer if status is 
+						//Cannot change customer if status is
 						if (values) {
-							if (["approved", "commissioned", "completed"].includes(values.status)) {
+							if (
+								[
+									"approved",
+									"commissioned",
+									"completed",
+								].includes(values.status)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},					
+					},
+				},
 			},
 			locality: {
 				type: "string",
@@ -280,32 +348,43 @@ export default  {
 					type: "text",
 					default: "",
 					required: true,
-					size: 6
+					size: 6,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						//Cannot change customer if status is 
+						//Cannot change customer if status is
 						if (values) {
-							if (["approved", "commissioned", "completed"].includes(values.status)) {
+							if (
+								[
+									"approved",
+									"commissioned",
+									"completed",
+								].includes(values.status)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},					
+					},
+				},
 			},
 			type: {
 				type: "string",
@@ -316,7 +395,7 @@ export default  {
 					default: "qualitative",
 					required: true,
 				},
-				possibilities : {
+				possibilities: {
 					qualitative: "Qualitative",
 					quantitative: "Quantitative",
 					mixed: "Mixed",
@@ -325,31 +404,42 @@ export default  {
 					focus_group: "Focus group",
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						//Cannot change if status is 
+						//Cannot change if status is
 						if (values) {
-							if (["approved", "commissioned", "completed"].includes(values.status)) {
+							if (
+								[
+									"approved",
+									"commissioned",
+									"completed",
+								].includes(values.status)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},					
+					},
+				},
 			},
-			requested_start_date : {
+			requested_start_date: {
 				type: "date",
 				label: "Requested Start Date",
 				icon: "event",
@@ -357,32 +447,41 @@ export default  {
 					type: "date",
 					default: "",
 					required: true,
-					size: 6
+					size: 6,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						//Cannot change if status is 
+						//Cannot change if status is
 						if (values) {
-							if (["commissioned", "completed"].includes(values.status)) {
+							if (
+								["commissioned", "completed"].includes(
+									values.status
+								)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},					
+					},
+				},
 			},
 			requested_due_date: {
 				type: "date",
@@ -392,32 +491,43 @@ export default  {
 					type: "date",
 					default: "",
 					required: true,
-					size: 6
+					size: 6,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						//Cannot change if status is 
+						//Cannot change if status is
 						if (values) {
-							if (["commissioned", "cancelled", "completed"].includes(values.status)) {
+							if (
+								[
+									"commissioned",
+									"cancelled",
+									"completed",
+								].includes(values.status)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			sample_size: {
 				type: "integer",
@@ -429,30 +539,39 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						//Cannot change if status is 
+						//Cannot change if status is
 						if (values) {
-							if (["cancelled", "completed"].includes(values.status)) {
+							if (
+								["cancelled", "completed"].includes(
+									values.status
+								)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
-						return true;	
-					},				
+						return true;
+					},
 				},
-			},			
+			},
 			confidence_level: {
 				type: "integer",
 				label: "Confidence level",
@@ -461,38 +580,47 @@ export default  {
 					type: "slider",
 					default: "85",
 					required: true,
-					size: 6
+					size: 6,
 				},
-				possibilities : {
+				possibilities: {
 					80: "80%",
 					85: "85%",
 					90: "90%",
 					95: "95%",
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						//Cannot change if status is 
+						//Cannot change if status is
 						if (values) {
-							if (["cancelled", "completed"].includes(values.status)) {
+							if (
+								["cancelled", "completed"].includes(
+									values.status
+								)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			error_margin: {
 				type: "integer",
@@ -502,9 +630,9 @@ export default  {
 					type: "slider",
 					default: "15",
 					required: true,
-					size: 6
+					size: 6,
 				},
-				possibilities : {
+				possibilities: {
 					5: "5%",
 					10: "10%",
 					15: "15%",
@@ -513,28 +641,37 @@ export default  {
 					30: "30%",
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						//Cannot change if status is 
+						//Cannot change if status is
 						if (values) {
-							if (["cancelled", "completed"].includes(values.status)) {
+							if (
+								["cancelled", "completed"].includes(
+									values.status
+								)
+							) {
 								return true;
 							}
 						}
 						if (user) {
 							if (user.isAdmin) {
 								return false;
-							}
-							else{
+							} else {
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
-						return true;	
-					},				
+						return true;
+					},
 				},
 			},
 
@@ -544,23 +681,28 @@ export default  {
 				input: {
 					type: "file",
 					props: {
-						acceptedFiles: ["image/*", "video/*", "audio/*", "application/*"],
+						acceptedFiles: [
+							"image/*",
+							"video/*",
+							"audio/*",
+							"application/*",
+						],
 						filesLimit: 3,
-						helperText: "Max of 3 filse"
+						helperText: "Max of 3 filse",
 					},
 				},
 				reference: {
 					name: "attachments",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["name"],
 							secondary: [],
 							avatar: false,
-						}							
+						},
 					},
-				},		
+				},
 			},
 			status: {
 				type: "string",
@@ -573,103 +715,110 @@ export default  {
 				},
 				possibilities: (values, user) => {
 					let default_possibilities = {
-								requested: "Requested",					
-								approved: "Approved",
-								commissioned: "Commissioned",
-								cancelled: "Cancelled",
-								completed: "Completed",
-							};
+						requested: "Requested",
+						approved: "Approved",
+						commissioned: "Commissioned",
+						cancelled: "Cancelled",
+						completed: "Completed",
+					};
 
 					if (user) {
 						if (user.isAdmin) {
 							return default_possibilities;
-						}
-						else{
+						} else {
 							let possibilities = {
-								requested: "Requested",	
+								requested: "Requested",
 								cancelled: "Cancelled",
 							};
-							if (typeof values==="object" && values.status) {
+							if (typeof values === "object" && values.status) {
 								if (values.status in default_possibilities) {
-									possibilities[values.status] = default_possibilities[values.status];
+									possibilities[values.status] =
+										default_possibilities[values.status];
 								}
 							}
-								
+
 							return possibilities;
-							
-						}					
+						}
 					}
-					
+
 					return default_possibilities;
-						
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
-					input: (values, user) => {						
+					input: (values, user) => {
 						if (user) {
 							if (user.role === "admin") {
 								return false;
-							}
-							else{
-								//Cannot change if status is 
+							} else {
+								//Cannot change if status is
 								if (values) {
-									if (["commissioned", "completed"].includes(values.status)) {
+									if (
+										["commissioned", "completed"].includes(
+											values.status
+										)
+									) {
 										return true;
 									}
 								}
 								if (values && "customer" in values) {
-									return typeof values.customer === "object" && values.customer._id === user._id? false : (values.customer === user._id? false : true);
+									return typeof values.customer ===
+										"object" &&
+										values.customer._id === user._id
+										? false
+										: values.customer === user._id
+										? false
+										: true;
 								}
 							}
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 		},
 		identity: {
 			primary: ["title"],
 			secondary: ["status"],
 			avatar: false,
-		},		
-		dependencies: [ 
-			{ 
+		},
+		dependencies: [
+			{
 				name: "users",
-				column: "customer"
-			} 
+				column: "customer",
+			},
 		],
 		dependants: {
 			queries: {
 				column: "survey",
-				query: {}
+				query: {},
 			},
 			commissions: {
 				column: "survey",
-				query: {}
+				query: {},
 			},
 			actionlogs: {
 				column: "record",
-				query: { context: "Survey" }
+				query: { context: "Survey" },
 			},
-		},			
+		},
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return false;
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				if (user) {
 					return true;
 				}
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return true;
 				}
@@ -684,107 +833,122 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "surveys/view/"+id
+				uri: id => {
+					return "surveys/view/" + id;
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "surveys/view/"+id } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={"surveys/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
-					return user && user.role === 'admin'? false : true;
+				restricted: user => {
+					return user && user.role === "admin" ? false : true;
 				},
 				uri: "surveys/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
+						default: props => {
+							return (
 								<Link to={"surveys/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Survey
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Survey
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "surveys/edit/"+id
+				uri: id => {
+					return "surveys/edit/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "surveys/edit/"+id } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={"surveys/edit/" + id}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "surveys/delete/"+id
+				uri: id => {
+					return "surveys/delete/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
-	},		
-
+		},
+	},
 };

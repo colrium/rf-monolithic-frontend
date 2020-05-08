@@ -1,7 +1,5 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import compose from "recompose/compose";
+/** @format */
+
 import withStyles from "@material-ui/core/styles/withStyles";
 import FacebookIcon from "assets/img/icons/facebook-white.svg";
 import GoogleIcon from "assets/img/icons/google-white.svg";
@@ -9,16 +7,20 @@ import LinkedinIcon from "assets/img/icons/linkedin-white.svg";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import { AUTH } from "config/api";
-
-
-import withRoot from "utils/withRoot";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import compose from "recompose/compose";
+import withRoot from "hoc/withRoot";
+import {withGlobals} from "contexts/Globals";
 import styles from "./styles";
+
 
 class OAuth extends Component {
 	state = {
 		provider: "facebook",
 		disabled: false,
-		socketId: undefined
+		socketId: undefined,
 	};
 	constructor(props) {
 		super(props);
@@ -29,15 +31,14 @@ class OAuth extends Component {
 	componentDidMount() {
 		const { sockets } = this.props;
 		let that = this;
-		if (sockets.auth) {
-			sockets.auth.on("connect", () => {
-				that.setState({ socketId: sockets.auth.id });
+		if (sockets.default) {
+			sockets.default.on("connect", () => {
+				that.setState({ socketId: sockets.default.id });
 			});
-			sockets.auth.on("disconnect", () => {
+			sockets.default.on("disconnect", () => {
 				that.setState({ socketId: undefined });
 			});
 		}
-			
 	}
 
 	checkPopup() {
@@ -51,16 +52,23 @@ class OAuth extends Component {
 	}
 
 	handleOAuthBtnClick = name => event => {
-		this.setState({ provider: name }, () => { this.executeOAuth(); });
+		this.setState({ provider: name }, () => {
+			this.executeOAuth();
+		});
 	};
 
 	openPopup() {
-		const width = 600, height = 600;
+		const width = 600,
+			height = 600;
 		const left = window.innerWidth / 2 - width / 2;
 		const top = window.innerHeight / 2 - height / 2;
 		const url = `${AUTH}${this.state.provider}?socketId=${this.state.socketId}`;
 
-		return window.open(url, "", `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}` );
+		return window.open(
+			url,
+			"",
+			`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}`
+		);
 	}
 
 	handleOnOAuth(data) {
@@ -80,15 +88,18 @@ class OAuth extends Component {
 		const { sockets } = this.props;
 		if (!this.state.disabled) {
 			this.popup = this.openPopup();
-			if (sockets.auth) {
-				sockets.auth.on(this.state.provider + "-authorization", data => {
-					if (data.socketId === this.state.socketId) {
-						this.popup.close();
-						this.handleOnOAuth(data);
+			if (sockets.default) {
+				sockets.default.on(
+					this.state.provider + "-authorization",
+					data => {
+						if (data.socketId === this.state.socketId) {
+							this.popup.close();
+							this.handleOnOAuth(data);
+						}
 					}
-				});
+				);
 			}
-				
+
 			this.checkPopup();
 			this.setState({ disabled: true });
 		}
@@ -161,7 +172,7 @@ class OAuth extends Component {
 							alt="LinkedIn"
 						/>{" "}
 						Signin with linkedin
-		  </Button>
+					</Button>
 				</GridContainer>
 			</GridContainer>
 		);
@@ -170,11 +181,10 @@ class OAuth extends Component {
 
 OAuth.propTypes = {
 	onOAuthSuccess: PropTypes.func,
-	onOAuthError: PropTypes.func
+	onOAuthError: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
 	auth: state.auth,
-	sockets: state.sockets,
 });
-export default withRoot(compose( withStyles(styles), connect( mapStateToProps, {}))(OAuth));
+export default withGlobals(compose(withStyles(styles), connect(mapStateToProps, {}))(OAuth));

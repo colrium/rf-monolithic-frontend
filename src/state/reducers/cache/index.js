@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	SET_DATA_CACHE,
 	REMOVE_DATA_CACHE,
@@ -12,13 +14,12 @@ const initialState = {
 	blob: {},
 };
 
-
 export default (state = initialState, action = {}) => {
 	switch (action.type) {
 		case SET_DATA_CACHE: {
 			return {
 				...state,
-				data: { ...state.data, [action.key] : action.data },
+				data: { ...state.data, [action.key]: action.data },
 			};
 		}
 		case REMOVE_DATA_CACHE: {
@@ -36,7 +37,7 @@ export default (state = initialState, action = {}) => {
 		case SET_BLOB_CACHE: {
 			return {
 				...state,
-				blob: { ...state.blob, [action.key] : action.blob },
+				blob: { ...state.blob, [action.key]: action.blob },
 			};
 		}
 		case REMOVE_BLOB_CACHE: {
@@ -50,7 +51,7 @@ export default (state = initialState, action = {}) => {
 				...state,
 				blob: initialState.lob,
 			};
-		}		
+		}
 		default: {
 			return state;
 		}

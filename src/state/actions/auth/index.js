@@ -1,34 +1,41 @@
-import Auth from "utils/Auth";
+/** @format */
+
+import Auth from "hoc/Auth";
 import AuthService from "services/auth";
 import { authTokenLocation } from "config";
-import { SET_AUTHENTICATED, SET_ACCESS_TOKEN, SET_USER, clearDataCache, clearBlobCache } from "state/actions";
-
+import {
+	SET_AUTHENTICATED,
+	SET_ACCESS_TOKEN,
+	SET_USER,
+	clearDataCache,
+	clearBlobCache,
+} from "state/actions";
 
 export function setAuthenticated(authenticated) {
 	return {
 		type: SET_AUTHENTICATED,
-		authenticated
+		authenticated,
 	};
 }
 
 export function setAccessToken(token) {
 	return {
 		type: SET_ACCESS_TOKEN,
-		token
+		token,
 	};
 }
 
 export function setCurrentUser(user) {
 	return {
 		type: SET_USER,
-		user
+		user,
 	};
 }
 
 export function updateCurrentUser(user) {
 	return {
 		type: SET_USER,
-		user
+		user,
 	};
 }
 
@@ -37,6 +44,7 @@ export function logout() {
 		Auth.getInstance().setAccessToken(null);
 		dispatch(setAuthenticated(false));
 		dispatch(setAccessToken(null));
+		AuthService.reset();
 		//Do not call this on logout because views will update too
 		//dispatch(setCurrentUser({}));
 	};
@@ -49,14 +57,18 @@ export function login(data) {
 				let dataObj = {
 					access_token: res.body.data,
 					user: false,
-				}
+				};
 				Auth.getInstance().setAccessToken(res.body.data);
+				AuthService.reset();
 				let user = await AuthService.profile()
 					.then(prof_res => {
 						return prof_res.body.data;
 					})
 					.catch(err => {
-						console.log("login action AuthService.profile() err", err);
+						console.log(
+							"login action AuthService.profile() err",
+							err
+						);
 						throw err;
 					});
 				if (JSON.isJSON(user)) {
@@ -64,8 +76,7 @@ export function login(data) {
 				}
 				return dataObj;
 			})
-			.catch(err => {				
-				
+			.catch(err => {
 				console.log("login action AuthService.login() err", err);
 				throw err;
 			});

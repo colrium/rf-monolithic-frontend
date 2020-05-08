@@ -1,8 +1,9 @@
-import { colors } from "assets/jss/app-theme";
+/** @format */
 
-export default theme => ( {
+
+export default theme => ({
 	root: {
-		padding: "0"
+		padding: "0",
 	},
 	inputWrapper: {
 		height: "auto",
@@ -11,10 +12,9 @@ export default theme => ( {
 		"&:hover $actionContainer": {
 			display: "inline",
 		},
-				
 	},
 	transparent: {
-		background: "transparent !important"
+		background: "transparent !important",
 	},
 	inputContainer: {
 		flexGrow: 1,
@@ -26,7 +26,6 @@ export default theme => ( {
 		textAlign: "right",
 		padding: theme.spacing(0.5),
 		minWidth: theme.spacing(7),
-		
 	},
 	inputAction: {
 		margin: "auto",
@@ -42,10 +41,10 @@ export default theme => ( {
 		transform: "rotate(0deg)",
 		marginLeft: "auto",
 		transition: theme.transitions.create("transform", {
-			duration: theme.transitions.duration.shortest
-		})
+			duration: theme.transitions.duration.shortest,
+		}),
 	},
 	expandOpen: {
-		transform: "rotate(180deg)"
+		transform: "rotate(180deg)",
 	},
-} );
+});

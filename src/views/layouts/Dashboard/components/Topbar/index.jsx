@@ -1,30 +1,34 @@
-import React, { Component } from "react";
-import classNames from "classnames";
-import { connect } from "react-redux";
-import { bindActionCreators } from 'redux';
-import { Link } from "react-router-dom";
-import Hidden from '@material-ui/core/Hidden';
-import compose from "recompose/compose";
-import PropTypes from "prop-types";
-import { AppBar, Badge, Box, Breadcrumbs, IconButton, Popover, Snackbar, Toolbar, withStyles } from '@material-ui/core';
-import { PowerSettingsNew as LogoutIcon, NotificationsOutlined as NotificationsIcon } from "@material-ui/icons";
+/** @format */
+
+import { AppBar, Badge, Box, Breadcrumbs, IconButton, Popover, Snackbar, Toolbar, withStyles } from "@material-ui/core";
+import Hidden from "@material-ui/core/Hidden";
+import { NotificationsOutlined as NotificationsIcon, PowerSettingsNew as LogoutIcon } from "@material-ui/icons";
 import CloseSideBarIcon from "@material-ui/icons/ChevronLeft";
 import OpenSideBarIcon from "@material-ui/icons/Menu";
+import classNames from "classnames";
 import SnackbarContent from "components/Snackbar/SnackbarContent";
-import Status from "components/Status";
 import Typography from "components/Typography";
-
 import { notifications as notificationsDefination } from "definations";
-
-import { notifications as notificationsService } from "services";
+import Icon from '@mdi/react'
+import { mdiBellOutline, mdiLogoutVariant } from '@mdi/js';
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import compose from "recompose/compose";
+import { bindActionCreators } from "redux";
+import { withTheme } from '@material-ui/core/styles';
 import AuthService from "services/auth";
 import { logout, setCurrentUser } from "state/actions";
-import { ServiceDataHelper } from "utils/Helpers";
-import withRoot from "utils/withRoot";
+import { ServiceDataHelper } from "hoc/Helpers";
+import {withGlobals} from "contexts/Globals";
+import {withErrorHandler} from "hoc/ErrorHandler";
 // Custom components
 import { NotificationList } from "./components";
 // Component styles
 import styles from "./styles";
+
+
 
 class Topbar extends Component {
 	signal = true;
@@ -43,48 +47,74 @@ class Topbar extends Component {
 		connectionSnackBarColor: "success",
 		connectionSnackBarMessage: "Connection Restored",
 		notificationSnackBarOpen: false,
-		notificationSnackBarMessage: "New notification"
+		notificationSnackBarMessage: "New notification",
 	};
 
 	constructor(props) {
 		super(props);
-		this.onCloseConnectionSnackbar = this.onCloseConnectionSnackbar.bind(this);
-		this.onCloseNotificationSnackbar = this.onCloseNotificationSnackbar.bind(this);
-		this.handleCloseNotifications = this.handleCloseNotifications.bind(this);
+		this.mounted = false;
+		this.onCloseConnectionSnackbar = this.onCloseConnectionSnackbar.bind(
+			this
+		);
+		this.onCloseNotificationSnackbar = this.onCloseNotificationSnackbar.bind(
+			this
+		);
+		this.handleCloseNotifications = this.handleCloseNotifications.bind(
+			this
+		);
 		this.handleSignOut = this.handleSignOut.bind(this);
 		this.initSocketActionsListener();
-		
 	}
 
 	componentDidMount() {
 		this.signal = true;
 		let that = this;
-		window.addEventListener('scroll', async function(){
+		this.mounted = true;
+		window.addEventListener("scroll", async function() {
 			if (window.scrollY > 0) {
-				that.setState({ prominent: false });
+				if (this.mounted) {
+					that.setState({ prominent: false });
+				}
+				
+			} else {
+				if (this.mounted) {
+					that.setState({ prominent: true });
+				}
+				
 			}
-			else{
-				that.setState({ prominent: true });
-			}			
 		});
-		this.getNotifications();
+		//this.getNotifications();
 	}
 
 	componentWillUnmount() {
 		this.signal = false;
+		this.mounted = false;
 		this.ignoreConnectionState = true;
 		let that = this;
-		window.removeEventListener('scroll', async function(){
-			that.setState({ prominent: false });		
+		window.removeEventListener("scroll", async function() {
+			that.setState({ prominent: false });
 		});
+	}
+
+	getSnapshotBeforeUpdate(prevProps, prevState) {
+		this.mounted = false;
+		return null;
+	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		this.mounted = true;
 	}
 
 	initSocketActionsListener() {
 		const { sockets, auth, setCurrentUser } = this.props;
 		if (sockets.default) {
 			sockets.default.on("connect", () => {
-				if (this.state.connectionSnackBarOpened && !this.ignoreConnectionState) {
-					this.setState({ connectionSnackBarOpen: true, connectionSnackBarColor: "success", connectionSnackBarMessage: "Connection Restored" });
+				if ( this.state.connectionSnackBarOpened && !this.ignoreConnectionState) {
+					this.setState({
+						connectionSnackBarOpen: true,
+						connectionSnackBarColor: "success",
+						connectionSnackBarMessage: "Connection Restored",
+					});
 				}
 			});
 			sockets.default.on("disconnect", () => {
@@ -93,58 +123,52 @@ class Topbar extends Component {
 						connectionSnackBarOpened: true,
 						connectionSnackBarOpen: true,
 						connectionSnackBarColor: "error",
-						connectionSnackBarMessage: "Connection Lost"
+						connectionSnackBarMessage: "Connection Lost",
 					});
-				}
-			});
-
-			sockets.default.on("create", ({ context, action }) => {
-				if (auth.isAuthenticated && "_id" in auth.user) {
-					if (context.toLowerCase() === "notifications") {
-						if (action.effects.notify === auth.user._id && !action.effects.read) {
-							this.setState(prevState => ({
-								notifications: Array.isArray(prevState.notifications)
-									? prevState.notifications.unshift(action.effects)
-									: [action.effects],
-								notificationSnackBarOpen: true,
-								notificationSnackBarMessage: action.effects.body
-							}));
-
-							//this.getNotifications();
-						}
-					}
 				}
 			});
 
 			sockets.default.on("new_notification", notification => {
 				if (auth.isAuthenticated && "_id" in auth.user) {
-					if (notification.notify === auth.user._id && !notification.read) {
+					if (
+						notification.notify === auth.user._id &&
+						!notification.read
+					) {
 						this.setState(prevState => ({
-							notifications: Array.isArray(prevState.notifications)
+							notifications: Array.isArray(
+								prevState.notifications
+							)
 								? prevState.notifications.unshift(notification)
 								: [notification],
 							notificationSnackBarOpen: true,
-							notificationSnackBarMessage: notification.body
+							notificationSnackBarMessage: notification.body,
 						}));
 						//this.getNotifications();
 					}
 				}
-
 			});
-			
+
 			sockets.default.on("update", ({ context, action }) => {
 				if (context.toLowerCase() === "notification") {
 					if (action.effects.notify === auth.user._id) {
 						this.setState(prevState => ({
-							notifications: Array.isArray(prevState.notifications)
-								? prevState.notifications.unshift(action.effects)
+							notifications: Array.isArray(
+								prevState.notifications
+							)
+								? prevState.notifications.unshift(
+										action.effects
+								  )
 								: [action.effects],
 							notificationSnackBarOpen: true,
-							notificationSnackBarMessage: action.effects.body
+							notificationSnackBarMessage: action.effects.body,
 						}));
 						//this.getNotifications();
 					}
-				} else if (context.toLowerCase() === "user" && auth.isAuthenticated && "_id" in auth.user) {
+				} else if (
+					context.toLowerCase() === "user" &&
+					auth.isAuthenticated &&
+					"_id" in auth.user
+				) {
 					if (
 						action.record === auth.user._id &&
 						action.catalyst !== auth.user._id
@@ -154,62 +178,11 @@ class Topbar extends Component {
 					}
 				}
 			});
-		}
-		
-		if (sockets.auth) {
-			sockets.auth.on("connect", () => {
-				if (auth.isAuthenticated && "_id" in auth.user) {
-					sockets.auth.emit("set_identity", { _id: auth.user._id, presence: auth.user.presence});
-				}
-			});
+
 			
-			sockets.auth.on("identity_set", profile => {
-				if (auth.isAuthenticated) {
-					setCurrentUser(profile);
-				}
-			});
 
-			sockets.auth.on("new_notification", notification => {
-				if (auth.isAuthenticated && "_id" in auth.user) {
-					if (notification.notify === auth.user._id && !notification.read) {
-						this.setState(prevState => ({
-							notifications: Array.isArray(prevState.notifications)
-								? prevState.notifications.unshift(notification)
-								: [notification],
-							notificationSnackBarOpen: true,
-							notificationSnackBarMessage: notification.body
-						}));
-						//this.getNotifications();
-					}
-				}
-
-			});
-
-
-
-			sockets.auth.on("update", ({ context, action }) => {
-				if (context.toLowerCase() === "notification") {
-					if (action.effects.notify === auth.user._id) {
-						this.setState(prevState => ({
-							notifications: Array.isArray(prevState.notifications)
-								? prevState.notifications.unshift(action.effects)
-								: [action.effects],
-							notificationSnackBarOpen: true,
-							notificationSnackBarMessage: action.effects.body
-						}));
-						//this.getNotifications();
-					}
-				} else if (context.toLowerCase() === "user" && auth.isAuthenticated && "_id" in auth.user) {
-					if (
-						action.record === auth.user._id &&
-						action.catalyst !== auth.user._id
-					) {
-						let updated_user = { ...auth.user, ...action.effects };
-						setCurrentUser(updated_user);
-					}
-				}
-			});
-		}		
+			
+		}
 	}
 
 	parseData(entry) {
@@ -221,13 +194,18 @@ class Topbar extends Component {
 			if (field.possibilities) {
 				if (typeof field.possibilities === "object") {
 					if (entry[field_name] in field.possibilities) {
-						parsed_data[field_name] = field.possibilities[entry[field_name]];
+						parsed_data[field_name] =
+							field.possibilities[entry[field_name]];
 					}
 				} else if (typeof field.possibilities === "function") {
-					if (entry[field_name] in field.possibilities(entry, auth.user)) {
-						parsed_data[field_name] = field.possibilities(entry, auth.user)[
-							entry[field_name]
-						];
+					if (
+						entry[field_name] in
+						field.possibilities(entry, auth.user)
+					) {
+						parsed_data[field_name] = field.possibilities(
+							entry,
+							auth.user
+						)[entry[field_name]];
 					}
 				}
 			}
@@ -236,28 +214,40 @@ class Topbar extends Component {
 	}
 
 	getNotifications() {
-		const { auth } = this.props;
+		const { auth, definations, services } = this.props;
 
 		const { notificationsLimit } = this.state;
 
-		notificationsService
-			.getRecordsCount({ read: "0" })
-			.then(res => {
-				this.setState(state => ({
-					notificationsCount: res.body.data.count,
-					load_error: false,
-					loading: false
-				}));
+		services.notifications.getRecordsCount({ read: "0" }).then(res => {
+				if (this.mounted) {
+					this.setState(state => ({
+						notificationsCount: res.body.data.count,
+						load_error: false,
+						loading: false,
+					}));
+				}
+				else{
+					this.state.notificationsCount = res.body.data.count;
+					this.state.load_error = false;
+					this.state.loading = false;
+				}	
 			})
 			.catch(err => {
-				this.setState(state => ({ load_error: err, loading: false }));
+				if (this.mounted) {
+					this.setState(state => ({ load_error: err, loading: false }));
+				}
+				else {
+					this.state.load_error = err;
+					this.state.loading = false;
+				}
 			});
+				
 
-		notificationsService
+		services.notifications
 			.getRecords({
 				p: 1,
 				pagination: notificationsLimit,
-				desc: "date_created"
+				desc: "date_created",
 			})
 			.then(response => {
 				let raw_data = response.body.data;
@@ -270,27 +260,43 @@ class Topbar extends Component {
 				let all_records = resolved_data.map(entry => {
 					return that.parseData(entry);
 				});
-				this.setState(state => ({
-					notifications: all_records,
-					load_error: false,
-					loading: false
-				}));
+				if (this.mounted) {
+					this.setState(state => ({
+						notifications: all_records,
+						load_error: false,
+						loading: false,
+					}));
+				}
+				else {
+					this.state.notifications = all_records;
+					this.state.load_error = false;
+					this.state.loading = false;
+				}	
 			})
 			.catch(err => {
-				this.setState(state => ({ load_error: err, loading: false }));
+				if (this.mounted) {
+					this.setState(state => ({ load_error: err, loading: false }));
+				}
+				else{
+					this.state.load_error = err;
+					this.state.loading = false;
+				}
+				
 			});
+				
 	}
 
-	handleSignOut(){
+	handleSignOut() {
 		const { logout } = this.props;
 		logout();
-		AuthService.logout();				
-	};
+		AuthService.logout();
+	}
 
 	handleShowNotifications = event => {
+		const { auth, definations, services } = this.props;
 		this.setState({ notificationsEl: event.currentTarget }, () => {
 			if (this.state.notificationsCount > 0) {
-				notificationsService
+				services.notifications
 					.markAllAsRead()
 					.then(res => {
 						this.setState({ notificationsCount: 0 });
@@ -304,33 +310,38 @@ class Topbar extends Component {
 
 	handleCloseNotifications() {
 		this.setState({
-			notificationsEl: null
+			notificationsEl: null,
 		});
-	};
+	}
 
 	onCloseConnectionSnackbar() {
 		this.setState({
-			connectionSnackBarOpen: false
+			connectionSnackBarOpen: false,
 		});
 	}
 
 	onCloseNotificationSnackbar() {
 		this.setState({
-			notificationSnackBarOpen: false
+			notificationSnackBarOpen: false,
 		});
 	}
 
 	render() {
 		const {
+			theme,
 			classes,
 			className,
 			title,
 			isSidebarOpen,
 			onToggleSidebar,
 			dashboard,
-			nav
+			nav,
 		} = this.props;
-		const { notifications, notificationsCount, notificationsEl } = this.state;
+		const {
+			notifications,
+			notificationsCount,
+			notificationsEl,
+		} = this.state;
 
 		const rootClassName = classNames(classes.root, className);
 		const showNotifications = Boolean(notificationsEl);
@@ -340,44 +351,74 @@ class Topbar extends Component {
 		return (
 			<Box>
 				<AppBar className={rootClassName}>
-					<Toolbar className={classNames({[classes.toolbar]: true/*, [classes.prominent]: this.state.prominent*/})}>
-						{ dashboard.drawer_displayed && <IconButton
-							className={classes.menuButton}
-							onClick={onToggleSidebar}
-							variant="text"
-						>
-							{isSidebarOpen ? <CloseSideBarIcon /> : <OpenSideBarIcon />}
-						</IconButton> }
+					<Toolbar
+						className={classNames({
+							[classes.toolbar]: true /*, [classes.prominent]: this.state.prominent*/,
+						})}
+					>
+						{dashboard.drawer_displayed && (
+							<IconButton
+								className={classes.menuButton}
+								onClick={onToggleSidebar}
+								variant="text"
+							>
+								{isSidebarOpen ? (
+									<CloseSideBarIcon />
+								) : (
+									<OpenSideBarIcon />
+								)}
+							</IconButton>
+						)}
 
-						<Hidden mdDown>
+						<Typography
+								className={classes.title}
+								variant="body1"
+								color="inverse"
+							>
+								{title}
+							</Typography>
 
+						{/*<Hidden mdDown>
 							<Breadcrumbs
 								maxItems={4}
 								aria-label="breadcrumb"
 								separator={"/"}
 								className={classes.breadcrumbs}
 							>
-							
 								{breadcrumbs.map(
 									(breadcrumb, index) =>
 										index < breadcrumbs.length - 1 && (
-											<Link className={classes.breadcrumb} to={breadcrumb.uri} key={"breadcrumb-" + index} >
-												<Typography className={classes.title} variant="body1" color="inverse" > {breadcrumb.title}</Typography>
+											<Link
+												className={classes.breadcrumb}
+												to={breadcrumb.uri}
+												key={"breadcrumb-" + index}
+											>
+												<Typography
+													className={classes.title}
+													variant="body1"
+													color="inverse"
+												>
+													{" "}
+													{breadcrumb.title}
+												</Typography>
 											</Link>
 										)
 								)}
-								<Typography  variant="body1" color="inverse" >
+								<Typography variant="body1" color="inverse">
 									{title}
 								</Typography>
-							
 							</Breadcrumbs>
 						</Hidden>
-						
+
 						<Hidden lgUp>
-							<Typography className={classes.title} variant="body1" color="inverse" >
+							<Typography
+								className={classes.title}
+								variant="body1"
+								color="inverse"
+							>
 								{title}
 							</Typography>
-						</Hidden>
+						</Hidden>*/}
 
 						<IconButton
 							className={classes.notificationsButton}
@@ -388,14 +429,24 @@ class Topbar extends Component {
 								color="secondary"
 								variant="dot"
 							>
-								<NotificationsIcon />
+								<Icon 
+									path={mdiBellOutline}
+									title="Notification Icon"    
+									size={1}
+									color={theme.palette.background.paper}
+								/>
 							</Badge>
 						</IconButton>
 						<IconButton
 							className={classes.signOutButton}
 							onClick={this.handleSignOut}
 						>
-							<LogoutIcon />
+							<Icon 
+								path={mdiLogoutVariant}
+								title="Logout Icon"    
+								size={1}
+								color={theme.palette.background.paper}
+							/>
 						</IconButton>
 					</Toolbar>
 				</AppBar>
@@ -403,13 +454,13 @@ class Topbar extends Component {
 					anchorEl={notificationsEl}
 					anchorOrigin={{
 						vertical: "bottom",
-						horizontal: "center"
+						horizontal: "center",
 					}}
 					onClose={this.handleCloseNotifications}
 					open={showNotifications}
 					transformOrigin={{
 						vertical: "top",
-						horizontal: "center"
+						horizontal: "center",
 					}}
 				>
 					<NotificationList
@@ -423,10 +474,10 @@ class Topbar extends Component {
 				<Snackbar
 					anchorOrigin={{
 						vertical: "top",
-						horizontal: "center"
+						horizontal: "center",
 					}}
 					open={this.state.connectionSnackBarOpen}
-					autoHideDuration={6000}
+					autoHideDuration={this.state.connectionSnackBarColor === "error"? 200000000 : 2000}
 					onClose={this.onCloseConnectionSnackbar}
 				>
 					<SnackbarContent
@@ -439,11 +490,12 @@ class Topbar extends Component {
 				<Snackbar
 					anchorOrigin={{
 						vertical: "top",
-						horizontal: "right"
+						horizontal: "right",
 					}}
 					open={this.state.notificationSnackBarOpen}
-					autoHideDuration={6000}
-					onClose={this.onCloseNotificationSnackbar} >
+					autoHideDuration={3000}
+					onClose={this.onCloseNotificationSnackbar}
+				>
 					<SnackbarContent
 						onClose={this.onCloseNotificationSnackbar}
 						color="inverse"
@@ -460,11 +512,11 @@ Topbar.propTypes = {
 	classes: PropTypes.object.isRequired,
 	isSidebarOpen: PropTypes.bool,
 	onToggleSidebar: PropTypes.func,
-	title: PropTypes.string
+	title: PropTypes.string,
 };
 
 Topbar.defaultProps = {
-	onToggleSidebar: () => { }
+	onToggleSidebar: () => {},
 };
 
 const mapStateToProps = state => ({
@@ -473,9 +525,19 @@ const mapStateToProps = state => ({
 	dashboard: state.dashboard,
 	sockets: state.sockets,
 });
-const mapDispatchToProps = dispatch => bindActionCreators({
-    logout: logout,
-    setCurrentUser: setCurrentUser,
-}, dispatch);
+const mapDispatchToProps = dispatch =>
+	bindActionCreators(
+		{
+			logout: logout,
+			setCurrentUser: setCurrentUser,
+		},
+		dispatch
+	);
 
-export default withRoot(compose( withStyles(styles), connect( mapStateToProps, mapDispatchToProps))(Topbar));
+export default compose(
+		withTheme,
+		withStyles(styles),
+		connect(mapStateToProps, mapDispatchToProps),
+		withGlobals,
+		withErrorHandler
+	)(Topbar);

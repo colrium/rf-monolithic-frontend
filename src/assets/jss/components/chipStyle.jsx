@@ -1,5 +1,7 @@
-import {textcases, alignments } from "assets/jss/app-theme.jsx";
-const chipStyle = theme => ({	
+/** @format */
+
+import { textcases, alignments } from "assets/jss/app-theme.jsx";
+const chipStyle = theme => ({
 	...textcases,
 	...alignments,
 });

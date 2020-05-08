@@ -1,5 +1,7 @@
+/** @format */
+
 import React from "react";
-import ReactHtmlParser from 'react-html-parser';
+import ReactHtmlParser from "react-html-parser";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -7,8 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import { colors } from "assets/jss/app-theme.jsx";
 import typographyStyle from "assets/jss/components/typographyStyle.jsx";
 
-
-import withRoot from "utils/withRoot";
+import withRoot from "hoc/withRoot";
 
 function CustomTypography({ ...props }) {
 	const {
@@ -69,13 +70,13 @@ function CustomTypography({ ...props }) {
 		[classes.italic]: italic,
 		[classes.oblique]: oblique,
 		[classes[textcase]]: textcase,
-		[className]: className
+		[className]: className,
 	});
-	let {children} = props;
+	let { children } = props;
 	let isHTML = false;
-	let splitted = false; 
+	let splitted = false;
 	if (String.isString(children)) {
-		isHTML = children.hasHTML();		
+		isHTML = children.hasHTML();
 		if (children.indexOf("\t") !== -1 || children.indexOf("\n") !== -1) {
 			isHTML = true;
 			children = children.replaceAll("\n", "<br />");
@@ -84,11 +85,10 @@ function CustomTypography({ ...props }) {
 	}
 
 	return (
-			<Typography className={typographyClasses} {...rest} >
-				{ isHTML? ReactHtmlParser(children) : children }
-			</Typography>
+		<Typography className={typographyClasses} {...rest}>
+			{isHTML ? ReactHtmlParser(children) : children}
+		</Typography>
 	);
-		
 }
 
 CustomTypography.propTypes = {
@@ -122,8 +122,8 @@ CustomTypography.propTypes = {
 		"uppercase",
 		"wordcase",
 		"nocase",
-		"inheritcase"
-	])
+		"inheritcase",
+	]),
 };
 
 export default withRoot(withStyles(typographyStyle)(CustomTypography));

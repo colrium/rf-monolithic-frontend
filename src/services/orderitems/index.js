@@ -1,11 +1,15 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class OrdersItemsApiService extends ApiService{
-	constructor(){
+class OrdersItemsApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = '/retail/order-items';
+		this.service_uri = "/retail/order-items";
 	}
 }
 

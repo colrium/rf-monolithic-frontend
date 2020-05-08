@@ -1,17 +1,23 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon, ExploreOutlined as DefinationContextIcon } from '@material-ui/icons';
-import Button from 'components/Button';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+	ExploreOutlined as DefinationContextIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-
-
-export default  {
+export default {
 	name: "quoterequests",
 	label: "Quote Requests",
 	icon: <DefinationContextIcon />,
 	color: "#541400",
-	model: 'ProposalRequest',
+	model: "ProposalRequest",
 	endpoint: "/quote-requests",
 	cache: true,
 	views: {
@@ -20,15 +26,22 @@ export default  {
 			cardview: {
 				title: ["name"],
 				subtitle: ["code"],
-				body: ["status", "customer", "expiration_date", "value_type", "value", "use"],
-			}
+				body: [
+					"status",
+					"customer",
+					"expiration_date",
+					"value_type",
+					"value",
+					"use",
+				],
+			},
 		},
 		listing: {
 			default: "tableview",
 			listview: {
 				avatar: false,
 				primary: ["name"],
-				secondary: ["code", "status", "expiration_date", "use"]
+				secondary: ["code", "status", "expiration_date", "use"],
 			},
 			tableview: {
 				avatar: false,
@@ -41,7 +54,7 @@ export default  {
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
 			requesting_email: {
 				type: "string",
@@ -51,12 +64,12 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
 						return false;
-					}					
+					},
 				},
 			},
 			institution: {
@@ -66,12 +79,12 @@ export default  {
 					type: "text",
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
-					},
-					input: (values, user) => {								
+					display: (entry, user) => {
 						return false;
-					}					
+					},
+					input: (values, user) => {
+						return false;
+					},
 				},
 			},
 
@@ -85,12 +98,12 @@ export default  {
 					},
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
-					},
-					input: (values, user) => {								
+					display: (entry, user) => {
 						return false;
-					}					
+					},
+					input: (values, user) => {
+						return false;
+					},
 				},
 			},
 
@@ -101,12 +114,12 @@ export default  {
 					type: "datetime",
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
 						return false;
-					}					
+					},
 				},
 			},
 
@@ -118,15 +131,15 @@ export default  {
 					default: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 
@@ -137,15 +150,15 @@ export default  {
 					type: "datetime",
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 
@@ -156,26 +169,26 @@ export default  {
 					type: "select",
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "users",
 					service_query: { role: "admin" },
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 			},
@@ -187,15 +200,15 @@ export default  {
 					type: "textarea",
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 			quote_files: {
@@ -203,18 +216,17 @@ export default  {
 				label: "Files",
 				input: {
 					type: "file",
-
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					},
 				},
 			},
 		},
@@ -222,23 +234,22 @@ export default  {
 			primary: ["requesting_email"],
 			secondary: [],
 			avatar: false,
-		},		
-		dependencies: [],
-		dependants: {
 		},
+		dependencies: [],
+		dependants: {},
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return !(user.isAdmin || user.isCustomer);
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return user.isAdmin || user.isCustomer;
 				}
@@ -253,34 +264,42 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !(user.isAdmin || user.isCustomer);
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("quoterequests/view/"+id).toUriWithDashboardPrefix();
+				uri: id => {
+					return (
+						"quoterequests/view/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("quoterequests/view/"+id).toUriWithDashboardPrefix() } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={(
+										"quoterequests/view/" + id
+									).toUriWithDashboardPrefix()}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
@@ -289,73 +308,94 @@ export default  {
 				uri: "quoterequests/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
-								<Link to={("quoterequests/add/").toUriWithDashboardPrefix()} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Quote Request
+						default: props => {
+							return (
+								<Link
+									to={"quoterequests/add/".toUriWithDashboardPrefix()}
+									{...props}
+								>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Quote Request
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("quoterequests/edit/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"quoterequests/edit/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("quoterequests/edit/"+id).toUriWithDashboardPrefix() } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={(
+										"quoterequests/edit/" + id
+									).toUriWithDashboardPrefix()}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("quoterequests/delete/"+id).toUriWithDashboardPrefix();
+				uri: id => {
+					return (
+						"quoterequests/delete/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
-	},	
+		},
+	},
 };

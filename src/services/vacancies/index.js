@@ -1,11 +1,15 @@
-/* eslint-disable */
-import ApiService from 'services/api';
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
 
+import ApiService from "services/api";
 
-class VacanciesApiService extends ApiService{
-	constructor(){
+class VacanciesApiService extends ApiService {
+	constructor() {
 		super();
-		this.service_uri = 'recruitment/vacancies';
+		this.service_uri = "recruitment/vacancies";
 	}
 }
 

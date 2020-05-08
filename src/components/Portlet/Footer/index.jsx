@@ -1,3 +1,5 @@
+/** @format */
+
 // Material helpers
 import { withStyles } from "@material-ui/core";
 import classNames from "classnames";
@@ -7,40 +9,40 @@ import React from "react";
 
 // Component styles
 const styles = theme => ({
-  root: {
-    paddingBottom: theme.spacing(),
-    paddingTop: theme.spacing(),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    borderTop: `1px solid ${theme.palette.border}`,
-    borderBottomLeftRadius: "2px",
-    borderBottomRightRadius: "2px"
-    //background: "rgba("+colors.rgb.default+", 0.05)",
-  },
-  noDivider: {
-    borderTop: "none"
-  }
+	root: {
+		paddingBottom: theme.spacing(),
+		paddingTop: theme.spacing(),
+		paddingLeft: theme.spacing(2),
+		paddingRight: theme.spacing(2),
+		borderTop: `1px solid ${theme.palette.border}`,
+		borderBottomLeftRadius: "2px",
+		borderBottomRightRadius: "2px",
+		//background: "rgba("+colors.rgb.default+", 0.05)",
+	},
+	noDivider: {
+		borderTop: "none",
+	},
 });
 
 const PortletFooter = props => {
-  const { classes, className, noDivider, children } = props;
+	const { classes, className, noDivider, children } = props;
 
-  const rootClassName = classNames(
-    {
-      [classes.root]: true,
-      [classes.noDivider]: noDivider
-    },
-    className
-  );
+	const rootClassName = classNames(
+		{
+			[classes.root]: true,
+			[classes.noDivider]: noDivider,
+		},
+		className
+	);
 
-  return <div className={rootClassName}>{children}</div>;
+	return <div className={rootClassName}>{children}</div>;
 };
 
 PortletFooter.propTypes = {
-  children: PropTypes.node,
-  className: PropTypes.string,
-  classes: PropTypes.object.isRequired,
-  noDivider: PropTypes.bool
+	children: PropTypes.node,
+	className: PropTypes.string,
+	classes: PropTypes.object.isRequired,
+	noDivider: PropTypes.bool,
 };
 
 export default withStyles(styles)(PortletFooter);

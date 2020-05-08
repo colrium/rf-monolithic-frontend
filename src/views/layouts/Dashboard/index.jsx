@@ -1,4 +1,7 @@
 // Material helpers
+/** @format */
+
+// Material helpers
 import { Drawer, withStyles } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import { app } from "assets/jss/app-theme";
@@ -10,10 +13,8 @@ import React, { Component } from "react";
 import { isMobile } from "react-device-detect";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import withRoot from "utils/withRoot";
-// Custom components
+import {withErrorHandler} from "hoc/ErrorHandler";
 import { Footer, Sidebar, Topbar } from "./components";
-// Component styles
 import styles from "./styles";
 
 class Dashboard extends Component {
@@ -67,7 +68,7 @@ class Dashboard extends Component {
 
 		document.title = app.title(title);
 		return (
-			<Box>
+			<div>
 				{ dashboard.appbar_displayed && <Topbar
 					className={classNames(classes.topbar, {
 						[classes.topbarShift]: shiftTopbar
@@ -87,13 +88,14 @@ class Dashboard extends Component {
 				</Drawer> }
 				<main className={classNames({[classes.content] : true, [classes.contentShift]: shiftContent, "relative":true })} >
 					<ActionDialog />
+					
 					{children}
 
 					{ /* dashboard.footer_displayed && <Footer /> */ }
 				</main>
 
 				
-			</Box>
+			</div>
 		);
 	}
 }
@@ -117,12 +119,11 @@ const mapStateToProps = state => ({
 	device: state.device
 });
 
-export default withRoot(
-	compose(
+export default compose(
 		withStyles(styles),
 		connect(
 			mapStateToProps,
 			{}
-		)
-	)(Dashboard)
-);
+		),
+		withErrorHandler
+	)(Dashboard);

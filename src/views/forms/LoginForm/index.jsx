@@ -1,5 +1,7 @@
+/** @format */
+
 import React from "react";
-import Cookies from 'universal-cookie';
+import Cookies from "universal-cookie";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Icon from "@material-ui/core/Icon";
@@ -17,16 +19,27 @@ import SnackbarContent from "components/Snackbar/SnackbarContent";
 import Typography from "components/Typography";
 import PropTypes from "prop-types";
 
-//Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 //
 import AuthService from "services/auth";
-import { login, setAuthenticated, setCurrentUser, setAccessToken } from "state/actions/auth";
-import { authTokenLocation, authTokenName, baseUrls, environment } from 'config';
-import { AppHelper } from "utils/Helpers";
-import Auth from "utils/Auth";
-import withRoot from "utils/withRoot";
+import {
+	login,
+	setAuthenticated,
+	setCurrentUser,
+	setAccessToken
+} from "state/actions/auth";
+
+import {
+	authTokenLocation,
+	authTokenName,
+	baseUrls,
+	environment
+} from "config";
+import { AppHelper } from "hoc/Helpers";
+import {withErrorHandler} from "hoc/ErrorHandler";
+import Auth from "hoc/Auth";
+import withRoot from "hoc/withRoot";
 import OAuth from "./components/OAuth";
 
 
@@ -664,4 +677,4 @@ const mapStateToProps = state => ({
 	device: state.device
 });
 
-export default compose(withStyles(styles), connect( mapStateToProps, { login, setCurrentUser, setAuthenticated, setAccessToken }))(withRoot(LoginForm));
+export default compose(withStyles(styles), connect( mapStateToProps, { login, setCurrentUser, setAuthenticated, setAccessToken }))(withErrorHandler(LoginForm));

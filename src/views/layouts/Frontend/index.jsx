@@ -1,31 +1,37 @@
+/** @format */
+
 import React, { Component } from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core";
-import sample from 'components/LayoutBuilder/sample';
+import { connect } from "react-redux";
+import compose from "recompose/compose";
 import ActionDialog from "components/ActionDialog";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import styles from "./styles";
-import withRoot from "utils/withRoot";
-
-
+import {withErrorHandler} from "hoc/ErrorHandler";
 
 class Frontend extends Component {
-
 	render() {
-		const { classes, className, children, navItems, showHeader, showFooter } = this.props;
+		const {
+			classes,
+			className,
+			children,
+			navItems,
+			showHeader,
+			showFooter,
+			nav,
+		} = this.props;
 
 		return (
-			<div className={ "p-0 m-0" }>
-				{ showHeader && <Header navItems={navItems} />}
-				<main className={showHeader? classes.mainContent : ""}>
+			<div className={"p-0 m-0"}>
+				{showHeader && <Header navItems={navItems} />}
+				<main className={showHeader ? classes.mainContent : ""}>
 					<ActionDialog />
-					{ children }
-									
-            	</main>
-            	{showFooter && <Footer color="accent"/>}
-				
+					{children}
+				</main>
+				{showFooter && <Footer color="accent" />}
 			</div>
 		);
 	}
@@ -43,4 +49,18 @@ Frontend.defaultProps = {
 	showHeader: true,
 };
 
-export default withRoot(withStyles(styles)(Frontend));
+const mapStateToProps = state => ({
+	nav: state.nav,
+});
+
+
+export default withErrorHandler(
+	compose(
+		withStyles(styles),
+		connect(
+			mapStateToProps,
+			{}
+		)
+
+	)(Frontend)
+);

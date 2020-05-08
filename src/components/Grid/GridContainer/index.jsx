@@ -1,15 +1,20 @@
+/** @format */
+
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { colors } from "assets/jss/app-theme.jsx";
 import gridStyle from "assets/jss/components/gridStyle.jsx";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 function GridContainer({ ...props }) {
-	let [state, setState ] = useState(props);
-	useEffect(() => { setState(props); }, [props]);
-	let { classes,
+	let [state, setState] = useState(props);
+	useEffect(() => {
+		setState(props);
+	}, [props]);
+	let {
+		classes,
 		children,
 		color,
 		fullwidth,
@@ -22,7 +27,7 @@ function GridContainer({ ...props }) {
 		[classes.fullwidth]: fullwidth,
 		[classes.fullheight]: fullheight,
 		[classes.griditem]: true,
-		[className]: className
+		[className]: className,
 	});
 	return (
 		<Grid container {...rest} className={gridClasses}>
@@ -32,7 +37,7 @@ function GridContainer({ ...props }) {
 }
 
 GridContainer.defaultProps = {
-	className: ""
+	className: "",
 };
 
 GridContainer.propTypes = {
@@ -42,7 +47,7 @@ GridContainer.propTypes = {
 	color: PropTypes.oneOf(colors.names),
 	fullwidth: PropTypes.bool,
 	fullheight: PropTypes.bool,
-	grid: PropTypes.bool
+	grid: PropTypes.bool,
 };
 
 export default withStyles(gridStyle)(GridContainer);

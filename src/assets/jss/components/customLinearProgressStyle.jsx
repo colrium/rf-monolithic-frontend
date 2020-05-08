@@ -1,11 +1,13 @@
+/** @format */
+
 const customLinearProgressStyle = {
 	root: {
 		height: "4px",
 		marginBottom: "20px",
-		overflow: "hidden"
+		overflow: "hidden",
 	},
 	bar: {
-		height: "4px"
+		height: "4px",
 	},
 };
 

@@ -1,3 +1,5 @@
+/** @format */
+
 import withStyles from "@material-ui/core/styles/withStyles";
 import NotFoundImage from "assets/img/not_found.svg";
 import { app } from "assets/jss/app-theme";
@@ -8,12 +10,11 @@ import Typography from "components/Typography";
 import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
+import { withErrorHandler } from "hoc/ErrorHandler";
 //
 import styles from "views/pages/styles";
 
 class Page extends React.Component {
-	
-
 	componentDidMount() {
 		document.title = app.title("Resource Not Found");
 	}
@@ -76,13 +77,7 @@ class Page extends React.Component {
 	}
 }
 const mapStateToProps = state => ({
-	user: state.user
+	user: state.user,
 });
 
-export default compose(
-	withStyles(styles),
-	connect(
-		mapStateToProps,
-		{}
-	)
-)(Page);
+export default compose(withStyles(styles), connect(mapStateToProps, {}), withErrorHandler)(Page);

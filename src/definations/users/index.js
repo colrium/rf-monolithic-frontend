@@ -1,23 +1,30 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon, PeopleOutlined as DefinationContextIcon } from '@material-ui/icons';
-import Button from 'components/Button';
-import React from "react";
-import { Link } from 'react-router-dom';
-import { CountriesHelper } from "utils/Helpers";
+/** @format */
 
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+	PeopleOutlined as DefinationContextIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
+import React from "react";
+import { Link } from "react-router-dom";
+import { CountriesHelper } from "hoc/Helpers";
 
 const presences = {
-	online: {label: "Online", color: "#4caf50"},
-	away: {label: "Away", color: "#ffab00"},
-	offline: {label: "Offline", color: "#4caf50"},
-}
+	online: { label: "Online", color: "#4caf50" },
+	away: { label: "Away", color: "#ffab00" },
+	offline: { label: "Offline", color: "#4caf50" },
+};
 
-export default  {
+export default {
 	name: "users",
 	label: "Users",
 	icon: <DefinationContextIcon />,
 	color: "#01579b",
-	model: 'User',
+	model: "User",
 	endpoint: "/users",
 	cache: false,
 	views: {
@@ -28,7 +35,21 @@ export default  {
 				title: ["honorific", "first_name", "last_name"],
 				subtitle: ["email_address"],
 				tags: ["status", "presence"],
-				body: ["phone_number", "address", "contacts", "user_sector", "company", "job_title", "country", "region", "city", "location_type", "location", "provider", "provider_account_id"],
+				body: [
+					"phone_number",
+					"address",
+					"contacts",
+					"user_sector",
+					"company",
+					"job_title",
+					"country",
+					"region",
+					"city",
+					"location_type",
+					"location",
+					"provider",
+					"provider_account_id",
+				],
 			},
 		},
 		listing: {
@@ -36,18 +57,17 @@ export default  {
 			listview: {
 				avatar: "avatar",
 				primary: ["first_name", "last_name"],
-				secondary: ["email_address", "role", "status"]
+				secondary: ["email_address", "role", "status"],
 			},
 			tableview: {
-				avatar: (entry) => {
-					return 
+				avatar: entry => {
+					return;
 				},
 				title: ["first_name", "last_name"],
 			},
-			
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
 			honorific: {
 				type: "string",
@@ -56,8 +76,8 @@ export default  {
 					type: "text",
 					default: "",
 					required: false,
-					size: 2
-				},		
+					size: 2,
+				},
 			},
 			first_name: {
 				type: "string",
@@ -67,8 +87,8 @@ export default  {
 					type: "text",
 					default: "",
 					required: true,
-					size: 5
-				},		
+					size: 5,
+				},
 			},
 			last_name: {
 				type: "string",
@@ -78,8 +98,8 @@ export default  {
 					type: "text",
 					default: "",
 					required: true,
-					size: 5
-				},			
+					size: 5,
+				},
 			},
 			email_address: {
 				type: "string",
@@ -99,7 +119,7 @@ export default  {
 					type: "phone",
 					default: "",
 					required: false,
-				},			
+				},
 			},
 			presence: {
 				type: "string",
@@ -110,17 +130,17 @@ export default  {
 					required: false,
 				},
 
-				possibilities : {
+				possibilities: {
 					online: "Online",
 					away: "Away",
 					offline: "Offline",
 				},
 
-				colors:	{
+				colors: {
 					online: "#4caf50",
 					away: "#ffab00",
 					offline: "#f44336",
-				}			
+				},
 			},
 
 			address: {
@@ -130,7 +150,7 @@ export default  {
 					type: "textarea",
 					default: "",
 					required: false,
-				},		
+				},
 			},
 			contacts: {
 				type: "string",
@@ -139,7 +159,7 @@ export default  {
 					type: "textarea",
 					default: "",
 					required: false,
-				},		
+				},
 			},
 			job_title: {
 				type: "string",
@@ -149,7 +169,7 @@ export default  {
 					type: "text",
 					default: "",
 					required: false,
-				},				
+				},
 			},
 			country: {
 				type: "string",
@@ -160,7 +180,7 @@ export default  {
 					default: "",
 					required: true,
 				},
-				possibilities : CountriesHelper.names(),		
+				possibilities: CountriesHelper.names(),
 			},
 
 			region: {
@@ -170,7 +190,7 @@ export default  {
 					type: "text",
 					default: "",
 					required: false,
-				},				
+				},
 			},
 
 			city: {
@@ -180,9 +200,9 @@ export default  {
 					type: "text",
 					default: "",
 					required: false,
-				},				
+				},
 			},
-			
+
 			company: {
 				type: "string",
 				label: "Company",
@@ -191,7 +211,7 @@ export default  {
 					type: "text",
 					default: "",
 					required: false,
-				},			
+				},
 			},
 			user_sector: {
 				type: "string",
@@ -203,14 +223,14 @@ export default  {
 					required: true,
 				},
 
-				possibilities : {
+				possibilities: {
 					academic: "Academic",
 					researcher: "Researcher",
 					public_sector: "Public Sector",
 					private_sector: "Private Sector",
 					ngo: "NGO",
 					individual: "Individual",
-				},				
+				},
 			},
 
 			avatar: {
@@ -222,29 +242,9 @@ export default  {
 						acceptedFiles: ["image/*"],
 						filesLimit: 1,
 						dropzoneIcon: "person",
-						dropzoneText: "Click to select or drag n drop image file here",
+						dropzoneText:
+							"Click to select or drag n drop image file here",
 					},
-				},
-				reference: {
-					name: "attachments",
-					service_query: {},
-					resolves:{
-						value: "_id",
-						display: {
-							primary: ["name"],
-							secondary: [],
-							avatar: false,
-						}							
-					},
-				},		
-			},
-
-			documents: {
-				type: ["string"],
-				label: "Documents",
-				input: {
-					type: "file",
-					accepts: ['image/*', 'video/*', 'audio/*', 'application/*'],
 				},
 				reference: {
 					name: "attachments",
@@ -255,7 +255,28 @@ export default  {
 							primary: ["name"],
 							secondary: [],
 							avatar: false,
-						}
+						},
+					},
+				},
+			},
+
+			documents: {
+				type: ["string"],
+				label: "Documents",
+				input: {
+					type: "file",
+					accepts: ["image/*", "video/*", "audio/*", "application/*"],
+				},
+				reference: {
+					name: "attachments",
+					service_query: {},
+					resolves: {
+						value: "_id",
+						display: {
+							primary: ["name"],
+							secondary: [],
+							avatar: false,
+						},
 					},
 				},
 			},
@@ -268,15 +289,15 @@ export default  {
 					default: "",
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return true;
 					},
 					input: (values, user) => {
 						return false;
-					}					
-				},			
+					},
+				},
 			},
-			
+
 			preferences: {
 				type: "object",
 				label: "Preferences",
@@ -286,13 +307,13 @@ export default  {
 					default: "",
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return true;
 					},
 					input: (values, user) => {
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			login_attempts: {
 				type: "integer",
@@ -303,16 +324,16 @@ export default  {
 					default: 0,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
-				},		
+					},
+				},
 			},
 			role: {
 				type: "string",
@@ -323,21 +344,21 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
-				possibilities : {
-					"customer": "Customer",
-					"collector": "Collector",
-					"admin": "Administrator",
-				},				
+				possibilities: {
+					customer: "Customer",
+					collector: "Collector",
+					admin: "Administrator",
+				},
 			},
 			provider: {
 				type: "string",
@@ -348,23 +369,23 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
-				possibilities : {
-					"local": "Local",
-					"google": "Google",
-					"facebook": "Facebook",
-					"twitter": "Twitter",
-					"linkedin": "Linkedin",
-				},				
+				possibilities: {
+					local: "Local",
+					google: "Google",
+					facebook: "Facebook",
+					twitter: "Twitter",
+					linkedin: "Linkedin",
+				},
 			},
 			provider_account_id: {
 				type: "string",
@@ -374,9 +395,9 @@ export default  {
 					type: "text",
 					default: "",
 					required: true,
-				},			
+				},
 			},
-			
+
 			status: {
 				type: "string",
 				label: "Status",
@@ -387,11 +408,11 @@ export default  {
 					required: true,
 				},
 				restrictions: ["admin"],
-				possibilities : {
-					"pending": "Pending",
-					"active": "Active",
-					"inactive": "Inactive",
-				},				
+				possibilities: {
+					pending: "Pending",
+					active: "Active",
+					inactive: "Inactive",
+				},
 			},
 			account_verified: {
 				type: "string",
@@ -402,16 +423,16 @@ export default  {
 					default: "",
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
-				},			
+					},
+				},
 			},
 			account_verifacation_code: {
 				type: "string",
@@ -422,16 +443,16 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			account_verifacation_mode: {
 				type: "string",
@@ -441,23 +462,23 @@ export default  {
 					default: "",
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
-				possibilities : {
-					"none": "None",
-					"admin": "Admin",
-					"email": "Email",
-					"sms": "SMS",
-					"call": "Call",
-				},				
+				possibilities: {
+					none: "None",
+					admin: "Admin",
+					email: "Email",
+					sms: "SMS",
+					call: "Call",
+				},
 			},
 			password_reset_code: {
 				type: "string",
@@ -468,16 +489,16 @@ export default  {
 					default: "",
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
-				},			
+					},
+				},
 			},
 			password_reset_code_expiration: {
 				type: "string",
@@ -488,83 +509,82 @@ export default  {
 					default: "",
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
-				},		
+					},
+				},
 			},
 		},
 		identity: {
 			primary: ["honorific", "first_name", "last_name"],
 			secondary: ["email_address"],
 			avatar: "avatar",
-		},		
+		},
 		dependencies: [],
 		dependants: {
 			commissions: {
 				column: "individual",
-				query: { involvement: "individual" }
+				query: { involvement: "individual" },
 			},
 			teams: {
 				column: "members",
-				query: {}
+				query: {},
 			},
 			tracks: {
 				column: "user",
-				query: {}
+				query: {},
 			},
 			responses: {
 				column: "submitter",
-				query: {}
+				query: {},
 			},
 			orders: {
 				column: "customer",
-				query: {}
+				query: {},
 			},
 			invoices: {
 				column: "owner",
-				query: {}
+				query: {},
 			},
 			payments: {
 				column: "made_by",
-				query: {}
+				query: {},
 			},
 			events: {
 				column: "user",
-				query: {}
+				query: {},
 			},
 			attachments: {
 				column: "attached_by",
-				query: {}
+				query: {},
 			},
 			actionlogs: {
 				column: "catalyst",
-				query: {}
+				query: {},
 			},
 		},
-			
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return false;
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				if (user) {
 					return true;
 				}
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return true;
 				}
@@ -579,107 +599,122 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "users/view/"+id
+				uri: id => {
+					return "users/view/" + id;
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "users/view/"+id } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={"users/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
-					return user && user.role === 'admin'? false : true;
+				restricted: user => {
+					return user && user.role === "admin" ? false : true;
 				},
 				uri: "users/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
+						default: props => {
+							return (
 								<Link to={"users/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New User
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										User
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "users/edit/"+id
+				uri: id => {
+					return "users/edit/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "users/edit/"+id } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={"users/edit/" + id}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return false;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "users/delete/"+id
+				uri: id => {
+					return "users/delete/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
+		},
 	},
-
 };

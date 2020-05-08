@@ -1,3 +1,5 @@
+/** @format */
+
 export default theme => ({
 	root: {
 		padding: "0",
@@ -8,16 +10,16 @@ export default theme => ({
 		"& > *": {
 			display: "inline-block",
 			whiteSpace: "nowrap",
-		}
+		},
 	},
 	valueChip: {
-		margin: theme.spacing(0.5)
+		margin: theme.spacing(0.5),
 	},
 	emptyImage: {
 		maxWidth: 200,
 		width: "100%",
 	},
 	emptyText: {
-		marginTop: theme.spacing(3)
-	}
+		marginTop: theme.spacing(3),
+	},
 });

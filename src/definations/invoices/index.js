@@ -1,16 +1,23 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, ClassOutlined as DefinationContextIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon } from '@material-ui/icons';
-import Button from 'components/Button';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	ClassOutlined as DefinationContextIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-
-export default  {
+export default {
 	name: "invoices",
 	label: "Invoices",
 	icon: <DefinationContextIcon />,
 	color: "#545000",
-	model: 'Invoice',
+	model: "Invoice",
 	endpoint: "/invoices",
 	cache: true,
 	views: {
@@ -19,18 +26,44 @@ export default  {
 			cardview: {
 				title: ["ref_no"],
 				subtitle: ["status"],
-				body: ["order", "owner", "direction", "discount_type", "discount", "apply_tax", "tax_type", "tax", "due_date", "status", "date_generated"],
+				body: [
+					"order",
+					"owner",
+					"direction",
+					"discount_type",
+					"discount",
+					"apply_tax",
+					"tax_type",
+					"tax",
+					"due_date",
+					"status",
+					"date_generated",
+				],
 			},
 			invoiceview: {
-				variants: ["ref_no", "status", "order", "owner", "direction", "discount_type", "discount", "apply_tax", "tax_type", "tax", "due_date", "status", "date_generated"],
-			}
+				variants: [
+					"ref_no",
+					"status",
+					"order",
+					"owner",
+					"direction",
+					"discount_type",
+					"discount",
+					"apply_tax",
+					"tax_type",
+					"tax",
+					"due_date",
+					"status",
+					"date_generated",
+				],
+			},
 		},
 		listing: {
 			default: "tableview",
 			listview: {
 				avatar: false,
 				primary: ["ref_no"],
-				secondary: ["order", "due_date", "status"]
+				secondary: ["order", "due_date", "status"],
 			},
 			tableview: {
 				avatar: false,
@@ -43,7 +76,7 @@ export default  {
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
 			ref_no: {
 				type: "string",
@@ -55,16 +88,16 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
-				},				
+					},
+				},
 			},
 			order: {
 				type: "string",
@@ -76,28 +109,28 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "orders",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["reference", "date_made"],
 							secondary: ["status"],
 							avatar: false,
-						}							
+						},
 					},
-				},				
+				},
 			},
 
 			owner: {
@@ -110,15 +143,15 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						return false
+					display: (entry, user) => {
+						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "users",
@@ -129,11 +162,11 @@ export default  {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
 							avatar: false,
-						}
+						},
 					},
-				},				
+				},
 			},
-			
+
 			direction: {
 				type: "string",
 				label: "Direction",
@@ -144,25 +177,25 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						if (user && user.role==="admin") {
+					display: (entry, user) => {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
-				possibilities : {
-					"outgoing": "Outgoing",
-					"incoming": "Incoming",
-				},			
-			},			
-			
+				possibilities: {
+					outgoing: "Outgoing",
+					incoming: "Incoming",
+				},
+			},
+
 			discount_type: {
 				type: ["string"],
 				label: "Discount type",
@@ -173,22 +206,22 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
-				possibilities : {
-					"none": "None",
-					"amount": "Amount",
-					"percentage": "Percentage",
-					"coupon": "Coupon",
-				},			
+				possibilities: {
+					none: "None",
+					amount: "Amount",
+					percentage: "Percentage",
+					coupon: "Coupon",
+				},
 			},
 			discount: {
 				type: "string",
@@ -200,16 +233,16 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
-				},	
+					},
+				},
 			},
 			apply_tax: {
 				type: "boolean",
@@ -221,18 +254,18 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						if (user && user.role==="admin") {
+					display: (entry, user) => {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
 			},
 			tax_type: {
@@ -245,24 +278,24 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
-						if (user && user.role==="admin") {
+					display: (entry, user) => {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
-				possibilities : {
-					"none": "None",
-					"amount": "Amount",
-					"percentage": "Percentage",
-				},			
+				possibilities: {
+					none: "None",
+					amount: "Amount",
+					percentage: "Percentage",
+				},
 			},
 			tax: {
 				type: "float",
@@ -274,16 +307,16 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
-				},		
+					},
+				},
 			},
 			due_date: {
 				type: "string",
@@ -295,15 +328,15 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
 			},
 			status: {
@@ -316,21 +349,21 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
-				possibilities : {
-					"paid": "Paid",
-					"unpaid": "Unpaid",
-					"partially_paid": "Partially paid",
-				},			
+				possibilities: {
+					paid: "Paid",
+					unpaid: "Unpaid",
+					partially_paid: "Partially paid",
+				},
 			},
 			date_generated: {
 				type: "string",
@@ -342,15 +375,15 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
 						}
 						return true;
-					}					
+					},
 				},
 			},
 		},
@@ -358,34 +391,34 @@ export default  {
 			primary: ["reference"],
 			secondary: ["date_generated"],
 			avatar: false,
-		},		
+		},
 		dependencies: [],
 		dependants: {
 			payments: {
 				column: "invoice",
-				query: { context: "invoice" }
+				query: { context: "invoice" },
 			},
 			actionlogs: {
 				column: "record",
-				query: { context: "Invoice" }
+				query: { context: "Invoice" },
 			},
-		},	
+		},
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return !(user.isAdmin || user.isCustomer);
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				if (user) {
 					return user.isAdmin || user.isCustomer;
 				}
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return user.isAdmin || user.isCustomer;
 				}
@@ -396,41 +429,48 @@ export default  {
 					return user.isAdmin;
 				}
 				if (user && record) {
-					return user.isAdmin || (user.isCustomer && record.owner === user._id);
+					return (
+						user.isAdmin ||
+						(user.isCustomer && record.owner === user._id)
+					);
 				}
 				return false;
 			},
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !(user.isAdmin || user.isCustomer);
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "invoices/view/"+id
+				uri: id => {
+					return "invoices/view/" + id;
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "invoices/view/"+id } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={"invoices/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
@@ -439,73 +479,85 @@ export default  {
 				uri: "invoices/add",
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
+						default: props => {
+							return (
 								<Link to={"invoices/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Invoice
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Invoice
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "invoices/edit/"+id
+				uri: id => {
+					return "invoices/edit/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ "invoices/edit/"+id } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={"invoices/edit/" + id}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return "invoices/delete/"+id
+				uri: id => {
+					return "invoices/delete/" + id;
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
-	},	
+		},
+	},
 };

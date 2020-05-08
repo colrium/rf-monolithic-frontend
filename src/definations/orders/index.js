@@ -1,7 +1,18 @@
-/* eslint-disable react/display-name */
+/**
+ * /* eslint-disable react/display-name
+ *
+ * @format
+ */
+
 import { IconButton } from "@material-ui/core";
 import Chip from "@material-ui/core/Chip";
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, OpenInNewOutlined as OpenInNewIcon, ReceiptOutlined as DefinationContextIcon } from "@material-ui/icons";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+	ReceiptOutlined as DefinationContextIcon,
+} from "@material-ui/icons";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
@@ -12,8 +23,6 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { Link } from "react-router-dom";
 import { attachments as AttachmentsService } from "services";
-
-
 
 export default {
 	name: "orders",
@@ -30,11 +39,17 @@ export default {
 				title: ["reference"],
 				subtitle: ["date_made"],
 				tags: ["apply_coupon", "status"],
-				body: ["customer", "items", "coupon"]
+				body: ["customer", "items", "coupon"],
 			},
 			orderview: {
-				variants: ["reference", "date_made", "items", "customer", "status"]
-			}
+				variants: [
+					"reference",
+					"date_made",
+					"items",
+					"customer",
+					"status",
+				],
+			},
 		},
 		listing: {
 			default: "tableview",
@@ -42,11 +57,11 @@ export default {
 				avatar: false,
 				primary: ["reference"],
 				secondary: ["date_made", "status"],
-				tags: ["apply_coupon", "status"]
+				tags: ["apply_coupon", "status"],
 			},
 			tableview: {
 				avatar: false,
-				title: ["reference"]
+				title: ["reference"],
 			},
 			calendarview: {
 				type: "date",
@@ -63,30 +78,44 @@ export default {
 								<GridContainer>
 									<GridItem xs={12}>
 										{entry.status && (
-											<Typography variant="body2" paragraph>
+											<Typography
+												variant="body2"
+												paragraph
+											>
 												{" "}
 												<b> Status: </b>
 												{entry.status}
 											</Typography>
 										)}
 										{entry.customer && (
-											<Typography variant="body2" paragraph>
+											<Typography
+												variant="body2"
+												paragraph
+											>
 												{" "}
 												<b> Customer </b>
 												<Chip
 													size="small"
 													avatar={
-														entry.customer.avatar ? (
+														entry.customer
+															.avatar ? (
 															<Avatar
-																alt={entry.customer.first_name}
+																alt={
+																	entry
+																		.customer
+																		.first_name
+																}
 																src={AttachmentsService.getAttachmentFileUrl(
-																	entry.customer.avatar
+																	entry
+																		.customer
+																		.avatar
 																)}
 															/>
 														) : null
 													}
 													label={
-														entry.customer.first_name +
+														entry.customer
+															.first_name +
 														" " +
 														entry.customer.last_name
 													}
@@ -94,10 +123,15 @@ export default {
 											</Typography>
 										)}
 										{entry.date_made && (
-											<Typography variant="body2" paragraph>
+											<Typography
+												variant="body2"
+												paragraph
+											>
 												{" "}
 												<b> Date made: </b>
-												{new Date(entry.date_made).format(
+												{new Date(
+													entry.date_made
+												).format(
 													formats.dateformats.datetime
 												)}
 											</Typography>
@@ -107,12 +141,12 @@ export default {
 							),
 							category: "time",
 							dueDateClass: "",
-							start: entry.date_made
+							start: entry.date_made,
 						};
 					});
-				}
-			}
-		}
+				},
+			},
+		},
 	},
 	scope: {
 		columns: {
@@ -123,8 +157,8 @@ export default {
 				input: {
 					type: "text",
 					default: "",
-					required: true
-				}
+					required: true,
+				},
 			},
 			customer: {
 				type: "string",
@@ -133,7 +167,7 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: true
+					required: true,
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -151,7 +185,7 @@ export default {
 							}
 						}
 						return true;
-					}
+					},
 				},
 				reference: {
 					name: "users",
@@ -161,12 +195,11 @@ export default {
 						display: {
 							primary: ["first_name", "last_name"],
 							secondary: ["email_address"],
-							avatar: false
-						}
-					}
-				}
+							avatar: false,
+						},
+					},
+				},
 			},
-			
 
 			notes: {
 				type: "string",
@@ -175,7 +208,6 @@ export default {
 					type: "textarea",
 					default: "",
 					required: false,
-
 				},
 			},
 
@@ -187,8 +219,8 @@ export default {
 					type: "checkbox",
 					default: "",
 					required: false,
-					size: 4
-				}
+					size: 4,
+				},
 			},
 			coupon: {
 				type: "string",
@@ -201,7 +233,7 @@ export default {
 						return true;
 					},
 					required: false,
-					size: 8
+					size: 8,
 				},
 				restricted: {
 					display: () => {
@@ -212,7 +244,7 @@ export default {
 							return values.apply_coupon ? false : true;
 						}
 						return true;
-					}
+					},
 				},
 				reference: {
 					name: "coupons",
@@ -222,10 +254,10 @@ export default {
 						display: {
 							primary: ["name"],
 							secondary: ["code"],
-							avatar: false
-						}
-					}
-				}
+							avatar: false,
+						},
+					},
+				},
 			},
 
 			status: {
@@ -234,7 +266,7 @@ export default {
 				input: {
 					type: "select",
 					default: "",
-					required: true
+					required: true,
 				},
 				possibilities: (entry, user) => {
 					let all_possibilities = {
@@ -249,8 +281,9 @@ export default {
 						refunded: "Refunded",
 						disputed: "Disputed",
 						patially_refunded: "Patially Refunded",
-						awaiting_manual_verification: "Awaiting Manual Verification",
-						completed: "Completed"
+						awaiting_manual_verification:
+							"Awaiting Manual Verification",
+						completed: "Completed",
 					};
 
 					if (user) {
@@ -260,10 +293,11 @@ export default {
 						if (entry) {
 							if (entry.status in all_possibilities) {
 								return {
-									[entry.status]: all_possibilities[entry.status],
+									[entry.status]:
+										all_possibilities[entry.status],
 									drafted: "Drafted",
 									pending: "Pending",
-									cancelled: "Cancelled"
+									cancelled: "Cancelled",
 								};
 							}
 						}
@@ -271,7 +305,7 @@ export default {
 					return {
 						drafted: "Drafted",
 						pending: "Pending",
-						cancelled: "Cancelled"
+						cancelled: "Cancelled",
 					};
 				},
 				restricted: {
@@ -280,8 +314,8 @@ export default {
 					},
 					input: () => {
 						return false;
-					}
-				}
+					},
+				},
 			},
 			date_made: {
 				type: "date",
@@ -290,7 +324,7 @@ export default {
 				input: {
 					type: "datetime",
 					default: "",
-					required: false
+					required: false,
 				},
 				restricted: {
 					display: () => {
@@ -303,39 +337,39 @@ export default {
 							}
 						}
 						return true;
-					}
-				}
-			}
+					},
+				},
+			},
 		},
 		identity: {
 			primary: ["reference"],
 			secondary: ["status"],
-			avatar: false
+			avatar: false,
 		},
 		dependencies: [
 			{
 				name: "users",
-				column: "customer"
-			}
+				column: "customer",
+			},
 		],
 		dependants: {
 			fulfilments: {
 				column: "order",
-				query: {}
+				query: {},
 			},
 			orderitems: {
 				column: "order",
-				query: {}
+				query: {},
 			},
 			payments: {
 				column: "order",
-				query: { context: "order" }
+				query: { context: "order" },
 			},
 			actionlogs: {
 				column: "record",
-				query: { context: "Order" }
-			},				
-		}
+				query: { context: "Order" },
+			},
+		},
 	},
 	access: {
 		restricted: user => {
@@ -362,7 +396,7 @@ export default {
 					return true;
 				}
 				return false;
-			}
+			},
 		},
 		actions: {
 			view_single: {
@@ -377,18 +411,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={"orders/view/" + id} className={className}>
-									<IconButton color="inherit" aria-label="edit">
+								<Link
+									to={"orders/view/" + id}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			create: {
 				restricted: user => {
@@ -400,17 +440,22 @@ export default {
 						default: props => {
 							return (
 								<Link to={"orders/add/"} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left" /> New Order
-                  </Button>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Order
+									</Button>
 								</Link>
 							);
 						},
 						listing: () => {
 							return "";
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			update: {
 				restricted: user => {
@@ -424,21 +469,24 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "grey_text") => {
 							return (
 								<Link
 									to={"orders/edit/" + id}
 									className={className ? className : ""}
 								>
-									<IconButton color="inherit" aria-label="edit">
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							);
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			delete: {
 				restricted: user => {
@@ -452,7 +500,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => { },
+						default: () => {},
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton
@@ -464,10 +512,10 @@ export default {
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							);
-						}
-					}
-				}
-			}
-		}
-	}
+						},
+					},
+				},
+			},
+		},
+	},
 };

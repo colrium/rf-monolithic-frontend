@@ -1,17 +1,23 @@
-import { IconButton } from '@material-ui/core';
-import { Add as AddIcon, DeleteOutlined as DeleteIcon, EditOutlined as EditIcon, LocalOfferOutlined as DefinationContextIcon, OpenInNewOutlined as OpenInNewIcon } from '@material-ui/icons';
-import Button from 'components/Button';
+/** @format */
+
+import { IconButton } from "@material-ui/core";
+import {
+	Add as AddIcon,
+	DeleteOutlined as DeleteIcon,
+	EditOutlined as EditIcon,
+	LocalOfferOutlined as DefinationContextIcon,
+	OpenInNewOutlined as OpenInNewIcon,
+} from "@material-ui/icons";
+import Button from "components/Button";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-
-
-export default  {
+export default {
 	name: "fulfilments",
 	label: "Fulfilments",
 	icon: <DefinationContextIcon />,
 	color: "#001987",
-	model: 'Fulfilment',
+	model: "Fulfilment",
 	endpoint: "/retail/fulfilments",
 	cache: true,
 	views: {
@@ -19,17 +25,29 @@ export default  {
 			default: "cardview",
 			cardview: {
 				title: ["name"],
-				resolveData: (entry) => {
-
-				},
+				resolveData: entry => {},
 				subtitle: ["code"],
-				body: ["status", "customer", "expiration_date", "value_type", "value", "use"],
+				body: [
+					"status",
+					"customer",
+					"expiration_date",
+					"value_type",
+					"value",
+					"use",
+				],
 			},
 			calendarview: {
 				title: ["name"],
 				subtitle: ["code"],
-				body: ["status", "customer", "expiration_date", "value_type", "value", "use"],
-			}
+				body: [
+					"status",
+					"customer",
+					"expiration_date",
+					"value_type",
+					"value",
+					"use",
+				],
+			},
 		},
 		listing: {
 			default: "tableview",
@@ -39,9 +57,8 @@ export default  {
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
-
 			order: {
 				type: "string",
 				label: "Order",
@@ -53,13 +70,13 @@ export default  {
 				reference: {
 					name: "orders",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["reference", "date_made"],
 							secondary: ["status"],
 							avatar: false,
-						}							
+						},
 					},
 				},
 			},
@@ -72,11 +89,11 @@ export default  {
 					default: "survey",
 					required: true,
 				},
-				possibilities : {
-					"survey" : "Survey(s)",
-					"response" : "Response(s)",
-					"file" : "File(s)",
-				}
+				possibilities: {
+					survey: "Survey(s)",
+					response: "Response(s)",
+					file: "File(s)",
+				},
 			},
 
 			surveys: {
@@ -86,7 +103,7 @@ export default  {
 					type: "multiselect",
 					required: (values, user) => {
 						if (values) {
-							 return values.fulfilment === "survey";
+							return values.fulfilment === "survey";
 						}
 						return false;
 					},
@@ -95,13 +112,13 @@ export default  {
 							return values.fulfilment !== "survey";
 						}
 						return false;
-					}
+					},
 				},
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
 							return !(user.isAdmin || user.isCustomer);
-						}					
+						}
 						return true;
 					},
 					input: (values, user) => {
@@ -109,20 +126,20 @@ export default  {
 							return !(values.fulfilment === "survey");
 						}
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "surveys",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["title"],
 							secondary: ["status"],
 							avatar: false,
-						}							
+						},
 					},
-				},		
+				},
 			},
 
 			responses: {
@@ -142,13 +159,13 @@ export default  {
 							return values.fulfilment !== "response";
 						}
 						return false;
-					}
+					},
 				},
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
 							return !(user.isAdmin || user.isCustomer);
-						}					
+						}
 						return true;
 					},
 					input: (values, user) => {
@@ -156,20 +173,20 @@ export default  {
 							return !(values.fulfilment === "response");
 						}
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "responses",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["response_type"],
 							secondary: ["response_date"],
 							avatar: false,
-						}							
+						},
 					},
-				},		
+				},
 			},
 
 			files: {
@@ -182,7 +199,7 @@ export default  {
 					display: (entry, user) => {
 						if (user) {
 							return !(user.isAdmin || user.isCustomer);
-						}					
+						}
 						return true;
 					},
 					input: (values, user) => {
@@ -192,22 +209,21 @@ export default  {
 							}
 						}
 						return true;
-					}					
+					},
 				},
 				reference: {
 					name: "attachments",
 					service_query: {},
-					resolves:{
+					resolves: {
 						value: "_id",
 						display: {
 							primary: ["name"],
 							secondary: ["readable_size"],
 							avatar: false,
-						}							
+						},
 					},
-				},		
+				},
 			},
-
 
 			notes: {
 				type: "string",
@@ -226,31 +242,30 @@ export default  {
 					default: Date.now(),
 				},
 			},
-
 		},
 		identity: {
 			primary: ["fulfilment_type", "date_made"],
 			secondary: ["order"],
 			avatar: false,
-		},		
+		},
 		dependencies: [],
-		dependants: [],		
+		dependants: [],
 	},
-	access:{
-		restricted: (user) => {
+	access: {
+		restricted: user => {
 			if (user) {
 				return !(user.isCustomer || user.isAdmin);
 			}
 			return true;
 		},
-		view:{
-			summary: (user) => {
+		view: {
+			summary: user => {
 				if (user) {
 					return user.isCustomer || user.isAdmin;
 				}
 				return false;
 			},
-			all: (user) => {
+			all: user => {
 				if (user) {
 					return user.isCustomer || user.isAdmin;
 				}
@@ -265,106 +280,135 @@ export default  {
 		},
 		actions: {
 			view_single: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
 						return !(user.isCustomer || user.isAdmin);
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("fulfilments/view/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"fulfilments/view/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
-					inline: {						
-						default: (id, className) => {
-
-						},
-						listing: (id, className="grey_text") => {
+					inline: {
+						default: (id, className) => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("fulfilments/view/"+id).toUriWithDashboardPrefix() } className={ className }>
-									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+								<Link
+									to={(
+										"fulfilments/view/" + id
+									).toUriWithDashboardPrefix()}
+									className={className}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			create: {
-				restricted: (user) => {
-					return !(user.isAdmin);
+				restricted: user => {
+					return !user.isAdmin;
 				},
-				uri: ("fulfilments/add".toUriWithDashboardPrefix()),
+				uri: "fulfilments/add".toUriWithDashboardPrefix(),
 				link: {
 					inline: {
-						default: (props) => {
-							return ( 
-								<Link to={("fulfilments/add/").toUriWithDashboardPrefix()} {...props}>
-									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Fulfilment
+						default: props => {
+							return (
+								<Link
+									to={"fulfilments/add/".toUriWithDashboardPrefix()}
+									{...props}
+								>
+									<Button
+										color="primary"
+										outlined
+										aria-label="add"
+									>
+										<AddIcon className="float-left" /> New
+										Fulfilment
 									</Button>
 								</Link>
-							)
+							);
 						},
-						listing: (props) => {
-							return ""
+						listing: props => {
+							return "";
 						},
-					}					
-				}
+					},
+				},
 			},
 			update: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
-						return !(user.isAdmin);
+						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("fulfilments/edit/"+id).toUriWithDashboardPrefix();
+				uri: id => {
+					return (
+						"fulfilments/edit/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
-
-						},
-						listing: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("fulfilments/edit/"+id).toUriWithDashboardPrefix() } className={ className? className : ""}>
-									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+								<Link
+									to={(
+										"fulfilments/edit/" + id
+									).toUriWithDashboardPrefix()}
+									className={className ? className : ""}
+								>
+									<IconButton
+										color="inherit"
+										aria-label="edit"
+									>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
 			delete: {
-				restricted: (user) => {
+				restricted: user => {
 					if (user) {
-						return !(user.isAdmin);
+						return !user.isAdmin;
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("fulfilments/delete/"+id).toUriWithDashboardPrefix()
+				uri: id => {
+					return (
+						"fulfilments/delete/" + id
+					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
-
-						},
-						listing: (id, className="error_text", onClick) => {
+						default: (id, className = "error_text") => {},
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton
+									color="inherit"
+									className={className ? className : ""}
+									aria-label="delete"
+									onClick={onClick}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
-							)
+							);
 						},
-					}					
-				}
+					},
+				},
 			},
-		}			
-	},	
+		},
+	},
 };

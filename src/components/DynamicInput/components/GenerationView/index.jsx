@@ -1,61 +1,17 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
+/** @format */
 
-
-import Checkbox from "@material-ui/core/Checkbox";
-import Collapse from "@material-ui/core/Collapse";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormLabel from "@material-ui/core/FormLabel";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Radio from "@material-ui/core/Radio";
-
-import IconButton from "@material-ui/core/IconButton";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import withStyles from "@material-ui/core/styles/withStyles";
-import TextField from "@material-ui/core/TextField";
-import Tooltip from "@material-ui/core/Tooltip";
-import AddIcon from "@material-ui/icons/Add";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import MenuIcon from "@material-ui/icons/MoreVert";
-import MoveDownIcon from "@material-ui/icons/ArrowDownward";
-import MoveUpIcon from "@material-ui/icons/ArrowUpward";
-
-import AutoComplete from "components/AutoComplete";
-import Button from "components/Button";
+import classNames from "classnames";
+import { CheckboxInput, DateInput, FileInput, MapInput, RadioInput, SelectInput, TextInput, WysiwygInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
-import {
-	TextInput,
-	DateInput,
-	DateTimeInput,
-	RadioInput,
-	TimeInput,	
-	CheckboxInput,
-	RadioGroupInput,
-	SliderInput,
-	TranferListInput,
-	InputFormHelper,
-	MultiSelectInput,
-	SelectInput,
-	FileInput,
-	MapInput,
-	WysiwygInput,
-	DynamicInput,
-} from "components/FormInputs";
-
-import withRoot from "utils/withRoot";
+import PropTypes from "prop-types";
+import React from "react";
+import withRoot from "hoc/withRoot";
 import styles from "./styles";
+
+
+
 
 
 
@@ -85,32 +41,76 @@ class GenerationView extends React.Component {
 		select: "Select",
 		multiselect: "Multi Select",
 		transferlist: "Transferlist",
-		file: "File"
+		file: "File",
 	};
 
 	constructor(props) {
 		super(props);
-		const { value, blueprint, name, readOnly, required, disabled, validate, helperText, errors, error } = this.props;
-		this.state = { ...this.state, blueprint: JSON.isJSON(blueprint) ? blueprint : {}, value: JSON.isJSON(value) ? value : {}, name: name, readOnly: readOnly, required: required, disabled: disabled, validate: validate, helperText: helperText, errors: errors, error: error };
+		const {
+			value,
+			blueprint,
+			name,
+			readOnly,
+			required,
+			disabled,
+			validate,
+			helperText,
+			errors,
+			error,
+		} = this.props;
+		this.state = {
+			...this.state,
+			blueprint: JSON.isJSON(blueprint) ? blueprint : {},
+			value: JSON.isJSON(value) ? value : {},
+			name: name,
+			readOnly: readOnly,
+			required: required,
+			disabled: disabled,
+			validate: validate,
+			helperText: helperText,
+			errors: errors,
+			error: error,
+		};
 		this.handleChange = this.handleChange.bind(this);
 		this.mounted = false;
 	}
-	
+
 	componentDidMount() {
 		this.mounted = true;
-		
 	}
 
 	componentWillUnmount() {
 		this.mounted = false;
 	}
 
-
 	getSnapshotBeforeUpdate(prevProps) {
 		this.mounted = false;
 		if (!Object.areEqual(prevProps, this.props)) {
-			const { value, blueprint, name, readOnly, required, disabled, validate, helperText, errors, error } = this.props;
-			this.state = {...this.state, blueprint: JSON.isJSON(blueprint) ? blueprint : {}, value: JSON.isJSON(value) ? value : {}, name: name, readOnly: readOnly, required: required, disabled: disabled, validate: validate, helperText: helperText, errors: errors, error: error }
+			const {
+				value,
+				blueprint,
+				name,
+				readOnly,
+				required,
+				disabled,
+				validate,
+				helperText,
+				errors,
+				error,
+			} = this.props;
+			this.state = {
+				...this.state,
+				blueprint: JSON.isJSON(blueprint) ? blueprint : {},
+				value: JSON.isJSON(value) ? value : {},
+				name: name,
+				readOnly: readOnly,
+				required: required,
+				disabled: disabled,
+				validate: validate,
+				helperText: helperText,
+				errors: errors,
+				error: error,
+			};
 		}
 	}
 
@@ -120,7 +120,6 @@ class GenerationView extends React.Component {
 			this.setState({ blueprint: JSON.isJSON(blueprint) ? blueprint : {}, value: JSON.isJSON(value) ? value : {}, name: name, readOnly: readOnly, required: required, disabled: disabled, validate: validate, helperText: helperText, errors: errors, error: error });
 		}*/
 	}
-
 
 	async triggerOnChange(value = false) {
 		const { onChange } = this.props;
@@ -133,192 +132,279 @@ class GenerationView extends React.Component {
 	}
 
 	handleChange = name => value => {
-		let newValue = JSON.isJSON(this.state.value)? JSON.parse(JSON.stringify(this.state.value)) : {};
+		let newValue = JSON.isJSON(this.state.value)
+			? JSON.parse(JSON.stringify(this.state.value))
+			: {};
 		newValue[name] = value;
 		console.log("handleChange ", name, value);
-		this.setState({value: newValue});
+		this.setState({ value: newValue });
 		this.triggerOnChange(newValue);
-	}
-	
-	renderInputField(properties){
+	};
+
+	renderInputField(properties) {
 		const { textfield_variant, readOnly, disabled } = this.props;
-		const {input, name, label, group, possibilities } = properties;
+		const { input, name, label, group, possibilities } = properties;
 		const value = this.state.value[name];
 		if (JSON.isJSON(input)) {
 			let { type, size, props, ...rest } = input;
-			const restricted = readOnly || disabled || rest.disabled || rest.readOnly || rest.readonly;
+			const restricted =
+				readOnly ||
+				disabled ||
+				rest.disabled ||
+				rest.readOnly ||
+				rest.readonly;
 			size = Number.parseNumber(size, 12);
-			if ((type === "select" || type === "multiselect") && JSON.isJSON(possibilities)) {
+			if (
+				(type === "select" || type === "multiselect") &&
+				JSON.isJSON(possibilities)
+			) {
 				return (
-					<GridItem xs={12} md={Number.parseNumber(size, 12)} key={String.isString(group) ? (group + "-field-" + name) : ("field-" + name)}>
+					<GridItem
+						xs={12}
+						md={Number.parseNumber(size, 12)}
+						key={
+							String.isString(group)
+								? group + "-field-" + name
+								: "field-" + name
+						}
+					>
 						<SelectInput
 							textFieldProps={{
 								label: label,
 								InputLabelProps: {
-									shrink: true
+									shrink: true,
 								},
 								variant: textfield_variant,
 								disabled: restricted,
-								required: rest.required
-							}} 
-							label={label} 
-							name={name} 
+								required: rest.required,
+							}}
+							label={label}
+							name={name}
 							placeholder={"Select " + label}
-							options={possibilities} 
+							options={possibilities}
 							isMulti={type === "multiselect"}
 							value={value}
-							onChange={value => this.handleChange(name, value)} 
-							{...rest} 
-							{...(JSON.isJSON(props)? props : {})}
+							onChange={value => this.handleChange(name, value)}
+							{...rest}
+							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem> );
-			}
-			else if (["email", "number", "phone", "text"].includes(type)) {
+					</GridItem>
+				);
+			} else if (["email", "number", "phone", "text"].includes(type)) {
 				return (
-					<GridItem xs={12} md={Number.parseNumber(size, 12)} key={String.isString(group) ? (group + "-field-" + name) : ("field-" + name)}>
-						<TextInput 
-							type={type} 
-							label={label} 
+					<GridItem
+						xs={12}
+						md={Number.parseNumber(size, 12)}
+						key={
+							String.isString(group)
+								? group + "-field-" + name
+								: "field-" + name
+						}
+					>
+						<TextInput
+							type={type}
+							label={label}
 							name={name}
 							variant={textfield_variant}
 							value={value}
-							onChange={value => this.handleChange(name, value)}  
-							{...rest} 
-							{...(JSON.isJSON(props)? props : {})}
-						 /> 
-					</GridItem>);
-			}
-			else if (type === "textarea") {
+							onChange={value => this.handleChange(name, value)}
+							{...rest}
+							{...(JSON.isJSON(props) ? props : {})}
+						/>
+					</GridItem>
+				);
+			} else if (type === "textarea") {
 				return (
-					<GridItem xs={12} md={Number.parseNumber(size, 12)} key={String.isString(group) ? (group + "-field-" + name) : ("field-" + name)}>
-						<TextInput 
-							type={type} 
-							label={label} 
+					<GridItem
+						xs={12}
+						md={Number.parseNumber(size, 12)}
+						key={
+							String.isString(group)
+								? group + "-field-" + name
+								: "field-" + name
+						}
+					>
+						<TextInput
+							type={type}
+							label={label}
 							name={name}
 							multiline
 							rows={4}
 							variant={textfield_variant}
 							value={value}
-							onChange={this.handleChange(name)} 
-							{...rest} 
-							{...(JSON.isJSON(props)? props : {})} 
-						/> 
-					</GridItem>);
-			}
-			else if (type === "checkbox") {
-				return (
-					<GridItem xs={12} md={Number.parseNumber(size, 12)} key={String.isString(group) ? (group + "-field-" + name) : ("field-" + name)}>
-						<CheckboxInput 
-							label={label} 
-							name={name} 
-							value={value}
-							onChange={this.handleChange(name)} 
-							{...rest} 
-							{...(JSON.isJSON(props)? props : {})}
+							onChange={this.handleChange(name)}
+							{...rest}
+							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>);
-			}
-			else if (type === "radio") {
+					</GridItem>
+				);
+			} else if (type === "checkbox") {
 				return (
-					<GridItem xs={12} md={Number.parseNumber(size, 12)} key={String.isString(group) ? (group + "-field-" + name) : ("field-" + name)}>
-						<RadioInput 
-							label={label} 
+					<GridItem
+						xs={12}
+						md={Number.parseNumber(size, 12)}
+						key={
+							String.isString(group)
+								? group + "-field-" + name
+								: "field-" + name
+						}
+					>
+						<CheckboxInput
+							label={label}
 							name={name}
 							value={value}
-							onChange={this.handleChange(name)}  
-							{...rest} 
-							{...(JSON.isJSON(props)? props : {})}
+							onChange={this.handleChange(name)}
+							{...rest}
+							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>);
-			}
-			else if (type === "file") {
+					</GridItem>
+				);
+			} else if (type === "radio") {
 				return (
-					<GridItem xs={12} md={Number.parseNumber(size, 12)} key={String.isString(group) ? (group + "-field-" + name) : ("field-" + name)}>
-						<FileInput 
-							label={label} 
-							name={name} 
+					<GridItem
+						xs={12}
+						md={Number.parseNumber(size, 12)}
+						key={
+							String.isString(group)
+								? group + "-field-" + name
+								: "field-" + name
+						}
+					>
+						<RadioInput
+							label={label}
+							name={name}
 							value={value}
 							onChange={this.handleChange(name)}
-							{...rest} 
-							{...(JSON.isJSON(props)? props : {})} 
+							{...rest}
+							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>);
-			}
-			else if (type === "date") {
+					</GridItem>
+				);
+			} else if (type === "file") {
 				return (
-					<GridItem xs={12} md={Number.parseNumber(size, 12)} key={String.isString(group) ? (group + "-field-" + name) : ("field-" + name)}>
-						<DateInput 
-							label={label} 
+					<GridItem
+						xs={12}
+						md={Number.parseNumber(size, 12)}
+						key={
+							String.isString(group)
+								? group + "-field-" + name
+								: "field-" + name
+						}
+					>
+						<FileInput
+							label={label}
+							name={name}
+							value={value}
+							onChange={this.handleChange(name)}
+							{...rest}
+							{...(JSON.isJSON(props) ? props : {})}
+						/>
+					</GridItem>
+				);
+			} else if (type === "date") {
+				return (
+					<GridItem
+						xs={12}
+						md={Number.parseNumber(size, 12)}
+						key={
+							String.isString(group)
+								? group + "-field-" + name
+								: "field-" + name
+						}
+					>
+						<DateInput
+							label={label}
 							name={name}
 							autoOk
 							variant="inline"
 							openTo="date"
 							invalidDateMessage=""
 							inputVariant={textfield_variant}
-							value={value} 
-							onChange={this.handleChange(name)} 
-							{...rest} 
-							{...(JSON.isJSON(props)? props : {})} 
+							value={value}
+							onChange={this.handleChange(name)}
+							{...rest}
+							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>);
-			}
-
-			else if (type === "map") {
+					</GridItem>
+				);
+			} else if (type === "map") {
 				return (
-					<GridItem xs={12} md={Number.parseNumber(size, 12)} key={String.isString(group) ? (group + "-field-" + name) : ("field-" + name)}>
-						<MapInput 
-							label={label} 
+					<GridItem
+						xs={12}
+						md={Number.parseNumber(size, 12)}
+						key={
+							String.isString(group)
+								? group + "-field-" + name
+								: "field-" + name
+						}
+					>
+						<MapInput
+							label={label}
 							name={name}
-							value={value} 
-							onChange={this.handleChange(name)} 
-							{...rest} 
-							{...(JSON.isJSON(props)? props : {})}  
+							value={value}
+							onChange={this.handleChange(name)}
+							{...rest}
+							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>);
-			}
-			else if (type === "wysiwyg") {
-
+					</GridItem>
+				);
+			} else if (type === "wysiwyg") {
 				return (
-					<GridItem xs={12} md={Number.parseNumber(size, 12)} key={String.isString(group) ? (group + "-field-" + name) : ("field-" + name)}>
-						<WysiwygInput 
-							label={label} 
+					<GridItem
+						xs={12}
+						md={Number.parseNumber(size, 12)}
+						key={
+							String.isString(group)
+								? group + "-field-" + name
+								: "field-" + name
+						}
+					>
+						<WysiwygInput
+							label={label}
 							name={name}
 							variant={textfield_variant}
 							value={value}
-							onChange={this.handleChange(name)}  
-							{...rest} 
-							{...(JSON.isJSON(props)? props : {})}  
+							onChange={this.handleChange(name)}
+							{...rest}
+							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>);
+					</GridItem>
+				);
 			}
+		} else {
+			return <div></div>;
 		}
-		else{
-			return (
-				<div></div>
-			);
-		}
-		
 	}
 
-
-	
 	renderInputGroup(name, properties) {
-		const group_inputs = Array.isArray(properties.value) ? properties.value : [];
+		const group_inputs = Array.isArray(properties.value)
+			? properties.value
+			: [];
 		return (
-			<GridItem xs={12} md={Number.isNumber(properties.size) ? properties.size : 12} className="p-0" key={"group-" + name}>
-				<GridContainer className="m-0"> { properties.label + (properties.required ? "*" : "") } </GridContainer>
-				<GridContainer className="p-0 m-0"> 
-					{group_inputs.length > 0 && group_inputs.map((field_obj, field_index) => this.renderInputField(field_obj))}
+			<GridItem
+				xs={12}
+				md={Number.isNumber(properties.size) ? properties.size : 12}
+				className="p-0"
+				key={"group-" + name}
+			>
+				<GridContainer className="m-0">
+					{" "}
+					{properties.label + (properties.required ? "*" : "")}{" "}
+				</GridContainer>
+				<GridContainer className="p-0 m-0">
+					{group_inputs.length > 0 &&
+						group_inputs.map((field_obj, field_index) =>
+							this.renderInputField(field_obj)
+						)}
 				</GridContainer>
 			</GridItem>
 		);
 	}
-	
-	renderInput(name, properties){
+
+	renderInput(name, properties) {
 		if (properties.type === "group") {
 			return this.renderInputGroup(name, properties);
-		}
-		else if (properties.type === "field") {
+		} else if (properties.type === "field") {
 			return this.renderInputField(properties);
 		}
 	}
@@ -326,18 +412,22 @@ class GenerationView extends React.Component {
 	render() {
 		const { classes, className } = this.props;
 		const rootClassName = classNames({
-			[className]: className
-		})
+			[className]: className,
+		});
 		return (
-			<GridContainer className={ rootClassName }>
-				{ Object.entries(this.state.blueprint).map(([name, properties], cursor) => this.renderInput(name, properties))}
+			<GridContainer className={rootClassName}>
+				{Object.entries(
+					this.state.blueprint
+				).map(([name, properties], cursor) =>
+					this.renderInput(name, properties)
+				)}
 			</GridContainer>
 		);
 	}
 }
 
 GenerationView.propTypes = {
-	classes: PropTypes.object.isRequired,    
+	classes: PropTypes.object.isRequired,
 	className: PropTypes.string,
 	blueprint: PropTypes.object.isRequired,
 	value: PropTypes.object,

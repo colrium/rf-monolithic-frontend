@@ -1,25 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
+/** @format */
+
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { appendNavHistory } from "state/actions/ui/nav";
-import { app } from "assets/jss/app-theme";
-import withRoot from "utils/withRoot";
+import { withErrorHandler } from "hoc/ErrorHandler";
+
+import ContactSettingsWidget from "views/widgets/Settings/Contact";
 import GeneralSettingsWidget from "views/widgets/Settings/General";
 import LegalSettingsWidget from "views/widgets/Settings/Legal";
-import SocialSettingsWidget from "views/widgets/Settings/Social";
-import ContactSettingsWidget from "views/widgets/Settings/Contact";
 import ReadingSettingsWidget from "views/widgets/Settings/Reading";
-
-
+import SocialSettingsWidget from "views/widgets/Settings/Social";
+import TrackingSettingsWidget from "views/widgets/Settings/Tracking";
+import MobileSettingsWidget from "views/widgets/Settings/Mobile";
 
 function TabPanel(props) {
 	let [state, setState] = useState(props);
-	useEffect(() => {  setState(props); }, [props]);
+	useEffect(() => {
+		setState(props);
+	}, [props]);
 	const { children, value, index, ...other } = state;
 	return (
 		<GridContainer
@@ -28,26 +30,30 @@ function TabPanel(props) {
 			hidden={value !== index}
 			id={`settings-tabpanel-${index}`}
 			aria-labelledby={`settings-tab-${index}`}
-			className={value === index? "flex p-0" : "hidden"}
+			className={value === index ? "flex p-0" : "hidden"}
 			{...other}
 		>
-			{value === index && <GridItem xs={12} className="p-0">{children}</GridItem>}
+			{value === index && (
+				<GridItem xs={12} className="p-0">
+					{children}
+				</GridItem>
+			)}
 		</GridContainer>
 	);
 }
 
-
 class Page extends React.Component {
-
-	state={
+	state = {
 		active_tab: "general",
 		tabs: {
-			general: "General",
+			general: "General",			
 			legal: "Legal",
 			reading: "Reading",
 			social: "Social",
 			contact: "Contact",
-		}
+			tracking: "Tracking",
+			mobile: "Mobile App",
+		},
 	};
 
 	constructor(props) {
@@ -55,8 +61,10 @@ class Page extends React.Component {
 		const { nav } = this.props;
 		for (var i = 0; i < nav.entries.length; i++) {
 			if (nav.entries[i].name === "settings") {
-				this.state.active_tab = nav.entries[i].view? nav.entries[i].view : "general";
-			}			
+				this.state.active_tab = nav.entries[i].view
+					? nav.entries[i].view
+					: "general";
+			}
 		}
 		this.handleOnTabChange = this.handleOnTabChange.bind(this);
 	}
@@ -73,7 +81,7 @@ class Page extends React.Component {
 		}
 	}
 
-	handleOnTabChange(event, newValue){
+	handleOnTabChange(event, newValue) {
 		this.setState({ active_tab: newValue });
 		const { location, appendNavHistory } = this.props;
 		if (appendNavHistory && location) {
@@ -87,14 +95,21 @@ class Page extends React.Component {
 	}
 
 	render() {
-		const { device:{ window_size } } = this.props;
+		const {
+			device: { window_size },
+		} = this.props;
 		let tabs_orientation = "horizontal";
 		if (JSON.isJSON(window_size)) {
-			tabs_orientation = window_size.width >= 960? "vertical" : "horizontal";
+			tabs_orientation =
+				window_size.width >= 960 ? "vertical" : "horizontal";
 		}
 		return (
 			<GridContainer className="px-2 pt-8">
-				<GridItem xs={12} md={tabs_orientation === "vertical"? 3 : 12} lg={tabs_orientation === "vertical"? 2 : 12}>
+				<GridItem
+					xs={12}
+					md={tabs_orientation === "vertical" ? 3 : 12}
+					lg={tabs_orientation === "vertical" ? 2 : 12}
+				>
 					<Tabs
 						orientation={tabs_orientation}
 						variant="scrollable"
@@ -105,23 +120,52 @@ class Page extends React.Component {
 						aria-label="Settings tabs"
 						className="border-0"
 					>
-						{Object.entries(this.state.tabs).map(([name, value], cursor) => (
-							<Tab label={value} value={name} id={"settings-tab-"+name} aria-controls={"settings-tabpanel-"+name} key={"settings-tab-"+cursor}/>
-						))}
+						{Object.entries(this.state.tabs).map(
+							([name, value], cursor) => (
+								<Tab
+									label={value}
+									value={name}
+									id={"settings-tab-" + name}
+									aria-controls={"settings-tabpanel-" + name}
+									key={"settings-tab-" + cursor}
+								/>
+							)
+						)}
 					</Tabs>
-
 				</GridItem>
 
-				<GridItem xs={12} md={tabs_orientation === "vertical"? 9 : 12} lg={tabs_orientation === "vertical"? 10 : 12} >
-					{ Object.entries(this.state.tabs).map(([name, value], cursor) => (
-						<TabPanel value={this.state.active_tab} index={name} key={"settings-tabpanel-"+cursor}>
-							{name === "general" && <GeneralSettingsWidget /> }
-							{name === "legal" && <LegalSettingsWidget /> }	
-							{name === "social" && <SocialSettingsWidget /> }
-							{name === "reading" && <ReadingSettingsWidget /> }
-							{name === "contact" && <ContactSettingsWidget /> }							
-						</TabPanel>
-					))}
+				<GridItem
+					xs={12}
+					md={tabs_orientation === "vertical" ? 9 : 12}
+					lg={tabs_orientation === "vertical" ? 10 : 12}
+				>
+					{Object.entries(this.state.tabs).map(
+						([name, value], cursor) => (
+							<TabPanel
+								value={this.state.active_tab}
+								index={name}
+								key={"settings-tabpanel-" + cursor}
+							>
+								{name === "general" && (
+									<GeneralSettingsWidget />
+								)}
+								{name === "legal" && <LegalSettingsWidget />}
+								{name === "social" && <SocialSettingsWidget />}
+								{name === "reading" && (
+									<ReadingSettingsWidget />
+								)}
+								{name === "contact" && (
+									<ContactSettingsWidget />
+								)}
+								{name === "tracking" && (
+									<TrackingSettingsWidget />
+								)}
+								{name === "mobile" && (
+									<MobileSettingsWidget />
+								)}
+							</TabPanel>
+						)
+					)}
 				</GridItem>
 			</GridContainer>
 		);
@@ -134,5 +178,4 @@ const mapStateToProps = state => ({
 	device: state.device,
 });
 
-
-export default withRoot( connect(mapStateToProps, { appendNavHistory } )(Page));
+export default withErrorHandler(connect(mapStateToProps, { appendNavHistory })(Page));

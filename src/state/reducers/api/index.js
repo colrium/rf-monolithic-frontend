@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	API_CALL_REQUEST,
 	API_SET_LOADING,
@@ -8,23 +10,26 @@ import {
 
 const initialState = {
 	volatile: true,
-	base : {
-		options: { uri: "/", type:"records", params:{}, data: {} },
+	base: {
+		options: { uri: "/", type: "records", params: {}, data: {} },
 		loading: false,
 		response: null,
 		complete: false,
 		error: null,
-		cache: true
-	}
+		cache: true,
+	},
 };
-
 
 export default (state = initialState, action = {}) => {
 	switch (action.type) {
 		case API_CALL_REQUEST: {
 			return {
 				...state,
-				[action.key]: { ...state[action.key], options: action.options, cache: action.cache },
+				[action.key]: {
+					...state[action.key],
+					options: action.options,
+					cache: action.cache,
+				},
 			};
 		}
 		case API_SET_LOADING: {
@@ -36,13 +41,19 @@ export default (state = initialState, action = {}) => {
 		case API_SET_RESPONSE: {
 			return {
 				...state,
-				[action.key]: { ...state[action.key], response: action.response },
+				[action.key]: {
+					...state[action.key],
+					response: action.response,
+				},
 			};
 		}
 		case API_SET_COMPLETE: {
 			return {
 				...state,
-				[action.key]: { ...state[action.key], complete: action.complete },
+				[action.key]: {
+					...state[action.key],
+					complete: action.complete,
+				},
 			};
 		}
 		case API_SET_ERROR: {
@@ -50,7 +61,7 @@ export default (state = initialState, action = {}) => {
 				...state,
 				[action.key]: { ...state[action.key], error: action.error },
 			};
-		}		
+		}
 		default: {
 			return state;
 		}
