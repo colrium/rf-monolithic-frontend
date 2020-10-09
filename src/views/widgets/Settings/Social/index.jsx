@@ -34,7 +34,7 @@ function Widget(props) {
 
 	let context_settings = settings.social;
 
-	const handleOnChange = name => async value => {
+	const handleOnChange = name => async (value, event) => {
 		setLoading({...loading, [name] : true});
 		setErrors({...errors, [name] : false});
 		let new_value = { ...context_settings, [name]: value };
@@ -61,7 +61,7 @@ function Widget(props) {
 							label={value}
 							type="text"
 							defaultValue={context_settings[key]}
-							onChange={handleOnChange(key)}
+							onBlur={handleOnChange(key)}
 							helperText={alerts[key]}
 							disabled={loading[key]}
 							error={errors[key]}

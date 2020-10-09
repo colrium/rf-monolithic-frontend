@@ -10,24 +10,38 @@ export default theme => ({
 		},
 	},
 	dropZoneContainer: {
-		padding: "0 !important",
-		margin: "0 !important",
+		padding: 0,
+		margin: 0,
 	},
 
 	dropZone: {
 		position: "relative",
 		width: "100%",
-		minHeight: "250px",
 		background: "transparent",
 		border: "1px dashed #C8C8C8",
 		borderRadius: "5px",
-		padding: theme.spacing(),
+		padding: 0,
+		cursor: "pointer",
+		boxSizing: "border-box",
+	},
+
+	dropZoneFilled: {
+		position: "relative",
+		width: "100%",
+		background: "rgba(0,0,0,0.1)",
+		border: "0px solid transparent",
+		borderBottom: "1px solid "+theme.palette.text.secondary,
+		borderRadius: "5px",
+		borderBottomLeftRadius: 0,
+		borderBottomRightRadius: 0,
+		padding: 0,
 		cursor: "pointer",
 		boxSizing: "border-box",
 	},
 
 	dropZoneInner: {
 		height: "100%",
+		padding: 0,
 	},
 
 	stripes: {

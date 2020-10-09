@@ -9,17 +9,22 @@ import GridItem from "components/Grid/GridItem";
 import LazyModule from "components/LazyModule";
 import PropTypes from "prop-types";
 import React from "react";
-//Redux imports
+import Icon from '@mdi/react'
+import { mdiOverscan, mdiArrowCollapseAll  } from '@mdi/js';
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { appendNavHistory } from "state/actions/ui/nav";
 import {withErrorHandler} from "hoc/ErrorHandler";
+import { withTheme } from '@material-ui/core/styles';
 //
 import styles from "views/pages/styles";
 
 
 
 class Page extends React.Component {
+	state = {
+		mainMapInFullWidth: false,
+	};
 
 	componentDidMount() {
 		const { location, appendNavHistory } = this.props;
@@ -41,6 +46,7 @@ class Page extends React.Component {
 			app: {preferences},
 			auth,
 			location,
+			theme,
 		} = this.props;
 		/*let homepageSections = {
 			quicklinks: preferences.dashboard["quicklinks"],
@@ -50,165 +56,152 @@ class Page extends React.Component {
 			compact_maps: preferences.dashboard["compact-maps"],
 			calendar: preferences.dashboard["calendar"],
 		};*/
-		let sections = Object.entries(preferences.dashboard).filter(([key, value])=>{
-			return key !== "view";
-		});
 		
-		sections.sort(function(a, b){
-			return Number.parseNumber(a[1].position, 0) - Number.parseNumber(b[1].position, 0)
-		});
 
 		return (
 			<GridContainer className={classes.root}>
 				
-					{sections.map(([section_name, section_prefs]) => (
-						section_prefs.visible && <GridItem xs={12} md={Number.parseNumber(section_prefs.width)} className="p-2" key={section_name+"-section"}>
-							<Card>
-								{section_name === "map" && <LazyModule
-										resolve={() =>
-											import(
-												"views/widgets/Overview/GoogleMapOverview"
-											)
-										}
-										placeholderType="skeleton"
-										placeholder={[
-											[
+
+
+					<GridItem xs={12} md={this.state.mainMapInFullWidth? 12 : 7} className="p-2">
+						<Card>
+										<LazyModule
+												resolve={() =>
+													import(
+														"views/widgets/Overview/GoogleMapOverview"
+													)
+												}
+												placeholderType="skeleton"
+												placeholder={[
+													[
+														{
+															variant: "circle",
+															width: 40,
+															height: 40,
+															className: "mt-2 ml-4",
+														},
+														{
+															variant: "text",
+															width: 100,
+															className: "mx-2 mt-4",
+														},
+													],
+													{
+														variant: "rect",
+														width: "100%",
+														height: 600,
+														className: "mt-4",
+													},
+												]}
+												actions={[
+													{
+														icon: (
+															<Icon 
+																path={this.state.mainMapInFullWidth? mdiArrowCollapseAll : mdiOverscan}
+																title="Clients Locations"
+																size={0.8}   
+																color={theme.palette.text.primary}
+															/>
+														),
+														onClick: ()=> {
+															this.setState(prevState=>({
+																mainMapInFullWidth: !prevState.mainMapInFullWidth
+															}))
+														}
+													}
+												]}
+										/>
+						</Card>
+					</GridItem>
+
+					<GridItem xs={12} md={this.state.mainMapInFullWidth? 12 : 5} className="p-2">
+						<GridContainer className="p-0 m-0">
+										<LazyModule
+												resolve={() =>
+													import(
+														"views/widgets/Overview/CountsOverview"
+													)
+												}
+												placeholderType="skeleton"
+												placeholder={[
+														{
+															variant: "text",
+															width: "100%",
+															className: "mx-2 mt-4",
+														},
+														{
+															variant: "rect",
+															width: 40,
+															height: 40,
+															className: "mt-2 ml-4",
+														},
+												]}
+												wrapperSize={this.state.mainMapInFullWidth? 12 : 5}
+										/>
+						</GridContainer>
+						<GridContainer className="p-0 m-0">
+							<LazyModule
+											resolve={() =>
+												import(
+													"views/widgets/Overview/CompactAggregatesOverview"
+												)
+											}
+											placeholder={[
 												{
-													variant: "circle",
-													width: 40,
-													height: 40,
+													variant: "rect",
+													width: "100%",
+													height: 200,
+													className: "mt-4",
 												},
 												{
-													variant: "text",
-													width: 100,
-													className: "mx-2 mt-4",
-												},
-											],
-											{
-												variant: "rect",
-												width: "100%",
-												height: 600,
-												className: "mt-4",
-											},
-										]}
-								/>}
-
-								{(section_name === "charts" && section_prefs.type === "dynamic" ) && <LazyModule
-										resolve={() =>
-											import(
-												"views/widgets/Overview/CompactAggregatesOverview"
-											)
-										}
-										placeholder={[
-											[
-												{
-													variant: "circle",
-													width: 40,
-													height: 40,
+													variant: "rect",
+													width: "100%",
+													height: 200,
+													className: "mt-4",
 												},
 												{
-													variant: "text",
-													width: 100,
-													className: "mx-2 mt-4",
+													variant: "rect",
+													width: "100%",
+													height: 200,
+													className: "mt-4",
 												},
-											],
-											{
-												variant: "circle",
-												width: 250,
-												height: 250,
-												className:
-													"mx-auto sm:md:4 md:mt-16",
-											},
-										]}
-									/>}
+											]}
+											chartType={"bar"}
+											contexts={["responses"]}
+							/>
+						</GridContainer>
+					</GridItem>
 
-								{(section_name === "charts" && section_prefs.type === "static" ) && <LazyModule
-										resolve={() =>
-											import(
-												"views/widgets/Overview/AggregatesOverview"
-											)
-										}
-										placeholder={[
-											{
-												variant: "rect",
-												width: "100%",
-												height: 200,
-												className: "mt-4",
-											},
-											{
-												variant: "rect",
-												width: "100%",
-												height: 200,
-												className: "mt-4",
-											},
-											{
-												variant: "rect",
-												width: "100%",
-												height: 200,
-												className: "mt-4",
-											},
-										]}
-								/> }
-
-								{section_name === "timeline" && <LazyModule
-									resolve={() =>
-										import(
-											"views/widgets/Overview/OverviewCalendar"
-										)
-									}
-									placeholderType="skeleton"
-									placeholder={[
-										[
-											{
-												variant: "circle",
-												width: 40,
-												height: 40,
-											},
-											{
-												variant: "text",
-												width: 100,
-												className: "mx-2 mt-4",
-											},
-										],
-										{
-											variant: "rect",
-											width: "100%",
-											height: 500,
-											className: "mt-4",
-										},
-									]}
-								/> }
-
-								{section_name === "actions" && <LazyModule
-									resolve={() =>
-										import("./components/QuickActions")
-									}
-									placeholderType="skeleton"
-									placeholder={[
-										[
-											{
-												variant: "circle",
-												width: 40,
-												height: 40,
-											},
-											{
-												variant: "text",
-												width: 100,
-												className: "mx-2 mt-4",
-											},
-										],
-										{
-											variant: "rect",
-											width: "100%",
-											height: 300,
-											className: "my-2",
-										},
-									]}
-								/> }
-							</Card>
-						</GridItem>
-					))}
-
+					<GridItem xs={12} className="p-2">
+						<LazyModule
+											resolve={() =>
+												import(
+													"views/widgets/Overview/AggregatesOverview"
+												)
+											}
+											placeholder={[
+												{
+													variant: "rect",
+													width: "100%",
+													height: 200,
+													className: "mt-4",
+												},
+												{
+													variant: "rect",
+													width: "100%",
+													height: 200,
+													className: "mt-4",
+												},
+												{
+													variant: "rect",
+													width: "100%",
+													height: 200,
+													className: "mt-4",
+												},
+											]}
+											gridSize={4}
+						/>
+					</GridItem>
 					
 				
 			</GridContainer>
@@ -225,4 +218,4 @@ Page.propTypes = {
 	classes: PropTypes.object.isRequired,
 };
 
-export default compose( withStyles(styles), connect(mapStateToProps, { appendNavHistory }), withErrorHandler )(Page);
+export default compose( withStyles(styles), connect(mapStateToProps, { appendNavHistory }), withTheme, withErrorHandler )(Page);

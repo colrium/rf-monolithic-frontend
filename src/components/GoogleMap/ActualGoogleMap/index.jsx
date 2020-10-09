@@ -16,546 +16,24 @@ import {
 } from "react-google-maps";
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
 import Avatar from '@material-ui/core/Avatar';
+import Typography from 'components/Typography';
 import { mdiTooltipAccount as clientPositionMarkerPath } from '@mdi/js';
-import LocationSearchInput from "../LocationSearchInput";
-
+import RotateIcon from "../RotateIcon";
+import mapStyles, {mapDarkStyles} from "./mapStyles";
+import {LocationInput as LocationSearchInput } from "components/FormInputs";
 import { compose } from "recompose";
 import { withStyles } from "@material-ui/core";
 import {useGlobals} from "contexts/Globals";
 import { colors } from "assets/jss/app-theme";
+import client_position_marker_icon from "assets/img/maps/marker-person.svg";
+import client_user_female_icon from "assets/img/maps/marker-person-female.png";
+import client_user_male_icon from "assets/img/maps/marker-person-male.png";
+import Paper from "@material-ui/core/Paper";
+//import SlidingMarker from "marker-animate-unobtrusive";
 //
 
 //
-const mapStyles = [
-	{
-		"featureType": "administrative",
-		"elementType": "labels.text.fill",
-		"stylers": [
-			{
-				"color": "#444444"
-			}
-		]
-	},
-	{
-		"featureType": "landscape",
-		"elementType": "all",
-		"stylers": [
-			{
-				"color": "#f2f2f2"
-			}
-		]
-	},
-	{
-		"featureType": "poi",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.attraction",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.business",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.business",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.government",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.park",
-		"elementType": "all",
-		"stylers": [
-			{
-				"color": "#d9e8d9"
-			}
-		]
-	},
-	{
-		"featureType": "poi.park",
-		"elementType": "labels.text.fill",
-		"stylers": [
-			{
-				"color": "#707070"
-			}
-		]
-	},
-	{
-		"featureType": "poi.place_of_worship",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.school",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.school",
-		"elementType": "labels.text",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.school",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			},
-			{
-				"saturation": "46"
-			}
-		]
-	},
-	{
-		"featureType": "poi.sports_complex",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "road",
-		"elementType": "all",
-		"stylers": [
-			{
-				"saturation": -100
-			},
-			{
-				"lightness": "27"
-			},
-			{
-				"gamma": "1.20"
-			}
-		]
-	},
-	{
-		"featureType": "road.highway",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "simplified"
-			}
-		]
-	},
-	{
-		"featureType": "road.arterial",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "transit",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "water",
-		"elementType": "all",
-		"stylers": [
-			{
-				"color": "#5c9b60"
-			},
-			{
-				"visibility": "on"
-			}
-		]
-	}
-];
 
-const mapDarkStyles = [
-	{
-		"featureType": "all",
-		"elementType": "labels.text.fill",
-		"stylers": [
-			{
-				"saturation": 36
-			},
-			{
-				"color": "#000000"
-			},
-			{
-				"lightness": 40
-			}
-		]
-	},
-	{
-		"featureType": "all",
-		"elementType": "labels.text.stroke",
-		"stylers": [
-			{
-				"visibility": "on"
-			},
-			{
-				"color": "#000000"
-			},
-			{
-				"lightness": 16
-			}
-		]
-	},
-	{
-		"featureType": "all",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "administrative",
-		"elementType": "geometry.fill",
-		"stylers": [
-			{
-				"color": "#000000"
-			},
-			{
-				"lightness": 20
-			}
-		]
-	},
-	{
-		"featureType": "administrative",
-		"elementType": "geometry.stroke",
-		"stylers": [
-			{
-				"color": "#000000"
-			},
-			{
-				"lightness": 17
-			},
-			{
-				"weight": 1.2
-			}
-		]
-	},
-	{
-		"featureType": "administrative",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "on"
-			}
-		]
-	},
-	{
-		"featureType": "administrative.country",
-		"elementType": "geometry.stroke",
-		"stylers": [
-			{
-				"color": "#6d6d6d"
-			}
-		]
-	},
-	{
-		"featureType": "administrative.province",
-		"elementType": "geometry",
-		"stylers": [
-			{
-				"color": "#6e6e6e"
-			}
-		]
-	},
-	{
-		"featureType": "administrative.locality",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "simplified"
-			}
-		]
-	},
-	{
-		"featureType": "administrative.neighborhood",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "simplified"
-			}
-		]
-	},
-	{
-		"featureType": "landscape",
-		"elementType": "geometry",
-		"stylers": [
-			{
-				"color": "#000000"
-			},
-			{
-				"lightness": 20
-			}
-		]
-	},
-	{
-		"featureType": "landscape.man_made",
-		"elementType": "geometry",
-		"stylers": [
-			{
-				"color": "#383838"
-			}
-		]
-	},
-	{
-		"featureType": "poi",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "simplified"
-			}
-		]
-	},
-	{
-		"featureType": "poi",
-		"elementType": "geometry",
-		"stylers": [
-			{
-				"color": "#000000"
-			},
-			{
-				"lightness": 21
-			},
-			{
-				"visibility": "simplified"
-			}
-		]
-	},
-	{
-		"featureType": "poi",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.attraction",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.business",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.business",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.government",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.park",
-		"elementType": "all",
-		"stylers": [
-			{
-				"color": "#363b38"
-			}
-		]
-	},
-	{
-		"featureType": "poi.park",
-		"elementType": "labels",
-		"stylers": [
-			{
-				"color": "#707070"
-			}
-		]
-	},
-	{
-		"featureType": "poi.place_of_worship",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.school",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.school",
-		"elementType": "labels.text",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "poi.school",
-		"elementType": "labels.icon",
-		"stylers": [
-			{
-				"visibility": "off"
-			},
-			{
-				"saturation": "46"
-			}
-		]
-	},
-	{
-		"featureType": "poi.sports_complex",
-		"elementType": "all",
-		"stylers": [
-			{
-				"visibility": "off"
-			}
-		]
-	},
-	{
-		"featureType": "road.highway",
-		"elementType": "geometry.fill",
-		"stylers": [
-			{
-				"color": "#161616"
-			},
-			{
-				"lightness": 17
-			}
-		]
-	},
-	{
-		"featureType": "road.highway",
-		"elementType": "geometry.stroke",
-		"stylers": [
-			{
-				"color": "#000000"
-			},
-			{
-				"lightness": 29
-			},
-			{
-				"weight": 0.2
-			}
-		]
-	},
-	{
-		"featureType": "road.arterial",
-		"elementType": "geometry",
-		"stylers": [
-			{
-				"color": "#141414"
-			},
-			{
-				"lightness": 18
-			}
-		]
-	},
-	{
-		"featureType": "road.local",
-		"elementType": "geometry",
-		"stylers": [
-			{
-				"color": "#1a1a1a"
-			},
-			{
-				"lightness": 16
-			}
-		]
-	},
-	{
-		"featureType": "transit",
-		"elementType": "geometry",
-		"stylers": [
-			{
-				"color": "#000000"
-			},
-			{
-				"lightness": 19
-			}
-		]
-	},
-	{
-		"featureType": "water",
-		"elementType": "geometry",
-		"stylers": [
-			{
-				"color": "#101c11"
-			},
-			{
-				"lightness": 17
-			}
-		]
-	}
-];
 
 
 const current_position_marker_icon = {
@@ -568,7 +46,7 @@ const current_position_marker_icon = {
 	scale: 0.1, //to reduce the size of icons
 };
 
-const client_position_marker_icon = {
+/*const client_position_marker_icon = {
 	//path: "m 20.073331,0.06216702 c 3.79432,0.41734 7.45896,2.10713998 10.30993,4.75712998 3.00933,2.78519 5.11513,6.71834 5.87973,10.95353 0.31769,1.79439 0.31769,4.86121 -0.0102,6.71834 -0.27835,1.60664 -1.00311,3.95357 -1.68853,5.46632 -1.52968,3.41121 -3.60537,6.36324 -8.75013,12.42444 -3.54611,4.17295 -5.37357,6.5408 -6.85321,8.84641 -0.62567,0.96986 -0.7646,1.00156 -1.23143,0.22959 -1.1124,-1.85663 -3.4368,-4.87192 -7.12135,-9.23212 -3.4168895,-4.04743 -4.6385895,-5.60202 -6.0288595,-7.62599 -3.43681,-5.04896 -5.00584,-10.41119 -4.47975,-15.40811 0.89381,-8.6061 7.00234,-15.47036 15.0772595,-16.93106998 1.33051,-0.2398 3.66463,-0.33367 4.89654,-0.19847 z",
 	path: clientPositionMarkerPath,
 	fillColor: "#FF0000",
@@ -576,7 +54,7 @@ const client_position_marker_icon = {
 	strokeOpacity: 0,
 	scale: 1,
 };
-
+*/
 const labelSize = 200;
 const labelPadding = 8;
 
@@ -604,11 +82,17 @@ let toRad = Value => {
 };
 
 let showInfoWindow = (content, position) => {
+
 	return <InfoWindow position={position}>{content}</InfoWindow>;
 };
 
 let _map = null;
+let _clientsPositions = {};
 let _searchBox = null;
+let user_avatar_shape = {
+	coords: [1, 1, 1, 20, 18, 20, 18, 1],
+	type: 'poly'
+};
 
 const mapStateToProps = state => ({
 	app: state.app,
@@ -624,10 +108,15 @@ export default compose(
 	let [state, setState] = useState(props);
 	let [region, setRegion] = useState({});
 
+	let clientMarkers = {};
 
-	
 
-	const { onMapLoad, device, auth, showDeviceLocation, showClientsPositions, selectedClient, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition} = props;
+	useEffect(() => {
+		setState(props);
+	}, [props]);
+
+	const { onMapLoad, device, auth, markers, polylines, circles, showDeviceLocation, showClientsPositions, selectedEntry, selectedEntryType, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition, defaultCenter} = state;
+
 	let globals = useGlobals();
 	let sockets = globals? globals.sockets : {};
 	let services = globals? globals.services : {};
@@ -635,14 +124,32 @@ export default compose(
 	const [ mounted, setMounted ] = useState(false);
 	const [ socketsInitialized, setSocketsInitialized ] = useState(false);
 	const [ regionWidth, setRegionWidth ] = useState(0);
-	const [ selectedClientSocketId, setSelectedClientSocketId ] = useState(selectedClient);
-	const [ clientsPositions, setClientsPositions ] = useState({});
-	const [ regionBoundsClients, setRegionBoundsClients ] = useState([]);
+	const [ mapBounds, setMapBounds ] = useState(null);
+	const [ mapReady, setMapReady ] = useState(false);
+	const [ selectedItem, setSelectedItem ] = useState({id: selectedEntry, type: selectedEntryType});
+	//const [ clientsPositions, setClientsPositions ] = useState({});
+	const [ regionBoundsClients, setRegionBoundsClients ] = useState({});
+	const [ infoWindowContent, setInfoWindowContent ] = useState(null);
+	const [ infoWindowPosition, setInfoWindowPosition ] = useState(null);	
+	const [ infoWindowOpen, setInfoWindowOpen ] = useState(false);
+	const [ mapMarkers, setMapMarkers ] = useState(Array.isArray(markers)? markers : []);
+	const [ mapPolylines, setMapPolylines ] = useState(Array.isArray(polylines)? polylines : []);
+	const [ mapCircles, setMapCircles ] = useState(Array.isArray(circles)? circles : []);
+	const [ mapCenter, setMapCenter ] = useState(defaultCenter);
+	
+	
+	useEffect(() => {				
+		setMapMarkers((Array.isArray(markers)? markers : []));
+		setMapPolylines((Array.isArray(polylines)? polylines : []));
+		setMapCircles((Array.isArray(circles)? circles : []));
+	}, [markers, polylines, circles]);
+
+	
 	
 
-	/*useEffect(() => {
-		setSelectedClientSocketId(selectedClient);
-	}, [selectedClient]);*/
+	
+
+
 	
 	let {user} = auth;
 
@@ -666,81 +173,228 @@ export default compose(
 	}
 
 	const handleOnPressMarker = (socketId, data) => async event => {
-		setSelectedClientSocketId((socketId === selectedClientSocketId? null : socketId));
+		setSelectedItem({type: "clients_positions", id: socketId});
 		if (Function.isFunction(onSelectClientPosition)) {
 			onSelectClientPosition(socketId, data)
 		}
 	};
 
-	const handleOnClientPositionChange = (currentRegionBoundsClients) => ({socketId, ...position_change_data}) => {
-		let socketIdIndex = currentRegionBoundsClients.findIndex((currentValue)=>{ return currentValue[0] === socketId; }, socketId);
-		console.log("handleOnClientPositionChange socketId: ", socketId, "socketIdIndex", socketIdIndex);
-
-		if (Function.isFunction(onClientPositionChanged)) {
-			onClientPositionChanged(socketId, position_change_data);
-		}	
-
-		let newRegionBoundsClients = Object.entries(clientsPositions).reduce((accumulator, [socketId, clientData], index) => {		
-			if (JSON.isJSON(clientData.position)) {
-				accumulator.push([socketId, clientData]);
-			}			
-			return accumulator;						
-		}, []);
-
-		setRegionBoundsClients(newRegionBoundsClients);
-
-		/*if (Number.parseNumber(socketIdIndex, -1) !== -1 ) {	
-			let isMounted = currentRegionBoundsClients[socketIdIndex][1].markerRef? (currentRegionBoundsClients[socketIdIndex][1].markerRef.current? (currentRegionBoundsClients[socketIdIndex][1].markerRef.current._component? Function.isFunction(currentRegionBoundsClients[socketIdIndex][1].markerRef.current._component.animateMarkerToCoordinate) : false ) : false) : false;
-			if ( position_change_data.position && isMounted) {
-				//console.log("client-position-changed position_change_data");
-				if (Platform.OS === 'android') {
-					currentRegionBoundsClients[socketIdIndex][1].markerRef.current._component.animateMarkerToCoordinate({latitude: position_change_data.position.latitude, longitude: position_change_data.position.longitude, latitudeDelta: region.latitudeDelta, longitudeDelta: region.longitudeDelta}, 50);
-				}
-				else {
-					currentRegionBoundsClients[socketIdIndex][1].markerCoordinate.timing({latitude: position_change_data.position.latitude, longitude: position_change_data.position.longitude, atitudeDelta: region.latitudeDelta, longitudeDelta: region.longitudeDelta}).start();
-				}
+	const animateClientMarkerToPosition = (socketId, newPosition, kmph) => {
+		var options = {
+			duration: 1000,
+			easing: function (x, t, b, c, d) { // jquery animation: swing (easeOutQuad)
+				return -c *(t/=d)*(t-2) + b;
 			}
-		}*/
+		};
+
+
+		window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+		window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+
+		// save current position. prefixed to avoid name collisions. separate for lat/lng to avoid calling lat()/lng() in every frame
+		_clientsPositions[socketId].marker.AT_startPosition_lat = _clientsPositions[socketId].marker.getPosition().lat();
+		_clientsPositions[socketId].marker.AT_startPosition_lng = _clientsPositions[socketId].marker.getPosition().lng();
+		var newPosition_lat = newPosition.lat();
+		var newPosition_lng = newPosition.lng();
+
+		// crossing the 180° meridian and going the long way around the earth?
+		if (Math.abs(newPosition_lng - _clientsPositions[socketId].marker.AT_startPosition_lng) > 180) {
+			if (newPosition_lng > _clientsPositions[socketId].marker.AT_startPosition_lng) {
+				newPosition_lng -= 360;
+			} else {
+				newPosition_lng += 360;
+			}
+		}
+
+		var animateStep = function(marker, startTime) {
+			var ellapsedTime = (new Date()).getTime() - startTime;
+			var durationRatio = ellapsedTime / options.duration; // 0 - 1
+			var easingDurationRatio = options.easing(durationRatio, ellapsedTime, 0, 1, options.duration);
+
+			if (durationRatio < 1) {
+				marker.setMap(getGoogleMapContextElement());
+				marker.setPosition({
+					lat: (
+						marker.AT_startPosition_lat +
+						(newPosition_lat - marker.AT_startPosition_lat)*easingDurationRatio
+					),
+					lng: (
+						marker.AT_startPosition_lng +
+						(newPosition_lng - marker.AT_startPosition_lng)*easingDurationRatio
+					)
+				});
+
+				// use requestAnimationFrame if it exists on this browser. If not, use setTimeout with ~60 fps
+				if (window.requestAnimationFrame) {
+					marker.AT_animationHandler = window.requestAnimationFrame(function() {animateStep(marker, startTime)});
+				} else {
+					marker.AT_animationHandler = setTimeout(function() {animateStep(marker, startTime)}, 17);
+				}
+
+			} else {
+				marker.setMap(getGoogleMapContextElement());
+				marker.setPosition(newPosition);
+			}
+			return marker;
+		}
+
+		// stop possibly running animation
+		if (window.cancelAnimationFrame) {
+			window.cancelAnimationFrame(_clientsPositions[socketId].marker.AT_animationHandler);
+		} else {
+			clearTimeout(_clientsPositions[socketId].marker.AT_animationHandler);
+		}
+
+		animateStep(_clientsPositions[socketId].marker, (new Date()).getTime());
+	}
+
+	const handleOnClientPositionChange = async ({socketId, ...data}) => {	
+		if (data.user) {
+
+			let {user, position, track} = data;
+			let currentMapBounds = mapBounds;
+
+			if (!(socketId in _clientsPositions)) {
+				_clientsPositions[socketId] = data;
+				_clientsPositions[socketId].marker = new google.maps.Marker({
+										position: {lat: data.position.latitude, lng: data.position.longitude },
+										title: user.first_name+" "+user.last_name,
+										icon:{url: data.user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation:data.position.heading },
+										onClick: handleOnPressMarker(socketId, data),
+										map: getGoogleMapContextElement(),
+									});
+			}			
+			else {
+				_clientsPositions[socketId].user = user;
+				_clientsPositions[socketId].position = position;
+				var icon = _clientsPositions[socketId].marker.getIcon();
+							icon.rotation = position.heading;
+							_clientsPositions[socketId].marker.setIcon(icon);
+							/*_clientsPositions[socketId].marker.setIcon({
+								path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+								scale: 6,
+								rotation: data.position.heading,
+								fillColor: "#FF0000"
+							});
+							*/
+				if (currentMapBounds) {}
+				animateClientMarkerToPosition(socketId, new google.maps.LatLng(data.position.latitude, data.position.longitude), data.position.speed? data.position.speed : 10);
+				
+			}
+			/*console.log("JSON.stringify(data.position)", JSON.stringify(data.position));					
+			
+							_clientsPositions[socketId].user = user;
+							_clientsPositions[socketId].position = position;
+							_clientsPositions[socketId].marker.setPosition({lat: position.latitude, lng: position.longitude });
+							var icon = _clientsPositions[socketId].marker.getIcon();
+							icon.rotation = position.heading;
+							_clientsPositions[socketId].marker.setIcon(icon);
+							_clientsPositions[socketId].marker.setMap(_map);*/
+				
+
+			//let newClientPositions = {...clientsPositions, [socketId]: data};	
+			//setClientsPositions(newClientPositions);
+		}	
+			
+			
 			
 	};
 
-	
+	const getGoogleMapContextElement = () => {
+		if (_map) {
+			return _map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+		}
+		return null;
+	}
 
 	const handleOnSocketConnect = () => {
 		sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
 	};
 
 	const handleOnNewClientPosition = async ({socketId, ...data}) => {
-		let newClientPositions = {...clientsPositions, [socketId]: data};	
-		setClientsPositions(newClientPositions);
+		const  {user, position} = data;
+		/*let newClientPositions = {
+			...clientsPositions, 
+			[socketId]: data
+		};	*/
+
+		_clientsPositions[socketId] = data;
+		_clientsPositions[socketId].marker = new google.maps.Marker({
+										position: {lat: data.position.latitude, lng: data.position.longitude },
+										title: user.first_name+" "+user.last_name,
+										icon:{url: data.user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation:data.position.heading },
+										onClick: handleOnPressMarker(socketId, data),
+										map: getGoogleMapContextElement(),
+
+									});
+
+		//setClientsPositions(newClientPositions);
 		if (Function.isFunction(onClientPositionAvailable)) {
 			onClientPositionAvailable(socketId, data);
 		}	
 	};
 
 	const handleOnClientsPositions = async (clients_positions) => {	
-		let newClientPositions = clients_positions;
-		setClientsPositions(newClientPositions);
+
+		for (let [socketId, data] of Object.entries(clients_positions)) {
+			const  {user, position} = data;
+			if (user) {
+				if (!(socketId in _clientsPositions)) {
+					_clientsPositions[socketId] = data;
+					_clientsPositions[socketId].marker = new google.maps.Marker({
+												position: {lat: position.latitude, lng: position.longitude },
+												title: user.first_name+" "+user.last_name,
+												icon:{url: user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation: position.heading },
+												onClick: handleOnPressMarker(socketId, data),
+												map: getGoogleMapContextElement(),
+											});
+				}
+				else{
+					_clientsPositions[socketId] = {..._clientsPositions[socketId], ...data};
+					
+				}
+			}
+			
+		}
+		
+		//console.log("_clientsPositions ", _clientsPositions);
 		if (Function.isFunction(onLoadClientsPositions)) {
-			onLoadClientsPositions(clients_positions);
+			onLoadClientsPositions(_clientsPositions);
 		}		
 	};
 
 	const handleOnClientPositionUnavailable = async ({socketId, ...data}) => {
-		let newClientPositions = JSON.fromJSON(clientsPositions);
-		delete newClientPositions[socketId];
-		setClientsPositions(newClientPositions);
+		if (socketId in _clientsPositions) {
+			if (_clientsPositions[socketId].marker) {
+				_clientsPositions[socketId].marker.setMap(null);
+			}
+		}
+			
+		//delete _clientsPositions[socketId];
 		if (Function.isFunction(onClientPositionUnavailable)) {
 			onClientPositionUnavailable(socketId, data);
 		}
+		/*if (socketId in regionBoundsClients) {
+			let newRegionBoundsClients = regionBoundsClients;
+			if (newRegionBoundsClients[socketId].marker) {
+				newRegionBoundsClients[socketId].marker.setMap(null);
+			}
+			
+			delete newRegionBoundsClients[socketId];
+			setRegionBoundsClients(newRegionBoundsClients); 
+		}*/
+		
 	};
+
+	
 
 	const initSockets = () => {
 		if (sockets.default) {
 			sockets.default.on("new-client-position", handleOnNewClientPosition);
 			sockets.default.on("clients-positions", handleOnClientsPositions);
 			sockets.default.on("client-position-unavailable", handleOnClientPositionUnavailable);
-			//sockets.default.on("client-position-changed", handleOnClientPositionChange(regionBoundsClients));
+			sockets.default.on("client-position-changed", handleOnClientPositionChange);
+			
 			if (sockets.default.connected) {
 				sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
 			}
@@ -755,69 +409,177 @@ export default compose(
 	
 
 
-	const prepareRegionMarkers = async () => {
-		sockets.default.off("client-position-changed", handleOnClientPositionChange(regionBoundsClients));
-		if (JSON.isJSON(clientsPositions)) {
-				let newRegionBoundsClients = Object.entries(clientsPositions).reduce((accumulator, [socketId, clientData], index) => {		
-					if (JSON.isJSON(clientData.position)) {
-						accumulator.push([socketId, clientData]);
-					}			
-					return accumulator;						
-				}, []);
-					
+	const prepareMapBoundsClientsMarkers = async () => {
+		if (mapBounds) {
+					let newRegionBoundsClients = Object.entries(_clientsPositions).reduce((accumulator, [socketId, clientData], index) => {		
+						if (JSON.isJSON(clientData.position)) {
+							if (mapBounds.contains({lat: clientData.position.latitude, lng: clientData.position.longitude})) {
+								let {user, position} = clientData;
+								if (!clientData.marker) {
+									clientData.marker = new google.maps.Marker({
+										position: {lat: position.latitude, lng: position.longitude },
+										title: user.first_name+" "+user.last_name,
+										icon:{url: user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation:position.heading },
+										onClick: handleOnPressMarker(socketId, clientData),
+										duration: 250,
+									});
+								}
+								clientData.marker.setPosition({lat: position.latitude, lng: position.longitude });
+								var icon = clientData.marker.getIcon();
+									icon.rotation = position.heading;
+									clientData.marker.setIcon(icon);
+								clientData.marker.setMap(getGoogleMapContextElement());
+								accumulator[socketId] = clientData;
+							}
+						}			
+						return accumulator;						
+					}, {});
 
-				sockets.default.on("client-position-changed", handleOnClientPositionChange(newRegionBoundsClients));
 
-				setRegionBoundsClients(newRegionBoundsClients);
-		}			
+					//setRegionBoundsClients(newRegionBoundsClients);
+			
+		}
+						
 	}
 
+	const handleOnBoundsChanged = async () => {
+		if (_map) {
+			setMapBounds(_map.getBounds());
+		}
+	};
 
+	
+	useEffect(() => {		
+		//console.log({type: selectedEntryType, id: selectedEntry});
+		if (selectedEntryType && (Number.isNumber(selectedEntry) || String.isString(selectedEntry))) {
+			let googlemap = false;
+			if (_map) {
+				googlemap = _map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+			}
+			
+			if (selectedEntryType === "clients_position" && selectedEntry.id in _clientsPositions) {
+				setInfoWindowOpen(true);
+				setInfoWindowPosition((_clientsPositions in regionBoundsClients)? {lat: regionBoundsClients[selectedEntry].position.latitude, lng: regionBoundsClients[selectedEntry].position.longitude } :  {lat: _clientsPositions[selectedEntry].position.latitude, lng: _clientsPositions[selectedEntry].position.longitude });
+				setInfoWindowContent(<Typography> { _clientsPositions[selectedEntry].user.first_name+" "+_clientsPositions[selectedEntry].user.last_name}</Typography>);
+			}
+			if (selectedEntryType === "polyline" && polylines[selectedEntry]) {
+				let LatLngList = polylines[selectedEntry].path;
+				//  Create a new viewpoint bound
+				let bounds = new google.maps.LatLngBounds ();
+				//  Go through each...
+				for (let i = 0;  i < LatLngList.length; i++) {
+				  //  And increase the bounds to take this point
+				  bounds.extend(new google.maps.LatLng (LatLngList[i].lat, LatLngList[i].lng));
+				}
+				if (googlemap) {
+					googlemap.fitBounds(bounds);
+				}
+			}
+
+			if (selectedEntryType === "circle" && circles[selectedEntry]) {
+				
+				let selectedCircle = new google.maps.Circle({
+					...circles[selectedEntry],
+				});
+
+				let bounds = new google.maps.LatLngBounds();
+				bounds.union(selectedCircle.getBounds());
+
+				if (googlemap) {
+					googlemap.fitBounds(bounds);
+				}
+				
+			}
+
+		}
+		setSelectedItem({type: selectedEntryType, id: selectedEntry});
+		
+	}, [selectedEntry, selectedEntryType, _map, polylines, circles, markers]);
+	
 	
 
 	
 	useEffect(() => {	
 		setMounted(true);
+
 		return () => {
 			setMounted(false);
+			setMapReady(false);
 		}
 	}, []);
+
+
+
 
 	useEffect(() => {	
 		if (mounted && !socketsInitialized) {
 			initSockets();
 		}
 		return () => {
-			sockets.default.off("client-position-changed", handleOnClientPositionChange(regionBoundsClients));
 			sockets.default.off("new-client-position", handleOnNewClientPosition);
+			sockets.default.off("client-position-changed", handleOnClientPositionChange);
 			sockets.default.off("clients-positions", handleOnClientsPositions);
 			sockets.default.off("client-position-unavailable", handleOnClientPositionUnavailable);
 			sockets.default.off("connect", handleOnSocketConnect);
 		}
 	}, [sockets, mounted]);
 
-
-
+	useEffect(() => {	
+		prepareMapBoundsClientsMarkers();
+		
+	}, [_clientsPositions, mapBounds]);
 
 	useEffect(() => {
+		for (let key of Object.keys(_clientsPositions)) {
+			if (_clientsPositions[key].marker) {
+				_clientsPositions[key].marker.setMap(getGoogleMapContextElement())
+			}
+			
+		}
+	}, [_map]);
+
+
+	useEffect(() => {	
+		if (infoWindowOpen && selectedItem.type === "clients_position" && selectedItem.id in regionBoundsClients) {
+			if (infoWindowPosition.lat !== regionBoundsClients[selectedItem.id].position.latitude || infoWindowPosition.lng !== regionBoundsClients[selectedItem.id].position.longitude) {
+				setInfoWindowPosition({lat: regionBoundsClients[selectedItem.id].position.latitude, lng: regionBoundsClients[selectedItem.id].position.longitude })
+			}
+		}
+		else if (infoWindowOpen && selectedItem.type === "clients_position" && !(selectedItem.id in regionBoundsClients)) {
+			setInfoWindowContent(null);
+			setInfoWindowPosition(null);
+			setInfoWindowOpen(false);
+		}
 		
-		prepareRegionMarkers(region);
-	}, [region, clientsPositions]);
+	}, [infoWindowOpen, selectedItem, infoWindowPosition]);
+
+
+
 
 		return (
 			<GoogleMap
 				className="relative"
 				defaultZoom={state.defaultZoom}
+				zoom={state.zoom}
 				defaultCenter={state.defaultCenter}
 				defaultOptions={{
 					styles: state.mapStyles ? state.mapStyles : (state.theme === "dark"? mapDarkStyles : mapStyles),
 				}}
-				ref={map => {
-					_map = map;
-					if (Function.isFunction(onMapLoad)) {
-						onMapLoad(map);
-					}				
+				ref={map => {	
+					_map = map;				
+					if (map) {
+						if (!_map) {
+							setMapBounds(map.getBounds());
+						}
+						
+						if (Function.isFunction(onMapLoad)) {
+							onMapLoad(map, google);
+						}
+					}
+					
+									
 				}}
+				onBoundsChanged={handleOnBoundsChanged}
 			>
 				{state.draw && (
 					<DrawingManager
@@ -845,32 +607,22 @@ export default compose(
 						}}
 					/>
 				)}
-				{Array.isArray(state.polylines) &&
-					state.polylines.map((polyline, index) => (
+				{Array.isArray(mapPolylines) &&
+					mapPolylines.map((polyline, index) => (
 						<Polyline
 							path={polyline.path}
 							geodesic={true}
 							options={{
-								strokeColor: polyline.color
-									? polyline.color
-									: colors.hex.accent,
-								strokeOpacity: polyline.opacity
-									? polyline.opacity
-									: 0.75,
-								strokeWeight: polyline.weight ? polyline.weight : 4,
+								strokeColor: selectedItem.type == "polyline" && selectedItem.id === index? colors.hex.accent : (polyline.color ? polyline.color : colors.hex.accent),
+								strokeOpacity: selectedItem.type == "polyline" && selectedItem.id === index?  1 : (selectedItem.type != "polyline" ? polyline.opacity : 0.2),
+								strokeWeight:selectedItem.type == "polyline" && selectedItem.id === index?  4 : (selectedItem.type != "polyline" ? polyline.strokeWeight : 3),
 							}}
 							onClick={event => {
-								//let infowindow = showInfoWindow((polyline.title? polyline.title : "Uknown"), event.latLng);
+								setSelectedItem({type: "polyline", id: index });
 
 								var infowindow = new google.maps.InfoWindow({
 									content:
-										(polyline.infoWindow
-											? ReactDOMServer.renderToStaticMarkup(
-													polyline.infoWindow
-											  )
-											: polyline.title
-											? polyline.title
-											: "") +
+										(polyline.infoWindow? ReactDOMServer.renderToStaticMarkup(polyline.infoWindow): polyline.title ? polyline.title: "") +
 										("<br/> Crow fleight distance from Start: " +
 											crowFleightDistanceinKm(
 												event.latLng.lat(),
@@ -885,17 +637,24 @@ export default compose(
 								infowindow.open(
 									_map.context
 										.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
-								);
-							}}
+								);							}}
 							key={"polyline-" + index}
 						/>
 					))}
 
-				{Array.isArray(state.circles) &&
-					state.circles.map(({ infoWindow, ...rest }, index) => (
+				{Array.isArray(mapCircles) &&
+					mapCircles.map(({ infoWindow, ...rest }, index) => (
 						<Circle
 							{...rest}
+							options={{
+								fillColor: selectedItem.type == "circle" && selectedItem.id === index? colors.hex.accent : (rest.fillColor ? rest.fillColor : colors.hex.accent),
+								strokeColor: rest.color ? rest.color : colors.hex.accent,
+								strokeOpacity: selectedItem.type == "circle" && selectedItem.id === index?  1 : (selectedItem.type != "circle" ? rest.opacity : 0.2),
+								fillOpacity: selectedItem.type == "circle" && selectedItem.id === index?  0.5 : (selectedItem.type != "circle"? rest.opacity : 0.2),
+								strokeWeight: selectedItem.type == "circle" && selectedItem.id === index?  4 : (selectedItem.type != "circle" ? rest.strokeWeight : 1),
+							}}
 							onClick={event => {
+								setSelectedItem({type: "polyline", id: index });
 								if (infoWindow) {
 									new google.maps.InfoWindow({
 										content: ReactDOMServer.renderToStaticMarkup(
@@ -912,8 +671,8 @@ export default compose(
 						/>
 					))}
 
-				{Array.isArray(state.markers) &&
-					state.markers.map(
+				{Array.isArray(mapMarkers) &&
+					mapMarkers.map(
 						({ position, title, infoWindow, ...rest }, index) =>
 							typeof google !== undefined && (
 								<Marker
@@ -922,6 +681,7 @@ export default compose(
 									title={title}
 									key={"marker-" + index}
 									onClick={event => {
+										setSelectedItem({type: "circles", id: index });
 										var infowindow = new google.maps.InfoWindow(
 											{
 												content: infoWindow
@@ -935,30 +695,30 @@ export default compose(
 											}
 										);
 
-										infowindow.open(
-											_map.context
-												.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
-										);
+										infowindow.open(_map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
 									}}
 									{...rest}
 								/>
 							)
 					)}
 
-				{(Array.isArray(regionBoundsClients) && showClientsPositions) && regionBoundsClients.map(([socketId, { position, user, ...rest }], index) =>
+				{/*(JSON.isJSON(regionBoundsClients) && showClientsPositions) && Object.entries(regionBoundsClients).map(([socketId, { position, user, ...rest }], index) =>
 						(typeof google !== undefined && JSON.isJSON(position) && JSON.isJSON(user)) && (
 								<Marker
-									animation={selectedClientSocketId === socketId? google.maps.Animation.BOUNCE : google.maps.Animation.DROP}
 									position={{lat: position.latitude, lng: position.longitude }}
 									title={user.first_name+" "+user.last_name}
 									key={"client-marker-" + index}
-									icon={ user.avatar && services.attachments ? ({url: services.attachments.getAttachmentFileUrl(user.avatar), scaledSize: { width: 24, height: 24 }, }) : client_position_marker_icon }
+									icon={{url: client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation: position.heading } }
 									onClick={handleOnPressMarker(socketId, { position: position, user: user, ...rest })}
-									style={user.avatar && services.attachments ? {borderRadius: 12} : {}}
+									style={{transform: "rotate(" + 100 + "deg)"}}
+									shape={[16, 16, 8]}
+									ref={ _marker => {
+										//console.log("_marker", _marker)
+									}}
 									{...rest}
 								/>
 						)
-					)}
+					)*/}
 
 				{JSON.isJSON(state.currentDevicePosition) &&
 					state.showCurrentPosition && (
@@ -972,11 +732,25 @@ export default compose(
 				{JSON.isJSON(state.marker) && <Marker {...state.marker} />}
 				{JSON.isJSON(state.circle) && <Marker {...state.circle} />}
 
+				{(infoWindowOpen && infoWindowPosition && infoWindowContent) && <InfoWindow position={infoWindowPosition} onCloseClick={() => setInfoWindowOpen(false) }>
+					{infoWindowContent}
+				</InfoWindow>}
+
 				{state.showSearchBar && (
-					<LocationSearchInput
-						controlPosition={google.maps.ControlPosition.BOTTOM_CENTER}
-						{...state.searchBarProps}
-					/>
+					<div className={"absolute bottom-0 mb-4 py-1 px-2 sm:w-full md:w-5/6 lg:w-4/6 "} >
+						<Paper
+							component="div"
+							className={"flex items-center w-full relative py-1 px-2"}
+						>
+							<LocationSearchInput
+								variant="plain"
+								margin="none"
+								controlPosition={google.maps.ControlPosition.BOTTOM_CENTER}
+								{...state.searchBarProps}
+							/>
+						</Paper>
+					</div>
+					
 				)}
 			</GoogleMap>
 		);

@@ -11,6 +11,7 @@ import Color from "color";
 import decode from "jwt-decode";
 import lodash from "lodash";
 import lodash_inflection from "lodash-inflection";
+import kenya_geodata from "assets/geodata/kenya.json";
 import {
 	AudiotrackOutlined as AudioIcon,
 	InsertDriveFileOutlined as FileIcon,
@@ -831,6 +832,34 @@ class FileUtilities {
 
 class CountriesData {
 	static names() {
+
+
+		let names = {
+			ET: "Ethiopia",
+			KE: "Kenya",
+			RW: "Rwanda",
+			TZ: "Tanzania",
+			UG: "Uganda",
+		}
+
+		/*let sorted_values = Object.values(names).sort(function(a,b) {
+			let x = a.toLowerCase().replace(/\s/g, '');
+			let y = b.toLowerCase().replace(/\s/g, '');
+			return x === y ? 0 : x < y ? -1 : 1;
+		});
+
+		let sorted_names = {};
+
+		for (var i = 0; i < sorted_values.length; i++) {
+			let value = sorted_values[i];
+			let key = Utilities.objIndexOf(names, value);
+			sorted_names[key] = value;
+		}*/
+
+		return names;
+	}
+
+	static allNames() {
 		let names = {
 			AD: "Andorra",
 			AE: "United Arab Emirates",
@@ -1097,6 +1126,41 @@ class CountriesData {
 			let key = Utilities.objIndexOf(names, value);
 			sorted_names[key] = value;
 		}*/
+
+		return names;
+	}
+
+	static regions(country) {
+		let names = {};
+
+		if (String.isString(country)) {
+			if (["ke", "kenya", "254", "+254"].includes(country.toLowerCase())) {
+				kenya_geodata.regions.map(region=> {
+					names[region.name] = region.name;
+				});
+
+			}
+		}
+
+		return names;
+	}
+
+	static subregions(region) {
+		let names = {};
+
+		if (String.isString(region)) {
+			kenya_geodata.regions.map(regionentry=> {
+				if (regionentry.name.toLowerCase() === region.toLowerCase()) {
+					regionentry.sub_counties.map(sub_county=> {
+						names[sub_county] = sub_county;
+					});
+				}
+				
+			});
+
+			console.log("names", names)
+			
+		}
 
 		return names;
 	}

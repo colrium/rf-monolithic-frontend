@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { useGlobals } from "contexts/Globals";
 
 import Typography from "@material-ui/core/Typography";
-import { WysiwygInput } from "components/FormInputs";
+import { WysiwygInput, TextInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 
@@ -37,10 +37,38 @@ function Widget(props) {
 		});
 	};
 
+	const handleOnBlurText = name => async (value, event) => {
+		setLoading({...loading, [name] : true});
+		setErrors({...errors, [name] : false});
+		let new_value = { ...context_settings, [name]: value };
+		updateSettings("legal", new_value).then(new_settings => {
+			setLoading({...loading, [name] : false});
+			setAlerts({ [name]: name.humanize() + " saved", });
+		}).catch(e => {
+			setLoading({...loading, [name] : false});
+			setErrors({...errors, [name] : e.msg});
+			console.error("update legal settings error", e);
+		});
+	};
+
 	return (
 		<GridContainer className="px-2">
 			<GridItem xs={12} className="mb-2">
 				<Typography variant="h3"> Legal settings</Typography>
+			</GridItem>
+
+			<GridItem xs={12} className="mb-4">
+				<TextInput
+					name="cookies-consent"
+					label="Cookies Consent"
+					multiline
+					rows="6"
+					defaultValue={context_settings["cookies-consent"]}
+					onBlur={handleOnBlurText("cookies-consent")}
+					helperText={alerts["cookies-consent"]}
+					disabled={loading["cookies-consent"]}
+					error={errors["cookies-consent"]}
+				/>
 			</GridItem>
 
 			<GridItem xs={12} className="mb-4">
@@ -79,17 +107,7 @@ function Widget(props) {
 				/>
 			</GridItem>
 
-			<GridItem xs={12} className="mb-4">
-				<WysiwygInput
-					name="cookies-consent"
-					label="Cookies Consent"
-					defaultValue={context_settings["cookies-consent"]}
-					onChange={handleOnChange("cookies-consent")}
-					helperText={alerts["cookies-consent"]}
-					disabled={loading["cookies-consent"]}
-					error={errors["cookies-consent"]}
-				/>
-			</GridItem>
+
 		</GridContainer>
 	);
 }

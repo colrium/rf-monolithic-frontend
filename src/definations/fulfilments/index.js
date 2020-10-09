@@ -260,9 +260,6 @@ export default {
 		},
 		view: {
 			summary: user => {
-				if (user) {
-					return user.isCustomer || user.isAdmin;
-				}
 				return false;
 			},
 			all: user => {

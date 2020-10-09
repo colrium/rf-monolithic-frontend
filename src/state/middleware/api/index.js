@@ -7,16 +7,17 @@ import {
 	setApiCallComplete,
 	setApiCallError,
 	setDataCache,
+	setResponseCache,
+	removeResponseCache,
+	addApiTask,
+	removeApiTask,
 } from "state/actions";
 import ApiService from "services/api";
 
+
 const ApiServiceInstance = new ApiService();
 
-const api = ({ dispatch, getState, ...rest }) => next => action => {
-	next(action);
-	if (action.type !== API_CALL_REQUEST) {
-		return;
-	}
+const api = ({ dispatch, getState }) => next => action => {
 	function onApiCallStart(action) {
 		const { key } = action;
 		dispatch(setApiCallLoading(key, true));
@@ -49,27 +50,230 @@ const api = ({ dispatch, getState, ...rest }) => next => action => {
 		}
 	}
 
-	if (action.type === API_CALL_REQUEST) {
-		const { key, options, cache } = action;
+	const executeRequest = async () => {
+		const state = getState();
+		const { key, options } = action;
+		const apiTask = { key : String.uid(50), ...options};
 		if (key && options) {
-			const { uri, type, params, data } = options;
-			onApiCallStart(action);
-			ApiServiceInstance.setServiceUri(uri);
+			const { uri, type, params, data, cache, id } = options;
+			//onApiCallStart(action);
+			if (String.isString(uri)) {
+				ApiServiceInstance.refresh();
+				ApiServiceInstance.setServiceUri(uri);
+			}
+			
 			if (type === "records") {
-				ApiServiceInstance.getRecords(params).then(res => {
-					onApiCallComplete(action, res, false);
-				}).catch(e => {
-						onApiCallComplete(action, false, e);
-				});
-			} else if (type === "aggregates") {
-				ApiServiceInstance.getAggregatesCount(params).then(res => {
-					onApiCallComplete(action, res, false);
-				}).catch(e => {
-					onApiCallComplete(action, false, e);
-				});
+				//console.log("cached", key, cache[key]);
+				dispatch(addApiTask(apiTask));
+				if (cache) {
+					dispatch(removeResponseCache(key));
+				}
+				return await ApiServiceInstance.getRecords(params).then(res => {
+						if (cache) {
+							let {data, ...rest} = res.body;
+							dispatch(setResponseCache(key, rest));
+							dispatch(setDataCache(key, data));
+						}
+						dispatch(removeApiTask(apiTask));
+						if (res.err) {
+							throw res.err;
+						}
+						else {
+							return res.body.data;
+						}
+					}).catch(e => {
+						dispatch(removeApiTask(apiTask));
+						throw e;
+					});
+			} 
+			if (type === "count") {
+				//console.log("cached", key, cache[key]);
+				dispatch(addApiTask(apiTask));
+				if (cache) {
+					dispatch(removeResponseCache(key));
+				}
+				return await ApiServiceInstance.getRecordsCount(params).then(res => {
+						if (cache) {
+							let {data, ...rest} = res.body;
+							dispatch(setResponseCache(key, rest));
+							dispatch(setDataCache(key, data.count));
+						}
+						dispatch(removeApiTask(apiTask));
+						if (res.err) {
+							throw res.err;
+						}
+						else {
+							return res.body.data;
+						}
+					}).catch(e => {
+						dispatch(removeApiTask(apiTask));
+						throw e;
+					});
+			} 
+			else if (type === "aggregates") {
+				dispatch(addApiTask(apiTask));
+				
+				if (cache) {
+					dispatch(removeResponseCache(key));
+				}
+				
+				return await ApiServiceInstance.getAggregatesCount(params).then(res => {
+						if (cache) {
+							let {data, ...rest} = res.body;
+							dispatch(setResponseCache(key, rest));
+							dispatch(setDataCache(key, data));
+						}
+						dispatch(removeApiTask(apiTask));
+						if (res.err) {
+							throw res.err;
+						}
+						else {
+							return res.body.data;
+						}
+					}).catch(e => {
+						dispatch(removeApiTask(apiTask));
+						dispatch(setResponseCache(key, e));
+						throw e;
+					});
+			}
+
+			else if (type === "create") {
+				dispatch(addApiTask(apiTask));
+				if (cache) {
+					dispatch(removeResponseCache(key));
+				}
+				return await ApiServiceInstance.create(data).then(res => {
+						if (cache) {
+							let {data, ...rest} = res.body;
+							dispatch(setResponseCache(key, rest));
+							/*let newCache = Array.isArray(cache[key])? cache[key] : [];
+							//newCache.push(res.body.data);
+							dispatch(setDataCache(key, newCache));*/
+						}
+						dispatch(removeApiTask(apiTask));
+						if (res.err) {
+							throw res.err;
+						}
+						else {
+							return res.body.data;
+						}
+					}).catch(e => {
+						dispatch(removeApiTask(apiTask));
+						throw e;
+					});
+			}
+
+			else if (type === "update") {
+				dispatch(addApiTask(apiTask));
+				if (cache) {
+					dispatch(removeResponseCache(key));
+				}
+				return await ApiServiceInstance.update(id, data, params).then(res => {
+						if (cache) {
+							let {data, ...rest} = res.body;
+							dispatch(setResponseCache(key, rest));
+							/*let newCache = Array.isArray(cache[key])? cache[key] : [];
+
+							if (newCache.length > 0) {
+								let exists = false;
+								newCache = newCache.map((entry, index) => {
+									if (entry._id === id) {
+										exists = true;
+										return res.body.data;
+									}
+									return entry;
+								});
+								if (!exists) {
+									newCache.push(res.body.data);
+								}
+								
+							}
+							else{
+								newCache.push(res.body.data);
+							}
+							
+							dispatch(setDataCache(key, newCache));
+							*/
+						}
+						dispatch(removeApiTask(apiTask));
+						if (res.err) {
+							throw res.err;
+						}
+						else {
+							return res.body.data;
+						}
+						
+					}).catch(e => {
+						dispatch(removeApiTask(apiTask));
+						throw e;
+					});
+			}
+
+			else if (type === "delete") {
+				dispatch(addApiTask(apiTask));
+				if (cache) {
+					dispatch(removeResponseCache(key));
+				}
+				return await ApiServiceInstance.delete(id).then(res => {
+						if (cache) {
+							let {data, ...rest} = res.body;
+							dispatch(setResponseCache(key, rest));
+							//dispatch(setDataCache(key, res.body.data));
+						}
+						dispatch(removeApiTask(apiTask));
+						console.log("ApiServiceInstance.update res", res);
+						return res.body.data;
+					}).catch(e => {
+						dispatch(removeApiTask(apiTask));
+						throw e;
+					});
+			}
+
+			else if (type === "search") {
+				dispatch(addApiTask(apiTask));
+				if (cache) {
+					dispatch(removeResponseCache(key));
+				}
+				let searchKeyword = "";
+				if (JSON.isJSON(params) && (String.isString(params.q) || String.isString(params.query))) {
+					searchKeyword = String.isString(params.q)? params.q : params.query;
+					searchKeyword = searchKeyword.trim();
+				}
+				
+				if (searchKeyword !== "") {
+					if (cache) {
+						let search_history = Array.isArray(state.cache.data.search_history)? state.cache.data.search_history : [];
+						search_history.unshift(searchKeyword);
+						
+						let unique_search_history = search_history.unique();
+						console.log("unique_search_history", unique_search_history);
+						dispatch(setDataCache("search_history", unique_search_history));
+					}
+					return await ApiServiceInstance.searchGlobally(searchKeyword).then(res => {
+						if (cache) {
+							let {data, ...rest} = res.body;
+							dispatch(setResponseCache(key, rest));
+						}
+						dispatch(removeApiTask(apiTask));
+						return res.body.data;
+					}).catch(e => {
+						dispatch(removeApiTask(apiTask));
+						throw e;
+					});
+				}
+				else {
+					dispatch(removeApiTask(apiTask));
+					return [];
+				}
+				
 			}
 		}
-	} 
+	}
+	if (action.type === API_CALL_REQUEST) {
+		return executeRequest();
+	} else {
+		next(action);
+	}
 };
 
 export default api;

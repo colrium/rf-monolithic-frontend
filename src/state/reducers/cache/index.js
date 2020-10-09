@@ -4,6 +4,9 @@ import {
 	SET_DATA_CACHE,
 	REMOVE_DATA_CACHE,
 	CLEAR_DATA_CACHE,
+	SET_RESPONSE_CACHE,
+	REMOVE_RESPONSE_CACHE,
+	CLEAR_RESPONSE_CACHE,
 	SET_BLOB_CACHE,
 	REMOVE_BLOB_CACHE,
 	CLEAR_BLOB_CACHE,
@@ -12,6 +15,7 @@ import {
 const initialState = {
 	data: {},
 	blob: {},
+	res: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -32,6 +36,24 @@ export default (state = initialState, action = {}) => {
 			return {
 				...state,
 				data: initialState.data,
+			};
+		}
+		case SET_RESPONSE_CACHE: {
+			return {
+				...state,
+				res: { ...state.res, [action.key]: action.res },
+			};
+		}
+		case REMOVE_RESPONSE_CACHE: {
+			return {
+				...state,
+				res: JSON.removeProperty(state.res, action.key),
+			};
+		}
+		case CLEAR_RESPONSE_CACHE: {
+			return {
+				...state,
+				res: initialState.res,
 			};
 		}
 		case SET_BLOB_CACHE: {

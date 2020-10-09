@@ -10,6 +10,7 @@ import CardContent from "components/Card/CardContent";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 //
+import { withTheme } from '@material-ui/core/styles';
 import LazyModule from "components/LazyModule";
 import Typography from "components/Typography";
 import {withGlobals} from "contexts/Globals";
@@ -82,7 +83,7 @@ class Overview extends Component {
 	handleAggregateMenuItemClick = column => event => {};
 
 	render() {
-		const { classes, className, auth, definations, services } = this.props;
+		const { classes, className, auth, definations, services, contexts,  gridSize, theme, chartType } = this.props;
 
 		const rootClassName = classNames(classes.root, className);
 
@@ -92,20 +93,20 @@ class Overview extends Component {
 					([name, defination], index) =>
 						!defination.access.restricted(auth.user) &&
 						defination.access.view.summary(auth.user) &&
-						name in services && (
-							<GridItem xs={12} key={name + "-aggregates"}>
+						name in services && contexts.includes(name) && (
+							<GridItem xs={12} md={gridSize} key={name + "-aggregates"}>
 								<Card
-									elevation={0}
 									className="rounded p-0"
 									style={{
-										background:
+										/*background:
 											"rgba(" +
 											this.backgroundColors[name] +
-											", 0.2)",
+											", 0.2)",*/
+										background: theme.palette.background.paper,
 									}}
 								>
 									<CardContent className="p-0">
-										<LazyModule
+										{chartType === "pie" && <LazyModule
 											resolve={() =>
 												import(
 													"views/widgets/Charts/AggregatesPieChart"
@@ -142,14 +143,53 @@ class Overview extends Component {
 											showTitle
 											showMenu
 											monochrome
-										/>
+										/>}
+										{chartType === "bar" && <LazyModule
+											resolve={() =>
+												import(
+													"views/widgets/Charts/AggregatesBarChart"
+												)
+											}
+											placeholder={[
+												{
+													variant: "rect",
+													width: "30%",
+													height: 50,
+													className:
+														"m-auto float-right",
+												},
+												{
+													variant: "circle",
+													width: 150,
+													height: 150,
+													className: "m-auto mt-4",
+												},
+												{
+													variant: "text",
+													width: "50%",
+													className: "m-auto mt-4",
+												},
+											]}
+											defination={defination}
+											service={services[name]}
+											color={
+												defination.color
+													? defination.color
+													: colors.hex.primary
+											}
+											dynamic
+											showTitle
+											showMenu
+											monochrome
+										/>}
 									</CardContent>
 									<CardActions>
+										{defination.icon}
 										<Typography
 											className={classes.caption}
 											variant="caption"
 										>
-											{defination.icon} Total{" "}
+											 Total{" "}
 											{defination.label} :{" "}
 											{this.state.counts[name]
 												? this.state.counts[name] + ""
@@ -168,6 +208,15 @@ class Overview extends Component {
 Overview.propTypes = {
 	className: PropTypes.string,
 	classes: PropTypes.object.isRequired,
+	gridSize: PropTypes.number,
+	chartType: PropTypes.string,
+	contexts:  PropTypes.array,
+};
+
+Overview.defaultProps = {
+	gridSize: 12,
+	chartType: "pie",
+	contexts: ["commissions", "surveys", "responses"]
 };
 
 const mapStateToProps = state => ({
@@ -175,6 +224,7 @@ const mapStateToProps = state => ({
 });
 
 export default withGlobals(compose(
+	withTheme,
 	withStyles(styles),
 	connect(mapStateToProps, {}),
 	withErrorHandler

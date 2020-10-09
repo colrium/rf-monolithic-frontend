@@ -1,4 +1,5 @@
 import {
+	SET_VERSION,
 	SET_ONBOARDED,
 	SET_INITIALIZED,
 	SET_SETTINGS,
@@ -9,6 +10,13 @@ export function setOnboarded(onboarded) {
 	return {
 		type: SET_ONBOARDED,
 		onboarded,
+	};
+}
+
+export function setVersion(version) {
+	return {
+		type: SET_VERSION,
+		version,
 	};
 }
 

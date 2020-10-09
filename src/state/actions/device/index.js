@@ -6,6 +6,7 @@ import {
 	SET_BROWSER,
 	SET_SCREEN_SIZE,
 	SET_WINDOW_SIZE,
+	SET_LOCATION,
 } from "state/actions/types";
 
 export function setIdentity(identity) {
@@ -40,5 +41,12 @@ export function setWindowSize(window_size) {
 	return {
 		type: SET_WINDOW_SIZE,
 		window_size,
+	};
+}
+
+export function setDeviceLocation(location) {
+	return {
+		type: SET_LOCATION,
+		location,
 	};
 }

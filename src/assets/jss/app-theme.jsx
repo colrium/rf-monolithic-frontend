@@ -35,8 +35,213 @@ import {
 	linkedinColor,
 } from "config";
 
+import Color from "color";
+
 import { createMuiTheme } from "@material-ui/core/styles";
-let Color = require("color");
+import AvenirWoff from 'assets/fonts/Avenir.woff';
+import MuliRegular from 'assets/fonts/Muli-Regular.woff';
+import MuliItalic from 'assets/fonts/Muli-Italic.woff';
+import MuliBlack from 'assets/fonts/Muli-Black.woff';
+import MuliBlackItalic from 'assets/fonts/Muli-BlackItalic.woff';
+import MuliBold from 'assets/fonts/Muli-Bold.woff';
+import MuliBoldItalic from 'assets/fonts/Muli-BoldItalic.woff';
+import MuliExtraBold from 'assets/fonts/Muli-ExtraBold.woff';
+import MuliExtraBoldItalic from 'assets/fonts/Muli-ExtraBoldItalic.woff';
+import MuliExtraLight from 'assets/fonts/Muli-ExtraLight.woff';
+import MuliExtraLightItalic from 'assets/fonts/Muli-ExtraLightItalic.woff';
+import MuliLight from 'assets/fonts/Muli-Light.woff';
+import MuliLightItalic from 'assets/fonts/Muli-LightItalic.woff';
+import MuliSemiBold from 'assets/fonts/Muli-SemiBold.woff';
+import MuliSemiBoldItalic from 'assets/fonts/Muli-SemiBoldItalic.woff';
+import MaterialIconsWoff2 from 'assets/fonts/MaterialIcons-Regular.woff2';
+
+
+
+const materialIconsFont = {
+	fontFamily: 'Material Icons',
+	fontWeight: 400,
+	fontStyle: "normal",
+	src: `url(${MaterialIconsWoff2}) format("woff2");`,
+};
+
+const avenirFont = {
+	fontFamily: 'Avenir',
+	fontWeight: 400,
+	fontStyle: "normal",
+	src: `url(${AvenirWoff}) format("woff");`,
+};
+
+const muliRegularFont = {
+	fontFamily: 'Muli',
+	fontWeight: 400,
+	fontDisplay: 'swap',
+	src: `
+		local('Muli'),
+		local('Muli Regular'),
+		url(${MuliRegular}) format('woff')
+	`,
+};
+
+const muliItalicFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 400,
+	src: `
+		local('Muli'),
+		local('Muli Italic'),
+		url(${MuliItalic}) format('woff')
+	`,
+};
+
+
+const muliBlackFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 900,
+	src: `
+		local('Muli'),
+		local('Muli Black'),
+		url(${MuliBlack}) format('woff')
+	`,
+};
+
+const muliBlackItalicFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 900,
+	src: `
+		local('Muli'),
+		local('Muli Black Italic'),
+		url(${MuliBlackItalic}) format('woff')
+	`,
+};
+
+const muliBoldFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 700,
+	src: `
+		local('Muli'),
+		local('Muli Bold'),
+		url(${MuliBold}) format('woff')
+	`,
+};
+
+const muliBoldItalicFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 700,
+	src: `
+		local('Muli'),
+		local('Muli Bold Italic'),
+		url(${MuliBoldItalic}) format('woff')
+	`,
+};
+
+const muliExtraBoldFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 800,
+	src: `
+		local('Muli'),
+		local('Muli Extra Bold'),
+		url(${MuliExtraBold}) format('woff')
+	`,
+};
+
+const muliExtraBoldItalicFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 800,
+	src: `
+		local('Muli'),
+		local('Muli Extra Bold Italic'),
+		url(${MuliExtraBoldItalic}) format('woff')
+	`,
+};
+
+
+const muliExtraLightFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 200,
+	src: `
+		local('Muli'),
+		local('Muli Extra Light'),
+		url(${MuliExtraLight}) format('woff')
+	`,
+};
+
+const muliExtraLightItalicFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 200,
+	src: `
+		local('Muli'),
+		local('Muli Extra Light Italic'),
+		url(${MuliExtraLightItalic}) format('woff')
+	`,
+};
+
+const muliLightFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 300,
+	src: `
+		local('Muli'),
+		local('Muli Light'),
+		url(${MuliLight}) format('woff')
+	`,
+};
+
+const muliLightItalicFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 300,
+	src: `
+		local('Muli'),
+		local('Muli Light Italic'),
+		url(${MuliLightItalic}) format('woff')
+	`,
+};
+
+const muliSemiBoldFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 600,
+	src: `
+		local('Muli'),
+		local('Muli Semi Bold'),
+		url(${MuliSemiBold}) format('woff')
+	`,
+};
+
+const muliSemiBoldItalicFont = {
+	fontFamily: 'Muli',
+	fontStyle: 'normal',
+	fontDisplay: 'swap',
+	fontWeight: 600,
+	src: `
+		local('Muli'),
+		local('Muli Semi Bold Italic'),
+		url(${MuliSemiBoldItalic}) format('woff')
+	`,
+};
+
+
+
 
 const app = {
 	name: appName,
@@ -195,114 +400,376 @@ const colors = {
 	},
 };
 
-/*const nunito = {
-  fontFamily: '"Nunito", sans-serif',
-  fontStyle: 'normal',
-  fontDisplay: 'swap',
-  fontWeight: 400,
-};*/
+
+let defaultPallete = {
+	red: {
+		main: "#f44336",
+		lighten_5: "#ffebee",
+		lighten_4: "#ffcdd2",
+		lighten_3: "#ef9a9a",
+		lighten_2: "#e57373",
+		lighten_1: "#ef5350",
+		darken_1: "#e53935",
+		darken_2: "#d32f2f",
+		darken_3: "#c62828",
+		darken_4: "#b71c1c",
+		accent_1: "#ff8a80",
+		accent_2: "#ff5252",
+		accent_3: "#ff1744",
+		accent_4: "#d50000",
+	},
+	pink: {
+		main: "#e91e63",
+		lighten_5: "#fce4ec",
+		lighten_4: "#f8bbd0",
+		lighten_3: "#f48fb1",
+		lighten_2: "#f06292",
+		lighten_1: "#ec407a",
+		darken_1: "#d81b60",
+		darken_2: "#c2185b",
+		darken_3: "#ad1457",
+		darken_4: "#880e4f",
+		accent_1: "#ff80ab",
+		accent_2: "#ff4081",
+		accent_3: "#f50057",
+		accent_4: "#c51162",
+	},
+	purple: {
+		main: "#9c27b0",
+		lighten_5: "#f3e5f5",
+		lighten_4: "#e1bee7",
+		lighten_3: "#ce93d8",
+		lighten_2: "#ba68c8",
+		lighten_1: "#ab47bc",
+		darken_1: "#8e24aa",
+		darken_2: "#7b1fa2",
+		darken_3: "#6a1b9a",
+		darken_4: "#4a148c",
+		accent_1: "#ea80fc",
+		accent_2: "#e040fb",
+		accent_3: "#d500f9",
+		accent_4: "#aa00ff",
+	},
+	deep_purple: {
+		main: "#673ab7",
+		lighten_5: "#ede7f6",
+		lighten_4: "#d1c4e9",
+		lighten_3: "#b39ddb",
+		lighten_2: "#9575cd",
+		lighten_1: "#7e57c2",
+		darken_1: "#5e35b1",
+		darken_2: "#512da8",
+		darken_3: "#4527a0",
+		darken_4: "#311b92",
+		accent_1: "#b388ff",
+		accent_2: "#7c4dff",
+		accent_3: "#651fff",
+		accent_4: "#6200ea",
+	},
+	indigo: {
+		main: "#3f51b5",
+		lighten_5: "#e8eaf6",
+		lighten_4: "#c5cae9",
+		lighten_3: "#9fa8da",
+		lighten_2: "#7986cb",
+		lighten_1: "#5c6bc0",
+		darken_1: "#3949ab",
+		darken_2: "#303f9f",
+		darken_3: "#283593",
+		darken_4: "#1a237e",
+		accent_1: "#8c9eff",
+		accent_2: "#536dfe",
+		accent_3: "#3d5afe",
+		accent_4: "#304ffe",
+	},
+	blue: {
+		main: "#2196f3",
+		lighten_5: "#e3f2fd",
+		lighten_4: "#bbdefb",
+		lighten_3: "#90caf9",
+		lighten_2: "#64b5f6",
+		lighten_1: "#42a5f5",
+		darken_1: "#1e88e5",
+		darken_2: "#1976d2",
+		darken_3: "#1565c0",
+		darken_4: "#0d47a1",
+		accent_1: "#82b1ff",
+		accent_2: "#448aff",
+		accent_3: "#2979ff",
+		accent_4: "#2962ff",
+	},
+	light_blue: {
+		main: "#03a9f4",
+		lighten_5: "#e1f5fe",
+		lighten_4: "#b3e5fc",
+		lighten_3: "#81d4fa",
+		lighten_2: "#4fc3f7",
+		lighten_1: "#29b6f6",
+		darken_1: "#039be5",
+		darken_2: "#0288d1",
+		darken_3: "#0277bd",
+		darken_4: "#01579b",
+		accent_1: "#80d8ff",
+		accent_2: "#40c4ff",
+		accent_3: "#00b0ff",
+		accent_4: "#0091ea",
+	},
+	cyan: {
+		main: "#00bcd4",
+		lighten_5: "#e0f7fa",
+		lighten_4: "#b2ebf2",
+		lighten_3: "#80deea",
+		lighten_2: "#4dd0e1",
+		lighten_1: "#26c6da",
+		darken_1: "#00acc1",
+		darken_2: "#0097a7",
+		darken_3: "#00838f",
+		darken_4: "#006064",
+		accent_1: "#84ffff",
+		accent_2: "#18ffff",
+		accent_3: "#00e5ff",
+		accent_4: "#00b8d4",
+	},
+	teal: {
+		main: "#009688",
+		lighten_5: "#e0f2f1",
+		lighten_4: "#b2dfdb",
+		lighten_3: "#80cbc4",
+		lighten_2: "#4db6ac",
+		lighten_1: "#26a69a",
+		darken_1: "#00897b",
+		darken_2: "#00796b",
+		darken_3: "#00695c",
+		darken_4: "#004d40",
+		accent_1: "#a7ffeb",
+		accent_2: "#64ffda",
+		accent_3: "#1de9b6",
+		accent_4: "#00bfa5",
+	},
+	green: {
+		main: "#4caf50",
+		lighten_5: "#e8f5e9",
+		lighten_4: "#c8e6c9",
+		lighten_3: "#a5d6a7",
+		lighten_2: "#81c784",
+		lighten_1: "#66bb6a",
+		darken_1: "#43a047",
+		darken_2: "#388e3c",
+		darken_3: "#2e7d32",
+		darken_4: "#1b5e20",
+		accent_1: "#b9f6ca",
+		accent_2: "#69f0ae",
+		accent_3: "#00e676",
+		accent_4: "#00c853",
+	},
+	light_green: {
+		main: "#8bc34a",
+		lighten_5: "#f1f8e9",
+		lighten_4: "#dcedc8",
+		lighten_3: "#c5e1a5",
+		lighten_2: "#aed581",
+		lighten_1: "#9ccc65",
+		darken_1: "#7cb342",
+		darken_2: "#689f38",
+		darken_3: "#558b2f",
+		darken_4: "#33691e",
+		accent_1: "#ccff90",
+		accent_2: "#b2ff59",
+		accent_3: "#76ff03",
+		accent_4: "#64dd17",
+	},
+	lime: {
+		main: "#cddc39",
+		lighten_5: "#f9fbe7",
+		lighten_4: "#f0f4c3",
+		lighten_3: "#e6ee9c",
+		lighten_2: "#dce775",
+		lighten_1: "#d4e157",
+		darken_1: "#c0ca33",
+		darken_2: "#afb42b",
+		darken_3: "#9e9d24",
+		darken_4: "#827717",
+		accent_1: "#f4ff81",
+		accent_2: "#eeff41",
+		accent_3: "#c6ff00",
+		accent_4: "#aeea00",
+	},
+	yellow: {
+		main: "#ffeb3b",
+		lighten_5: "#fffde7",
+		lighten_4: "#fff9c4",
+		lighten_3: "#fff59d",
+		lighten_2: "#fff176",
+		lighten_1: "#ffee58",
+		darken_1: "#fdd835",
+		darken_2: "#fbc02d",
+		darken_3: "#f9a825",
+		darken_4: "#f57f17",
+		accent_1: "#ffff8d",
+		accent_2: "#ffff00",
+		accent_3: "#ffea00",
+		accent_4: "#ffd600",
+	},
+	amber: {
+		main: "#ffc107",
+		lighten_5: "#fff8e1",
+		lighten_4: "#ffecb3",
+		lighten_3: "#ffe082",
+		lighten_2: "#ffd54f",
+		lighten_1: "#ffca28",
+		darken_1: "#ffb300",
+		darken_2: "#ffa000",
+		darken_3: "#ff8f00",
+		darken_4: "#ff6f00",
+		accent_1: "#ffe57f",
+		accent_2: "#ffd740",
+		accent_3: "#ffc400",
+		accent_4: "#ffab00",
+	},
+};
 
 let theme = createMuiTheme({
+	props: {
+		MuiTypography: {
+			variantMapping: {
+				h1: 'h1',
+				h2: 'h2',
+				h3: 'h3',
+				h4: 'h4',
+				h5: 'h5',
+				h6: 'h6',
+				subtitle1: 'h5',
+				subtitle2: 'h5',
+				body1: 'span',
+				body2: 'span',
+			},
+		},
+	},
 	palette: {
 		type: "light",
 		primary: {
 			contrastText: inverseColor,
 			main: primaryColor,
 			light: Color(primaryColor)
-				.lighten(0.5)
+				.lighten(0.3)
 				.desaturate(0.5)
 				.hex(),
 			dark: Color(primaryColor)
-				.darken(0.5)
+				.darken(0.2)
 				.hex(),
 		},
 		secondary: {
 			main: secondaryColor,
+			light: Color(secondaryColor)
+				.lighten(0.2)
+				.desaturate(0.5)
+				.hex(),
+			dark: Color(secondaryColor)
+				.darken(0.5)
+				.hex(),
+		},
+		accent: {
+			main: accentColor,
+			light: Color(accentColor)
+				.lighten(0.3)
+				.desaturate(0.5)
+				.hex(),
+			dark: Color(accentColor)
+				.darken(0.2)
+				.hex(),
 		},
 		error: {
 			main: errorColor,
 		},
+		background: {
+			default: "#EBEBEB",
+			paper: "#FFFFFF",
+		},
+		text: {
+			primary: "#575757",
+			secondary: "#737373",
+			disabled: "#999999",
+		},
+		...defaultPallete,
+
 	},
 	typography: {
 		useNextVariants: true,
 		// Use the system font instead of the default Roboto font.
-		fontFamily: [
-			"Product Sans",
+		/*fontFamily: [
+			"Muli SemiBold",			
 			"-apple-system",
 			"BlinkMacSystemFont",
-			'"Segoe UI"',
+			"Segoe UI",
 			"Roboto",
-			'"Helvetica Neue"',
-			'"Muli"',
+			"Helvetica Neue",
 			"Arial",
 			"sans-serif",
-			'"Apple Color Emoji"',
-			'"Segoe UI Emoji"',
-			'"Segoe UI Symbol"',
-		].join(","),
+			"Apple Color Emoji",
+			"Segoe UI Emoji",
+			"Segoe UI Symbol",
+		].join(","),*/
+		fontFamily: 'Muli',
 		htmlFontSize: 16,
 		h1: {
-			fontWeight: "400",
-			fontSize: "35px",
-			letterSpacing: "-0.24px",
-			lineHeight: "40px",
+			fontWeight: 700,
+			fontSize: "60px",
+			lineHeight: "68px",
+			marginBlockStart: 0,
+			marginBlockEnd: 0,
 		},
 		h2: {
-			fontWeight: "400",
-			fontSize: "29px",
-			letterSpacing: "-0.24px",
-			lineHeight: "32px",
+			fontWeight: 700,
+			fontSize: "48px",
+			lineHeight: "54px",
+			marginBlockStart: 0,
+			marginBlockEnd: 0,
 		},
 		h3: {
-			fontWeight: "400",
-			fontSize: "24px",
-			letterSpacing: "-0.06px",
-			lineHeight: "28px",
+			fontWeight: 700,
+			fontSize: "32px",
+			lineHeight: "38px",
 		},
 		h4: {
-			fontWeight: "400",
-			fontSize: "20px",
-			letterSpacing: "-0.06px",
-			lineHeight: "24px",
+			fontWeight: 700,
+			fontSize: "24px",
+			lineHeight: "28px",
 		},
 		h5: {
-			fontWeight: "400",
-			fontSize: "16px",
-			letterSpacing: "-0.05px",
-			lineHeight: "20px",
+			fontWeight: 700,
+			fontSize: "20px",
+			lineHeight: "24px",
 		},
 		h6: {
-			fontWeight: "400",
-			fontSize: "14px",
-			letterSpacing: "-0.05px",
+			fontWeight: 700,
+			fontSize: "18px",
 			lineHeight: "20px",
 		},
 		subtitle1: {
-			fontSize: "16px",
-			letterSpacing: "-0.05px",
+			fontWeight: 800,
+			fontSize: "18px",
 			lineHeight: "25px",
 		},
 		subtitle2: {
-			fontSize: "14px",
+			fontSize: "18px",
 			letterSpacing: 0,
-			lineHeight: "16px",
+			lineHeight: "20px",
 		},
 		body1: {
-			fontSize: "14px",
-			letterSpacing: "-0.05px",
+			fontSize: 14,
 			lineHeight: "21px",
 		},
 		body2: {
+			fontWeight: 600,
 			fontSize: "12px",
-			letterSpacing: "-0.04px",
-			lineHeight: "14px",
 		},
 		button: {
+			fontWeight: 400,
 			fontSize: "14px",
 		},
 		caption: {
+			fontWeight: 400,
 			fontSize: "12px",
-			letterSpacing: "0.3px",
 			lineHeight: "16px",
 		},
 	},
@@ -310,6 +777,26 @@ let theme = createMuiTheme({
 		width: app.drawer.width,
 	},
 	overrides: {
+		MuiCssBaseline: {
+			'@global': {
+				'@font-face': [
+					avenirFont,
+					materialIconsFont,					
+					muliRegularFont,
+					//muliItalicFont,
+					muliBlackFont,
+					//muliBlackItalicFont,
+					muliBoldFont,
+					//muliBoldItalicFont,
+					muliExtraBoldFont,
+					//muliExtraBoldItalicFont,
+					muliExtraLightFont,
+					//muliExtraLightItalicFont,
+					muliLightFont,
+					//muliLightItalicFont,
+				],
+			},
+		},
 		MuiButtonBase: {
 			disableRipple: true, // No more ripple, on the whole application 💣!
 		},
@@ -347,6 +834,20 @@ let theme = createMuiTheme({
 
 let theme_dark = createMuiTheme({
 	props: {
+		MuiTypography: {
+			variantMapping: {
+				h1: 'h1',
+				h2: 'h2',
+				h3: 'h3',
+				h4: 'h4',
+				h5: 'h5',
+				h6: 'h6',
+				subtitle1: 'h5',
+				subtitle2: 'h5',
+				body1: 'span',
+				body2: 'span',
+			},
+		},
 		// Name of the component ⚛️
 		MuiButtonBase: {
 			// The properties to apply
@@ -369,90 +870,74 @@ let theme_dark = createMuiTheme({
 		secondary: {
 			main: secondaryColor,
 		},
+		accent: {
+			main: accentColor,
+		},
 		error: {
 			main: errorColor,
-		},
+		},		
+		...defaultPallete,
 	},
 	typography: {
 		useNextVariants: true,
 		// Use the system font instead of the default Roboto font.
-		fontFamily: [
-			"Product Sans",
-			"-apple-system",
-			"BlinkMacSystemFont",
-			'"Segoe UI"',
-			"Roboto",
-			'"Helvetica Neue"',
-			'"Muli"',
-			"Arial",
-			"sans-serif",
-			'"Apple Color Emoji"',
-			'"Segoe UI Emoji"',
-			'"Segoe UI Symbol"',
-		].join(","),
+		fontFamily: 'Muli, Arial',
 		htmlFontSize: 16,
 		h1: {
-			fontWeight: "400",
-			fontSize: "35px",
-			letterSpacing: "-0.24px",
-			lineHeight: "40px",
+			fontWeight: 700,
+			fontSize: "60px",
+			lineHeight: "68px",
 		},
 		h2: {
-			fontWeight: "400",
-			fontSize: "29px",
-			letterSpacing: "-0.24px",
-			lineHeight: "32px",
+			fontWeight: 700,
+			fontSize: "48px",
+			lineHeight: "54px",
 		},
 		h3: {
-			fontWeight: "400",
-			fontSize: "24px",
-			letterSpacing: "-0.06px",
-			lineHeight: "28px",
+			fontWeight: 700,
+			fontSize: "32px",
+			lineHeight: "38px",
 		},
 		h4: {
-			fontWeight: "400",
-			fontSize: "20px",
-			letterSpacing: "-0.06px",
-			lineHeight: "24px",
+			fontWeight: 700,
+			fontSize: "24px",
+			lineHeight: "28px",
 		},
 		h5: {
-			fontWeight: "400",
-			fontSize: "16px",
-			letterSpacing: "-0.05px",
-			lineHeight: "20px",
+			fontWeight: 700,
+			fontSize: "20px",
+			lineHeight: "24px",
 		},
 		h6: {
-			fontWeight: "400",
-			fontSize: "14px",
-			letterSpacing: "-0.05px",
+			fontWeight: 700,
+			fontSize: "18px",
 			lineHeight: "20px",
 		},
 		subtitle1: {
-			fontSize: "16px",
-			letterSpacing: "-0.05px",
+			fontWeight: 800,
+			fontSize: "18px",
 			lineHeight: "25px",
 		},
 		subtitle2: {
-			fontSize: "14px",
+			fontSize: "18px",
 			letterSpacing: 0,
-			lineHeight: "16px",
+			lineHeight: "20px",
 		},
 		body1: {
-			fontSize: "14px",
-			letterSpacing: "-0.05px",
+			fontSize: 14,
 			lineHeight: "21px",
 		},
 		body2: {
+			fontWeight: 600,
 			fontSize: "12px",
-			letterSpacing: "-0.04px",
-			lineHeight: "14px",
 		},
 		button: {
+			fontWeight: 600,
 			fontSize: "14px",
 		},
 		caption: {
+			fontWeight: 400,
 			fontSize: "12px",
-			letterSpacing: "0.3px",
 			lineHeight: "16px",
 		},
 	},
@@ -460,6 +945,26 @@ let theme_dark = createMuiTheme({
 		width: app.drawer.width,
 	},
 	overrides: {
+		MuiCssBaseline: {
+			'@global': {
+				'@font-face': [
+					avenirFont,
+					materialIconsFont,
+					muliRegularFont,
+					//muliItalicFont,
+					muliBlackFont,
+					//muliBlackItalicFont,
+					muliBoldFont,
+					//muliBoldItalicFont,
+					muliExtraBoldFont,
+					//muliExtraBoldItalicFont,
+					muliExtraLightFont,
+					//muliExtraLightItalicFont,
+					muliLightFont,
+					//muliLightItalicFont,
+				],
+			},
+		},
 		MuiButtonBase: {
 			//disableRipple: false, // No more ripple, on the whole application 💣!
 		},

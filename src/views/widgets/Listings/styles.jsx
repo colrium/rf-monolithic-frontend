@@ -4,7 +4,8 @@ import { colors } from "assets/jss/app-theme";
 
 export default theme => ({
 	root: {
-		padding: "0",
+		padding: theme.spacing(),
+		backgroundColor: theme.palette.background.paper,
 	},
 	calendar: {
 		borderRight: "1px solid rgba(" + colors.rgb.grey + ", 0.5) !important",

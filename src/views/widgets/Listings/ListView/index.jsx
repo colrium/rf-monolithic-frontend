@@ -19,6 +19,7 @@ import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import * as Actions from "state/actions";
+import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
 import { UtilitiesHelper } from "hoc/Helpers";
 import { withErrorHandler } from "hoc/ErrorHandler";
@@ -29,6 +30,7 @@ class ListView extends React.Component {
 	state = {
 		loading: true,
 		load_error: false,
+		raw_records: [],
 		records: [],
 	};
 	constructor(props) {
@@ -40,44 +42,38 @@ class ListView extends React.Component {
 	}
 
 	componentDidMount() {
-		this.prepareForData();
-		this.loadAll({ p: 1 });
+		const { cache, defination } = this.props;
+		this.mounted = true;
+		this.loadContext();
+		this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if (
-			!Object.entries(this.props.defination).equals(
-				Object.entries(nextProps.defination)
-			)
-		) {
-			/*this.prepareForData();
-			this.loadAll({p: 1});*/
+	getSnapshotBeforeUpdate(prevProps) {
+		this.mounted = false;
+		const { cache, defination } = this.props;
+		return {
+			contextReloadRequired: !Object.areEqual(prevProps.defination, this.props.defination),
+			dataReloadRequired: !Object.areEqual(prevProps.query,this.props.query),
+			/*dataPreparationRequired: Array.isArray(cache.data[defination.name])? !cache.data[prevProps.defination.name].equals(prevProps.cache.data[defination.name]) : (Array.isArray(prevProps.cache.data[defination.name])? !prevProps.cache.data[prevProps.defination.name].equals(cache.data[defination.name]) : false),*/
+			dataPreparationRequired: false,
+		};
+	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if (snapshot.contextReloadRequired) {
+			this.loadContext();
+			this.prepareData();
 		}
-	}
-
-	componentDidUpdate(prevProps) {
-		if (
-			!Object.entries(this.props.defination).equals(
-				Object.entries(prevProps.defination)
-			) ||
-			!Object.entries(this.props.service).equals(
-				Object.entries(prevProps.service)
-			)
-		) {
-			//this.loadAll({p: 1});
-			this.prepareForData();
-			this.loadAll({ p: 1 });
+		if (snapshot.dataReloadRequired) {
+			const { query } = this.props;
+			this.setState(
+				{ query: query ? { ...query, p: 1 } : { p: 1 } },
+				this.loadData
+			);
 		}
+		
 	}
 
-	componentWillUnmount() {
-		const { dispatch } = this.props;
-		dispatch(Actions.closeDialog());
-	}
-
-	handleChangeCalendarView = view => event => {
-		this.setState(state => ({ view: view }));
-	};
 
 	handleDeleteItemConfirm = item_id => event => {
 		const { dispatch } = this.props;
@@ -121,6 +117,86 @@ class ListView extends React.Component {
 		);
 	};
 
+	loadContext() {
+		const { defination, service, query, cache } = this.props;
+		if (defination) {
+			this.setState(
+				{
+					defination: defination,
+					service: service,
+					query: query ? { ...query, p: 1 } : { p: 1 },
+					loading: false,
+				},
+				this.loadData
+			);
+		}
+	}
+
+	loadData() {
+		const { auth, cache, defination, apiCallRequest, cache_data, onLoadData, load_data } = this.props;
+		if (defination ) {
+			if (load_data) {
+				apiCallRequest( defination.name,
+					{
+						uri: defination.endpoint,
+						type: "records",
+						params: this.state.query,
+						data: {},
+						cache: cache_data,
+					}
+				).then(data => {
+					if (Function.isFunction(onLoadData)) {
+						onLoadData(data, this.state.query);
+					}
+					this.prepareData(data);
+				}).catch(e => {
+					this.setState(state => ({
+						records: [],
+						load_error: e,
+						loading: false,
+					}));
+				});
+			}
+			else {
+				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];
+				if (Function.isFunction(onLoadData)) {
+					onLoadData(data, this.state.query);
+				}
+				this.prepareData(data);
+			}
+		}
+		else {
+			this.setState(state => ({
+				records: [],
+				load_error: { msg: "No Context defination or provided" },
+				loading: false,
+			}));
+		}
+	}
+
+	
+
+	prepareData(data=null) {
+		const { auth, cache, defination, entryItemProps } = this.props;
+		let target_data = Array.isArray(data)? data : (Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : []);
+		let columns = defination ? defination.scope.columns : {};
+		let resolved_data = [];
+
+		if ( Function.isFunction( defination.views.listing.listview.resolveData ) ) {
+			defination.views.listing.listview.resolveData(target_data, auth.user, entryItemProps)
+				.then(resolve => {
+					this.setState(state => ({
+						raw_records: data,
+						records: resolve,
+						loading: false,
+					}));
+				})
+				.catch(err => {					
+					this.setState(state => ({ records: [], raw_records: [], loading: false }));
+				});
+		}
+	}
+
 	prepareForData() {
 		const { classes, defination, auth, dispatch } = this.props;
 
@@ -130,57 +206,9 @@ class ListView extends React.Component {
 		this.state.loading = false;
 	}
 
-	parseData(entry) {
-		const { defination, service, auth } = this.props;
-		let parsed_data = entry;
-		let columns = defination.scope.columns;
-
-		return parsed_data;
-	}
-
-	loadAll(query_data) {
-		const { service, auth, defination } = this.props;
-		let columns = defination.scope.columns;
-		this.setState(state => ({ loading: true }));
-		service
-			.getRecords(query_data)
-			.then(res => {
-				let raw_data = res.body.data;
-				if (
-					UtilitiesHelper.isOfType(
-						defination.views.listing.listview.resolveData,
-						"function"
-					)
-				) {
-					defination.views.listing.listview
-						.resolveData(raw_data)
-						.then(data => {
-							this.setState(state => ({
-								records: data,
-								loading: false,
-							}));
-						})
-						.catch(err => {
-							console.log("err", err);
-							this.setState(state => ({
-								records: [],
-								load_error: err,
-								loading: false,
-							}));
-						});
-				}
-			})
-			.catch(err => {
-				console.log("err", err);
-				this.setState(state => ({
-					records: [],
-					load_error: err,
-					loading: false,
-				}));
-			});
-	}
+	
 	render() {
-		const { classes, defination, service, googleMapProps } = this.props;
+		const { classes, defination, service, onClickEntry } = this.props;
 		return (
 			<GridContainer className={classes.root}>
 				<GridItem className="p-0 m-0" xs={12}>
@@ -249,7 +277,16 @@ class ListView extends React.Component {
 																		index
 																	}
 																>
-																	<ListItem alignItems="flex-start">
+																	<ListItem 
+																		button 
+																		alignItems="flex-start" 
+																		onClick={()=>{
+																			if (Function.isFunction(onClickEntry)) {
+																				onClickEntry(this.state.raw_records[index], index);
+																			}
+																		}}
+																		className={classes.listItem}
+																	>
 																		{entry.avatar && (
 																			<ListItemAvatar>
 																				{" "}
@@ -275,9 +312,9 @@ class ListView extends React.Component {
 																				entry.body
 																			}
 																		/>
+
 																	</ListItem>
 																	<Divider
-																		variant="inset"
 																		component="li"
 																	/>
 																</div>
@@ -332,20 +369,31 @@ ListView.propTypes = {
 	defination: PropTypes.object.isRequired,
 	service: PropTypes.any.isRequired,
 	show_actions: PropTypes.bool,
-	show_links: PropTypes.bool,
 	query: PropTypes.object,
+	cache_data: PropTypes.bool,
+	load_data: PropTypes.bool,
+	onLoadData: PropTypes.func,
+	onClickEntry: PropTypes.func,
 };
 
 ListView.defaultProps = {
-	query: {},
+	show_actions: true,
+	show_links: true,
+	query: { p: 1 },
+	load_data: true,
+	cache_data: true,
 };
 
-const mapStateToProps = state => ({
-	auth: state.auth,
-});
-
+const mapStateToProps = (state, ownProps) => {
+	const { defination } = ownProps;
+	return {
+		auth: state.auth,
+		cache: state.cache,
+		api: state.api,
+	};
+};
 export default compose(
 	withStyles(styles),
-	connect(mapStateToProps, {}),
+	connect(mapStateToProps, { apiCallRequest, openDialog, closeDialog }),
 	withErrorHandler
 )(ListView);

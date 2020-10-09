@@ -13,6 +13,12 @@ import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
 import { CountriesHelper, UtilitiesHelper } from "hoc/Helpers";
+import Icon from '@mdi/react';
+import { mdiAccountBoxOutline, mdiFileAccountOutline  } from '@mdi/js';
+
+let currentDate = new Date();
+
+const ke_regions = CountriesHelper.regions("KE");
 
 export default {
 	name: "applications",
@@ -42,6 +48,12 @@ export default {
 				input: {
 					type: "select",
 					required: true,
+					props: {
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						}
+					},
 				},
 				reference: {
 					name: "vacancies",
@@ -57,32 +69,7 @@ export default {
 				},
 			},
 
-			avatar: {
-				type: "string",
-				label: "Image",
-				input: {
-					type: "file",
-					props: {
-						acceptedFiles: ["image/*"],
-						dropzoneText:
-							"Drag & drop your passport size photo here",
-						filesLimit: 1,
-						dropzoneIcon: "portrait",
-					},
-				},
-				reference: {
-					name: "attachments",
-					service_query: {},
-					resolves: {
-						value: "_id",
-						display: {
-							primary: ["name"],
-							secondary: ["size"],
-							avatar: false,
-						},
-					},
-				},
-			},
+			
 
 			/*honorific: {
 				type: "string",
@@ -101,6 +88,7 @@ export default {
 					type: "text",
 					required: true,
 					size: 6,
+					
 				},
 			},
 
@@ -112,6 +100,7 @@ export default {
 					default: "",
 					required: true,
 					size: 6,
+					
 				},
 			},
 
@@ -123,6 +112,7 @@ export default {
 					type: "email",
 					default: "",
 					required: true,
+					
 				},
 			},
 
@@ -133,6 +123,7 @@ export default {
 					type: "phone",
 					default: "",
 					required: false,
+					
 				},
 			},
 
@@ -143,12 +134,16 @@ export default {
 					type: "select",
 					default: "",
 					required: false,
+					props: {
+						freeSolo: true,
+					},
 				},
 				possibilities: {
 					male: "Male",
 					female: "Female",
-					bisexual: "Bisexual",
-					transexual: "Transexual",
+					nonbinary: "Nonbinary",
+					transgender: "Transgender",
+					prefer_not_to_say: "Prefer not to say",
 				},
 			},
 
@@ -157,8 +152,18 @@ export default {
 				label: "Date of birth",
 				input: {
 					type: "date",
-					default: "",
+					default: new Date().setFullYear(currentDate.getFullYear()-18),
 					required: false,
+					props: {
+						maxDate: new Date().setFullYear(currentDate.getFullYear()-18),
+						format:"DD/MM/YYYY",
+						margin: "dense",
+						InputProps: { 
+							classes : {
+								root: "inverse",
+							}
+						}
+					},
 				},
 			},
 
@@ -166,29 +171,140 @@ export default {
 				type: "string",
 				label: "Address",
 				input: {
-					type: "textarea",
+					type: "text",
 					default: "",
 					required: false,
+					
 				},
 			},
 
-			contacts: {
+			country: {
 				type: "string",
-				label: "Other Contacts",
+				label: "Country",
+				icon: "folder",
 				input: {
-					type: "textarea",
+					type: "select",
+					default: "KE",
+					required: true,
+					props: {
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						},
+					},
+				},
+				possibilities: CountriesHelper.names(),
+			},
+
+			region: {
+				type: "string",
+				label: "Region/ County",
+				input: {
+					type: "select",
+					default: "Nairobi",
+					required: true,
+					/*props: {
+						freeSolo: true,
+					}	*/					
+				},
+				possibilities: CountriesHelper.regions("KE"),
+				/*possibilities: (values, user) => {
+						if (JSON.isJSON(values)) {
+							console.log("values.country", values.country)
+							return CountriesHelper.regions(values.country);
+						}
+						return {};
+						
+					}*/
+			
+			},
+
+			
+
+			subcounty: {
+				type: "string",
+				label: "Sub County",
+				input: {
+					type: "text",
 					default: "",
 					required: false,
+					/*props: {
+						freeSolo: true,
+					}*/
+				},
+				/*possibilities: (values, user) => {
+						if (JSON.isJSON(values)) {
+							return CountriesHelper.subregions(values.region);
+						}
+						return {};
+						
+				}*/
+			},
+
+			ward: {
+				type: "string",
+				label: "Ward",
+				input: {
+					type: "text",
+					default: "",
+					required: false,
+					
 				},
 			},
 
-			bio: {
+			locale: {
 				type: "string",
-				label: "Bio",
+				label: "City/Town",
 				input: {
-					type: "textarea",
+					type: "text",
 					default: "",
-					rich_text: true,
+					required: false,
+					
+				},
+			},
+
+			education: {
+				type: "string",
+				label: "Education",
+				input: {
+					type: "select",
+					default: "",
+					required: true,
+					props: {
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						}
+					},
+				},
+				possibilities: {
+					technical: "Technical School",
+					college: "College",
+					undergraduate: "Under Graduate",
+					postgraduate: "Post Graduate",
+					doctorate: "Doctorate",
+				},
+			},
+
+			institution: {
+				type: "string",
+				label: "Institution",
+				input: {
+					type: "text",
+					default: "",
+					required: true,
+					
+				},
+			},
+
+			course: {
+				type: "string",
+				label: "Course",
+				input: {
+					type: "text",
+					default: "",
+					required: true,
+					
 				},
 			},
 
@@ -200,36 +316,49 @@ export default {
 					default: "",
 					required: false,
 					rich_text: true,
+					
 				},
 			},
 
-			education: {
-				type: "string",
-				label: "Education",
-				input: {
-					type: "select",
-					default: "",
-					required: false,
-				},
-				possibilities: {
-					primary: "Primary",
-					highschool: "High School",
-					technical: "Pechnical School",
-					college: "college",
-					undergraduate: "Under Graduate",
-					postgraduate: "Post Graduate",
-					doctorate: "Doctorate",
-				},
-			},
 
-			course: {
+			bio: {
 				type: "string",
-				label: "Course",
+				label: "Bio",
 				input: {
 					type: "textarea",
 					default: "",
-					required: false,
 					rich_text: true,
+				},
+			},
+			
+
+			avatar: {
+				type: "string",
+				label: "Selfie",
+				input: {
+					type: "file",
+					props: {
+						acceptedFiles: ["image/*"],
+						dropzoneText:
+							"Click to select or Drag & drop your selfie here",
+						filesLimit: 1,
+						dropzoneIcon: "portrait",
+						containerStyle: {
+							background: "#FFFFFF"
+						}
+					},
+				},
+				reference: {
+					name: "attachments",
+					service_query: {},
+					resolves: {
+						value: "_id",
+						display: {
+							primary: ["name"],
+							secondary: ["size"],
+							avatar: false,
+						},
+					},
 				},
 			},
 
@@ -245,10 +374,12 @@ export default {
 							"audio/*",
 							"application/*",
 						],
-						dropzoneText:
-							"Drag & drop your passport size photo here",
+						dropzoneText: "Click to select or Drag & drop your resume/ CV here",
 						filesLimit: 1,
-						dropzoneIcon: "attach_file",
+						dropzoneIcon: "insert_drive_file",
+						containerStyle: {
+							background: "#FFFFFF"
+						}
 					},
 				},
 				reference: {
@@ -264,56 +395,57 @@ export default {
 					},
 				},
 			},
-
-			country: {
+			government_id: {
 				type: "string",
-				label: "Country",
-				icon: "folder",
+				label: "Copy of Government ID",
+				input: {
+					type: "file",
+					size: 12,
+					props: {
+						acceptedFiles: ["image/*"],
+						dropzoneText:
+							"Click to select or Drag & drop your Copy of Government ID here",
+						filesLimit: 1,
+						dropzoneIcon: "credit_card",
+						containerStyle: {
+							background: "#FFFFFF"
+						}
+					},
+				},
+				reference: {
+					name: "attachments",
+					service_query: {},
+					resolves: {
+						value: "_id",
+						display: {
+							primary: ["name"],
+							secondary: ["size"],
+							avatar: false,
+						},
+					},
+				},
+			},
+			source: {
+				type: "string",
+				label: "How did you learn about Realfield?",
 				input: {
 					type: "select",
-					default: "",
-					required: true,
+					size: 12,
+					props: {
+						freeSolo: true,
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						},
+					},
 				},
-				possibilities: CountriesHelper.names(),
-			},
-
-			region: {
-				type: "string",
-				label: "Region/ County",
-				input: {
-					type: "text",
-					default: "",
-					required: false,
-				},
-			},
-
-			city: {
-				type: "string",
-				label: "City/Town",
-				input: {
-					type: "text",
-					default: "",
-					required: false,
-				},
-			},
-
-			subcounty: {
-				type: "string",
-				label: "Sub County",
-				input: {
-					type: "text",
-					default: "",
-					required: false,
-				},
-			},
-
-			ward: {
-				type: "string",
-				label: "Ward",
-				input: {
-					type: "text",
-					default: "",
-					required: false,
+				possibilities: {
+					"Facebook": "Facebook",
+					"Instagram": "Instagram",
+					"Twitter": "Twitter",
+					"LinkedIn": "LinkedIn",
+					"WhatsApp": "WhatsApp",
+					"Word of mouth": "Word of mouth",
 				},
 			},
 		},

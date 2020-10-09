@@ -11,6 +11,9 @@ import React from "react";
 import { withErrorHandler } from "hoc/ErrorHandler";
 import LoginForm from "views/forms/LoginForm";
 import AnimatedChevronMap from "views/widgets/AnimatedChevronMap";
+import { intercom } from "config";
+import Intercom from "react-intercom";
+import { Link } from "react-router-dom";
 
 const styles = theme => ({
 	root: {
@@ -29,7 +32,7 @@ const styles = theme => ({
 		marginTop: theme.spacing(2),
 	},
 	info_wrapper: {
-		background: "#87c49e",
+		background: theme.palette.secondary.light,
 	},
 	info_container: {
 		color: theme.palette.text.primary,
@@ -95,29 +98,22 @@ class Login extends React.Component {
 										>
 											<AnimatedChevronMap
 												mapcolor={colors.hex.inverse}
+												popUpStyle={{
+													background: "linear-gradient(to right, #8C189B, #6a0f75)",
+												}}
 											/>
 										</GridItem>
 
 										<GridItem xs={12}>
 											<Typography
-												color="inverse"
-												center
+												className={"w-full text-center"}
 												variant="h5"
 											>
-												Realfield.io
+												realfield.io
 											</Typography>
 										</GridItem>
 
-										<GridItem xs={12}>
-											<Typography
-												color="inverse"
-												center
-												variant="body2"
-											>
-												We're not smart, we are here to
-												give you the data to be smart.
-											</Typography>
-										</GridItem>
+										
 									</GridContainer>
 								</GridContainer>
 							</GridItem>
@@ -137,14 +133,17 @@ class Login extends React.Component {
 								alignItems="center"
 							>
 								<GridItem xs={12}>
-									<img
-										alt={app.name + " logo"}
-										className={classNames(
-											classes.login_logo,
-											"center"
-										)}
-										src={app.logo}
-									/>
+									<Link to={"/home".toUriWithLandingPagePrefix()}>
+										
+										<img
+											alt={app.name + " logo"}
+											className={classNames(
+												classes.login_logo,
+												"center"
+											)}
+											src={app.logo}
+										/>
+									</Link>
 								</GridItem>
 								<GridItem xs={12}>
 									<LoginForm onLogin={this.onLogin} />
@@ -153,6 +152,7 @@ class Login extends React.Component {
 						</GridItem>
 					</GridContainer>
 				</GridContainer>
+				<Intercom appID={intercom.app.id} {...intercom.app.user} />
 			</div>
 		);
 	}

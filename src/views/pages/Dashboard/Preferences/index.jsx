@@ -9,8 +9,11 @@ import { connect } from "react-redux";
 import { appendNavHistory } from "state/actions/ui/nav";
 import withRoot from "hoc/withRoot";
 import DefaultPreferences from "views/widgets/Preferences/Default";
-import DashboardPreferences from "views/widgets/Preferences/Dashboard";
 import PasswordPreferences from "views/widgets/Preferences/Password";
+import DataPreferences from "views/widgets/Preferences/Data";
+import NotificationsPreferences from "views/widgets/Preferences/Notifications";
+import SubscriptionsPreferences from "views/widgets/Preferences/Subscriptions";
+import CookiesPreferences from "views/widgets/Preferences/Cookies";
 import {withErrorHandler} from "hoc/ErrorHandler";
 
 function TabPanel(props) {
@@ -43,9 +46,11 @@ class Page extends React.Component {
 		active_tab: "default",
 		tabs: {
 			default: "Default",
-			dashboard: "Dashboard",
 			password: "Password",
 			notifications: "Notifications",
+			data: "Data",
+			cookies: "Cookies",
+			subscriptions: "Subscriptions",
 		},
 	};
 
@@ -142,8 +147,11 @@ class Page extends React.Component {
 								key={"preferences-tabpanel-" + cursor}
 							>
 								{name === "default" && <DefaultPreferences />}
-								{name === "dashboard" && <DashboardPreferences />}
 								{name === "password" && <PasswordPreferences />}
+								{name === "data" && <DataPreferences />}
+								{name === "notifications" && <NotificationsPreferences />}
+								{name === "subscriptions" && <SubscriptionsPreferences />}
+								{name === "cookies" && <CookiesPreferences />}
 								
 							</TabPanel>
 						)

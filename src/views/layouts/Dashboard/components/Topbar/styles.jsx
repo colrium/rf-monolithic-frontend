@@ -4,7 +4,7 @@ import { colors } from "assets/jss/app-theme.jsx";
 export default theme => ({
 	root: {
 		//borderBottom: `1px solid ${theme.palette.border}`,
-		backgroundColor: colors.hex.primarys,
+		backgroundColor: theme.palette.background.paper,
 		//display: "flex",
 		//alignItems: "center",
 		zIndex: theme.zIndex.appBar,
@@ -15,39 +15,78 @@ export default theme => ({
 		transition: "height 100ms",
 		width: "100%",
 		transitionTimingFunction: "cubic-bezier(0.1, 0.7, 1.0, 0.1)",
-		color: colors.hex.inverse,
+		zIndex: 1300,		
+		color: theme.palette.text.primary,
+	},
+	logoWrapper: {
+		display: "inline-block",
+		textAlign: "left",
+		flexShrink: 1,
+		alignSelf: "center",
+	},
+	logoLink: {
+		fontSize: 0,
+		display: "inline-block",
+		textAlign: "left",
+		width: "auto",
+		alignSelf: "center",
+
+	},
+	logoImage: {
+		cursor: "pointer",
+		height: theme.spacing(2),
+		marginLeft: theme.spacing(),
+		width: "auto",
 	},
 	breadcrumbs: {
-		color: colors.hex.inverse,
+		color: theme.palette.text.primary,
 		paddingLeft: theme.spacing(3),
 	},
 	breadcrumb: {
-		color: colors.hex.inverse,
+		color: theme.palette.text.secondary,
 		"&:hover": {
-			color: colors.hex.inverse + " !important",
+			color: theme.palette.text.primary + " !important",
 		},
 	},
 	title: {
 		marginLeft: theme.spacing(),
-		color: colors.hex.inverse,
+		color: theme.palette.text.primary,
 	},
 	menuButton: {
 		alignSelf: "center",
 		marginLeft: "-4px",
-		color: colors.hex.inverse,
+		color: theme.palette.text.primary,
+		"&:hover": {
+			color: theme.palette.primary.main + " !important",
+		},
+		[theme.breakpoints.up("md")]: {
+			display: "none",
+		},
 	},
 	notificationsButton: {
 		alignSelf: "center",
 		marginLeft: "auto",
-		color: colors.hex.inverse,
+		color: theme.palette.text.secondary,
+		"&:hover": {
+			color: theme.palette.text.primary + " !important",
+		},
+	},
+	userAvatar: {
+		width: theme.spacing(3.5),
+    	height: theme.spacing(3.5),
+    	marginLeft: theme.spacing(),
+    	marginRight: theme.spacing(),
 	},
 	signOutButton: {
 		alignSelf: "center",
 		marginLeft: theme.spacing(),
-		color: colors.hex.inverse,
+		color: theme.palette.text.secondary,
+		"&:hover": {
+			color: theme.palette.text.primary + " !important",
+		},
 	},
 	prominent: {
-		height: theme.spacing(20),
+		height: theme.spacing(10),
 		//alignItems: 'flex-start',
 		paddingTop: theme.spacing(1),
 		paddingBottom: theme.spacing(2),

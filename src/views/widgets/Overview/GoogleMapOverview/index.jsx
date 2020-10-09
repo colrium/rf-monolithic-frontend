@@ -12,7 +12,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Icon from '@mdi/react'
-import { mdiMapMarkerMultiple, mdiMapMarkerMultipleOutline, mdiMapMarkerOff, mdiForwardburger, mdiTooltipAccount as clientPositionMarkerPath, mdiAccountCircleOutline } from '@mdi/js';
+import { mdiMapMarkerMultiple, mdiMapMarkerMultipleOutline, mdiMapMarkerOff, mdiForwardburger, mdiTooltipAccount as clientPositionMarkerPath, mdiAccountCircleOutline, mdiFolderOutline } from '@mdi/js';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import MenuIcon from '@material-ui/icons/Menu';
 import ImageIcon from '@material-ui/icons/Image';
@@ -34,11 +34,18 @@ import PeopleIcon from '@material-ui/icons/People';
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import React from "react";
 import { connect } from "react-redux";
+import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 import {withGlobals} from "contexts/Globals";
+import Pagination from '@material-ui/lab/Pagination';
 import compose from "recompose/compose";
 import GoogleMap from "components/GoogleMap";
 import GoogleMapView from "views/widgets/Listings/GoogleMapView";
+import Listings from "views/widgets/Listings";
+import { SwitchInput } from "components/FormInputs";
 import {withErrorHandler} from "hoc/ErrorHandler";
+import client_user_female_icon from "assets/img/maps/marker-person-female.png";
+import client_user_male_icon from "assets/img/maps/marker-person-male.png";
+import PropTypes from "prop-types";
 import styles from "./styles";
 
 
@@ -65,17 +72,24 @@ class GoogleMapOverview extends React.Component {
 		drawerOpen: true,
 		show_client_positions: true,
 		clients_positions: {},
-		context: "clients_positions",
+		context: "commissions",
 		context_entry: null,
-
-		zoom: 12,
+		defaultZoom: 10,
+		multicontexts: true,
+		rendered_contexts: [],
+		contexts_props: {},
+		zoom: 15,
 		query: {},
+		records: [],
 		markers: [],
+		circles: [],
+		polylines: [],
 	};
 
 	constructor(props) {
 		super(props);
-		const { device, cache } = this.props;
+		const { device, cache, context, contexts, definations, app } = this.props;
+		this.elementRef = React.createRef();
 		this.prepareForView();
 		this.toggleDrawer = this.toggleDrawer.bind(this);
 		
@@ -88,13 +102,30 @@ class GoogleMapOverview extends React.Component {
 		this.handleOnClientPositionChanged = this.handleOnClientPositionChanged.bind(this);
 		this.handleOnDrawerNavigationValueChange = this.handleOnDrawerNavigationValueChange.bind(this);
 		this.handleContextEntryClick = this.handleContextEntryClick.bind(this);
-
+		this.handleToggleContextRender = this.handleToggleContextRender.bind(this);
+		
 		this.state = { 
 			...this.state, 
 			//context: Object.keys(this.state.definations)[0],
+			context: context? context: this.state.context,
+			defaultZoom: app.preferences.data.defaultMapZoom,
+			multicontexts: Array.isArray(contexts)? contexts.length > 1 : false,
+			rendered_contexts: context? [context]: [],
+			contexts_props: context? {
+				[context]: {
+					query: {page: 1, pagination: app.preferences.data.pagination, populate: 1},
+					element: "marker",
+					records: [],
+				}
+			}: {},
 			context_entries: Array.isArray(cache.data[this.state.defination.name])? cache.data[this.state.defination.name] : [],
-			drawerOpen: device.window_size.width >= 1280
+			//drawerOpen: device.window_size.width >= 1280,
+			drawerOpen: false,
 		};
+	}
+
+	isMounted() {
+		return this.elementRef.current != null;
 	}
 
 	componentDidMount() {
@@ -105,16 +136,23 @@ class GoogleMapOverview extends React.Component {
 	}
 
 	prepareForView() {
-		const { auth, definations, services, sockets } = this.props;
+		const { auth, definations, services, app } = this.props;
 		let current_defination = null;
 		let current_service = null;
 		let possible_definations = {};
 		let possible_services = {};
+		let contexts_props = this.state.contexts_props;
 		for (let [name, defination] of Object.entries(definations)) {
-			if (!defination.access.restricted(auth.user) && name in services) {
-				if (defination.views.listing.googlemapview) {
+			if (!defination.access.restricted(auth.user)) {
+				if (defination.views.listing.googlemapview && Function.isFunction( defination.views.listing.googlemapview.resolveData )) {
 					possible_definations[name] = defination;
 					possible_services[name] = services[name];
+					contexts_props[name] = {
+						query: {page: 1, pagination: app.preferences.data.pagination, populate: 1},
+						element: defination.views.listing.googlemapview.type,
+						elements: [],
+						loaded: false,
+					}
 					if (current_defination === null) {
 						current_defination = defination;
 						current_service = services[name];
@@ -122,6 +160,7 @@ class GoogleMapOverview extends React.Component {
 				}
 			}
 		}
+		this.state.contexts_props = contexts_props;
 		this.state.definations = possible_definations;
 		this.state.services = possible_services;
 		this.state.defination = current_defination;
@@ -148,6 +187,9 @@ class GoogleMapOverview extends React.Component {
 
 	handleOnLoadMap(map) {
 		googleMap = map;
+		if (googleMap) {
+
+		}
 	}
 
 
@@ -157,7 +199,7 @@ class GoogleMapOverview extends React.Component {
 
 	handleOnClientPositionAvailable(socketId, client) {
 		this.setState(state => ({ clients_positions: {...state.clients_positions, [socketId]: client } }));
-		console.log("handleOnClientPositionAvailable socketId", socketId);
+		//console.log("handleOnClientPositionAvailable socketId", socketId);
 	}
 
 	handleOnClientPositionUnavailable(socketId, client) {
@@ -171,6 +213,7 @@ class GoogleMapOverview extends React.Component {
 			this.setState(state => ({ clients_positions: {...state.clients_positions, [socketId]: client } }));
 		}		
 	}
+
 
 	
 
@@ -187,53 +230,178 @@ class GoogleMapOverview extends React.Component {
 	};
 
 	handleClientListItemClick = (socketId, client) => event => {
-		this.setState({ context_entry: socketId });
-		if (googleMap) {
-			googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
-			this.setState(state => ({zoom : 21}));
+		//console.log("handleClientListItemClick client", client);
+		if (this.state.context_entry === socketId) {
+			this.setState({ context_entry: null, zoom: 15 }, ()=>{
+				if (googleMap) {		
+					//googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
+					googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(15);
+				}
+			});
 		}
+		else{
+			this.setState({ context_entry: socketId, zoom: 18 }, ()=>{
+				if (googleMap) {		
+					googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
+					googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(18);
+				}
+			});
+		}
+			
+			
 		
 	};
 
-	handleContextEntryClick = (entry) => event => {
-		this.setState({ context_entry: entry._id });
-		if (googleMap) {
+	handleToggleContextRender = (context, renderContext) => {
+		const { definations, cache, apiCallRequest, app } = this.props;
+		this.setState((prevState)=>{
+			let renderedContextIndex = prevState.rendered_contexts.indexOf(context);
+			return {
+				rendered_contexts: prevState.rendered_contexts.includes(context)? prevState.rendered_contexts.removeAtIndex(renderedContextIndex) : prevState.rendered_contexts.concat([context]),
+			}
+		}, async ()=>{
+			if (definations[context] && renderContext) {
+				
+				apiCallRequest( definations[context].name, {
+					uri: definations[context].endpoint,
+					type: "records",
+					params: JSON.isJSON(this.state.contexts_props[context])? this.state.contexts_props[context].query : {page: 1, pagination: app.preferences.data.pagination, populate: 1},
+					data: {},
+					cache: true,
+				}).then(data => {
+					if (definations[context] && Function.isFunction( definations[context].views.listing.googlemapview.resolveData ) && Array.isArray(data)) {
+						definations[context].views.listing.googlemapview.resolveData(data, true).then(resolve => {
+							if (this.isMounted()) {
+								this.setState(prevState => ({
+									context_entry_type : definations[context].views.listing.googlemapview.type,
+									context_entry: data.length> 0? 0 : undefined,
+									contexts_props: {
+									...prevState.contexts_props, 
+										[context]: { 
+											...prevState.contexts_props[context], 
+											elements: resolve,
+											element: definations[context].views.listing.googlemapview.type,
+											loaded: true,
+										}
+									}
+								}))
+							}
+							else {
+								this.state.context_entry_type = definations[context].views.listing.googlemapview.type;
+								this.state.context_entry = data.length> 0? 0 : undefined;
+								this.state.contexts_props = {
+									...this.state.contexts_props, 
+										[context]: { 
+											...this.state.contexts_props[context], 
+											elements: resolve,
+											element: definations[context].views.listing.googlemapview.type,
+											loaded: true,
+										}
+								}
+							}
+						});
+					}
+						
+				}).catch(e => {
+
+				});
+			}
+			else if (definations[context]) {
+				if (this.isMounted()) {
+								this.setState(prevState => ({ 
+									context_entry_type : undefined,
+									context_entry: undefined,
+									contexts_props: {
+									...prevState.contexts_props, 
+										[context]: { 
+											...prevState.contexts_props[context], 
+											elements: [],
+											element: definations[context].views.listing.googlemapview.type,
+											loaded: false,
+										}
+									}
+								}))
+							}
+							else {
+								this.state.context_entry_type = undefined;
+								this.state.context_entry = undefined;
+								this.state.contexts_props = {
+									...this.state.contexts_props, 
+										[context]: { 
+											...this.state.contexts_props[context], 
+											elements: [],
+											element: definations[context].views.listing.googlemapview.type,
+											loaded: false,
+										}
+								}
+							}
+			}
+				
+			
+			
+		});
+						
+			
+		
+	};
+
+	handleContextEntryClick = (entry, index) => {
+		//console.log("handleContextEntryClick index", index);
+
+		this.setState({ context_entry: index });
+		/*if (googleMap) {
 			if (this.state.context === "commissions") {
 				googleMap.panTo(entry.focus_center);
-				this.setState(state => ({zoom : 21}));
 			}
 			if (this.state.context === "tracks") {
 				if (entry.positions) {
 					if (Array.isArray(entry.positions)) {
-						if (entry.positions[0].type === "coordinates") {
+						if (JSON.isJSON(entry.positions[0])) {
 							googleMap.panTo({ lat: entry.positions[0].latitude, lng: entry.positions[0].longitude });
-							this.setState(state => ({zoom : 11}));
 						}
 					}
 				}							
 			}				
-		}		
+		}*/
 	};
 
 	render() {
-		const { theme, classes, showAll, device, sockets, definations, services } = this.props;
-		const { context, clients_positions, show_client_positions } = this.state;
-		console.log("this.state.defination.name", this.state.defination.name);
+		const { theme, classes, showAll, device, sockets, definations, services, contexts, actions } = this.props;
+		const { context, clients_positions, show_client_positions, rendered_contexts, contexts_props } = this.state;
+		let circles = [];
+		let markers = [];
+		let polylines = [];
+		//console.log("rendered_contexts", rendered_contexts);
+		rendered_contexts.map(rendered_context => {
+			if (definations[rendered_context] && rendered_context in contexts_props ) {
+
+				if (contexts_props[rendered_context].element === "marker" && Array.isArray(contexts_props[rendered_context].elements)) {
+					markers = markers.concat(contexts_props[rendered_context].elements);
+				}
+				else if (contexts_props[rendered_context].element === "circle" && Array.isArray(contexts_props[rendered_context].elements)) {
+					circles = circles.concat(contexts_props[rendered_context].elements);
+				}
+				else if (contexts_props[rendered_context].element === "polyline" && Array.isArray(contexts_props[rendered_context].elements)) {
+					polylines = polylines.concat(contexts_props[rendered_context].elements);
+				}
+			}
+		});
+		//console.log("circles", circles);
+		
+
 		return (
-			<Card elevation={0} outlineColor="#cfd8dc" className="secondary">
+			<Card elevation={0} outlineColor={theme.palette.text.primary} style={{backgroundColor: theme.palette.background.paper }}  ref={this.elementRef}>
 				<CardHeader
 					avatar={
-						<Avatar style={{backgroundColor: "rgba(0,0,0,0.05)"}}>
+						<Avatar style={{backgroundColor: "rgba(0,0,0,0.05)", color:theme.palette.text.primary}}>
 							<MapOutlinedIcon />
 						</Avatar>
 					}
-					title={
-						"Map Overview"
-					}
+					title={this.props.context? (definations[this.props.context]? (definations[this.props.context].label+" Map"): "Map") : "Map Overview"}
 					subheader="Click on any context marker, route or polyline in the map for more infomation on the context "
 					action={
 						<div>
-							<IconButton
+							{/*<IconButton
 								aria-label="Clients Locations Button"
 								className={"mx-1 inverse-text translucent "}
 								onClick={this.handleOnToggleShowClients}
@@ -243,9 +411,22 @@ class GoogleMapOverview extends React.Component {
 									path={show_client_positions? mdiMapMarkerMultiple : mdiMapMarkerMultipleOutline}
 									title="Clients Locations"
 									size={0.8}   
-									color={theme.palette.background.paper}
+									color={theme.palette.text.primary}
 								/>
-							</IconButton>
+							</IconButton>*/}
+
+							{Array.isArray(actions) && actions.map(({onClick, icon, ...rest}, cursor)=> (
+								<IconButton
+									aria-label="Action"
+									className={"mx-1 inverse-text translucent "}
+									onClick={onClick}
+									style={{backgroundColor: "rgba(0,0,0,0.05)"}}
+									key={"action-button-"+cursor}
+									{...rest}
+								>
+									{icon}									
+								</IconButton>
+							))}
 
 							<IconButton
 								aria-label="menu"
@@ -259,52 +440,36 @@ class GoogleMapOverview extends React.Component {
 									title="Map Overview Drawer Menu"
 									rotate={this.state.drawerOpen? 0 : 180}	    
 									size={0.8}
-									color={theme.palette.background.paper}
+									color={theme.palette.text.primary}
 								/>
 							</IconButton>
 						</div>
 					}
 
 				/>
-				<CardContent className="p-0 m-0">
+				<CardContent className="p-0 m-0 overflow-x-hidden">
 					<GridContainer className="p-0 m-0">
 						<GridItem xs={12} className={classes.wrapper}>
 							<div className={classNames(classes.content, { [classes.contentDrawerMargin]: device.window_size.width >= 1280,  [classes.contentShift]: this.state.drawerOpen && device.window_size.width >= 1280})} style={{minHeight: device.window_size.height, backgroundColor: theme.palette.background.paper }}>
-								{context === "commissions" && <GoogleMapView 
-									defination={definations["commissions"]}
-									service={services["commissions"]}
-									query={this.state.query}
-									googleMapProps={{
-										mapHeight: device.window_size.height,
-										showClientsPositions: this.state.show_client_positions,
-										showCurrentPosition: true,
-										onLoadClientsPositions: this.handleOnClientsPositionsLoaded,
-										onClientPositionAvailable: this.handleOnClientPositionAvailable,
-										onClientPositionUnavailable: this.handleOnClientPositionUnavailable,
-										onClientPositionChanged: this.handleOnClientPositionChanged,
-										//selectedClient: this.state.context_entry,
-										defaultZoom: this.state.zoom,
-										onMapLoad: this.handleOnLoadMap,
-									}}   
-								/>}
+								
 
-								{(context === "tracks" || context === "clients_positions") && <GoogleMapView 
-									defination={definations["tracks"]}
-									service={services["tracks"]}
-									query={this.state.query}
-									googleMapProps={{
-										mapHeight: device.window_size.height,
-										showClientsPositions: this.state.show_client_positions,
-										showCurrentPosition: true,
-										onLoadClientsPositions: this.handleOnClientsPositionsLoaded,
-										onClientPositionAvailable: this.handleOnClientPositionAvailable,
-										onClientPositionUnavailable: this.handleOnClientPositionUnavailable,
-										onClientPositionChanged: this.handleOnClientPositionChanged,
-										selectedClient: this.state.context_entry,
-										defaultZoom: this.state.zoom,
-										onMapLoad: this.handleOnLoadMap,
-									}}   
-								/>}
+								<GoogleMap									
+									mapHeight={device.window_size.height}
+									showClientsPositions={rendered_contexts.includes("clients_positions")}
+									showCurrentPosition={true}
+									onLoadClientsPositions={this.handleOnClientsPositionsLoaded}
+									onClientPositionAvailable={this.handleOnClientPositionAvailable}
+									onClientPositionUnavailable={this.handleOnClientPositionUnavailable}
+									onClientPositionChanged={this.handleOnClientPositionChanged}
+									selectedEntry={this.state.context_entry} 
+									selectedEntryType={this.state.context_entry_type? this.state.context_entry_type : "clients_position"}
+									defaultZoom={this.state.defaultZoom}
+									zoom={this.state.zoom}
+									onMapLoad={this.handleOnLoadMap}
+									polylines={polylines}
+									markers={markers}
+									circles={circles}									  
+								/>
 
 							</div>
 								
@@ -319,7 +484,7 @@ class GoogleMapOverview extends React.Component {
 									paper: device.window_size.width >= 1280? classes.drawerPaper : classes.temporaryDrawerPaper,
 								}}
 							>
-								<BottomNavigation
+								{this.state.multicontexts && <BottomNavigation
 									value={context}
 									onChange={this.handleOnDrawerNavigationValueChange}
 									showLabels
@@ -344,117 +509,136 @@ class GoogleMapOverview extends React.Component {
 											key={"googlemapview-btn-"+name+"-option"}
 										/>
 									))}
-								</BottomNavigation>
+								</BottomNavigation>}
 
-								<List className={classes.root}>
-									{context === "clients_positions" && Object.entries(clients_positions).map(([socketId, client_position], index) => (
-										client_position.user && <ListItem className={"cursor-pointer hover:bg-gray-400"} onClick={this.handleClientListItemClick(socketId, client_position)} key={"client-"+socketId}>
-											<ListItemAvatar>
-												{ client_position.user.avatar? ( 
-													<Avatar src={ services.attachments.getAttachmentFileUrl(client_position.user.avatar) } /> 
-													) : ( 
-													<Avatar style={{backgroundColor: "rgba(0,0,0,0.05)"}} > 
-														<Icon 
-															path={clientPositionMarkerPath} 
-															size={1}	   
-															className={"error-text"}
-														/>
-													</Avatar>
-													) }
-													
-											</ListItemAvatar>
-											<ListItemText primary={ client_position.user.first_name+" "+client_position.user.last_name } secondary="Position" />
-										</ListItem>
+								{(context === "clients_positions" && Object.size(clients_positions) === 0) && <GridContainer>
+									<GridItem xs={12} className="flex items-center justify-center p-2">
+										<Icon 
+											path={mdiFolderOutline}
+											title="No Records available yet."
+											color="#CCCCCC"
+											size={5}
+										/>
+									</GridItem>
+
+									<GridItem xs={12} className="flex items-center justify-center p-2">
+										<Typography>
+										No Records available yet.
+										</Typography>
+									</GridItem>
+								</GridContainer>}
+
+								
+									{context === "clients_positions" && <List className={classes.root}>
+										{Object.entries(clients_positions).map(([socketId, client_position], index) => (
+											client_position.user && <ListItem className={"cursor-pointer hover:bg-gray-400"} onClick={this.handleClientListItemClick(socketId, client_position)} key={"client-"+socketId}>
+												<ListItemAvatar>
+													<Avatar src={client_position.user.gender==="female"? client_user_female_icon : client_user_male_icon} /> 
+													{/* client_position.user.gender? ( 
+														<Avatar src={ services.attachments.getAttachmentFileUrl(client_position.user.avatar) } /> 
+														) : ( 
+														<Avatar style={{backgroundColor: "rgba(0,0,0,0.05)"}} > 
+															<Icon 
+																path={clientPositionMarkerPath} 
+																size={1}	   
+																className={"error-text"}
+															/>
+														</Avatar>
+														) */}
+														
+												</ListItemAvatar>
+												<ListItemText primary={ client_position.user.first_name+" "+client_position.user.last_name } secondary="Position" />
+											</ListItem>
 									))}
+									</List>}
 
-									{context === "commissions" && this.state.context_entries.map((entry, index) => (
-										<ListItem className={"cursor-pointer hover:bg-gray-400"} onClick={this.handleContextEntryClick(entry)}  key={"context_entry-"+index}>
-											<ListItemAvatar>
-												<Avatar style={{backgroundColor: commission_status_colors[entry.status]? commission_status_colors[entry.status] : theme.palette.text.primary, color: theme.palette.background.paper }} > 
-													{ this.state.defination.icon }
-												</Avatar>
-											</ListItemAvatar>
-											<ListItemText 
-												primary={ entry.status? entry.status.humanize() : "Unknown Status"  } 
-												secondary={
-													<GridContainer>
-														<GridItem>
-															<Typography component="div" variant="body2" color="default" className={"mb-2"} >
-																Period: {new Date( entry.start_date).format("d M Y H:i:s A")+" To "+new Date(entry.end_date).format("d M Y H:i:s A")}
-															</Typography>
-															<Typography component="div" variant="body2" color="default" className={"mb-2"} >
-																Involvement: {entry.involvement === "team" ? "Team" : "Individual"}
-															</Typography>
-															<Typography component="div" variant="body2" color="default" className={"mb-2"} >
-																Radius: {entry.focus_radius + " " + entry.focus_radius_metric}
-															</Typography>
-														</GridItem>
-													</GridContainer>
-												} 
-											/>
-										</ListItem>
+									{context === "commissions" && <Listings 
+										defination={definations.commissions} 
+										service={services.commissions}
+										query={{}}
+										showViewOptions={false}
+										showAddBtn={false}
+										showSorter={true}
+										sorterFormLayoutType={"normal"}
+										view={"listview"}
+										onLoadData={(loadedData, query)=>{
+											if (definations[context] && Function.isFunction( definations[context].views.listing.googlemapview.resolveData ) && Array.isArray(loadedData)) {
+												definations[context].views.listing.googlemapview.resolveData(loadedData, true).then(resolve => {
+													this.setState(prevState => ({
+															contexts_props: {
+																...prevState.contexts_props,
+																[context]: {
+																	...prevState.contexts_props[context],
+																	query: query,
+																	elements: resolve,
+																	loaded: true,
+																}
+															},
+															records: loadedData,
+													}));
+														
+												}).catch(err => {
+													this.setState(prevState => ({
+														contexts_props: {
+																...prevState.contexts_props,
+																[context]: {
+																	...prevState.contexts_props[context],
+																	elements: [],
+																	loaded: true,
+																}
+														},
+														records: loadedData,
+													}));
+												});
+											}
+											
+										}}
+										onClickEntry={this.handleContextEntryClick}
+									/>}
 
-									))}
-
-									{context === "tracks" && this.state.context_entries.map((entry, index) => (
-										<ListItem className={"cursor-pointer hover:bg-gray-400"} onClick={this.handleContextEntryClick(entry)}  key={"context_entry-"+index}>
-											<ListItemAvatar>
-												<Avatar style={{backgroundColor: track_timetype_colors[entry.time_type]? track_timetype_colors[entry.time_type] : theme.palette.text.primary, color: theme.palette.background.paper}} > 
-													{ this.state.defination.icon }
-												</Avatar>
-											</ListItemAvatar>
-											<ListItemText 
-												primary={(entry.time_type? entry.time_type.humanize() : "")+" Track" } 
-												secondary={
-													<GridContainer>
-														<GridItem>
-															<Typography
-																component="p"
-																variant="body2"
-																color="default"
-															>
-															Start Time: {new Date(entry.start_time).format("d M Y H:i:s A")}
-															</Typography>
-															<Typography
-																component="div"
-																variant="body2"
-																color="default"
-															>
-																{entry.user && (
-																	<Chip
-																		size="small"
-																		avatar={
-																			entry.user.avatar ? (
-																				<Avatar
-																					alt={
-																						entry.user.first_name
-																					}
-																					src={services.attachments.getAttachmentFileUrl(entry.user.avatar)}
-																				/>
-																			) : (
-																				<Avatar className="twitter_text">
-																					<Icon 
-																						path={clientPositionMarkerPath} 
-																						size={1}	   
-																						className={"error-text"}
-																					/>
-																				</Avatar>
-																			)
-																		}
-																		label={ entry.user.first_name + " " + entry.user.last_name }
-																	/>
-																)}
-															</Typography>
-														</GridItem>
-													</GridContainer>
-												} 
-											/>
-										</ListItem>
-										
-									))}
-								</List>
-
-
+									{context === "tracks" && <Listings 
+										defination={definations.tracks} 
+										service={services.tracks}										
+										showViewOptions={false}
+										showAddBtn={false}
+										showSorter={true}
+										showPagination={true}
+										sorterFormLayoutType={"normal"}
+										view={"listview"}
+										onLoadData={(loadedData, query)=>{
+											if (definations[context] && Function.isFunction( definations[context].views.listing.googlemapview.resolveData ) && Array.isArray(loadedData)) {
+												definations[context].views.listing.googlemapview.resolveData(loadedData, true).then(resolve => {
+													this.setState(prevState => ({
+															contexts_props: {
+																...prevState.contexts_props,
+																[context]: {
+																	...prevState.contexts_props[context],
+																	query: query,
+																	elements: resolve,
+																	loaded: true,
+																}
+															},
+															records: loadedData,
+													}));
+														
+												}).catch(err => {
+													this.setState(prevState => ({
+														contexts_props: {
+																...prevState.contexts_props,
+																[context]: {
+																	...prevState.contexts_props[context],
+																	query: query,
+																	elements: [],
+																	loaded: true,
+																}
+														},
+														records: loadedData,
+													}));
+												});
+											}
+										}}
+										onClickEntry={this.handleContextEntryClick}
+									/>}
 
 							</SwipeableDrawer>
 						</GridItem>
@@ -462,9 +646,21 @@ class GoogleMapOverview extends React.Component {
 				</CardContent>
 				<CardActions>
 					<GridContainer className="p-0 m-0">
+						{Array.isArray(contexts) && contexts.map((context_entry_name, cursor) => (
+							<GridItem xs={12} md={Math.round((12 / contexts.length))} className={"flex items-center justify-center"} key={"context_entry_switch-"+cursor}>
+									<SwitchInput 
+										label={context_entry_name === "clients_positions"? "Users" : (definations[context_entry_name]? definations[context_entry_name].label : context_entry_name) }
+										value={this.state.rendered_contexts.includes(context_entry_name)}
+										onChange={(new_value)=>{
+											this.handleToggleContextRender(context_entry_name, new_value);											
+										}}
+									/>
+										
+							</GridItem>
+						))}
 						<GridItem xs={12}>
 							<Typography variant="body2">
-								Your Map from a glance
+								{this.props.context? (definations[this.props.context]? (definations[this.props.context].label+" Map from a glance"): "Map from a glance") : "Map from a glance"}
 							</Typography>
 						</GridItem>
 					</GridContainer>
@@ -473,6 +669,20 @@ class GoogleMapOverview extends React.Component {
 		);
 	}
 }
+
+GoogleMapOverview.propTypes = {
+	className: PropTypes.string,
+	classes: PropTypes.object,
+	contexts: PropTypes.array,
+	context: PropTypes.string.isRequired,
+	actions: PropTypes.array,
+};
+
+GoogleMapOverview.defaultProps = {
+	contexts: ["clients_positions", "commissions", "tracks"],
+	context: "clients_positions",
+	actions: [],
+};
 
 const mapStateToProps = state => ({
 	app: state.app,
@@ -483,7 +693,7 @@ const mapStateToProps = state => ({
 
 export default withGlobals(compose(
 	withStyles(styles),
-	connect(mapStateToProps, {}),
+	connect(mapStateToProps, {apiCallRequest, closeDialog, openDialog}),
 	withTheme,
 	withErrorHandler
 )(GoogleMapOverview));

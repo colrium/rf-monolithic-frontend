@@ -3,6 +3,9 @@
 import {
 	API_CALL_REQUEST,
 	API_SET_LOADING,
+	API_ADD_TASK,
+	API_REMOVE_TASK,
+	API_CLEAR_TASKS,
 	API_SET_RESPONSE,
 	API_SET_COMPLETE,
 	API_SET_ERROR,
@@ -10,6 +13,8 @@ import {
 
 const initialState = {
 	volatile: true,
+	tasks: {},
+	busy: false,
 	base: {
 		options: { uri: "/", type: "records", params: {}, data: {} },
 		loading: false,
@@ -36,6 +41,32 @@ export default (state = initialState, action = {}) => {
 			return {
 				...state,
 				[action.key]: { ...state[action.key], loading: action.loading },
+			};
+		}
+		case API_ADD_TASK: {
+			let {key, ...rest} = action.task;
+			return {
+				...state,
+				busy: true,
+				tasks: {...state.tasks, [key]: rest },
+			};
+		}
+		case API_REMOVE_TASK: {
+			let {key, ...rest} = action.task;
+			let newTasks = JSON.fromJSON(state.tasks);
+			delete newTasks[key];
+			newTasks = JSON.isJSON(newTasks)? newTasks : {};
+			return {
+				...state,
+				busy: Object.size(newTasks) > 0? true : false,
+				tasks: newTasks,
+			};
+		}
+		case API_CLEAR_TASKS: {
+			return {
+				...state,
+				busy: false,
+				tasks: {},
 			};
 		}
 		case API_SET_RESPONSE: {

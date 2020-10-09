@@ -1,11 +1,15 @@
 import {
 	SET_ONBOARDED,
+	SET_VERSION,
 	SET_INITIALIZED,
 	SET_SETTINGS,
 	SET_PREFERENCES,
 } from "state/actions";
 
+import { appName } from "config";
+
 const initialState = {
+	version: "0.0.0",
 	onboarded: false,
 	initialized: false,
 	settings: {
@@ -14,7 +18,9 @@ const initialState = {
 			"seo-tagline": "We are not smart, We give you the data to be smart!",
 			"copyright": "Copyright YYYY",
 			"trademark": "Registered in Eng & wales Co No.",
-		},
+			"landing-page-routing": "sections",
+		},		
+		
 		"reading": {
 			"enable-blog": true,
 			"enable-press": true,
@@ -24,7 +30,7 @@ const initialState = {
 			"terms-of-use": "Terms of use",
 			"end-user-agreement": "End user agreement",
 			"privacy-policy": "Privacy Policy",
-			"cookies-consent": "Cookies Consent",
+			"cookies-consent": "We use cookies to personalise content and ads, to provide social media features and to analyse our traffic. We also share information about your use of our site with our social media, advertising and analytics partners who may combine it with other information that you’ve provided to them or that they’ve collected from your use of their services",
 		},
 		"social": {
 			facebook: null,
@@ -38,6 +44,11 @@ const initialState = {
 		},
 		"mobile": {
 			"enabled": true,
+			"commission-embarkment": true,
+			"response-submission": true,
+			"user-registration": true,
+			"new-logins": true,
+			"oath2-logins": true,
 			"show-message": false,
 			"access-availability": "administrators-only", 
 			"message": "",	
@@ -57,11 +68,107 @@ const initialState = {
 			email: "",
 			address: "",
 		},
+		"mail": {
+			smtp_host: "smtp.gmail.com",
+			smtp_port: 465,
+			smtp_tls_ssl: true,
+			smtp_user: "",
+			smtp_password: "",
+			smtp_sender_name: appName,
+		},
+		"auth": {
+			logins_enabled: true,
+			registrations_enabled: true,
+			account_recovery_enabled: true,
+			OAuth2_enabled: false,
+			google: {
+				enabled: false,
+				client_id: "",
+				client_secret: "",
+				client_callback_url: "",
+			},
+			twitter: {
+				enabled: false,
+				client_id: "",
+				client_secret: "",
+				client_callback_url: "",
+			},
+			facebook: {
+				enabled: false,
+				client_id: "",
+				client_secret: "",
+				client_callback_url: "",
+			},
+			linkedin: {
+				enabled: false,
+				client_id: "",
+				client_secret: "",
+				client_callback_url: "",
+			},
+			github: {
+				enabled: false,
+				client_id: "",
+				client_secret: "",
+				client_callback_url: "",
+			},
+		},
 	},
 	preferences: {
 		"theme": "light",
 		"locale": "en",
-		"dashboard": {
+		"data": {
+			pagination: 10,
+			defaultMapZoom: 15,			
+		},
+		"presentation": {
+			"formats": {
+				"date": "iso",
+				"time": "iso"
+			},
+			"views": {
+				"records": "tableview",
+				"record": "basic"
+			}
+		},
+		"notifications": {
+			"all": {
+				"push": true,
+				"sms": true,
+				"email": true,
+			},
+			"activity": {
+				"push": true,
+				"sms": true,
+				"email": true,
+			},			
+			"subscriptions": {
+				"push": true,
+				"sms": true,
+				"email": true,
+			},
+			"features": {
+				"push": true,
+				"sms": true,
+				"email": true,
+			},
+			"financial": {
+				"push": true,
+				"sms": true,
+				"email": true,
+			},
+		},
+		"subscriptions": {
+			"newsletter": true,
+			"posts": true,
+			"updates": true,
+		},
+		"cookies": {
+			"necessary": true,
+			"statistics": false,
+			"preferences": false,
+			"marketing": false,
+		},
+		/*"dashboard": {
 			"view": "tabs",// or "default"
 			"map": {
 				"visible": true,
@@ -110,14 +217,21 @@ const initialState = {
 				"width": "12", //1 to 12
 				"defaultView": "calendar", // Or list or table or map
 			},
-		}
+		}*/
 			
 	},//user settings	
 };
 
 
 const app = function(state = initialState, action) {
+	state = JSON.merge(initialState, state);
 	switch (action.type) {
+		case SET_VERSION: {
+			return {
+				...state,
+				version: action.version,
+			};
+		}
 		case SET_ONBOARDED: {
 			return {
 				...state,
@@ -130,16 +244,20 @@ const app = function(state = initialState, action) {
 				initialized: action.initialized,
 			};
 		}
-		case SET_SETTINGS: {
+		case SET_SETTINGS: {/*
+			console.log("action.settings", action.settings);
+			console.log("initialState.settings", initialState.settings);
+			console.log("JSON.merge(initialState.settings, action.settings)", JSON.merge(initialState.settings, action.settings));*/
+
 			return {
 				...state,
-				settings: JSON.isJSON(action.settings)? {...initialState.settings, ...state.settings, ...action.settings } : initialState.settings,
+				settings: JSON.isJSON(action.settings)? JSON.merge(initialState.settings, action.settings) : initialState.settings,
 			};
 		}
 		case SET_PREFERENCES: {
 			return {
 				...state,
-				preferences: JSON.isJSON(action.preferences)? {...initialState.preferences, ...state.preferences, ...action.preferences}  : initialState.preferences,
+				preferences: JSON.isJSON(action.preferences)? JSON.merge(initialState.preferences, action.preferences)  : initialState.preferences,
 			};
 		}
 		default: {

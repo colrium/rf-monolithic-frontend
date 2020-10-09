@@ -206,7 +206,35 @@ export default {
 			color: "inherit",
 		},
 	},
+	".material-icons": {
+		fontFamily: "Material Icons",
+		fontWeight: "normal",
+		fontStyle: "normal",
+		fontSize: 24,
+		display: "inline-block",
+		lineHeight: 1,
+		textTransform: "none",
+		letterSpacing: "normal",
+		wordWrap: "normal",
+		whiteSpace: "nowrap",
+		direction: "ltr",
 
+		/* Support for all WebKit browsers. */
+		WebkitFontSmoothing: "antialiased",
+		/* Support for Safari and Chrome. */
+		textRendering: "optimizeLegibility",
+
+		/* Support for Firefox. */
+		MozOsxFontSmoothing: "grayscale",
+
+		/* Support for IE. */
+		fontFeatureSettings: "liga",
+	},
+	".avenir": {
+		fontFamily: "Avenir",
+		fontWeight: "normal",
+		fontStyle: "normal",
+	},
 	".right": {
 		right: 0,
 	},
@@ -238,6 +266,13 @@ export default {
 		MsTransform: "translateY(-50%)",
 		transform: "translateY(-50%)",
 	},
+	".center-vertically": {
+		position: "relative",
+		top: "50%",
+		WebkitTransform: "translateY(-50%)",
+		MsTransform: "translateY(-50%)",
+		transform: "translateY(-50%)",
+	},
 	".center_horizontally": {
 		position: "relative",
 		left: "50%",
@@ -245,7 +280,7 @@ export default {
 		MsTransform: "translateX(-50%)",
 		transform: "translateX(-50%)",
 	},
-	".center_horizontally": {
+	".center-horizontally": {
 		position: "relative",
 		left: "50%",
 		WebkitTransform: "translateX(-50%)",
@@ -273,6 +308,9 @@ export default {
 	".h-screen-3/4": {
 		height: "75vh !important",
 	},
+	".min-w-half": {
+		minWidth: "50%  !important",
+	},	
 	".break-flex-column": {
 		flexBasis: "100%",
 		width: 0,

@@ -1,8 +1,7 @@
 /** @format */
 
 //App constants
-export const appName =
-	(process.env.NODE_ENV === "development" ? "DEV::" : "") + "Realfield";
+export const appName =(process.env.NODE_ENV === "development" ? "DEV::" : "") + "Realfield";
 export const appDescription = "Realfield Dashboard";
 export const appLogo = require("assets/img/realfield/logo.svg");
 //
@@ -42,8 +41,8 @@ export const baseUrls = {
 	development: {
 		domain: "localhost",
 		endpoints: {
-			default: "http://192.168.0.2:8000/",
-			auth: "http://192.168.0.2:8000/",
+			default: "http://localhost:8000/",
+			auth: "http://localhost:8000/",
 		},
 	},
 	production: {
@@ -59,7 +58,8 @@ export const google_maps_url =
 	"https://maps.googleapis.com/maps/api/js?key=" +
 	process.env.REACT_APP_GOOGLE_MAPS_KEY +
 	"&v=3.exp&libraries=geometry,drawing,places";
-export const google_maps_default_center = { lat: -1.2921, lng: 36.8219 };
+	
+export const default_location = { lat: -1.2921, lng: 36.8219 };
 
 export const auth_token = {
 	location: "cookie", // "cookie" or "redux"

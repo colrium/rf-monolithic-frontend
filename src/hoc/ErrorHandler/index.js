@@ -96,7 +96,7 @@ export const wrapComponentMethodsTryCatch = (Component) => {
 
 export const withErrorHandler = Component => {
 	function WithErrorHandler(props) {
-		if (Object.isReactComponent(Component)) {
+		/*if (Object.isReactComponent(Component)) {
 			[
 				'render',
 				'componentWillMount',
@@ -111,7 +111,7 @@ export const withErrorHandler = Component => {
 					tryCatchDecorator(Component.prototype, method);
 				}
 			});
-		}
+		}*/
 			
 
 		return <Component {...props} />;

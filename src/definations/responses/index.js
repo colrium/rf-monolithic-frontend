@@ -17,13 +17,24 @@ import {
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
+import {context_country_data} from "config/data";
 import commissionService from "services/commissions";
+
+const getRegions = ()=>{
+	let regions = {};
+
+	context_country_data.regions.map(region => {
+		regions[region.name] = region.name;
+	});
+
+	return regions;
+}
 
 export default {
 	name: "responses",
 	label: "Responses",
 	icon: <DefinationContextIcon />,
-	color: "#1e0040",
+	color: "#8C189B",
 	model: "Response",
 	endpoint: "/responses",
 	cache: true,
@@ -174,6 +185,35 @@ export default {
 					},
 				},
 			},
+			region: {
+				type: "string",
+				label: context_country_data.regions_type.humanize(),
+				input: {
+					type: "administrative_area_level_1",
+					placeholderType: "administrative_area_level_1",
+					value: "Kiambu County",
+					required: true,
+				},
+				possibilities: getRegions(),
+				restricted: {
+					display: (entry, user) => {
+						return false;
+					},
+					input: (values, user) => {
+						if (values) {
+							if (["accepted", "disputed"].includes(values.status)) {
+								return true;
+							}
+						}
+						
+						if (user) {
+							return !user.isAdmin;
+						}
+
+						return false;
+					},
+				},
+			},
 			response_type: {
 				type: "string",
 				label: "Response type",
@@ -208,6 +248,7 @@ export default {
 					},
 				},
 			},
+			
 			text_response: {
 				type: "string",
 				label: "Text response",
@@ -371,9 +412,10 @@ export default {
 			},
 			coordinates: {
 				type: "object",
-				label: "Coordinates",
+				label: "Location",
 				input: {
-					type: "map",
+					type: "coordinates",
+					placeholderType: "formatted_address",
 					required: true,
 				},
 				restricted: {

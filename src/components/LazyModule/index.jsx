@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import Placeholder from "components/Placeholder";
 import ViewPortSensor from "components/ViewPortSensor";
+import debounce from 'lodash/debounce';
 
 class LazyModule extends React.Component {
 	constructor() {
@@ -57,7 +58,7 @@ class LazyModule extends React.Component {
 
 		return (
 			<ViewPortSensor
-				onViewportVisibilityChange={this.onViewportVisibilityChange}
+				onViewportVisibilityChange={debounce(this.onViewportVisibilityChange, 200)}
 			>
 				{hasError && (
 					<h5 className="error_text relative center text-center">

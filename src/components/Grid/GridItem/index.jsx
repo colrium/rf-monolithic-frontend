@@ -10,10 +10,6 @@ import React, { useState, useEffect } from "react";
 import withRoot from "hoc/withRoot";
 
 function GridItem(props) {
-	let [state, setState] = useState(props);
-	useEffect(() => {
-		setState(props);
-	}, [props]);
 	let {
 		classes,
 		children,
@@ -22,7 +18,7 @@ function GridItem(props) {
 		fullheight,
 		className,
 		...rest
-	} = state;
+	} = props;
 	let gridClasses = classNames({
 		[color]: color,
 		[classes.fullwidth]: fullwidth,
@@ -46,4 +42,4 @@ GridItem.propTypes = {
 	fullheight: PropTypes.bool,
 };
 
-export default withStyles(gridStyle)(GridItem);
+export default withStyles(gridStyle)(React.memo(GridItem));

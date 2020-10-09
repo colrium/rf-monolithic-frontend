@@ -30,6 +30,9 @@ import Listings from "views/widgets/Listings";
 class Page extends React.Component {
 	defination = null;
 	service = null;
+	state = {
+		query: {},
+	};
 
 	constructor(props) {
 		super(props);
@@ -37,7 +40,19 @@ class Page extends React.Component {
 		this.context = componentProps.context;
 		this.defination = definations[componentProps.context];
 		this.service = services[componentProps.context];
+		let urlQuery = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function(result, each, n, every) {
+			let [key, value] = decodeURI(each).split("=");
+			result[key] = value;
+			return result;
+		}, {});
+
+		console.log("window.location.search", decodeURI(window.location.search));
+		console.log("urlQuery", urlQuery);
+
+		this.state.query = {...this.state.query, ...urlQuery}
 	}
+
+	
 
 	componentDidMount() {
 		const { auth, location, appendNavHistory } = this.props;
@@ -50,6 +65,7 @@ class Page extends React.Component {
 						? this.defination.label(auth.user)
 						: this.defination.label,
 				view: null,
+				state: this.state,
 				color: this.defination.color
 					? this.defination.color
 					: colors.hex.primary,
@@ -136,6 +152,7 @@ class Page extends React.Component {
 						<Listings
 							defination={this.defination}
 							service={this.service}
+							query={this.state.query}
 						/>
 					)}
 				</GridItem>

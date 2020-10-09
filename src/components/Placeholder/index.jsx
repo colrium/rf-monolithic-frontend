@@ -105,9 +105,14 @@ function Placeholder(props) {
 		} else {
 			return <Skeleton variant="rect" width={"100%"} height={120} />;
 		}
-	} else if (type === "progress") {
+	} 
+	else if (type === "progress") {
 		return <ProgressIndicator type="circular" size={24} />;
-	} else {
+	}
+	else if (type === "logo") {
+		return <ProgressIndicator type="logo" size={24} thickness={5} className="absolute center" />;
+	}  
+	else {
 		return <Skeleton variant="rect" width={"100%"} height={"100%"} />;
 	}
 }

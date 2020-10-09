@@ -31,6 +31,10 @@ class ApiService {
 		return axios_instance;
 	}
 
+	refresh(){
+		this.apiInstance = this.endpoint();
+	}
+	
 	resetService(){
 		this.apiInstance = this.endpoint();
 	}
@@ -200,6 +204,24 @@ class ApiService {
 		let that = this;
 		return await this.apiInstance
 			.delete(endpoint_uri)
+			.then(function(response) {
+				return {
+					err: false,
+					body: response.data,
+					code: response.status,
+					headers: response.headers,
+				};
+			})
+			.catch(function(error) {
+				that.handleRequestError(error);
+			});
+	}
+
+	async searchGlobally(query) {
+		let endpoint_uri = "/search";
+		let that = this;
+		return await this.apiInstance
+			.get(endpoint_uri, {q: query})
 			.then(function(response) {
 				return {
 					err: false,

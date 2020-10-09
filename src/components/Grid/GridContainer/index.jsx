@@ -8,11 +8,11 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
 
-function GridContainer({ ...props }) {
-	let [state, setState] = useState(props);
+function GridContainer(props) {
+	/*let [state, setState] = useState(props);
 	useEffect(() => {
 		setState(props);
-	}, [props]);
+	}, [props]);*/
 	let {
 		classes,
 		children,
@@ -21,7 +21,7 @@ function GridContainer({ ...props }) {
 		fullheight,
 		className,
 		...rest
-	} = state;
+	} = props;
 	let gridClasses = classNames({
 		[color]: color,
 		[classes.fullwidth]: fullwidth,

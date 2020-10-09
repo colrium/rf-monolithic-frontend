@@ -22,6 +22,7 @@ import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import AggregatesPieChart from "views/widgets/Charts/AggregatesPieChart";
+import AggregatesBarChart from "views/widgets/Charts/AggregatesBarChart";
 import { withErrorHandler } from "hoc/ErrorHandler";
 
 const styles = theme => ({
@@ -40,14 +41,10 @@ class CompactAggregatesOverview extends React.Component {
 	};
 	constructor(props) {
 		super(props);
-		const { auth, definations, services } = props;
+		const { auth, definations, services, contexts } = props;
 		let possible_definations = {};
 		for (let [name, defination] of Object.entries(definations)) {
-			if (
-				name in services &&
-				!defination.access.restricted(auth.user) &&
-				defination.access.view.summary(auth.user)
-			) {
+			if ( name in services && !defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) && contexts.includes(name)) {
 				possible_definations[name] = defination;
 				if (!this.state.defination) {
 					this.state.defination = defination;
@@ -82,10 +79,10 @@ class CompactAggregatesOverview extends React.Component {
 	}
 
 	render() {
-		const { classes, auth, definations, services } = this.props;
+		const { classes, auth, definations, services, contexts,  gridSize, theme, chartType } = this.props;
 
 		return (
-			<Card elevation={0} outlineColor="#cfd8dc">
+			<Card outlineColor="#cfd8dc">
 				<CardHeader
 					avatar={
 						<Avatar
@@ -97,8 +94,8 @@ class CompactAggregatesOverview extends React.Component {
 					}
 					title={this.state.defination.label}
 					subheader="Aggregates Overview"
-					action={
-						<div>
+					action={(
+						contexts.length > 1 && <div>
 							<IconButton
 								aria-label="menuicon"
 								color="primary"
@@ -117,7 +114,7 @@ class CompactAggregatesOverview extends React.Component {
 							>
 								{Object.entries(this.state.definations).map(
 									([name, defination], index) => (
-										<MenuItem
+										!defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) && name in services && contexts.includes(name) && <MenuItem
 											onClick={this.handleDefinationChange(
 												name
 											)}
@@ -130,7 +127,7 @@ class CompactAggregatesOverview extends React.Component {
 								)}
 							</Menu>
 						</div>
-					}
+					)}
 				></CardHeader>
 				<CardContent className="p-0 m-0">
 					<GridContainer
@@ -147,7 +144,7 @@ class CompactAggregatesOverview extends React.Component {
 									justify="center"
 									alignItems="center"
 								>
-									<AggregatesPieChart
+									{chartType === "pie" && <AggregatesPieChart
 										defination={this.state.defination}
 										service={
 											services[this.state.defination.name]
@@ -164,7 +161,25 @@ class CompactAggregatesOverview extends React.Component {
 										showTitle
 										showMenu
 										dynamic
-									/>
+									/>}
+									{chartType === "bar" && <AggregatesBarChart
+										defination={this.state.defination}
+										service={
+											services[this.state.defination.name]
+										}
+										color={
+											this.state.defination.color
+												? this.state.defination.color
+												: colors.hex.primary
+										}
+										onLoadAggregates={
+											this.handleOnAggregatesLoad
+										}
+										monochrome
+										showTitle
+										showMenu
+										dynamic
+									/>}
 								</GridContainer>
 							</GridItem>
 							<GridItem xs={12}>
@@ -219,7 +234,6 @@ class CompactAggregatesOverview extends React.Component {
 					<GridContainer className="p-0 m-0">
 						<GridItem xs={12}>
 							<Typography variant="body2">
-								{" "}
 								{this.state.defination.label} by Aggregates
 							</Typography>
 						</GridItem>
@@ -232,6 +246,17 @@ class CompactAggregatesOverview extends React.Component {
 
 CompactAggregatesOverview.propTypes = {
 	classes: PropTypes.object.isRequired,
+	gridSize: PropTypes.number,
+	chartType: PropTypes.string,
+	contexts:  PropTypes.array,
+	aggregates: PropTypes.array,
+};
+
+CompactAggregatesOverview.defaultProps = {
+	gridSize: 12,
+	chartType: "pie",
+	contexts: ["commissions", "surveys", "responses"],
+	aggregates: []
 };
 
 const mapStateToProps = state => ({

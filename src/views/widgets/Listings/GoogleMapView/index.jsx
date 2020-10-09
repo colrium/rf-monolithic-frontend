@@ -17,7 +17,6 @@ import styles from "./styles";
 
 
 class GoogleMapView extends React.Component {
-	calendarRef = React.createRef();
 	state = {
 		loading: true,
 		load_error: false,
@@ -39,19 +38,20 @@ class GoogleMapView extends React.Component {
 	}
 
 	componentDidMount() {
+		const { cache, defination } = this.props;
+		this.mounted = true;
 		this.loadContext();
-		this.prepareData();
+		this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
 	}
+
 	getSnapshotBeforeUpdate(prevProps) {
+		this.mounted = false;
+		const { cache, defination } = this.props;
 		return {
-			contextReloadRequired:
-				!Object.areEqual(prevProps.defination, this.props.defination) &&
-				!Object.areEqual(prevProps.service, this.props.service),
-			dataReloadRequired: !Object.areEqual(
-				prevProps.query,
-				this.props.query
-			),
-			dataPreparationRequired: prevProps.cache !== this.props.cache,
+			contextReloadRequired: !Object.areEqual(prevProps.defination, this.props.defination),
+			dataReloadRequired: !Object.areEqual(prevProps.query,this.props.query),
+			/*dataPreparationRequired: Array.isArray(cache.data[defination.name])? !cache.data[prevProps.defination.name].equals(prevProps.cache.data[defination.name]) : (Array.isArray(prevProps.cache.data[defination.name])? !prevProps.cache.data[prevProps.defination.name].equals(cache.data[defination.name]) : false),*/
+			dataPreparationRequired: false,
 		};
 	}
 
@@ -67,9 +67,7 @@ class GoogleMapView extends React.Component {
 				this.loadData
 			);
 		}
-		if (snapshot.dataPreparationRequired) {
-			this.prepareData();
-		}
+		
 	}
 
 	handleDeleteItemConfirm = item_id => event => {
@@ -127,20 +125,41 @@ class GoogleMapView extends React.Component {
 		}
 	}
 
+	
 	loadData() {
-		const { auth, apiCallRequest, defination, cache } = this.props;
-		if (defination) {
-			apiCallRequest(
-				defination.name,
-				{
-					uri: defination.endpoint,
-					type: "records",
-					params: this.state.query,
-					data: {},
-				},
-				true
-			);
-		} else {
+		const { auth, cache, defination, apiCallRequest, cache_data, onLoadData, load_data } = this.props;
+		if (defination ) {
+			if (load_data) {
+				apiCallRequest( defination.name,
+					{
+						uri: defination.endpoint,
+						type: "records",
+						params: this.state.query,
+						data: {},
+						cache: cache_data,
+					}
+				).then(data => {
+					if (Function.isFunction(onLoadData)) {
+						onLoadData(data);
+					}
+					this.prepareData(data);
+				}).catch(e => {
+					this.setState(state => ({
+						records: [],
+						load_error: e,
+						loading: false,
+					}));
+				});
+			}
+			else {
+				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];
+				if (Function.isFunction(onLoadData)) {
+					onLoadData(data);
+				}
+				this.prepareData(data);
+			}
+		}
+		else {
 			this.setState(state => ({
 				records: [],
 				load_error: { msg: "No Context defination or provided" },
@@ -149,28 +168,23 @@ class GoogleMapView extends React.Component {
 		}
 	}
 
-	prepareData() {
+	
+
+	prepareData(data=null) {
 		const { auth, cache, defination } = this.props;
-		let cached_data = Array.isArray(cache) ? cache : [];
+		let target_data = Array.isArray(data)? data : (Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : []);
+		let columns = defination ? defination.scope.columns : {};
 		let resolved_data = [];
 
-		if (
-			Function.isFunction(
-				defination.views.listing.googlemapview.resolveData
-			)
-		) {
-			defination.views.listing.googlemapview
-				.resolveData(cached_data, true)
-				.then(resolve => {
+		if ( Function.isFunction( defination.views.listing.googlemapview.resolveData ) ) {
+			defination.views.listing.googlemapview.resolveData(target_data, true).then(resolve => {
 					this.setState(state => ({
 						records: resolve,
 						loading: false,
 					}));
-				})
-				.catch(err => {
-					
-					this.setState(state => ({ records: [], loading: false }));
-				});
+			}).catch(err => {					
+				this.setState(state => ({ records: [], loading: false }));
+			});
 		}
 	}
 	render() {
@@ -184,12 +198,11 @@ class GoogleMapView extends React.Component {
 								<GridContainer className="p-0 m-0">
 										<GridItem xs={12} className="p-0 m-0">
 											<GoogleMap
-												defaultZoom={5}
+												defaultZoom={12}
+												zoom={12}
 												{...googleMapProps}
 
-												disabled={
-													api ? api.loading : true
-												}
+												
 												polylines={
 													defination &&
 													defination.views.listing
@@ -212,7 +225,7 @@ class GoogleMapView extends React.Component {
 														? this.state.records
 														: []
 												}
-												
+												showCurrentPosition={true}
 											/>
 										</GridItem>
 									</GridContainer>
@@ -248,21 +261,28 @@ GoogleMapView.propTypes = {
 	show_links: PropTypes.bool,
 	googleMapProps: PropTypes.object,
 	query: PropTypes.object,
+	cache_data: PropTypes.bool,
+	load_data: PropTypes.bool,
+	onLoadData: PropTypes.func,
 };
 
 GoogleMapView.defaultProps = {
 	googleMapProps: {
-		height: "900px",
+		mapHeight: 900,
+		showClientsPositions: true,
+		showCurrentPosition: true,
 	},
 	query: {},
+	load_data: true,
+	cache_data: true,
 };
 
 const mapStateToProps = (state, ownProps) => {
 	const { defination } = ownProps;
 	return {
 		auth: state.auth,
-		cache: defination ? state.cache.data[defination.name] : null,
-		api: defination ? state.api[defination.name] ? state.api[defination.name] : {} : {},
+		cache: state.cache,
+		api: state.api,
 	};
 };
 

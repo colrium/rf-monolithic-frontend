@@ -5,7 +5,7 @@
  */
 
 // Material helpers
-import { Divider, Icon, List, ListItem, ListItemIcon, ListItemText, ListSubheader, Typography, withStyles } from "@material-ui/core";
+import { Toolbar, Divider, Icon, List, ListItem, ListItemIcon, ListItemText, ListSubheader, Typography, withStyles } from "@material-ui/core";
 import Fade from "@material-ui/core/Fade";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -130,12 +130,23 @@ class Sidebar extends Component {
 		return items_with_restrictions;
 	}
 	render() {
-		const { classes, className, items, auth,  } = this.props;
+		const { classes, className, items, auth, onClickNavLink } = this.props;
 		const rootClassName = classNames(classes.root, className);
 
 		return (
 			<nav className={rootClassName}>
-				<div className={classes.headerWrapper}>
+				{/*<Toolbar className={classes.toolbar}>
+					<div className={classes.logoWrapper}>
+						<Link className={classes.logoLink} to="/">
+							<LazyImage
+								alt={app.name + " logo"}
+								className={classes.logoImage}
+								src={app.logo}
+							/>
+						</Link>
+					</div>
+				</Toolbar>*/}
+				{/*<div className={classes.headerWrapper}>
 					<div className={classes.logoWrapper}>
 						<Link className={classes.logoLink} to="/">
 							<LazyImage
@@ -248,9 +259,9 @@ class Sidebar extends Component {
 							</Typography>
 						)}
 					</div>
-				</div>
+				</div>*/}
 				<ScrollBars className={classes.bodyWrapper}>
-					<List component="div" disablePadding className="px-2">
+					<List component="div" disablePadding className="px-0">
 						{this.applyItemsRestrictions().map((item_link, index) =>
 							item_link.section ? (
 								<div key={"drawer_section_" + index}>
@@ -271,12 +282,15 @@ class Sidebar extends Component {
 										{item_link.links.map(
 											(link_obj, link_index) => (
 												<ListItem
-													activeClassName={
-														classes.activeListItem
-													}
+													activeClassName={classNames({[classes.activeListItem]: true, "activeListItemCSS": true})}
 													className={classes.listItem}
 													component={AdapterLink}
 													to={link_obj.route}
+													onClick={(event) => {
+														if (Function.isFunction(onClickNavLink)) {
+															onClickNavLink(link_obj);
+														}
+													}}
 													key={
 														"drawer_item_" +
 														index +
@@ -338,9 +352,14 @@ class Sidebar extends Component {
 								</div>
 							) : (
 								<ListItem
-									activeClassName={classes.activeListItem}
+									activeClassName={classNames({[classes.activeListItem]: true, "activeListItemCSS": true})}
 									className={classes.listItem}
 									component={AdapterLink}
+									onClick={(event) => {
+										if (Function.isFunction(onClickNavLink)) {
+											onClickNavLink(item_link);
+										}
+									}}
 									to={item_link.route}
 									key={"drawer_item_" + index}
 								>

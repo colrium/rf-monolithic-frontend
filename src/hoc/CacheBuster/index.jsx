@@ -1,7 +1,7 @@
 import React from 'react';
-import { app } from "assets/jss/app-theme";
-import packageJson from '../../../package.json';
-global.appVersion = packageJson.version;
+import { connect } from "react-redux";
+import { setVersion, setInitialized } from "state/actions";
+import { app as themeApp } from "assets/jss/app-theme";
 
 // version from response - first param, local version second param
 const semverGreaterThan = (versionA, versionB) => {
@@ -23,26 +23,38 @@ const semverGreaterThan = (versionA, versionB) => {
 class CacheBuster extends React.Component {
 	constructor(props) {
 		super(props);
+		const { app, auth } = this.props;
 		this.state = {
 			loading: true,
 			isLatestVersion: false,
-			refreshCacheAndReload: () => {
-				console.log('Clearing cache and hard reloading...')
-				if (caches) {
+			latestVersion: app.version,
+			refreshCacheAndReload: () => {			
+				if (window) {
+					window.location.reload(true);
+				}
+				/*try {
 					// Service worker cache should be cleared with caches.delete()
+					localStorage.clear();
+					console.log('Clearing cache and hard reloading...', caches);
 					caches.keys().then(function(names) {
 						for (let name of names) caches.delete(name);
 					});
-				}
-
-				// delete browser cache and hard reload
-				window.location.reload(true);
+					window.location.reload(true);
+				} catch(e){
+					console.error("Error clearing cached data: ", e);
+				}*/
+				
 			}
 		};
 	}
 
+	async getCacheVersion() {
+
+	}
+
 	componentDidMount() {
-		fetch('/meta.json', {cache: "force-cache"})
+		const { app, auth, setVersion, setInitialized } = this.props;
+		fetch('/meta.json', {cache: "reload"})
 			.then(async (response) => {
 				let responseJSON = await response.json().then(data => {
 					return data;
@@ -52,39 +64,28 @@ class CacheBuster extends React.Component {
 				return responseJSON;
 			})
 			.then((meta) => {
-				const latestVersion = global.appVersion;
-				const currentVersion = meta.version;
+				const currentVersion = app? (app.version? app.version : "0.0.0") : "0.0.0" ;
+				const latestVersion = meta.version;
+
 				if (currentVersion === "0.0.0") {
-					const serializedState = localStorage.getItem( app.name.replace(/\s+/g, "").toLowerCase() + "-state" );
-					if (serializedState === null) {
-						this.setState({ loading: false, isLatestVersion: true });
-					}
-					else{
-						if (serializedState.auth) {
-							if (serializedState.auth.isAuthenticated) {
-								localStorage.clear();
-								this.setState({ loading: false, isLatestVersion: true });
-							}
-							else{
-								this.setState({ loading: false, isLatestVersion: true });
-							}
-						}
-						else{
-							this.setState({ loading: false, isLatestVersion: true });
-						}
-					}
+					console.log(`${currentVersion}. Should force refresh`);
+					this.setState({ loading: false, isLatestVersion: false, latestVersion: latestVersion });
+					setVersion(latestVersion);
+					setInitialized(true);
 				}
 				else {
 					const shouldForceRefresh = currentVersion !== latestVersion;
 					if (shouldForceRefresh) {
 						console.log(`We have a new version - ${latestVersion}. Should force refresh`);
-						this.setState({ loading: false, isLatestVersion: false });
+						this.setState({ loading: false, isLatestVersion: false, latestVersion: latestVersion });
+						setVersion(latestVersion);
+						setInitialized(true);
 					} else {
-						console.log(`${app.name} version - ${latestVersion}.`);
-						this.setState({ loading: false, isLatestVersion: true });
+						console.log(`${themeApp.name} version - ${latestVersion}.`);
+						this.setState({ loading: false, isLatestVersion: true, latestVersion });
+						setInitialized(true);
 					}
 				}
-
 					
 			}).catch(e => {
 				console.log("meta.json error", e);
@@ -92,9 +93,15 @@ class CacheBuster extends React.Component {
 			});
 	}
 	render() {
-		const { loading, isLatestVersion, refreshCacheAndReload } = this.state;
-		return this.props.children({ loading, isLatestVersion, refreshCacheAndReload });
+		const { loading, isLatestVersion, refreshCacheAndReload, latestVersion } = this.state;
+		return this.props.children({ loading, isLatestVersion, refreshCacheAndReload, latestVersion });
 	}
 }
 
-export default CacheBuster;
+
+const mapStateToProps = state => ({		
+	app: state.app,
+	auth: state.auth,
+});
+
+export default connect(mapStateToProps, { setVersion, setInitialized })(CacheBuster);

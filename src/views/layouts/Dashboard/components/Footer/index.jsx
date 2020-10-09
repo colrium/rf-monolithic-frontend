@@ -7,6 +7,8 @@ import { app } from "assets/jss/app-theme";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import {withErrorHandler} from "hoc/ErrorHandler";
+import { intercom } from "config";
+import Intercom from "react-intercom";
 
 // Component styles
 const styles = theme => ({
@@ -26,7 +28,7 @@ class Footer extends Component {
 		return (
 			<div
 				className={
-					"p-4 absolute bottom-0 mt-16" +
+					"p-4 mt-16" +
 					(className ? " " + className : "")
 				}
 			>
@@ -35,6 +37,7 @@ class Footer extends Component {
 					&copy; {app.name}. {new Date().format("Y")}
 				</Typography>
 				<Typography variant="caption">{app.description}</Typography>
+				<Intercom appID={intercom.app.id} {...intercom.app.user} />
 			</div>
 		);
 	}

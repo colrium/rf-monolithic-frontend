@@ -1040,9 +1040,11 @@ class DefinationView extends React.Component {
 						variant="outlined"
 						defaultValue={context.label}
 						onChange={value => {
-							if (value.trim().length > 0) {
-								this.onContextParamsChange("name", value);
-							}
+							if (String.isString(value)) {
+								if (value.trim().length > 0) {
+									this.onContextParamsChange("name", value);
+								}
+							}								
 						}}
 						label="Group Name"
 						type="text"

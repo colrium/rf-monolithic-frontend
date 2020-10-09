@@ -6,6 +6,7 @@ const initialState = {
 	options: {
 		children: "Hi",
 	},
+	volatile: true,
 };
 
 const dialog = function(state = initialState, action) {

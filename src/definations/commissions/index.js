@@ -17,6 +17,11 @@ import GoogleMap from "components/GoogleMap";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Status from "components/Status";
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Divider from '@material-ui/core/Divider';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Typography from "components/Typography";
 import { formats } from "config/data";
 import React from "react";
@@ -490,7 +495,7 @@ export default {
 			},
 		},
 		listing: {
-			default: "tableview",
+			default: "googlemapview",
 			listview: {
 				avatar: false,
 				resolveData: async (
@@ -869,6 +874,7 @@ export default {
 					let resolved_data = [];
 					resolved_data = entries.map((entry, index) => {
 						return {
+							id: entry._id,
 							center: entry.focus_center,
 							//title: entry.survey? entry.survey.title+' Survey Commission' : 'Commission',
 							infoWindow: (
@@ -1074,14 +1080,19 @@ export default {
 					},
 				},
 			},
-			queries: {
-				type: ["string"],
-				label: "Queries",
-				icon: "label",
+
+			response_mode: {
+				type: "string",
+				label: "Response Mode",
 				input: {
-					type: "multiselect",
-					default: "",
+					type: "radio",
+					default: "individual",
 					required: true,
+					size: 12,
+				},
+				possibilities: {
+					queries: "Queries",
+					form: "Form",
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -1093,6 +1104,45 @@ export default {
 						}
 						return true;
 					},
+				},
+			},
+
+			queries: {
+				type: ["string"],
+				label: "Queries",
+				icon: "label",
+				input: {
+					type: (values, user) => {
+						if (values.response_mode === "queries") {
+							return "multiselect";
+						}
+						return "hidden";
+					},
+					default: "",
+					required: (values, user) => {
+						if (values) {
+							return values.response_mode === "queries";
+						}
+					},
+				},
+				restricted: {
+					display: (entry, user) => {
+						if (entry) {
+							if (entry.response_mode === "queries") {
+								return false;
+							}
+						}					
+						return true;
+					},
+					input: (values, user) => {
+						if (values) {
+							if (values.response_mode === "queries") {
+								return false;
+							}
+							
+						}						
+						return true;
+					}
 				},
 				reference: {
 					name: "queries",
@@ -1112,6 +1162,57 @@ export default {
 					},
 				},
 			},
+
+			form: {
+				type: "string",
+				label: "Form",
+				input: {
+					type: (values, user) => {
+						if (values.response_mode === "form") {
+							return "select";
+						}
+						return "hidden";
+					},
+					required: (values, user) => {
+						if (values.response_mode === "form") {
+							return true;
+						}
+						return false;
+					},
+				},
+				restricted: {
+					display: (entry, user) => {
+						if (entry) {
+							if (entry.response_mode === "form") {
+								return false;
+							}
+						}					
+						return true;
+					},
+					input: (values, user) => {
+						if (values) {
+							if (values.response_mode === "form") {
+								return false;
+							}
+							
+						}						
+						return true;
+					}					
+				},
+				reference: {
+					name: "forms",
+					service_query: { active: true },
+					resolves: {
+						value: "_id",
+						display: {
+							primary: ["title"],
+							secondary: [],
+							avatar: false,
+						},
+					},
+				},
+			},
+
 			involvement: {
 				type: "string",
 				label: "Involvement",
@@ -1272,8 +1373,10 @@ export default {
 				type: "object",
 				label: "Focus center",
 				input: {
-					type: "map",
+					type: "coordinates",
+					placeholderType: "formatted_address",
 					required: true,
+
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -1352,7 +1455,7 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return false;
+						return true;
 					},
 					input: (values, user) => {
 						if (user) {
@@ -1481,11 +1584,8 @@ export default {
 			return true;
 		},
 		view: {
-			summary: user => {
-				if (user) {
-					return user.isAdmin || user.isCollector;
-				}
-				return false;
+			summary: user => {				
+				return true;
 			},
 			all: user => {
 				if (user) {

@@ -87,7 +87,7 @@ export default {
 					blog: "Blog",
 					category: "Category",
 					press: "Press",
-					faq: "FAQ",
+					faq: "FAQ",					
 					"knowledge-base": "Knowledge Base",
 					newsletter: "Newsletter",
 					anouncement: "Anouncement",
@@ -166,19 +166,34 @@ export default {
 					required: true,
 					value: (values, user) => {
 						if (values) {
-							if (
-								String.isString(values.title) &&
-								String.isString(values.type)
-							) {
+							if (String.isString(values.title)) {
 								if (values.type.length > 0) {
 									return values.title
 										.variablelize()
-										.replaceAll("_", "-");
+										.replaceAll("_", "-")
+										.replaceAll("-", " ")
+										.replace(/[^\w\s]/, "")
+										.replaceAll(" ", "-");
 								}
 							}
 						}
 						return "";
 					},
+					/*defaultValue: (values, user) => {
+						if (values) {
+							if (String.isString(values.title)) {
+								if (values.type.length > 0) {
+									return values.title
+										.variablelize()
+										.replaceAll("_", "-")
+										.replaceAll("-", " ")
+										.replace(/[^\w\s]/, "")
+										.replaceAll(" ", "-");
+								}
+							}
+						}
+						return "";
+					},*/
 				},
 				restricted: {
 					display: (values, user) => {

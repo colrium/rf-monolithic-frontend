@@ -1,29 +1,30 @@
-import React, { /*useEffect,*/ useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useGlobals } from "contexts/Globals";
 
 import Typography from "@material-ui/core/Typography";
-import { TextInput } from "components/FormInputs";
+import { TextInput, RadioInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 
 function Widget(props) {
-	/*let [state, setState] = useState(props);
+	let [state, setState] = useState(props);
 	useEffect(() => {
 		setState(props);
-	}, [props]);*/
+	}, [props]);
 
 	let [alerts, setAlerts] = useState({});	
 	let [loading, setLoading] = useState({});
 	let [errors, setErrors] = useState({});
 
 	
-	let { app: { settings } } = props;
+	let { app: { settings } } = state;
 	const { updateSettings } = useGlobals();
 
 	let context_settings = settings.general;
 
-	const handleOnChange = name => async value => {
+	const handleOnChange = name => async (value, event) => {
+		setAlerts({...alerts, [name] : ""});
 		setLoading({...loading, [name] : true});
 		setErrors({...errors, [name] : false});
 		let new_value = { ...context_settings, [name]: value };
@@ -49,9 +50,9 @@ function Widget(props) {
 					label="SEO title"
 					type="text"
 					defaultValue={context_settings["seo-title"]}
-					onChange={handleOnChange("seo-title")}
+					onBlur={handleOnChange("seo-title")}
 					helperText={alerts["seo-title"]}
-					disabled={loading["seo-title"]}
+					loading={loading["seo-title"]}
 					error={errors["seo-title"]}
 					required
 				/>
@@ -65,9 +66,9 @@ function Widget(props) {
 					multiline
 					rows="6"
 					defaultValue={context_settings["seo-tagline"]}
-					onChange={handleOnChange("seo-tagline")}
+					onBlur={handleOnChange("seo-tagline")}
 					helperText={alerts["seo-tagline"]}
-					disabled={loading["seo-tagline"]}
+					loading={loading["seo-tagline"]}
 					error={errors["seo-tagline"]}
 					required
 				/>
@@ -79,9 +80,9 @@ function Widget(props) {
 					label="Copyright"
 					type="text"
 					defaultValue={context_settings["copyright"]}
-					onChange={handleOnChange("copyright")}
+					onBlur={handleOnChange("copyright")}
 					helperText={alerts["copyright"]}
-					disabled={loading["copyright"]}
+					loading={loading["copyright"]}
 					error={errors["copyright"]}
 					required
 				/>
@@ -93,10 +94,24 @@ function Widget(props) {
 					label="Trademark"
 					type="text"
 					defaultValue={context_settings["trademark"]}
-					onChange={handleOnChange("trademark")}
+					onBlur={handleOnChange("trademark")}
 					helperText={alerts["trademark"]}
-					disabled={loading["trademark"]}
+					loading={loading["trademark"]}
 					error={errors["trademark"]}
+					required
+				/>
+			</GridItem>
+
+			<GridItem xs={12} className="mb-4">
+				<RadioInput
+					name="landing-page-routing"
+					label="Landing page routing"
+					defaultValue={context_settings["landing-page-routing"]}
+					onChange={handleOnChange("landing-page-routing")}
+					helperText={alerts["landing-page-routing"]}
+					options={{"sections" : "Sections", "pages": "Pages"}}
+					disabled={loading["landing-page-routing"]}
+					error={errors["landing-page-routing"]}
 					required
 				/>
 			</GridItem>

@@ -178,8 +178,7 @@ export default  {
 				label: "Filter",
 				input: {
 					type: "select",
-					size: 4,					
-					default: "is",
+					size: 4,	
 				},
 				restricted: {
 					display: (entry, user) => {						

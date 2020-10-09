@@ -75,6 +75,22 @@ export default {
 					},
 				},
 			},
+			requested_time: {
+				type: "string",
+				label: "Preferred Time",
+				input: {
+					type: "datetime",
+					required: true,
+				},
+				restricted: {
+					display: (entry, user) => {
+						return false;
+					},
+					input: (values, user) => {						
+						return false;
+					},
+				},
+			},
 			date_made: {
 				type: "string",
 				label: "Date made",

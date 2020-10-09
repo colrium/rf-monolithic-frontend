@@ -2,197 +2,72 @@
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { app, colors } from "assets/jss/app-theme.jsx";
-import Button from "components/Button";
+import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
 import { connect } from "react-redux";
+import { withTheme } from '@material-ui/core/styles';
+import Hidden from '@material-ui/core/Hidden';
 // react components for routing our app without refresh
-import { Link } from "react-router-dom";
+import { Link, HashRouter, Route, Switch } from "react-router-dom";
 import compose from "recompose/compose";
 import { withErrorHandler } from "hoc/ErrorHandler";
-import AnimatedChevronMap from "views/widgets/AnimatedChevronMap";
 
 
 // Sections for this page
-/*import SurveysQueriesSection from "./Sections/SurveysQueriesSection.jsx";
-import QueriesSection from "./Sections/QueriesSection.jsx";
-import StartProjectSection from "./Sections/StartProjectSection.jsx";
-import InfoSection from "./Sections/InfoSection.jsx";*/
+import JumbotronSection from "views/sections/LandingPage/Jumbotron";
+import StartProjectSection from "views/sections/LandingPage/StartYourProject";
+import FAQsSection from "views/sections/LandingPage/FAQs";
+import JobsSection from "views/sections/LandingPage/Jobs";
+import AboutUsSection from "views/sections/LandingPage/AboutUs";
+import ProductsSection from "views/sections/LandingPage/Products";
+import CommisionSurveySection from "views/sections/LandingPage/CommisionSurvey";
 
 const styles = theme => ({
-	root: {
-		zIndex: "12",
-		color: colors.hex.text,
-		position: "relative",
-		minHeight: "100vh",
-	},
-	container: {
-		color: colors.hex.default,
-	},
-	title: {
-		display: "inline-block",
-		position: "relative",
-		marginTop: "30px",
-		minHeight: "32px",
-		color: colors.hex.default,
-		textDecoration: "none",
-	},
-	subtitle: {
-		fontSize: "1.313rem",
-		margin: "10px auto 0",
-	},
-	titleWrapper: {
-		position: "relative",
-	},
-	titleContainer: {
-		position: "absolute",
-		top: "50%",
-		transform: "translateY(-50%)",
-		padding: "0",
-	},
-	main: {
-		background: colors.hex.inverse,
-		position: "relative",
-		zIndex: "3",
-	},
-	mainRaised: {
-		margin: "-60px 30px 0px",
-		borderRadius: "6px",
-		boxShadow:
-			"0 16px 24px 2px rgba(" +
-			colors.rgb.text +
-			", 0.14), 0 6px 30px 5px rgba(" +
-			colors.rgb.text +
-			", 0.12), 0 8px 10px -5px rgba(" +
-			colors.rgb.text +
-			", 0.2)",
-	},
+	
 });
 
 class Page extends React.Component {
 	componentDidMount() {
 		document.title = app.title("Home");
+		const {
+			match,
+			location,
+		} = this.props;
+
 	}
 
 	render() {
-		const { classes, auth, ...rest } = this.props;
+		const { classes, auth, theme, device, ...rest } = this.props;
 		return (
-			<div>
-				<GridContainer
-					className={classes.root}
-					direction="column"
-					alignItems="center"
-					justify="center"
-				>
-					<GridContainer className={classes.container}>
-						<GridItem xs={12} sm={12} md={12}>
-							<GridContainer alignItems="center" justify="center">
-								<GridItem
-									xs={12}
-									sm={12}
-									md={5}
-									className={classes.titleWrapper}
-								>
-									<GridContainer>
-										<GridItem xs={12}>
-											<Typography variant="h3" center>
-												{" "}
-												Get <b>Real</b> time research in
-												the <b>Field</b>{" "}
-											</Typography>
-										</GridItem>
-
-										<GridItem xs={12}>
-											<Typography
-												bold
-												doublespaced
-												center
-											>
-												Reaching remote areas that the
-												internet cannot, asking real
-												questions that the internet
-												cannot...... An impactful
-												statement explaining why
-												realfield, with link to backup
-											</Typography>
-										</GridItem>
-									</GridContainer>
-								</GridItem>
-
-								<GridItem xs={12} sm={12} md={7}>
-									<AnimatedChevronMap />
-								</GridItem>
-							</GridContainer>
-							<GridContainer>
-								<GridItem xs={12} sm={12} md={5}>
-									<GridContainer>
-										<GridItem
-											xs={12}
-											sm={6}
-											md={6}
-											style={{ textAlign: "center" }}
-										>
-											<Link to="/order" color="inherit">
-												<Button
-													color="accent"
-													style={{ margin: "auto" }}
-												>
-													Get started
-												</Button>
-											</Link>
-										</GridItem>
-
-										<GridItem
-											xs={12}
-											sm={6}
-											md={6}
-											style={{ textAlign: "center" }}
-										>
-											<Link
-												to="/request-demo"
-												color="inherit"
-											>
-												<Button
-													color="primary"
-													outlined
-													style={{ margin: "auto" }}
-												>
-													Request demo
-												</Button>
-											</Link>
-										</GridItem>
-									</GridContainer>
-								</GridItem>
-							</GridContainer>
-						</GridItem>
-					</GridContainer>
+			<GridContainer className={"p-0"}>
+				
+				
+				<GridContainer className={"p-0 px-4 md:pl-20 md:pr-4"} style={{ background: theme.palette.background.default }}>
+					<JumbotronSection />
 				</GridContainer>
 
-				{/*<GridContainer className={classes.main} paddless>
-					<SurveysQueriesSection />
-					<QueriesSection />
-					{auth.isAuthenticated? (
-						<GridItem xs={12} style={{textAlign: "center"}}>
-							<Button color="accent" size="lg" round href="https://survey.realfield.io" target="_blank" rel="noopener noreferrer" style={{margin: "auto"}}>
-								Start survey
-							</Button> 
-						</GridItem>) : (
-						<StartProjectSection />
-					)}
-					
-					<InfoSection />
-				</GridContainer>*/}
-			</div>
+				<GridContainer className={"p-0 px-4 md:px-48 py-4"} style={{ background: theme.palette.background.paper }}>
+					<ProductsSection />
+				</GridContainer>
+
+				<GridContainer className={"p-0 px-4 md:px-0"} style={{ background: theme.palette.background.default }}>
+					<CommisionSurveySection />
+				</GridContainer>
+
+				
+			</GridContainer>
 		);
 	}
 }
 
 const mapStateToProps = (state, ownProps) => ({
 	auth: state.auth,
+	device: state.device,
 });
 
 export default withErrorHandler(
-	compose(connect(mapStateToProps, {}), withStyles(styles))(Page)
+	compose(connect(mapStateToProps, {}), withStyles(styles), withTheme)(Page)
 );

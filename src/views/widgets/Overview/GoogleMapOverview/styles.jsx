@@ -18,7 +18,7 @@ export default theme => ({
 		width: theme.appDrawer.width,
 		position: "absolute",
 		zIndex: theme.zIndex.appBar/2,
-		background: theme.palette.background.default,
+		backgroundColor: theme.palette.background.paper,
   	},
   	temporaryDrawerPaper: {
 		width: theme.appDrawer.width,

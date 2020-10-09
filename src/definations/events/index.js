@@ -415,9 +415,7 @@ export default {
 		},
 		view: {
 			summary: user => {
-				if (user) {
-					return true;
-				}
+				
 				return false;
 			},
 			all: user => {

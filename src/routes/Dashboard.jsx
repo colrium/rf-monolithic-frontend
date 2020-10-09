@@ -51,7 +51,7 @@ export default class DashboardRoutes extends Component {
 					authRestrict
 				/>
 
-				{contexts.map((context, cursor) => (
+				{Array.isArray(contexts) && contexts.map((context, cursor) => (
 					<Route
 						exact
 						path={context.toUriWithDashboardPrefix()}
@@ -62,7 +62,7 @@ export default class DashboardRoutes extends Component {
 					/>
 				))}
 
-				{contexts.map((context, cursor) => (
+				{Array.isArray(contexts) && contexts.map((context, cursor) => (
 					<Route
 						exact
 						path={(
@@ -75,7 +75,7 @@ export default class DashboardRoutes extends Component {
 					/>
 				))}
 
-				{contexts.map((context, cursor) => (
+				{Array.isArray(contexts) && contexts.map((context, cursor) => (
 					<Route
 						exact
 						path={(context + "/add").toUriWithDashboardPrefix()}
@@ -86,7 +86,7 @@ export default class DashboardRoutes extends Component {
 					/>
 				))}
 
-				{contexts.map((context, cursor) => (
+				{Array.isArray(contexts) && contexts.map((context, cursor) => (
 					<Route
 						exact
 						path={(

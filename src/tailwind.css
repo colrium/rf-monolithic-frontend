@@ -11,8 +11,7 @@
  * @import "tailwindcss/base";
  */
 
-/* @tailwind base; */
-
+@tailwind base;
 /**
  * This injects any component classes registered by plugins.
  *

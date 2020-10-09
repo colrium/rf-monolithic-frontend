@@ -1,11 +1,12 @@
 /** @format */
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import FacebookIcon from "assets/img/icons/facebook-white.svg";
-import GoogleIcon from "assets/img/icons/google-white.svg";
-import LinkedinIcon from "assets/img/icons/linkedin-white.svg";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
+import FacebookIcon from "@material-ui/icons/Facebook";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import LinkedInIcon from "@material-ui/icons/LinkedIn";
+import GoogleIcon from 'mdi-react/GooglePlusIcon';
 import { AUTH } from "config/api";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
@@ -124,12 +125,10 @@ class OAuth extends Component {
 						onClick={this.handleOAuthBtnClick("google")}
 						textCase="wordcase"
 					>
-						<img
+						<GoogleIcon
 							className={classes.oauthBtnIcon}
-							src={GoogleIcon}
-							alt="Google"
-						/>{" "}
-						Signin with Google
+						/>
+						Proceed with Google
 					</Button>
 				</GridContainer>
 
@@ -145,12 +144,10 @@ class OAuth extends Component {
 						onClick={this.handleOAuthBtnClick("facebook")}
 						textCase="wordcase"
 					>
-						<img
+						<FacebookIcon
 							className={classes.oauthBtnIcon}
-							src={FacebookIcon}
-							alt="Facebook"
-						/>{" "}
-						Signin with Facebook
+						/>
+						Proceed with Facebook
 					</Button>
 				</GridContainer>
 
@@ -166,12 +163,10 @@ class OAuth extends Component {
 						onClick={this.handleOAuthBtnClick("linkedin")}
 						textCase="wordcase"
 					>
-						<img
+						<LinkedInIcon
 							className={classes.oauthBtnIcon}
-							src={LinkedinIcon}
-							alt="LinkedIn"
-						/>{" "}
-						Signin with linkedin
+						/>
+						Proceed with LinkedIn
 					</Button>
 				</GridContainer>
 			</GridContainer>

@@ -2,14 +2,9 @@
 
 import React from "react";
 import Cookies from "universal-cookie";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Icon from "@material-ui/core/Icon";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import Snackbar from "@material-ui/core/Snackbar";
 import { withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { alignments, colors } from "assets/jss/app-theme.jsx";
 import classNames from "classnames";
 import Button from "components/Button";
@@ -18,7 +13,7 @@ import GridItem from "components/Grid/GridItem";
 import SnackbarContent from "components/Snackbar/SnackbarContent";
 import Typography from "components/Typography";
 import PropTypes from "prop-types";
-
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 //
@@ -40,6 +35,10 @@ import { AppHelper } from "hoc/Helpers";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import Auth from "hoc/Auth";
 import withRoot from "hoc/withRoot";
+import {
+	TextInput,
+	CheckboxInput,
+} from "components/FormInputs";
 import OAuth from "./components/OAuth";
 
 
@@ -79,7 +78,6 @@ const styles = theme => ({
 		margin: theme.spacing(),
 		padding: theme.spacing(),
 		marginTop: theme.spacing(4),
-		minHeight: "60px",
 		height: "auto"
 	},
 	loginSubmitBtn: {
@@ -204,12 +202,26 @@ class LoginForm extends React.Component {
 		const { setCurrentUser, setAuthenticated, auth } = this.props;
 		if (Auth.getInstance().authTokenSet() && auth.isAuthenticated && "_id" in auth.user) {
 			this.handleOnUserLogin({user: auth.user});
-		}		
+		}
+		else {
+			let uriQueries = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function(result, each, n, every) {
+				let [key, value] = each.split("=");
+				result[key] = value;
+				return result;
+			}, {});
+			if ("c" in uriQueries || "code" in uriQueries) {
+				let reset_code = "c" in uriQueries ? uriQueries.c : uriQueries.code;
+				this.setState(prevState => ({
+					forgotPassword: false,
+					resettingPassword: true,
+					reset_code: reset_code,				
+				}));
+			}
+		}	
 	}
 
-	handleChange = name => event => {
-		let eventTargetValue = event.target.value;
-		this.setState({ [name]: eventTargetValue });
+	handleChange = name => value => {
+		this.setState({ [name]: value });
 	};
 
 	getCookiesAccessToken(){
@@ -301,7 +313,7 @@ class LoginForm extends React.Component {
 	}
 
 	onClickForgotPassword() {
-		this.setState(state => ({ forgotPassword: !state.forgotPassword }));
+		this.setState(state => ({ forgotPassword: !state.forgotPassword, resettingPassword: state.resettingPassword? false : false }));
 	}
 
 	onClickResetPassword() {
@@ -312,8 +324,8 @@ class LoginForm extends React.Component {
 		this.setState(state => ({ showPassword: !state.showPassword }));
 	}
 
-	handleClickRememberMe() {
-		this.setState(state => ({ rememberMe: !state.rememberMe }));
+	handleClickRememberMe(rememberMe) {
+		this.setState(state => ({ rememberMe: rememberMe }));
 	}
 
 	handleClickShowRepeatPassword() {
@@ -442,15 +454,21 @@ class LoginForm extends React.Component {
 									md={12}
 									className={classes.inputContainer}
 								>
-									<TextField
+									<TextInput
 										id="reset-code"
 										type="text"
+										variant="filled"
 										value={this.state.reset_code}
 										onChange={this.handleChange("reset_code")}
-										className={classNames(classes.textField)}
-										variant="outlined"
 										label="Password Reset Code"
+										InputProps={{ 
+												classes : {
+													input: "inverse",
+												}
+										}}
 										fullWidth
+										required 
+										validate
 										disabled={this.state.submitting}
 									/>
 								</GridItem>
@@ -461,145 +479,137 @@ class LoginForm extends React.Component {
 										md={12}
 										className={classes.inputContainer}
 									>
-										<TextField
+										<TextInput
 											id="login-email"
 											type="email"
 											value={this.state.email}
 											onChange={this.handleChange("email")}
-											className={classNames(classes.textField)}
-											variant="outlined"
 											label="Email"
+											variant="filled"
+											InputProps={{ 
+												classes : {
+													input: "inverse",
+												}
+											}}
+											required 
+											validate
 											fullWidth
 											disabled={this.state.submitting}
 										/>
 									</GridItem>
 								)}
 
-							{(!this.state.forgotPassword && !this.state.resettingPassword) ||
-								this.state.resettingPassword ? (
+							{(!this.state.forgotPassword || this.state.resettingPassword) && (
 									<GridItem
 										xs={12}
 										sm={12}
 										md={12}
 										className={classes.inputContainer}
 									>
-										<TextField
+										<TextInput
 											id="login-password"
-											type={this.state.showPassword ? "text" : "password"}
+											type={"password"}
 											value={this.state.password}
 											onChange={this.handleChange("password")}
-											className={classNames(classes.textField)}
-											variant="outlined"
 											label="Password"
-											InputProps={{
-												endAdornment: (
-													<InputAdornment position="end">
-														{" "}
-														<IconButton
-															aria-label="Toggle password visibility"
-															onClick={this.handleClickShowPassword}
-														>
-															{" "}
-															{this.state.showPassword ? (
-																<Icon>visibility_off</Icon>
-															) : (
-																	<Icon>visibility</Icon>
-																)}{" "}
-														</IconButton>{" "}
-													</InputAdornment>
-												)
+											InputProps={{ 
+												classes : {
+													input: "inverse",
+												}
 											}}
+											required
 											fullWidth
+											validate
+											variant="filled"
+											excludeValidation={!this.state.resettingPassword? [] : ["password"]}
 											disabled={this.state.submitting}
 										/>
 									</GridItem>
-								) : (
-									""
-								)}
+							)}
 
-							{this.state.resettingPassword ? (
+							{this.state.resettingPassword && (
 								<GridItem
 									xs={12}
 									sm={12}
 									md={12}
 									className={classes.inputContainer}
 								>
-									<TextField
+									<TextInput
 										id="repeat-password"
-										type={this.state.showRepeatPassword ? "text" : "password"}
-										value={this.state.password}
+										type={"password"}
+										value={this.state["repeat-password"]}
 										onChange={this.handleChange("repeat-password")}
-										className={classNames(classes.textField)}
-										variant="outlined"
 										label="Repeat Password"
-										InputProps={{
-											endAdornment: (
-												<InputAdornment position="end">
-													{" "}
-													<IconButton
-														aria-label="Toggle password visibility"
-														onClick={this.handleClickShowRepeatPassword}
-													>
-														{" "}
-														{this.state.showRepeatPassword ? (
-															<Icon>visibility</Icon>
-														) : (
-																<Icon>visibility_off</Icon>
-															)}{" "}
-													</IconButton>{" "}
-												</InputAdornment>
-											)
+										variant="filled"
+										InputProps={{ 
+												classes : {
+													input: "inverse",
+												}
 										}}
+										required
+										validate
+										validator={(value) => { return value === this.state.password? false : "Passwords dont match" }}
 										fullWidth
 										disabled={this.state.submitting}
 									/>
 								</GridItem>
-							) : (
-									""
-								)}
+							)}
+
 
 							<GridContainer>
 								<GridItem xs={12} md={6}>
-									{!this.state.forgotPassword && (
-										<FormControlLabel
-											control={
-												<Checkbox
-													checked={this.state.rememberMe}
-													onChange={this.handleClickRememberMe}
-													value="remember"
-													color="primary"
-												/>
-											}
+									{(!this.state.forgotPassword && !this.state.resettingPassword) && (
+										<CheckboxInput
+											value={this.state.rememberMe}
+											onChange={this.handleClickRememberMe}
+											color="primary"
 											label="Remember me"
 										/>
 									)}
 								</GridItem>
 								<GridItem xs={12} md={6} className="m-0 p-0">
-									<Button
-										color="accent"
-										size="lg"
-										className={classes.loginSubmitBtn}
-										right
-										simple={this.state.submitting}
-										disabled={this.state.submitting}
-										type="submit"
-									>
-										{this.state.submitting
-											? ". . ."
-											: this.state.forgotPassword
-												? " Send password reset code"
-												: this.state.resettingPassword
-													? "Reset Password"
-													: "Login"}
-									</Button>
+									
+									{!this.state.submitting && <GridContainer className={"p-0"}>
+											<GridItem xs={12} className={"flex flex-col items-end justify-end"}>
+												<Button
+													color="primary"
+													className={classes.loginSubmitBtn}
+													type="submit"
+												>
+													{this.state.forgotPassword? " Send password reset code" : (this.state.resettingPassword ? "Reset Password" : "Login")}
+												</Button>
+											</GridItem>
+												
+										</GridContainer>}
+									{this.state.submitting && (
+										<GridContainer className={"p-0"}>
+											<GridItem xs={12} className={"flex items-center justify-center"}>
+												<CircularProgress
+													size={24}
+													className={"accent-text"}
+												/>
+											</GridItem>
+											<GridItem xs={12} className={"p-0"}>
+												<Typography
+													className={"my-1"}
+													color="default"
+													center
+													variant="body2"
+												>
+													{"Logging in. Please Wait..."}
+												</Typography>
+											</GridItem>
+												
+										</GridContainer>
+									)}
 								</GridItem>
 							</GridContainer>
 
 							<GridContainer>
-								<GridItem md={6} className="p-0">
+								<GridItem md={6} className="p-0 flex flex-col items-center md:justify-start sm:justify-center">
 									<Button
 										variant="text"
-										color="accent"
+										color="default"
 										size="md"
 										simple
 										className={classNames({
@@ -608,35 +618,34 @@ class LoginForm extends React.Component {
 										})}
 										onClick={this.onClickForgotPassword}
 									>
-										{this.state.forgotPassword
-											? "Back to login"
-											: "Forgot password?"}
+										{this.state.forgotPassword || this.state.resettingPassword ? "Back to login" : "Forgot password?"}
 									</Button>
 								</GridItem>
-								<GridItem md={6} className="p-0">
-									<Button
-										variant="text"
-										color="accent"
-										right
-										size="md"
-										simple
-										href="https://realfield.io/home"
-									>
-										Create account
-                  </Button>
+								<GridItem md={6} className="p-0 flex flex-col items-center md:justify-end sm:justify-center">
+									<Link to={"/register"} className="transparent">
+										<Button
+											variant="text"
+											color="default"
+											size="md"
+											simple
+											href="/register"
+										>
+											Create account
+	                  					</Button>
+                  					</Link>
 								</GridItem>
 							</GridContainer>
 
 							<GridContainer className="p-0">
 								<Typography
 									className="p-0"
-									color="grey"
+									color="default"
 									center
-									variant="body1"
+									variant="h5"
 									fullWidth
 								>
-									or
-                </Typography>
+									OR
+                				</Typography>
 							</GridContainer>
 
 							<GridContainer alignItems="center" justify="center">

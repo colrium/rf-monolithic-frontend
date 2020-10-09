@@ -14,7 +14,7 @@ import React from "react";
 //Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import { closeDialog, openDialog } from "state/actions";
+import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
 import { withErrorHandler } from "hoc/ErrorHandler";
 import styles from "./styles";
@@ -29,7 +29,7 @@ class CalendarView extends React.Component {
 
 	constructor(props) {
 		super(props);
-		const { defination, service, query } = props;
+		const { defination, service, query, app } = props;
 
 		this.state.defination = defination;
 		this.state.service = service;
@@ -158,45 +158,64 @@ class CalendarView extends React.Component {
 	}
 
 	loadData() {
-		const { auth } = this.props;
-
-		if (this.state.defination && this.state.service) {
-			this.setState(state => ({ records: [], loading: true }));
-			this.state.service
-				.getRecords(this.state.query)
-				.then(res => {
-					let raw_data = res.body.data;
-					this.state.defination.views.listing.calendarview
-						.resolveData(raw_data)
-						.then(data => {
-							this.setState(state => ({
-								records: data,
-								loading: false,
-							}));
-						})
-						.catch(err => {
-							console.error("CalendarView resolveData err", err);
-							this.setState(state => ({
-								records: [],
-								load_error: { msg: err },
-								loading: false,
-							}));
-						});
-				})
-				.catch(err => {
-					console.error("CalendarView loadData err", err);
+		const { auth, cache, defination, apiCallRequest, cache_data, onLoadData, load_data } = this.props;
+		if (defination ) {
+			if (load_data) {
+				apiCallRequest( defination.name,
+					{
+						uri: defination.endpoint,
+						type: "records",
+						params: this.state.query,
+						data: {},
+						cache: cache_data,
+					}
+				).then(data => {
+					console.log("calendar data", data);
+					if (Function.isFunction(onLoadData)) {
+						onLoadData(data, this.state.query);
+					}
+					this.prepareData(data);
+				}).catch(e => {
+					console.log("calendar error", e);
 					this.setState(state => ({
 						records: [],
-						load_error: { msg: err },
+						load_error: e,
 						loading: false,
 					}));
 				});
-		} else {
+			}
+			else {
+				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];
+				if (Function.isFunction(onLoadData)) {
+					onLoadData(data, this.state.query);
+				}
+				this.prepareData(data);
+			}
+		}
+		else {
 			this.setState(state => ({
 				records: [],
 				load_error: { msg: "No Context defination or provided" },
 				loading: false,
 			}));
+		}
+	}
+
+	prepareData(data=null) {
+		const { auth, cache, defination } = this.props;
+		let target_data = Array.isArray(data)? data : (Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : []);
+		let columns = defination ? defination.scope.columns : {};
+		let resolved_data = [];
+
+		if ( Function.isFunction( defination.views.listing.calendarview.resolveData ) ) {
+			defination.views.listing.calendarview.resolveData(target_data, true).then(resolve => {
+					this.setState(state => ({
+						records: resolve,
+						loading: false,
+					}));
+			}).catch(err => {					
+				this.setState(state => ({ records: [], loading: false }));
+			});
 		}
 	}
 
@@ -359,6 +378,9 @@ CalendarView.propTypes = {
 	service: PropTypes.any.isRequired,
 	calendarProps: PropTypes.object,
 	query: PropTypes.object,
+	cache_data: PropTypes.bool,
+	load_data: PropTypes.bool,
+	onLoadData: PropTypes.func,
 };
 
 CalendarView.defaultProps = {
@@ -373,16 +395,19 @@ CalendarView.defaultProps = {
 		scheduleView: true,
 		taskView: false,
 	},
-	query: {},
+	query: { p: 1 },
+	cache_data: true,
+	load_data: true,
 };
 
 const mapStateToProps = state => ({
 	auth: state.auth,
+	app: state.app,
 });
 
 export default withErrorHandler(
 	compose(
 		withStyles(styles),
-		connect(mapStateToProps, { openDialog, closeDialog })
+		connect(mapStateToProps, { apiCallRequest, openDialog, closeDialog })
 	)(CalendarView)
 );

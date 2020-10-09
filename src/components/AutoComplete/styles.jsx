@@ -10,6 +10,9 @@ export default theme => ({
 		height: "auto",
 		display: "flex",
 	},
+	inputRoot:{
+
+	},
 	valueContainer: {
 		display: "flex",
 		flexWrap: "wrap",

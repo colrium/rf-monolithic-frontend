@@ -1,12 +1,13 @@
 /** @format */
 
-import { SET_DASHBOARD_APPBAR_DISPLAYED, SET_DASHBOARD_DRAWER_DISPLAYED, SET_DASHBOARD_FOOTER_DISPLAYED, SET_DASHBOARD_HOMEPAGE_STATE, SET_DASHBOARD_LANGUAGE, SET_DASHBOARD_LAYOUT_DIRECTION, SET_DASHBOARD_LIGHTBOX } from "state/actions";
+import { SET_DASHBOARD_APPBAR_DISPLAYED, SET_DASHBOARD_DRAWER_DISPLAYED, SET_DASHBOARD_FOOTER_DISPLAYED, SET_DASHBOARD_HOMEPAGE_STATE, SET_DASHBOARD_LANGUAGE, SET_DASHBOARD_LAYOUT_DIRECTION, SET_DASHBOARD_LIGHTBOX, SET_DASHBOARD_SEARCHBAR_DISPLAYED } from "state/actions";
 
 const initialState = {
 	language: "en_us",
 	layout_direction: "ltr",
 	appbar_displayed: true,
 	drawer_displayed: true,
+	searchbar_displayed: false,
 	footer_displayed: true,
 	lightbox: {
 		open: false,
@@ -43,6 +44,12 @@ export default (state = initialState, action = {}) => {
 			return {
 				...state,
 				appbar_displayed: action.appbar_displayed,
+			};
+		}
+		case SET_DASHBOARD_SEARCHBAR_DISPLAYED: {
+			return {
+				...state,
+				searchbar_displayed: action.searchbar_displayed,
 			};
 		}
 		case SET_DASHBOARD_DRAWER_DISPLAYED: {

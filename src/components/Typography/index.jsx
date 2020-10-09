@@ -85,7 +85,7 @@ function CustomTypography({ ...props }) {
 	}
 
 	return (
-		<Typography className={typographyClasses} {...rest}>
+		<Typography className={typographyClasses} color={color && !colors.names.includes(color)? color : undefined} {...rest}>
 			{isHTML ? ReactHtmlParser(children) : children}
 		</Typography>
 	);
@@ -93,7 +93,7 @@ function CustomTypography({ ...props }) {
 
 CustomTypography.propTypes = {
 	classes: PropTypes.object.isRequired,
-	color: PropTypes.oneOf(colors.names),
+	//color: PropTypes.oneOf(colors.names),
 	statusColor: PropTypes.string,
 	fullWidth: PropTypes.bool,
 	quote: PropTypes.bool,

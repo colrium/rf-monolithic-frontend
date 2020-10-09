@@ -16,7 +16,7 @@ import { withStyles } from "@material-ui/core";
 import {withGlobals} from "contexts/Globals";
 import { colors } from "assets/jss/app-theme";
 //
-import { google_maps_default_center, google_maps_url } from "config";
+import { default_location, google_maps_url } from "config";
 
 import withRoot from "hoc/withRoot";
 
@@ -72,7 +72,7 @@ let _searchBox = null;
 class CustomGoogleMap extends Component {
 	state = {
 		current_device_position: {
-			coordinates: google_maps_default_center,
+			coordinates: default_location,
 			title: "You",
 		},
 		current_device_position_set: false,
@@ -96,6 +96,8 @@ class CustomGoogleMap extends Component {
 				this.state.value = [];
 			}
 		}
+
+
 
 		this.onLocationSearchSelect = this.onLocationSearchSelect.bind(this);
 		this.onLocationBtnClick = this.onLocationBtnClick.bind(this);
@@ -191,7 +193,7 @@ class CustomGoogleMap extends Component {
 		//this.setState(updatedPropsState);
 		if (!Object.areEqual(prevProps, this.props)) {
 			let updatedPropsState = JSON.updateJSON(this.state, this.props);
-			console.log("updatedPropsState", updatedPropsState);
+			//console.log("updatedPropsState", updatedPropsState);
 			this.setState({
 				...updatedPropsState,
 			});
@@ -353,18 +355,18 @@ class CustomGoogleMap extends Component {
 			marker,
 			polyline,
 		} = this.state;
-		let defaultCenter = this.state.current_device_position.coordinates;
-		if (!showCurrentPosition ) {
+
+			let defaultCenter = {lat: 41.850033, lng: -87.6500523 };
 			if (Array.isArray(markers) && markers.length > 0) {
-				if (JSON.isJSON(markers[markers.length - 1].position)) {
-					defaultCenter = markers[markers.length - 1].position;
+				if (JSON.isJSON(markers[0].position)) {
+					defaultCenter = markers[0].position;
 				}
 			} else if (Array.isArray(polylines) && polylines.length > 0) {
-				if (JSON.isJSON(polylines[polylines.length - 1].path[0])) {
-					defaultCenter = polylines[polylines.length - 1].path[0];
+				if (JSON.isJSON(polylines[0].path[0])) {
+					defaultCenter = polylines[0].path[0];
 				}
 			} else if (Array.isArray(circles) && circles.length > 0) {
-				defaultCenter = circles[circles.length - 1].center;
+				defaultCenter = circles[0].center;
 			} else if (JSON.isJSON(circle)) {
 				defaultCenter = circle.center;
 			} else if (JSON.isJSON(marker)) {
@@ -372,7 +374,9 @@ class CustomGoogleMap extends Component {
 			} else if (JSON.isJSON(polyline)) {
 				defaultCenter = polyline.path[0];
 			}
-		}
+			else{
+				defaultCenter = this.state.current_device_position.coordinates;
+			}
 			
 		return defaultCenter;
 	}
@@ -422,7 +426,7 @@ class CustomGoogleMap extends Component {
 		this.setState(prevState => ({
 			defaultCenter: this.state.current_device_position.coordinates,
 			showCurrentPosition: true,
-			zoom: prevState.defaultZoom / 2,
+			zoom: prevState.defaultZoom,
 		}));
 	};
 
@@ -521,9 +525,10 @@ class CustomGoogleMap extends Component {
 						showSearchBar={showSearchBar}
 						theme={preferences.theme }
 						searchBarProps={{
-							className: classes.locationSearchInput + " absolute mb-4",
+							label: "Search for a place",
+							placeholder: "Search for a place...",
 							onSelect: this.onLocationSearchSelect,
-							onLeftBtnClick: this.state.current_device_position_set? this.onLocationBtnClick : undefined,
+							onClickMyLocationBtn: this.onLocationBtnClick,
 						}}
 						onMapLoad={map=>{
 							_map = map;
@@ -574,7 +579,8 @@ CustomGoogleMap.propTypes = {
 CustomGoogleMap.defaultProps = {
 	googleMapURL: google_maps_url,
 	mapHeight: 800,
-	defaultZoom: 11,
+	defaultZoom: 12,
+	zoom: 12,
 	showCurrentPosition: false,
 	markers: [],
 	polylines: [],
@@ -593,7 +599,7 @@ CustomGoogleMap.defaultProps = {
 
 const mapStateToProps = state => ({
 	app: state.app,
-	device: state.app,
+	device: state.device,
 });
 
 export default compose(

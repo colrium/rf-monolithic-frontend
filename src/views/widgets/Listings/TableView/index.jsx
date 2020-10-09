@@ -50,22 +50,20 @@ class TableView extends React.Component {
 	}
 
 	componentDidMount() {
+		const { cache, defination } = this.props;
 		this.mounted = true;
 		this.loadContext();
-		this.prepareData();
+		this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
 	}
 
 	getSnapshotBeforeUpdate(prevProps) {
 		this.mounted = false;
+		const { cache, defination } = this.props;
 		return {
-			contextReloadRequired:
-				!Object.areEqual(prevProps.defination, this.props.defination) &&
-				!Object.areEqual(prevProps.service, this.props.service),
-			dataReloadRequired: !Object.areEqual(
-				prevProps.query,
-				this.props.query
-			),
-			dataPreparationRequired: !prevProps.cache.equals(this.props.cache),
+			contextReloadRequired: !Object.areEqual(prevProps.defination, this.props.defination),
+			dataReloadRequired: !Object.areEqual(prevProps.query,this.props.query),
+			/*dataPreparationRequired: Array.isArray(cache.data[defination.name])? !cache.data[prevProps.defination.name].equals(prevProps.cache.data[defination.name]) : (Array.isArray(prevProps.cache.data[defination.name])? !prevProps.cache.data[prevProps.defination.name].equals(cache.data[defination.name]) : false),*/
+			dataPreparationRequired: false,
 		};
 	}
 
@@ -81,9 +79,6 @@ class TableView extends React.Component {
 				{ query: query ? { ...query, p: 1 } : { p: 1 } },
 				this.loadData
 			);
-		}
-		if (snapshot.dataPreparationRequired) {
-			this.prepareData();
 		}
 	}
 
@@ -539,36 +534,62 @@ class TableView extends React.Component {
 	}
 
 	loadData() {
-		const { auth, cache, defination, apiCallRequest } = this.props;
-		if (defination) {
-			apiCallRequest(
-				defination.name,
-				{
-					uri: defination.endpoint,
-					type: "records",
-					params: this.state.query,
-					data: {},
-				},
-				true
-			);
+		const { auth, cache, defination, apiCallRequest, cache_data, onLoadData, load_data } = this.props;
+		if (defination ) {
+			if (load_data) {
+				apiCallRequest( defination.name,
+					{
+						uri: defination.endpoint,
+						type: "records",
+						params: this.state.query,
+						data: {},
+						cache: cache_data,
+					}
+				).then(data => {
+					if (Function.isFunction(onLoadData)) {
+						onLoadData(data, this.state.query);
+					}
+					this.prepareData(data);
+				}).catch(e => {
+					this.setState(state => ({
+						records: [],
+						load_error: e,
+						loading: false,
+					}));
+				});
+			}
+			else {
+				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];
+				if (Function.isFunction(onLoadData)) {
+					onLoadData(data, this.state.query);
+				}
+				this.prepareData(data);
+			}
+		}
+		else {
+			this.setState(state => ({
+				records: [],
+				load_error: { msg: "No Context defination or provided" },
+				loading: false,
+			}));
 		}
 	}
 
-	prepareData() {
+	prepareData(data=null) {
 		const { auth, cache, defination } = this.props;
-		let cached_data = Array.isArray(cache) ? cache : [];
+		let target_data = Array.isArray(data)? data : (Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : []);
 		let columns = defination ? defination.scope.columns : {};
 		let resolved_data = [];
 
-		if (
-			Function.isFunction(defination.views.listing.tableview.resolveData)
-		) {
+
+
+		if (Function.isFunction(defination.views.listing.tableview.resolveData)) {
 			defination.views.listing.tableview
-				.resolveData(cached_data, true)
+				.resolveData(target_data, true)
 				.then(resolve => {
 					if (this.mounted) {
 						this.setState(state => ({
-							raw_data: cached_data,
+							raw_data: target_data,
 							records: resolve,
 							loading: false,
 						}));
@@ -591,7 +612,7 @@ class TableView extends React.Component {
 				});
 		} else {
 			resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(
-				cached_data,
+				target_data,
 				columns,
 				auth.user
 			);
@@ -604,9 +625,10 @@ class TableView extends React.Component {
 	}
 
 	render() {
-		const { classes, defination, api } = this.props;
+		const { classes, defination, api, cache } = this.props;
 		const table_options = {
 			filterType: "dropdown",
+			filter: false,
 			downloadOptions: {
 				filename:
 					(defination ? defination.label : "Records") +
@@ -618,6 +640,7 @@ class TableView extends React.Component {
 			resizableColumns: false,
 			selectableRows: "none",
 			responsive: "scroll",
+			pagination: false,
 			/*customRowRender: (data, dataIndex, rowIndex) => {
 						console.log("customRowRender data", data);
 						console.log("customRowRender dataIndex", dataIndex);
@@ -634,7 +657,7 @@ class TableView extends React.Component {
 		return (
 			<GridContainer className={classes.root}>
 				<GridItem className="p-0 m-0" xs={12}>
-					{ ((api ? !api.complete : true) && this.state.records.length===0 ) && <GridContainer className={classes.full_height} justify="center" alignItems="center">
+					{ (api.busy || !(defination.name in cache.res) && this.state.records.length===0 ) && <GridContainer className={classes.full_height} justify="center" alignItems="center">
 								<GridItem xs={12} className="flex relative flex-row">
 									<div className="flex-grow">
 										<Skeleton variant="text" width={150}/>
@@ -653,9 +676,9 @@ class TableView extends React.Component {
 									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
 									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
 								</GridItem>
-							</GridContainer> }
+					</GridContainer> }
 
-					{api.complete && <GridContainer className="p-0 m-0">
+					{(!api.busy && defination.name in cache.res) && <GridContainer className="p-0 m-0">
 						<GridContainer className="p-0 m-0">
 							<GridItem className="p-0 m-0" xs={12}>
 								{/* this.state.actionsView === "contextMenu" && <Menu											
@@ -711,7 +734,7 @@ class TableView extends React.Component {
 								)}
 							</GridItem>
 						</GridContainer>
-						{(api ? api.complete && api.error : false) && (
+						{(api ? api.busy && api.error : false) && (
 							<GridContainer>
 								<GridItem xs={12}>
 									<Typography
@@ -720,9 +743,7 @@ class TableView extends React.Component {
 										center
 										fullWidth
 									>
-										{"An error occured. \n " +
-											api.error.msg +
-											" \n Displaying cached data."}
+										{"An error occured. \n " + api.error.msg +" \n Displaying cached data."}
 									</Typography>
 								</GridItem>
 							</GridContainer>
@@ -741,28 +762,26 @@ TableView.propTypes = {
 	show_actions: PropTypes.bool,
 	show_links: PropTypes.bool,
 	query: PropTypes.object,
+	cache_data: PropTypes.bool,
+	load_data: PropTypes.bool,
+	onLoadData: PropTypes.func,
+	
 };
 
 TableView.defaultProps = {
 	show_actions: true,
 	show_links: true,
 	query: { p: 1 },
+	cache_data: true,
+	load_data: true,
 };
 
 const mapStateToProps = (state, ownProps) => {
 	const { defination } = ownProps;
 	return {
 		auth: state.auth,
-		cache: defination
-			? state.cache.data[defination.name]
-				? state.cache.data[defination.name]
-				: []
-			: [],
-		api: defination
-			? state.api[defination.name]
-				? state.api[defination.name]
-				: {}
-			: {},
+		cache: state.cache,
+		api:state.api,
 	};
 };
 

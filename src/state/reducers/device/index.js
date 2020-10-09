@@ -6,7 +6,10 @@ import {
 	SET_BROWSER,
 	SET_SCREEN_SIZE,
 	SET_WINDOW_SIZE,
+	SET_LOCATION,
 } from "state/actions/types";
+
+import {default_location} from "config";
 
 const initialState = {
 	identity: {
@@ -31,6 +34,15 @@ const initialState = {
 		width: 1024,
 		height: 768,
 		name: "xs",
+	},
+	location: {
+		...default_location,
+		altitude: 0,
+		accuracy: 0,
+		altitudeAccuracy: 0,
+		heading: 0,
+		speed: 0,
+		timestamp: new Date().getTime() / 1000,
 	},
 };
 
@@ -64,6 +76,12 @@ export default (state = initialState, action = {}) => {
 			return {
 				...state,
 				window_size: action.window_size,
+			};
+		}
+		case SET_LOCATION: {
+			return {
+				...state,
+				location: JSON.isJSON(action.location)? (("lat" in action.location && "lng" in action.location)? action.location : state.location) : initialState.location ,
 			};
 		}
 		default: {

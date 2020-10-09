@@ -1,98 +1,71 @@
 /** @format */
 
-import { app } from "assets/jss/app-theme";
-import Button from "components/Button";
+import withStyles from "@material-ui/core/styles/withStyles";
+import { app, colors } from "assets/jss/app-theme.jsx";
+import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
+import { connect } from "react-redux";
+import { withTheme } from '@material-ui/core/styles';
+// react components for routing our app without refresh
 import { Link } from "react-router-dom";
+import compose from "recompose/compose";
 import { withErrorHandler } from "hoc/ErrorHandler";
 
-class Page extends React.Component {
-	constructor(props) {
-		super(props);
-	}
 
+// Sections for this page
+import JobsSection from "views/sections/LandingPage/Jobs";
+
+const styles = theme => ({
+	root: {
+		zIndex: "12",
+		position: "relative",
+		minHeight: "100vh",
+
+	},
+	container: {
+		padding: 0,
+	},
+	title: {		
+		color: theme.palette.text.secondary,
+		textDecoration: "none",
+	},
+	subtitle: {
+		margin: "10px auto 0",
+	},
+});
+
+class Page extends React.Component {
 	componentDidMount() {
-		document.title = app.title("Recruitment");
+		document.title = app.title("Jobs");
 	}
 
 	render() {
-		const { classes, ...rest } = this.props;
+		const { classes, auth, theme, device, ...rest } = this.props;
 		return (
-			<GridContainer
-				className=""
-				style={{ minHeight: "90vh" }}
-				alignItems="center"
-				justify="center"
-			>
-				<GridItem xs={12} md={9}>
-					<GridContainer alignItems="center" justify="center">
-						<GridItem xs={12} sm={12}>
-							<Typography bold variant="h3">
-								Welcome to the Realfield and join us in the
-								fight against fake news and false facts!
-							</Typography>
-						</GridItem>
+				<GridContainer
+					className={classes.root+" p-0 md:px-12"}
+					direction="column"
+					alignItems="center"
+					justify="center"
+				>
+					<GridContainer className={"p-0"}>
+						<GridItem xs={12} sm={12} md={12} className={"p-0 px-4 md:px-48 "}>
+							<JobsSection />
+						</GridItem>							
 					</GridContainer>
-
-					<GridContainer alignItems="center" justify="center">
-						<GridItem xs={12} sm={12}>
-							<Typography variant="body1" paragraph gutterBottom>
-								Accurate and timely information is absolutely
-								essential for today’s decision makers, yet solid
-								gold data has never been more rare. Realfield is
-								a fresh tech start-up revolutionizing data
-								collection through our online platform providing
-								automated face-to-face (F2F) data collection
-								services.
-							</Typography>
-							<Typography variant="body1" paragraph gutterBottom>
-								Our unyielding dedication to ethical data
-								collection and data privacy combines the most
-								robust data collection methods with online
-								convenience and usability giving our clients
-								real-time access to real data from real people
-								at a price that compares with online tools.
-							</Typography>
-
-							<Typography variant="body1" paragraph gutterBottom>
-								We are now recruiting Data Collectors (Fielders)
-								for upcoming projects around the country. If you
-								are interested in working with an exciting
-								startup with an important, ethical mission in{" "}
-								<a
-									href="https://www.mercycorps.org/research/kenya-gigeconomy"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{" "}
-									Kenya’s rapidly growing gig-economy
-								</a>
-								, and have a reputation for fast, reliable and
-								efficient work turnaround time - Realfield is
-								looking for you!
-							</Typography>
-						</GridItem>
-					</GridContainer>
-
-					<GridContainer alignItems="center" justify="center">
-						<GridItem xs={12} sm={12}>
-							<Link
-								to={"/apply".toUriWithLandingPagePrefix()}
-								color="inherit"
-							>
-								<Button color="accent" size="lg" right>
-									Apply
-								</Button>
-							</Link>
-						</GridItem>
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+				</GridContainer>
 		);
 	}
 }
 
-export default withErrorHandler(Page);
+const mapStateToProps = (state, ownProps) => ({
+	auth: state.auth,
+	device: state.device,
+});
+
+export default withErrorHandler(
+	compose(connect(mapStateToProps, {}), withStyles(styles), withTheme)(Page)
+);

@@ -37,9 +37,9 @@ import NestedJSS from "jss-plugin-nested";
 
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
-
+import debounce from 'lodash/debounce';
 import GlobalsProvider from "contexts/Globals";
-
+import CookiesConsentDialog from 'views/widgets/CookiesConsentDialog';
 import {
 	setDefaultSocket,
 	setAuthSocket,
@@ -157,7 +157,7 @@ class App extends React.Component {
 						? "lg"
 						: "xl",
 			});
-			window.addEventListener("resize", async function() {
+			window.addEventListener("resize", debounce(function() {
 				setWindowSize({
 					width: window.innerWidth,
 					height: window.innerHeight,
@@ -175,7 +175,7 @@ class App extends React.Component {
 							? "lg"
 							: "xl",
 				});
-			});
+			}, 200));
 		}
 	}
 
@@ -208,7 +208,7 @@ class App extends React.Component {
 	}
 
 	render() {
-		const {app} = this.props;
+		const {app: {preferences, initialized}} = this.props;
 
 		return (
 			<CacheBuster>
@@ -220,19 +220,18 @@ class App extends React.Component {
 
 					return (
 						<GlobalsProvider >
-							<ThemeProvider theme={app.preferences.theme==="dark"? theme_dark :  theme}>
-								<MuiThemeProvider theme={app.preferences.theme==="dark"? theme_dark :  theme}>
+							<ThemeProvider theme={preferences.theme==="dark"? theme_dark :  theme}>
+								<MuiThemeProvider theme={preferences.theme==="dark"? theme_dark :  theme}>
 									<CssBaseline />
 									<JssProvider jss={jss} generateClassName={generateClassName} registry={sheets} >
 										<MuiPickersUtilsProvider utils={MomentUtils}>
-											
-												<Router history={createBrowserHistory()} >
-													<Routes />
-												</Router>
-											
+											<BrowserRouter forceRefresh={false}>												
+												<Routes />												
+											</BrowserRouter>
 										</MuiPickersUtilsProvider>
 									</JssProvider>
-									<ProgressDialog open={!app.initialized} hideBackdrop={false}/>
+									<CookiesConsentDialog/>
+									<ProgressDialog open={!initialized} hideBackdrop={false}/>
 								</MuiThemeProvider>
 							</ThemeProvider>			
 						</GlobalsProvider>

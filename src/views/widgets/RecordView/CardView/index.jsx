@@ -89,8 +89,7 @@ function CardView({ ...props }) {
 		} else if (resolvedRefRecord.resolver === "helper") {
 			let secondaries = defination.scope.identity.secondary;
 			for (var i = 0; i < secondaries.length; i++) {
-				subtitle +=
-					defination.scope.columns[secondaries[i]].reference &&
+				subtitle += defination.scope.columns[secondaries[i]].reference &&
 					resolvedRefRecord[secondaries[i]]
 						? resolvedRefRecord[secondaries[i]].resolve
 						: resolvedRefRecord[secondaries[i]];

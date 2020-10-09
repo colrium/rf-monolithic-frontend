@@ -117,7 +117,7 @@ String.prototype.pluralize = function() {
 };
 
 String.prototype.variablelize = function(connector = "_") {
-	console.log("connector", connector);
+	//console.log("connector", connector);
 	var target = this;
 	target = target.replaceAll(/([A-Z])/g, " $1");
 	target = target.trim();
@@ -165,202 +165,7 @@ String.isEmpty = function(target) {
 	return true;
 };
 
-if (JSON.isJSON) {
-	console.warn("Overriding existing JSON.isJSON.");
-}
-JSON.isJSON = function(input) {
-	return input !== undefined && input !== null
-		? input.constructor === {}.constructor
-		: false;
-};
-JSON.prettyStringify = function(input, spaces = 4) {
-	let spacing = "";
-	for (var i = 0; i < spaces; i++) {
-		spacing = spacing + " ";
-	}
-	function syntaxHighlight(json) {
-		json = json
-			.replace(/&/g, "&amp;")
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;");
-		return json.replace(
-			/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-			function(match) {
-				var cls = "text-gray-700";
-				if (/^"/.test(match)) {
-					if (/:$/.test(match)) {
-						cls = "text-red-700";
-					} else {
-						cls = "text-green-700";
-					}
-				} else if (/true|false/.test(match)) {
-					cls = "text-blue-600";
-				} else if (/null/.test(match)) {
-					cls = "text-gray-500";
-				}
-				return '<span class="' + cls + '">' + match + "</span>";
-			}
-		);
-	}
-	let str = "";
-	if (JSON.isJSON(input)) {
-		str = syntaxHighlight(JSON.stringify(input, undefined, spaces));
-		str = str.replaceAll(spacing, " \t \t ");
-	}
-	return str;
-};
-JSON.readable = function(
-	input,
-	highLightSytax = true,
-	linebreaker = "\n",
-	spacer = "\t"
-) {
-	let str = "";
-	if (JSON.isJSON(input)) {
-		str = str + "Object(" + linebreaker + " " + spacer;
-		for (let [key, value] of Object.entries(input)) {
-			str =
-				str +
-				" " +
-				linebreaker +
-				" " +
-				spacer +
-				" " +
-				key.humanize() +
-				" = ";
-			if (JSON.isJSON(value)) {
-				str = str + JSON.readable(value);
-			} else if (Array.isArray(value)) {
-				str = str + "Array(";
-				const last_index = value.length > 0 ? value.length - 1 : 0;
-				for (var i = 0; i <= last_index; i++) {
-					if (JSON.isJSON(value[i])) {
-						str =
-							str +
-							JSON.readable(value[i]) +
-							(i < last_index ? ", " : "");
-					} else {
-						str =
-							str +
-							new String(value) +
-							(i < last_index ? ", " : "");
-					}
-				}
-				str = str + ")";
-			} else if (Boolean.isBoolean(value)) {
-				str = str + (value ? "Yes" : "No");
-			} else {
-				str = str + new String(value);
-			}
-			str = str + linebreaker;
-		}
-		str = str + linebreaker + ")";
-	}
-	return str;
-};
 
-if (JSON.indexOf) {
-	console.warn("Overriding existing JSON.indexOf.");
-}
-
-JSON.positionOfKey = function(object, key) {
-	let position = -1;
-	if (JSON.isJSON(object)) {
-		let keys = Object.keys(object);
-		position = keys.indexOf(key);
-	}
-	return position;
-};
-
-JSON.keyOf = function(object, value) {
-	let key = null;
-	if (JSON.isJSON(object)) {
-		let values = Object.values(object);
-		let position = values.indexOf(value);
-		key = position !== -1? Object.keys(object)[position] : null;
-	}
-	return key;
-};
-
-if (JSON.moveKey) {
-	console.warn("Overriding existing JSON.moveKey.");
-}
-JSON.moveKey = function(object, key, position = 0) {
-	let newObject = {};
-	if (JSON.isJSON(object)) {
-		newObject = {};
-		let object_keys_arr = Object.keys(object);
-		let current_position = object_keys_arr.indexOf(key);
-		if (current_position !== -1) {
-			if (current_position === position) {
-				newObject = object;
-			} else {
-				let cutOut = object_keys_arr.splice(current_position, 1)[0]; // cut the element at index 'current_position'
-				object_keys_arr.splice(position, 0, cutOut);
-
-				newObject = {};
-				for (let i = 0; i < object_keys_arr.length; i++) {
-					newObject[object_keys_arr[i]] = object[object_keys_arr[i]];
-				}
-			}
-		} else {
-			newObject = object;
-		}
-	}
-
-	return newObject;
-};
-
-//This is to ensure equating objects doesnt change original
-JSON.fromJSON = function(input) {
-	let newObject = {};
-	if (JSON.isJSON(input)) {
-		newObject = JSON.parse(JSON.stringify(input));
-	}
-	return newObject;
-};
-
-JSON.merge = function(objs) {	
-	let merged = lodash_merge({},objs);
-	/*if (JSON.isJSON(a) && JSON.isJSON(b)) {
-		merged = Object.assign(a, b);
-	}
-	if (JSON.isJSON(a) && !JSON.isJSON(b)) {
-		merged = a;
-	}
-	else if (!JSON.isJSON(a) && JSON.isJSON(b)) {
-		merged = b;
-	}*/
-	return merged;
-};
-
-JSON.updateJSON = function(original = {}, updater = {}) {
-	let newObject = {};
-	if (JSON.isJSON(original) && JSON.isJSON(updater)) {
-		newObject = JSON.fromJSON(original);
-
-		for (let [key, value] of Object.entries(original)) {
-			if (key in updater) {
-				newObject[key] = updater[key];
-			}
-		}
-	}
-	return newObject;
-};
-JSON.removeProperty = function(input, key) {
-	let newObject = {};
-	if (JSON.isJSON(input)) {
-		newObject = JSON.fromJSON(input);
-		delete newObject[key];
-		console.log(
-			"JSON.removeProperty input ",
-			input,
-			"newObject",
-			newObject
-		);
-	}
-	return newObject;
-};
 
 if (Boolean.isBoolean) {
 	console.warn("Overriding existing Boolean.isBoolean.");
@@ -451,6 +256,20 @@ Array.prototype.remove = function(from, to) {
 	return this.push.apply(this, rest);
 };
 
+Array.prototype.shuffle = function() {
+	var i = this.length, j, temp;
+	if (i == 0) { 
+		return this;
+	}
+	while (--i) {
+		j = Math.floor( Math.random() * ( i + 1 ));
+		temp = this[i]
+		this[i] = this[j];
+		this[j] = temp;
+	}
+	return this;
+};
+
 Array.prototype.removeAtIndex = function(index) {
 	var target = this;
 	target.splice(index, 1);
@@ -472,8 +291,18 @@ Array.prototype.removeItem = function() {
 	return target;
 };
 
-Array.prototype.removeDuplicates = function() {
-	return lodash.uniqWith(this, lodash.isEqual);
+
+Array.prototype.unique = function() {
+	var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+    return this.filter(function(item) {
+        var type = typeof item;
+        if(type in prims){
+            return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+        }
+        else{
+            return objs.indexOf(item) >= 0 ? false : objs.push(item);
+        }
+    });
 };
 
 // Warn if overriding existing method
@@ -661,6 +490,228 @@ Object.isFunctionalComponent = Component => {
 
 Object.isReactComponent = Component => {
 	return Component.prototype && Component.prototype.render;
+};
+
+
+if (JSON.isJSON) {
+	console.warn("Overriding existing JSON.isJSON.");
+}
+JSON.isJSON = function(input) {
+	return input !== undefined && input !== null
+		? input.constructor === {}.constructor
+		: false;
+};
+JSON.prettyStringify = function(input, spaces = 4) {
+	let spacing = "";
+	for (var i = 0; i < spaces; i++) {
+		spacing = spacing + " ";
+	}
+	function syntaxHighlight(json) {
+		json = json
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;");
+		return json.replace(
+			/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+			function(match) {
+				var cls = "text-gray-700";
+				if (/^"/.test(match)) {
+					if (/:$/.test(match)) {
+						cls = "text-red-700";
+					} else {
+						cls = "text-green-700";
+					}
+				} else if (/true|false/.test(match)) {
+					cls = "text-blue-600";
+				} else if (/null/.test(match)) {
+					cls = "text-gray-500";
+				}
+				return '<span class="' + cls + '">' + match + "</span>";
+			}
+		);
+	}
+	let str = "";
+	if (JSON.isJSON(input)) {
+		str = syntaxHighlight(JSON.stringify(input, undefined, spaces));
+		str = str.replaceAll(spacing, " \t \t ");
+	}
+	return str;
+};
+JSON.readable = function(
+	input,
+	highLightSytax = true,
+	linebreaker = "\n",
+	spacer = "\t"
+) {
+	let str = "";
+	if (JSON.isJSON(input)) {
+		str = str + "Object(" + linebreaker + " " + spacer;
+		for (let [key, value] of Object.entries(input)) {
+			str =
+				str +
+				" " +
+				linebreaker +
+				" " +
+				spacer +
+				" " +
+				key.humanize() +
+				" = ";
+			if (JSON.isJSON(value)) {
+				str = str + JSON.readable(value);
+			} else if (Array.isArray(value)) {
+				str = str + "Array(";
+				const last_index = value.length > 0 ? value.length - 1 : 0;
+				for (var i = 0; i <= last_index; i++) {
+					if (JSON.isJSON(value[i])) {
+						str =
+							str +
+							JSON.readable(value[i]) +
+							(i < last_index ? ", " : "");
+					} else {
+						str =
+							str +
+							new String(value) +
+							(i < last_index ? ", " : "");
+					}
+				}
+				str = str + ")";
+			} else if (Boolean.isBoolean(value)) {
+				str = str + (value ? "Yes" : "No");
+			} else {
+				str = str + new String(value);
+			}
+			str = str + linebreaker;
+		}
+		str = str + linebreaker + ")";
+	}
+	return str;
+};
+
+if (JSON.indexOf) {
+	console.warn("Overriding existing JSON.indexOf.");
+}
+
+JSON.positionOfKey = function(object, key) {
+	let position = -1;
+	if (JSON.isJSON(object)) {
+		let keys = Object.keys(object);
+		position = keys.indexOf(key);
+	}
+	return position;
+};
+
+JSON.keyOf = function(object, value) {
+	let key = null;
+	if (JSON.isJSON(object)) {
+		let values = Object.values(object);
+		let position = values.indexOf(value);
+		key = position !== -1? Object.keys(object)[position] : null;
+	}
+	return key;
+};
+
+if (JSON.moveKey) {
+	console.warn("Overriding existing JSON.moveKey.");
+}
+JSON.moveKey = function(object, key, position = 0) {
+	let newObject = {};
+	if (JSON.isJSON(object)) {
+		newObject = {};
+		let object_keys_arr = Object.keys(object);
+		let current_position = object_keys_arr.indexOf(key);
+		if (current_position !== -1) {
+			if (current_position === position) {
+				newObject = object;
+			} else {
+				let cutOut = object_keys_arr.splice(current_position, 1)[0]; // cut the element at index 'current_position'
+				object_keys_arr.splice(position, 0, cutOut);
+
+				newObject = {};
+				for (let i = 0; i < object_keys_arr.length; i++) {
+					newObject[object_keys_arr[i]] = object[object_keys_arr[i]];
+				}
+			}
+		} else {
+			newObject = object;
+		}
+	}
+
+	return newObject;
+};
+
+//This is to ensure equating objects doesnt change original
+JSON.fromJSON = function(input) {
+	let newObject = {};
+	if (JSON.isJSON(input)) {
+		//newObject = JSON.parse(JSON.stringify(input));
+		newObject = input;
+	}
+	return newObject;
+};
+
+/*JSON.merge = function(a, b) {	
+	let merged = {};
+	if (JSON.isJSON(a) && JSON.isJSON(b)) {
+		merged = Object.assign(a, b);
+	}
+	if (JSON.isJSON(a) && !JSON.isJSON(b)) {
+		merged = a;
+	}
+	else if (!JSON.isJSON(a) && JSON.isJSON(b)) {
+		merged = b;
+	}
+	return merged;
+};
+*/
+/**
+ * Deep merge two objects.
+ * @param target
+ * @param ...sources
+ */
+const deepMerge = function(target, ...sources) {
+	if (!sources.length) return target;
+	const source = sources.shift();
+
+	if (JSON.isJSON(target) && JSON.isJSON(source)) {
+		for (const key in source) {
+			if (JSON.isJSON(source[key])) {
+				if (!target[key]) Object.assign(target, { [key]: {} });
+				deepMerge(target[key], source[key]);
+			} else {
+				Object.assign(target, { [key]: source[key] });
+			}
+		}
+	}
+
+	return deepMerge(target, ...sources);
+	/*if (JSON.isJSON(target)) {
+		return lodash.merge(target, ...sources);
+	}
+	return {};*/
+}
+JSON.merge = deepMerge;
+JSON.deepMerge = deepMerge;
+
+JSON.updateJSON = function(original = {}, updater = {}) {
+	let newObject = {};
+	if (JSON.isJSON(original) && JSON.isJSON(updater)) {
+		newObject = JSON.fromJSON(original);
+
+		for (let [key, value] of Object.entries(original)) {
+			if (key in updater) {
+				newObject[key] = updater[key];
+			}
+		}
+	}
+	return newObject;
+};
+JSON.removeProperty = function(input, key) {
+	let newObject = {};
+	if (JSON.isJSON(input)) {
+		newObject = JSON.fromJSON(input);
+		delete newObject[key];
+	}
+	return newObject;
 };
 
 Date.prototype.format = function(format) {
@@ -933,6 +984,32 @@ Date.replaceChars = {
 	U: function() {
 		return this.getTime() / 1000;
 	},
+	since: function() {
+		let startTime = this.getTime();
+		let endTime = performance.now();
+		var timeDiff = endTime - startTime; //in ms 
+		// strip the ms 
+		timeDiff /= 1000; 		  
+		// get seconds 
+		let seconds = Math.round(timeDiff);
+
+		function secondsToDHms(secs) {
+			secs = Number(secs);
+
+			var d = Math.floor(secs / (3600*24));
+			var h = Math.floor(secs % (3600*24) / 3600);
+			var m = Math.floor(secs % 3600 / 60);
+			var s = Math.floor(secs % 60);
+			return {
+				days: d,
+				hrs : h,
+				mins : m,
+				secs : s,
+			};
+		}
+
+		return secondsToDHms(seconds);
+	},
 };
 
 Date.prototype.addDays = function(days) {
@@ -957,5 +1034,30 @@ Date.prototype.addSeconds = function(sec) {
 
 Date.prototype.addMilliSeconds = function(ms) {
 	this.setTime(this.getTime() + ms);
+	return this;
+};
+
+Date.prototype.minusDays = function(days) {
+	this.setDate(this.getDate() - days);
+	return this;
+};
+
+Date.prototype.minusHours = function(hrs) {
+	this.setTime(this.getTime() - hrs * 3600000);
+	return this;
+};
+
+Date.prototype.minusMinutes = function(min) {
+	this.setTime(this.getTime() - min * 60000);
+	return this;
+};
+
+Date.prototype.minusSeconds = function(sec) {
+	this.setTime(this.getTime() - sec * 1000);
+	return this;
+};
+
+Date.prototype.minusMilliSeconds = function(ms) {
+	this.setTime(this.getTime() - ms);
 	return this;
 };

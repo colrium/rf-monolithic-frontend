@@ -16,6 +16,8 @@ import ReadingSettingsWidget from "views/widgets/Settings/Reading";
 import SocialSettingsWidget from "views/widgets/Settings/Social";
 import TrackingSettingsWidget from "views/widgets/Settings/Tracking";
 import MobileSettingsWidget from "views/widgets/Settings/Mobile";
+import MailSettingsWidget from "views/widgets/Settings/Mail";
+import AuthSettingsWidget from "views/widgets/Settings/Auth";
 
 function TabPanel(props) {
 	let [state, setState] = useState(props);
@@ -51,8 +53,10 @@ class Page extends React.Component {
 			reading: "Reading",
 			social: "Social",
 			contact: "Contact",
+			mail: "Mail",
 			tracking: "Tracking",
 			mobile: "Mobile App",
+			auth: "Authorization",
 		},
 	};
 
@@ -157,11 +161,17 @@ class Page extends React.Component {
 								{name === "contact" && (
 									<ContactSettingsWidget />
 								)}
+								{name === "mail" && (
+									<MailSettingsWidget />
+								)}
 								{name === "tracking" && (
 									<TrackingSettingsWidget />
 								)}
 								{name === "mobile" && (
 									<MobileSettingsWidget />
+								)}
+								{name === "auth" && (
+									<AuthSettingsWidget />
 								)}
 							</TabPanel>
 						)

@@ -43,10 +43,74 @@ export default {
 			},
 		},
 		listing: {
-			default: "tableview",
+			default: "googlemapview",
 			listview: {
-				primary: ["start_time"],
-				secondary: ["time_type", "user"],
+				resolveData: async (entries, user = null, isPopulated = true) => {
+
+					let resolved_data = [];
+
+					if (Array.isArray(entries)) {
+						resolved_data = entries.map((entry, index) => {
+							return {
+								id: entry._id,
+								icon: false,
+								avatar: entry.user ? (
+										entry.user.avatar ? (
+											<Avatar
+												alt={
+													entry.user.first_name
+												}
+												src={AttachmentsService.getAttachmentFileUrl(
+													entry.user.avatar
+												)}
+											/>
+										) : (<Avatar className="twitter_text">
+												<UserIcon />
+											</Avatar>)
+									) : <Avatar className="twitter_text ">
+												<UserIcon />
+										</Avatar>,
+								title: new Date(entry.start_time).toString()+ " - " + new Date(entry.stop_time).toString(),
+								body: (
+									<React.Fragment>
+										{entry.time_type ? (
+											<Status
+												color={
+													entry.time_type === "live"
+														? "#00AF41"
+														: "#F38B00"
+												}
+												text={
+													entry.time_type === "live"
+														? "Live"
+														: "Roam"
+												}
+											/>
+										) : (
+											""
+										)}
+
+										<Typography
+											component="span"
+											variant="body2"
+											color="default"
+										>
+											
+										</Typography>
+										
+										{entry.context && (
+											<Status
+												color={entry.context === "commission"? "#00bfa5" : "#CCCCCC"}
+												text={entry.context === "commission"? "Commission": "Roam"}
+											/>
+										)}
+									</React.Fragment>
+								),
+							};
+						});
+					}
+					return resolved_data;
+				},
 			},
 			tableview: {
 				title: ["start_time"],
@@ -68,12 +132,10 @@ export default {
 									}
 								/>
 							),
-							commision: entry.commision
-								? entry.commision._id
-								: "",
+							commision: entry.commision? entry.commision._id: "",
 							positions: (
 								<React.Fragment>
-									{Array.isArray(entry.positions) &&
+									{/*Array.isArray(entry.positions) &&
 										entry.positions.map(
 											(position, cursor) => (
 												<div key={cursor}>
@@ -82,11 +144,10 @@ export default {
 														variant="body2"
 														paragraph
 													>
-														{position.type}
+														Coordinates
 													</Typography>
 													<br />
-													{position.type ===
-														"coordinates" && (
+													{JSON.isJSON(position) && (
 														<Typography
 															component="span"
 															variant="body2"
@@ -100,7 +161,7 @@ export default {
 													)}
 												</div>
 											)
-										)}
+										)*/}
 								</React.Fragment>
 							),
 							user: entry.user ? (
@@ -116,7 +177,7 @@ export default {
 											/>
 										) : (
 											<Avatar className="twitter_text">
-												<UserIcon />{" "}
+												<UserIcon />
 											</Avatar>
 										)
 									}
@@ -146,11 +207,11 @@ export default {
 								""
 							),
 							start_time: entry.start_time
-								? new Date(entry.start_time).format(
-										formats.dateformats.datetime
-								  )
+								? new Date(entry.start_time).toLocaleTimeString()
 								: "",
-							duration: entry.duration + " Hours",
+							stop_time: entry.stop_time
+								? new Date(entry.stop_time).toLocaleTimeString()
+								: "",
 						};
 					});
 					return resolvedData;
@@ -188,6 +249,7 @@ export default {
 					let resolved_data = [];
 					for (let entry of entries) {
 						resolved_data.push({
+							id: entry._id,
 							path: entry.positions.map((position, index) => {
 								return {
 									lat: position.latitude,
@@ -293,16 +355,7 @@ export default {
 											)}
 										</Typography>
 									)}
-									{entry.duration && (
-										<Typography
-											component="p"
-											variant="body2"
-											color="default"
-										>
-											{" "}
-											Duration : {entry.duration} Hrs
-										</Typography>
-									)}
+									
 									{entry.context && (
 										<Typography
 											component="p"
@@ -371,7 +424,7 @@ export default {
 				},
 			},
 
-			test_input: {
+			/*test_input: {
 				type: "object",
 				label: "Test dynamic input",
 				input: {
@@ -516,7 +569,7 @@ export default {
 						return true;
 					},
 				},
-			},
+			},*/
 
 			positions: {
 				type: "object",
@@ -580,7 +633,7 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return false;
+						return true;
 					},
 					input: (values, user) => {
 						if (user) {
@@ -650,13 +703,13 @@ export default {
 					required: true,
 				},
 			},
-			duration: {
+			stop_time: {
 				type: "string",
-				label: "Duration in Hours",
+				label: "Stop time",
 				input: {
-					type: "number",
-					default: 1,
-					required: false,
+					type: "datetime",
+					default: "",
+					required: true,
 				},
 			},
 		},

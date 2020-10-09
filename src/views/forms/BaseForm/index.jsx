@@ -20,7 +20,6 @@ import {
 import Skeleton from "@material-ui/lab/Skeleton";
 import {
 	TextInput,
-	PasswordInput,
 	DateInput,
 	DateTimeInput,
 	RadioInput,
@@ -34,7 +33,8 @@ import {
 	SelectInput,
 	FileInput,
 	MapInput,
-	DynamicInput
+	DynamicInput,
+	LocationInput
 } from "components/FormInputs";
 import { colors } from "assets/jss/app-theme";
 // Externals
@@ -45,6 +45,13 @@ import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 //
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -114,6 +121,7 @@ class BaseForm extends React.Component {
 		
 		this.handleResetForm = this.handleResetForm.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleKeyPress = this.handleKeyPress.bind(this);
 		this.mounted = false;
 		this.prepareForForm();
 	}
@@ -155,16 +163,29 @@ class BaseForm extends React.Component {
 	}
 
 	prepareForForm() {
-		const { defination, initialValues, initialize, exclude, record, fields, form_state, auth, change } = this.props;
+		const { defination, initialValues, initialize, exclude, record, fields, form_state, auth, change, onValuesChange } = this.props;
 		this.defination = defination;
 		
 		let field_values = {};
 		let initializeRedux = true;
+
 		if (form_state) {
 			if (JSON.isJSON(form_state.values)) {
 				console.log("form_state.values", form_state.values);
 				field_values = form_state.values;
 				initializeRedux = false;
+				if (Function.isFunction(onValuesChange)) {
+					let labels = {};
+					for (let key of Object.keys(field_values)) {
+						if (key in this.state.value_possibilities) {
+							labels[key] = this.state.value_possibilities[key][field_values[key]];
+						}
+						else if(key in defination.scope.columns ){
+							labels[key] = field_values[key];
+						}
+					}
+					onValuesChange(field_values, labels);
+				}
 			}				
 		} 
 		else if (JSON.isJSON(initialValues) && Object.size(initialValues) > 0) {
@@ -653,14 +674,25 @@ class BaseForm extends React.Component {
 
 
 	unSetFieldValue(name) {
-		const { change } = this.props;
+		const { change, onValuesChange } = this.props;
 		if (JSON.isJSON(this.state.field_values)) {
 			let values = JSON.parse(JSON.stringify(this.state.field_values));
 			if (name in values) {
 				delete values[name];
-
+				if (!JSON.isJSON(values)) {
+					values = {};
+				}
 				this.setState({ field_values: values }, () => {
 					change(name, null);
+					if (Function.isFunction(onValuesChange)) {
+						let labels = {};
+						for (let key of Object.keys(values)) {
+							if (key in this.state.value_possibilities && key !== name) {
+								labels[key] = this.state.value_possibilities[key][values[key]];
+							}
+						}
+						onValuesChange(values, labels);
+					}
 				});
 			}
 		}
@@ -668,12 +700,31 @@ class BaseForm extends React.Component {
 
 	}
 
+
+
 	setFieldValue(name, value) {
-		const { change } = this.props;
+		const { change, onValuesChange } = this.props;
 		change(name, value);
+		let values = JSON.parse(JSON.stringify(this.state.field_values));
+		if (!JSON.isJSON(values)) {
+			values = {};
+		}
+		values[name] = value;
+
 		this.setState({
-			field_values: { ...this.state.field_values, [name]: value },
+			field_values: values,
 			last_field_changed: name
+		}, ()=>{
+			if (Function.isFunction(onValuesChange)) {
+				let labels = {};
+				for (let key of Object.keys(values)) {
+					
+					if (key in this.state.value_possibilities) {
+						labels[key] = this.state.value_possibilities[key][values[key]];
+					}
+				}
+				onValuesChange(values, labels);
+			}
 		});
 	}
 
@@ -692,6 +743,14 @@ class BaseForm extends React.Component {
 		this.setState(state => ({ field_values: JSON.isJSON(initialValues) ? initialValues : {} }));
 		if (Function.isFunction(reset) && String.isString(form)) {
 			reset(form);
+		}
+	}
+
+	handleKeyPress(event){		
+		if((event.key === 's' || event.key === 'S') && event.ctrlKey){
+			event.preventDefault();
+			this.handleSubmit(event);
+			//console.log(event.key, ' pressed! ', "event.ctrlKey", event.ctrlKey, event.currentTarget, event);
 		}
 	}
 
@@ -719,7 +778,7 @@ class BaseForm extends React.Component {
 	}
 
 	renderFieldInput(name, field, restricted = false) {
-		const { auth, form_state, record, initialValues, change, text_fields_variant } = this.props;
+		const { auth, form_state, record, initialValues, change, text_fields_variant, validation, layout, textFieldsProps, selectFieldsProps, textareaFieldsProps } = this.props;
 		let that = this;
 
 
@@ -738,53 +797,70 @@ class BaseForm extends React.Component {
 		}
 
 		if (field.input.type === "radio") {
-			if (this.state.value_possibilities[name]) {
-				return (
-					<LightInputField
-						name={name}
-						component={RadioInput}
-						label={field.label}
-						defaultValue={value}
-						onChange={this.handleChange(name)}
-						required={field.input.required}
-						disabled={restricted}
-						options={this.state.value_possibilities[name]}
-						validate
-						{...inputProps}
-					/>
-				);
-			}
+				if (layout == "inline") {
+					return (
+						<LightInputField
+							name={name}
+							component={SelectInput}
+							disabled={restricted}
+							value={value}
+							validate={validation}
+							variant={text_fields_variant}
+							required={validation && field.input.required}
+							disabled={restricted}
+							margin="dense"							
+							onChange={this.handleChange(name)}
+							options={this.state.value_possibilities[name]? this.state.value_possibilities[name] : {}}
+							placeholder={"Select " + field.label.singularize()}
+							validate={validation}
+							size="small"
+							{...inputProps}
+						/>
+					);
+				}
+				else{
+					return (
+						<LightInputField
+							name={name}
+							component={RadioInput}
+							label={field.label}
+							defaultValue={value}
+							onChange={this.handleChange(name)}
+							required={field.input.required}
+							disabled={restricted}
+							options={this.state.value_possibilities[name]? this.state.value_possibilities[name] : {}}
+							validate={validation}
+							{...inputProps}
+						/>
+					);
+				}
+					
+			
 			return "";
 		}
 		else if (field.input.type === "select") {
-			if (this.state.value_possibilities[name]) {
 				return (
 					<LightInputField
 						name={name}
 						component={SelectInput}
 						disabled={restricted}
 						value={value}
-						textFieldProps={{
-							label: field.label,
-							InputLabelProps: {
-								shrink: true
-							},
-							variant: text_fields_variant,
-							disabled: restricted,
-							required: field.input.required
-						}}
 						onChange={this.handleChange(name)}
-						options={this.state.value_possibilities[name]}
+						options={this.state.value_possibilities[name]? this.state.value_possibilities[name] : {}}
 						placeholder={"Select " + field.label.singularize()}
-						validate
+						validate={true}
+						variant={text_fields_variant}
+						required={validation && field.input.required}
+						disabled={restricted}
+						label={field.label}
+						loading={this.state.loading[name]}
+						size="small"
+						{...selectFieldsProps}
 						{...inputProps}
 					/>
 				);
-			}
-			return "";
 		}
 		else if (field.input.type === "multiselect") {
-			if (this.state.value_possibilities[name]) {
 				value = Array.isArray(value) ? value : [];
 
 				return (
@@ -793,45 +869,41 @@ class BaseForm extends React.Component {
 						component={MultiSelectInput}
 						disabled={restricted}
 						value={value}
-						textFieldProps={{
-							label: field.label,
-							InputLabelProps: {
-								shrink: true
-							},
-							variant: text_fields_variant,
-							disabled: restricted,
-							required: field.input.required
-						}}
+						label={field.label}
 						onChange={this.handleChange(name)}
-						options={this.state.value_possibilities[name]}
+						options={this.state.value_possibilities[name]? this.state.value_possibilities[name] : {}}
 						placeholder={"Select " + field.label}
+						required={validation && field.input.required}
+						disabled={restricted}
+						variant={text_fields_variant}
 						isMulti
-						validate
+						validate={validation}
+						loading={this.state.loading[name]}
+						{...selectFieldsProps}
 						{...inputProps}
 					/>
 				);
-			}
+			
 			return "";
 		}
 		else if (field.input.type === "transferlist") {
 			if (this.state.value_possibilities[name]) {
 				return (
 					<LightInputField
-						name={name}
-						disabled={restricted}
+						name={name}						
 						component={TranferListInput}
 						label={field.label}
 						defaultValue={value}
 						onChange={this.handleChange(name)}
 						value_options={this.state.value_possibilities[name]}
-						validate
+						validate={validation}
 						{...inputProps}
 					/>
 				);
 			}
 			return "";
 		}
-		else if (["email", "number", "phone", "text"].includes(field.input.type)) {
+		else if (["email", "number", "phone", "text", "password"].includes(field.input.type)) {
 			return (
 				<LightInputField
 					name={name}
@@ -844,25 +916,8 @@ class BaseForm extends React.Component {
 					onChange={this.handleChange(name)}
 					required={field.input.required}
 					fullWidth
-					validate
-					{...inputProps}
-				/>
-			);
-		}
-		else if (field.input.type === "password") {
-			return (
-				<LightInputField
-					name={name}
-					type={this.state.show_passwords[name] ? "text" : "password"}
-					disabled={restricted}
-					component={PasswordInput}
-					label={field.label}
-					variant={text_fields_variant}
-					onChange={this.handleChange(name)}
-					defaultValue={value}
-					required={field.input.required}
-					fullWidth
-					validate
+					validate={validation}
+					{...textFieldsProps}
 					{...inputProps}
 				/>
 			);
@@ -881,7 +936,8 @@ class BaseForm extends React.Component {
 					onChange={this.handleChange(name)}
 					required={field.input.required}
 					fullWidth
-					validate
+					validate={validation}
+					{...textareaFieldsProps}
 					{...inputProps}
 				/>
 			);
@@ -912,7 +968,7 @@ class BaseForm extends React.Component {
 					]}
 					required={field.input.required}
 					fullWidth
-					validate
+					validate={validation}
 					{...inputProps}
 				/>
 			);
@@ -934,8 +990,10 @@ class BaseForm extends React.Component {
 					onChange={this.handleChange(name)}
 					required={field.input.required}
 					inputVariant={text_fields_variant}
+					format="DD/MM/YYYY"
 					color="primary"
 					{...inputProps}
+					validate={validation}
 				/>
 			);
 		}
@@ -952,7 +1010,7 @@ class BaseForm extends React.Component {
 					value={value}
 					onChange={this.handleChange(name)}
 					required={field.input.required}
-					validate
+					validate={validation}
 					{...inputProps}
 				/>
 			);
@@ -968,7 +1026,7 @@ class BaseForm extends React.Component {
 					label={field.label}
 					onChange={this.handleChange(name)}
 					required={field.input.required}
-					validate
+					validate={validation}
 					{...inputProps}
 				/>
 			);
@@ -1039,7 +1097,7 @@ class BaseForm extends React.Component {
 						step={step_value}
 						defaultValue={default_value}
 						onChange={this.handleChange(name)}
-						validate
+						validate={validation}
 						{...inputProps}
 					/>
 				);
@@ -1064,7 +1122,8 @@ class BaseForm extends React.Component {
 					value={value}
 					onChange={this.handleChange(name)}
 					required={field.input.required}
-					validate
+					validate={validation}
+					variant={text_fields_variant}
 					{...inputProps}
 				/>
 			);
@@ -1078,7 +1137,22 @@ class BaseForm extends React.Component {
 					value={value}
 					onChange={this.handleChange(name)}
 					required={field.input.required}
-					validate
+					validate={validation}
+					{...inputProps}
+				/>
+			);
+		}
+		else if (["street_number", "place_id", "coordinates", "formatted_address", "address_components", "route", "neighborhood", "political", "locality", "administrative_area_level_2", "administrative_area_level_1", "country", "postal_code"].includes(field.input.type)) {
+			return (
+				<LightInputField
+					name={name}
+					type={field.input.type}
+					label={field.label}
+					component={LocationInput}
+					value={value}
+					onChange={this.handleChange(name)}
+					required={field.input.required}
+					validate={validation}
 					{...inputProps}
 				/>
 			);
@@ -1103,7 +1177,7 @@ class BaseForm extends React.Component {
 					disabled={restricted}
 					variant={text_fields_variant}
 					required={field.input.required}
-					validate
+					validate={validation}
 					{...inputProps}
 				/>
 			);
@@ -1112,29 +1186,45 @@ class BaseForm extends React.Component {
 	}
 
 	renderField(name) {
+		const {layout, inputColumnSize} = this.props;
 		const field = this.state.fields[name];
 		let restricted = this.state.submitting;
 		if (!this.state.submitting && field.restricted) {
 			restricted = field.restricted.input;
 		}
-
-		if (this.state.loading[name]) {
+		if (layout=="inline") {
+			/*if (this.state.loading[name]) {
+				return (
+					<TableCell key={"field_" + name} >
+						<Typography> {field.label}</Typography>
+						<Skeleton variant="rect" width={"100%"} height={50} />					
+					</TableCell>
+				);
+			} else {
+				return (
+					<TableCell key={"field_" + name} >
+						{this.renderFieldInput(name, field, restricted)}
+					</TableCell>
+				);
+			}*/
 			return (
-				<GridItem md={field.input.size ? field.input.size : 12} key={"field_" + name} >
-					<Typography> {field.label}</Typography>
-					<Skeleton variant="rect" width={"100%"} height={50} />					
-				</GridItem>
-			);
-		} else {
+					<TableCell key={"field_" + name} >
+						{this.renderFieldInput(name, field, restricted)}
+					</TableCell>
+				);
+		}
+		else{
 			return (
-				<GridItem
-					md={field.input.size ? field.input.size : 12}
+				<GridItem					
+					className={"p-0 m-0 px-1 py-1"}
+					md={field.input.size ? (inputColumnSize < 12 && field.input.size < inputColumnSize? inputColumnSize : field.input.size) : inputColumnSize}
 					key={"field_" + name}
 				>
 					{this.renderFieldInput(name, field, restricted)}
 				</GridItem>
 			);
 		}
+			
 	}
 
 	async handleSubmit(event) {
@@ -1260,7 +1350,10 @@ class BaseForm extends React.Component {
 			DiscardBtn,
 			discardBtnProps,
 			submit_btn_text,
-			pristine
+			pristine, 
+			layout,
+			...rest
+
 		} = this.props;
 		let formClasses = classNames({
 			[classes.root]: true,
@@ -1272,8 +1365,8 @@ class BaseForm extends React.Component {
 
 
 		return (
-			<form className={formClasses} id={form ? form : `${this.defination.name}-form`} onSubmit={this.handleSubmit} >
-				<Card elevation={0} outlineColor={"transparent"} className="bg-transparent px-2" >
+			<form className={formClasses} id={form ? form : `${this.defination.name}-form`} autoComplete="off" onKeyDown={this.handleKeyPress} onSubmit={this.handleSubmit} >
+				<Card elevation={0} outlineColor={"transparent"} className="p-0 bg-transparent" >
 					{show_title ? (
 						<CardHeader
 							avatar={
@@ -1297,8 +1390,8 @@ class BaseForm extends React.Component {
 							""
 						)}
 
-					<CardContent>
-						<GridContainer className="m-0 p-0">
+					<CardContent className="m-0 p-0 py-4">
+						{ layout=="normal" && <GridContainer className="m-0 p-0">
 							{Object.keys(this.state.fields).map(
 								(column_name, column_index) =>
 									Array.isArray(fields) && fields.length > 0 ? exclude? fields.includes(column_name)? ""
@@ -1308,25 +1401,39 @@ class BaseForm extends React.Component {
 												: ""
 										: this.renderField(column_name)
 							)}
-						</GridContainer>
+						</GridContainer> }
+
+						{ layout=="inline" && <GridContainer className="m-0 p-0">
+							<GridItem xs={12}>
+								<Table className="w-full ">
+									<TableBody>
+										<TableRow>
+											{Object.keys(this.state.fields).map((column_name, column_index) => {
+												return ((Array.isArray(fields)? fields.includes(column_name) : true) && (Array.isArray(exclude)? !exclude.includes(column_name) : (exclude? false : true)))? this.renderField(column_name) : "";
+											})}
+										</TableRow>
+									</TableBody>
+								</Table>
+							</GridItem>
+						</GridContainer>}
 					</CardContent>
 
-					<CardActions>
+					{((show_discard || show_submit) && Object.keys(this.state.fields).length > 0) && <CardActions>
 						<GridContainer className="m-0 p-0">
 							
-							{show_discard && <GridItem xs={12} md={6} className="flex flex-row sm:items-center sm:justify-center md:items-start md:justify-start">
+							{show_discard && <GridItem xs={12} md={6} className="flex flex-row items-center justify-center md:items-start md:justify-start">
 								{!DiscardBtn && <Button className="sm:w-full md:w-auto" variant="text" outlined onClick={this.handleResetForm} > Discard changes </Button>}
 								{DiscardBtn && <DiscardBtn className="sm:w-full md:w-auto" variant="text" outlined onClick={this.handleResetForm} {...(discardBtnProps? discardBtnProps : {})}/>}
 							</GridItem>}	
 								
 								
-							{show_submit && <GridItem xs={12} md={6} className="flex flex-row sm:items-center sm:justify-center md:items-end md:justify-end">
+							{show_submit && <GridItem xs={12} md={show_discard? 6 : 12} className="flex flex-row items-center justify-center md:items-end md:justify-end">
 								{!SubmitBtn && <Button type="submit" className="sm:w-full md:w-auto" color="primary"  outlined > {submit_btn_text ? submit_btn_text : "Save Changes"} </Button>}
 								{SubmitBtn && <SubmitBtn type="submit" className="sm:w-full md:w-auto" color="primary" outlined {...(submitBtnProps? submitBtnProps : {})}/>}
 							</GridItem>}
 							
 						</GridContainer>
-					</CardActions>
+					</CardActions>}
 				</Card>
 
 				<Snackbar
@@ -1350,11 +1457,14 @@ class BaseForm extends React.Component {
 }
 
 BaseForm.defaultProps = {
-	text_fields_variant: "outlined",
+	text_fields_variant: "filled",
+	layout: "normal",
 	exclude: false,
 	show_title: true,
 	show_submit: true,
-	show_discard: true
+	show_discard: true,
+	validation: true,
+	inputColumnSize: 12,
 };
 
 BaseForm.propTypes = {
@@ -1364,6 +1474,13 @@ BaseForm.propTypes = {
 	service: PropTypes.any,
 	record: PropTypes.string,
 	text_fields_variant: PropTypes.string,
+	inputColumnSize: PropTypes.number,
+	layout: PropTypes.string,
+	layoutProps: PropTypes.object,
+	textFieldsProps: PropTypes.object,
+	textareaFieldsProps: PropTypes.object,
+	selectFieldsProps: PropTypes.object,
+	validation: PropTypes.bool,
 	show_title: PropTypes.bool,
 	show_submit: PropTypes.bool,
 	show_discard: PropTypes.bool,
@@ -1374,9 +1491,12 @@ BaseForm.propTypes = {
 	discardBtnProps: PropTypes.object,
 	onSubmit: PropTypes.func,
 	onSubmitSuccess: PropTypes.func,
+	onValuesChange: PropTypes.func,
 	onSubmitSuccessMessage: PropTypes.string,
 	fields: PropTypes.array,
-	exclude: PropTypes.bool
+	exclude: PropTypes.bool,
+	wrapper: PropTypes.node,
+
 };
 
 const mapStateToProps = (state, ownProps) => ({

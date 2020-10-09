@@ -8,6 +8,7 @@ import ProgressIndicator from "components/ProgressIndicator";
 // Route components
 import Fairing from "views/Fairing";
 import Login from "views/pages/System/Login";
+import Register from "views/pages/System/Register";
 import NotFound from "views/pages/System/NotFound";
 
 const RouteComponentPlaceHolder = () => (
@@ -24,7 +25,7 @@ export default class Routes extends Component {
 					placeholder={<RouteComponentPlaceHolder />}
 					componentProps={{
 						routing: "landingpage",
-						layout: "frontend",
+						layout: "landingpage",
 						layoutProps: { showHeader: true, showFooter: true },
 					}}
 				/>
@@ -32,7 +33,9 @@ export default class Routes extends Component {
 					path={"/".toUriWithDashboardPrefix()}
 					component={Fairing}
 					placeholder={<RouteComponentPlaceHolder />}
-					componentProps={{ layout: "dashboard" }}
+					componentProps={{ 
+						layout: "dashboard" 
+					}}
 					authRestrict
 				/>
 				<Route
@@ -45,7 +48,19 @@ export default class Routes extends Component {
 					component={Login}
 					placeholder={<RouteComponentPlaceHolder />}
 				/>
-				<Route path="/" entry entryPaths={{unauthenticated: "/recruitment".toUriWithLandingPagePrefix(), authenticated: "/home".toUriWithDashboardPrefix() }} />
+
+				<Route
+					path="/signup"
+					component={Register}
+					placeholder={<RouteComponentPlaceHolder />}
+				/>
+
+				<Route
+					path="/register"
+					component={Register}
+					placeholder={<RouteComponentPlaceHolder />}
+				/>
+				<Route path="/" entry entryPaths={{unauthenticated: "/home".toUriWithLandingPagePrefix(), authenticated: "/home".toUriWithDashboardPrefix() }} />
 				<Route
 					path="*"
 					component={NotFound}

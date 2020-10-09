@@ -521,6 +521,8 @@ class FileDropZone extends Component {
 			readOnly,
 			disabled,
 			dropzoneIcon,
+			containerStyle,
+			variant,
 		} = this.props;
 		const showPreviews =
 			this.props.showPreviews && this.state.fileObjects.length > 0;
@@ -537,19 +539,8 @@ class FileDropZone extends Component {
 			? false
 			: true;
 		return (
-			<Box>
-				{!showDragDrop && this.state.label && (
-					<GridContainer className={classes.labelContainer}>
-						<Typography
-							variant="body1"
-							color={this.props.defaultColor}
-						>
-							{this.state.label +
-								(this.props.required ? "*" : "")}
-						</Typography>
-					</GridContainer>
-				)}
-				{showDragDrop && (
+			<Box className={"flex-1"+(className? (" "+className) : "")}>
+				
 					<Dropzone
 						accept={this.props.acceptedFiles.join(",")}
 						onDrop={this.onDrop.bind(this)}
@@ -570,59 +561,47 @@ class FileDropZone extends Component {
 								<GridContainer
 									className={classes.dropZoneContainer}
 								>
-									{this.state.label && (
-										<GridContainer
-											className={classes.labelContainer}
-										>
-											<Typography
-												variant="body1"
-												color={
-													isDragActive
-														? this.props.activeColor
-														: this.props
-																.defaultColor
-												}
-											>
-												{this.state.label +
-													(this.props.required
-														? "*"
-														: "")}
-											</Typography>
-										</GridContainer>
-									)}
+									
 
 									<div
 										{...getRootProps()}
-										className={classes.dropZone}
-										style={{
-											border:
-												"1px " +
-												(isDragActive
-													? "solid " +
-													  colors.hex[
-															this.state
-																.activeColor
-													  ]
-													: "dashed " +
-													  colors.hex[
-															this.state
-																.defaultColor
-													  ]),
-										}}
+										className={(variant!=="filled"? classes.dropZone : classes.dropZoneFilled)+(className? (" "+className) : "")}
+										style={variant!=="filled"? {
+											border: "1px " +(isDragActive ? "solid " + colors.hex[this.state.activeColor]  : "dashed " +colors.hex[this.state.defaultColor]),
+											...containerStyle,
+										} : {...containerStyle}}
 									>
 										<GridContainer
-											direction="row"
-											justify="center"
-											alignItems="center"
-											className={classes.dropZoneInner}
+											className={"h-full p-0 px-4 py-2"}
 										>
+											<GridItem xs={12} className="p-0">
+
+												{this.state.label && (
+													<GridContainer
+														className={classes.labelContainer+" p-0"}
+													>
+														<Typography
+															variant="body1"
+															color={
+																isDragActive ? "primary" : "textSecondary"
+															}
+														>
+															{this.state.label +
+																(this.props.required
+																	? "*"
+																	: "")}
+														</Typography>
+													</GridContainer>
+												)}
+											</GridItem>
+
 											<GridItem xs={12}>
-												<GridContainer
+												{showDragDrop && <GridContainer
 													direction="column"
 													justify="center"
 													alignItems="center"
 												>
-													{!readOnly && !disabled && (
+													{!readOnly && !disabled  && (
 														<input
 															{...getInputProps()}
 														/>
@@ -685,7 +664,19 @@ class FileDropZone extends Component {
 															}
 														</Typography>
 													</GridContainer>
-												</GridContainer>
+												</GridContainer>}
+
+												{showPreviews && !disabled && (
+													<GridContainer className="p-0">
+														<PreviewList
+															className="p-0"
+															fileObjects={this.state.fileObjects}
+															handleRemove={this.handleRemove}
+															showFileNames={this.props.showFileNamesInPreview}
+															title={this.props.label}
+														/>
+													</GridContainer>
+												)}
 
 												{/* <GridContainer>
 													{showPreviewsInDropzone && (
@@ -720,18 +711,7 @@ class FileDropZone extends Component {
 							);
 						}}
 					</Dropzone>
-				)}
-				{showPreviews && !disabled && (
-					<GridContainer className="p-0">
-						<PreviewList
-							className="p-0"
-							fileObjects={this.state.fileObjects}
-							handleRemove={this.handleRemove}
-							showFileNames={this.props.showFileNamesInPreview}
-							title={this.props.label}
-						/>
-					</GridContainer>
-				)}
+				
 				{this.props.showAlerts && (
 					<Snackbar
 						anchorOrigin={{
@@ -756,6 +736,7 @@ class FileDropZone extends Component {
 
 FileDropZone.defaultProps = {
 	acceptedFiles: ["image/*", "video/*", "audio/*", "application/*"],
+	variant: "filled",
 	filesLimit: 3,
 	type: "text",
 	maxFileSize: 3000000,

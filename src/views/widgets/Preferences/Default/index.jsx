@@ -10,19 +10,19 @@ import { withErrorHandler } from "hoc/ErrorHandler";
 import { locales } from "config";
 
 
-function Widget(props) {	
-
-	const { app } = props;
+function Widget({ app: {preferences} }) {	
 
 	const { updatePreferences } = useGlobals();
-
+	let [prefs, setPrefs] = useState(preferences);
 	let [alerts, setAlerts] = useState({});
 	let [errors, setErrors] = useState({});
 	let [loading, setLoading] = useState({});
 
-	
+	useEffect(()=>{
+		setPrefs(preferences);
+	}, [preferences])
 
-	let preferences = app.preferences;
+	
 	
 
 	const handleOnChange = (name) => async value => {
@@ -53,12 +53,13 @@ function Widget(props) {
 				<RadioInput
 					name="theme"
 					label="Theme"
-					defaultValue={preferences.theme}
+					value={prefs.theme}
 					onChange={handleOnChange("theme")}
 					helperText={alerts["theme"]}
 					options={{"light" : "Light", "dark": "Dark"}}
 					disabled={loading["theme"]}
 					error={errors["theme"]}
+					validate
 					required
 				/>
 			</GridItem>
@@ -67,12 +68,14 @@ function Widget(props) {
 				<SelectInput
 					name="locale"
 					label="Locale"
-					defaultValue={preferences.locale}
+					value={prefs.locale}
+					variant={"outlined"}
 					onChange={handleOnChange("locale")}
 					helperText={alerts["locale"]}
 					options={locales}
 					disabled={loading["locale"]}
 					error={errors["locale"]}
+					validate
 					required
 				/>
 			</GridItem>

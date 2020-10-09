@@ -4,7 +4,7 @@ import { Menu, MenuItem } from "@material-ui/core";
 //
 import withStyles from "@material-ui/core/styles/withStyles";
 import { MoreVert as AggregateMenuIcon } from "@material-ui/icons";
-import EmptyStateImage from "assets/img/empty-state.svg";
+import EmptyStateImage from "assets/img/empty-state-table.svg";
 import { colors } from "assets/jss/app-theme";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
@@ -268,8 +268,8 @@ class AggregatesPieChart extends React.Component {
 					type: "aggregates",
 					params: query_data,
 					data: {},
+					cache: true,
 				},
-				true
 			);
 		}
 	}

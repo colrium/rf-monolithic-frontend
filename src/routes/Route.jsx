@@ -15,10 +15,10 @@ import {
 } from "state/actions";
 
 const CustomRoute = props => {
-	const [state, setState] = useState(props);
+	/*const [state, setState] = useState(props);
 	useEffect(() => {
 		setState(props);
-	}, [props]);
+	}, [props]);*/
 
 	const {
 		component: Component,
@@ -33,7 +33,50 @@ const CustomRoute = props => {
 		clearBlobCache,
 		entryPaths,
 		...rest
-	} = state;
+	} = props;
+
+	useEffect(()=>{
+		/*function myFunction() { 
+     if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) 
+    {
+        alert('Opera');
+    }
+    else if(navigator.userAgent.indexOf("Chrome") != -1 )
+    {
+        alert('Chrome');
+    }
+    else if(navigator.userAgent.indexOf("Safari") != -1)
+    {
+        alert('Safari');
+    }
+    else if(navigator.userAgent.indexOf("Firefox") != -1 ) 
+    {
+         alert('Firefox');
+    }
+    else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) //IF IE > 10
+    {
+      alert('IE'); 
+    }  
+    else 
+    {
+       alert('unknown');
+    }
+    }
+
+    myFunction();*/
+
+		/*if (window) {
+			if (window.chrome) {
+				window.chrome.identity.getProfileUserInfo(function(userInfo) {
+					console.log("window.chrome.identity", window.chrome.identity);
+				});
+				
+			}
+		}*/
+
+		
+
+	}, [auth]);
 
 	
 

@@ -6,6 +6,7 @@ import {
 	CircularProgress,
 	FormControl,
 	FormControlLabel,
+	FormGroup,
 	FormHelperText,
 	FormLabel,
 	IconButton,
@@ -15,6 +16,7 @@ import {
 	Slider,
 	TextField,
 	Typography,
+	Switch,
 } from "@material-ui/core";
 //
 import { DatePicker, DateTimePicker } from "@material-ui/pickers";
@@ -31,162 +33,12 @@ import {
 
 import WysiwygEditor from "components/WysiwygEditor";
 
-import withRoot from "hoc/withRoot";
 
-export const TextInput = props => {
-	let [state, setState] = useState(props);
-	useEffect(() => {
-		setState(props);
-	}, [props]);
-	let {
-		label,
-		touched,
-		invalid,
-		error,
-		onChange,
-		variant,
-		validate,
-		value,
-		defaultValue,
-		helperText,
-		...rest
-	} = state;
-	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
-	const [inputError, setInputError] = useState(error);
-	const [isInvalid, setIsInvalid] = useState(invalid);
+export { default as TextInput } from "./TextInput";
+export { default as RadioInput } from "./RadioInput";
+export { default as LocationInput } from "./LocationInput";
 
-	const inputValueValid = async input_value => {
-		const { type, required, max, maxlength, min, minlength } = rest;
-		let valid = true;
-		let validationError = "";
-		if (validate) {
-			if (valid && required) {
-				if (input_value) {
-					if (input_value.toString().length === 0) {
-						valid = false;
-						validationError = label + " required";
-					}
-				} else {
-					valid = false;
-					validationError = label + " required";
-				}
-			}
-			if (valid && type === "email") {
-				let validEmail = /^[a-zA-Z0-9\.]+@[a-zA-Z0-9]+(\-)?[a-zA-Z0-9]+(\.)?[a-zA-Z0-9]{2,6}?\.[a-zA-Z]{2,6}$/.test(
-					input_value
-				);
-				if (!validEmail) {
-					valid = false;
-					validationError = "Invalid email";
-				}
-			}
-			if (valid && type === "number") {
-				let validNumber = Number.parseNumber(input_value, false);
-				if (!validNumber) {
-					valid = false;
-					validationError = "Invalid";
-				}
-			}
-		}
 
-		setInputError(valid ? undefined : validationError);
-		setIsInvalid(!valid);
-
-		return valid;
-	};
-	return (
-		<TextField
-			label={label}
-			onChange={event => {
-				let value = event.target.value;
-				inputValueValid(value);
-			}}
-			onBlur={async event => {
-				const { type } = rest;
-				let value = event.target.value;
-				if (type == "number") {
-					value = Number.parseNumber(value, undefined);
-				}
-				setInputValue(value);
-				let callOnChange = inputValueValid(value);
-
-				if (callOnChange && Function.isFunction(onChange)) {
-					if (onChange.length === 0) {
-						onChange();
-					} else if (onChange.length === 1) {
-						onChange(value);
-					} else {
-						onChange(value, event);
-					}
-				}
-			}}
-			variant={variant ? variant : "outlined"}
-			defaultValue={inputValue}
-			error={inputError ? true : isInvalid}
-			helperText={
-				inputError ? inputError : isInvalid ? "Invalid" : helperText
-			}
-			{...rest}
-		/>
-	);
-};
-
-export const PasswordInput = ({
-	label,
-	touched,
-	invalid,
-	error,
-	onChange,
-	variant,
-	value,
-	defaultValue,
-	...rest
-}) => {
-	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
-	const [showPassword, setShowPassword] = React.useState(false);
-	return (
-		<TextField
-			label={label}
-			onChange={e => {
-				/* Do nothing */
-			}}
-			InputProps={{
-				endAdornment: (
-					<InputAdornment position="end">
-						<IconButton
-							aria-label="Toggle password visibility"
-							onClick={e => setShowPassword(true)}
-						>
-							{showPassword ? (
-								<HidePasswordIcon />
-							) : (
-								<ShowPasswordIcon />
-							)}
-						</IconButton>
-					</InputAdornment>
-				),
-			}}
-			onBlur={async event => {
-				let value = event.target.value;
-				setInputValue(value);
-
-				if (Function.isFunction(onChange)) {
-					if (onChange.length === 0) {
-						onChange();
-					} else if (onChange.length === 1) {
-						onChange(value);
-					} else {
-						onChange(value, event);
-					}
-				}
-			}}
-			type="password"
-			defaultValue={inputValue}
-			variant={variant ? variant : "outlined"}
-			{...rest}
-		/>
-	);
-};
 
 export const DateInput = ({
 	touched,
@@ -194,12 +46,16 @@ export const DateInput = ({
 	error,
 	onChange,
 	value,
+	className,
 	defaultValue,
 	...rest
 }) => {
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
 	return (
-		<FormControl component="fieldset">
+		<FormControl 
+			className={"flex-1"+(className? (" "+className) : "")}
+			component="fieldset"
+		>
 			<DatePicker
 				onChange={async input_value => {
 					let value = input_value._d;
@@ -227,6 +83,9 @@ export const DateTimeInput = ({
 	invalid,
 	error,
 	onChange,
+	validate,
+	validator,
+	onValidityChange,
 	value,
 	defaultValue,
 	...rest
@@ -255,59 +114,7 @@ export const DateTimeInput = ({
 	);
 };
 
-export const RadioInput = ({
-	name,
-	options,
-	touched,
-	invalid,
-	error,
-	onChange,
-	value,
-	defaultValue,
-	helperText,
-	...rest
-}) => {
-	let { label, ...props } = rest;
-	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
-	return (
-		<FormControl component="fieldset" {...props}>
-			<FormLabel component="legend">{label}</FormLabel>
-			{JSON.isJSON(options) && (
-				<RadioGroup
-					aria-label={name}
-					name={name}
-					onChange={async event => {
-						let value = event.target.value;
-						setInputValue(value);
-
-						if (Function.isFunction(onChange)) {
-							if (onChange.length === 0) {
-								onChange();
-							} else if (onChange.length === 1) {
-								onChange(value);
-							} else {
-								onChange(value, null);
-							}
-						}
-					}}
-					value={inputValue}
-					{...props}
-				>
-					{Object.entries(options).map(
-						([option_name, option_label], cursor) => (
-							<FormControlLabel
-								value={option_name}
-								control={<Radio color="primary" />}
-								label={option_label}
-								key={name + "-option-" + cursor}
-							/>
-						)
-					)}
-				</RadioGroup>
-			)}
-		</FormControl>
-	);
-};
+/**/
 
 export const TimeInput = ({
 	label,
@@ -315,6 +122,9 @@ export const TimeInput = ({
 	invalid,
 	error,
 	onChange,
+	validate,
+	validator,
+	onValidityChange,
 	value,
 	defaultValue,
 	...rest
@@ -353,6 +163,9 @@ export const WysiwygInput = ({
 	error,
 	variant,
 	onChange,
+	validate,
+	validator,
+	onValidityChange,
 	value,
 	defaultValue,
 	...rest
@@ -381,42 +194,61 @@ export const WysiwygInput = ({
 	);
 };
 
-export const CheckboxInput = ({
-	label,
-	touched,
-	invalid,
-	error,
-	onChange,
-	value,
-	defaultValue,
-	...rest
-}) => {
-	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
-	return (
-		<FormControlLabel
-			control={
-				<Checkbox
-					checked={inputValue ? true : false}
-					color="primary"
-					onChange={async event => {
-						let value = event.target.checked;
-						setInputValue(value);
+export const CheckboxInput = (props) => {
 
-						if (Function.isFunction(onChange)) {
-							if (onChange.length === 0) {
-								onChange();
-							} else if (onChange.length === 1) {
-								onChange(value);
-							} else {
-								onChange(value, null);
+	let [state, setState] = useState(props);
+	useEffect(() => {
+		setState(props);
+	}, [props]);
+	const {
+		label,
+		touched,
+		invalid,
+		required,
+		error,
+		onChange,
+		validate,
+		validator,
+		onValidityChange,
+		helperText,
+		value,
+		defaultValue,
+		...rest
+	} = state;
+	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
+	useEffect(() => {
+		setInputValue(Boolean.isBoolean(value)? value : (Boolean.isBoolean(defaultValue)? defaultValue : false))
+	}, [value, defaultValue]);
+
+	return (
+		<FormGroup required={required} error={error} component="fieldset">
+			<FormControlLabel
+				control={
+					<Checkbox
+						checked={inputValue ? true : false}
+						color="primary"
+						onChange={async event => {
+							let newvalue = event.target.checked;
+							setInputValue(newvalue);
+
+							if (Function.isFunction(onChange)) {
+								if (onChange.length === 0) {
+									onChange();
+								} else if (onChange.length === 1) {
+									onChange(newvalue);
+								} else {
+									onChange(newvalue, event);
+								}
 							}
-						}
-					}}
-					{...rest}
-				/>
-			}
-			label={label}
-		/>
+						}}
+						required={required}
+						{...rest}
+					/>
+				}
+				label={label}
+			/>
+			{helperText && <FormHelperText>{helperText}</FormHelperText>}
+		</FormGroup>
 	);
 };
 
@@ -427,6 +259,9 @@ export const SliderInput = ({
 	invalid,
 	error,
 	onChange,
+	validate,
+	validator,
+	onValidityChange,
 	value,
 	defaultValue,
 	...rest
@@ -474,6 +309,9 @@ export const TranferListInput = ({
 	onChange,
 	value,
 	defaultValue,
+	validate,
+	validator,
+	onValidityChange,
 	...rest
 }) => {
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
@@ -509,86 +347,22 @@ export const InputFormHelper = ({ touched, error }) => {
 	}
 };
 
-export const MultiSelectInput = ({
-	touched,
-	invalid,
-	error,
-	onChange,
-	value,
-	defaultValue,
-	...rest
-}) => {
-	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
+export const MultiSelectInput = (props) => {
 	return (
 		<FormControl fullWidth>
 			<AutoComplete
-				isMulti
-				onChange={async value => {
-					setInputValue(value);
-
-					if (Function.isFunction(onChange)) {
-						if (onChange.length === 0) {
-							onChange();
-						} else if (onChange.length === 1) {
-							onChange(value);
-						} else {
-							onChange(value, null);
-						}
-					}
-				}}
-				value={inputValue}
-				textFieldProps={{
-							label: rest.label,
-							InputLabelProps: {
-								shrink: true
-							},
-							variant: "outlined",
-							disabled: rest.disabled,
-							required: rest.required
-				}}
-				{...rest}
+				isMulti				
+				{...props}
 			/>
 		</FormControl>
 	);
 };
 
-export const SelectInput = ({
-	touched,
-	invalid,
-	error,
-	onChange,
-	value,
-	defaultValue,
-	...rest
-}) => {
-	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
+export const SelectInput = (props) => {
 	return (
 		<FormControl fullWidth>
-			<AutoComplete
-				onChange={async value => {
-					setInputValue(value);
-
-					if (Function.isFunction(onChange)) {
-						if (onChange.length === 0) {
-							onChange();
-						} else if (onChange.length === 1) {
-							onChange(value);
-						} else {
-							onChange(value, null);
-						}
-					}
-				}}
-				value={inputValue}
-				textFieldProps={{
-							label: rest.label,
-							InputLabelProps: {
-								shrink: true
-							},
-							variant: "outlined",
-							disabled: rest.disabled,
-							required: rest.required
-				}}
-				{...rest}
+			<AutoComplete			
+				{...props}
 			/>
 		</FormControl>
 	);
@@ -600,6 +374,9 @@ export const FileInput = ({
 	invalid,
 	error,
 	onChange,
+	validate,
+	validator,
+	onValidityChange,
 	value,
 	defaultValue,
 	...rest
@@ -636,6 +413,9 @@ export const MapInput = ({
 	label,
 	type,
 	onChange,
+	validate,
+	validator,
+	onValidityChange,
 	value,
 	defaultValue,
 	...rest
@@ -674,6 +454,114 @@ export const MapInput = ({
 	);
 };
 
+export const SwitchInput = ({
+	touched,
+	invalid,
+	error,
+	label,
+	type,
+	onChange,
+	validate,
+	validator,
+	onValidityChange,
+	value,
+	defaultValue,
+	fullWidth,
+	disabled,
+
+	...rest
+}) => {
+	const [inputValue, setInputValue] = useState(value ? true : (defaultValue? true : false));
+	const [inputDisabled, setInputDisabled] = useState(disabled);
+	const [inputError, setInputError] = useState(error);
+	const [isInvalid, setIsInvalid] = useState(invalid);
+	const [inputTouched, setInputTouched] = useState(touched);
+
+	const inputValueValid = async input_value => {
+		const { required, excludeValidation } = rest;
+		let excludedValidators = Array.isArray(excludeValidation)? excludeValidation : (String.isString(excludeValidation)? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
+		let valid = true;
+		let validationError = "";
+		if (validate) {
+			if (valid && required && !excludedValidators.includes("required")) {
+				if (!input_value) {
+					valid = false;
+					validationError = label + " required";
+				}
+			}
+			if (valid && Function.isFunction(validator) && !excludedValidators.includes("validator")) {
+				try {
+					validationError = await validator(input_value);
+				} catch(err) {
+					console.error(label+" validator error ", err);					
+					validationError = " validity cannot be determined.";
+				};
+				valid = !String.isString(validationError);
+			}			
+		}
+		if (valid !== !isInvalid && Function.isFunction(onValidityChange)) {
+			onValidityChange(valid);
+		}
+		setInputError(valid ? undefined : validationError);
+		setIsInvalid(!valid);
+		
+		return valid;
+	};
+
+	const triggerOnChange = async (new_value) => {
+		setInputDisabled(true);
+		if ( Function.isFunction(onChange)) {
+			let changed = onChange(new_value);
+			Promise.all([changed]).then(()=>{
+				setInputDisabled(false);
+			}).catch(e => {
+				console.error(label+" onChange error", e);
+				setInputDisabled(false);
+			});
+			
+		}
+		else{
+			setInputDisabled(false);
+		}
+		
+	}
+
+	useEffect(() => {
+		if (inputTouched) {
+			let valueValid = inputValueValid(inputValue);
+			Promise.all([valueValid]).then(validity => {
+				if (validity) {
+					triggerOnChange(inputValue);
+				}
+			}).catch(e => {
+				console.error(label+" validity check error", e);
+			});
+							
+		}
+	}, [inputValue, inputTouched]);
+
+	return (
+		<FormControl fullWidth={fullWidth}>
+			<FormControlLabel
+				control={<Switch 
+					color={"primary"}
+					disabled={inputDisabled} 
+					checked={inputValue} 
+					onChange={()=>{
+						setInputValue(!inputValue);
+						if (!inputTouched) {
+							setInputTouched(true);
+						}
+					}} 
+					{...rest}
+				/>}
+				label={label}
+				disabled={inputDisabled}
+			/>
+		</FormControl>
+	);
+};
+
 export const DynamicInput = ({
 	touched,
 	invalid,
@@ -681,6 +569,9 @@ export const DynamicInput = ({
 	onChange,
 	value,
 	defaultValue,
+	validate,
+	validator,
+	onValidityChange,
 	...rest
 }) => {
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);

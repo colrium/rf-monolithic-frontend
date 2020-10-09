@@ -4,16 +4,18 @@ import {
 	API_CALL_REQUEST,
 	API_SET_LOADING,
 	API_SET_RESPONSE,
+	API_ADD_TASK,
+	API_REMOVE_TASK,
+	API_CLEAR_TASKS,
 	API_SET_COMPLETE,
 	API_SET_ERROR,
 } from "state/actions";
 
-export function apiCallRequest(key, options, cache = true) {
+export function apiCallRequest(key, options) {
 	return {
 		type: API_CALL_REQUEST,
 		key: key,
 		options: options,
-		cache: cache,
 	};
 }
 
@@ -22,6 +24,26 @@ export function setApiCallLoading(key, loading) {
 		type: API_SET_LOADING,
 		key: key,
 		loading: loading,
+	};
+}
+
+export function addApiTask(task) {
+	return {
+		type: API_ADD_TASK,
+		task: task,
+	};
+}
+
+export function removeApiTask(task) {
+	return {
+		type: API_REMOVE_TASK,
+		task: task,
+	};
+}
+
+export function clearApiTasks() {
+	return {
+		type: API_CLEAR_TASKS,
 	};
 }
 

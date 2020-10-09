@@ -407,9 +407,6 @@ export default {
 		},
 		view: {
 			summary: user => {
-				if (user) {
-					return user.isAdmin || user.isCustomer;
-				}
 				return false;
 			},
 			all: user => {
