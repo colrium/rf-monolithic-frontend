@@ -47,6 +47,7 @@ class Page extends React.Component {
 			auth,
 			location,
 			theme,
+			device,
 		} = this.props;
 		/*let homepageSections = {
 			quicklinks: preferences.dashboard["quicklinks"],
@@ -63,7 +64,7 @@ class Page extends React.Component {
 				
 
 
-					<GridItem xs={12} md={this.state.mainMapInFullWidth? 12 : 7} className="p-2">
+					<GridItem xs={12} lg={this.state.mainMapInFullWidth? 12 : 7} className="p-2">
 						<Card>
 										<LazyModule
 												resolve={() =>
@@ -93,12 +94,13 @@ class Page extends React.Component {
 														className: "mt-4",
 													},
 												]}
-												actions={[
+												actions={device.window_size.width > 1280? [
 													{
 														icon: (
 															<Icon 
 																path={this.state.mainMapInFullWidth? mdiArrowCollapseAll : mdiOverscan}
-																title="Clients Locations"
+																title="Toggle size"
+																className={"invisible xl:visible"}
 																size={0.8}   
 																color={theme.palette.text.primary}
 															/>
@@ -109,12 +111,12 @@ class Page extends React.Component {
 															}))
 														}
 													}
-												]}
+												] : []}
 										/>
 						</Card>
 					</GridItem>
 
-					<GridItem xs={12} md={this.state.mainMapInFullWidth? 12 : 5} className="p-2">
+					<GridItem xs={12} lg={this.state.mainMapInFullWidth? 12 : 5} className="p-2">
 						<GridContainer className="p-0 m-0">
 										<LazyModule
 												resolve={() =>
@@ -212,6 +214,7 @@ const mapStateToProps = state => ({
 	app: state.app,
 	auth: state.auth,
 	nav: state.nav,
+	device: state.device,
 });
 
 Page.propTypes = {

@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import ReactDOMServer from "react-dom/server";
+import GridContainer from "components/Grid/GridContainer";
+import GridItem from "components/Grid/GridItem";
 import { connect } from "react-redux";
 import {
 	GoogleMap,
@@ -29,7 +31,12 @@ import client_position_marker_icon from "assets/img/maps/marker-person.svg";
 import client_user_female_icon from "assets/img/maps/marker-person-female.png";
 import client_user_male_icon from "assets/img/maps/marker-person-male.png";
 import Paper from "@material-ui/core/Paper";
-//import SlidingMarker from "marker-animate-unobtrusive";
+import { attachments as AttachmentsService } from "services";
+import {
+	PersonOutlined as UserIcon,
+} from "@material-ui/icons";
+import Chip from "@material-ui/core/Chip";
+import Button from '@material-ui/core/Button';
 //
 
 //
@@ -82,12 +89,164 @@ let toRad = Value => {
 };
 
 let showInfoWindow = (content, position) => {
-
 	return <InfoWindow position={position}>{content}</InfoWindow>;
+};
+
+const ClientInfoWindow = ({user, track, position, ...rest}) => {
+	return (
+		<GridContainer>
+			<GridItem xs={12}>
+									<Typography
+										component="h5"
+										variant="subtitle2"
+										color="primary"
+										paragraph
+									>
+									Live
+									</Typography>
+									<Typography
+										component="div"
+										variant="body2"
+										color="default"
+										paragraph
+									>
+										{user && (
+											<Chip
+												size="small"
+												avatar={
+													user.avatar ? (
+														<Avatar
+															className="bg-transparent"
+															alt={user.first_name}
+															src={AttachmentsService.getAttachmentFileUrl(user.avatar)}
+														/>
+													) : (
+														<Avatar className="bg-transparent">
+															<UserIcon />{" "}
+														</Avatar>
+													)
+												}
+												label={user.first_name +" " +user.last_name }
+											/>
+										)}
+									</Typography>
+
+									
+										<Typography
+											component="p"
+											variant="body2"
+											color="default"
+											paragraph
+										>
+											
+											 {user.email_address}
+										</Typography>
+
+										<Typography
+											component="p"
+											variant="body1"
+											color="default"											
+										>
+											
+											Coordinates
+										</Typography>
+										<Typography
+											component="p"
+											variant="body2"
+											color="default"
+											paragraph
+										>
+											
+											Latitude: {position.latitude} longitude: {position.longitude}
+										</Typography>
+
+										<Typography
+											component="p"
+											variant="body2"
+											color="default"
+											
+										>
+											
+											Speed
+										</Typography>
+										<Typography
+											component="p"
+											variant="body2"
+											color="default"
+											paragraph
+										>
+											
+											{position.speed}
+										</Typography>
+
+
+										<Typography
+											component="p"
+											variant="body2"
+											color="default"
+											
+										>
+											
+											Accuracy
+										</Typography>
+										<Typography
+											component="p"
+											variant="body2"
+											color="default"
+											paragraph
+										>
+											
+											{position.accuracy}
+										</Typography>
+
+										<Typography
+											component="p"
+											variant="body2"
+											color="default"
+											
+										>
+											
+											Heading
+										</Typography>
+										<Typography
+											component="p"
+											variant="body2"
+											color="default"
+											paragraph
+										>
+											
+											{position.heading}
+										</Typography>
+									
+				</GridItem>
+
+				<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
+					<Button color="primary">Send Message</Button>
+				</GridItem>
+			</GridContainer>
+	)
+};
+
+let _clientsPositionsOpenPopups = [];
+
+let showClientInfoWindow = ({socketId, ...data}, google_map, marker) => {
+	if (google_map, marker && !_clientsPositionsOpenPopups.includes(socketId)) {
+		var infoWindow = new google.maps.InfoWindow({content: ReactDOMServer.renderToStaticMarkup(<ClientInfoWindow {...data} />)});
+		infoWindow.open(google_map, marker);
+		_clientsPositionsOpenPopups.push(socketId);
+		google.maps.event.addListener(infoWindow,'closeclick',function(){
+			let position = _clientsPositionsOpenPopups.indexOf(socketId);
+		   	_clientsPositionsOpenPopups = _clientsPositionsOpenPopups.remove(position);
+		   	if (!Array.isArray(_clientsPositionsOpenPopups)) {
+		   		_clientsPositionsOpenPopups = [];
+		   	}
+		});
+	}
 };
 
 let _map = null;
 let _clientsPositions = {};
+
 let _searchBox = null;
 let user_avatar_shape = {
 	coords: [1, 1, 1, 20, 18, 20, 18, 1],
@@ -311,6 +470,22 @@ export default compose(
 		sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
 	};
 
+	const setMapOnAll = (google_map) => {
+		Object.entries(_clientsPositions).map(([socketId, clientPosition]) =>{
+			if (clientPosition.marker) {
+				clientPosition.marker.setMap(google_map);
+			}
+		});
+	};
+
+	const handleOnSocketDisconnect = () => {
+		setMapOnAll(null);
+		_clientsPositions = {}; 
+		if (Function.isFunction(onLoadClientsPositions)) {
+			onLoadClientsPositions(_clientsPositions);
+		}
+	};
+
 	const handleOnNewClientPosition = async ({socketId, ...data}) => {
 		const  {user, position} = data;
 		/*let newClientPositions = {
@@ -339,15 +514,21 @@ export default compose(
 		for (let [socketId, data] of Object.entries(clients_positions)) {
 			const  {user, position} = data;
 			if (user) {
+
 				if (!(socketId in _clientsPositions)) {
 					_clientsPositions[socketId] = data;
-					_clientsPositions[socketId].marker = new google.maps.Marker({
+					let marker = new google.maps.Marker({
 												position: {lat: position.latitude, lng: position.longitude },
 												title: user.first_name+" "+user.last_name,
 												icon:{url: user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation: position.heading },
 												onClick: handleOnPressMarker(socketId, data),
 												map: getGoogleMapContextElement(),
 											});
+					_clientsPositions[socketId].marker = marker;
+					google.maps.event.addListener(marker, 'click', function () {
+						showClientInfoWindow({socketId: socketId, ...data}, getGoogleMapContextElement(), marker);                
+		            });
+					
 				}
 				else{
 					_clientsPositions[socketId] = {..._clientsPositions[socketId], ...data};
@@ -370,11 +551,12 @@ export default compose(
 			}
 		}
 			
-		//delete _clientsPositions[socketId];
+		delete _clientsPositions[socketId];
 		if (Function.isFunction(onClientPositionUnavailable)) {
 			onClientPositionUnavailable(socketId, data);
 		}
-		/*if (socketId in regionBoundsClients) {
+
+		if (socketId in regionBoundsClients) {
 			let newRegionBoundsClients = regionBoundsClients;
 			if (newRegionBoundsClients[socketId].marker) {
 				newRegionBoundsClients[socketId].marker.setMap(null);
@@ -382,7 +564,7 @@ export default compose(
 			
 			delete newRegionBoundsClients[socketId];
 			setRegionBoundsClients(newRegionBoundsClients); 
-		}*/
+		}
 		
 	};
 
@@ -394,7 +576,8 @@ export default compose(
 			sockets.default.on("clients-positions", handleOnClientsPositions);
 			sockets.default.on("client-position-unavailable", handleOnClientPositionUnavailable);
 			sockets.default.on("client-position-changed", handleOnClientPositionChange);
-			
+			sockets.default.on("disconnect", handleOnSocketDisconnect);
+			sockets.default.on("reconnect", handleOnSocketConnect);
 			if (sockets.default.connected) {
 				sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
 			}
@@ -415,8 +598,9 @@ export default compose(
 						if (JSON.isJSON(clientData.position)) {
 							if (mapBounds.contains({lat: clientData.position.latitude, lng: clientData.position.longitude})) {
 								let {user, position} = clientData;
-								if (!clientData.marker) {
-									clientData.marker = new google.maps.Marker({
+								let marker = clientData.marker;
+								if (!marker) {
+									marker = new google.maps.Marker({
 										position: {lat: position.latitude, lng: position.longitude },
 										title: user.first_name+" "+user.last_name,
 										icon:{url: user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation:position.heading },
@@ -424,11 +608,15 @@ export default compose(
 										duration: 250,
 									});
 								}
-								clientData.marker.setPosition({lat: position.latitude, lng: position.longitude });
-								var icon = clientData.marker.getIcon();
+								marker.setPosition({lat: position.latitude, lng: position.longitude });
+								var icon = marker.getIcon();
 									icon.rotation = position.heading;
-									clientData.marker.setIcon(icon);
-								clientData.marker.setMap(getGoogleMapContextElement());
+									marker.setIcon(icon);
+								marker.setMap(getGoogleMapContextElement());
+								google.maps.event.addListener(marker, 'click', function () {
+									showClientInfoWindow({socketId: socketId, ...clientData}, getGoogleMapContextElement(), marker);
+					            });
+					            clientData.marker= marker;
 								accumulator[socketId] = clientData;
 							}
 						}			
@@ -458,9 +646,9 @@ export default compose(
 			}
 			
 			if (selectedEntryType === "clients_position" && selectedEntry.id in _clientsPositions) {
-				setInfoWindowOpen(true);
+				/*setInfoWindowOpen(true);
 				setInfoWindowPosition((_clientsPositions in regionBoundsClients)? {lat: regionBoundsClients[selectedEntry].position.latitude, lng: regionBoundsClients[selectedEntry].position.longitude } :  {lat: _clientsPositions[selectedEntry].position.latitude, lng: _clientsPositions[selectedEntry].position.longitude });
-				setInfoWindowContent(<Typography> { _clientsPositions[selectedEntry].user.first_name+" "+_clientsPositions[selectedEntry].user.last_name}</Typography>);
+				setInfoWindowContent(<Typography> { _clientsPositions[selectedEntry].user.first_name+" "+_clientsPositions[selectedEntry].user.last_name}</Typography>);*/
 			}
 			if (selectedEntryType === "polyline" && polylines[selectedEntry]) {
 				let LatLngList = polylines[selectedEntry].path;
@@ -530,12 +718,7 @@ export default compose(
 	}, [_clientsPositions, mapBounds]);
 
 	useEffect(() => {
-		for (let key of Object.keys(_clientsPositions)) {
-			if (_clientsPositions[key].marker) {
-				_clientsPositions[key].marker.setMap(getGoogleMapContextElement())
-			}
-			
-		}
+		setMapOnAll(_map);
 	}, [_map]);
 
 
