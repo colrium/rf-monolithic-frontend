@@ -26,6 +26,11 @@ const Account = asyncComponent(() => import("views/pages/Dashboard/Account"));
 const PageBuilder = asyncComponent(() =>
 	import("views/pages/Dashboard/PageBuilder")
 );
+
+const Messages = asyncComponent(() =>
+	import("views/pages/Dashboard/Messages")
+);
+
 const Dashboard = asyncComponent(() => import("views/pages/Dashboard/Home"));
 
 export default class DashboardRoutes extends Component {
@@ -48,6 +53,27 @@ export default class DashboardRoutes extends Component {
 					path={"/calendar".toUriWithDashboardPrefix()}
 					component={RecordsListing}
 					componentProps={{ context: "events" }}
+					authRestrict
+				/>
+
+				<Route
+					exact
+					path={"/messages".toUriWithDashboardPrefix()}
+					component={Messages}
+					authRestrict
+				/>
+
+				<Route
+					exact
+					path={"/chat".toUriWithDashboardPrefix()}
+					component={Messages}
+					authRestrict
+				/>
+
+				<Route
+					exact
+					path={"/chats".toUriWithDashboardPrefix()}
+					component={Messages}
 					authRestrict
 				/>
 

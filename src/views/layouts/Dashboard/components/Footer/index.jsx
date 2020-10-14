@@ -28,16 +28,16 @@ class Footer extends Component {
 		return (
 			<div
 				className={
-					"p-4 mt-16" +
+					"p-4 " +
 					(className ? " " + className : "")
 				}
 			>
-				<Divider />
+				{/*<Divider />
 				<Typography className="mt-2 mb-1" variant="body1">
 					&copy; {app.name}. {new Date().format("Y")}
 				</Typography>
 				<Typography variant="caption">{app.description}</Typography>
-				<Intercom appID={intercom.app.id} {...intercom.app.user} />
+				<Intercom appID={intercom.app.id} {...intercom.app.user} />*/}
 			</div>
 		);
 	}

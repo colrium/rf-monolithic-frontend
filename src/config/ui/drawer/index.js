@@ -18,9 +18,15 @@ export const items = [
 	},
 	{
 		icon: definations.events.icon,
-		text: "Calendar",
+		text: "Apps",
 		section: true,
 		links: [
+			{
+				icon: definations.conversations.icon,
+				text: "Messages",
+				route: "/messages".toUriWithDashboardPrefix(),
+				restricted: false,
+			},
 			{
 				icon: definations.events.icon,
 				text: "Calendar",
