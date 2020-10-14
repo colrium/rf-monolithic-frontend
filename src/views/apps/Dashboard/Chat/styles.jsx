@@ -26,11 +26,17 @@ export default theme => ({
 		overflowX: "hidden",
 		height: "calc(100% - "+theme.spacing(4)+"px)",
 	},
+
 	list: {
 		marginBottom: theme.spacing(2),
 	},
+
 	subheader: {
 		backgroundColor: theme.palette.background.paper,
+	},
+	iconAvatar:{
+		backgroundColor: theme.palette.background.default,
+		color: theme.palette.accent.main,
 	},
 	chatsAppBar: {
 		top: 'auto',

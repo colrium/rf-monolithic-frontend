@@ -6,7 +6,7 @@ import {
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
-	ChatBubbleOutlined as DefinationContextIcon,
+	ChatBubbleOutline as DefinationContextIcon,
 } from "@material-ui/icons";
 import Button from "components/Button";
 import React from "react";

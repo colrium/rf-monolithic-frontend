@@ -17,6 +17,9 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PersonIcon from '@material-ui/icons/Person';
 import PeopleIcon from '@material-ui/icons/People';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import ForumIcon from '@material-ui/icons/Forum';
@@ -112,18 +115,20 @@ function Chat(props) {
 				<Toolbar>
 					{activeChat && <IconButton 
 						onClick={()=>setActiveChat(false)}
+						className={"mr-2"}
 						edge="start" 
 						color="inherit" 
 						aria-label="back-to-chats"
 					>
 						<ArrowBackIcon />
 					</IconButton>}
-					{activeChat && <Typography variant="h6" className={classes.title}>
-						{activeChat.type == "individual"? (user._id === activeChat.owner._id? (activeChat.recipients[0].first_name +" "+activeChat.recipients[0].last_name) : (activeChat.owner.first_name +" "+activeChat.owner.last_name)) : (activeChat.type == "group"? activeChat.group_name : "Realfield Assistant")}
+					{activeChat && (activeChat.type == "individual"? (user._id === activeChat.owner._id && activeChat.recipients[0].avatar? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(activeChat.recipients[0].avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>)) : (activeChat.group_avatar? (<Avatar className={"mr-6"} src={AttachmentsService.getAttachmentFileUrl(activeChat.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {activeChat.type === "group"? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
+					{activeChat && <Typography variant="h6" className={"capitalize"}>
+						{activeChat.type == "individual"? (user._id === activeChat.owner._id? (activeChat.recipients[0].first_name +" "+activeChat.recipients[0].last_name) : (activeChat.owner.first_name +" "+activeChat.owner.last_name)) : (activeChat.type == "group"? activeChat.group_name : "Realfield")}
 					</Typography>}
 
-					{!activeChat && <Typography variant="h6" className={classes.title}>
-						Chats
+					{!activeChat && <Typography variant="h6" className={"capitalize"}>
+						Conversations
 					</Typography>}
 				</Toolbar>
 			</AppBar>
@@ -131,7 +136,7 @@ function Chat(props) {
 						<Paper square className={classes.paper}>
 							<ScrollBars className={classes.bodyWrapper}>
 							{loading && <GridContainer>
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-2 my-4"}>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
 										<Skeleton variant="text" width={80} className="mb-1"/>
@@ -139,7 +144,7 @@ function Chat(props) {
 									</div>
 								</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-2 my-4"}>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
 										<Skeleton variant="text" width={110} className="mb-1"/>
@@ -147,7 +152,7 @@ function Chat(props) {
 									</div>
 								</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-2 my-4"}>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
 										<Skeleton variant="text" width={80} className="mb-1"/>
@@ -155,7 +160,7 @@ function Chat(props) {
 									</div>
 								</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-2 my-4"}>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
 										<Skeleton variant="text" width={90} className="mb-1"/>
@@ -163,7 +168,7 @@ function Chat(props) {
 									</div>
 								</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-2 my-4"}>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
 										<Skeleton variant="text" width={70} className="mb-1"/>
@@ -171,7 +176,7 @@ function Chat(props) {
 									</div>
 								</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-2 my-4"}>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
 										<Skeleton variant="text" width={80} className="mb-1"/>
@@ -179,7 +184,7 @@ function Chat(props) {
 									</div>
 								</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-2 my-4"}>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
 										<Skeleton variant="text" width={120} className="mb-1"/>
@@ -187,7 +192,7 @@ function Chat(props) {
 									</div>
 								</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-2 my-4"}>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
 										<Skeleton variant="text" width={100} className="mb-1"/>
@@ -195,7 +200,7 @@ function Chat(props) {
 									</div>
 								</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-2 my-4"}>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
 										<Skeleton variant="text" width={80} className="mb-1"/>
@@ -224,18 +229,40 @@ function Chat(props) {
 
 								return (
 									<ListItem 
-										className="px-2" 
+										className="px-8" 
 										onClick={(event)=> setActiveChat(chat)}
 										key={"chat-"+index}
 										button
 									>
 										<ListItemAvatar>
 											{ avatar && <Avatar src={AttachmentsService.getAttachmentFileUrl(avatar)} />}
-											{!avatar && <Avatar>
+											{!avatar && <Avatar className={classes.iconAvatar}>
 												{chat.type === "group"? <PeopleIcon /> : <PersonIcon />}
 											</Avatar>}
 										</ListItemAvatar>
-										<ListItemText primary={primaryText} secondary="Jan 9, 2014" />
+										<ListItemText 
+											className="flex flex-col justify-center"
+											primary={(
+												<Typography variant="body1" color="textPrimary" className={"capitalize text-bold"}>
+													{primaryText}
+												</Typography>
+											)} 
+											secondary={(
+												<div className="w-full flex flex-row">
+													<Typography variant="body2" color="textSecondary" className="truncate mr-2 flex-grow font-normal">
+														Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+													</Typography>
+													<Typography variant="body2" color="secondary" className="mx-2">
+														<DoneAllIcon fontSize="inherit" />
+													</Typography>
+												</div>
+											)}
+										/>
+										{/*<ListItemSecondaryAction>
+											<IconButton edge="end" aria-label="receipt-status">
+											  <DoneAllIcon />
+											</IconButton>
+										</ListItemSecondaryAction>*/}
 									</ListItem>
 								);
 							})}
