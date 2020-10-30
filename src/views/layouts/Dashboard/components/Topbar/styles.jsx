@@ -1,6 +1,7 @@
 /** @format */
 
 import { colors } from "assets/jss/app-theme.jsx";
+import { app } from "assets/jss/app-theme";
 export default theme => ({
 	root: {
 		//borderBottom: `1px solid ${theme.palette.border}`,
@@ -34,9 +35,9 @@ export default theme => ({
 	},
 	logoImage: {
 		cursor: "pointer",
-		height: theme.spacing(2),
+		width: theme.spacing(26),
 		marginLeft: theme.spacing(),
-		width: "auto",
+		height: "auto",
 	},
 	breadcrumbs: {
 		color: theme.palette.text.primary,

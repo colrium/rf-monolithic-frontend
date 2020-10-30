@@ -6,12 +6,11 @@ import {
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
-	ChatBubbleOutline as DefinationContextIcon,
+	ForumOutlined as DefinationContextIcon,
 } from "@material-ui/icons";
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
-
 export default {
 	name: "messages",
 	label: "Messages",

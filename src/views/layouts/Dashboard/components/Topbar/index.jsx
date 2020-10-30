@@ -27,12 +27,14 @@ import Avatar from "components/Avatar";
 import LazyImage from "components/LazyImage";
 import { attachments as AttachmentsService } from "services";
 import { PersonOutlined as UserIcon } from "@material-ui/icons";
+import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import AuthService from "services/auth";
 import { logout, setCurrentUser } from "state/actions";
 import { ServiceDataHelper } from "hoc/Helpers";
 import {withGlobals} from "contexts/Globals";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import SearchBar from "components/SearchBar";
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
 // Custom components
 import { NotificationList } from "./components";
 import { app } from "assets/jss/app-theme";
@@ -369,6 +371,7 @@ class Topbar extends Component {
 			onToggleSidebar,
 			dashboard,
 			nav,
+			cache: { messaging },
 			auth,
 		} = this.props;
 		const {
@@ -548,6 +551,14 @@ class Topbar extends Component {
 								
 							)}
 
+							<Link className={"cursor-pointer"} to={"/messages".toUriWithDashboardPrefix()}>
+								<IconButton>
+								<Badge variant="dot" invisible={Number.parseNumber(messaging.unread_count, 0) === 0} badgeContent={messaging.unread_count} color="primary">
+							        <ForumOutlinedIcon />
+							    </Badge>
+							    </IconButton>
+						    </Link>
+
 
 							<Menu
 								id="user-presence-menu"
@@ -690,6 +701,7 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 	nav: state.nav,
 	dashboard: state.dashboard,
+	cache: state.cache,
 });
 
 

@@ -107,7 +107,7 @@ class Dashboard extends Component {
 				</Drawer> }
 				<main className={classNames({[classes.content] : true, [classes.contentShift]: shiftContent, "relative":true })} >
 				
-					<GridContainer>
+					{/*<GridContainer>
 						<GridItem xs={10}>
 							<GridContainer>
 								<GridItem xs={12} className={"p-0 px-1 m-0 pt-2 flex flex-row items-center"}>
@@ -161,7 +161,7 @@ class Dashboard extends Component {
 						<GridItem xs={2}>
 							
 						</GridItem>
-					</GridContainer>
+					</GridContainer>*/}
 					<GridContainer className={"p-0"}>
 						<GridItem xs={12}>
 							{children}

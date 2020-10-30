@@ -37,6 +37,8 @@ import {
 } from "@material-ui/icons";
 import Chip from "@material-ui/core/Chip";
 import Button from '@material-ui/core/Button';
+import Rating from '@material-ui/lab/Rating';
+import { Link } from "react-router-dom";
 //
 
 //
@@ -94,134 +96,105 @@ let showInfoWindow = (content, position) => {
 
 const ClientInfoWindow = ({user, track, position, ...rest}) => {
 	return (
-		<GridContainer>
-			<GridItem xs={12}>
-									<Typography
-										component="h5"
-										variant="subtitle2"
-										color="primary"
-										paragraph
-									>
-									Live
-									</Typography>
-									<Typography
-										component="div"
-										variant="body2"
-										color="default"
-										paragraph
-									>
-										{user && (
-											<Chip
-												size="small"
-												avatar={
+		<GridContainer style={{maxWidth: 300}}>
+			<GridItem xs={12} className={"flex flex-row items-center"}>
+				{
 													user.avatar ? (
 														<Avatar
-															className="bg-transparent"
+															className="bg-transparent mr-4"
 															alt={user.first_name}
 															src={AttachmentsService.getAttachmentFileUrl(user.avatar)}
 														/>
 													) : (
-														<Avatar className="bg-transparent">
+														<Avatar className="bg-transparent  mr-4">
 															<UserIcon />{" "}
 														</Avatar>
 													)
-												}
-												label={user.first_name +" " +user.last_name }
-											/>
-										)}
-									</Typography>
+				}
+				<Typography variant="h5" >
+					{user.first_name}
+				</Typography>
+			</GridItem>
 
-									
-										<Typography
-											component="p"
-											variant="body2"
-											color="default"
-											paragraph
-										>
-											
-											 {user.email_address}
-										</Typography>
+			<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Typography
+					className="mx-2 font-bold"
+										variant="body1"
+										
+									>
+					Gender: 
+				</Typography>
+				<Typography
+										variant="body1"
+										
+									>
+					{user.gender? user.gender : "Unspecified"}
+				</Typography>
+			</GridItem>
 
-										<Typography
-											component="p"
-											variant="body1"
-											color="default"											
-										>
-											
-											Coordinates
-										</Typography>
-										<Typography
-											component="p"
-											variant="body2"
-											color="default"
-											paragraph
-										>
-											
-											Latitude: {position.latitude} longitude: {position.longitude}
-										</Typography>
+			<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Typography
+					className="mx-2 font-bold"
+										variant="body1"
+										
+									>
+					Course of Study: 
+				</Typography>
+				<Typography
+										variant="body1"
+										
+									>
+					{user.course? user.course : "Unspecified"}
+				</Typography>
+			</GridItem>
 
-										<Typography
-											component="p"
-											variant="body2"
-											color="default"
-											
-										>
-											
-											Speed
-										</Typography>
-										<Typography
-											component="p"
-											variant="body2"
-											color="default"
-											paragraph
-										>
-											
-											{position.speed}
-										</Typography>
+			<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Typography
+					className="mx-2 font-bold"
+										variant="body1"
+										
+									>
+					Tasks Completed: 
+				</Typography>
+				<Typography
+										variant="body1"
+										
+									>
+					{user.noof_completed_tasks? user.noof_completed_tasks : "0"}
+				</Typography>
+			</GridItem>
 
-
-										<Typography
-											component="p"
-											variant="body2"
-											color="default"
-											
-										>
-											
-											Accuracy
-										</Typography>
-										<Typography
-											component="p"
-											variant="body2"
-											color="default"
-											paragraph
-										>
-											
-											{position.accuracy}
-										</Typography>
-
-										<Typography
-											component="p"
-											variant="body2"
-											color="default"
-											
-										>
-											
-											Heading
-										</Typography>
-										<Typography
-											component="p"
-											variant="body2"
-											color="default"
-											paragraph
-										>
-											
-											{position.heading}
-										</Typography>
-									
-				</GridItem>
+			<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Typography
+					className="mx-2 font-bold"
+										variant="body1"
+										
+									>
+					Uncompleted Tasks: 
+				</Typography>
+				<Typography
+										variant="body1"
+										
+									>
+					{user.noof_uncompleted_tasks? user.noof_uncompleted_tasks : "0"}
+				</Typography>
+			</GridItem>
+			<GridItem xs={12} className={"flex flex-col"}>
+				<Typography
+					className="mx-2 font-bold"
+										variant="body1"
+										
+									>
+					Rating
+				</Typography>
+				<Rating name="read-only" value={user.rating? user.rating : 4} readOnly />
+			</GridItem>
+			
 
 				<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
-					<Button color="primary">Send Message</Button>
+					<Button href={("/messages?with="+user._id).toUriWithDashboardPrefix()} color="primary">Message Me</Button>
+					
+					
 				</GridItem>
 			</GridContainer>
 	)

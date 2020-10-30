@@ -10,15 +10,29 @@ import {
 	SET_BLOB_CACHE,
 	REMOVE_BLOB_CACHE,
 	CLEAR_BLOB_CACHE,
+	SET_MESSAGING_CACHE,
+	REMOVE_MESSAGING_CACHE,
+	CLEAR_MESSAGING_CACHE,
+	CLEAR_CACHE
 } from "state/actions";
 
 const initialState = {
 	data: {},
 	blob: {},
 	res: {},
+	messaging: {
+		unread_count: 0,
+		unread_ids: [],
+		unsent_messages: [],
+		conversations: [],
+		drafts: [],
+		contacts: [],
+		active_conversation: false,
+	},
 };
 
 export default (state = initialState, action = {}) => {
+
 	switch (action.type) {
 		case SET_DATA_CACHE: {
 			return {
@@ -71,8 +85,29 @@ export default (state = initialState, action = {}) => {
 		case CLEAR_BLOB_CACHE: {
 			return {
 				...state,
-				blob: initialState.lob,
+				blob: initialState.blob,
 			};
+		}
+		case SET_MESSAGING_CACHE: {
+			return {
+				...state,
+				messaging: { ...state.messaging, [action.key]: (Function.isFunction(action.messaging)? action.messaging(state.messaging[action.key]) : action.messaging) },
+			};
+		}
+		case REMOVE_MESSAGING_CACHE: {
+			return {
+				...state,
+				messaging: JSON.removeProperty(state.messaging, action.key),
+			};
+		}
+		case CLEAR_MESSAGING_CACHE: {
+			return {
+				...state,
+				messaging: initialState.messaging,
+			};
+		}
+		case CLEAR_CACHE: {
+			return initialState;
 		}
 		default: {
 			return state;

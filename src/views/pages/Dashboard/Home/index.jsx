@@ -23,7 +23,7 @@ import styles from "views/pages/styles";
 
 class Page extends React.Component {
 	state = {
-		mainMapInFullWidth: false,
+		mainMapInFullWidth: true,
 	};
 
 	componentDidMount() {

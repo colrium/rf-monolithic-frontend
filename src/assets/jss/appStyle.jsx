@@ -317,4 +317,5 @@ export default {
 	},
 	...muiGlobalStyles,
 	...color_based_styles,
+	
 };

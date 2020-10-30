@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 
 import { connect } from "react-redux";
 import { useStore, useDispatch } from 'react-redux'
-import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation } from "state/actions";
+import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } from "state/actions";
 import AuthHelper from 'hoc/Auth';
 import {default_location} from "config";
 import { defaultSocket } from "hoc/Sockets";
 import * as definations from "definations";
 import * as services from "services";
+import notificationSound from "assets/audio/notification.mp3";
 
 
 let models = {};
@@ -47,12 +48,13 @@ function loadScript(src, position, id) {
 export const GlobalsContext = React.createContext(defaultValue);
 
 const GlobalsProvider = props => {
+	let notificationAudio = new Audio(notificationSound)
 	let [value, setValue] = useState(defaultValue);	
 	let [valueInitialized, setValueInitialized] = useState(false);	
 	let [settingsChangeCallBacks, setSettingsChangeCallBacks] = useState([]);
 	let [preferencesChangeCallBacks, setPreferencesChangeCallBacks] = useState([]);	
 
-	let { auth, cache: { data: dataCache }, api, app, clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation } = props;
+	let { auth, cache: { data: dataCache, messaging }, api, app, clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } = props;
 	
 
 	const handleOnInternetAvailabilityChange = () => {
@@ -86,36 +88,228 @@ const GlobalsProvider = props => {
 		}
 		
 
+	}
 
+	const handleOnNewConversation = (conversation) => {
+		console.log("handleOnNewConversation conversation", conversation)
 
-
-
-
-
-
-
-
-
-
-
-
-
-		/*if (String.isString(hash)) {
-				let elementId = hash.trim();
-
-				if (elementId.startsWith("#")) {
-					console.log("elementId", elementId);
-					elementId = elementId.replace("#", "");
-					console.log("elementId", elementId);
-					let section = document.getElementById(elementId);
-					if (section) {
-						
-						section.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-						setActiveSection(elementId);
-					}					
+		setMessagingCache("conversations", currentConversations => {
+			try {
+				let newConversations = JSON.parse(JSON.stringify(currentConversations));
+				if (Array.isArray(newConversations)) {
+					newConversations.unshift(conversation);
 				}
-		}*/
-		//return setValue({...value, internet: { available: false, checked: false }});
+				else{
+					newConversations = [conversation];
+				}
+				return newConversations;
+			} catch(err) {
+				console.error(err);
+				if (!Array.isArray(currentConversations)) {
+					return [conversation];
+				}
+				else{
+					return currentConversations;
+				}
+			}
+		});
+	}
+
+	const handleOnConversationCreated = (conversation) => {
+		console.log("handleOnConversationCreated conversation", conversation)
+		setMessagingCache("conversations", currentConversations => {
+			try {
+				let newConversations = JSON.parse(JSON.stringify(currentConversations));
+				if (Array.isArray(newConversations)) {
+					newConversations.unshift(conversation);
+				}
+				else{
+					newConversations = [conversation];
+				}
+				return newConversations;
+			} catch(err) {
+				console.error(err);
+				if (!Array.isArray(currentConversations)) {
+					return [conversation];
+				}
+				else{
+					return currentConversations;
+				}
+			}
+		});
+		setMessagingCache("active_conversation", currentActiveConversation => {
+			if (!currentActiveConversation) {
+				return conversation;
+			}
+			else {
+				return currentActiveConversation;
+			}
+		});
+	}
+
+	const handleOnNewMessage = ({conversation, message, user}) => {
+		let sender_id = message.sender;
+		if (JSON.isJSON(sender_id)) {
+			sender_id = sender_id._id;
+		}
+		if (sender_id) {
+			if (sender_id !== auth.user._id) {
+				notificationAudio.play();
+			}
+			if (sender_id !== auth.user._id) {
+				setMessagingCache("unread_ids", currentUnreadIds => {
+						
+					if (sender_id.toString() !== auth.user._id.toString()) {
+						try {
+							let newUnreadIds = JSON.parse(JSON.stringify(currentUnreadIds));
+							if (Array.isArray(newUnreadIds)) {
+								newUnreadIds.unshift(message._id.toString());
+							}
+							else{
+								newUnreadIds = [message._id.toString()];
+							}
+							return newUnreadIds;
+						} catch(err) {
+							console.error(err);
+							if (!Array.isArray(currentUnreadIds)) {
+								return [message._id.toString];
+							}
+							else{
+								return currentUnreadIds;
+							}
+						}
+					}
+				});
+				if (value.sockets.default) {
+					value.sockets.default.emit("mark-message-as-received", {message: message._id, user: auth.user});
+				}
+				
+				setMessagingCache("conversations", currentConversations => {
+					
+						try {
+							let newConversations = JSON.parse(JSON.stringify(currentConversations));
+							if (Array.isArray(newConversations)) {
+									let message_conversation = message.conversation;
+									if (JSON.isJSON(message_conversation)) {
+										message_conversation = message_conversation._id;
+									}
+									let conversation_position = -1;
+									newConversations.map((conversationEntry, index) => {
+										if (conversation_position === -1 && conversationEntry._id === message_conversation) {
+											conversation_position = index;
+											if (JSON.isJSON(conversationEntry.state)) {
+												conversationEntry.state.total = conversationEntry.state.total > 0? (conversationEntry.state.total + 1) : 1;
+												conversationEntry.state.unread = conversationEntry.state.unread > 0? (conversationEntry.state.unread + 1) : 1;
+												conversationEntry.state.last_message = message;
+											}
+											else {
+												conversationEntry.state = {
+													total: 1,
+													unread: 1,
+													last_message: message,
+												}
+											}
+										}
+									});
+									/*newConversations.map((conversationEntry, index) => {
+										if (conversation_position === -1 && conversationEntry._id === message_conversation) {
+											conversation_position = index;
+										}
+									});
+
+									if (!conversation_position !== -1) {
+										newConversations[conversation_position].state.last_message = message;
+										newConversations[conversation_position].state.unread = newConversations[conversation_position].state.unread+1;
+
+									}*/
+								
+							}
+							else{
+								//newConversations = [conversation];
+							}
+							return newConversations;
+						} catch(err) {
+							console.error(err);
+							return currentConversations;
+						}
+					
+								
+				});
+			}	
+		}
+				
+						
+						
+
+	}
+
+	const handleOnMessageSent = ({conversation, message, user}) => {
+		let sender_id = message.sender;
+		if (JSON.isJSON(sender_id)) {
+			sender_id = sender_id._id;
+		}
+		if (sender_id) {
+			if (sender_id === auth.user._id) {
+				setMessagingCache("conversations", currentConversations => {
+					
+						try {
+							let newConversations = JSON.parse(JSON.stringify(currentConversations));
+							if (Array.isArray(newConversations)) {
+									let message_conversation = message.conversation;
+									if (JSON.isJSON(message_conversation)) {
+										message_conversation = message_conversation._id;
+									}
+									let conversation_position = -1;
+									newConversations.map((conversationEntry, index) => {
+										if (conversation_position === -1 && conversationEntry._id === message_conversation) {
+											conversation_position = index;
+											if (JSON.isJSON(conversationEntry.state)) {
+												conversationEntry.state.total = conversationEntry.state.total > 0? (conversationEntry.state.total + 1) : 1;
+												conversationEntry.state.last_message = message;
+											}
+											else {
+												conversationEntry.state = {
+													total: 1,
+													unread: 1,
+													last_message: message,
+												}
+											}
+										}
+									});
+									console.log("\n\n newConversations", newConversations);
+
+									/*if (!conversation_position !== -1) {
+										newConversations[conversation_position].state.last_message = message;
+									}*/
+								
+							}
+							
+							return newConversations;
+						} catch(err) {
+							console.error(err);
+							return currentConversations;
+						}
+					
+								
+				});
+			}	
+		}
+	}
+
+	const handleOnInbox = (inbox) => {
+						console.log("\n\n inbox", inbox);
+						let total_unread = 0;
+						if (Array.isArray(inbox)) {
+							inbox.map(convo => {
+								if (convo.state.unread > 0) {
+									total_unread = total_unread+convo.state.unread;
+								}							
+							});
+
+						}
+						console.log("\n\n total_unread", total_unread);
+						setMessagingCache("unread_count", total_unread);
+						setMessagingCache("conversations", inbox);
 	}
 
 	
@@ -207,7 +401,6 @@ const GlobalsProvider = props => {
 
 				defaultSocketInstance.on("identity-set", async (profile) => {
 					//console.log("\n\n identity-set profile", profile._id);
-
 					setCurrentUser(profile);
 				});
 
@@ -220,6 +413,9 @@ const GlobalsProvider = props => {
 					setSettings(settings);
 				});
 
+				
+
+				
 				defaultSocketInstance.on("preferences", async (preferences) => {
 							let deepMergePreferences = JSON.deepMerge(app.preferences, preferences);
 
@@ -241,9 +437,18 @@ const GlobalsProvider = props => {
 					defaultSocketInstance.on("reconnect", () => {
 						console.log("reconnect")
 						defaultSocketInstance.emit("set-identity", auth.user._id);
+						defaultSocketInstance.emit("get-settings", auth.user._id);
+						defaultSocketInstance.emit("get-inbox", auth.user);
 					});
+					
+					defaultSocketInstance.on("new-message", handleOnNewMessage);
+					defaultSocketInstance.on("message-sent", handleOnMessageSent);
+					defaultSocketInstance.on("new-conversation", handleOnNewConversation);
+					defaultSocketInstance.on("conversation-created", handleOnConversationCreated);
+					defaultSocketInstance.on("inbox", handleOnInbox);
 					defaultSocketInstance.emit("set-identity", auth.user._id);
 					defaultSocketInstance.emit("get-preferences", auth.user._id);
+					defaultSocketInstance.emit("get-inbox", auth.user);
 				}
 					
 
@@ -421,7 +626,7 @@ const mapStateToProps = state => ({
 	cache: state.cache,
 });
 
-export default connect(mapStateToProps, { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation })(GlobalsProvider);
+export default connect(mapStateToProps, { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache })(GlobalsProvider);
 
 /*export const useGlobals = () => {
 	const context = React.useContext(GlobalsContext);

@@ -7,8 +7,7 @@ import {
 	SET_AUTHENTICATED,
 	SET_ACCESS_TOKEN,
 	SET_USER,
-	clearDataCache,
-	clearBlobCache,
+	clearCache,
 } from "state/actions";
 
 export function setAuthenticated(authenticated) {
@@ -44,6 +43,7 @@ export function logout() {
 		Auth.getInstance().setAccessToken(null);
 		dispatch(setAuthenticated(false));
 		dispatch(setAccessToken(null));
+		dispatch(clearCache());
 		AuthService.reset();
 		//Do not call this on logout because views will update too
 		//dispatch(setCurrentUser({}));

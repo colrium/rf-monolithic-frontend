@@ -10,6 +10,10 @@ import {
 	SET_BLOB_CACHE,
 	REMOVE_BLOB_CACHE,
 	CLEAR_BLOB_CACHE,
+	SET_MESSAGING_CACHE,
+	REMOVE_MESSAGING_CACHE,
+	CLEAR_MESSAGING_CACHE,
+	CLEAR_CACHE,
 } from "state/actions";
 
 export function setDataCache(key, data) {
@@ -72,5 +76,32 @@ export function removeBlobCache(key) {
 export function clearBlobCache() {
 	return {
 		type: CLEAR_BLOB_CACHE,
+	};
+}
+
+export function setMessagingCache(key, messaging) {
+	return {
+		type: SET_MESSAGING_CACHE,
+		key: key,
+		messaging: messaging,
+	};
+}
+
+export function removeMessagingCache(key) {
+	return {
+		type: REMOVE_MESSAGING_CACHE,
+		key,
+	};
+}
+
+export function clearMessagingCache() {
+	return {
+		type: CLEAR_MESSAGING_CACHE,
+	};
+}
+
+export function clearCache() {
+	return {
+		type: CLEAR_CACHE,
 	};
 }

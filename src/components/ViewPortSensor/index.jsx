@@ -3,11 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 
 function ViewPortSensor(props) {
-	let [state, setState] = useState(props);
-
-	useEffect(() => {
-		setState(props);
-	}, [props]);
 
 	let {
 		className,
@@ -16,7 +11,7 @@ function ViewPortSensor(props) {
 		onViewportVisibilityChange,
 		placeholder,
 		placeholderType
-	} = state;
+	} = props;
 	// Ref for the element that we want to detect whether on screen
 	const ref = useRef();
 	// Call the hook passing in ref and root margin
@@ -57,7 +52,7 @@ function ViewPortSensor(props) {
 	}
 
 	return (
-		<div className={className ? className : "w-full min-h-full "} ref={ref}>
+		<div className={className ? className : "w-full "} ref={ref}>
 			{children}
 		</div>
 	);
@@ -82,7 +77,7 @@ ViewPortSensor.defaultProps = {
 		height: 200,
 		animation: "wave"
 	},
-	offset: 10
+	offset: 0
 };
 
 export default ViewPortSensor;

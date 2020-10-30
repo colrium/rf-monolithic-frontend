@@ -94,10 +94,17 @@ const Scrollbars = React.forwardRef(function Scrollbars(props, ref) {
 			ref.current.scrollTop = 0;
 		}
 
+		function scrollToBottom() {
+			ref.current.scrollTop = ref.current.scrollHeight - ref.current.getBoundingClientRect().height;
+		}
+
 		if (props.scrollToTopOnChildChange) {
 			scrollToTop();
 		}
-	}, [props.children, props.scrollToTopOnChildChange, ref]);
+		if (props.scrollToBottomOnChildChange) {
+			scrollToBottom();
+		}
+	}, [props.children, props.scrollToTopOnChildChange, props.scrollToBottomOnChildChange, ref]);
 
 	useEffect(() => {
 		return () => {
@@ -141,6 +148,7 @@ Scrollbars.propTypes = {
 	onXReachStart: PropTypes.func,
 	onXReachEnd: PropTypes.func,
 	scrollToTopOnChildChange: PropTypes.bool,
+	scrollToBottomOnChildChange: PropTypes.bool,
 };
 
 Scrollbars.defaultProps = {
@@ -148,9 +156,10 @@ Scrollbars.defaultProps = {
 	className: "",
 	enable: true,
 	scrollToTopOnChildChange: false,
+	scrollToBottomOnChildChange: false,
 	option: { wheelPropagation: true },
 };
 
 export default connect(mapStateToProps, null, null, { forwardRef: true })(
-	withRoot(React.memo(Scrollbars))
+	React.memo(Scrollbars)
 );
