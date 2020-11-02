@@ -156,17 +156,17 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("settings/view/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("settings/view/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"settings/view/" + id
+										"settings/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -222,17 +222,17 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("settings/edit/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("settings/edit/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"settings/edit/" + id
+										"settings/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -255,8 +255,8 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("settings/delete/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("settings/delete/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

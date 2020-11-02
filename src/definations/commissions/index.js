@@ -1608,19 +1608,19 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"commissions/view/" + id
+						"commissions/view/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"commissions/view/" + id
+										"commissions/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -1676,19 +1676,19 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"commissions/edit/" + id
+						"commissions/edit/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"commissions/edit/" + id
+										"commissions/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -1711,9 +1711,9 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"commissions/delete/" + id
+						"commissions/delete/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

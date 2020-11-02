@@ -439,17 +439,17 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("events/view/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("events/view/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"events/view/" + id
+										"events/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -502,17 +502,17 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("events/edit/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("events/edit/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"events/edit/" + id
+										"events/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -535,8 +535,8 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("events/delete/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("events/delete/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

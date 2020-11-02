@@ -365,16 +365,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "notifications/view/" + id;
+				uri: entry => {
+					return "notifications/view/" + entry._id;
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"notifications/view/" + id}
+									to={"notifications/view/" + entry._id}
 									className={className}
 								>
 									<IconButton
@@ -427,16 +427,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "notifications/edit/" + id;
+				uri: entry => {
+					return "notifications/edit/" + entry._id;
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"notifications/edit/" + id}
+									to={"notifications/edit/" + entry._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -458,8 +458,8 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "notifications/delete/" + id;
+				uri: entry => {
+					return "notifications/delete/" + entry._id;
 				},
 				link: {
 					inline: {

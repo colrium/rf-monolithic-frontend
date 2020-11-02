@@ -301,16 +301,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("formvalues/view/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("formvalues/view/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"formvalues/view/" + id}
+									to={"formvalues/view/" + entry._id}
 									className={className}
 								>
 									<IconButton
@@ -362,17 +362,17 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("formvalues/edit/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("formvalues/edit/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"formvalues/edit/" + id
+										"formvalues/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -395,9 +395,9 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"formvalues/delete/" + id
+						"formvalues/delete/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

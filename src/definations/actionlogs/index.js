@@ -292,16 +292,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("actionlogs/view/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("actionlogs/view/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className) => {
+						default: (entry, className) => {
 							return (
 								<Link
 									to={(
-										"actionlogs/view/" + id
+										"actionlogs/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -314,11 +314,11 @@ export default {
 								</Link>
 							);
 						},
-						listing: (id, className = "grey_text") => {
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"actionlogs/view/" + id
+										"actionlogs/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -373,16 +373,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("actionlogs/edit/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("actionlogs/edit/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"actionlogs/edit/" + id
+										"actionlogs/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -395,11 +395,11 @@ export default {
 								</Link>
 							);
 						},
-						listing: (id, className = "grey_text") => {
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"actionlogs/edit/" + id
+										"actionlogs/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -422,9 +422,9 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"actionlogs/delete/" + id
+						"actionlogs/delete/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

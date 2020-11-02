@@ -270,19 +270,19 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"quoterequests/view/" + id
+						"quoterequests/view/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"quoterequests/view/" + id
+										"quoterequests/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -338,19 +338,19 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"quoterequests/edit/" + id
+						"quoterequests/edit/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"quoterequests/edit/" + id
+										"quoterequests/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -373,9 +373,9 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"quoterequests/delete/" + id
+						"quoterequests/delete/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

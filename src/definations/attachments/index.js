@@ -459,18 +459,18 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"attachments/view/" + id
+						"attachments/view/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className) => {
+						default: (entry, className) => {
 							return (
 								<Link
 									to={(
-										"attachments/view/" + id
+										"attachments/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -483,11 +483,11 @@ export default {
 								</Link>
 							);
 						},
-						listing: (id, className = "grey_text") => {
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"attachments/view/" + id
+										"attachments/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -540,18 +540,18 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"attachments/edit/" + id
+						"attachments/edit/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"attachments/edit/" + id
+										"attachments/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -564,11 +564,11 @@ export default {
 								</Link>
 							);
 						},
-						listing: (id, className = "grey_text") => {
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"attachments/edit/" + id
+										"attachments/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -591,9 +591,9 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"attachments/delete/" + id
+						"attachments/delete/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

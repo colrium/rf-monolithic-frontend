@@ -306,17 +306,17 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("coupons/view/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("coupons/view/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"coupons/view/" + id
+										"coupons/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -372,17 +372,17 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("coupons/edit/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("coupons/edit/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"coupons/edit/" + id
+										"coupons/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -405,8 +405,8 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return ("coupons/delete/" + id).toUriWithDashboardPrefix();
+				uri: entry => {
+					return ("coupons/delete/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

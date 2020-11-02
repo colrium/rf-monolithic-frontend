@@ -626,16 +626,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "users/view/" + id;
+				uri: entry => {
+					return "users/view/" + entry._id;
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"users/view/" + id}
+									to={"users/view/" + entry._id}
 									className={className}
 								>
 									<IconButton
@@ -684,16 +684,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "users/edit/" + id;
+				uri: entry => {
+					return "users/edit/" + entry._id;
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"users/edit/" + id}
+									to={"users/edit/" + entry._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -715,8 +715,8 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "users/delete/" + id;
+				uri: entry => {
+					return "users/delete/" + entry._id;
 				},
 				link: {
 					inline: {

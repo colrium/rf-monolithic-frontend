@@ -43,7 +43,7 @@ String.uid = function(len, numeric, all_caps) {
 		chars = "0123456789";
 		charlen = chars.length;
 	} else if (all_caps) {
-		chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 		charlen = chars.length;
 	}
 
@@ -642,9 +642,10 @@ JSON.moveKey = function(object, key, position = 0) {
 //This is to ensure equating objects doesnt change original
 JSON.fromJSON = function(input) {
 	let newObject = {};
-	if (JSON.isJSON(input)) {
-		//newObject = JSON.parse(JSON.stringify(input));
-		newObject = input;
+	try {
+		newObject = JSON.parse(JSON.stringify(input));
+	} catch(err) {
+		newObject = {};
 	}
 	return newObject;
 };

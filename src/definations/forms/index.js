@@ -352,7 +352,7 @@ export default  {
 				},
 				link: {
 					inline: {						
-						default: (id, className) => {
+						default: (entry, className) => {
 
 						},
 						listing: (id, className="grey_text") => {

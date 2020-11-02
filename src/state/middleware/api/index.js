@@ -55,7 +55,7 @@ const api = ({ dispatch, getState }) => next => action => {
 		const { key, options } = action;
 		const apiTask = { key : String.uid(50), ...options};
 		if (key && options) {
-			const { uri, type, params, data, cache, id } = options;
+			const { uri, type, params, data, cache, silent, id } = options;
 			//onApiCallStart(action);
 			if (String.isString(uri)) {
 				ApiServiceInstance.refresh();
@@ -64,17 +64,23 @@ const api = ({ dispatch, getState }) => next => action => {
 			
 			if (type === "records") {
 				//console.log("cached", key, cache[key]);
-				dispatch(addApiTask(apiTask));
-				if (cache) {
-					dispatch(removeResponseCache(key));
+				if (!silent) {
+					dispatch(addApiTask(apiTask));
+					if (cache) {
+						dispatch(removeResponseCache(key));
+					}
 				}
+				
 				return await ApiServiceInstance.getRecords(params).then(res => {
 						if (cache) {
 							let {data, ...rest} = res.body;
 							dispatch(setResponseCache(key, rest));
 							dispatch(setDataCache(key, data));
 						}
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
+						
 						if (res.err) {
 							throw res.err;
 						}
@@ -82,7 +88,9 @@ const api = ({ dispatch, getState }) => next => action => {
 							return res.body.data;
 						}
 					}).catch(e => {
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						throw e;
 					});
 			} 
@@ -98,7 +106,9 @@ const api = ({ dispatch, getState }) => next => action => {
 							dispatch(setResponseCache(key, rest));
 							dispatch(setDataCache(key, data.count));
 						}
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						if (res.err) {
 							throw res.err;
 						}
@@ -106,7 +116,9 @@ const api = ({ dispatch, getState }) => next => action => {
 							return res.body.data;
 						}
 					}).catch(e => {
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						throw e;
 					});
 			} 
@@ -123,7 +135,9 @@ const api = ({ dispatch, getState }) => next => action => {
 							dispatch(setResponseCache(key, rest));
 							dispatch(setDataCache(key, data));
 						}
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						if (res.err) {
 							throw res.err;
 						}
@@ -131,7 +145,9 @@ const api = ({ dispatch, getState }) => next => action => {
 							return res.body.data;
 						}
 					}).catch(e => {
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						dispatch(setResponseCache(key, e));
 						throw e;
 					});
@@ -150,7 +166,9 @@ const api = ({ dispatch, getState }) => next => action => {
 							//newCache.push(res.body.data);
 							dispatch(setDataCache(key, newCache));*/
 						}
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						if (res.err) {
 							throw res.err;
 						}
@@ -158,7 +176,9 @@ const api = ({ dispatch, getState }) => next => action => {
 							return res.body.data;
 						}
 					}).catch(e => {
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						throw e;
 					});
 			}
@@ -195,7 +215,9 @@ const api = ({ dispatch, getState }) => next => action => {
 							dispatch(setDataCache(key, newCache));
 							*/
 						}
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						if (res.err) {
 							throw res.err;
 						}
@@ -204,7 +226,9 @@ const api = ({ dispatch, getState }) => next => action => {
 						}
 						
 					}).catch(e => {
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						throw e;
 					});
 			}
@@ -220,11 +244,15 @@ const api = ({ dispatch, getState }) => next => action => {
 							dispatch(setResponseCache(key, rest));
 							//dispatch(setDataCache(key, res.body.data));
 						}
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						console.log("ApiServiceInstance.update res", res);
 						return res.body.data;
 					}).catch(e => {
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						throw e;
 					});
 			}
@@ -254,15 +282,21 @@ const api = ({ dispatch, getState }) => next => action => {
 							let {data, ...rest} = res.body;
 							dispatch(setResponseCache(key, rest));
 						}
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						return res.body.data;
 					}).catch(e => {
-						dispatch(removeApiTask(apiTask));
+						if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 						throw e;
 					});
 				}
 				else {
-					dispatch(removeApiTask(apiTask));
+					if (!silent) {
+							dispatch(removeApiTask(apiTask));
+						}
 					return [];
 				}
 				

@@ -393,16 +393,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "teams/view/" + id;
+				uri: entry => {
+					return "teams/view/" + entry._id;
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"teams/view/" + id}
+									to={"teams/view/" + entry._id}
 									className={className}
 								>
 									<IconButton
@@ -451,16 +451,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "teams/edit/" + id;
+				uri: entry => {
+					return "teams/edit/" + entry._id;
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"teams/edit/" + id}
+									to={"teams/edit/" + entry._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -482,8 +482,8 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "teams/delete/" + id;
+				uri: entry => {
+					return "teams/delete/" + entry._id;
 				},
 				link: {
 					inline: {

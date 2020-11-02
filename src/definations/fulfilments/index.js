@@ -283,19 +283,19 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"fulfilments/view/" + id
+						"fulfilments/view/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"fulfilments/view/" + id
+										"fulfilments/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -348,19 +348,19 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"fulfilments/edit/" + id
+						"fulfilments/edit/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"fulfilments/edit/" + id
+										"fulfilments/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -383,9 +383,9 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"fulfilments/delete/" + id
+						"fulfilments/delete/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

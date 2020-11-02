@@ -199,16 +199,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "currencies/view/" + id;
+				uri: entry => {
+					return "currencies/view/" + entry._id;
 				},
 				link: {
 					inline: {
 						default: () => {},
-						listing: (id, className = "grey_text") => {
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"currencies/view/" + id}
+									to={"currencies/view/" + entry._id}
 									className={className}
 								>
 									<IconButton
@@ -260,16 +260,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "currencies/edit/" + id;
+				uri: entry => {
+					return "currencies/edit/" + entry._id;
 				},
 				link: {
 					inline: {
 						default: () => {},
-						listing: (id, className = "grey_text") => {
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"currencies/edit/" + id}
+									to={"currencies/edit/" + entry._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -291,8 +291,8 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "currencies/delete/" + id;
+				uri: entry => {
+					return "currencies/delete/" + entry._id;
 				},
 				link: {
 					inline: {

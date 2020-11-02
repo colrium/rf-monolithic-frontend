@@ -9,44 +9,238 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@material-ui/icons";
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
+import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
 import Button from "components/Button";
 import React, {useEffect, useState} from "react";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { Link } from "react-router-dom";
 import { CountriesHelper, UtilitiesHelper } from "hoc/Helpers";
 import Icon from '@mdi/react';
 import { mdiAccountBoxOutline, mdiFileAccountOutline  } from '@mdi/js';
+import { useGlobals } from "contexts/Globals";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
 import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
 import compose from "recompose/compose";
-import { apiCallRequest, setEmailingCache, clearEmailingCache } from "state/actions";
+import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions";
 
 let currentDate = new Date();
 
 const ke_regions = CountriesHelper.regions("KE");
 
 
-
+const Alert = (props) => {
+	return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 
 const ConvertToUserIconAction = (props) => {
-	const { application, layoutType, apiCallRequest, setEmailingCache, clearEmailingCache } = props;
+	const { application, layoutType, apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } = props;
+	const { definations, sockets } = useGlobals();
+	const [staffID, setStaffID] = useState(String.uid(8, false, true));
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(false);
+	const [initiated, setInitiated] = useState(false);
 
-	const handleOnClick = (event) => {
+	const handleCreateApplicantUserAccount = (sendEmail) => {			
+			setLoading(true);
+			setError(false);
+			let accountDetails = JSON.fromJSON(application);
+			delete accountDetails["_id"];
+			delete accountDetails["entry"];
+			accountDetails.staff_id = staffID;
+			accountDetails.password = staffID;
+			accountDetails.status = "active";
+			apiCallRequest( "applications",
+					{
+						uri: "/recruitment/applications/"+application._id+"/create-user",
+						type: "create",
+						params: {p: "1"},
+						data: accountDetails,
+						cache: true,
+						silent: true,
+					}
+			).then(data => {
+				console.log("handleCreateApplicantUserAccount data", data)
+				
+				setError(false);
+				setLoading(false);					
+			}).catch(e => {
+				setError(e);
+				setLoading(false);
+			});
 		console.log("ConvertToUserIconAction application", application)
 	}
 
+	const handleOnCreateUserAccountConfirm = () => {
+		openDialog({
+			title: "Confirm add "+application.first_name+" "+application.last_name+" as a new user",
+			body:
+				"A new user account will be created for <b> "+application.first_name+" "+application.last_name+"</b> with the staff ID: <b>"+staffID+"</b> and the following credentials.<br /><br /> <b> Username:</b>"+application.email_address+" <br /> <b>Password:</b>"+staffID,
+			actions: {
+				cancel: {
+					text: "Cancel",
+					color: "default",
+					onClick: () => closeDialog(),
+				},
+				create: {
+					text: "Create",
+					color: "secondarys",
+					onClick: () => {
+						closeDialog();
+						handleCreateApplicantUserAccount(false);
+
+					},
+				},
+				create_send_mail: {
+					text: "Create and send Email",
+					color: "primary",
+					onClick: () => {
+						closeDialog();
+						handleCreateApplicantUserAccount(true);
+					},
+				},
+			},
+		});
+	}
+
+	const handleOnShowUser = () => {
+		let profileContent = '<div class="flex flex-col w-full">';
+		try {
+			let profObjectStr = application.user.replace(/<[^>]*>?/gm, '');
+			let profObject = JSON.parse(profObjectStr);
+			delete profObject["password"];
+			delete profObject["__v"];
+			delete profObject["preferences"];
+			delete profObject["login_attempts"];
+			delete profObject["last_login_attempt"];
+			delete profObject["account_verified"];
+			delete profObject["account_verifacation_code"];
+			delete profObject["account_verifacation_mode"];
+			delete profObject["password_reset_code"];
+			delete profObject["password_reset_code_expiration"];
+			delete profObject["provider"];
+			delete profObject["provider_account_id"];
+			delete profObject["provider_handle"];
+			delete profObject["provider_url"];
+			Object.entries(profObject).map(([key, value]) => {
+				profileContent = profileContent+' <div class="flex flex-row w-full"><b>'+key.humanize()+': </b> <span class="flex-grow mx-2">'+value+'</span></div>';
+			});
+			profileContent = profileContent + '</div>';
+		} catch (e) {
+
+		}
+		openDialog({
+			title: "User Account for  "+application.first_name+" "+application.last_name,
+			body: profileContent,
+			actions: {
+				cancel: {
+					text: "Dismiss",
+					color: "default",
+					onClick: () => closeDialog(),
+				},
+				send_mail: {
+					text: "Email",
+					color: "secondary",
+					onClick: () => {
+						closeDialog();
+					},
+				},
+				send_message: {
+					text: "Message",
+					color: "primary",
+					onClick: () => {
+						closeDialog();
+					},
+				},
+				revoke: {
+					text: "Revoke",
+					color: "warning",
+					onClick: () => {
+						closeDialog();
+					},
+				},
+				revoke_send_mail: {
+					text: "Revoke and Email",
+					color: "error",
+					onClick: () => {
+						closeDialog();
+					},
+				},
+			},
+		});
+	}
+
+	const checkStaffIDAvailability = () => {
+			setLoading(true);
+			setError(false);
+			apiCallRequest( "users",
+					{
+						uri: "/users",
+						type: "records",
+						params: {p: "1", staff_id: staffID},
+						data: {},
+						cache: false,
+						silent: true,
+					}
+			).then(data => {
+				console.log("checkStaffIDAvailability data", data)
+				if (Array.isArray(data)) {
+					if (data.length > 0) {
+						let staff_id = String.uid(8, false, true);
+						setStaffID(staff_id);
+					}
+					else {
+						handleOnCreateUserAccountConfirm();
+					}
+				}
+				setError(false);
+				setLoading(false);					
+			}).catch(e => {
+				setError(e);
+				setLoading(false);
+			});
+		
+	}
+
+	
+
+	
+
+
+	useEffect(() => {
+		if (initiated) {
+			if (!application.user) {
+				checkStaffIDAvailability();
+			}
+			else {
+				handleOnShowUser();
+			}
+		}		
+	}, [initiated, staffID]);
+
 	return (
 		<React.Fragment>
-			{layoutType === "inline" && <IconButton
-				color="inherit"
+			{loading && <CircularProgress color="secondary" />}
+			{(layoutType === "inline" && !loading) && <IconButton
+				color={application.user? "secondary" : "inherit"}
 				aria-label="Create application user"
-				onClick={handleOnClick}
+				onClick={() => {
+					setInitiated(true);
+				}}
 			>
-				<PersonAddOutlinedIcon fontSize="small" />
+				{!application.user && <PersonAddOutlinedIcon fontSize="small" />}
+				{application.user && <AccountCircleOutlinedIcon fontSize="small" />}
 			</IconButton>}
+			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
+		        <Alert onClose={() => setError(false)} severity="error">
+					{error.toString()}
+		        </Alert>
+			</Snackbar>}
 		</React.Fragment>
 	)
 
@@ -62,7 +256,7 @@ const mapStateToProps = state => ({
 });
 
 const ConvertToUserIconActionComponent = compose(
-	connect(mapStateToProps, {apiCallRequest, setEmailingCache, clearEmailingCache}),
+	connect(mapStateToProps, {apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog}),
 	withTheme,
 )(ConvertToUserIconAction);
 
@@ -571,17 +765,17 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "applications/view/" + id;
+				uri: entry => {
+					return "applications/view/" + entry._id;
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"applications/view/" + id
+										"applications/view/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -634,19 +828,19 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"applications/edit/" + id
+						"applications/edit/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
 									to={(
-										"applications/edit/" + id
+										"applications/edit/" + entry._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -669,17 +863,17 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"applications/" + id + "/user/create"
+						"applications/" + entry._id + "/user/create"
 					).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
-								<ConvertToUserIconActionComponent application={id} />
+								<ConvertToUserIconActionComponent application={entry} />
 							);
 						},
 					},
@@ -692,9 +886,9 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
+				uri: entry => {
 					return (
-						"applications/delete/" + id
+						"applications/delete/" + entry._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

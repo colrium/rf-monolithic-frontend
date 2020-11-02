@@ -839,16 +839,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "surveys/view/" + id;
+				uri: entry => {
+					return "surveys/view/" + entry._id;
 				},
 				link: {
 					inline: {
-						default: (id, className) => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className) => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"surveys/view/" + id}
+									to={"surveys/view/" + entry._id}
 									className={className}
 								>
 									<IconButton
@@ -897,16 +897,16 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "surveys/edit/" + id;
+				uri: entry => {
+					return "surveys/edit/" + entry._id;
 				},
 				link: {
 					inline: {
-						default: (id, className = "grey_text") => {},
-						listing: (id, className = "grey_text") => {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"surveys/edit/" + id}
+									to={"surveys/edit/" + entry._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -928,8 +928,8 @@ export default {
 					}
 					return true;
 				},
-				uri: id => {
-					return "surveys/delete/" + id;
+				uri: entry => {
+					return "surveys/delete/" + entry._id;
 				},
 				link: {
 					inline: {
