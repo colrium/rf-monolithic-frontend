@@ -13,6 +13,9 @@ import {
 	SET_MESSAGING_CACHE,
 	REMOVE_MESSAGING_CACHE,
 	CLEAR_MESSAGING_CACHE,
+	SET_EMAILING_CACHE,
+	REMOVE_EMAILING_CACHE,
+	CLEAR_EMAILING_CACHE,
 	CLEAR_CACHE,
 } from "state/actions";
 
@@ -97,6 +100,27 @@ export function removeMessagingCache(key) {
 export function clearMessagingCache() {
 	return {
 		type: CLEAR_MESSAGING_CACHE,
+	};
+}
+
+export function setEmailingCache(key, emailing) {
+	return {
+		type: SET_EMAILING_CACHE,
+		key: key,
+		emailing: emailing,
+	};
+}
+
+export function removeEmailingCache(key) {
+	return {
+		type: REMOVE_EMAILING_CACHE,
+		key,
+	};
+}
+
+export function clearEmailingCache() {
+	return {
+		type: CLEAR_EMAILING_CACHE,
 	};
 }
 

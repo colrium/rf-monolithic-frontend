@@ -7,7 +7,7 @@ import Box from "@material-ui/core/Box";
 import { app } from "assets/jss/app-theme";
 // Externals
 import classNames from "classnames";
-import ActionDialog from "components/ActionDialog";
+
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { isMobile } from "react-device-detect";
@@ -26,6 +26,8 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DashboardRoutes from "routes/Dashboard";
+import ActionDialog from "components/ActionDialog";
+import ComposeEmailDialog from "components/ComposeEmailDialog";
 import { setDashboardSearchbarDisplayed } from "state/actions";
 
 
@@ -168,6 +170,7 @@ class Dashboard extends Component {
 						</GridItem>
 					</GridContainer>
 					<ActionDialog />
+					<ComposeEmailDialog />
 					
 					
 

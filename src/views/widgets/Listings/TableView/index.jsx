@@ -159,9 +159,7 @@ class TableView extends React.Component {
 									spacing={2}
 									className={classes.data_actions_wrapper}
 								>
-									{Object.keys(
-										defination.access.actions
-									).map((action_name, action_index) =>
+									{Object.keys(defination.access.actions).map((action_name, action_index) =>
 										defination.access.actions[
 											action_name
 										].restricted(auth.user) ? (

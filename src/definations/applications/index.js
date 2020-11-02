@@ -8,17 +8,63 @@ import {
 	HowToVoteOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@material-ui/icons";
-
+import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
+import Tooltip from '@material-ui/core/Tooltip';
 import Button from "components/Button";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import { CountriesHelper, UtilitiesHelper } from "hoc/Helpers";
 import Icon from '@mdi/react';
 import { mdiAccountBoxOutline, mdiFileAccountOutline  } from '@mdi/js';
+import { connect } from "react-redux";
+import { withTheme } from '@material-ui/core/styles';
+import classNames from "classnames";
+import withStyles from "@material-ui/core/styles/withStyles";
+import compose from "recompose/compose";
+import { apiCallRequest, setEmailingCache, clearEmailingCache } from "state/actions";
 
 let currentDate = new Date();
 
 const ke_regions = CountriesHelper.regions("KE");
+
+
+
+
+
+const ConvertToUserIconAction = (props) => {
+	const { application, layoutType, apiCallRequest, setEmailingCache, clearEmailingCache } = props;
+
+	const handleOnClick = (event) => {
+		console.log("ConvertToUserIconAction application", application)
+	}
+
+	return (
+		<React.Fragment>
+			{layoutType === "inline" && <IconButton
+				color="inherit"
+				aria-label="Create application user"
+				onClick={handleOnClick}
+			>
+				<PersonAddOutlinedIcon fontSize="small" />
+			</IconButton>}
+		</React.Fragment>
+	)
+
+};
+
+ConvertToUserIconAction.defaultProps = {
+	layoutType: "inline",
+}
+
+const mapStateToProps = state => ({
+	auth: state.auth,
+	cache: state.cache,
+});
+
+const ConvertToUserIconActionComponent = compose(
+	connect(mapStateToProps, {apiCallRequest, setEmailingCache, clearEmailingCache}),
+	withTheme,
+)(ConvertToUserIconAction);
 
 export default {
 	name: "applications",
@@ -318,6 +364,17 @@ export default {
 					rich_text: true,
 					
 				},
+				restricted: {
+					display: (entry, user) => {
+						return true;
+					},
+					input: (values, user) => {
+						if (user) {
+							return !user.isAdmin;
+						}
+						return true;
+					},
+				},
 			},
 
 
@@ -328,6 +385,18 @@ export default {
 					type: "textarea",
 					default: "",
 					rich_text: true,
+				},
+				restricted: {
+					display: (entry, user) => {
+						
+						return true;
+					},
+					input: (values, user) => {
+						if (user) {
+							return !user.isAdmin;
+						}
+						return true;
+					},
 				},
 			},
 			
@@ -588,6 +657,29 @@ export default {
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
+							);
+						},
+					},
+				},
+			},
+			create_application_user: {
+				restricted: user => {
+					if (user) {
+						return !user.isAdmin;
+					}
+					return true;
+				},
+				uri: id => {
+					return (
+						"applications/" + id + "/user/create"
+					).toUriWithDashboardPrefix();
+				},
+				link: {
+					inline: {
+						default: (id, className = "grey_text") => {},
+						listing: (id, className = "grey_text") => {
+							return (
+								<ConvertToUserIconActionComponent application={id} />
 							);
 						},
 					},

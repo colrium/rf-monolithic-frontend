@@ -432,7 +432,7 @@ class LoginForm extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, app:{settings: { auth: OAuth2_enabled }} } = this.props;
 		const loginBtnClassname = classNames({
 			[classes.loginSubmitBtn]: true,
 			[classes.loginSubmitting]: this.state.loginSubmitting,
@@ -636,7 +636,7 @@ class LoginForm extends React.Component {
 								</GridItem>
 							</GridContainer>
 
-							<GridContainer className="p-0">
+							{OAuth2_enabled && <GridContainer className="p-0">
 								<Typography
 									className="p-0"
 									color="default"
@@ -646,11 +646,11 @@ class LoginForm extends React.Component {
 								>
 									OR
                 				</Typography>
-							</GridContainer>
+							</GridContainer>}
 
-							<GridContainer alignItems="center" justify="center">
+							{OAuth2_enabled && <GridContainer alignItems="center" justify="center">
 								<OAuth onOAuthSuccess={this.handleOnOAuthSuccess} />
-							</GridContainer>
+							</GridContainer>}
 						</GridContainer>
 					</form>
 				</GridContainer>
@@ -682,6 +682,7 @@ LoginForm.propTypes = {
 
 const mapStateToProps = state => ({
 	auth: state.auth,
+	app: state.app,
 	nav: state.nav,
 	device: state.device
 });
