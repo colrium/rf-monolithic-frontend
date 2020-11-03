@@ -45,6 +45,8 @@ function ComposeEmailDialog(props) {
 	const [emailBCC, setEmailBCC] = useState(bcc);
 	const [emailSubject, setEmailSubject] = useState(subject);
 	const [emailContent, setEmailContent] = useState(content); 
+	const [emailContext, setEmailContext] = useState(context); 
+	const [emailRecord, setEmailRecord] = useState(record); 
 	const [canSend, setCanSend] = useState(false);
 	const [hasCC, setHasCC] = useState(!String.isEmpty(cc)); 
 	const [hasBCC, setHasBCC] = useState(!String.isEmpty(bcc)); 
@@ -73,6 +75,34 @@ function ComposeEmailDialog(props) {
 	useEffect(() => {
 		setCanSend(!String.isEmpty(emailRecipientAddress) && !String.isEmpty(emailSubject) && !String.isEmpty(emailContent));
 	}, [emailRecipientAddress, emailSubject, emailContent]);
+
+	useEffect(() => {
+		setEmailRecipientAddress(recipient_address);
+	}, [recipient_address]);
+
+	useEffect(() => {
+		setEmailCC(cc);
+	}, [cc]);
+
+	useEffect(() => {
+		setEmailBCC(bcc);
+	}, [bcc]);
+
+	useEffect(() => {
+		setEmailSubject(subject);
+	}, [subject]);
+
+	useEffect(() => {
+		setEmailContent(content);
+	}, [content]);
+
+	useEffect(() => {
+		setEmailContext(context);
+	}, [context]);
+
+	useEffect(() => {
+		setEmailRecord(record);
+	}, [record]);
 
 	return (
 		<Dialog

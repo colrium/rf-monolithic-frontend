@@ -39,14 +39,15 @@ const Alert = (props) => {
 
 
 const ConvertToUserIconAction = (props) => {
-	const { application, layoutType, apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } = props;
+	const { application, layoutType, apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth } = props;
 	const { definations, sockets } = useGlobals();
 	const [staffID, setStaffID] = useState(String.uid(8, false, true));
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(false);
 	const [initiated, setInitiated] = useState(false);
+	const [emailCacheTouched, setEmailCacheTouched] = useState(false);
 
-	const handleCreateApplicantUserAccount = (sendEmail) => {			
+	const handleCreateApplicantUserAccount = (sendEmail = false) => {			
 			setLoading(true);
 			setError(false);
 			let accountDetails = JSON.fromJSON(application);
@@ -65,6 +66,17 @@ const ConvertToUserIconAction = (props) => {
 						silent: true,
 					}
 			).then(data => {
+				if (sendEmail) {
+					setEmailingCache("recipient_address", data.email_address);
+					setEmailingCache("recipient_name", data.first_name);
+					setEmailingCache("subject", "Your qualification and new user account");
+					setEmailingCache("content", "Hey "+data.first_name+", \n\nWe are glad to inform you that your application was successful. \nA new user account has been be created for you with the Staff ID: "+staffID+" and the following credentials.\n\nUsername: "+application.email_address+" \nPassword: "+staffID+"\n\nBe sure to change your password once you login. \nWe look forward to working with you.\nWelcome aboard!\n\n\n"+auth.user.first_name+"\nRealfield.io");
+					setEmailingCache("context", "Application");
+					setEmailingCache("record", application._id);
+					setEmailingCache("popup_open", true);
+					setEmailCacheTouched(true);
+
+				}
 				console.log("handleCreateApplicantUserAccount data", data)
 				
 				setError(false);
@@ -78,7 +90,7 @@ const ConvertToUserIconAction = (props) => {
 
 	const handleOnCreateUserAccountConfirm = () => {
 		openDialog({
-			title: "Confirm add "+application.first_name+" "+application.last_name+" as a new user",
+			title: "Add "+application.first_name+" "+application.last_name+" as a new user?",
 			body:
 				"A new user account will be created for <b> "+application.first_name+" "+application.last_name+"</b> with the staff ID: <b>"+staffID+"</b> and the following credentials.<br /><br /> <b> Username:</b>"+application.email_address+" <br /> <b>Password:</b>"+staffID,
 			actions: {
@@ -222,6 +234,14 @@ const ConvertToUserIconAction = (props) => {
 			}
 		}		
 	}, [initiated, staffID]);
+
+	useEffect(() => {
+		return () => {
+			if (emailCacheTouched) {
+				clearEmailingCache();
+			}
+		}		
+	}, [emailCacheTouched]);
 
 	return (
 		<React.Fragment>
