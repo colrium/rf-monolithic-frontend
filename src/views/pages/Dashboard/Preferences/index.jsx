@@ -17,11 +17,7 @@ import CookiesPreferences from "views/widgets/Preferences/Cookies";
 import {withErrorHandler} from "hoc/ErrorHandler";
 
 function TabPanel(props) {
-	let [state, setState] = useState(props);
-	useEffect(() => {
-		setState(props);
-	}, [props]);
-	const { children, value, index, ...other } = state;
+	const { children, value, index, ...other } = props;
 	return (
 		<GridContainer
 			component="div"

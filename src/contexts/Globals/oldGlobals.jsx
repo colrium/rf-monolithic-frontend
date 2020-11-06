@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { connect } from "react-redux";
-import { useStore, useDispatch, useSelector } from 'react-redux';
+import { useStore, useDispatch } from 'react-redux'
 import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } from "state/actions";
 import AuthHelper from 'hoc/Auth';
 import {default_location} from "config";
@@ -48,7 +48,6 @@ function loadScript(src, position, id) {
 export const GlobalsContext = React.createContext(defaultValue);
 
 const GlobalsProvider = props => {
-	const dispatch = useDispatch()
 	let notificationAudio = new Audio(notificationSound)
 	let [value, setValue] = useState(defaultValue);	
 	let [valueInitialized, setValueInitialized] = useState(false);	
@@ -141,11 +140,6 @@ const GlobalsProvider = props => {
 		setMessagingCache("active_conversation", conversation);
 	}
 
-	const handleOnCreatingConversationExists = (conversation) => {		
-		setMessagingCache("active_conversation", conversation);
-	}
-
-	
 	const handleOnNewMessage = ({conversation, message, user}) => {
 		let sender_id = message.sender;
 		if (JSON.isJSON(sender_id)) {
@@ -155,28 +149,6 @@ const GlobalsProvider = props => {
 			if (sender_id !== auth.user._id) {
 				notificationAudio.play();
 			}
-			let currentConversation = messaging.active_conversation;
-				if (currentConversation) {
-					let conversation_id = message.conversation;
-					if (JSON.isJSON(conversation_id)) {
-						conversation_id = conversation_id._id;
-					}
-					if (conversation_id) {
-						conversation_id = conversation_id.toString();
-					}
-					if (conversation_id === currentConversation._id.toString()) {
-						dispatch(setMessagingCache("active_conversation_messages", current_messages => {
-							if (Array.isArray(current_messages)) {
-								current_messages.push(message);
-							}
-							else {
-								current_messages = [message];
-							}
-							return current_messages;
-						}));
-					}
-				}
-				
 			if (sender_id !== auth.user._id) {
 				setMessagingCache("unread_ids", currentUnreadIds => {
 						
@@ -273,27 +245,6 @@ const GlobalsProvider = props => {
 			sender_id = sender_id._id;
 		}
 		if (sender_id) {
-					let currentConversation = messaging.active_conversation;
-					if (currentConversation) {
-						let conversation_id = message.conversation;
-						if (JSON.isJSON(conversation_id)) {
-							conversation_id = conversation_id._id;
-						}
-						if (conversation_id) {
-							conversation_id = conversation_id.toString();
-						}
-						if (conversation_id === currentConversation._id.toString()) {
-							dispatch(setMessagingCache("active_conversation_messages", current_messages => {
-								if (Array.isArray(current_messages)) {
-									current_messages.push(message);
-								}
-								else {
-									current_messages = [message];
-								}
-								return current_messages;
-							}));
-						}
-					}
 			if (sender_id === auth.user._id) {
 				setMessagingCache("conversations", currentConversations => {
 					
@@ -348,18 +299,18 @@ const GlobalsProvider = props => {
 	}
 
 	const handleOnInbox = (inbox) => {
-		let total_unread = 0;
-		if (Array.isArray(inbox)) {
-			inbox.map(convo => {
-				if (convo.state.incoming_unread > 0) {
-					total_unread = total_unread+convo.state.incoming_unread;
-				}							
-			});
+						let total_unread = 0;
+						if (Array.isArray(inbox)) {
+							inbox.map(convo => {
+								if (convo.state.incoming_unread > 0) {
+									total_unread = total_unread+convo.state.incoming_unread;
+								}							
+							});
 
-		}
-		console.log("\n\n total_unread", total_unread);
-		setMessagingCache("unread_count", total_unread);
-		setMessagingCache("conversations", inbox);
+						}
+						console.log("\n\n total_unread", total_unread);
+						setMessagingCache("unread_count", total_unread);
+						setMessagingCache("conversations", inbox);
 	}
 
 	
@@ -495,7 +446,6 @@ const GlobalsProvider = props => {
 					defaultSocketInstance.on("message-sent", handleOnMessageSent);
 					defaultSocketInstance.on("new-conversation", handleOnNewConversation);
 					defaultSocketInstance.on("conversation-created", handleOnConversationCreated);
-					defaultSocketInstance.on("creating-conversation-exists", handleOnCreatingConversationExists);
 					defaultSocketInstance.on("inbox", handleOnInbox);
 					defaultSocketInstance.emit("set-identity", auth.user._id);
 					defaultSocketInstance.emit("get-preferences", auth.user._id);

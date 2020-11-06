@@ -16,7 +16,7 @@ import {
 	SET_EMAILING_CACHE,
 	REMOVE_EMAILING_CACHE,
 	CLEAR_EMAILING_CACHE,
-	CLEAR_CACHE
+	CLEAR_CACHE,
 } from "state/actions";
 
 const initialState = {
@@ -31,6 +31,7 @@ const initialState = {
 		drafts: [],
 		contacts: [],
 		active_conversation: false,
+		active_conversation_messages: [],
 	},
 	emailing: {
 		popup_open: false,

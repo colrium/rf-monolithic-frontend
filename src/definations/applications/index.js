@@ -85,7 +85,6 @@ const ConvertToUserIconAction = (props) => {
 				setError(e);
 				setLoading(false);
 			});
-		console.log("ConvertToUserIconAction application", application)
 	}
 
 	const handleOnCreateUserAccountConfirm = () => {

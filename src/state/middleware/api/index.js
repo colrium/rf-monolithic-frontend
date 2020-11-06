@@ -303,11 +303,14 @@ const api = ({ dispatch, getState }) => next => action => {
 			}
 		}
 	}
-	if (action.type === API_CALL_REQUEST) {
-		return executeRequest();
-	} else {
-		next(action);
+	if (action) {
+		if (action.type === API_CALL_REQUEST) {
+			return executeRequest();
+		} else {
+			next(action);
+		}
 	}
+		
 };
 
 export default api;

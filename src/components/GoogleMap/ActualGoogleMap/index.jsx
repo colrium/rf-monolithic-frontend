@@ -518,7 +518,7 @@ export default compose(
 	};
 
 	const handleOnClientPositionUnavailable = async ({socketId, ...data}) => {
-		if (socketId in _clientsPositions) {
+		if (_clientsPositions[socketId]) {
 			if (_clientsPositions[socketId].marker) {
 				_clientsPositions[socketId].marker.setMap(null);
 			}

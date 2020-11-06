@@ -5,11 +5,7 @@ import React, { useState, useEffect } from "react";
 
 function withRoot(Component) {
 	function WithRoot(props) {
-		let [state, setState] = useState(props);
-		useEffect(() => {
-			setState(props);
-		}, [props]);
-		return <Component {...state} />;
+		return <Component {...props} />;
 	}
 
 	return WithRoot;

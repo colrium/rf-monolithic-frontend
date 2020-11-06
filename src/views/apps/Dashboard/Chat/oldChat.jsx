@@ -1,4 +1,4 @@
-/** @format */
+	/** @format */
 
 import React, {memo, useState, useEffect, useCallback, useRef} from "react";
 import PropTypes from "prop-types";
@@ -101,11 +101,11 @@ function Chat(props) {
 
 
 	const { definations, sockets } = useGlobals();
-	const { unread_count, unread_ids, conversations, drafts, contacts:cacheContacts, active_conversation, active_conversation_messages } = messaging;
+	const { unread_count, unread_ids, conversations, drafts, contacts:cacheContacts, active_conversation } = messaging;
 
 	const [chats, setChats] = useState(Array.isArray(conversations)? conversations : []);
 	const [activeChat, setActiveChat] = useState(active_conversation);
-	const [activeChatMessages, setActiveChatMessages] = useState(active_conversation_messages);
+	const [activeChatMessages, setActiveChatMessages] = useState([]);
 	const [query, setQuery] = useState({desc: "created_on"});
 	const [loadingConversations, setLoadingConversations] = useState(true);
 	const [loadingContacts, setLoadingContacts] = useState(true);
@@ -208,7 +208,7 @@ function Chat(props) {
 	};
 
 	const handleArchiveConversation = (conversation) => {
-		setMessagingCache("conversations", currentChats => {
+		setChats(currentChats => {
 			try {
 				let newChats = JSON.parse(JSON.stringify(currentChats));
 
@@ -233,7 +233,7 @@ function Chat(props) {
 	};
 
 	const handleDeleteConversation = (conversation) => {
-		setMessagingCache("conversations", currentChats => {
+		setChats(currentChats => {
 			try {
 				let newChats = JSON.parse(JSON.stringify(currentChats));
 
@@ -267,31 +267,31 @@ function Chat(props) {
 
 			recipients.map(recipient => {
 				if (JSON.isJSON(recipient) && "_id" in recipient) {
-					recipients_ids.push(recipient._id);
+					recipients_ids.push(recipient._id.toString());
 				}
 				else if (!String.isEmpty(recipient)) {
-					recipients_ids.push(recipient);
+					recipients_ids.push(recipient.toString());
 				}
 			});
 
 
 			setContactsDrawerOpen(false);
 			let existsAtIndex = -1;
-			conversations.map((chat, index) => {
+			chats.map((chat, index) => {
 				if (existsAtIndex === -1 && chat.type === "individual") {
 					let owner_id = chat.owner;
 					let recipient_id = chat.recipients[0];
 					if (JSON.isJSON(chat.owner) && "_id" in chat.owner) {
-						owner_id = chat.owner._id;
+						owner_id = chat.owner._id.toString();
 					}
-					owner_id = owner_id;
+					owner_id = owner_id.toString();
 					if (JSON.isJSON(chat.recipients[0]) && "_id" in chat.recipients[0]) {
-						recipient_id = chat.recipients[0]._id;
+						recipient_id = chat.recipients[0]._id.toString();
 					}
 					else {
-						recipient_id = chat.recipients[0];
+						recipient_id = chat.recipients[0].toString();
 					}
-					if ((owner_id == auth.user._id && recipients_ids.includes(recipient_id)) || (recipient_id === auth.user._id && recipients_ids.includes(owner_id))) {
+					if ((owner_id.toString() == auth.user._id && recipients_ids.includes(recipient_id)) || (recipient_id === auth.user._id.toString() && recipients_ids.includes(owner_id))) {
 						existsAtIndex = index;
 					}
 				}
@@ -301,13 +301,13 @@ function Chat(props) {
 
 
 			if (existsAtIndex !== -1) {
-				let updatedChats = conversations;
+				let updatedChats = chats;
 				let existingChat = JSON.parse(JSON.stringify(updatedChats[existsAtIndex]));
 				updatedChats.remove(existsAtIndex);
 				updatedChats.unshift(existingChat);
-				setMessagingCache("active_conversation", existingChat);
+				setActiveChat(existingChat);
 				getConversationMessages(existingChat);
-				setMessagingCache("conversations", updatedChats);
+				setChats(updatedChats);
 				setMessagingCache("active_conversation", existingChat);	
 				setDraft({
 						is_reply: false,
@@ -338,7 +338,13 @@ function Chat(props) {
 					type: Array.isArray(recipients)? (recipients.length > 1? "group" : "individual") : "individual",
 				};
 
-				setMessagingCache("active_conversation_messages", []);
+				setActiveChatMessages([]);
+				/*let updatedChats = chats;
+				updatedChats.unshift(newChat);
+				setActiveChat(newChat);
+				setChats(updatedChats);
+
+				console.log("updatedChats", updatedChats);*/
 
 				if (sockets.default) {
 					sockets.default.emit("create-conversation", newChat);
@@ -376,7 +382,7 @@ function Chat(props) {
 			}
 				
 		});
-		setMessagingCache("conversations", currentChats => {
+		setChats(currentChats => {
 			try {
 				let newChats = JSON.parse(JSON.stringify(currentChats));
 				let user_id = user;
@@ -415,7 +421,7 @@ function Chat(props) {
 	}
 
 	const handleOnUserStartedTypingMessage = ({conversation, user}) => {
-		setMessagingCache("conversations", currentChats => {
+		setChats(currentChats => {
 			try {
 				let newChats = JSON.parse(JSON.stringify(currentChats));
 				let user_id = user; 
@@ -432,12 +438,12 @@ function Chat(props) {
 						let typing_users_arr = Array.isArray(chat.typing)? chat.typing : [];
 						let exists = false;
 						typing_users_arr.map(chat_typing_user => {
-							if (!exists && chat_typing_user._id === user_id) {
+							if (!exists && chat_typing_user._id.toString() === user_id.toString()) {
 								exists = true;
 							}
 							
 						});
-						if (!exists  && user_id !== auth.user._id) {
+						if (!exists  && user_id.toString() !== auth.user._id.toString()) {
 							chat.typing = typing_users_arr.concat([user]);
 						}
 					}
@@ -450,8 +456,7 @@ function Chat(props) {
 				
 			
 		});
-
-		setMessagingCache("active_conversation", currentActiveChat => {
+		setActiveChat(currentActiveChat => {
 			if (currentActiveChat) {
 				try {
 					let newCurrentActiveChat = JSON.parse(JSON.stringify(currentActiveChat));
@@ -463,16 +468,16 @@ function Chat(props) {
 						let typing_users_arr = Array.isArray(newCurrentActiveChat.typing)? newCurrentActiveChat.typing : [];
 						let exists = false;
 						typing_users_arr.map(chat_typing_user => {
-							if (!exists && chat_typing_user._id === user_id) {
+							if (!exists && chat_typing_user._id.toString() === user_id.toString()) {
 								exists = true;
 							}
 							
 						});
-						if (!exists && user_id !== auth.user._id) {
+						if (!exists && user_id.toString() !== auth.user._id.toString()) {
 							newCurrentActiveChat.typing = typing_users_arr.concat([user]);
 						}
 					}
-					else if (user_id !== auth.user._id) {
+					else if (user_id.toString() !== auth.user._id.toString()) {
 						newCurrentActiveChat.typing = [user];
 					}
 					
@@ -491,7 +496,7 @@ function Chat(props) {
 	
 
 	const handleOnUserStoppedTypingMessage = ({conversation, user}) => {
-		setMessagingCache("conversations", currentChats => {
+		setChats(currentChats => {
 			try {
 				let newChats = JSON.parse(JSON.stringify(currentChats));
 				let user_id = user; 
@@ -503,10 +508,10 @@ function Chat(props) {
 					chat_id = conversation._id;
 				}
 				newChats.forEach(function(chat) {
-					if (chat._id === chat_id) {
+					if (chat._id.toString() === chat_id.toString()) {
 						let typing_users_arr = Array.isArray(chat.typing)? chat.typing : [];
 						chat.typing = typing_users_arr.filter(chat_typing_user => {
-							return chat_typing_user._id !== user_id
+							return chat_typing_user._id.toString() !== user_id.toString()
 						});
 						if (!Array.isArray(chat.typing)) {
 							chat.typing = []
@@ -521,7 +526,7 @@ function Chat(props) {
 				
 			
 		});
-		setMessagingCache("active_conversation", currentActiveChat => {
+		setActiveChat(currentActiveChat => {
 			if (currentActiveChat) {
 				let user_id = user; 
 				if (JSON.isJSON(user)) {
@@ -531,13 +536,13 @@ function Chat(props) {
 				if (JSON.isJSON(conversation)) {
 					chat_id = conversation._id;
 				}
-				if (chat_id === currentActiveChat._id) {
+				if (chat_id.toString() === currentActiveChat._id.toString()) {
 					try {
 						let newCurrentActiveChat = JSON.parse(JSON.stringify(currentActiveChat));
 
 						let typing_users_arr = Array.isArray(newCurrentActiveChat.typing)? newCurrentActiveChat.typing : [];
 						newCurrentActiveChat.typing = typing_users_arr.filter(chat_typing_user => {
-							return chat_typing_user._id !== user_id
+							return chat_typing_user._id.toString() !== user_id.toString()
 						});
 						if (!Array.isArray(newCurrentActiveChat.typing)) {
 							newCurrentActiveChat.typing = []
@@ -571,9 +576,16 @@ function Chat(props) {
 
 
 
-	/*const handleOnNewMessage = ({conversation, message, user}) => {	
+	const handleOnNewMessage = ({conversation, message, user}) => {	
 		console.log("handleOnNewMessage", message)	
-		setActiveChatMessages(currentChatMessages => {
+		setActiveChat(currentActiveChat => {
+			if (currentActiveChat) {
+				let conversation_id = conversation;
+				if (JSON.isJSON(conversation)) {
+					conversation_id = conversation._id;
+				}
+				if (conversation_id.toString() === currentActiveChat._id.toString()) {
+					setActiveChatMessages(currentChatMessages => {
 						try {
 							let newChatMessages = JSON.parse(JSON.stringify(currentChatMessages));
 
@@ -583,15 +595,7 @@ function Chat(props) {
 							console.error(err);
 							return currentChatMessages;
 						}
-		});
-		setMessagingCache("active_conversation", currentActiveChat => {
-			if (currentActiveChat) {
-				let conversation_id = conversation;
-				if (JSON.isJSON(conversation)) {
-					conversation_id = conversation._id;
-				}
-				if (conversation_id === currentActiveChat._id) {
-					
+					});
 				}
 			}
 			return currentActiveChat;
@@ -601,7 +605,7 @@ function Chat(props) {
 
 	const handleOnMessageSent = ({conversation, message, user}) => {	
 		console.log("handleOnMessageSent", message)	
-		setMessagingCache("active_conversation", currentActiveChat => {
+		setActiveChat(currentActiveChat => {
 			if (currentActiveChat) {
 				let conversation_id = conversation;
 				if (JSON.isJSON(conversation)) {
@@ -611,7 +615,7 @@ function Chat(props) {
 				if (JSON.isJSON(message)) {
 					message_id = message._id;
 				}
-				if (conversation_id === currentActiveChat._id) {
+				if (conversation_id.toString() === currentActiveChat._id.toString()) {
 					setActiveChatMessages(currentChatMessages => {
 						try {
 							let newChatMessages = JSON.parse(JSON.stringify(currentChatMessages));
@@ -630,7 +634,7 @@ function Chat(props) {
 			return currentActiveChat;
 		});
 		
-	}*/
+	}
 
 	const handleOnChangeDraftType= (type) => {
 		setDraft(currentDraft => {
@@ -647,11 +651,27 @@ function Chat(props) {
 
 	const handleOnConversationMessages = ({conversation, messages}) => {
 		setLoadingActiveChatMessages(false);
-		setMessagingCache("active_conversation_messages", messages);
+		setActiveChatMessages(messages);
 	}
 
 	const handleOnConversationCreated = (conversation) => {
-		
+		setChats(currentChats => {
+			try {
+				let newChats = JSON.parse(JSON.stringify(currentChats));
+				if (Array.isArray(newChats)) {
+					newChats.map(chat =>{
+						if (chat._id.toString() === conversation._id.toString()) {
+							setActiveChat(chat);
+						}
+					});
+				}			
+				return newChats;
+			} catch(err) {
+				console.error(err);
+				return currentChats;
+			}
+		})
+		setActiveChat(conversation)
 	}
 
 	
@@ -659,7 +679,7 @@ function Chat(props) {
 	const getConversationMessages = (conversation) => {
 		if (conversation) {
 			setLoadingActiveChatMessages(true);
-			setMessagingCache("active_conversation_messages", []);	
+			setActiveChatMessages([]);	
 			if (sockets.default) {
 				sockets.default.emit("get-conversation-messages", {conversation: conversation._id, user: auth.user});
 			}
@@ -670,7 +690,7 @@ function Chat(props) {
 	}
 
 	const handleOnSendMessage = (messageToSend) => {
-		if (active_conversation) {
+		if (activeChat) {
 			let newMessage = { ...draft, sender: auth.user, created_on: new Date()};
 			if (messageToSend) {			
 				if (JSON.isJSON(messageToSend)) {
@@ -682,7 +702,7 @@ function Chat(props) {
 			}
 
 			if (!String.isEmpty(newMessage.content) || (["audio", "file", "video", "image"].includes(newMessage.type) && (Array.isArray(newMessage.attachments)? (newMessage.attachments.length > 0) : false))) {
-					sockets.default.emit("send-message", {message: newMessage, conversation: active_conversation, user: auth.user});
+					sockets.default.emit("send-message", {message: newMessage, conversation: activeChat, user: auth.user});
 										if (textInputRef.current) {
 											textInputRef.current.value = "";
 											textInputRef.current.focus();
@@ -694,7 +714,7 @@ function Chat(props) {
 											reply_for: null,
 											type: "text",
 											content: "",
-											conversation: active_conversation._id,
+											conversation: activeChat._id,
 										});
 				
 			}
@@ -715,7 +735,7 @@ function Chat(props) {
 				newMessageValue = "";
 			}
 			if (!String.isEmpty(newMessageValue)) {
-				sockets.default.emit("stopped-typing-message", {conversation: active_conversation._id, user: auth.user});
+				sockets.default.emit("stopped-typing-message", {conversation: activeChat._id, user: auth.user});
 				handleOnSendMessage(newMessageValue);
 			}
 				
@@ -727,12 +747,12 @@ function Chat(props) {
 	}
 
 	const handleOnMessageDeletedForUser = ({ message, user }) => {
-		setMessagingCache("active_conversation_messages", currentActiveChatMessages =>{
+		setActiveChatMessages(currentActiveChatMessages =>{
 			try {
 				let newActiveChatMessages = JSON.parse(JSON.stringify(currentActiveChatMessages));
 				if (Array.isArray(newActiveChatMessages)) {
 					newActiveChatMessages.forEach(activeChatMessage => {
-						if (activeChatMessage._id === message._id) {
+						if (activeChatMessage._id.toString() === message._id.toString()) {
 							activeChatMessage.state = message.state;
 						}
 					});
@@ -747,12 +767,12 @@ function Chat(props) {
 	}
 
 	const handleOnMessageDeletedForAll = ({ message, user }) => {
-		setMessagingCache("active_conversation_messages", currentActiveChatMessages =>{
+		setActiveChatMessages(currentActiveChatMessages =>{
 			try {
 				let newActiveChatMessages = JSON.parse(JSON.stringify(currentActiveChatMessages));
 				if (Array.isArray(newActiveChatMessages)) {
 					newActiveChatMessages.forEach(activeChatMessage => {
-						if (activeChatMessage._id === message._id) {
+						if (activeChatMessage._id.toString() === message._id.toString()) {
 							activeChatMessage.state = message.state;
 						}
 					});
@@ -767,12 +787,12 @@ function Chat(props) {
 	}
 
 	const handleOnMessageStateChangedBySocketAction = ({ message, user }) => {
-		setMessagingCache("active_conversation_messages", currentActiveChatMessages =>{
+		setActiveChatMessages(currentActiveChatMessages =>{
 			try {
 				let newActiveChatMessages = JSON.parse(JSON.stringify(currentActiveChatMessages));
 				if (Array.isArray(newActiveChatMessages)) {
 					newActiveChatMessages.forEach(activeChatMessage => {
-						if (activeChatMessage._id === message._id) {
+						if (activeChatMessage._id.toString() === message._id.toString()) {
 							activeChatMessage.state = message.state;
 						}
 					});
@@ -787,18 +807,36 @@ function Chat(props) {
 	
 
 
-	/*useEffect(() => {
+	useEffect(() => {
 		setChats(conversations);
-	}, [conversations]);*/
+	}, [conversations]);
 
 	useEffect(() => {
-		if (active_conversation && firstLoad) {
-			getConversationMessages(active_conversation);
-			setFirstLoad(false);
+		if (active_conversation && activeChat) {
+			if (active_conversation._id.toString() !== activeChat._id.toString() || firstLoad) {
+				if (!firstLoad) {
+					let newActiveChat = JSON.fromJSON(activeChat);
+					newActiveChat.typing = [];
+					setMessagingCache("active_conversation", newActiveChat);
+				}
+				else {
+					setFirstLoad(false);					
+				}
+				getConversationMessages(activeChat);
+			}
 			
 		}
+		else if (activeChat && !active_conversation) {
+			let newActiveChat = JSON.fromJSON(activeChat);
+			newActiveChat.typing = [];
+			setMessagingCache("active_conversation", newActiveChat);
+			getConversationMessages(activeChat);
+		}
+		else if (!activeChat && active_conversation) {
+			setMessagingCache("active_conversation", false);
+		}
 			
-	}, [active_conversation, firstLoad]);
+	}, [active_conversation, sockets, activeChat, firstLoad]);
 
 	/*useEffect(() => {
 
@@ -829,7 +867,7 @@ function Chat(props) {
 			console.log("location withRecipient", withRecipient);	
 			if (!String.isEmpty(withRecipient)) {
 				cacheContacts.map(cacheContact => {
-					if (cacheContact._id === withRecipient) {
+					if (cacheContact._id.toString() === withRecipient) {
 						handleNewChat(cacheContact);
 					}
 				});
@@ -844,9 +882,9 @@ function Chat(props) {
 	}, [cacheContacts]);
 
 	useEffect(() => {
-		if (Array.isArray(conversations)) {
+		if (Array.isArray(chats)) {
 			let newIndividualConversationsRecipients = [];
-			conversations.map(chat => {
+			chats.map(chat => {
 				if (chat.type === "individual") {
 					let chat_owner_id = chat.owner;
 					if (JSON.isJSON(chat.owner)) {
@@ -869,7 +907,7 @@ function Chat(props) {
 			});
 			setIndividualConversationsRecipients(newIndividualConversationsRecipients);
 		}			
-	}, [conversations]);
+	}, [chats]);
 
 	useEffect(() => {
 		loadContacts();
@@ -885,8 +923,9 @@ function Chat(props) {
 			sockets.default.on("message-typing-started", handleOnUserStartedTypingMessage);
 			sockets.default.on("message-typing-stopped", handleOnUserStoppedTypingMessage);
 			sockets.default.on("conversation-messages", handleOnConversationMessages);
-			/*sockets.default.on("new-message", handleOnNewMessage);
-			sockets.default.on("message-sent", handleOnMessageSent);*/
+			sockets.default.on("new-message", handleOnNewMessage);
+			sockets.default.on("conversation-created", handleOnConversationCreated);
+			sockets.default.on("message-sent", handleOnMessageSent);
 			sockets.default.on("messages-deleted-for-user", handleOnMessageDeletedForUser);
 			sockets.default.on("messages-deleted-for-all", handleOnMessageDeletedForAll);
 			sockets.default.on("message-marked-as-received", handleOnMessageStateChangedBySocketAction);
@@ -907,8 +946,8 @@ function Chat(props) {
 				sockets.default.off("message-typing-started", handleOnUserStartedTypingMessage);
 				sockets.default.off("message-typing-stopped", handleOnUserStoppedTypingMessage);
 				sockets.default.off("conversation-messages", handleOnConversationMessages);
-				/*sockets.default.off("new-message", handleOnNewMessage);
-				sockets.default.off("message-sent", handleOnMessageSent);*/
+				sockets.default.off("new-message", handleOnNewMessage);
+				sockets.default.off("message-sent", handleOnMessageSent);
 				sockets.default.off("messages-deleted-for-user", handleOnMessageDeletedForUser);
 				sockets.default.off("messages-deleted-for-all", handleOnMessageDeletedForAll);
 				sockets.default.off("delete-conversation-for-user-error", handleSocketActionError);
@@ -929,29 +968,26 @@ function Chat(props) {
 		<Paper className={classNames({"p-0 m-0 relative": true, [classes.root] : true, [className]: true})} >
 			<AppBar position="absolute" color="transparent" className={classes.mainAppBar}>
 				<Toolbar>
-					{active_conversation && <IconButton 
-						onClick={()=>{
-							setMessagingCache("active_conversation", false);
-							setMessagingCache("active_conversation_messages", []);	
-						}}
+					{activeChat && <IconButton 
+						onClick={()=>setActiveChat(false)}
 						className={"mr-2"}
 						edge="start" 
 						color="inherit" 
-						aria-label="back-to-conversations"
+						aria-label="back-to-chats"
 					>
 						<ArrowBackIcon />
 					</IconButton>}
-					{active_conversation && (active_conversation.type == "individual"? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && active_conversation.participants[0].avatar? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.participants[0].avatar)} />) : (active_conversation.started_by.avatar? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.started_by.avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>))) : (active_conversation.group_avatar? (<Avatar className={"mr-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {active_conversation.type === "group"? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
-					{active_conversation && <Typography variant="h6" className={"capitalize flex-grow"}>
-						{active_conversation.type == "individual"? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner)? (active_conversation.participants[0].first_name +" "+active_conversation.participants[0].last_name) : (active_conversation.started_by.first_name +" "+active_conversation.started_by.last_name)) : (active_conversation.type == "group"? active_conversation.group_name : "Realfield")}
+					{activeChat && (activeChat.type == "individual"? ((auth.user._id === activeChat.owner._id || auth.user._id === activeChat.owner) && activeChat.participants[0].avatar? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(activeChat.participants[0].avatar)} />) : (activeChat.started_by.avatar? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(activeChat.started_by.avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>))) : (activeChat.group_avatar? (<Avatar className={"mr-6"} src={AttachmentsService.getAttachmentFileUrl(activeChat.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {activeChat.type === "group"? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
+					{activeChat && <Typography variant="h6" className={"capitalize flex-grow"}>
+						{activeChat.type == "individual"? ((auth.user._id === activeChat.owner._id || auth.user._id === activeChat.owner)? (activeChat.participants[0].first_name +" "+activeChat.participants[0].last_name) : (activeChat.started_by.first_name +" "+activeChat.started_by.last_name)) : (activeChat.type == "group"? activeChat.group_name : "Realfield")}
 					</Typography>}
 
-					{!active_conversation && <Typography variant="h6" className={"capitalize flex-grow"}>
+					{!activeChat && <Typography variant="h6" className={"capitalize flex-grow"}>
 						Conversations
 					</Typography>}
 
 
-					{(!active_conversation && !contactsDrawerOpen) && <IconButton 
+					{(!activeChat && !contactsDrawerOpen) && <IconButton 
 						onClick={()=>setContactsDrawerOpen(true)}
 						className={"mr-2"}
 						edge="end" 
@@ -1055,7 +1091,7 @@ function Chat(props) {
 
 							{(Array.isArray(contacts) && !loadingContacts) && <List className={classes.list}>
 								{contacts.map((contact, cursor)=> (
-									contact._id !== auth.user._id && <ListItem 
+									contact._id.toString() !== auth.user._id.toString() && <ListItem 
 										className={"px-8 "} 
 										key={"contact-"+cursor}
 										onClick={() => {
@@ -1096,10 +1132,10 @@ function Chat(props) {
 
 				</ScrollBars>
 			</SwipeableDrawer>
-			{!active_conversation && <GridItem md={12} className={"flex flex-col relative min-h-full p-0"}>					
+			{!activeChat && <GridItem md={12} className={"flex flex-col relative min-h-full p-0"}>					
 						<Paper square className={classes.paper}>
 							<ScrollBars className={classes.bodyWrapper}>
-							{(loadingConversations && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
+							{(loadingConversations && (!Array.isArray(chats) || (Array.isArray(chats) && chats.length === 0))) && <GridContainer>
 								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
@@ -1173,7 +1209,7 @@ function Chat(props) {
 								</GridItem>
 							</GridContainer>}
 
-							{(!loadingConversations && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
+							{(!loadingConversations && (!Array.isArray(chats) || (Array.isArray(chats) && chats.length === 0))) && <GridContainer>
 								<GridItem md={12} className={"flex flex-col items-center relative p-0 px-4 my-4"}>
 									<Typography variant="subtitle1" color="textSecondary" className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center" style={{color: theme.palette.text.disabled, background: theme.palette.background.default}}>
 										<ForumOutlinedIcon fontSize="inherit"/>
@@ -1184,8 +1220,8 @@ function Chat(props) {
 								</GridItem>
 							</GridContainer>}
 
-							{(Array.isArray(conversations) && !loadingConversations) && <List className={classes.list}>
-							{conversations.map((chat, index)=> {
+							{(Array.isArray(chats) && !loadingConversations) && <List className={classes.list}>
+							{chats.map((chat, index)=> {
 								let primaryText = "";
 								let chatUser = false;
 								let avatar = false;
@@ -1194,22 +1230,22 @@ function Chat(props) {
 								let last_message_sender_name = false;
 								if (chat.state.total > 0 && chat.state.last_message) {
 									last_message_content = chat.state.last_message.content;
-									if (chat.state.last_message.sender === auth.user._id) {
+									if (chat.state.last_message.sender.toString() === auth.user._id.toString()) {
 										last_message_sender_name = "You";
 									}
-									else if (chat.owner === chat.state.last_message.sender) {
+									else if (chat.owner.toString() === chat.state.last_message.sender.toString()) {
 										last_message_sender_name = chat.started_by.first_name;
 									}
 									else{
 										if (Array.isArray(chat.participants)) {
 											chat.participants.map(participant => {
-												if (participant._id === chat.state.last_message.sender) {
+												if (participant._id.toString() === chat.state.last_message.sender.toString()) {
 													last_message_sender_name = participant.first_name;
 												}
 											});
 										}											
 									}
-									if ((chat.state.last_message.state === "deleted-for-sender" && chat.state.last_message.sender._id === auth.user._id) || chat.state.last_message.state === "deleted-for-all") {
+									if ((chat.state.last_message.state === "deleted-for-sender" && chat.state.last_message.sender._id.toString() === auth.user._id.toString()) || chat.state.last_message.state === "deleted-for-all") {
 										last_message_deleted = true;
 									}
 								}
@@ -1244,8 +1280,7 @@ function Chat(props) {
 									<ListItem 
 										className={"px-8 content-between"} 
 										onClick={(event)=> {
-											setMessagingCache("active_conversation", chat);	
-											getConversationMessages(chat);			
+											setActiveChat(chat);				
 										}}										
 										onContextMenu={handleContextOpen("conversation", chat)}
 										key={"chat-"+index}
@@ -1303,9 +1338,9 @@ function Chat(props) {
 														</div>}
 
 														{!last_message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.text.disabled}}>
-															{(chat.state.last_message.state === "sent" && chat.state.last_message.sender === auth.user._id) && <DoneIcon className={"mx-1 text-xs"} fontSize="small"/>}
-															{((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && chat.state.last_message.sender === auth.user._id) && <DoneAllIcon className={"mx-1 text-xs"} fontSize="small"/>}
-															{((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && chat.state.last_message.sender === auth.user._id) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small"/>}
+															{(chat.state.last_message.state === "sent" && chat.state.last_message.sender.toString() === auth.user._id.toString()) && <DoneIcon className={"mx-1 text-xs"} fontSize="small"/>}
+															{((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && chat.state.last_message.sender.toString() === auth.user._id.toString()) && <DoneAllIcon className={"mx-1 text-xs"} fontSize="small"/>}
+															{((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && chat.state.last_message.sender.toString() === auth.user._id.toString()) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small"/>}
 														</div>}
 													</div>}
 													{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <Typography variant="body2" color="secondary" className="mx-2">
@@ -1365,7 +1400,7 @@ function Chat(props) {
 						</AppBar>
 			</GridItem>}
 
-			{active_conversation && <Paper square elevation={0} className={classes.chatPaperWrapper}>
+			{activeChat && <Paper square elevation={0} className={classes.chatPaperWrapper}>
 				<GridItem md={12} className="h-full p-0 flex flex-col relative">
 					{!["audio", "file", "video", "image"].includes(draft.type) && <ScrollBars 
 						className={"flex-grow "+classes.chatScrollWrapper} 
@@ -1374,16 +1409,16 @@ function Chat(props) {
 						ref={messagesWrapperRef}
 					>
 						<GridContainer className="px-4">
-							{active_conversation_messages.map((activeChatMessage, cursor) =>{
+							{activeChatMessages.map((activeChatMessage, cursor) =>{
 								let message_deleted = false;
 								let show_message = true;
 								if (cursor > 0) {
-									if (active_conversation_messages[cursor]._id === active_conversation_messages[(cursor - 1)]._id) {
+									if (activeChatMessages[cursor]._id.toString() === activeChatMessages[(cursor - 1)]._id.toString()) {
 										show_message = false;
 									}
 								}
 								if (activeChatMessage && show_message) {
-									if ((activeChatMessage.state === "deleted-for-sender" && activeChatMessage.sender._id === auth.user._id) || activeChatMessage.state === "deleted-for-all") {
+									if ((activeChatMessage.state === "deleted-for-sender" && activeChatMessage.sender._id.toString() === auth.user._id.toString()) || activeChatMessage.state === "deleted-for-all") {
 										message_deleted = true;
 									}
 									return (
@@ -1391,7 +1426,7 @@ function Chat(props) {
 											xs={12} 
 											className={"flex p-0 py-1 "+(activeChatMessage.sender._id === auth.user._id? "flex-row-reverse" : "flex-row")}
 											id={"message-"+activeChatMessage._id}
-											key={"conversation-"+active_conversation._id+"-message-"+cursor}
+											key={"conversation-"+activeChat._id+"-message-"+cursor}
 										>
 											{ activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(activeChatMessage.sender.avatar)} />}
 											{!activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar}>
@@ -1402,17 +1437,17 @@ function Chat(props) {
 												className={"p-2 mx-4  flex flex-col px-4 "+(activeChatMessage.sender._id === auth.user._id? ("bg-green-200 "+classes.chatBubbleLocal) : ("bg-white "+classes.chatBubbleExternal))}
 												onViewportVisibilityChange={(inViewport) => {
 													if (inViewport && sockets.default) {
-														if (activeChatMessage.state === "sent" && activeChatMessage.sender._id !== auth.user._id) {
+														if (activeChatMessage.state === "sent" && activeChatMessage.sender._id.toString() !== auth.user._id.toString()) {
 															sockets.default.emit("mark-message-as-received", {message: activeChatMessage, user: auth.user});
 														}
-														else if ((activeChatMessage.state === "received" || activeChatMessage.state === "partially-received") && activeChatMessage.sender._id !== auth.user._id) {
+														else if ((activeChatMessage.state === "received" || activeChatMessage.state === "partially-received") && activeChatMessage.sender._id.toString() !== auth.user._id.toString()) {
 															sockets.default.emit("mark-message-as-read", {message: activeChatMessage, user: auth.user});
 														}
 													}
 													
 												}}
 											>
-												{(!message_deleted && JSON.isJSON(activeChatMessage.sender)) && <div className={"flex flex-row w-full items-center mb-1"}>
+												{!message_deleted && <div className={"flex flex-row w-full items-center mb-1"}>
 													<Typography variant="body1" className={"flex-grow text-gray-500 font-bold"}>
 														{activeChatMessage.sender.first_name+" "+activeChatMessage.sender.last_name}
 													</Typography>
@@ -1461,9 +1496,9 @@ function Chat(props) {
 													<Typography variant="body2" className={"text-xs flex-grow"}>
 														{activeChatMessage.created_on instanceof Date? activeChatMessage.created_on.toLocaleString() : activeChatMessage.created_on}
 													</Typography>
-													{(activeChatMessage.state === "sent" && activeChatMessage.sender._id === auth.user._id) && <DoneIcon className={"mx-2"} fontSize="small"/>}
-													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && activeChatMessage.sender._id === auth.user._id) && <DoneAllIcon className={"mx-2"} fontSize="small"/>}
-													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && activeChatMessage.sender._id === auth.user._id) && <DoneAllIcon className={"mx-2"} color={"secondary"} fontSize="small"/>}
+													{(activeChatMessage.state === "sent" && activeChatMessage.sender._id.toString() === auth.user._id.toString()) && <DoneIcon className={"mx-2"} fontSize="small"/>}
+													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && activeChatMessage.sender._id.toString() === auth.user._id.toString()) && <DoneAllIcon className={"mx-2"} fontSize="small"/>}
+													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && activeChatMessage.sender._id.toString() === auth.user._id.toString()) && <DoneAllIcon className={"mx-2"} color={"secondary"} fontSize="small"/>}
 												</div>}
 											</ViewPortSensor>
 										</GridItem>
@@ -1472,7 +1507,7 @@ function Chat(props) {
 									
 							})}
 
-							{(Array.isArray(active_conversation.typing)? (active_conversation.typing.length > 0) : false) && <GridItem xs={12} className={"flex p-0 py-1 flex-row"} >
+							{(Array.isArray(activeChat.typing)? (activeChat.typing.length > 0) : false) && <GridItem xs={12} className={"flex p-0 py-1 flex-row"} >
 									<div  className={classes.avatar}> </div>
 									<div  className={"p-2 mx-4  flex flex-col px-4  rounded-full"}>
 										<div  className={classes.typing_loader}></div>
@@ -1561,30 +1596,30 @@ function Chat(props) {
 								multiline
 								rows={2}
 								onBlur={()=>{
-									if (active_conversation._id && sockets.default) {
-										sockets.default.emit("stopped-typing-message", {conversation: active_conversation._id, user: auth.user});
+									if (activeChat._id && sockets.default) {
+										sockets.default.emit("stopped-typing-message", {conversation: activeChat._id, user: auth.user});
 										
 									}
 								}}
 								onFocus={()=>{
-									if (active_conversation._id && sockets.default) {
-										sockets.default.emit("started-typing-message", {conversation: active_conversation._id, user: auth.user});										
+									if (activeChat._id && sockets.default) {
+										sockets.default.emit("started-typing-message", {conversation: activeChat._id, user: auth.user});										
 									}
 								}}
-								defaultValue={active_conversation._id === draft.conversation? draft.content : undefined}
+								defaultValue={activeChat._id === draft.conversation? draft.content : undefined}
 								onChange={(new_value)=>{
-									if (active_conversation._id && !String.isEmpty(new_value)) {
+									if (activeChat._id && !String.isEmpty(new_value)) {
 										
 										setDraft(currentDraft => {
 											try {
 												let newDraft = {
 														content: new_value,
-														conversation: active_conversation._id,
+														conversation: activeChat._id,
 													}
 												if (JSON.isJSON(currentDraft)) {
 													newDraft = JSON.parse(JSON.stringify(currentDraft));
 													newDraft.content = new_value;
-													newDraft.conversation = active_conversation._id;
+													newDraft.conversation = activeChat._id;
 												}
 												return newDraft;												
 												
@@ -1625,7 +1660,7 @@ function Chat(props) {
 					}
 				  >
 					{contextMenu.type === "conversation" && <MenuItem onClick={(event)=>{
-						setMessagingCache("active_conversation", contextMenu.entry);
+						setActiveChat(contextMenu.entry);
 						handleContextClose(event);
 					}}>Open Conversation</MenuItem>}
 					{contextMenu.type === "conversation" && <MenuItem 
@@ -1653,7 +1688,7 @@ function Chat(props) {
 								sender: auth.user,
 								reply_for: contextMenu.entry,
 								content: "",
-								conversation: active_conversation._id,
+								conversation: activeChat._id,
 							});
 							if (textInputRef.current) {
 								textInputRef.current.value = "";
@@ -1690,7 +1725,7 @@ function Chat(props) {
 
 		{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
 	        <Alert onClose={() => setError(false)} severity="error">
-				{error}
+				{error.toString()}
 	        </Alert>
 		</Snackbar>}
 
