@@ -119,7 +119,8 @@ function Chat(props) {
 	const [loadingActiveChatMessages, setLoadingActiveChatMessages] = useState(false);
 	const [locationHasWith, setLocationHasWith] = useState(false);
 	const [firstLoad, setFirstLoad] = useState(true);
-	
+	const [searchKeyword, setSearchKeyword] = useState(false);
+
 
 	const attachmentActions = [
 		{ icon: <ImageOutlinedIcon />, name: 'image', label: 'Image', color: theme.palette.error.main },
@@ -345,10 +346,7 @@ function Chat(props) {
 				}
 				
 			}
-
-				
 		}
-			
 	}
 
 	const handleRefresh = () => {
@@ -977,9 +975,21 @@ function Chat(props) {
 					<IconButton className={"mx-2"} color="inherit">
 						<ContactsIcon />
 					</IconButton>
-					<Typography variant="subtitle1" color="inherit" className="flex-grow">
-						Contacts
-					</Typography>
+
+					<TextInput
+								variant={"outlined"}
+								defaultValue={active_conversation._id === draft.conversation? draft.content : undefined}
+								onChange={(new_value)=>{
+									if (!String.isEmpty(new_value)) {
+										setSearchKeyword(new_value);
+									}
+									else {
+										setSearchKeyword(false);
+									}
+								}}
+								placeholder="Search..."
+								label="Search"
+							/>
 
 					<IconButton className={"mx-2"} color="inherit" onClick={()=>setContactsDrawerOpen(false)}>
 						{theme.direction === 'ltr' ?  <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -1054,44 +1064,58 @@ function Chat(props) {
 							</GridContainer>}
 
 							{(Array.isArray(contacts) && !loadingContacts) && <List className={classes.list}>
-								{contacts.map((contact, cursor)=> (
-									contact._id !== auth.user._id && <ListItem 
-										className={"px-8 "} 
-										key={"contact-"+cursor}
-										onClick={() => {
-											handleNewChat(contact);
-										}}
-										button
-									>
-										<ListItemAvatar>
-											<Badge 
-												variant="dot" 
-												badgeContent=" "
-												anchorOrigin={{
-													vertical: 'bottom',
-													horizontal: 'right',
-												}}
-												classes={{
-													dot: contact.presence === "online"? "bg-green-600" : (contact.presence == "away"? "bg-orange-500" : "bg-gray-500")
-												}}
-											>
-												{ contact.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(contact.avatar)} />}
-												{!contact.avatar && <Avatar className={classes.contactAvatar}>
-													<PersonIcon />
-												</Avatar>}
-											</Badge>
-										</ListItemAvatar>
+								{contacts.map((contact, cursor)=> {
+									let includeContact = true;
+									if (String.isString(searchKeyword)) {
+										try {
+											let contactValuesStr = contact.first_name+"" + contact.first_name+" "+contact.email_address;
+											let searchKeywordPosition = contactValuesStr.toLowerCase().search(searchKeyword.toLowerCase());
+											if (searchKeywordPosition === -1) {
+												includeContact = false;
+											}
+										} catch(err) {
+											includeContact = true;
+										}
+									}
+									return (
+										includeContact && contact._id !== auth.user._id && <ListItem 
+											className={"px-8 "} 
+											key={"contact-"+cursor}
+											onClick={() => {
+												handleNewChat(contact);
+											}}
+											button
+										>
+											<ListItemAvatar>
+												<Badge 
+													variant="dot" 
+													badgeContent=" "
+													anchorOrigin={{
+														vertical: 'bottom',
+														horizontal: 'right',
+													}}
+													classes={{
+														dot: contact.presence === "online"? "bg-green-600" : (contact.presence == "away"? "bg-orange-500" : "bg-gray-500")
+													}}
+												>
+													{ contact.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(contact.avatar)} />}
+													{!contact.avatar && <Avatar className={classes.contactAvatar}>
+														<PersonIcon />
+													</Avatar>}
+												</Badge>
+											</ListItemAvatar>
 
-										<ListItemText 
-											className="flex flex-col justify-center"
-											primary={(
-												<Typography variant="body1" color="textPrimary" className={"capitalize font-bold"}>
-													{contact.first_name+" "+contact.last_name}
-												</Typography>
-											)} 
-										/>
-									</ListItem>
-								))}
+											<ListItemText 
+												className="flex flex-col justify-center"
+												primary={(
+													<Typography variant="body1" color="textPrimary" className={"capitalize font-bold"}>
+														{contact.first_name+" "+contact.last_name}
+													</Typography>
+												)} 
+											/>
+										</ListItem>
+									);
+								})}
 							</List>}
 
 				</ScrollBars>
