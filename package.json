@@ -4,7 +4,7 @@
   "private": true,
   "description": "Realfield Web",
   "main": "index.js",
-  "homepage": "https://preview.realfield.io/",
+  "homepage": "https://realfield.io/",
   "author": "Mutugi Riungu",
   "dependencies": {
     "@builder.io/react": "^1.0.97",

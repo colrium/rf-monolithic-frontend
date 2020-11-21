@@ -533,7 +533,7 @@ class GoogleMapOverview extends React.Component {
 										{Object.entries(clients_positions).map(([socketId, client_position], index) => (
 											client_position.user && <ListItem className={"cursor-pointer hover:bg-gray-400"} onClick={this.handleClientListItemClick(socketId, client_position)} key={"client-"+socketId}>
 												<ListItemAvatar>
-													<Avatar src={client_position.user.gender==="female"? client_user_female_icon : client_user_male_icon} /> 
+													<Avatar src={(String.isString(client_position.user.gender)? (client_position.user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon)} /> 
 													{/* client_position.user.gender? ( 
 														<Avatar src={ services.attachments.getAttachmentFileUrl(client_position.user.avatar) } /> 
 														) : ( 

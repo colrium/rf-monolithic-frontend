@@ -677,7 +677,7 @@ class TableView extends React.Component {
 								</GridItem>
 					</GridContainer> }
 
-					{(!api.busy && defination.name in cache.res) && <GridContainer className="p-0 m-0">
+					{Array.isArray(this.state.records) && <GridContainer className="p-0 m-0">
 						<GridContainer className="p-0 m-0">
 							<GridItem className="p-0 m-0" xs={12}>
 								{/* this.state.actionsView === "contextMenu" && <Menu											
@@ -692,9 +692,7 @@ class TableView extends React.Component {
 											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Email</MenuItem>
 										</Menu> */}
 
-								{defination && 
-								Array.isArray(this.state.records) &&
-								this.state.records.length > 0 ? (
+								{this.state.records.length > 0 ? (
 									<MUIDataTable
 										title={
 											(api.loading ? "Loading " : "") +

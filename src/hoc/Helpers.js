@@ -389,10 +389,10 @@ class ServiceData {
 			} else if (Utilities.isOfType(entry[column], "array")) {
 				resolve = [];
 				for (var x = 0; x < entry[column].length; x++) {
-					let item_value = entry[column][x][resolves.value];
+					let item_value = "";
 					let item_resolve = "";
 					if (
-						Utilities.isOfType(primary_resolves, "array") &&
+						entry[column][x] && Array.isArray(primary_resolves) &&
 						primary_resolves.length > 0
 					) {
 						let primary_resolve_value = "";

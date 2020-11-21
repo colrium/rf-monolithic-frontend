@@ -160,7 +160,17 @@ function Chat(props) {
 				setLoadingConversations(false);					
 			}).catch(e => {
 				console.log("conversations e", e);
-				setError(e);
+				let errorMsg = e;
+				if (JSON.isJSON(e)) {
+					if ("msg" in e) {
+						errorMsg = e.msg;
+					}
+					else {
+						errorMsg = JSON.stringify(e);
+					}
+				}
+				
+				setError(errorMsg);
 				setLoadingConversations(false);
 			});
 		}
@@ -186,7 +196,17 @@ function Chat(props) {
 				setLoadingContacts(false);					
 			}).catch(e => {
 				console.log("contacts e", e);
-				setError(e);
+				let errorMsg = e;
+				if (JSON.isJSON(e)) {
+					if ("msg" in e) {
+						errorMsg = e.msg;
+					}
+					else {
+						errorMsg = JSON.stringify(e);
+					}
+				}
+				
+				setError(errorMsg);
 				setLoadingContacts(false);
 			});
 		}

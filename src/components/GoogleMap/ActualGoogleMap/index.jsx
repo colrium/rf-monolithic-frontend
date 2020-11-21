@@ -391,7 +391,7 @@ export default compose(
 				_clientsPositions[socketId].marker = new google.maps.Marker({
 										position: {lat: data.position.latitude, lng: data.position.longitude },
 										title: user.first_name+" "+user.last_name,
-										icon:{url: data.user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation:data.position.heading },
+										icon:{url: (String.isString(data.user.gender)? (data.user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon), scaledSize: { width: 32, height: 32 }, rotation:data.position.heading },
 										onClick: handleOnPressMarker(socketId, data),
 										map: getGoogleMapContextElement(),
 									});
@@ -470,7 +470,7 @@ export default compose(
 		_clientsPositions[socketId].marker = new google.maps.Marker({
 										position: {lat: data.position.latitude, lng: data.position.longitude },
 										title: user.first_name+" "+user.last_name,
-										icon:{url: data.user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation:data.position.heading },
+										icon:{url: (String.isString(data.user.gender)? (data.user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon), scaledSize: { width: 32, height: 32 }, rotation:data.position.heading },
 										onClick: handleOnPressMarker(socketId, data),
 										map: getGoogleMapContextElement(),
 
@@ -493,7 +493,7 @@ export default compose(
 					let marker = new google.maps.Marker({
 												position: {lat: position.latitude, lng: position.longitude },
 												title: user.first_name+" "+user.last_name,
-												icon:{url: user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation: position.heading },
+												icon:{url: (String.isString(data.user.gender)? (data.user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon), scaledSize: { width: 32, height: 32 }, rotation: position.heading },
 												onClick: handleOnPressMarker(socketId, data),
 												map: getGoogleMapContextElement(),
 											});
@@ -576,7 +576,7 @@ export default compose(
 									marker = new google.maps.Marker({
 										position: {lat: position.latitude, lng: position.longitude },
 										title: user.first_name+" "+user.last_name,
-										icon:{url: user.gender==="female"? client_user_female_icon : client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation:position.heading },
+										icon:{url: (String.isString(user.gender)? (user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon), scaledSize: { width: 32, height: 32 }, rotation:position.heading },
 										onClick: handleOnPressMarker(socketId, clientData),
 										duration: 250,
 									});

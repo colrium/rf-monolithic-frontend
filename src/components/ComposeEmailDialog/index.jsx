@@ -8,6 +8,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -37,6 +39,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const Alert = (props) => {
+	return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 function ComposeEmailDialog(props) {
 	const { classes, cache: { emailing : { popup_open, recipient_address, recipient_name, cc, bcc, subject, content, context, record} }, apiCallRequest, setEmailingCache, clearEmailingCache} = props;
 
@@ -48,11 +54,48 @@ function ComposeEmailDialog(props) {
 	const [emailContext, setEmailContext] = useState(context); 
 	const [emailRecord, setEmailRecord] = useState(record); 
 	const [canSend, setCanSend] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
+	const [error, setError] = useState(false);
+	const [alert, setAlert] = useState(false);
 	const [hasCC, setHasCC] = useState(!String.isEmpty(cc)); 
 	const [hasBCC, setHasBCC] = useState(!String.isEmpty(bcc)); 
 
 	const handleSendEmail = () => {
-		setEmailingCache("popup_open", false)
+		setSubmitting(true);
+		setAlert(false);
+		setError(false);
+		apiCallRequest( "emails",
+					{
+						uri: "/emails",
+						type: "create",
+						params: {p: "1"},
+						data: {
+							folder: "outbox",
+							subject: emailSubject,
+							recipient_address: emailRecipientAddress,
+							cc: emailCC,
+							bcc: emailBCC,
+							content: emailContent,							
+							context: emailContext,
+							record: emailRecord,
+							attachments: null,
+						},
+						cache: false,
+						silent: true,
+					}
+		).then(data => {
+			clearEmailingCache();
+			setEmailingCache("popup_open", false);
+			setSubmitting(false);
+			setAlert("Email sent.");
+			setError(false);
+		}).catch(err => {
+			setSubmitting(false);
+			setAlert(false);
+			setError(err);
+		});
+		
+
 	}
 
 	const handleDiscardEmail = () => {
@@ -103,6 +146,21 @@ function ComposeEmailDialog(props) {
 	useEffect(() => {
 		setEmailRecord(record);
 	}, [record]);
+
+	useEffect(() => {
+		return () => {
+					setEmailingCache("recipient_address", emailRecipientAddress);
+					setEmailingCache("subject", emailSubject);
+					setEmailingCache("content", emailContent);
+					setEmailingCache("context", emailContext);
+					setEmailingCache("cc", emailCC);
+					setEmailingCache("bcc", emailBCC);
+					setEmailingCache("context", emailContext);
+					setEmailingCache("record", emailRecord);
+		}
+	}, []);
+
+
 
 	return (
 		<Dialog
@@ -312,6 +370,16 @@ function ComposeEmailDialog(props) {
 					Send
 				</Button>
 			</DialogActions>
+			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
+		        <Alert onClose={() => setError(false)} severity="error">
+					{error.toString()}
+		        </Alert>
+			</Snackbar>}
+			{alert && <Snackbar open={Boolean(alert)} autoHideDuration={5000} onClose={() => setAlert(false)}>
+		        <Alert onClose={() => setAlert(false)} severity="success">
+					{alert.toString()}
+		        </Alert>
+			</Snackbar>}
 		</Dialog>
 	);
 }

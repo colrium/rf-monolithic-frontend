@@ -1,6 +1,3 @@
-/** @format */
-
-import { IconButton } from "@material-ui/core";
 import {
 	Add as AddIcon,
 	DeleteOutlined as DeleteIcon,
@@ -9,15 +6,74 @@ import {
 	PeopleOutlined as DefinationContextIcon,
 } from "@material-ui/icons";
 import Button from "components/Button";
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import { CountriesHelper } from "hoc/Helpers";
+import compose from "recompose/compose";
+import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions";
+import IconButton from "@material-ui/core/IconButton";
+import { withTheme } from '@material-ui/core/styles';
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import { useGlobals } from "contexts/Globals";
+import { connect } from "react-redux";
 
 const presences = {
 	online: { label: "Online", color: "#4caf50" },
 	away: { label: "Away", color: "#ffab00" },
 	offline: { label: "Offline", color: "#4caf50" },
 };
+
+
+
+const EmailUserAction = (props) => {
+	const { user, apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth } = props;
+	const { definations, sockets } = useGlobals();
+	const [initiated, setInitiated] = useState(false);
+	
+
+	useEffect(() => {
+		if (initiated && JSON.isJSON(user)) {
+			clearEmailingCache();
+			setEmailingCache("recipient_address", user.email_address);
+			setEmailingCache("recipient_name", user.first_name);
+			setEmailingCache("subject", "");
+			setEmailingCache("content", "Hey "+user.first_name+", \n\n\n\n\n"+auth.user.first_name+"\nRealfield.io");
+			setEmailingCache("popup_open", true);
+		}			
+	}, [user, initiated]);
+
+
+	return (
+		<React.Fragment>
+			
+			{user && <IconButton
+				color={"secondary"}
+				aria-label="Create application user"
+				onClick={() => {
+					setInitiated(true);
+				}}
+			>
+				<MailOutlineIcon fontSize="small" />
+			</IconButton>}
+			
+		</React.Fragment>
+	)
+
+};
+
+EmailUserAction.defaultProps = {
+	layoutType: "inline",
+}
+
+const mapStateToProps = state => ({
+	auth: state.auth,
+	cache: state.cache,
+});
+
+const EmailUserActionComponent = compose(
+	connect(mapStateToProps, {apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog}),
+	withTheme,
+)(EmailUserAction);
 
 export default {
 	name: "users",
@@ -53,7 +109,7 @@ export default {
 			},
 		},
 		listing: {
-			default: "listview",
+			default: "tableview",
 			listview: {
 				avatar: "avatar",
 				primary: ["first_name", "last_name"],
@@ -115,6 +171,15 @@ export default {
 				input: {
 					type: "phone",
 					default: "",
+					required: false,
+				},
+			},
+			staff_id: {
+				type: "string",
+				label: "Staff ID",
+				icon: "label",
+				input: {
+					type: "text",
 					required: false,
 				},
 			},
@@ -703,6 +768,27 @@ export default {
 										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
+							);
+						},
+					},
+				},
+			},
+			send_user_email: {
+				restricted: user => {
+					if (user) {
+						return !user.isAdmin;
+					}
+					return true;
+				},
+				uri: entry => {
+					return ( "/" ).toUriWithDashboardPrefix();
+				},
+				link: {
+					inline: {
+						default: (entry, className = "grey_text") => {},
+						listing: (entry, className = "grey_text") => {
+							return (
+								<EmailUserActionComponent user={entry} />
 							);
 						},
 					},

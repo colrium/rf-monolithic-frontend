@@ -100,6 +100,22 @@ export default {
 				},
 			},
 
+			status: {
+				type: "string",
+				label: "Status",
+				input: {
+					type: "select",
+					default: "auto-draft",
+					required: true,
+				},
+				possibilities: {
+					'auto-draft': "Auto Draft",
+					'draft' : "Draft",
+					'published': "Published",
+					'trash': "trash"
+				},
+			},
+
 			content: {
 				type: "string",
 				label: "Content",
@@ -112,7 +128,7 @@ export default {
 				},
 				restricted: {
 					display: (values, user) => {
-						return false;
+						return true;
 					},
 					input: (values, user) => {
 						if (user) {
@@ -132,7 +148,7 @@ export default {
 
 				reference: {
 					name: "posts",
-					service_query: { status: "publish" },
+					service_query: { type: "category" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -158,7 +174,7 @@ export default {
 				},
 			},
 
-			slug: {
+			/*slug: {
 				type: "string",
 				label: "Slug",
 				input: {
@@ -179,7 +195,7 @@ export default {
 						}
 						return "";
 					},
-					/*defaultValue: (values, user) => {
+					defaultValue: (values, user) => {
 						if (values) {
 							if (String.isString(values.title)) {
 								if (values.type.length > 0) {
@@ -193,7 +209,7 @@ export default {
 							}
 						}
 						return "";
-					},*/
+					},
 				},
 				restricted: {
 					display: (values, user) => {
@@ -205,6 +221,65 @@ export default {
 						}
 						return true;
 					},
+				},
+			},*/
+			featured_image: {
+				type: "string",
+				label: "Featured Image",
+				input: {
+					type: "file",
+					accepts: ["image/*"],
+				},
+				reference: {
+					name: "attachments",
+					service_query: {},
+					resolves: {
+						value: "_id",
+						display: {
+							primary: ["name"],
+							secondary: [],
+							avatar: false,
+						},
+					},
+				},
+			},
+
+			attachments: {
+				type: ["string"],
+				label: "Attachments",
+				input: {
+					type: "file",
+					accepts: ["image/*", "video/*", "audio/*", "application/*"],
+				},
+				reference: {
+					name: "attachments",
+					service_query: {},
+					resolves: {
+						value: "_id",
+						display: {
+							primary: ["name"],
+							secondary: [],
+							avatar: false,
+						},
+					},
+				},
+			},
+
+			access: {
+				type: "string",
+				label: "Access",
+				input: {
+					type: "select",
+					default: "auto-draft",
+					required: true,
+				},
+				possibilities: {
+					'open' : "Open to public", 
+					'authorized': "Authorized users only", 
+					'author': "Author only", 
+					'admin': "Administrators only", 
+					'non-admin': "Non Administrators only", 
+					'customers': "Customers",
 				},
 			},
 		},
