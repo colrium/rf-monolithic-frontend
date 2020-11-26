@@ -536,6 +536,7 @@ class TableView extends React.Component {
 		const { auth, cache, defination, apiCallRequest, cache_data, onLoadData, load_data } = this.props;
 		if (defination ) {
 			if (load_data) {
+				this.setState({loading: true, load_error: false});
 				apiCallRequest( defination.name,
 					{
 						uri: defination.endpoint,
@@ -545,9 +546,11 @@ class TableView extends React.Component {
 						cache: cache_data,
 					}
 				).then(data => {
+
 					if (Function.isFunction(onLoadData)) {
 						onLoadData(data, this.state.query);
 					}
+					this.setState({loading: false});
 					this.prepareData(data);
 				}).catch(e => {
 					this.setState(state => ({
@@ -656,7 +659,7 @@ class TableView extends React.Component {
 		return (
 			<GridContainer className={classes.root}>
 				<GridItem className="p-0 m-0" xs={12}>
-					{ (api.busy && !(defination.name in cache.res) && this.state.records.length===0 ) && <GridContainer className={classes.full_height} justify="center" alignItems="center">
+					{ this.state.loading && <GridContainer className={classes.full_height} justify="center" alignItems="center">
 								<GridItem xs={12} className="flex relative flex-row">
 									<div className="flex-grow">
 										<Skeleton variant="text" width={150}/>
@@ -677,7 +680,7 @@ class TableView extends React.Component {
 								</GridItem>
 					</GridContainer> }
 
-					{Array.isArray(this.state.records) && <GridContainer className="p-0 m-0">
+					{(!this.state.loading && Array.isArray(this.state.records)) && <GridContainer className="p-0 m-0">
 						<GridContainer className="p-0 m-0">
 							<GridItem className="p-0 m-0" xs={12}>
 								{/* this.state.actionsView === "contextMenu" && <Menu											

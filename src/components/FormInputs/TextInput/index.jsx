@@ -6,6 +6,7 @@ import {
 	IconButton,
 	InputAdornment,
 	TextField,
+	InputBase,
 } from "@material-ui/core";
 import debounce from 'lodash/debounce';
 //
@@ -188,98 +189,175 @@ const Input = (props) => {
 		}
 	}, [value, defaultValue, inputFocused]);
 
-	return (
-		<TextField
-			className={"flex-1"+(className? (" "+className) : "")}
-			label={label}
-			onChange={(event) => {
-				event.persist();
-				if (!debouncedOnChange) {
-					debouncedOnChange =  debounce(() => {
-						let new_value = event.target.value;				
-						if (type == "number") {
-							new_value = Number.parseNumber(new_value, undefined);
-						}	
-						
-						let valueValid = inputValueValid(new_value);
-						Promise.all([valueValid]).then(validity => {
-							if (validity[0]) {
-								triggerOnChange(new_value);
+	if (variant === "base") {
+		return (
+			<InputBase
+				className={"flex-1"+(className? (" "+className) : "")}
+				label={label}
+				onChange={(event) => {
+					event.persist();
+					if (!debouncedOnChange) {
+						debouncedOnChange =  debounce(() => {
+							let new_value = event.target.value;				
+							if (type == "number") {
+								new_value = Number.parseNumber(new_value, undefined);
+							}	
+							
+							let valueValid = inputValueValid(new_value);
+							Promise.all([valueValid]).then(validity => {
+								if (validity[0]) {
+									triggerOnChange(new_value);
+								}
+							}).catch(e => {
+								console.error(label+" validity check error", e);
+							});
+							
+							if (!inputTouched) {
+								setInputTouched(true);
 							}
-						}).catch(e => {
-							console.error(label+" validity check error", e);
-						});
-						
-						if (!inputTouched) {
-							setInputTouched(true);
-						}
-						
-					}, 300);
-				}
-	
-				debouncedOnChange();	
-				
-			}}
-			onFocus={event => {
-				setInputFocused(true);
-			}}
-			onBlur={event => {
-				/*if (!inputTouched) {
-					setInputTouched(true);
-				}*/
-				event.persist();
-				let new_value = event.target.value;	
-				console.log("onBlur event new_value", new_value);
-				setInputFocused(false);
-				let valueValid = inputValueValid(new_value);
-				Promise.all([valueValid]).then(validity => {
-					if (validity[0]) {
-						if (Function.isFunction(onBlur)) {
-							if (onBlur.length === 0) {
-								onBlur();
-							} else if (onBlur.length === 1) {
-								onBlur(event);
-							} else {
-								onBlur(new_value, event);
-							}
-						}
+							
+						}, 300);
 					}
-				}).catch(e => {
-					console.error(label+" validity check error", e);
-				});
+		
+					debouncedOnChange();	
+					
+				}}
+				onFocus={event => {
+					setInputFocused(true);
+				}}
+				onBlur={event => {
+					/*if (!inputTouched) {
+						setInputTouched(true);
+					}*/
+					event.persist();
+					let new_value = event.target.value;	
+					console.log("onBlur event new_value", new_value);
+					setInputFocused(false);
+					let valueValid = inputValueValid(new_value);
+					Promise.all([valueValid]).then(validity => {
+						if (validity[0]) {
+							if (Function.isFunction(onBlur)) {
+								if (onBlur.length === 0) {
+									onBlur();
+								} else if (onBlur.length === 1) {
+									onBlur(event);
+								} else {
+									onBlur(new_value, event);
+								}
+							}
+						}
+					}).catch(e => {
+						console.error(label+" validity check error", e);
+					});
+					
+				}}
 				
-			}}
-			InputProps={{
-				...inputProps,
-				endAdornment: (type === "password" || loading) && (
-					<InputAdornment position="end">
-						{loading && <CircularProgress size={"1rem"} color="inherit" />}
-						{type === "password" && <IconButton
-							aria-label="Toggle password visibility"
-							onClick={e => {
-								setShowPassword(inputType === "password");
-								setInputType(inputType === "password"? "text" : "password");
-								
-							}}
-						>
-							{showPassword ? (
-								<HidePasswordIcon />
-							) : (
-								<ShowPasswordIcon />
-							)}
-						</IconButton>}
-					</InputAdornment>
-				),
-			}}
-			variant={variant ? variant : "outlined"}
-			defaultValue={inputValue}
-			disabled={inputDisabled}
-			error={inputError ? true : isInvalid}
-			helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
-			type={inputType}
-			{...rest}
-		/>
-	);
+				defaultValue={inputValue}
+				disabled={inputDisabled}
+				error={inputError ? true : isInvalid}
+				helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
+				type={inputType}
+				{...inputProps}
+				{...rest}
+			/>
+		);
+	}
+	else{
+		return (
+			<TextField
+				className={"flex-1"+(className? (" "+className) : "")}
+				label={label}
+				onChange={(event) => {
+					event.persist();
+					if (!debouncedOnChange) {
+						debouncedOnChange =  debounce(() => {
+							let new_value = event.target.value;				
+							if (type == "number") {
+								new_value = Number.parseNumber(new_value, undefined);
+							}	
+							
+							let valueValid = inputValueValid(new_value);
+							Promise.all([valueValid]).then(validity => {
+								if (validity[0]) {
+									triggerOnChange(new_value);
+								}
+							}).catch(e => {
+								console.error(label+" validity check error", e);
+							});
+							
+							if (!inputTouched) {
+								setInputTouched(true);
+							}
+							
+						}, 300);
+					}
+		
+					debouncedOnChange();	
+					
+				}}
+				onFocus={event => {
+					setInputFocused(true);
+				}}
+				onBlur={event => {
+					/*if (!inputTouched) {
+						setInputTouched(true);
+					}*/
+					event.persist();
+					let new_value = event.target.value;	
+					console.log("onBlur event new_value", new_value);
+					setInputFocused(false);
+					let valueValid = inputValueValid(new_value);
+					Promise.all([valueValid]).then(validity => {
+						if (validity[0]) {
+							if (Function.isFunction(onBlur)) {
+								if (onBlur.length === 0) {
+									onBlur();
+								} else if (onBlur.length === 1) {
+									onBlur(event);
+								} else {
+									onBlur(new_value, event);
+								}
+							}
+						}
+					}).catch(e => {
+						console.error(label+" validity check error", e);
+					});
+					
+				}}
+				InputProps={{
+					...inputProps,
+					endAdornment: (type === "password" || loading) && (
+						<InputAdornment position="end">
+							{loading && <CircularProgress size={"1rem"} color="inherit" />}
+							{type === "password" && <IconButton
+								aria-label="Toggle password visibility"
+								onClick={e => {
+									setShowPassword(inputType === "password");
+									setInputType(inputType === "password"? "text" : "password");
+									
+								}}
+							>
+								{showPassword ? (
+									<HidePasswordIcon />
+								) : (
+									<ShowPasswordIcon />
+								)}
+							</IconButton>}
+						</InputAdornment>
+					),
+				}}
+				variant={variant ? variant : "outlined"}
+				defaultValue={inputValue}
+				disabled={inputDisabled}
+				error={inputError ? true : isInvalid}
+				helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
+				type={inputType}
+				{...rest}
+			/>
+		);
+	}
+
+		
 };
 
 Input.defaultProps = {

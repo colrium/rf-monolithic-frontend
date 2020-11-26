@@ -521,7 +521,7 @@ class LoginForm extends React.Component {
 											fullWidth
 											validate
 											variant="filled"
-											excludeValidation={!this.state.resettingPassword? [] : ["password"]}
+											excludeValidation={this.state.resettingPassword? [] : ["password"]}
 											disabled={this.state.submitting}
 										/>
 									</GridItem>

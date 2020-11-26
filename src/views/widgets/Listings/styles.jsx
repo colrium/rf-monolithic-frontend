@@ -20,4 +20,21 @@ export default theme => ({
 		position: "absolute !important",
 		right: theme.spacing(),
 	},
+	searchRoot: {
+		padding: '2px 4px',
+		display: 'flex',
+		alignItems: 'center',
+		width: "100%",
+	},
+	searchInput: {
+		marginLeft: theme.spacing(1),
+		flex: 1,
+	},
+	searchIconButton: {
+		padding: 10,
+	},
+	searchDivider: {
+		height: 28,
+		margin: 4,
+	},
 });

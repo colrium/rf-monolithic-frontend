@@ -82,7 +82,25 @@ const ConvertToUserIconAction = (props) => {
 				setError(false);
 				setLoading(false);					
 			}).catch(e => {
-				setError(e);
+				let errMsg = e;
+				if (JSON.isJSON(e)) {
+					if (String.isString(e.error)) {
+						errMsg = e.error;
+					}
+					else if (String.isString(e.message)) {
+						errMsg = e.message;
+					}
+					else if (String.isString(e.msg)) {
+						errMsg = e.msg;
+					}
+					else{
+						errMsg = JSON.stringify(e);
+					}
+				}
+				else{
+					errMsg = e.toString();
+				}
+				setError(errMsg);
 				setLoading(false);
 			});
 	}
@@ -96,7 +114,11 @@ const ConvertToUserIconAction = (props) => {
 				cancel: {
 					text: "Cancel",
 					color: "default",
-					onClick: () => closeDialog(),
+					onClick: () => {
+						closeDialog();
+						setError(false);
+						setLoading(false);
+					},
 				},
 				create: {
 					text: "Create",
@@ -152,7 +174,11 @@ const ConvertToUserIconAction = (props) => {
 				cancel: {
 					text: "Dismiss",
 					color: "default",
-					onClick: () => closeDialog(),
+					onClick: () => {
+						closeDialog();
+						setError(false);
+						setLoading(false);
+					},
 				},
 				send_mail: {
 					text: "Email",
@@ -208,20 +234,33 @@ const ConvertToUserIconAction = (props) => {
 					else {
 						handleOnCreateUserAccountConfirm();
 					}
-				}
-				setError(false);
-				setLoading(false);					
+				}				
 			}).catch(e => {
-				setError(e);
+				let errMsg = e;
+				if (JSON.isJSON(e)) {
+					if (String.isString(e.error)) {
+						errMsg = e.error;
+					}
+					else if (String.isString(e.message)) {
+						errMsg = e.message;
+					}
+					else if (String.isString(e.msg)) {
+						errMsg = e.msg;
+					}
+					else{
+						errMsg = JSON.stringify(e);
+					}
+				}
+				else{
+					errMsg = e.toString();
+				}
+				setError(errMsg);
 				setLoading(false);
 			});
 		
 	}
 
 	
-
-	
-
 
 	useEffect(() => {
 		if (initiated) {
@@ -244,12 +283,22 @@ const ConvertToUserIconAction = (props) => {
 
 	return (
 		<React.Fragment>
-			{loading && <CircularProgress color="secondary" />}
+			{loading && <CircularProgress size={16} color="secondary" />}
 			{(layoutType === "inline" && !loading) && <IconButton
 				color={application.user? "secondary" : "inherit"}
 				aria-label="Create application user"
 				onClick={() => {
-					setInitiated(true);
+					if (initiated) {
+						if (!application.user) {
+							checkStaffIDAvailability();
+						}
+						else {
+							handleOnShowUser();
+						}
+					}
+					else{
+						setInitiated(true);
+					}					
 				}}
 			>
 				{!application.user && <PersonAddOutlinedIcon fontSize="small" />}
@@ -257,7 +306,7 @@ const ConvertToUserIconAction = (props) => {
 			</IconButton>}
 			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
 		        <Alert onClose={() => setError(false)} severity="error">
-					{error.toString()}
+					{error}
 		        </Alert>
 			</Snackbar>}
 		</React.Fragment>

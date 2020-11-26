@@ -75,7 +75,18 @@ const api = ({ dispatch, getState }) => next => action => {
 						if (cache) {
 							let {data, ...rest} = res.body;
 							dispatch(setResponseCache(key, rest));
-							dispatch(setDataCache(key, data));
+							if (Array.isArray(data)) {
+								if (data.length <= 50) {
+									dispatch(setDataCache(key, data));
+								}
+								else {
+									const items = data.slice(0, 50)
+									dispatch(setDataCache(key, items));
+								}
+							}
+							else{
+								dispatch(setDataCache(key, []));
+							}
 						}
 						if (!silent) {
 							dispatch(removeApiTask(apiTask));

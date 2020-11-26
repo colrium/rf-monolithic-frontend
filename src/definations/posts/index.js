@@ -74,6 +74,24 @@ export default {
 					},
 				},
 			},
+			subtitle: {
+				type: "string",
+				label: "Subtitle",
+				input: {
+					type: "text",
+				},
+				restricted: {
+					display: (values, user) => {
+						return false;
+					},
+					input: (values, user) => {
+						if (user) {
+							return !user.isAdmin;
+						}
+						return true;
+					},
+				},
+			},
 			type: {
 				type: "string",
 				label: "Type",
@@ -105,7 +123,7 @@ export default {
 				label: "Status",
 				input: {
 					type: "select",
-					default: "auto-draft",
+					default: "published",
 					required: true,
 				},
 				possibilities: {
@@ -174,12 +192,12 @@ export default {
 				},
 			},
 
-			/*slug: {
+			slug: {
 				type: "string",
 				label: "Slug",
 				input: {
 					type: "text",
-					required: true,
+					required: false,
 					value: (values, user) => {
 						if (values) {
 							if (String.isString(values.title)) {
@@ -222,13 +240,18 @@ export default {
 						return true;
 					},
 				},
-			},*/
+			},
 			featured_image: {
 				type: "string",
 				label: "Featured Image",
 				input: {
 					type: "file",
-					accepts: ["image/*"],
+					props: {
+						acceptedFiles: ["image/*"],
+						filesLimit: 1,
+						dropzoneText: "Click to select Featured Image \n or \n Drag and drop an image file here",
+						dropzoneIcon: "image",
+					},
 				},
 				reference: {
 					name: "attachments",
@@ -249,7 +272,13 @@ export default {
 				label: "Attachments",
 				input: {
 					type: "file",
-					accepts: ["image/*", "video/*", "audio/*", "application/*"],
+					props: {
+						acceptedFiles: ["image/*", "video/*", "audio/*", "application/*"],
+						filesLimit: 1,
+						dropzoneText: "Click to select File(s)\n or \n Drag and drop an files here",
+						dropzoneIcon: "attachment",
+					}
+					
 				},
 				reference: {
 					name: "attachments",
@@ -270,7 +299,7 @@ export default {
 				label: "Access",
 				input: {
 					type: "select",
-					default: "auto-draft",
+					default: "authorized",
 					required: true,
 				},
 				possibilities: {

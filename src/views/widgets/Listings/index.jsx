@@ -19,6 +19,14 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionActions from '@material-ui/core/AccordionActions';
 import Divider from '@material-ui/core/Divider';
+import Paper from '@material-ui/core/Paper';
+import {
+	TextInput
+} from "components/FormInputs";
+import InputBase from '@material-ui/core/InputBase';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -43,6 +51,7 @@ class ListingView extends React.Component {
 		views: {},
 		showViewOptions: true,
 		showAddBtn: true,
+		searchKeyword: "",
 		query: {},
 		pages: 10,
 		page: 1,
@@ -72,7 +81,15 @@ class ListingView extends React.Component {
 			pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
 			page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
 		};
-		console.log("defination", defination);
+		
+		if (query.q || query.query) {
+			if (query.q) {
+				this.state.searchKeyword = query.q;
+			}
+			else {
+				this.state.searchKeyword = query.query;
+			}
+		}
 
 		this.handleViewItemClick = this.handleViewItemClick.bind(this);
 		this.handleOnPageChanged = this.handleOnPageChanged.bind(this);
@@ -269,7 +286,7 @@ class ListingView extends React.Component {
 				<GridContainer className="p-1 m-0">
 					{ (showSorter && view !== "googlemapview") && <GridItem xs={12} className="p-0 m-0 mb-2" >
 						<GridContainer className="p-0 m-0">
-							<GridItem xs={12} className="p-0 m-0">
+							{/*<GridItem xs={12} className="p-0 m-0">
 								<Accordion 
 									expanded={this.state.filterAccordionExpanded}
 									onChange={(event, expanded) => {
@@ -345,12 +362,47 @@ class ListingView extends React.Component {
 											}}
 										/>
 									</AccordionDetails>
-									{/*<Divider />
-									<AccordionActions>
-										
-									</AccordionActions>*/}
 								</Accordion>
 										
+							</GridItem>*/}
+
+							<GridItem xs={12} className={"p-0"}>
+								<Paper 
+									component="form" 
+									className={classes.searchRoot} 
+									onSubmit={event => {
+										event.preventDefault();
+										this.setState(prevState => ({
+											query: {...prevState.query, q: prevState.searchKeyword}
+										}));
+										console.log("Search submit searchKeyword", this.state.searchKeyword)
+									}}
+								>
+									<TextInput
+										className={classes.searchInput}
+										placeholder="Search..."
+										inputProps={{ 'aria-label': 'Search' }}
+										defaultValue={this.state.searchKeyword}
+										onChange={newKeyword => {
+											this.setState(prevState=>{
+												let newState = { searchKeyword: newKeyword };
+												if (prevState.query) {
+													if (prevState.query.q) {
+														let newQuery = JSON.fromJSON(prevState.query);
+														delete newQuery["q"];
+														newState.query = newQuery;
+													}
+												}
+												return newState;
+											});
+										}}
+										variant={"base"}
+									/>
+									<IconButton 
+										type="submit" className={classes.searchIconButton} aria-label="search">
+										<SearchIcon />
+									</IconButton>
+								</Paper>
 							</GridItem>
 						</GridContainer>
 						
