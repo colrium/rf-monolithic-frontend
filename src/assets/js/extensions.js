@@ -671,7 +671,9 @@ JSON.fromJSON = function(input) {
  */
 const deepMerge = function(target, ...sources) {
 	if (!sources.length) return target;
-	const source = sources.shift();
+	/*
+	sources = JSON.parse(sources);
+	const source = sources.shift(sources);
 
 	if (JSON.isJSON(target) && JSON.isJSON(source)) {
 		for (const key in source) {
@@ -684,11 +686,11 @@ const deepMerge = function(target, ...sources) {
 		}
 	}
 
-	return deepMerge(target, ...sources);
-	/*if (JSON.isJSON(target)) {
+	return deepMerge(target, ...sources);*/
+	if (JSON.isJSON(target)) {
 		return lodash.merge(target, ...sources);
 	}
-	return {};*/
+	return {};
 }
 JSON.merge = deepMerge;
 JSON.deepMerge = deepMerge;

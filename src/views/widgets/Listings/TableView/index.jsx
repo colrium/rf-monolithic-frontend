@@ -2,6 +2,9 @@
 
 //
 import Chip from "@material-ui/core/Chip";
+import Menu from "@material-ui/core/Menu";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import MenuItem from "@material-ui/core/MenuItem";
 import withStyles from "@material-ui/core/styles/withStyles";
 import EmptyStateImage from "assets/img/empty-state-table.svg";
 import Avatar from "components/Avatar";
@@ -11,8 +14,10 @@ import Typography from "components/Typography";
 import Skeleton from "@material-ui/lab/Skeleton";
 import { formats } from "config/data";
 import MUIDataTable from "mui-datatables";
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
 import PropTypes from "prop-types";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { attachments as AttachmentsService } from "services";
@@ -143,58 +148,89 @@ class TableView extends React.Component {
 	};
 
 	loadContext() {
-		const { classes, defination, service, query, auth } = this.props;
+		const { classes, defination, service, query, auth, actionsType } = this.props;
 		if (defination) {
 			let columns = defination.scope.columns;
 			let dt_columns = [];
 			if (!defination.access.restricted(auth.user)) {
 				dt_columns.push({
 					name: "entry",
-					label: "Actions",
+					label: "",
 					options: {
 						filter: false,
 						sort: false,
-						customBodyRender: (value, tableMeta, updateValue) => {
-							return (
-								<GridContainer
-									spacing={2}
-									className={classes.data_actions_wrapper}
-								>
-									{Object.keys(defination.access.actions).map((action_name, action_index) =>
-										defination.access.actions[
-											action_name
-										].restricted(auth.user) ? (
-											""
-										) : (
-											<div
-												key={
-													value +
-													"_" +
-													action_name +
-													"_action"
-												}
-											>
-												{action_name === "delete"
-													? defination.access.actions[
-															action_name
-													  ].link.inline.listing(
-															value,
-															"error_text",
-															this.handleDeleteItemConfirm(
+						customBodyRenderLite: (dataIndex, rowIndex) => {
+							let value = this.state.raw_data[dataIndex];
+							if (actionsType === "inline") {
+								return (
+									<GridContainer
+										spacing={2}
+										className={classes.data_actions_wrapper}
+									>
+										{Object.keys(defination.access.actions).map((action_name, action_index) =>
+											!defination.access.actions[action_name].restricted(auth.user) && (
+												<div
+													key={
+														value +
+														"_" +
+														action_name +
+														"_action"
+													}
+												>
+													{action_name === "delete" ? defination.access.actions[action_name].link.inline.listing(value,
+																"error_text",
+																this.handleDeleteItemConfirm(
+																	value
+																)
+														  )
+														: defination.access.actions[
+																action_name
+														  ].link.inline.listing(
 																value
-															)
-													  )
-													: defination.access.actions[
-															action_name
-													  ].link.inline.listing(
-															value
-													  )}
-											</div>
-										)
-									)}
-								</GridContainer>
-							);
+														  )}
+												</div>
+											)
+										)}
+									</GridContainer>
+								);
+							}
 						},
+						/*customBodyRender: (value, tableMeta, updateValue) => {
+							if (actionsType === "inline") {
+								return (
+									<GridContainer
+										spacing={2}
+										className={classes.data_actions_wrapper}
+									>
+										{Object.keys(defination.access.actions).map((action_name, action_index) =>
+											!defination.access.actions[action_name].restricted(auth.user) && (
+												<div
+													key={
+														value +
+														"_" +
+														action_name +
+														"_action"
+													}
+												>
+													{action_name === "delete" ? defination.access.actions[action_name].link.inline.listing(value,
+																"error_text",
+																this.handleDeleteItemConfirm(
+																	value
+																)
+														  )
+														: defination.access.actions[
+																action_name
+														  ].link.inline.listing(
+																value
+														  )}
+												</div>
+											)
+										)}
+									</GridContainer>
+								);
+							}
+								
+						},*/
 					},
 				});
 
@@ -468,7 +504,7 @@ class TableView extends React.Component {
 		const { defination, auth } = this.props;
 		let parsed_data = entry;
 		let columns = defination.scope.columns;
-		parsed_data["entry"] = entry;
+		parsed_data["entry"] = entry._id;
 		for (let [field_name, field] of Object.entries(columns)) {
 			if (field.input.type === "date") {
 				if (entry[field_name]) {
@@ -546,7 +582,6 @@ class TableView extends React.Component {
 						cache: cache_data,
 					}
 				).then(data => {
-
 					if (Function.isFunction(onLoadData)) {
 						onLoadData(data, this.state.query);
 					}
@@ -627,10 +662,10 @@ class TableView extends React.Component {
 	}
 
 	render() {
-		const { classes, defination, api, cache } = this.props;
+		const { classes, defination, api, cache, actionsType } = this.props;
 		const table_options = {
 			filterType: "dropdown",
-			filter: false,
+			filter: true,
 			downloadOptions: {
 				filename:
 					(defination ? defination.label : "Records") +
@@ -640,22 +675,42 @@ class TableView extends React.Component {
 				separator: ",",
 			},
 			resizableColumns: false,
-			selectableRows: "none",
+			selectableRows: "multiple",
 			responsive: "scroll",
 			pagination: false,
-			/*customRowRender: (data, dataIndex, rowIndex) => {
-						console.log("customRowRender data", data);
-						console.log("customRowRender dataIndex", dataIndex);
-						console.log("customRowRender rowIndex", rowIndex);
-						return (
-							<tr onContextMenu={ this.handleOnRowContextMenu(dataIndex) }>
-								{data.map((value, index)=>(
-									<td key={"row-"+index}>{ value }</td>
-								))}
-							</tr>
-						);
-					}*/
+			rowHover: true,
+			onCellClick: (colData, cellMeta) => {
+				console.log("onCellClick colData", colData);
+			},
+			setRowProps: (row, dataIndex, rowIndex) => {
+				console.log("setRowProps dataIndex", dataIndex);
+				let rowProps = {};
+				if (actionsType === "context") {
+					rowProps.onContextMenu = this.handleOnRowContextMenu(dataIndex);
+				}
+				return rowProps;
+			},
+			customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+				console.log("customToolbarSelect selectedRows", selectedRows);
+				console.log("customToolbarSelect displayData", displayData);
+			}
 		};
+		/*if (actionsType === "context") {
+			table_options.customRowRender = (data, dataIndex, rowIndex) => {
+						console.log("customRowRender data", data);
+						return (
+							<TableRow key={"row-"+rowIndex} onContextMenu={ this.handleOnRowContextMenu(dataIndex) }>
+								{data.map((value, index)=>(
+									<TableCell 
+										key={"row-"+rowIndex+"-cell-"+index}
+									>
+										{ value }
+									</TableCell>
+								))}
+							</TableRow>
+						);
+					};
+		}*/
 		return (
 			<GridContainer className={classes.root}>
 				<GridItem className="p-0 m-0" xs={12}>
@@ -683,7 +738,8 @@ class TableView extends React.Component {
 					{(!this.state.loading && Array.isArray(this.state.records)) && <GridContainer className="p-0 m-0">
 						<GridContainer className="p-0 m-0">
 							<GridItem className="p-0 m-0" xs={12}>
-								{/* this.state.actionsView === "contextMenu" && <Menu											
+								{actionsType === "context" && <ClickAwayListener onContextMenu={this.handleOnRowContextMenuClose} onClickAway={this.handleOnRowContextMenuClose}>
+										<Menu											
 											open={this.state.mouseY !== null}
 											onClose={this.handleOnRowContextMenuClose}
 											anchorReference="anchorPosition"
@@ -693,7 +749,8 @@ class TableView extends React.Component {
 											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Print</MenuItem>
 											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Highlight</MenuItem>
 											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Email</MenuItem>
-										</Menu> */}
+										</Menu>
+									</ClickAwayListener>}
 
 								{this.state.records.length > 0 ? (
 									<MUIDataTable
@@ -749,6 +806,7 @@ class TableView extends React.Component {
 							</GridContainer>
 						)}
 					</GridContainer> }
+
 				</GridItem>
 			</GridContainer>
 		);
@@ -774,6 +832,7 @@ TableView.defaultProps = {
 	query: { p: 1 },
 	cache_data: true,
 	load_data: true,
+	actionsType: "context",
 };
 
 const mapStateToProps = (state, ownProps) => ({

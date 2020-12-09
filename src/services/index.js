@@ -36,3 +36,9 @@ export { default as preferences } from "./preferences";
 
 export { default as forms } from "./forms";
 export { default as formvalues } from "./formvalues";
+
+//Training exports
+export { default as courses } from "./courses";
+export { default as quizes } from "./quizes";
+export { default as questions } from "./questions";
+export { default as answers } from "./answers";

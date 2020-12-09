@@ -101,6 +101,8 @@ export default class DashboardRoutes extends Component {
 					/>
 				))}
 
+
+
 				{Array.isArray(contexts) && contexts.map((context, cursor) => (
 					<Route
 						exact
@@ -124,6 +126,123 @@ export default class DashboardRoutes extends Component {
 						authRestrict
 					/>
 				))}
+
+			
+
+				{/*<Route
+						path={"/training-courses".toUriWithDashboardPrefix()}
+						component={RecordsListing}
+						componentProps={{ context: "courses" }}
+						authRestrict
+				/>
+
+				<Route
+						exact
+						path={"/training-courses/view/:id".toUriWithDashboardPrefix()}
+						component={RecordView}
+						componentProps={{ context: "courses" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-courses/add".toUriWithDashboardPrefix()}
+						component={RecordForm}
+						componentProps={{ context: "courses" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-courses/edit/:id".toUriWithDashboardPrefix()}
+						component={RecordForm}
+						componentProps={{ context: "courses" }}
+						authRestrict
+				/>
+
+
+				<Route
+						path={"/training-quizes".toUriWithDashboardPrefix()}
+						component={RecordsListing}
+						componentProps={{ context: "quizes" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-quizes/view/:id".toUriWithDashboardPrefix()}
+						component={RecordView}
+						componentProps={{ context: "quizes" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-quizes/add".toUriWithDashboardPrefix()}
+						component={RecordForm}
+						componentProps={{ context: "quizes" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-quizes/edit/:id".toUriWithDashboardPrefix()}
+						component={RecordForm}
+						componentProps={{ context: "quizes" }}
+						authRestrict
+				/>
+
+
+				<Route
+						path={"/training-questions".toUriWithDashboardPrefix()}
+						component={RecordsListing}
+						componentProps={{ context: "questions" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-questions/view/:id".toUriWithDashboardPrefix()}
+						component={RecordView}
+						componentProps={{ context: "questions" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-questions/add".toUriWithDashboardPrefix()}
+						component={RecordForm}
+						componentProps={{ context: "questions" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-questions/edit/:id".toUriWithDashboardPrefix()}
+						component={RecordForm}
+						componentProps={{ context: "questions" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-answers".toUriWithDashboardPrefix()}
+						component={RecordsListing}
+						componentProps={{ context: "answers" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-answers/view/:id".toUriWithDashboardPrefix()}
+						component={RecordView}
+						componentProps={{ context: "answers" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-answers/add".toUriWithDashboardPrefix()}
+						component={RecordForm}
+						componentProps={{ context: "answers" }}
+						authRestrict
+				/>
+
+				<Route
+						path={"/training-answers/edit/:id".toUriWithDashboardPrefix()}
+						component={RecordForm}
+						componentProps={{ context: "answers" }}
+						authRestrict
+				/>*/}
 
 				<Route
 					path={"/page-builder".toUriWithDashboardPrefix()}

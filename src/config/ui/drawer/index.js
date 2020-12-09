@@ -64,6 +64,37 @@ export const items = [
 		],
 	},
 	{
+		text: "Training",
+		section: true,
+		restricted: user => {
+			return !user.isAdmin;
+		},
+		links: [
+			{
+				icon: definations.courses.icon,
+				text: definations.courses.label,
+				route: "courses".toUriWithDashboardPrefix(),
+			},
+			{
+				icon: definations.quizes.icon,
+				text: definations.quizes.label,
+				route: "quizes".toUriWithDashboardPrefix(),
+			},
+			{
+				icon: definations.questions.icon,
+				text: definations.questions.label,
+				route: "questions".toUriWithDashboardPrefix(),
+			},
+			{
+				icon: definations.answers.icon,
+				text: definations.answers.label,
+				route: "answers".toUriWithDashboardPrefix(),
+			},
+
+
+		],
+	},
+	{
 		text: definations.commissions.label,
 		section: true,
 		restricted: user => {
@@ -316,7 +347,7 @@ export const items = [
 		],
 	},
 
-	{
+	/*{
 		text: "Help & Support",
 		section: true,
 		links: [
@@ -327,7 +358,7 @@ export const items = [
 				route: "/support".toUriWithDashboardPrefix(),
 			},
 		],
-	},
+	},*/
 ];
 
 export const width = 240;

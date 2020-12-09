@@ -68,7 +68,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ScrollBars from "components/ScrollBars";
 import LazyImage from "components/LazyImage";
 import ViewPortSensor from "components/ViewPortSensor";
-
+import Listings from "views/widgets/Listings";
 import {
 	FileInput,
 	TextInput,
@@ -93,26 +93,27 @@ function Alert(props) {
 }
 
 function Chat(props) {
-	const { classes, className, layout, cache:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, clearMessagingCache, ...rest } = props;
+	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, clearMessagingCache, ...rest } = props;
 	let textInputRef = React.createRef();
 	let messagesWrapperRef = React.createRef();
 	let location = useLocation();
 	
 
 
-	const { definations, sockets } = useGlobals();
-	const { unread_count, unread_ids, conversations, drafts, contacts:cacheContacts, active_conversation, active_conversation_messages } = messaging;
+	const { definations, services, sockets } = useGlobals();
+	const { unread_count, unread_ids, conversations, contacts: cacheContacts, drafts, active_conversation, active_conversation_messages } = messaging;
 
 	const [chats, setChats] = useState(Array.isArray(conversations)? conversations : []);
 	const [activeChat, setActiveChat] = useState(active_conversation);
 	const [activeChatMessages, setActiveChatMessages] = useState(active_conversation_messages);
 	const [query, setQuery] = useState({desc: "created_on"});
+	const [contactsQuery, setContactsQuery] = useState({desc: "created_on"});
 	const [loadingConversations, setLoadingConversations] = useState(true);
 	const [loadingContacts, setLoadingContacts] = useState(true);
 	const [draft, setDraft] = useState({});
 	const [individualConversationsRecipients, setIndividualConversationsRecipients] = useState([]);
 	const [error, setError] = useState(false);
-	const [contacts, setContacts] = useState(Array.isArray(cacheContacts)? cacheContacts : []);
+	const [contacts, setContacts] = useState([]);
 	const [contactsDrawerOpen, setContactsDrawerOpen] = useState(false);
 	const [attachmentDialOpen, setAttachmentDialOpen] = useState(false);
 	const [contextMenu, setContextMenu] = useState({ mouseX: null, mouseY: null,});
@@ -120,6 +121,8 @@ function Chat(props) {
 	const [locationHasWith, setLocationHasWith] = useState(false);
 	const [firstLoad, setFirstLoad] = useState(true);
 	const [searchKeyword, setSearchKeyword] = useState(false);
+
+	
 
 
 	const attachmentActions = [
@@ -805,9 +808,9 @@ function Chat(props) {
 	
 
 
-	/*useEffect(() => {
+	useEffect(() => {
 		setChats(conversations);
-	}, [conversations]);*/
+	}, [conversations]);
 
 	useEffect(() => {
 		if (active_conversation && firstLoad) {
@@ -841,25 +844,26 @@ function Chat(props) {
 
 
 	useEffect(()=>{
-		if (location) {
+		if (location && !locationHasWith) {
 			let params = new URLSearchParams(location.search);
 			const withRecipient = params.get('with');
 			console.log("location withRecipient", withRecipient);	
 			if (!String.isEmpty(withRecipient)) {
-				cacheContacts.map(cacheContact => {
-					if (cacheContact._id === withRecipient) {
-						handleNewChat(cacheContact);
-					}
-				});
+				if (withRecipient.indexOf("@") !== -1) {
+					setContactsQuery({email_address: withRecipient.trim()});
+				}
+				else {
+					setContactsQuery({_id: withRecipient.trim()});
+				}				
 				setLocationHasWith(true);
 				
 			}
 		}
-	}, [location, cacheContacts]);
+	}, [location, locationHasWith]);
 
 	useEffect(() => {			
-		setContacts(cacheContacts);
-	}, [cacheContacts]);
+		console.log("contactsQuery", contactsQuery);
+	}, [contactsQuery]);
 
 	useEffect(() => {
 		if (Array.isArray(conversations)) {
@@ -890,7 +894,7 @@ function Chat(props) {
 	}, [conversations]);
 
 	useEffect(() => {
-		loadContacts();
+		//loadContacts();
 		loadConversations();
 	}, [definations, query]);
 
@@ -995,8 +999,10 @@ function Chat(props) {
 					<IconButton className={"mx-2"} color="inherit">
 						<ContactsIcon />
 					</IconButton>
-
-					<TextInput
+					<Typography variant="h6" className={"capitalize flex-grow"}>
+						Contacts
+					</Typography>
+					{/*<TextInput
 								variant={"outlined"}
 								defaultValue={active_conversation._id === draft.conversation? draft.content : undefined}
 								onChange={(new_value)=>{
@@ -1009,7 +1015,7 @@ function Chat(props) {
 								}}
 								placeholder="Search..."
 								label="Search"
-							/>
+							/>*/}
 
 					<IconButton className={"mx-2"} color="inherit" onClick={()=>setContactsDrawerOpen(false)}>
 						{theme.direction === 'ltr' ?  <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -1018,125 +1024,34 @@ function Chat(props) {
 				<Divider />
 
 				<ScrollBars className={classes.bodyWrapper}>
-					{loadingContacts && <GridContainer>
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" className="w-3/12"/>
-									</div>
-								</GridItem>
+					
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" className="w-8/12"/>
-									</div>
-								</GridItem>
-
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" className="w-4/12"/>
-									</div>
-								</GridItem>
-
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" className="w-3/12"/>
-									</div>
-								</GridItem>
-
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" className="w-5/12"/>
-									</div>
-								</GridItem>
-
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" className="w-9/12"/>
-									</div>
-								</GridItem>
-
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" className="w-4/12"/>
-									</div>
-								</GridItem>
-
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" className="w-3/12"/>
-									</div>
-								</GridItem>
-
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" className="w-4/12"/>
-									</div>
-								</GridItem>
-							</GridContainer>}
-
-							{(Array.isArray(contacts) && !loadingContacts) && <List className={classes.list}>
-								{contacts.map((contact, cursor)=> {
-									let includeContact = true;
-									if (String.isString(searchKeyword)) {
-										try {
-											let contactValuesStr = contact.first_name+"" + contact.first_name+" "+contact.email_address;
-											let searchKeywordPosition = contactValuesStr.toLowerCase().search(searchKeyword.toLowerCase());
-											if (searchKeywordPosition === -1) {
-												includeContact = false;
+							{definations && <Listings
+								show_actions={false}
+								show_links={false}
+								showViewOptions={false}
+								showAddBtn={false}
+								cache_data={false}
+								showPagination
+								showSorter
+								defination={definations.users}
+								service={services.users}
+								query={contactsQuery}
+								view={"listview"}
+								onClickEntry={(contact) => handleNewChat(contact)}
+								onLoadData={(loadedData, loadedQuery) => {
+									if (locationHasWith && Array.isArray(loadedData)) {
+										loadedData.map(entry => {
+											if (entry._id === loadedQuery._id || entry.email_address === loadedQuery.email_address) {
+												handleNewChat(entry);
+												console.log("onLoadData", loadedData, loadedQuery);
 											}
-										} catch(err) {
-											includeContact = true;
-										}
+										})
 									}
-									return (
-										includeContact && contact._id !== auth.user._id && <ListItem 
-											className={"px-8 "} 
-											key={"contact-"+cursor}
-											onClick={() => {
-												handleNewChat(contact);
-											}}
-											button
-										>
-											<ListItemAvatar>
-												<Badge 
-													variant="dot" 
-													badgeContent=" "
-													anchorOrigin={{
-														vertical: 'bottom',
-														horizontal: 'right',
-													}}
-													classes={{
-														dot: contact.presence === "online"? "bg-green-600" : (contact.presence == "away"? "bg-orange-500" : "bg-gray-500")
-													}}
-												>
-													{ contact.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(contact.avatar)} />}
-													{!contact.avatar && <Avatar className={classes.contactAvatar}>
-														<PersonIcon />
-													</Avatar>}
-												</Badge>
-											</ListItemAvatar>
+									
+								}}
+							/>}
 
-											<ListItemText 
-												className="flex flex-col justify-center"
-												primary={(
-													<Typography variant="body1" color="textPrimary" className={"capitalize font-bold"}>
-														{contact.first_name+" "+contact.last_name}
-													</Typography>
-												)} 
-											/>
-										</ListItem>
-									);
-								})}
-							</List>}
 
 				</ScrollBars>
 			</SwipeableDrawer>
@@ -1217,7 +1132,7 @@ function Chat(props) {
 								</GridItem>
 							</GridContainer>}
 
-							{(!loadingConversations && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
+							{(!loadingConversations && (!Array.isArray(conversations) || (Array.isArray(conversations) && chats.length === 0))) && <GridContainer>
 								<GridItem md={12} className={"flex flex-col items-center relative p-0 px-4 my-4"}>
 									<Typography variant="subtitle1" color="textSecondary" className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center" style={{color: theme.palette.text.disabled, background: theme.palette.background.default}}>
 										<ForumOutlinedIcon fontSize="inherit"/>
@@ -1502,9 +1417,9 @@ function Chat(props) {
 												</div>}
 
 												{!message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.text.disabled}}>
-													<Typography variant="body2" className={"text-xs flex-grow"}>
-														{activeChatMessage.created_on instanceof Date? activeChatMessage.created_on.toLocaleString() : activeChatMessage.created_on}
-													</Typography>
+													{activeChatMessage.created_on && <Typography variant="body2" className={"text-xs flex-grow"}>
+														{activeChatMessage.created_on instanceof Date? activeChatMessage.created_on.toLocaleString() : new Date(activeChatMessage.created_on).toLocaleString()}
+													</Typography>}
 													{(activeChatMessage.state === "sent" && activeChatMessage.sender._id === auth.user._id) && <DoneIcon className={"mx-2"} fontSize="small"/>}
 													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && activeChatMessage.sender._id === auth.user._id) && <DoneAllIcon className={"mx-2"} fontSize="small"/>}
 													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && activeChatMessage.sender._id === auth.user._id) && <DoneAllIcon className={"mx-2"} color={"secondary"} fontSize="small"/>}
@@ -1604,21 +1519,8 @@ function Chat(props) {
 								variant={["audio", "file", "video", "image"].includes(draft.type)? "standard" : "outlined"}
 								multiline
 								rows={2}
-								onBlur={()=>{
-									if (active_conversation._id && sockets.default) {
-										sockets.default.emit("stopped-typing-message", {conversation: active_conversation._id, user: auth.user});
-										
-									}
-								}}
-								onFocus={()=>{
-									if (active_conversation._id && sockets.default) {
-										sockets.default.emit("started-typing-message", {conversation: active_conversation._id, user: auth.user});										
-									}
-								}}
-								defaultValue={active_conversation._id === draft.conversation? draft.content : undefined}
-								onChange={(new_value)=>{
-									if (active_conversation._id && !String.isEmpty(new_value)) {
-										
+								onBlur={(new_value, event)=>{
+									if (active_conversation._id && !String.isEmpty(new_value)) {										
 										setDraft(currentDraft => {
 											try {
 												let newDraft = {
@@ -1639,6 +1541,19 @@ function Chat(props) {
 										});
 										
 									}
+									if (active_conversation._id && sockets.default) {
+										sockets.default.emit("stopped-typing-message", {conversation: active_conversation._id, user: auth.user});
+										
+									}
+								}}
+								onFocus={()=>{
+									if (active_conversation._id && sockets.default) {
+										sockets.default.emit("started-typing-message", {conversation: active_conversation._id, user: auth.user});										
+									}
+								}}
+								defaultValue={active_conversation._id === draft.conversation? draft.content : undefined}
+								onChange={(new_value)=>{
+									
 								}}
 								placeholder="Type your message here..."
 								inputRef={textInputRef}
@@ -1746,7 +1661,7 @@ function Chat(props) {
 
 const mapStateToProps = state => ({
 	auth: state.auth,
-	cache: state.cache,
+	communication: state.communication,
 	device: state.device,
 });
 

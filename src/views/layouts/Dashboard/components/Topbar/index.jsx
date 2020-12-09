@@ -371,7 +371,7 @@ class Topbar extends Component {
 			onToggleSidebar,
 			dashboard,
 			nav,
-			cache: { messaging },
+			communication: { messaging },
 			auth,
 		} = this.props;
 		const {
@@ -518,7 +518,19 @@ class Topbar extends Component {
 							)*/}
 
 							{auth.isAuthenticated && (
-								auth.user.avatar ? (
+								<Badge 
+									variant="dot" 
+									badgeContent=" "
+									className="mx-4"
+									anchorOrigin={{
+										vertical: 'bottom',
+										horizontal: 'right',
+									}}
+									classes={{
+										dot: auth.user.presence === "online"? "bg-green-600" : (auth.user.presence == "away"? "bg-orange-500" : "bg-gray-500")
+									}}
+								>
+									{auth.user.avatar ? (
 										<Avatar 
 											alt="Avatar" 
 											className={classes.userAvatar+" cursor-pointer"} 
@@ -526,14 +538,15 @@ class Topbar extends Component {
 											onClick={this.onOpenUserPresenceMenu} 
 										/>
 									) : (
-										<Avatar className={classes.userAvatar+" cursor-pointer"} onClick={this.onOpenUserPresenceMenu}>
+										<Avatar className={classes.userAvatar+" cursor-pointer"} style={{color: theme.palette.text.primary, background: theme.palette.action.selected}} onClick={this.onOpenUserPresenceMenu}>
 											<UserIcon />
 										</Avatar>
-									)
-								
+									)}
+
+								</Badge>
 							)}
 
-							{auth.isAuthenticated && (
+							{/*auth.isAuthenticated && (
 								<Status
 											color={
 												auth.user.presence === "online"
@@ -549,7 +562,7 @@ class Topbar extends Component {
 											}
 								/>
 								
-							)}
+							)*/}
 
 							<Link className={"cursor-pointer"} to={"/messages".toUriWithDashboardPrefix()}>
 								<IconButton>
@@ -702,6 +715,7 @@ const mapStateToProps = state => ({
 	nav: state.nav,
 	dashboard: state.dashboard,
 	cache: state.cache,
+	communication: state.communication,
 });
 
 

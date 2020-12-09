@@ -44,7 +44,7 @@ const Alert = (props) => {
 }
 
 function ComposeEmailDialog(props) {
-	const { classes, cache: { emailing : { popup_open, recipient_address, recipient_name, cc, bcc, subject, content, context, record} }, apiCallRequest, setEmailingCache, clearEmailingCache} = props;
+	const { classes, communication: { emailing : { popup_open, recipient_address, recipient_name, cc, bcc, subject, content, context, record} }, apiCallRequest, setEmailingCache, clearEmailingCache} = props;
 
 	const [emailRecipientAddress, setEmailRecipientAddress] = useState(recipient_address); 
 	const [emailCC, setEmailCC] = useState(cc); 
@@ -388,6 +388,7 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 	cache: state.cache,
 	device: state.device,
+	communication: state.communication,
 });
 
 export default compose(

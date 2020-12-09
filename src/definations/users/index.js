@@ -4,6 +4,7 @@ import {
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
 	PeopleOutlined as DefinationContextIcon,
+	PersonOutlined as EntryIcon,
 } from "@material-ui/icons";
 import Button from "components/Button";
 import React, {useState, useEffect} from "react";
@@ -16,6 +17,9 @@ import { withTheme } from '@material-ui/core/styles';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import { useGlobals } from "contexts/Globals";
 import { connect } from "react-redux";
+import Typography from "components/Typography";
+import Avatar from "components/Avatar";
+import { attachments as AttachmentsService } from "services";
 
 const presences = {
 	online: { label: "Online", color: "#4caf50" },
@@ -111,9 +115,55 @@ export default {
 		listing: {
 			default: "tableview",
 			listview: {
-				avatar: "avatar",
-				primary: ["first_name", "last_name"],
-				secondary: ["email_address", "role", "status"],
+				avatar: false,
+				resolveData: async (entries, user = null, isPopulated = true) => {
+					let resolved_data = [];
+					if (Array.isArray(entries)) {
+						resolved_data = entries.map((entry, index) => {
+							return {
+								id: entry._id,
+								icon: entry.avatar? null : (<EntryIcon />),
+								avatar: (entry.avatar ? (
+											<Avatar
+												alt={entry.first_name}
+												src={AttachmentsService.getAttachmentFileUrl(entry.avatar)}
+											/>
+										) : null),
+								title:(<Typography
+												className={"truncate"}
+												component="p"
+												variant="body1"
+												color="default"
+										>
+										{entry.first_name+" "+entry.last_name}
+								</Typography>),
+								body: (
+									<React.Fragment>
+										{entry.email_address && <Typography
+												component="p"
+												className={"truncate"}
+												variant="body2"
+												color="default"
+										>
+												{entry.email_address}
+										</Typography>}
+
+										{entry.role && <Typography
+												component="p"
+												variant="body2"
+												color="default"
+										>
+											{entry.role}
+										</Typography>}
+
+										
+									</React.Fragment>
+								),
+							};
+						});
+					}
+					return resolved_data;
+				},
 			},
 			tableview: {
 				avatar: entry => {
@@ -651,6 +701,10 @@ export default {
 			},
 			attachments: {
 				column: "attached_by",
+				query: {},
+			},
+			answers: {
+				column: "user",
 				query: {},
 			},
 			actionlogs: {

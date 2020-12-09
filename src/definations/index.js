@@ -40,3 +40,9 @@ export { default as formvalues } from "./formvalues";
 export { default as conversations } from "./conversations";
 export { default as messages } from "./messages";
 export { default as emails } from "./emails";
+
+//Training exports
+export { default as courses } from "./courses";
+export { default as quizes } from "./quizes";
+export { default as questions } from "./questions";
+export { default as answers } from "./answers";

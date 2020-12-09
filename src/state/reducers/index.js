@@ -13,6 +13,7 @@ import dashboard from "./ui/layouts/Dashboard";
 import landingpage from "./ui/layouts/LandingPage";
 import dialog from "./dialog";
 import ecommerce from "./ecommerce";
+import communication from "./communication";
 
 export default combineReducers({
 	api,
@@ -26,4 +27,5 @@ export default combineReducers({
 	landingpage,
 	form,
 	ecommerce,
+	communication,
 });

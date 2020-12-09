@@ -622,7 +622,7 @@ class LoginForm extends React.Component {
 									</Button>
 								</GridItem>
 								<GridItem md={6} className="p-0 flex flex-col items-center md:justify-end sm:justify-center">
-									<Link to={"/register"} className="transparent">
+									{!this.state.forgotPassword && !this.state.resettingPassword  && <Link to={"/register"} className="transparent">
 										<Button
 											variant="text"
 											color="default"
@@ -632,7 +632,16 @@ class LoginForm extends React.Component {
 										>
 											Create account
 	                  					</Button>
-                  					</Link>
+                  					</Link>}
+                  					{this.state.forgotPassword && <Button
+											variant="text"
+											color="default"
+											size="md"
+											simple
+											onClick={()=>this.setState({resettingPassword:true, forgotPassword: false})}
+										>
+											Reset Password
+	                  					</Button>}
 								</GridItem>
 							</GridContainer>
 

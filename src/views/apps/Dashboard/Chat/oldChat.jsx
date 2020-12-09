@@ -93,7 +93,7 @@ function Alert(props) {
 }
 
 function Chat(props) {
-	const { classes, className, layout, cache:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, clearMessagingCache, ...rest } = props;
+	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, clearMessagingCache, ...rest } = props;
 	let textInputRef = React.createRef();
 	let messagesWrapperRef = React.createRef();
 	let location = useLocation();
@@ -1738,6 +1738,7 @@ function Chat(props) {
 const mapStateToProps = state => ({
 	auth: state.auth,
 	cache: state.cache,
+	communication: state.communication,
 	device: state.device,
 });
 

@@ -25,6 +25,7 @@ export default theme => ({
 		display: 'flex',
 		alignItems: 'center',
 		width: "100%",
+		margin: 0,
 	},
 	searchInput: {
 		marginLeft: theme.spacing(1),

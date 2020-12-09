@@ -34,7 +34,7 @@ function loadStateFromLocalStorage() {
 }
 
 let volatile_state = {};
-function applyPermanence(state) {
+export const applyPermanence = (state) => {
 	let persistent_state = {};
 	for (const [name, value] of Object.entries(state)) {
 		if (value.volatile) {

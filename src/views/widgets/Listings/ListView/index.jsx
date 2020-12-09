@@ -19,6 +19,7 @@ import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import * as Actions from "state/actions";
+import Skeleton from '@material-ui/lab/Skeleton';
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
 import { UtilitiesHelper } from "hoc/Helpers";
@@ -26,7 +27,7 @@ import { withErrorHandler } from "hoc/ErrorHandler";
 import styles from "./styles";
 
 class ListView extends React.Component {
-	calendarRef = React.createRef();
+	
 	state = {
 		loading: true,
 		load_error: false,
@@ -157,7 +158,7 @@ class ListView extends React.Component {
 					}));
 				});
 			}
-			else {
+			else if (cache_data){
 				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];
 				if (Function.isFunction(onLoadData)) {
 					onLoadData(data, this.state.query);
@@ -213,21 +214,70 @@ class ListView extends React.Component {
 			<GridContainer className={classes.root}>
 				<GridItem className="p-0 m-0" xs={12}>
 					{this.state.loading ? (
-						<GridContainer
-							className={classes.full_height}
-							justify="center"
-							alignItems="center"
-						>
-							<GridItem xs={1}>
-								<ProgressIndicator
-									size={24}
-									thickness={4}
-									className={classes.progress}
-									color="secondary"
-									disableShrink
-								/>
-							</GridItem>
-						</GridContainer>
+						<GridContainer>
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+									<Skeleton variant="circle" width={40} height={40} />
+									<div className="flex-grow mx-2 flex flex-col">
+										<Skeleton variant="text" className="w-3/12"/>
+									</div>
+								</GridItem>
+
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+									<Skeleton variant="circle" width={40} height={40} />
+									<div className="flex-grow mx-2 flex flex-col">
+										<Skeleton variant="text" className="w-8/12"/>
+									</div>
+								</GridItem>
+
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+									<Skeleton variant="circle" width={40} height={40} />
+									<div className="flex-grow mx-2 flex flex-col">
+										<Skeleton variant="text" className="w-4/12"/>
+									</div>
+								</GridItem>
+
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+									<Skeleton variant="circle" width={40} height={40} />
+									<div className="flex-grow mx-2 flex flex-col">
+										<Skeleton variant="text" className="w-3/12"/>
+									</div>
+								</GridItem>
+
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+									<Skeleton variant="circle" width={40} height={40} />
+									<div className="flex-grow mx-2 flex flex-col">
+										<Skeleton variant="text" className="w-5/12"/>
+									</div>
+								</GridItem>
+
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+									<Skeleton variant="circle" width={40} height={40} />
+									<div className="flex-grow mx-2 flex flex-col">
+										<Skeleton variant="text" className="w-9/12"/>
+									</div>
+								</GridItem>
+
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+									<Skeleton variant="circle" width={40} height={40} />
+									<div className="flex-grow mx-2 flex flex-col">
+										<Skeleton variant="text" className="w-4/12"/>
+									</div>
+								</GridItem>
+
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+									<Skeleton variant="circle" width={40} height={40} />
+									<div className="flex-grow mx-2 flex flex-col">
+										<Skeleton variant="text" className="w-3/12"/>
+									</div>
+								</GridItem>
+
+								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+									<Skeleton variant="circle" width={40} height={40} />
+									<div className="flex-grow mx-2 flex flex-col">
+										<Skeleton variant="text" className="w-4/12"/>
+									</div>
+								</GridItem>
+							</GridContainer>
 					) : (
 						<GridContainer className="p-0 m-0">
 							{this.state.load_error ? (
@@ -246,6 +296,7 @@ class ListView extends React.Component {
 										<Typography
 											color="error"
 											variant="body1"
+											className={"w-full text-center"}
 											center
 											fullWidth
 										>
@@ -266,7 +317,7 @@ class ListView extends React.Component {
 											<GridContainer className="p-0 m-0">
 												<GridItem xs={12}>
 													<List
-														className={classes.root}
+														className={"p-0 transparent-bg"}
 													>
 														{this.state.records.map(
 															(entry, index) => (

@@ -75,8 +75,6 @@ export default theme => ({
 	userAvatar: {
 		width: theme.spacing(3.5),
     	height: theme.spacing(3.5),
-    	marginLeft: theme.spacing(),
-    	marginRight: theme.spacing(),
 	},
 	signOutButton: {
 		alignSelf: "center",

@@ -28,6 +28,24 @@ import { withStyles } from "@material-ui/core";
 import {useGlobals} from "contexts/Globals";
 import { colors } from "assets/jss/app-theme";
 import client_position_marker_icon from "assets/img/maps/marker-person.svg";
+import client_position_female_heading_135_icon from "assets/img/maps/heading/female-135.png";
+import client_position_female_heading_180_icon from "assets/img/maps/heading/female-180.png";
+import client_position_female_heading_225_icon from "assets/img/maps/heading/female-225.png";
+import client_position_female_heading_270_icon from "assets/img/maps/heading/female-270.png";
+import client_position_female_heading_315_icon from "assets/img/maps/heading/female-315.png";
+import client_position_female_heading_360_icon from "assets/img/maps/heading/female-360.png";
+import client_position_female_heading_45_icon from "assets/img/maps/heading/female-45.png";
+import client_position_female_heading_80_icon from "assets/img/maps/heading/female-90.png";
+
+import client_position_male_heading_135_icon from "assets/img/maps/heading/male-135.png";
+import client_position_male_heading_180_icon from "assets/img/maps/heading/male-180.png";
+import client_position_male_heading_225_icon from "assets/img/maps/heading/male-225.png";
+import client_position_male_heading_270_icon from "assets/img/maps/heading/male-270.png";
+import client_position_male_heading_315_icon from "assets/img/maps/heading/male-315.png";
+import client_position_male_heading_360_icon from "assets/img/maps/heading/male-360.png";
+import client_position_male_heading_45_icon from "assets/img/maps/heading/male-45.png";
+import client_position_male_heading_80_icon from "assets/img/maps/heading/male-90.png";
+
 import client_user_female_icon from "assets/img/maps/marker-person-female.png";
 import client_user_male_icon from "assets/img/maps/marker-person-male.png";
 import Paper from "@material-ui/core/Paper";
@@ -64,6 +82,27 @@ const current_position_marker_icon = {
 	scale: 1,
 };
 */
+
+let rounded_headings = [360, 315, 270, 225, 180, 135, 90, 45];
+rounded_headings.sort((a, b) => {return a-b});
+const heading_aware_client_position_marker_icons = {
+	male_heading_135: client_position_male_heading_135_icon,
+	male_heading_180: client_position_male_heading_180_icon,
+	male_heading_225: client_position_male_heading_225_icon,
+	male_heading_270: client_position_male_heading_270_icon,
+	male_heading_315: client_position_male_heading_315_icon,
+	male_heading_360: client_position_male_heading_360_icon,
+	male_heading_45: client_position_male_heading_45_icon,
+	male_heading_80: client_position_male_heading_80_icon,
+	female_heading_135: client_position_female_heading_135_icon,
+	female_heading_180: client_position_female_heading_180_icon,
+	female_heading_225: client_position_female_heading_225_icon,
+	female_heading_270: client_position_female_heading_270_icon,
+	female_heading_315: client_position_female_heading_315_icon,
+	female_heading_360: client_position_female_heading_360_icon,
+	female_heading_45: client_position_female_heading_45_icon,
+	female_heading_80: client_position_female_heading_80_icon,
+};
 const labelSize = 200;
 const labelPadding = 8;
 
@@ -237,17 +276,14 @@ export default compose(
 	withGoogleMap,
 	connect(mapStateToProps, {}),
 )( React.memo(props => {
-	let [state, setState] = useState(props);
+	let [map, setMap] = useState(null);
+	//let [googleMap, setGoogleMap] = useState(null);
 	let [region, setRegion] = useState({});
 
 	let clientMarkers = {};
 
 
-	useEffect(() => {
-		setState(props);
-	}, [props]);
-
-	const { onMapLoad, device, auth, markers, polylines, circles, showDeviceLocation, showClientsPositions, selectedEntry, selectedEntryType, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition, defaultCenter} = state;
+	const { onMapLoad, device, auth, markers, polylines, circles, showDeviceLocation, showClientsPositions, selectedEntry, selectedEntryType, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition, defaultCenter} = props;
 
 	let globals = useGlobals();
 	let sockets = globals? globals.sockets : {};
@@ -290,7 +326,27 @@ export default compose(
 	}
 
 	
+	const getclientPositionHeadingMarkerIcon = (user, position) => {		
+		let computed_gender = (JSON.isJSON(user)? (String.isString(user.gender)? user.gender.trim().toLowerCase() : "male") : "male");
+		let computed_heading = JSON.isJSON(position)? Number.parseNumber(position.heading, 360) : 360;
 
+
+		let heading_approach_index = 0;
+		if (!rounded_headings.includes(computed_heading)) {
+			heading_approach_index = Math.round(((rounded_headings.length * (computed_heading / 360))-1));			
+			computed_heading = rounded_headings[heading_approach_index];
+		}
+
+		if (computed_gender !== "male" && computed_gender !== "female") {
+			computed_gender = "male";
+		}
+		if (!rounded_headings.includes(computed_heading)) {
+			computed_heading = 360;
+		}
+
+
+		return heading_aware_client_position_marker_icons[computed_gender+"_heading_"+computed_heading];
+	}
 
 	const getRegionWidth = (target_region = null) => {
 		target_region = target_region? target_region : false;
@@ -311,13 +367,17 @@ export default compose(
 		}
 	};
 
-	const animateClientMarkerToPosition = (socketId, newPosition, kmph) => {
+	const animateClientMarkerToPosition = ({socketId, user,  position}) => {
 		var options = {
 			duration: 1000,
 			easing: function (x, t, b, c, d) { // jquery animation: swing (easeOutQuad)
 				return -c *(t/=d)*(t-2) + b;
 			}
 		};
+
+		let newPosition = new google.maps.LatLng(position.latitude, position.longitude);
+		let kmph = position.speed? position.speed : 10;
+
 
 
 		window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -380,18 +440,20 @@ export default compose(
 		animateStep(_clientsPositions[socketId].marker, (new Date()).getTime());
 	}
 
+	
+
 	const handleOnClientPositionChange = async ({socketId, ...data}) => {	
 		if (data.user) {
 
 			let {user, position, track} = data;
-			let currentMapBounds = mapBounds;
+			let currentMapBounds = mapBounds;			
 
 			if (!(socketId in _clientsPositions)) {
 				_clientsPositions[socketId] = data;
 				_clientsPositions[socketId].marker = new google.maps.Marker({
 										position: {lat: data.position.latitude, lng: data.position.longitude },
 										title: user.first_name+" "+user.last_name,
-										icon:{url: (String.isString(data.user.gender)? (data.user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon), scaledSize: { width: 32, height: 32 }, rotation:data.position.heading },
+										icon: getclientPositionHeadingMarkerIcon(user, position),
 										onClick: handleOnPressMarker(socketId, data),
 										map: getGoogleMapContextElement(),
 									});
@@ -399,9 +461,7 @@ export default compose(
 			else {
 				_clientsPositions[socketId].user = user;
 				_clientsPositions[socketId].position = position;
-				var icon = _clientsPositions[socketId].marker.getIcon();
-							icon.rotation = position.heading;
-							_clientsPositions[socketId].marker.setIcon(icon);
+				_clientsPositions[socketId].marker.setIcon(getclientPositionHeadingMarkerIcon(user, position));
 							/*_clientsPositions[socketId].marker.setIcon({
 								path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
 								scale: 6,
@@ -410,7 +470,7 @@ export default compose(
 							});
 							*/
 				if (currentMapBounds) {}
-				animateClientMarkerToPosition(socketId, new google.maps.LatLng(data.position.latitude, data.position.longitude), data.position.speed? data.position.speed : 10);
+				animateClientMarkerToPosition({socketId, ...data});
 				
 			}
 			/*console.log("JSON.stringify(data.position)", JSON.stringify(data.position));					
@@ -470,7 +530,7 @@ export default compose(
 		_clientsPositions[socketId].marker = new google.maps.Marker({
 										position: {lat: data.position.latitude, lng: data.position.longitude },
 										title: user.first_name+" "+user.last_name,
-										icon:{url: (String.isString(data.user.gender)? (data.user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon), scaledSize: { width: 32, height: 32 }, rotation:data.position.heading },
+										icon: getclientPositionHeadingMarkerIcon(user, position),
 										onClick: handleOnPressMarker(socketId, data),
 										map: getGoogleMapContextElement(),
 
@@ -493,7 +553,7 @@ export default compose(
 					let marker = new google.maps.Marker({
 												position: {lat: position.latitude, lng: position.longitude },
 												title: user.first_name+" "+user.last_name,
-												icon:{url: (String.isString(data.user.gender)? (data.user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon), scaledSize: { width: 32, height: 32 }, rotation: position.heading },
+												icon: getclientPositionHeadingMarkerIcon(user, position),
 												onClick: handleOnPressMarker(socketId, data),
 												map: getGoogleMapContextElement(),
 											});
@@ -576,7 +636,7 @@ export default compose(
 									marker = new google.maps.Marker({
 										position: {lat: position.latitude, lng: position.longitude },
 										title: user.first_name+" "+user.last_name,
-										icon:{url: (String.isString(user.gender)? (user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon), scaledSize: { width: 32, height: 32 }, rotation:position.heading },
+										icon: getclientPositionHeadingMarkerIcon(user, position),
 										onClick: handleOnPressMarker(socketId, clientData),
 										duration: 250,
 									});
@@ -715,13 +775,13 @@ export default compose(
 		return (
 			<GoogleMap
 				className="relative"
-				defaultZoom={state.defaultZoom}
-				zoom={state.zoom}
-				defaultCenter={state.defaultCenter}
+				defaultZoom={props.defaultZoom}
+				zoom={props.zoom}
+				defaultCenter={props.defaultCenter}
 				defaultOptions={{
-					styles: state.mapStyles ? state.mapStyles : (state.theme === "dark"? mapDarkStyles : mapStyles),
+					styles: props.mapStyles ? props.mapStyles : (props.theme === "dark"? mapDarkStyles : mapStyles),
 				}}
-				ref={map => {	
+				ref={map => {
 					_map = map;				
 					if (map) {
 						if (!_map) {
@@ -737,7 +797,7 @@ export default compose(
 				}}
 				onBoundsChanged={handleOnBoundsChanged}
 			>
-				{state.draw && (
+				{props.draw && (
 					<DrawingManager
 						defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
 						defaultOptions={{
@@ -876,23 +936,23 @@ export default compose(
 						)
 					)*/}
 
-				{JSON.isJSON(state.currentDevicePosition) &&
-					state.showCurrentPosition && (
+				{JSON.isJSON(props.currentDevicePosition) &&
+					props.showCurrentPosition && (
 						<Marker
-							position={state.currentDevicePosition.coordinates}
-							title={state.currentDevicePosition.title}
+							position={props.currentDevicePosition.coordinates}
+							title={props.currentDevicePosition.title}
 							icon={current_position_marker_icon}
 						/>
 					)}
 
-				{JSON.isJSON(state.marker) && <Marker {...state.marker} />}
-				{JSON.isJSON(state.circle) && <Marker {...state.circle} />}
+				{JSON.isJSON(props.marker) && <Marker {...props.marker} />}
+				{JSON.isJSON(props.circle) && <Marker {...props.circle} />}
 
 				{(infoWindowOpen && infoWindowPosition && infoWindowContent) && <InfoWindow position={infoWindowPosition} onCloseClick={() => setInfoWindowOpen(false) }>
 					{infoWindowContent}
 				</InfoWindow>}
 
-				{state.showSearchBar && (
+				{props.showSearchBar && (
 					<div className={"absolute bottom-0 mb-4 py-1 px-2 sm:w-full md:w-5/6 lg:w-4/6 "} >
 						<Paper
 							component="div"
@@ -902,7 +962,7 @@ export default compose(
 								variant="plain"
 								margin="none"
 								controlPosition={google.maps.ControlPosition.BOTTOM_CENTER}
-								{...state.searchBarProps}
+								{...props.searchBarProps}
 							/>
 						</Paper>
 					</div>

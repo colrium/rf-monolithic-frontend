@@ -20,6 +20,13 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionActions from '@material-ui/core/AccordionActions';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
+import { useTheme } from '@material-ui/core/styles';
 import {
 	TextInput
 } from "components/FormInputs";
@@ -42,6 +49,63 @@ import styles from "./styles";
 //
 import TableView from "./TableView";
 
+function TablePaginationActions(props) {
+	const theme = useTheme();
+	const { count, page, rowsPerPage, onChangePage } = props;
+
+	const handleFirstPageButtonClick = (event) => {
+		onChangePage(event, 0);
+	};
+
+	const handleBackButtonClick = (event) => {
+		onChangePage(event, page - 1);
+	};
+
+	const handleNextButtonClick = (event) => {
+		onChangePage(event, page + 1);
+	};
+
+	const handleLastPageButtonClick = (event) => {
+		onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+	};
+
+	return (
+		<div className={"ml-2 flex-shrink-0"}>
+			<IconButton
+				onClick={handleFirstPageButtonClick}
+				disabled={page === 0}
+				aria-label="first page"
+			>
+				{theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+			</IconButton>
+			<IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+				{theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+			</IconButton>
+			<IconButton
+				onClick={handleNextButtonClick}
+				disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+				aria-label="next page"
+			>
+				{theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+			</IconButton>
+			<IconButton
+				onClick={handleLastPageButtonClick}
+				disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+				aria-label="last page"
+			>
+				{theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+			</IconButton>
+		</div>
+	);
+}
+
+TablePaginationActions.propTypes = {
+	count: PropTypes.number.isRequired,
+	onChangePage: PropTypes.func.isRequired,
+	page: PropTypes.number.isRequired,
+	rowsPerPage: PropTypes.number.isRequired,
+};
+
 
 class ListingView extends React.Component {
 	state = {
@@ -58,12 +122,16 @@ class ListingView extends React.Component {
 		viewMenuAnchorEl: null,
 		sortFields: [],
 		filterAccordionExpanded: false,
+		filterableFields: {},
+		filterContext: false,
+		filterMenuAnchor: null,
 		filters: {
 			values: {},
 			labels: {},
 		}
 	};
 	mounted = false;
+	searchkeywordRef = React.createRef();
 
 	constructor(props) {
 		super(props);
@@ -81,8 +149,35 @@ class ListingView extends React.Component {
 			pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
 			page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
 		};
+
+		let filterableFields = {};
+			let filterContext = false;
+			let searchKeyword = "";
+			Object.entries(defination.scope.columns).map(([column_name, column_props], cursor) => {
+				if (!["file", "dynamic", "textarea", "password", "wysiwyg", "map", "file", "slider", "multiselect"].includes(column_props.input.type)) {
+					filterableFields[column_name] = column_props;
+				}
+			});
+			if (JSON.isJSON(query)) {
+				let filterContextMatched = false;
+				let filterableColumns = Object.keys(filterableFields);
+				Object.entries(query).map(([queryColumn, queryValue]) => {
+					if (!filterContextMatched && filterableColumns.includes(queryColumn)) {
+						filterContext = queryColumn;
+						searchKeyword = queryValue;
+						if (String.isString(queryValue)) {
+							searchKeyword = queryValue;
+						}
+						else{
+							searchKeyword = String(queryValue);
+						}
+						filterContextMatched = true;
+					}
+				})
+
+			}
 		
-		if (query.q || query.query) {
+		if (!filterContext && (query.q || query.query)) {
 			if (query.q) {
 				this.state.searchKeyword = query.q;
 			}
@@ -90,6 +185,11 @@ class ListingView extends React.Component {
 				this.state.searchKeyword = query.query;
 			}
 		}
+		else {
+			this.state.searchKeyword = searchKeyword;
+			this.state.filterContext = filterContext;
+		}
+
 
 		this.handleViewItemClick = this.handleViewItemClick.bind(this);
 		this.handleOnPageChanged = this.handleOnPageChanged.bind(this);
@@ -191,11 +291,33 @@ class ListingView extends React.Component {
 					views[name] = label;
 				}
 			}
-			let sortFields = Object.entries(defination.scope.columns).map(([column_name, column_props], cursor) => {
-				if (!["text", "datetime", "date", "dynamic", "textarea", "number", "phone", "text", "password", "wysiwyg", "map", "file", "slider", "multiselect"].includes(column_props.input.type)) {
-					return column_name;
+			let filterableFields = {};
+			let filterContext = false;
+			let searchKeyword = "";
+			Object.entries(defination.scope.columns).map(([column_name, column_props], cursor) => {
+				if (!["file", "dynamic", "textarea", "password", "wysiwyg", "map", "file", "slider", "multiselect"].includes(column_props.input.type)) {
+					filterableFields[column_name] = column_props;
 				}
-			})
+			});
+			if (JSON.isJSON(query)) {
+				let filterContextMatched = false;
+				let filterableColumns = Object.keys(filterableFields);
+				Object.entries(query).map(([queryColumn, queryValue]) => {
+					if (!filterContextMatched && filterableColumns.includes(queryColumn)) {
+						filterContext = queryColumn;
+						searchKeyword = queryValue;
+						if (String.isString(queryValue)) {
+							searchKeyword = queryValue;
+						}
+						else{
+							searchKeyword = String(queryValue);
+						}
+						filterContextMatched = true;
+					}
+				})
+
+			}
+			console.log("this.searchkeywordRef", "this.searchkeywordRef")
 			if (this.mounted) {
 				this.setState(state => ({
 					defination: defination,
@@ -214,7 +336,10 @@ class ListingView extends React.Component {
 					view: view ? view : default_view,
 					showViewOptions: showViewOptions,
 					showAddBtn: showAddBtn,
-					sortFields: sortFields,
+					filterableFields: filterableFields,
+					searchKeyword: searchKeyword,
+					filterContext: filterContext,
+
 				}));
 			} else {
 				this.state = {
@@ -235,7 +360,9 @@ class ListingView extends React.Component {
 					view: view ? view : default_view,
 					showViewOptions: showViewOptions,
 					showAddBtn: showAddBtn,
-					sortFields: sortFields,
+					filterableFields: filterableFields,
+					searchKeyword: searchKeyword,
+					filterContext: filterContext,
 				};
 			}
 		}
@@ -286,28 +413,107 @@ class ListingView extends React.Component {
 				<GridContainer className="p-1 m-0">
 					{ (showSorter && view !== "googlemapview") && <GridItem xs={12} className="p-0 m-0 mb-2" >
 						<GridContainer className="p-0 m-0">
-							{/*<GridItem xs={12} className="p-0 m-0">
+							
+
+							<GridItem xs={12} className={"p-0"}>
 								<Accordion 
 									expanded={this.state.filterAccordionExpanded}
-									onChange={(event, expanded) => {
-										if (this.state.filterAccordionExpanded !== expanded) {
-											this.setState({
-												filterAccordionExpanded: expanded,
-											});
-										}											
-									}}
-									className="px-2"
+									className="p-0"
 									variant="outlined"
 								>
-									<AccordionSummary
+									{/*<AccordionSummary
 										expandIcon={this.state.filterAccordionExpanded? <ExpandLessIcon /> : <FilterListIcon />}
 										aria-controls="filter-panel1c-content"
 										id="filter-panel1c-header"
-										className="flex p-1 flex-grow"
+										className="flex m-0 p-0 flex-grow"
 										
+									>*/}
+									<Paper 
+										component="form" 
+										elevation={0}
+										className={classes.searchRoot} 
+										onSubmit={event => {
+											event.preventDefault();
+											this.setState(prevState => ({
+												query: prevState.filterContext? {...prevState.query, [prevState.filterContext]: prevState.searchKeyword} : {...prevState.query, q: prevState.searchKeyword}
+											}));
+											console.log("Search submit searchKeyword", this.state.searchKeyword)
+										}}
 									>
+										{!this.state.filterContext && <IconButton 
+											className={classes.filterIconButton} 
+											aria-label="Filter"
+											onClick={(event)=>{
+												event.preventDefault();
+												this.setState({filterMenuAnchor: event.currentTarget});
+											}}
+										>
+											<MenuIcon />
+										</IconButton>}
+										{this.state.filterContext && <Button  
+											aria-label="Filter"
+											size={"small"}
+											color="secondary"
+											onClick={(event)=>{
+												event.preventDefault();
+												this.setState({filterMenuAnchor: event.currentTarget});
+											}}
+										>
+											{Function.isFunction(this.state.filterableFields[this.state.filterContext].label)? this.state.filterContext.humanize() : this.state.filterableFields[this.state.filterContext].label}
+										</Button>}
+										<Menu
+									        id="filter-fields-menu"
+									        anchorEl={this.state.filterMenuAnchor}
+									        keepMounted
+									        open={Boolean(this.state.filterMenuAnchor)}
+									        onClose={() => this.setState({filterMenuAnchor: null})}
+									    >
+									        {Object.entries(this.state.filterableFields).map(([filterableField, filterableFieldProps], cursor) => (
+									        	<MenuItem 
+									        		onClick={()=> {
+									        			this.setState({filterContext: (this.state.filterContext === filterableField? false : filterableField), filterMenuAnchor: null});									        			
+									        		}}
+									        	>
+									        		{Function.isFunction(filterableFieldProps.label)? filterableField.humanize() : filterableFieldProps.label}
+									        	</MenuItem>
+									        ))}
+									    </Menu>
+										<TextInput
+											className={classes.searchInput}
+											placeholder="Search..."
+											inputProps={{ 'aria-label': 'Search' }}
+											defaultValue={this.state.searchKeyword}
+											onFocus={() => {
+												if (!this.state.filterAccordionExpanded) {
+													this.setState({ filterAccordionExpanded: true });
+												}
+											}}
+											onChange={newKeyword => {
+												this.setState(prevState=>{
+													let newState = { searchKeyword: newKeyword };
+													if (prevState.query) {
+														if (prevState.query.q) {
+															let newQuery = JSON.fromJSON(prevState.query);
+															delete newQuery["q"];
+															newState.query = newQuery;
+														}
+													}
+													return newState;
+												});
+											}}
+											variant={"base"}
+											ref={ref => (this.searchkeywordRef = ref)}
+										/>
+										<IconButton 
+											type="submit" className={classes.searchIconButton} aria-label="search">
+											<SearchIcon />
+										</IconButton>
+									</Paper>
 										
-											{Object.keys(this.state.filters.values).length === 0 && <Typography variant="h5" gutterBottom>Filter </Typography>}
+											
+										
+									{/*</AccordionSummary>*/}
+									<AccordionDetails className={"p-0"}>
 											{ Object.keys(this.state.filters.values).length > 0 && <GridContainer className="m-0">
 												{Object.entries(this.state.filters.labels).map(([filter_name, filter_label], cursor) => {
 														return (
@@ -323,86 +529,9 @@ class ListingView extends React.Component {
 
 																	})}
 											</GridContainer>}
-										
-									</AccordionSummary>
-									<AccordionDetails className={"p-0"}>
-										
-										<ContextDataForm
-											defination={defination}
-											service={service}
-											form={defination.name+"-listing-sorter"}
-											fields={this.state.sortFields}
-											show_title={false}
-											show_submit={false}
-											show_discard={false}
-											layout={sorterFormLayoutType}
-											initialValues={this.state.filters.values}
-											onValuesChange={(values, labels)=>{
-												console.log("onValuesChange values", values, "labels", labels);
-												let newfilterValues = {};
-												let newfilterLabels = {};
-
-												for (let [key, value] of Object.entries(values)) {
-													if (value !== null && value !== undefined && labels[key] !== null && labels[key] !== undefined) {
-														newfilterValues[key] = value;
-														newfilterLabels[key] = labels[key];
-													}
-												}
-
-												this.setState(prevState => ({
-													query: {
-														...prevState.query,
-														...newfilterValues
-													},
-													filters: {
-														values: newfilterValues,
-														labels: newfilterLabels,
-													}
-												}));
-											}}
-										/>
 									</AccordionDetails>
 								</Accordion>
-										
-							</GridItem>*/}
-
-							<GridItem xs={12} className={"p-0"}>
-								<Paper 
-									component="form" 
-									className={classes.searchRoot} 
-									onSubmit={event => {
-										event.preventDefault();
-										this.setState(prevState => ({
-											query: {...prevState.query, q: prevState.searchKeyword}
-										}));
-										console.log("Search submit searchKeyword", this.state.searchKeyword)
-									}}
-								>
-									<TextInput
-										className={classes.searchInput}
-										placeholder="Search..."
-										inputProps={{ 'aria-label': 'Search' }}
-										defaultValue={this.state.searchKeyword}
-										onChange={newKeyword => {
-											this.setState(prevState=>{
-												let newState = { searchKeyword: newKeyword };
-												if (prevState.query) {
-													if (prevState.query.q) {
-														let newQuery = JSON.fromJSON(prevState.query);
-														delete newQuery["q"];
-														newState.query = newQuery;
-													}
-												}
-												return newState;
-											});
-										}}
-										variant={"base"}
-									/>
-									<IconButton 
-										type="submit" className={classes.searchIconButton} aria-label="search">
-										<SearchIcon />
-									</IconButton>
-								</Paper>
+								
 							</GridItem>
 						</GridContainer>
 						
@@ -465,9 +594,17 @@ class ListingView extends React.Component {
 							page={defination.name in cache.res? cache.res[defination.name].page-1 : this.state.page-1}							
 							rowsPerPage={this.state.query.pagination}
 							onChangePage={this.handleOnPageChanged}
-							labelRowsPerPage={"Records per page:"}
+							labelRowsPerPage={"Records per page"}
 							rowsPerPageOptions={[5, 10, 25, 50, 100, { value: -1, label: 'All' }]}
 							onChangeRowsPerPage={this.handleOnRecordsPerPageChanged}
+							ActionsComponent={TablePaginationActions}
+							SelectProps={{
+								label: "Records per page",
+								variant: "outlined",
+							}}
+							classes={{
+								toolbar: "flex-col-reverse px-2",
+							}}
 						/>
 					</GridItem>
 				</GridContainer> }

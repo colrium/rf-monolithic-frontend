@@ -54,7 +54,7 @@ const GlobalsProvider = props => {
 	let [settingsChangeCallBacks, setSettingsChangeCallBacks] = useState([]);
 	let [preferencesChangeCallBacks, setPreferencesChangeCallBacks] = useState([]);	
 
-	let { auth, cache: { data: dataCache, messaging }, api, app, clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } = props;
+	let { auth, cache: { data: dataCache}, communication: {messaging} api, app, clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } = props;
 	
 
 	const handleOnInternetAvailabilityChange = () => {
@@ -625,6 +625,7 @@ const mapStateToProps = state => ({
 	app: state.app,
 	auth: state.auth,
 	cache: state.cache,
+	communication: communication,
 });
 
 export default connect(mapStateToProps, { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache })(GlobalsProvider);

@@ -5,13 +5,13 @@ export default theme => ({
 		padding: "0",
 	},
 	listItem: {
-		background: theme.palette.background.paper,
+		background: "transparent",
 		transition: theme.transitions.create("background", {
 			easing: theme.transitions.easing.sharp,
 			duration: 50,
 		}),
 		"&:hover": {
-			background: theme.palette.background.default,
+			background: theme.palette.action.hover,
 		},
 	},
 });

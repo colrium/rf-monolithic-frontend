@@ -547,7 +547,7 @@ class GoogleMapOverview extends React.Component {
 														) */}
 														
 												</ListItemAvatar>
-												<ListItemText primary={ client_position.user.first_name+" "+client_position.user.last_name } secondary="Position" />
+												<ListItemText primary={ client_position.user.first_name+" "+client_position.user.last_name } secondary={String.isString(client_position.user.role)? client_position.user.role.humanize() : ""} />
 											</ListItem>
 									))}
 									</List>}
