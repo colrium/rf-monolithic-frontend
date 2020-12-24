@@ -362,9 +362,7 @@ export default {
 						default: (entry, className) => {
 							return (
 								<Link
-									to={(
-										"courses/view/" + entry._id
-									).toUriWithDashboardPrefix()}
+									to={("courses/view/" + entry._id).toUriWithDashboardPrefix()}
 									className={className}
 								>
 									<IconButton
@@ -379,9 +377,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={(
-										"courses/view/" + entry._id
-									).toUriWithDashboardPrefix()}
+									to={("courses/view/" + entry._id).toUriWithDashboardPrefix()}
 									className={className}
 								>
 									<IconButton
@@ -442,9 +438,7 @@ export default {
 						default: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={(
-										"courses/edit/" + entry._id
-									).toUriWithDashboardPrefix()}
+									to={("courses/edit/" + entry._id).toUriWithDashboardPrefix()}
 									className={className}
 								>
 									<IconButton
@@ -459,9 +453,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={(
-										"courses/edit/" + entry._id
-									).toUriWithDashboardPrefix()}
+									to={("courses/edit/" + entry._id).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -484,9 +476,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return (
-						"courses/delete/" + entry._id
-					).toUriWithDashboardPrefix();
+					return ("courses/delete/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

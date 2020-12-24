@@ -1064,3 +1064,178 @@ Date.prototype.minusMilliSeconds = function(ms) {
 	this.setTime(this.getTime() - ms);
 	return this;
 };
+
+
+
+/*Date.difference = function(date1, date2 = new Date()) {
+	
+	if (Number.isNumber(date1)) {
+		try {
+			date1 = new Date(date1);
+		} catch (e) {
+			console.log("difference date1 error", e);
+		}
+	}
+	if (Number.isNumber(date2)) {
+		try {
+			date2 = new Date(date2);
+		} catch (e) {
+			console.log("difference date2 error", e);
+		}
+	}
+	
+	var intervals = {
+		years: 0,
+		months: 0,
+		weeks: 0,
+		days: 0,
+		hours: 0,
+		minutes: 0,
+		seconds: 0,
+		milliseconds: 0,
+		direction: "forward",
+		description: "",
+	}
+
+	if ((date1 instanceof Date) && (date2 instanceof Date)) {
+		var years = 0;
+		var months = 0;
+		var weeks = 0;
+		var days = 0;
+		var hours = 0;
+		var minutes = 0;
+		var seconds = 0;
+		var milliseconds = 0;
+		var direction = date2.getTime() >= date1.getTime()? "forward" : "reverse";
+		var description = "";
+
+		var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+		if (date2.getFullYear() % 4 === 0) {
+			daysInMonth[1] = 29;
+		}
+		
+		
+		
+		years = Math.abs((date2.getFullYear() - date1.getFullYear()));
+
+		//months = date2.getDate() - date1.getMonth();
+
+		months = (years === 0? (date2.getMonth() - date1.getMonth()) : (( 11 - date1.getMonth()) +  (11 - date2.getMonth())));
+		if (years > 0 && date1.getMonth() < 6) {
+			months = (11 - date1.getMonth()) + date2.getMonth();
+		}
+		days = (months === 0? (date2.getDate() - date1.getDate()) : (( daysInMonth[date1.getMonth()] - date1.getDate()) + (daysInMonth[date2.getMonth()] - date2.getDate())));
+		
+		weeks = Math.floor((days >= 7? (days/7) : 0));
+		days = weeks > 0? (days - (weeks*7)) : days;
+		hours = ((days === 0? (date2.getHours() - date1.getHours()) : (( 23 - date1.getHours()) + (23 - date2.getHours()))));
+		minutes = ((hours === 0? (date2.getMinutes() - date1.getMinutes()) : (( 59 - date1.getMinutes()) + (59 - date2.getMinutes()))));
+		seconds = ((minutes === 0? (date2.getSeconds() - date1.getSeconds()) : (( 59 - date1.getSeconds()) + (59 - date2.getSeconds()))));
+		milliseconds = ((seconds === 0? (date2.getMilliseconds() - date1.getMilliseconds()) : (( 999 - date1.getMilliseconds()) + (599 - date1.getMilliseconds()))));
+
+		if (years > 0) {
+			description = years+" years";
+			if (years === 1) {
+				description = "last year";
+				if (months > 0) {
+					description = date1.toLocaleString;
+				}
+			}
+			
+		}
+		else  if (months > 0) {
+
+		}
+		
+			
+
+
+		intervals.years = years;
+		intervals.months = months;
+		intervals.weeks = weeks;
+		intervals.days = days;
+		intervals.hours = hours;
+		intervals.minutes = minutes;
+		intervals.seconds = seconds;
+		intervals.milliseconds = milliseconds;
+		intervals.direction = direction;
+		intervals.description = description;
+
+		console.log("date1", date1.toLocaleString());
+		console.log("date2", date2.toLocaleString());
+	}
+		
+
+	return intervals;
+};*/
+
+Date.difference = function(date1, date2 = new Date()) {
+	
+	if (Number.isNumber(date1)) {
+		try {
+			date1 = new Date(date1);
+		} catch (e) {
+			console.log("difference date1 error", e);
+		}
+	}
+	if (Number.isNumber(date2)) {
+		try {
+			date2 = new Date(date2);
+		} catch (e) {
+			console.log("difference date2 error", e);
+		}
+	}
+	
+	var intervals = {
+		years: 0,
+		months: 0,
+		weeks: 0,
+		days: 0,
+		hours: 0,
+		minutes: 0,
+		seconds: 0,
+		milliseconds: 0,
+		direction: "forward",
+		description: "",
+	}
+
+	if ((date1 instanceof Date) && (date2 instanceof Date)) {
+		var date2Millis = date2.getTime();
+		var targetMillis = date1.getTime();
+
+		var duration = targetMillis - date2Millis;
+		var years = Math.floor(duration / 3.154e+10);
+		var durationMinusYears = duration - (years * 3.154e+10);
+		var months = Math.floor(duration / 2.628e+9) % 12;
+		var durationMinusMonths = durationMinusYears - (months * 2.628e+9);
+		var days = Math.floor(durationMinusMonths / 8.64e+7);
+		var hours = Math.floor(duration / 3.6e+6 ) % 24;
+		var minutes = Math.floor(duration / 60000 ) % 60;
+		var seconds = Math.floor(duration / 1000 ) % 60;
+
+		
+			
+
+
+		intervals.years = Math.abs(years);
+		intervals.months =  Math.abs(months);
+		//intervals.weeks = weeks;
+		intervals.days =  Math.abs(days);
+		intervals.hours =  Math.abs(hours);
+		intervals.minutes =  Math.abs(minutes);
+		intervals.seconds =  Math.abs(seconds);
+		/*intervals.milliseconds = milliseconds;
+		intervals.direction = direction;
+		intervals.description = description;*/
+
+		console.log("date1", date1.toLocaleString());
+		console.log("date2", date2.toLocaleString());
+	}
+		
+
+	return intervals;
+};
+Date.prototype.difference = function(otherdate) {
+	let difference = Date.difference(otherdate, this);
+    return difference;
+};

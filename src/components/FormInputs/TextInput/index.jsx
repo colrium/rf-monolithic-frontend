@@ -43,6 +43,7 @@ const Input = (props) => {
 		loading,
 		className,
 		inputProps,
+		InputProps,
 		...rest
 	} = state;
 
@@ -304,7 +305,6 @@ const Input = (props) => {
 					}*/
 					event.persist();
 					let new_value = event.target.value;	
-					console.log("onBlur event new_value", new_value);
 					setInputFocused(false);
 					let valueValid = inputValueValid(new_value);
 					Promise.all([valueValid]).then(validity => {
@@ -326,11 +326,13 @@ const Input = (props) => {
 				}}
 				InputProps={{
 					...inputProps,
+					...InputProps,
 					endAdornment: (type === "password" || loading) && (
 						<InputAdornment position="end">
 							{loading && <CircularProgress size={"1rem"} color="inherit" />}
 							{type === "password" && <IconButton
 								aria-label="Toggle password visibility"
+								color="inherit"
 								onClick={e => {
 									setShowPassword(inputType === "password");
 									setInputType(inputType === "password"? "text" : "password");
@@ -338,9 +340,9 @@ const Input = (props) => {
 								}}
 							>
 								{showPassword ? (
-									<HidePasswordIcon />
+									<HidePasswordIcon fontSize="small" />
 								) : (
-									<ShowPasswordIcon />
+									<ShowPasswordIcon fontSize="small" />
 								)}
 							</IconButton>}
 						</InputAdornment>

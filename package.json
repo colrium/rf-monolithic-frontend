@@ -1,10 +1,10 @@
 {
   "name": "dashboard",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "private": true,
   "description": "Realfield Web",
   "main": "index.js",
-  "homepage": "https://realfield.io/",
+  "homepage": "https://preview.realfield.io/",
   "author": "Mutugi Riungu",
   "dependencies": {
     "@builder.io/react": "^1.0.97",

@@ -7,14 +7,15 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import withRoot from "hoc/withRoot";
 
-function CustomAvatar({
+function CustomAvatar(props) {
+	const {
 	classes,
 	className,
 	color,
 	textColor,
 	children,
 	...rest
-}) {
+} = props;
 	const avatarClasses = classNames({
 		[className]: className,
 	});

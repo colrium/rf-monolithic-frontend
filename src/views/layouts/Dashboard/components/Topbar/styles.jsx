@@ -60,9 +60,7 @@ export default theme => ({
 		"&:hover": {
 			color: theme.palette.primary.main + " !important",
 		},
-		[theme.breakpoints.up("md")]: {
-			display: "none",
-		},
+		
 	},
 	notificationsButton: {
 		alignSelf: "center",

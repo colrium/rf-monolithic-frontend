@@ -19,7 +19,7 @@ export default {
 	icon: <DefinationContextIcon />,
 	color: "#4a148c",
 	model: "Quiz",
-	endpoint: "/answers",
+	endpoint: "/training/quizes",
 	cache: false,
 	views: {
 		single: {
@@ -234,9 +234,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={(
-										"quizes/view/" + entry._id
-									).toUriWithDashboardPrefix()}
+									to={("quizes/view/" + entry._id).toUriWithDashboardPrefix()}
 									className={className}
 								>
 									<IconButton
@@ -298,9 +296,7 @@ export default {
 						default: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={(
-										"quizes/edit/" + entry._id
-									).toUriWithDashboardPrefix()}
+									to={("quizes/edit/" + entry._id).toUriWithDashboardPrefix()}
 									className={className}
 								>
 									<IconButton
@@ -315,9 +311,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={(
-										"quizes/edit/" + entry._id
-									).toUriWithDashboardPrefix()}
+									to={("quizes/edit/" + entry._id).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -340,9 +334,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return (
-						"quizes/delete/" + entry._id
-					).toUriWithDashboardPrefix();
+					return ("quizes/delete/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

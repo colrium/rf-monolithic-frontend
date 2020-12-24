@@ -113,10 +113,38 @@ class TableView extends React.Component {
 	handleDeleteItem = item_id => event => {
 		const { openDialog, closeDialog } = this.props;
 		closeDialog();
+		if (item_id._id) {
+			item_id = item_id._id;
+		}
 		this.state.service
 			.delete(item_id)
-			.then(res => {})
-			.catch(e => {
+			.then(res => {
+				this.setState(prevState => {
+					let new_records = prevState.records;
+					if (Array.isArray(new_records)) {
+						new_records = new_records.filter((record)=>{
+							if (record.entry) {
+								if (record.entry._id === item_id ) {
+									return false;
+								}
+							}
+							else if (record._id === item_id) {
+								return false;
+							}
+
+							return true;
+						});
+					}
+
+					if (!Array.isArray(new_records)) {
+						new_records = [];
+					}
+
+					return {
+						records: new_records,
+					}
+				});
+			}).catch(e => {
 				openDialog({
 					title: "Delete failed",
 					body: e.msg,
@@ -155,12 +183,13 @@ class TableView extends React.Component {
 			if (!defination.access.restricted(auth.user)) {
 				dt_columns.push({
 					name: "entry",
-					label: "",
+					label: String.isString(defination.label)? defination.label.singularize() : ("Action"),
 					options: {
 						filter: false,
 						sort: false,
-						customBodyRenderLite: (dataIndex, rowIndex) => {
-							let value = this.state.raw_data[dataIndex];
+						/*customBodyRenderLite: (dataIndex, rowIndex) => {
+							console.log("dataIndex", dataIndex);
+							let value = this.state.records[dataIndex].entry;
 							if (actionsType === "inline") {
 								return (
 									<GridContainer
@@ -194,8 +223,8 @@ class TableView extends React.Component {
 									</GridContainer>
 								);
 							}
-						},
-						/*customBodyRender: (value, tableMeta, updateValue) => {
+						},*/
+						customBodyRender: (value, tableMeta, updateValue) => {
 							if (actionsType === "inline") {
 								return (
 									<GridContainer
@@ -230,7 +259,7 @@ class TableView extends React.Component {
 								);
 							}
 								
-						},*/
+						},
 					},
 				});
 
@@ -504,7 +533,7 @@ class TableView extends React.Component {
 		const { defination, auth } = this.props;
 		let parsed_data = entry;
 		let columns = defination.scope.columns;
-		parsed_data["entry"] = entry._id;
+		parsed_data["entry"] = entry;
 		for (let [field_name, field] of Object.entries(columns)) {
 			if (field.input.type === "date") {
 				if (entry[field_name]) {
@@ -675,11 +704,11 @@ class TableView extends React.Component {
 				separator: ",",
 			},
 			resizableColumns: false,
-			selectableRows: "multiple",
+			selectableRows: "none",
 			responsive: "scroll",
 			pagination: false,
 			rowHover: true,
-			onCellClick: (colData, cellMeta) => {
+			/*onCellClick: (colData, cellMeta) => {
 				console.log("onCellClick colData", colData);
 			},
 			setRowProps: (row, dataIndex, rowIndex) => {
@@ -689,7 +718,7 @@ class TableView extends React.Component {
 					rowProps.onContextMenu = this.handleOnRowContextMenu(dataIndex);
 				}
 				return rowProps;
-			},
+			},*/
 			customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
 				console.log("customToolbarSelect selectedRows", selectedRows);
 				console.log("customToolbarSelect displayData", displayData);
@@ -832,7 +861,7 @@ TableView.defaultProps = {
 	query: { p: 1 },
 	cache_data: true,
 	load_data: true,
-	actionsType: "context",
+	actionsType: "inline",
 };
 
 const mapStateToProps = (state, ownProps) => ({

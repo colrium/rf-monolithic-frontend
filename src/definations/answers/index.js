@@ -17,7 +17,7 @@ export default {
 	icon: <DefinationContextIcon />,
 	color: "#4a148c",
 	model: "Answer",
-	endpoint: "/training`/answers",
+	endpoint: "/training/answers",
 	cache: false,
 	views: {
 		single: {
@@ -328,9 +328,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={(
-										"answers/edit/" + entry._id
-									).toUriWithDashboardPrefix()}
+									to={("answers/edit/" + entry._id).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -353,9 +351,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return (
-						"answers/delete/" + entry._id
-					).toUriWithDashboardPrefix();
+					return ("answers/delete/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

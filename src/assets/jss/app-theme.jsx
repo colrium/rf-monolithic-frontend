@@ -826,6 +826,11 @@ let theme = createMuiTheme({
 		},
 		MUIDataTableBodyCell: {
 			root: {
+				borderBottom: "0px solid transparent",
+			},
+		},
+		MUIDataTableBodyRow: {
+			root: {
 				borderBottom: "1px solid #c9c9c9",
 			},
 		},

@@ -30,11 +30,7 @@ class Profile extends Component {
 								/>
 
 								<h1 className="text-3xl pt-8 lg:pt-0">
-									{auth.user.honorific +
-										" " +
-										auth.user.first_name +
-										" " +
-										auth.user.last_name}
+									{auth.user.first_name + " " + auth.user.last_name}
 								</h1>
 								<p className="text-sm">
 									<Status

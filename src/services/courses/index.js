@@ -9,7 +9,7 @@ import ApiService from "services/api";
 class CoursesApiService extends ApiService {
 	constructor() {
 		super();
-		this.service_uri = "training-courses";
+		this.service_uri = "training/courses";
 	}
 }
 

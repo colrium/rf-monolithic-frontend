@@ -215,7 +215,7 @@ class AuthApiService {
 	async resetPassword(data) {
 		let that = this;
 		return await this.apiInstance
-			.post("change-password", data)
+			.post("reset-password", data)
 			.then(function(response) {
 				let resobj = {
 					err: false,

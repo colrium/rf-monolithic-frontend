@@ -3,7 +3,7 @@
 export default theme => ({
 	root: {
 		padding: "0",
-		height: "100vh",
+		height: "calc(100vh - "+theme.spacing(12)+"px)",
 		maxHeight: "100vh",
 		display: "flex",
 		flexDirection: "column",

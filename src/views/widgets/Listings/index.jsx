@@ -8,7 +8,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import PropTypes from "prop-types";
-import React from "react";
+import React, {useEffect} from "react";
 //Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
@@ -53,6 +53,7 @@ function TablePaginationActions(props) {
 	const theme = useTheme();
 	const { count, page, rowsPerPage, onChangePage } = props;
 
+	
 	const handleFirstPageButtonClick = (event) => {
 		onChangePage(event, 0);
 	};

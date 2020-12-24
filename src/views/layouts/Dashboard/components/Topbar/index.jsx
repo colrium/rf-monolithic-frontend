@@ -3,7 +3,7 @@
 import { AppBar, Badge, Box, Breadcrumbs, IconButton, Popover, Snackbar, Toolbar, withStyles } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { NotificationsOutlined as NotificationsIcon, PowerSettingsNew as LogoutIcon } from "@material-ui/icons";
-import CloseSideBarIcon from "@material-ui/icons/ChevronLeft";
+import CloseSideBarIcon from '@material-ui/icons/MenuOpen';
 import OpenSideBarIcon from "@material-ui/icons/Menu";
 import classNames from "classnames";
 import SnackbarContent from "components/Snackbar/SnackbarContent";
@@ -20,7 +20,7 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Chip from '@material-ui/core/Chip';
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import compose from "recompose/compose";
 import { withTheme } from '@material-ui/core/styles';
 import Avatar from "components/Avatar";
@@ -35,6 +35,7 @@ import {withGlobals} from "contexts/Globals";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import SearchBar from "components/SearchBar";
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 // Custom components
 import { NotificationList } from "./components";
 import { app } from "assets/jss/app-theme";
@@ -153,7 +154,19 @@ class Topbar extends Component {
 				}
 			});
 			sockets.default.on("disconnect", () => {
-				if (!this.ignoreConnectionState) {
+				/*if (!this.ignoreConnectionState) {
+					this.setState({
+						connectionSnackBarOpened: true,
+						connectionSnackBarOpen: true,
+						connectionSnackBarColor: "error",
+						connectionSnackBarMessage: "Connection Lost",
+					});
+				}*/
+			});
+
+			sockets.default.on("reconnect_failed", (attemptNumber) => {
+					////console.log("sockets.default reconnect_failed attemptNumber", attemptNumber);			
+				if (attemptNumber >= 10 && !this.ignoreConnectionState) {
 					this.setState({
 						connectionSnackBarOpened: true,
 						connectionSnackBarOpen: true,
@@ -161,6 +174,7 @@ class Topbar extends Component {
 						connectionSnackBarMessage: "Connection Lost",
 					});
 				}
+					
 			});
 
 			sockets.default.on("new_notification", notification => {
@@ -199,7 +213,7 @@ class Topbar extends Component {
 						}));
 						//this.getNotifications();
 					}
-				} else if (
+				} /*else if (
 					context.toLowerCase() === "user" &&
 					auth.isAuthenticated &&
 					"_id" in auth.user
@@ -211,7 +225,7 @@ class Topbar extends Component {
 						let updated_user = { ...auth.user, ...action.effects };
 						setCurrentUser(updated_user);
 					}
-				}
+				}*/
 			});
 
 			
@@ -397,8 +411,8 @@ class Topbar extends Component {
 						})}
 					>
 
-						{dashboard.drawer_displayed && (
-							<IconButton
+						
+							{<IconButton
 								className={classes.menuButton}
 								onClick={onToggleSidebar}
 								variant="text"
@@ -409,11 +423,11 @@ class Topbar extends Component {
 								) : (
 									<OpenSideBarIcon />
 								)}
-							</IconButton>
-						)}
+							</IconButton>}
+						
 
 						
-							<Link className={classes.logoLink+" cursor-pointer"} to={"/home".toUriWithLandingPagePrefix()}>
+							<Link className={classes.logoLink+" cursor-pointer"} to={"/home".toUriWithDashboardPrefix()}>
 								<img
 									alt={app.name + " logo cursor-pointer"}
 									className={classes.logoImage}
@@ -567,10 +581,10 @@ class Topbar extends Component {
 							<Link className={"cursor-pointer"} to={"/messages".toUriWithDashboardPrefix()}>
 								<IconButton>
 								<Badge variant="dot" invisible={Number.parseNumber(messaging.unread_count, 0) === 0} badgeContent={messaging.unread_count} color="primary">
-							        <ForumOutlinedIcon />
-							    </Badge>
-							    </IconButton>
-						    </Link>
+									<ForumOutlinedIcon />
+								</Badge>
+								</IconButton>
+							</Link>
 
 
 							<Menu
@@ -579,8 +593,19 @@ class Topbar extends Component {
 								open={this.state.userPresenceMenuOpen}
 								onClose={this.onCloseUserPresenceMenu}
 								TransitionComponent={Fade}
+								classes={{
+									list: "pt-0"
+								}}
 								keepMounted
 							>
+								<MenuItem 
+									classes={{
+										root: "opacity-100 inverse-text "+(auth.user.presence === "online"? "bg-green-600" : (auth.user.presence == "away"? "bg-orange-500" : "bg-gray-500"))
+									}} 
+									disabled
+								>
+									<Typography color="inherit" variant="subtitle1">{auth.user.first_name +" " +auth.user.last_name}</Typography>
+								</MenuItem>
 								<MenuItem
 									onClick={this.onChangeUserPresenceMenu(
 										auth.user

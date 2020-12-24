@@ -185,11 +185,9 @@ class GoogleMapOverview extends React.Component {
 		this.setState(state => ({ show_client_positions: !state.show_client_positions }));
 	}
 
-	handleOnLoadMap(map) {
+	handleOnLoadMap(map, google) {
 		googleMap = map;
-		if (googleMap) {
-
-		}
+		
 	}
 
 
@@ -230,22 +228,10 @@ class GoogleMapOverview extends React.Component {
 	};
 
 	handleClientListItemClick = (socketId, client) => event => {
-		//console.log("handleClientListItemClick client", client);
-		if (this.state.context_entry === socketId) {
-			this.setState({ context_entry: null, zoom: 15 }, ()=>{
-				if (googleMap) {		
-					//googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
-					googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(15);
-				}
-			});
-		}
-		else{
-			this.setState({ context_entry: socketId, zoom: 18 }, ()=>{
-				if (googleMap) {		
+		console.log("handleClientListItemClick client", client, "googleMap", googleMap);
+		if (googleMap) {		
 					googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
-					googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(18);
-				}
-			});
+					googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(15);
 		}
 			
 			
@@ -530,26 +516,32 @@ class GoogleMapOverview extends React.Component {
 
 								
 									{context === "clients_positions" && <List className={classes.root}>
-										{Object.entries(clients_positions).map(([socketId, client_position], index) => (
-											client_position.user && <ListItem className={"cursor-pointer hover:bg-gray-400"} onClick={this.handleClientListItemClick(socketId, client_position)} key={"client-"+socketId}>
-												<ListItemAvatar>
-													<Avatar src={(String.isString(client_position.user.gender)? (client_position.user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon)} /> 
-													{/* client_position.user.gender? ( 
-														<Avatar src={ services.attachments.getAttachmentFileUrl(client_position.user.avatar) } /> 
-														) : ( 
-														<Avatar style={{backgroundColor: "rgba(0,0,0,0.05)"}} > 
-															<Icon 
-																path={clientPositionMarkerPath} 
-																size={1}	   
-																className={"error-text"}
-															/>
-														</Avatar>
-														) */}
-														
-												</ListItemAvatar>
-												<ListItemText primary={ client_position.user.first_name+" "+client_position.user.last_name } secondary={String.isString(client_position.user.role)? client_position.user.role.humanize() : ""} />
-											</ListItem>
-									))}
+										{Object.entries(clients_positions).map(([socketId, client], index) => {
+											let show_entry = true;
+											if (index > 0) {
+
+												if (client.user._id === clients_positions[(Object.keys(clients_positions)[(index-1)])].user._id) {
+													show_entry = false;
+												}
+											}
+											else{
+												if (googleMap) {		
+													googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
+													googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(15);
+												}
+											}
+											if (client.user && show_entry) {
+												return (
+													<ListItem className={"cursor-pointer hover:bg-gray-400"} onClick={this.handleClientListItemClick(socketId, client)} key={"client-"+socketId}>
+														<ListItemAvatar>
+															<Avatar src={(String.isString(client.user.gender)? (client.user.gender.trim().toLowerCase()==="female"? client_user_female_icon : client_user_male_icon) : client_user_male_icon)} />
+														</ListItemAvatar>
+														<ListItemText primary={ client.user.first_name+" "+client.user.last_name } secondary={String.isString(client.user.role)? client.user.role.humanize() : ""} />
+													</ListItem>
+												);
+											}
+												
+										})}
 									</List>}
 
 									{context === "commissions" && <Listings 

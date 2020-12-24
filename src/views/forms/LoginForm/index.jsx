@@ -15,6 +15,7 @@ import Typography from "components/Typography";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { withRouter } from 'react-router'
 import compose from "recompose/compose";
 //
 import AuthService from "services/auth";
@@ -170,9 +171,10 @@ class LoginForm extends React.Component {
 		email: AppHelper.inDevelopment() ? "colrium@gmail.com" : "",
 		password: AppHelper.inDevelopment() ? "WI5HINd8" : "",
 		reset_code: "",
-		repeat_password: "",
+		"repeat-password": "",
 		forgotPassword: false,
 		resettingPassword: false,
+		resettingPasswordWithUrl: false,
 		showPassword: false,
 		rememberMe: false,
 		showRepeatPassword: false,
@@ -184,8 +186,7 @@ class LoginForm extends React.Component {
 	};
 	constructor(props) {
 		super(props);
-		const { setCurrentUser, setAuthenticated, auth } = props;
-		
+		const { setCurrentUser, setAuthenticated, auth, history } = props;
 		this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
 		this.handleOnOAuthSuccess = this.handleOnOAuthSuccess.bind(this);
 		this.onClickForgotPassword = this.onClickForgotPassword.bind(this);
@@ -209,13 +210,28 @@ class LoginForm extends React.Component {
 				result[key] = value;
 				return result;
 			}, {});
-			if ("c" in uriQueries || "code" in uriQueries) {
+			if (("c" in uriQueries || "code" in uriQueries) && ("e" in uriQueries || "email" in uriQueries)) {
 				let reset_code = "c" in uriQueries ? uriQueries.c : uriQueries.code;
-				this.setState(prevState => ({
-					forgotPassword: false,
-					resettingPassword: true,
-					reset_code: reset_code,				
-				}));
+				let email = "e" in uriQueries ? uriQueries.e : uriQueries.email;
+				console.log("email", email);
+				if (!String.isEmpty(reset_code) && !String.isEmpty(email)) {
+					this.setState(prevState => ({
+						forgotPassword: false,
+						resettingPassword: true,
+						resettingPasswordWithUrl: true,
+						reset_code: reset_code,	
+						email: email,				
+					}));
+				}
+				else {
+					this.setState(prevState => ({
+						forgotPassword: false,
+						resettingPassword: true,
+						resettingPasswordWithUrl: false,
+						reset_code: reset_code,	
+						email: email,				
+					}));
+				}
 			}
 		}	
 	}
@@ -351,7 +367,7 @@ class LoginForm extends React.Component {
 	}
 
 	async handleLoginSubmit(event) {
-		const { login, onLogin } = this.props;
+		const { login, onLogin, history } = this.props;
 		//
 		event.preventDefault();
 		//
@@ -364,46 +380,59 @@ class LoginForm extends React.Component {
 
 		if (this.state.forgotPassword) {
 			let formData = {
-				email: this.state.email
+				email: this.state.email,
+				cb: window.location.href,
 			};
-			let response = await AuthService.forgotPassword(formData);
-			if (response.err) {
-				this.setState(state => ({
-					submitting: false,
-					loginerror: true,
-					loginsuccess: false,
-					alert: response.err.msg
-				}));
-			} else {
-				this.setState(state => ({
-					submitting: false,
-					loginerror: false,
-					loginsuccess: true,
-					alert: response.body.message
-				}));
-			}
+			await AuthService.forgotPassword(formData).then((res) => {
+					this.setState(state => ({
+						submitting: false,
+						loginerror: false,
+						loginsuccess: true,
+						alert: "An email has been sent to your email with password reset resources",
+						resettingPassword: true,
+						forgotPassword: false,
+
+					}));
+			}).catch(err => {
+					this.setState(state => ({
+						submitting: false,
+						loginerror: true,
+						loginsuccess: false,
+						alert: err.msg
+					}));
+			});
+			
 		} else if (this.state.resettingPassword) {
 			let formData = {
 				code: this.state.reset_code,
-				password: this.state.password,
-				repeat_password: this.state.repeat_password
+				email: this.state.email,
+				"password": this.state.password,
+				"repeat-password": this.state["repeat-password"]
 			};
-			let response = await AuthService.resetPassword(formData);
-			if (response.err) {
-				this.setState(state => ({
-					submitting: false,
-					loginerror: true,
-					loginsuccess: false,
-					alert: response.err.msg
-				}));
-			} else {
-				this.setState(state => ({
-					submitting: false,
-					loginerror: false,
-					loginsuccess: true,
-					alert: response.body.message
-				}));
-			}
+			AuthService.resetPassword(formData).then((res) => {
+					this.setState(state => ({
+						submitting: false,
+						loginerror: false,
+						loginsuccess: true,
+						alert: "Your password has been reset successfully",
+						resettingPassword: false,
+						resettingPasswordWithUrl: false,
+						forgotPassword: false,
+					}));
+					if (history) {
+						history.push(history.location.pathname);
+					}
+
+			}).catch(err => {
+					console.log("err", err);
+					this.setState(state => ({
+						submitting: false,
+						loginerror: true,
+						loginsuccess: false,
+						alert: err.msg
+					}));
+			});
+			
 		} else {
 			let formData = {
 				username: this.state.email,
@@ -445,34 +474,10 @@ class LoginForm extends React.Component {
 					<form
 						className={classes.loginContainer}
 						onSubmit={this.handleLoginSubmit}
+						autoComplete={this.state.resettingPassword? "off" : "on"}
 					>
 						<GridContainer className={classes.loginContainer}>
-							{this.state.resettingPassword ? (
-								<GridItem
-									xs={12}
-									sm={12}
-									md={12}
-									className={classes.inputContainer}
-								>
-									<TextInput
-										id="reset-code"
-										type="text"
-										variant="filled"
-										value={this.state.reset_code}
-										onChange={this.handleChange("reset_code")}
-										label="Password Reset Code"
-										InputProps={{ 
-												classes : {
-													input: "inverse",
-												}
-										}}
-										fullWidth
-										required 
-										validate
-										disabled={this.state.submitting}
-									/>
-								</GridItem>
-							) : (
+							{(!this.state.resettingPassword && (this.state.resettingPassword || !this.state.resettingPasswordWithUrl)) && (
 									<GridItem
 										xs={12}
 										sm={12}
@@ -489,6 +494,7 @@ class LoginForm extends React.Component {
 											InputProps={{ 
 												classes : {
 													input: "inverse",
+													adornedEnd: "inverse",
 												}
 											}}
 											required 
@@ -497,7 +503,32 @@ class LoginForm extends React.Component {
 											disabled={this.state.submitting}
 										/>
 									</GridItem>
-								)}
+							)}
+							{(this.state.resettingPassword && !this.state.resettingPasswordWithUrl) && <GridItem
+									xs={12}
+									sm={12}
+									md={12}
+									className={classes.inputContainer}
+								>
+									<TextInput
+										id="reset-code"
+										type="text"
+										variant="filled"
+										value={this.state.reset_code}
+										onChange={this.handleChange("reset_code")}
+										label="Password Reset Code"
+										InputProps={{ 
+												classes : {
+													input: "inverse",
+													adornedEnd: "inverse",
+												}
+										}}
+										fullWidth
+										required 
+										validate
+										disabled={this.state.submitting}
+									/>
+							</GridItem>}
 
 							{(!this.state.forgotPassword || this.state.resettingPassword) && (
 									<GridItem
@@ -511,10 +542,11 @@ class LoginForm extends React.Component {
 											type={"password"}
 											value={this.state.password}
 											onChange={this.handleChange("password")}
-											label="Password"
+											label={this.state.resettingPassword? "Enter new password": "Password"}
 											InputProps={{ 
 												classes : {
 													input: "inverse",
+													adornedEnd: "inverse",
 												}
 											}}
 											required
@@ -539,11 +571,12 @@ class LoginForm extends React.Component {
 										type={"password"}
 										value={this.state["repeat-password"]}
 										onChange={this.handleChange("repeat-password")}
-										label="Repeat Password"
+										label={this.state.resettingPassword? "Repeat new password": "Repeat Password"}
 										variant="filled"
 										InputProps={{ 
 												classes : {
 													input: "inverse",
+													adornedEnd: "inverse",
 												}
 										}}
 										required
@@ -596,7 +629,7 @@ class LoginForm extends React.Component {
 													center
 													variant="body2"
 												>
-													{"Logging in. Please Wait..."}
+													{"Submitting. Please Wait..."}
 												</Typography>
 											</GridItem>
 												
@@ -633,7 +666,7 @@ class LoginForm extends React.Component {
 											Create account
 	                  					</Button>
                   					</Link>}
-                  					{this.state.forgotPassword && <Button
+                  					{/*this.state.forgotPassword && <Button
 											variant="text"
 											color="default"
 											size="md"
@@ -641,7 +674,7 @@ class LoginForm extends React.Component {
 											onClick={()=>this.setState({resettingPassword:true, forgotPassword: false})}
 										>
 											Reset Password
-	                  					</Button>}
+	                  					</Button> */}
 								</GridItem>
 							</GridContainer>
 
@@ -696,4 +729,4 @@ const mapStateToProps = state => ({
 	device: state.device
 });
 
-export default compose(withStyles(styles), connect( mapStateToProps, { login, setCurrentUser, setAuthenticated, setAccessToken }))(withErrorHandler(LoginForm));
+export default compose(withStyles(styles), connect( mapStateToProps, { login, setCurrentUser, setAuthenticated, setAccessToken }), withRouter)(withErrorHandler(LoginForm));

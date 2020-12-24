@@ -76,7 +76,7 @@ import {
 
 import { useGlobals } from "contexts/Globals";
 import { app } from "assets/jss/app-theme.jsx";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
 import compose from "recompose/compose";
@@ -97,8 +97,10 @@ function Chat(props) {
 	let textInputRef = React.createRef();
 	let messagesWrapperRef = React.createRef();
 	let location = useLocation();
-	
+	let history = useHistory();
 
+	
+	
 
 	const { definations, services, sockets } = useGlobals();
 	const { unread_count, unread_ids, conversations, contacts: cacheContacts, drafts, active_conversation, active_conversation_messages } = messaging;
@@ -321,18 +323,18 @@ function Chat(props) {
 				}
 			});
 
-			console.log("handleNewChat existsAtIndex", existsAtIndex);
-
 
 			if (existsAtIndex !== -1) {
 				let updatedChats = conversations;
 				let existingChat = JSON.parse(JSON.stringify(updatedChats[existsAtIndex]));
 				updatedChats.remove(existsAtIndex);
 				updatedChats.unshift(existingChat);
-				setMessagingCache("active_conversation", existingChat);
 				getConversationMessages(existingChat);
 				setMessagingCache("conversations", updatedChats);
+				setMessagingCache("active_conversation_messages", []);	
 				setMessagingCache("active_conversation", existingChat);	
+
+
 				setDraft({
 						is_reply: false,
 						sender: auth.user,
@@ -815,9 +817,9 @@ function Chat(props) {
 	useEffect(() => {
 		if (active_conversation && firstLoad) {
 			getConversationMessages(active_conversation);
-			setFirstLoad(false);
-			
+			setFirstLoad(false);			
 		}
+
 			
 	}, [active_conversation, firstLoad]);
 
@@ -953,8 +955,12 @@ function Chat(props) {
 				<Toolbar>
 					{active_conversation && <IconButton 
 						onClick={()=>{
+							if (history && locationHasWith) {
+								history.push(history.location.pathname);
+							}
+							setMessagingCache("active_conversation_messages", []);
 							setMessagingCache("active_conversation", false);
-							setMessagingCache("active_conversation_messages", []);	
+							
 						}}
 						className={"mr-2"}
 						edge="start" 
@@ -1145,141 +1151,146 @@ function Chat(props) {
 
 							{(Array.isArray(conversations) && !loadingConversations) && <List className={classes.list}>
 							{conversations.map((chat, index)=> {
-								let primaryText = "";
-								let chatUser = false;
-								let avatar = false;
-								let last_message_content = false;
-								let last_message_deleted = false;
-								let last_message_sender_name = false;
-								if (chat.state.total > 0 && chat.state.last_message) {
-									last_message_content = chat.state.last_message.content;
-									if (chat.state.last_message.sender === auth.user._id) {
-										last_message_sender_name = "You";
-									}
-									else if (chat.owner === chat.state.last_message.sender) {
-										last_message_sender_name = chat.started_by.first_name;
-									}
-									else{
-										if (Array.isArray(chat.participants)) {
-											chat.participants.map(participant => {
-												if (participant._id === chat.state.last_message.sender) {
-													last_message_sender_name = participant.first_name;
-												}
-											});
-										}											
-									}
-									if ((chat.state.last_message.state === "deleted-for-sender" && chat.state.last_message.sender._id === auth.user._id) || chat.state.last_message.state === "deleted-for-all") {
-										last_message_deleted = true;
-									}
-								}
-								if (chat.type == "individual") {
-									let chat_owner_id = chat.owner;
-									if (JSON.isJSON(chat.owner)) {
-										chat_owner_id = chat.owner._id;
-									}
-									if (auth.user._id === chat_owner_id) {
-										if (Array.isArray(chat.participants)) {
-											if (chat.participants.length > 0) {
-												chatUser = chat.participants[0];
-												primaryText = chat.participants[0].first_name +" "+chat.participants[0].last_name
-												avatar = chat.participants[0].avatar;
-											}
+
+								if (index === 0 || (index > 0 && conversations[index-1]._id !== conversations[index]._id )) {
+									let primaryText = "";
+									let chatUser = false;
+									let avatar = false;
+									let last_message_content = false;
+									let last_message_deleted = false;
+									let last_message_sender_name = false;
+									if (chat.state.total > 0 && chat.state.last_message) {
+										last_message_content = chat.state.last_message.content;
+										if (chat.state.last_message.sender === auth.user._id) {
+											last_message_sender_name = "You";
 										}
-												
+										else if (chat.owner === chat.state.last_message.sender) {
+											last_message_sender_name = chat.started_by.first_name;
+										}
+										else{
+											if (Array.isArray(chat.participants)) {
+												chat.participants.map(participant => {
+													if (participant._id === chat.state.last_message.sender) {
+														last_message_sender_name = participant.first_name;
+													}
+												});
+											}											
+										}
+										if ((chat.state.last_message.state === "deleted-for-sender" && chat.state.last_message.sender._id === auth.user._id) || chat.state.last_message.state === "deleted-for-all") {
+											last_message_deleted = true;
+										}
 									}
-									else{
+									if (chat.type == "individual") {
+										let chat_owner_id = chat.owner;
+										if (JSON.isJSON(chat.owner)) {
+											chat_owner_id = chat.owner._id;
+										}
+										if (auth.user._id === chat_owner_id) {
+											if (Array.isArray(chat.participants)) {
+												if (chat.participants.length > 0) {
+													chatUser = chat.participants[0];
+													primaryText = chat.participants[0].first_name +" "+chat.participants[0].last_name
+													avatar = chat.participants[0].avatar;
+												}
+											}
+													
+										}
+										else{
 
-										chatUser = chat.started_by;
-										primaryText = chat.started_by.first_name +" "+chat.started_by.last_name;
-										avatar = chat.started_by.avatar;
+											chatUser = chat.started_by;
+											primaryText = chat.started_by.first_name +" "+chat.started_by.last_name;
+											avatar = chat.started_by.avatar;
+										}
+									} 
+									else if (chat.type == "group") {
+										primaryText = chat.group_name;
+										avatar = chat.group_avatar;
 									}
-								} 
-								else if (chat.type == "group") {
-									primaryText = chat.group_name;
-									avatar = chat.group_avatar;
-								}
 
-								return (
-									<ListItem 
-										className={"px-8 content-between"} 
-										onClick={(event)=> {
-											setMessagingCache("active_conversation", chat);	
-											getConversationMessages(chat);			
-										}}										
-										onContextMenu={handleContextOpen("conversation", chat)}
-										key={"chat-"+index}
-										style={{background: (contextMenu.type==="conversation"? (contextMenu.entry._id===chat._id? theme.palette.background.default : "transparent") : "transparent")}}
-										button
-									>
-										{chatUser && <ListItemAvatar>
-											<Badge 
-												variant="dot" 
-												badgeContent=" "
-												anchorOrigin={{
-													vertical: 'bottom',
-													horizontal: 'right',
-												}}
-												classes={{
-													dot: chatUser.presence === "online"? "bg-green-600" : (chatUser.presence == "away"? "bg-orange-500" : "bg-gray-500")
-												}}
-											>
-												{ chatUser.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(chatUser.avatar)} />}
-												{!chatUser.avatar && <Avatar className={classes.contactAvatar}>
-													<PersonIcon />
+									return (
+										<ListItem 
+											className={"px-8 content-between"} 
+											onClick={(event)=> {
+												setMessagingCache("active_conversation_messages", []);	
+												setMessagingCache("active_conversation", chat);	
+												getConversationMessages(chat);			
+											}}										
+											onContextMenu={handleContextOpen("conversation", chat)}
+											key={"chat-"+index}
+											style={{background: (contextMenu.type==="conversation"? (contextMenu.entry._id===chat._id? theme.palette.background.default : "transparent") : "transparent")}}
+											button
+										>
+											{chatUser && <ListItemAvatar>
+												<Badge 
+													variant="dot" 
+													badgeContent=" "
+													anchorOrigin={{
+														vertical: 'bottom',
+														horizontal: 'right',
+													}}
+													classes={{
+														dot: chatUser.presence === "online"? "bg-green-600" : (chatUser.presence == "away"? "bg-orange-500" : "bg-gray-500")
+													}}
+												>
+													{ chatUser.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(chatUser.avatar)} />}
+													{!chatUser.avatar && <Avatar className={classes.contactAvatar}>
+														<PersonIcon />
+													</Avatar>}
+												</Badge>
+											</ListItemAvatar>}
+											{!chatUser && <ListItemAvatar>
+												{ avatar && <Avatar src={AttachmentsService.getAttachmentFileUrl(avatar)} />}
+												{!avatar && <Avatar className={classes.iconAvatar}>
+													{chat.type === "group"? <PeopleIcon /> : <PersonIcon />}
 												</Avatar>}
-											</Badge>
-										</ListItemAvatar>}
-										{!chatUser && <ListItemAvatar>
-											{ avatar && <Avatar src={AttachmentsService.getAttachmentFileUrl(avatar)} />}
-											{!avatar && <Avatar className={classes.iconAvatar}>
-												{chat.type === "group"? <PeopleIcon /> : <PersonIcon />}
-											</Avatar>}
-										</ListItemAvatar>}
-										<ListItemText 
-											className="flex flex-col justify-center"
-											primary={(
-												<Typography variant="body1" color="textPrimary" className={"capitalize font-bold"}>
-													{primaryText}
-												</Typography>
-											)} 
-											secondary={(
-												<div className="w-full flex flex-row">
-													{Array.isArray(chat.typing) && <Typography variant="body2" color="primary" className="mx-0">
-														{chat.typing.length > 1? (chat.typing.length+" people are typing...") : (chat.typing.length === 1? (chat.typing[0].first_name+" is typing...") : "")}
-													</Typography>}
-													{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <div className="flex flex-row items-center flex-grow">
-														<Typography variant="body2" color="textPrimary" className="font-bold mr-2">
-															{last_message_sender_name? last_message_sender_name: ""}
-														</Typography>
-														<Typography variant="body2" color="textSecondary" className="flex-grow truncate mr-2 font-normal">
-															{last_message_content? last_message_content : "No messages yet"}
-														</Typography>
-														{last_message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.divider}}>
-															<Typography variant="body1" color="inherit" className={"flex-grow"}>
-																Message deleted
+											</ListItemAvatar>}
+											<ListItemText 
+												className="flex flex-col justify-center"
+												primary={(
+													<Typography variant="body1" color="textPrimary" className={"capitalize font-bold"}>
+														{primaryText}
+													</Typography>
+												)} 
+												secondary={(
+													<div className="w-full flex flex-row">
+														{Array.isArray(chat.typing) && <Typography variant="body2" color="primary" className="mx-0">
+															{chat.typing.length > 1? (chat.typing.length+" people are typing...") : (chat.typing.length === 1? (chat.typing[0].first_name+" is typing...") : "")}
+														</Typography>}
+														{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <div className="flex flex-row items-center flex-grow">
+															<Typography variant="body2" color="textPrimary" className="font-bold mr-2">
+																{last_message_sender_name? last_message_sender_name: ""}
 															</Typography>
-															<BlockIcon className={"mx-2 text-xs"} fontSize="small"/>
-														</div>}
+															<Typography variant="body2" color="textSecondary" className="flex-grow truncate mr-2 font-normal">
+																{last_message_content? last_message_content : "No messages yet"}
+															</Typography>
+															{last_message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.divider}}>
+																<Typography variant="body1" color="inherit" className={"flex-grow"}>
+																	Message deleted
+																</Typography>
+																<BlockIcon className={"mx-2 text-xs"} fontSize="small"/>
+															</div>}
 
-														{!last_message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.text.disabled}}>
-															{(chat.state.last_message.state === "sent" && chat.state.last_message.sender === auth.user._id) && <DoneIcon className={"mx-1 text-xs"} fontSize="small"/>}
-															{((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && chat.state.last_message.sender === auth.user._id) && <DoneAllIcon className={"mx-1 text-xs"} fontSize="small"/>}
-															{((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && chat.state.last_message.sender === auth.user._id) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small"/>}
+															{!last_message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.text.disabled}}>
+																{(chat.state.last_message.state === "sent" && chat.state.last_message.sender === auth.user._id) && <DoneIcon className={"mx-1 text-xs"} fontSize="small"/>}
+																{((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && chat.state.last_message.sender === auth.user._id) && <DoneAllIcon className={"mx-1 text-xs"} fontSize="small"/>}
+																{((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && chat.state.last_message.sender === auth.user._id) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small"/>}
+															</div>}
 														</div>}
-													</div>}
-													{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <Typography variant="body2" color="secondary" className="mx-2">
-														{/*<DoneAllIcon fontSize="inherit" />*/}
-													</Typography>}
-												</div>
-											)}
-										/>
-										{chat.state.incoming_unread > 0 && <ListItemSecondaryAction>
-											<Avatar className={"bg-transparent primary-text h-4 w-4 text-xs"}>
-												{chat.state.incoming_unread}
-											</Avatar>
-										</ListItemSecondaryAction>}
-									</ListItem>
-								);
+														{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <Typography variant="body2" color="secondary" className="mx-2">
+															{/*<DoneAllIcon fontSize="inherit" />*/}
+														</Typography>}
+													</div>
+												)}
+											/>
+											{chat.state.incoming_unread > 0 && <ListItemSecondaryAction>
+												<Avatar className={"bg-transparent primary-text h-4 w-4 text-xs"}>
+													{chat.state.incoming_unread}
+												</Avatar>
+											</ListItemSecondaryAction>}
+										</ListItem>
+									);
+								}
+									
 							})}
 								
 							</List>}
@@ -1337,7 +1348,7 @@ function Chat(props) {
 								let message_deleted = false;
 								let show_message = true;
 								if (cursor > 0) {
-									if (active_conversation_messages[cursor]._id === active_conversation_messages[(cursor - 1)]._id) {
+									if (active_conversation_messages[cursor]._id === active_conversation_messages[(cursor - 1)]._id || activeChatMessage.conversation._id !== active_conversation._id) {
 										show_message = false;
 									}
 								}
@@ -1352,10 +1363,10 @@ function Chat(props) {
 											id={"message-"+activeChatMessage._id}
 											key={"conversation-"+active_conversation._id+"-message-"+cursor}
 										>
-											{ activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(activeChatMessage.sender.avatar)} />}
+											{/* activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(activeChatMessage.sender.avatar)} />}
 											{!activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar}>
 												<PersonIcon />
-											</Avatar>}
+											</Avatar> */}
 
 											<ViewPortSensor  
 												className={"p-2 mx-4  flex flex-col px-4 "+(activeChatMessage.sender._id === auth.user._id? ("bg-green-200 "+classes.chatBubbleLocal) : ("bg-white "+classes.chatBubbleExternal))}
