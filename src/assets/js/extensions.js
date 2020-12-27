@@ -717,6 +717,13 @@ JSON.removeProperty = function(input, key) {
 	return newObject;
 };
 
+JSON.isEmpty = function(target) {
+	if (JSON.isJSON(target)) {
+		return Object.keys(target).length > 0 ? false : true;
+	}
+	return true;
+};
+
 Date.prototype.format = function(format) {
 	//PHP's date format function Javascript emulation
 	/*
