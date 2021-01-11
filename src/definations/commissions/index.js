@@ -1174,9 +1174,9 @@ export default {
 						return "hidden";
 					},
 					required: (values, user) => {
-						if (values.response_mode === "odk_form") {
+						/*if (values.response_mode === "odk_form") {
 							return true;
-						}
+						}*/
 						return false;
 					},
 				},
@@ -1605,21 +1605,25 @@ export default {
 					inline: {
 						default: (entry, className) => {},
 						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"commissions/view/" + entry._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
+							if (entry) {
+								return (
+									<Link
+										to={(
+											"commissions/view/" + entry._id
+										).toUriWithDashboardPrefix()}
+										className={className}
 									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
+										<IconButton
+											color="inherit"
+											aria-label="edit"
+										>
+											<OpenInNewIcon fontSize="small" />
+										</IconButton>
+									</Link>
+								);
+							}
+							return;
+								
 						},
 					},
 				},
@@ -1673,21 +1677,24 @@ export default {
 					inline: {
 						default: (entry, className = "grey_text") => {},
 						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"commissions/edit/" + entry._id
-									).toUriWithDashboardPrefix()}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
+							if (entry) {
+								return (
+									<Link
+										to={(
+											"commissions/edit/" + entry._id
+										).toUriWithDashboardPrefix()}
+										className={className ? className : ""}
 									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
+										<IconButton
+											color="inherit"
+											aria-label="edit"
+										>
+											<EditIcon fontSize="small" />
+										</IconButton>
+									</Link>
+								);
+							}
+							return;	
 						},
 					},
 				},

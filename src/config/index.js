@@ -41,8 +41,8 @@ export const baseUrls = {
 	development: {
 		domain: "localhost",
 		endpoints: {
-			default: "http://localhost:8000/",
-			auth: "http://localhost:8000/",
+			default: "http://localhost:8080/",
+			auth: "http://localhost:8080/",
 		},
 	},
 	production: {

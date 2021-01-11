@@ -198,7 +198,7 @@ export default {
 					},
 				},
 			},
-			order: {
+			/*order: {
 				type: "string",
 				label: "Order",
 				input: {
@@ -248,7 +248,7 @@ export default {
 						},
 					},
 				},
-			},
+			},*/
 
 			country: {
 				type: "string",

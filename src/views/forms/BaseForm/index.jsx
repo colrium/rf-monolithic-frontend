@@ -1153,6 +1153,7 @@ class BaseForm extends React.Component {
 					onChange={this.handleChange(name)}
 					required={field.input.required}
 					validate={validation}
+					variant={text_fields_variant}
 					{...inputProps}
 				/>
 			);

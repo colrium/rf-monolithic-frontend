@@ -659,21 +659,18 @@ function LocationInput(props) {
 							InputProps={{
 								...params.InputProps,
 								autoComplete: String.uid(11),
-				            	/*endAdornment: inputLoading ? (
+				            	endAdornment: inputLoading ? (
 				            		<InputAdornment position="end">
-				            			<CircularProgress size={"1.2rem"}  color="inherit" />
+				            			<CircularProgress size={"1rem"}  color="inherit" />
 				            		</InputAdornment>
-								) : params.InputProps.endAdornment,*/
-				            	/*endAdornment: (
-				            		<InputAdornment position="end">
+								) : (showMyLocationBtn? (
 										<IconButton
-											size={size}
-											aria-label="search-location"
+											aria-label="my-location"
+											onClick={handleOnClickMyLocationBtn}
 										>
-											<SearchIcon fontSize="inherit"/>
+											<MyLocationIcon fontSize="inherit"/>
 										</IconButton>
-									</InputAdornment>
-								),	*/					
+							) : params.InputProps.endAdornment),
 				        	}}					
 							label={label} 
 							variant={variant} 

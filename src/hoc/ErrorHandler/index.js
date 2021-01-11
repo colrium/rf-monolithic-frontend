@@ -12,12 +12,12 @@ export const config = {
 	 */
 	errorHandler: (errorReport) => {
 		const qualifiedMethod = `${errorReport.component}.${errorReport.method}(${errorReport.arguments ? '...' : ''})`;
-		console.error(`Error caught in ${qualifiedMethod} by Error Handler:`, errorReport.error);
+		//console.error(`Error caught in ${qualifiedMethod} by Error Handler:`, errorReport.error);
 	}
 };
 
 const RenderFunctionError = (props) => {
-	console.info('Props:', props);
+	//console.info('Props:', props);
 	const message = `Error thrown in ${props.componentName}.render function!`;
 
 	return (
@@ -60,7 +60,7 @@ const tryCatchDecorator = (component, method) => {
 	};
 
 	if (method === "constructor") {
-		console.log(component[method]);
+		//console.log(component[method]);
 	}
 };
 

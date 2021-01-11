@@ -317,6 +317,10 @@ export default compose(
 	let sockets = globals? globals.sockets : {};
 	let services = globals? globals.services : {};
 
+	/*let mapMarkers = [];
+	let mapPolylines = [];
+	let mapCircles = [];*/
+
 	const [ mounted, setMounted ] = useState(false);
 	const [ socketsInitialized, setSocketsInitialized ] = useState(false);
 
@@ -334,24 +338,8 @@ export default compose(
 	const [ mapCenter, setMapCenter ] = useState(defaultCenter);
 	
 	
-	useEffect(() => {				
-		setMapMarkers((Array.isArray(markers)? markers : []));
-		setMapPolylines((Array.isArray(polylines)? polylines : []));
-		setMapCircles((Array.isArray(circles)? circles : []));
-	}, [markers, polylines, circles]);
-
-	
-	
-
-	
 
 
-	
-	let {user} = auth;
-
-	if (!JSON.isJSON(user) || (JSON.isJSON(user) && !user._id)) {
-		user = { _id: null };
-	}
 
 	const getGoogleMap = (__map) => {
 		if (__map) {
@@ -369,6 +357,123 @@ export default compose(
 	const getCurrentMap = useCallback(() => {
 		return _map;
 	}, [_map]);
+
+	
+	/*const applyMapMarkers = (newMarkers) => {
+		if (Array.isArray(mapMarkers)) {
+			mapMarkers.map(mapMarker => {
+				if (mapMarker instanceof google.maps.Marker) {
+					mapMarker.setMap(null);
+				}
+			});
+		}
+		if (Array.isArray(newMarkers)) {
+			mapMarkers = newMarkers.map(newMarker => {
+				const { infowindow, ...markerProps} = newMarker;
+				let newMapMarker = new google.maps.Marker(markerProps);
+				newMapMarker.setMap(getCurrentMap());
+				return newMapMarker;
+			});
+		}
+		else {
+			mapMarkers = [];
+		}
+			
+	};
+
+	const applyMapPolylines = (newPolylines) => {
+		if (Array.isArray(mapPolylines)) {
+			mapPolylines.map(mapPolyline => {
+				if (mapPolyline instanceof google.maps.Polyline) {
+					mapPolyline.setMap(null);
+				}
+			});
+		}
+		if (Array.isArray(newPolylines)) {
+			mapPolylines = newPolylines.map(newPolyline => {
+				const { infowindow, ...polylineProps} = newPolyline;
+				let newMapPolyline = new google.maps.Polyline(polylineProps);
+				newMapPolyline.setMap(getCurrentMap());
+				return newMapPolyline;
+			});
+		}
+		else {
+			mapPolylines = [];
+		}			
+	};
+
+	const applyMapCircles = (newCircles) => {
+		if (Array.isArray(mapCircles)) {
+			mapCircles.map(mapCircle => {
+				if (mapCircle instanceof google.maps.Circle) {
+					mapCircle.setMap(null);
+				}
+			});
+		}
+		if (Array.isArray(newCircles)) {
+			mapCircles = newCircles.map((newCircle, index) => {
+				const { infowindow, ...circleProps} = newCircle;
+				let newMapCircle = new google.maps.Circle({
+					options: {
+								fillColor: selectedItem.type == "circle" && selectedItem.id === index? colors.hex.accent : (circleProps.fillColor ? circleProps.fillColor : colors.hex.accent),
+								strokeColor: circleProps.color ? circleProps.color : colors.hex.accent,
+								strokeOpacity: selectedItem.type == "circle" && selectedItem.id === index?  1 : (selectedItem.type != "circle" ? circleProps.opacity : 0.2),
+								fillOpacity: selectedItem.type == "circle" && selectedItem.id === index?  0.5 : (selectedItem.type != "circle"? circleProps.opacity : 0.2),
+								strokeWeight: selectedItem.type == "circle" && selectedItem.id === index?  4 : (selectedItem.type != "circle" ? circleProps.strokeWeight : 1),
+					},
+					...circleProps
+				});
+				newMapCircle.setMap(getCurrentMap());
+
+				google.maps.event.addListener(newMapCircle, 'click', function (event) {
+					console.log("newMapCircle click event", event);
+				});
+				console.log("newMapCircle", newMapCircle);
+				return newMapCircle;
+			});
+		}
+		else {
+			mapCircles = [];
+		}			
+	};
+
+	useEffect(() => {				
+		applyMapMarkers((Array.isArray(markers)? markers : []));
+	}, [, _map]);
+
+
+	useEffect(() => {
+		applyMapPolylines((Array.isArray(polylines)? polylines : []));
+	}, [polylines, _map]);
+
+	useEffect(() => {
+		applyMapCircles((Array.isArray(circles)? circles : []));
+	}, [circles, _map]);
+
+	useEffect(() => {
+		applyMapPolylines((Array.isArray(polylines)? polylines : []));
+	}, [polylines, _map]);*/
+
+
+	useEffect(() => {
+		setMapMarkers((Array.isArray(markers)? markers : []));
+		setMapPolylines((Array.isArray(polylines)? polylines : []));
+		setMapCircles((Array.isArray(circles)? circles : []));
+	}, [polylines, circles, markers]);
+	
+	
+
+	
+
+
+	
+	let {user} = auth;
+
+	if (!JSON.isJSON(user) || (JSON.isJSON(user) && !user._id)) {
+		user = { _id: null };
+	}
+
+	
 
 	
 	const getclientPositionHeadingMarkerIcon = (user, position) => {		
@@ -534,10 +639,8 @@ export default compose(
 	
 
 	const applyMapOnAll = (google_map) => {
-		Object.entries(_clientsPositions).map(([socketId, clientPosition]) =>{
-			if (clientPosition.marker) {
-				clientPosition.marker.setMap(google_map);
-			}
+		mapMarkers.map(mapMarker =>{			
+			mapMarker.setMap(google_map);			
 		});
 		if (JSON.isJSON(regionBoundsClients)) {
 			Object.entries(regionBoundsClients).map(([socketId, regionBoundsClient]) => {
@@ -546,6 +649,14 @@ export default compose(
 				}
 			});			
 		}
+
+		console.log("mapCircles", mapCircles)
+		mapCircles.map(mapCircle =>{			
+			mapCircle.setMap(google_map);			
+		});
+		mapPolylines.map(mapPolyline =>{			
+			mapPolyline.setMap(google_map);			
+		});
 
 	};
 	//Memoized Method
@@ -723,7 +834,7 @@ export default compose(
 	
 
 	
-	useEffect(() => {		
+	/*useEffect(() => {		
 		//console.log({type: selectedEntryType, id: selectedEntry});
 		if (selectedEntryType && (Number.isNumber(selectedEntry) || String.isString(selectedEntry))) {
 			let googlemap = false;
@@ -731,11 +842,7 @@ export default compose(
 				googlemap = _map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
 			}
 			
-			if (selectedEntryType === "clients_position" && selectedEntry.id in _clientsPositions) {
-				/*setInfoWindowOpen(true);
-				setInfoWindowPosition((_clientsPositions in regionBoundsClients)? {lat: regionBoundsClients[selectedEntry].position.latitude, lng: regionBoundsClients[selectedEntry].position.longitude } :  {lat: _clientsPositions[selectedEntry].position.latitude, lng: _clientsPositions[selectedEntry].position.longitude });
-				setInfoWindowContent(<Typography> { _clientsPositions[selectedEntry].user.first_name+" "+_clientsPositions[selectedEntry].user.last_name}</Typography>);*/
-			}
+			
 			if (selectedEntryType === "polyline" && polylines[selectedEntry]) {
 				let LatLngList = polylines[selectedEntry].path;
 				//  Create a new viewpoint bound
@@ -768,7 +875,7 @@ export default compose(
 		}
 		setSelectedItem({type: selectedEntryType, id: selectedEntry});
 		
-	}, [selectedEntry, selectedEntryType, _map, polylines, circles, markers]);
+	}, [selectedEntry, selectedEntryType, _map, polylines, circles, markers]);*/
 	
 	
 

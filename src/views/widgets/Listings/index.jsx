@@ -451,7 +451,7 @@ class ListingView extends React.Component {
 										>
 											<MenuIcon />
 										</IconButton>}
-										{this.state.filterContext && <Button  
+										{(this.state.filterContext && this.state.filterableFields[this.state.filterContext])&& <Button  
 											aria-label="Filter"
 											size={"small"}
 											color="secondary"
