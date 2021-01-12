@@ -8,7 +8,7 @@ export const defaultSocket = () => {
 	let socket_url = baseUrls[environment].endpoints.default;
 	let options = {
 		secure: false,
-		/*transportOptions: {
+		transportOptions: {
 			polling: {
 				extraHeaders: {
 					//"x-client-id": apiClient.client_id,
@@ -16,7 +16,7 @@ export const defaultSocket = () => {
 					"Authorization": Auth.getInstance().authTokenSet()? Auth.getInstance().authorization_header()["Authorization"] : undefined,
 				}
 			}
-		},*/
+		},
 		query : {
 			"x-client-id": apiClient.client_id,
 			"x-client-secret": apiClient.client_secret,
