@@ -469,6 +469,8 @@ class ListingView extends React.Component {
 									        open={Boolean(this.state.filterMenuAnchor)}
 									        onClose={() => this.setState({filterMenuAnchor: null})}
 									    >
+									    	
+
 									        {Object.entries(this.state.filterableFields).map(([filterableField, filterableFieldProps], cursor) => (
 									        	<MenuItem 
 									        		onClick={()=> {

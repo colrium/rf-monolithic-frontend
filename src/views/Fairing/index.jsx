@@ -77,6 +77,7 @@ class Fairing extends React.Component {
 			"quizes",
 			"questions",
 			"answers",
+			"results",
 		];
 		this.indexUri = Array.isArray(nav.entries) ? (nav.entries.length > 0 ? nav.entries[nav.entries.length - 1].uri : "/home".toUriWithDashboardPrefix()) : "/home".toUriWithDashboardPrefix();
 		

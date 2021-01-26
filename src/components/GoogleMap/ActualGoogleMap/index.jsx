@@ -59,6 +59,9 @@ import Chip from "@material-ui/core/Chip";
 import Button from '@material-ui/core/Button';
 import Rating from '@material-ui/lab/Rating';
 import { Link } from "react-router-dom";
+
+import { google_maps } from "config";
+
 //
 
 //
@@ -74,6 +77,8 @@ const current_position_marker_icon = {
 	strokeColor: "#0076d6",
 	scale: 0.1, //to reduce the size of icons
 };
+
+
 
 /*const client_position_marker_icon = {
 	//path: "m 20.073331,0.06216702 c 3.79432,0.41734 7.45896,2.10713998 10.30993,4.75712998 3.00933,2.78519 5.11513,6.71834 5.87973,10.95353 0.31769,1.79439 0.31769,4.86121 -0.0102,6.71834 -0.27835,1.60664 -1.00311,3.95357 -1.68853,5.46632 -1.52968,3.41121 -3.60537,6.36324 -8.75013,12.42444 -3.54611,4.17295 -5.37357,6.5408 -6.85321,8.84641 -0.62567,0.96986 -0.7646,1.00156 -1.23143,0.22959 -1.1124,-1.85663 -3.4368,-4.87192 -7.12135,-9.23212 -3.4168895,-4.04743 -4.6385895,-5.60202 -6.0288595,-7.62599 -3.43681,-5.04896 -5.00584,-10.41119 -4.47975,-15.40811 0.89381,-8.6061 7.00234,-15.47036 15.0772595,-16.93106998 1.33051,-0.2398 3.66463,-0.33367 4.89654,-0.19847 z",
@@ -235,9 +240,7 @@ const ClientInfoWindow = ({user, track, position, history, ...rest}) => {
 			
 
 				<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
-					<Button href={("/messages?with="+user.email_address).toUriWithDashboardPrefix()} color="primary">Message Me</Button>
-									
-					
+					<Button href={("/messages?with="+user.email_address).toUriWithDashboardPrefix()} style={{background: "#8C189B", color: "#FFFFFF"}}>Message Me</Button>				
 				</GridItem>
 			</GridContainer>
 	)
@@ -262,6 +265,10 @@ let showClientInfoWindow = ({socketId, ...data}, google_map, marker, history) =>
 };
 
 let _map = null;
+let _defaultCenter = google_maps.default_center;
+let	_defaultZoom = 12;
+let	_zoom = 12;
+let firstLoad = true;
 let _clientsPositions = {};
 let regionBoundsClients = {};
 let mapBounds = null;
@@ -321,13 +328,22 @@ export default compose(
 	let mapPolylines = [];
 	let mapCircles = [];*/
 
-	const [ mounted, setMounted ] = useState(false);
+	
 	const [ socketsInitialized, setSocketsInitialized ] = useState(false);
 
-	const [ mapReady, setMapReady ] = useState(false);
-	const [ defaultMapCenter, setDefaultMapCenter ] = useState(defaultCenter);
-	const [ defaultMapZoom, setDefaultMapZoom ] = useState(defaultZoom);
-	const [ mapZoom, setMapZoom ] = useState(zoom);
+	useEffect(() => {
+		if (firstLoad) {
+			_defaultCenter = defaultCenter;
+			_defaultZoom = defaultZoom;
+			_zoom = zoom;
+			firstLoad = false;
+		}
+		
+
+	}, [firstLoad, defaultCenter, defaultZoom, zoom]);
+	
+
+	
 	const [ selectedItem, setSelectedItem ] = useState({id: selectedEntry, type: selectedEntryType});
 	const [ infoWindowContent, setInfoWindowContent ] = useState(null);
 	const [ infoWindowPosition, setInfoWindowPosition ] = useState(null);	
@@ -650,7 +666,7 @@ export default compose(
 			});			
 		}
 
-		console.log("mapCircles", mapCircles)
+		//console.log("mapCircles", mapCircles)
 		mapCircles.map(mapCircle =>{			
 			mapCircle.setMap(google_map);			
 		});
@@ -668,18 +684,20 @@ export default compose(
 
 	
 
-	const onSocketDisconnect = () => {
+	
+
+	const handleOnSocketDisconnect = useCallback(() => {
 		applyMapOnAll(null);
 		_clientsPositions = {}; 
 		regionBoundsClients = {};
 		if (Function.isFunction(onLoadClientsPositions)) {
 			onLoadClientsPositions(_clientsPositions);
 		}
-	};
+	}, [_map, _clientsPositions, regionBoundsClients, onLoadClientsPositions]);
 
-	const handleOnSocketDisconnect = useCallback(onSocketDisconnect, [_map, _clientsPositions, regionBoundsClients, onLoadClientsPositions]);
+	
 
-	const onNewClientPosition = async ({socketId, ...data}) => {
+	const handleOnNewClientPosition = useCallback(async ({socketId, ...data}) => {
 		const  {user, position} = data;		
 		if (!JSON.isEmpty(user) && !JSON.isEmpty(user)) {
 
@@ -708,11 +726,10 @@ export default compose(
 
 		}
 				
-	};
+	}, [_map, _clientsPositions, regionBoundsClients, onClientPositionAvailable]);
 
-	const handleOnNewClientPosition = useCallback(onNewClientPosition, [_map, _clientsPositions, regionBoundsClients, onClientPositionAvailable]);
-
-	const handleOnClientsPositions = async (clients_positions) => {	
+	
+	const handleOnClientsPositions = useCallback(async (clients_positions) => {	
 		let clients_positions_user_ids = []
 		_clientsPositions = Object.entries(clients_positions).reduce((accumulator, [socketId, clientData], index) => {
 			if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
@@ -726,9 +743,10 @@ export default compose(
 
 		if (Function.isFunction(onLoadClientsPositions)) {
 			onLoadClientsPositions(_clientsPositions);
-		}		
-	};
+		}
 
+
+	}, [_clientsPositions, regionBoundsClients, onLoadClientsPositions]);
 	
 
 	const handleOnClientPositionUnavailable = useCallback(({socketId, ...data}) => {
@@ -813,14 +831,15 @@ export default compose(
 		}						
 	}, [_clientsPositions]);
 
+
 	
 
 	const handleOnBoundsChanged = useCallback(() => {
 		//const { center, zoom, bounds, marginBounds } = event;
-		
+		//console.log("handleOnBoundsChanged event", event);
 		if (_map) {
 			mapBounds = _map.getBounds();
-			console.log("handleOnBoundsChanged mapBounds", mapBounds);
+			
 			prepareMapBoundsClientsMarkers(mapBounds);
 			if (Function.isFunction(onBoundsChanged)) {
 				onBoundsChanged(mapBounds);
@@ -877,17 +896,6 @@ export default compose(
 		
 	}, [selectedEntry, selectedEntryType, _map, polylines, circles, markers]);*/
 	
-	
-
-	
-	/*useEffect(() => {	
-		setMounted(true);
-
-		return () => {
-			setMounted(false);
-			setMapReady(false);
-		}
-	}, []);*/
 
 
 	useLayoutEffect(() => {
@@ -913,6 +921,7 @@ export default compose(
 			sockets.default.off("clients-positions", handleOnClientsPositions);
 			sockets.default.off("client-position-unavailable", handleOnClientPositionUnavailable);
 			sockets.default.off("connect", handleOnSocketConnect);
+			sockets.default.off("reconnect", handleOnSocketConnect);
 		}
 	}, [sockets]);
 
@@ -942,9 +951,9 @@ export default compose(
 		return (
 			<GoogleMap
 				className="relative"
-				defaultZoom={defaultMapZoom}
-				zoom={mapZoom}
-				defaultCenter={defaultMapCenter}
+				defaultZoom={defaultZoom}
+				zoom={zoom}
+				defaultCenter={defaultCenter}
 				defaultOptions={{
 					styles: props.mapStyles ? props.mapStyles : (props.theme === "dark"? mapDarkStyles : mapStyles),
 				}}

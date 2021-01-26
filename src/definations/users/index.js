@@ -634,7 +634,7 @@ export default {
 					},
 				},
 			},
-			password_reset_code_expiration: {
+			/*password_reset_code_expiration: {
 				type: "string",
 				label: "Password reset code expiration",
 				icon: "folder",
@@ -653,7 +653,7 @@ export default {
 						return true;
 					},
 				},
-			},
+			},*/
 		},
 		identity: {
 			primary: ["honorific", "first_name", "last_name"],

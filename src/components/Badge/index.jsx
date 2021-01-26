@@ -12,7 +12,7 @@ import withRoot from "hoc/withRoot";
 
 import styles from "./styles";
 
-function CustomBadge({ ...props }) {
+function CustomBadge(props) {
 	const { classes, color, textColor, position, children, ...rest } = props;
 	const positionClasses = {
 		"top-left": classes.topLeft,

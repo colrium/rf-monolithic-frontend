@@ -76,6 +76,7 @@ class CustomGoogleMap extends Component {
 			title: "You",
 		},
 		current_device_position_set: false,
+		mapBounds: false,
 		markers: [],
 		circles: [],
 		polylines: [],
@@ -98,7 +99,7 @@ class CustomGoogleMap extends Component {
 		}
 
 
-
+		this.onMapBoundsChanged = this.onMapBoundsChanged.bind(this);
 		this.onLocationSearchSelect = this.onLocationSearchSelect.bind(this);
 		this.onLocationBtnClick = this.onLocationBtnClick.bind(this);
 		this.onValueObjectDragEnd = this.onValueObjectDragEnd.bind(this);
@@ -354,29 +355,37 @@ class CustomGoogleMap extends Component {
 			circle,
 			marker,
 			polyline,
+			mapBounds,
 		} = this.state;
-
 			let defaultCenter = {lat: 41.850033, lng: -87.6500523 };
-			if (Array.isArray(markers) && markers.length > 0) {
-				if (JSON.isJSON(markers[0].position)) {
-					defaultCenter = markers[0].position;
-				}
-			} else if (Array.isArray(polylines) && polylines.length > 0) {
-				if (JSON.isJSON(polylines[0].path[0])) {
-					defaultCenter = polylines[0].path[0];
-				}
-			} else if (Array.isArray(circles) && circles.length > 0) {
-				defaultCenter = circles[0].center;
-			} else if (JSON.isJSON(circle)) {
-				defaultCenter = circle.center;
-			} else if (JSON.isJSON(marker)) {
-				defaultCenter = marker.position;
-			} else if (JSON.isJSON(polyline)) {
-				defaultCenter = polyline.path[0];
+			if (mapBounds) {
+				let mapBoundsCenter = mapBounds.getCenter();
+				defaultCenter = {lat: mapBoundsCenter.lat(), lng: mapBoundsCenter.lng() };
 			}
-			else{
-				defaultCenter = this.state.current_device_position.coordinates;
+			else {
+				if (Array.isArray(markers) && markers.length > 0) {
+					if (JSON.isJSON(markers[0].position)) {
+						defaultCenter = markers[0].position;
+					}
+				} else if (Array.isArray(polylines) && polylines.length > 0) {
+					if (JSON.isJSON(polylines[0].path[0])) {
+						defaultCenter = polylines[0].path[0];
+					}
+				} else if (Array.isArray(circles) && circles.length > 0) {
+					defaultCenter = circles[0].center;
+				} else if (JSON.isJSON(circle)) {
+					defaultCenter = circle.center;
+				} else if (JSON.isJSON(marker)) {
+					defaultCenter = marker.position;
+				} else if (JSON.isJSON(polyline)) {
+					defaultCenter = polyline.path[0];
+				}
+				else{
+					defaultCenter = this.state.current_device_position.coordinates;
+				}
 			}
+			
+				
 			
 		return defaultCenter;
 	}
@@ -427,6 +436,13 @@ class CustomGoogleMap extends Component {
 			defaultCenter: this.state.current_device_position.coordinates,
 			showCurrentPosition: true,
 			zoom: prevState.defaultZoom,
+		}));
+	};
+
+	onMapBoundsChanged = newMapBounds => {
+		this.setState(prevState => ({
+			mapBounds: newMapBounds,
+			//zoom: prevState.defaultZoom,
 		}));
 	};
 
@@ -483,6 +499,8 @@ class CustomGoogleMap extends Component {
 		}
 	};
 
+	handle
+
 	render() {
 		let {
 			app:{preferences},
@@ -512,7 +530,7 @@ class CustomGoogleMap extends Component {
 			return (
 				<ActualGoogleMap
 						className={classes.googleMap}
-						defaultCenter={defaultCenter}
+						defaultCenter={this.getDefaultCenter()}
 						currentDevicePosition={current_device_position}
 						loadingElement={<div style={{ height: "100%", minHeight: "100%", }} />}
 						containerElement={
@@ -536,6 +554,7 @@ class CustomGoogleMap extends Component {
 								onMapLoad(map);
 							}
 						}}
+						onBoundsChanged={this.onMapBoundsChanged}
 						style={{ minHeight: mapHeight + "px" }}
 						{...rest}
 					/>

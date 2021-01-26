@@ -9,7 +9,7 @@ import React from "react";
 import withRoot from "hoc/withRoot";
 import styles from "./styles";
 
-function CustomCard({ ...props }) {
+const CustomCard =  React.forwardRef((props, ref) => {
 	const {
 		classes,
 		className,
@@ -44,7 +44,7 @@ function CustomCard({ ...props }) {
 			{children}
 		</Card>
 	);
-}
+});
 
 CustomCard.propTypes = {
 	classes: PropTypes.object.isRequired,

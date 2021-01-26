@@ -90,6 +90,11 @@ export const items = [
 				text: definations.answers.label,
 				route: "answers".toUriWithDashboardPrefix(),
 			},
+			{
+				icon: definations.results.icon,
+				text: definations.results.label,
+				route: "results".toUriWithDashboardPrefix(),
+			},
 
 
 		],

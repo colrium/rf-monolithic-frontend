@@ -41,15 +41,13 @@ import debounce from 'lodash/debounce';
 import GlobalsProvider from "contexts/Globals";
 import CookiesConsentDialog from 'views/widgets/CookiesConsentDialog';
 import {
-	setDefaultSocket,
-	setAuthSocket,
 	setIdentity,
 	setOperatingSystem,
 	setBrowser,
 	setScreenSize,
 	setWindowSize,
 } from "state/actions";
-import { authSocket, defaultSocket } from "hoc/Sockets";
+
 import Auth from "hoc/Auth";
 
 import appStyle from "assets/jss/appStyle";
@@ -85,8 +83,6 @@ class App extends React.Component {
 
 	initializeAppState(){
 		const {
-			setDefaultSocket,
-			setAuthSocket,
 			setIdentity,
 			setOperatingSystem,
 			setBrowser,

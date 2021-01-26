@@ -5,7 +5,7 @@ import { useStore, useDispatch, useSelector } from 'react-redux';
 import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } from "state/actions";
 import AuthHelper from 'hoc/Auth';
 import {default_location} from "config";
-import { defaultSocket } from "hoc/Sockets";
+import {socket as defaultSocket} from "utils/Sockets";
 import * as definations from "definations";
 import * as services from "services";
 import notificationSound from "assets/audio/notification.mp3";
@@ -21,7 +21,7 @@ let defaultValue = {
 	definations: definations,
 	services: services,
 	sockets: {
-		//default: defaultSocket(),
+		default: defaultSocket,
 		default: null,
 		auth: null,
 	},
@@ -365,8 +365,7 @@ const GlobalsProvider = props => {
 	
 	
 	useEffect(()=> {
-		const defaultSocketInstance = defaultSocket();
-				defaultSocketInstance.on("create", async ({ context, action }) => {
+				defaultSocket.on("create", async ({ context, action }) => {
 					let defination = definations[JSON.keyOf(models, context)];
 					
 					if (defination && auth.isAuthenticated ) {
@@ -383,7 +382,7 @@ const GlobalsProvider = props => {
 					}
 				});
 
-				defaultSocketInstance.on("update", async ({ context, action }) => {
+				defaultSocket.on("update", async ({ context, action }) => {
 					let defination = definations[JSON.keyOf(models, context)];
 					
 
@@ -425,7 +424,7 @@ const GlobalsProvider = props => {
 					}
 				});
 
-				defaultSocketInstance.on("delete", async ({ context, action }) => {
+				defaultSocket.on("delete", async ({ context, action }) => {
 					let defination = definations[JSON.keyOf(models, context)];
 					if (defination && auth.isAuthenticated) {
 						if (defination.cache) {
@@ -449,24 +448,24 @@ const GlobalsProvider = props => {
 
 					
 
-				defaultSocketInstance.on("identity-set", async (profile) => {
+				defaultSocket.on("identity-set", async (profile) => {
 					//console.log("\n\n identity-set profile", profile._id);
 					setCurrentUser(profile);
 				});
 
-				defaultSocketInstance.on("presence-changed", async ({user, presence}) => {
+				defaultSocket.on("presence-changed", async ({user, presence}) => {
 					//console.log("\n\n presence-changed presence", presence);
 					setCurrentUser(user);
 				});
 
-				defaultSocketInstance.on("settings", async (settings) => {
+				defaultSocket.on("settings", async (settings) => {
 					setSettings(settings);
 				});
 
 				
 
 				
-				defaultSocketInstance.on("preferences", async (preferences) => {
+				defaultSocket.on("preferences", async (preferences) => {
 							let deepMergePreferences = JSON.deepMerge(app.preferences, preferences);
 
 							Promise.all([deepMergePreferences]).then(results => {
@@ -478,33 +477,43 @@ const GlobalsProvider = props => {
 							});
 				});
 
-				
+				defaultSocket.on("reconnect", () => {
+					console.info("connection to server restored");					
+				});
+
+				defaultSocket.on("connect", () => {
+					console.info("connection to server established");					
+				});
+
+				defaultSocket.on("disconnect", () => {
+					console.error("connection to server lost");					
+				});
 
 
 				// Socket Emitions
-				defaultSocketInstance.emit("get-settings", {user: auth.user});
+				defaultSocket.emit("get-settings", {user: auth.user});
 				if (auth.isAuthenticated) {
-					defaultSocketInstance.on("reconnect", () => {
-						console.log("reconnect")
-						defaultSocketInstance.emit("set-identity", auth.user._id);
-						defaultSocketInstance.emit("get-settings", auth.user._id);
-						defaultSocketInstance.emit("get-inbox", auth.user);
+					defaultSocket.on("reconnect", () => {
+						
+						defaultSocket.emit("set-identity", auth.user._id);
+						defaultSocket.emit("get-settings", auth.user._id);
+						defaultSocket.emit("get-inbox", auth.user);
 					});
 					
-					defaultSocketInstance.on("new-message", handleOnNewMessage);
-					defaultSocketInstance.on("message-sent", handleOnMessageSent);
-					defaultSocketInstance.on("new-conversation", handleOnNewConversation);
-					defaultSocketInstance.on("conversation-created", handleOnConversationCreated);
-					defaultSocketInstance.on("creating-conversation-exists", handleOnCreatingConversationExists);
-					defaultSocketInstance.on("inbox", handleOnInbox);
-					defaultSocketInstance.emit("set-identity", auth.user._id);
-					defaultSocketInstance.emit("get-preferences", auth.user._id);
-					defaultSocketInstance.emit("get-inbox", auth.user);
+					defaultSocket.on("new-message", handleOnNewMessage);
+					defaultSocket.on("message-sent", handleOnMessageSent);
+					defaultSocket.on("new-conversation", handleOnNewConversation);
+					defaultSocket.on("conversation-created", handleOnConversationCreated);
+					defaultSocket.on("creating-conversation-exists", handleOnCreatingConversationExists);
+					defaultSocket.on("inbox", handleOnInbox);
+					defaultSocket.emit("set-identity", auth.user._id);
+					defaultSocket.emit("get-preferences", auth.user._id);
+					defaultSocket.emit("get-inbox", auth.user);
 				}
 					
 
 
-		value.sockets = { default: defaultSocketInstance, auth: null, };
+		value.sockets = { default: defaultSocket, auth: null, };
 
 
 

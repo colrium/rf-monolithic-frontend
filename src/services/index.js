@@ -42,3 +42,4 @@ export { default as courses } from "./courses";
 export { default as quizes } from "./quizes";
 export { default as questions } from "./questions";
 export { default as answers } from "./answers";
+export { default as results } from "./results";

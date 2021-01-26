@@ -15,7 +15,7 @@ class AuthApiService {
 		let base_url = this.base_url;
 		let axios_instance = axios.create({
 			baseURL: base_url,
-			withCredentials: true,
+			//withCredentials: true,
 			headers: {
 				...Auth.getInstance().authorization_header(),
 			},

@@ -41,7 +41,7 @@ export const baseUrls = {
 	development: {
 		domain: "localhost",
 		endpoints: {
-			default: "https://api.realfield.io/",
+			default: "http://localhost:8080/",
 			auth: "http://localhost:8080/",
 		},
 	},

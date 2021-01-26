@@ -200,16 +200,19 @@ class GoogleMapOverview extends React.Component {
 		//console.log("handleOnClientPositionAvailable socketId", socketId);
 	}
 
-	handleOnClientPositionUnavailable(socketId, client) {
-		let newclientspositions = JSON.fromJSON(this.state.clients_positions);
-		delete newclientspositions[socketId];
-		this.setState(state => ({ clients_positions: newclientspositions }));
+	handleOnClientPositionUnavailable(socketId, client) {		
+		this.setState(state => {
+			let newclientspositions = JSON.fromJSON(state.clients_positions);
+			delete newclientspositions[socketId];
+			return { clients_positions: newclientspositions }
+		});
 	}
 
 	handleOnClientPositionChanged(socketId, client) {
-		if (this.state.drawerOpen) {
-			this.setState(state => ({ clients_positions: {...state.clients_positions, [socketId]: client } }));
-		}		
+			this.setState(state => {
+				return { clients_positions: state.drawerOpen? {...state.clients_positions, [socketId]: client } : state.clients_positions }
+			});
+				
 	}
 
 

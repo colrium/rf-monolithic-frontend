@@ -666,6 +666,7 @@ function LocationInput(props) {
 								) : (showMyLocationBtn? (
 										<IconButton
 											aria-label="my-location"
+											className={"text-base"}
 											onClick={handleOnClickMyLocationBtn}
 										>
 											<MyLocationIcon fontSize="inherit"/>

@@ -64,34 +64,6 @@ export default  {
 				},
 			},
 
-			title: {
-				type: "string",
-				label: "Title",
-				input: {
-					type: "text",
-					default: "",
-					required: true,
-				},
-				restricted: {
-					display: (entry, user) => {				
-						return false
-					},
-					input: (values, user) => {
-						if (user && user.role==="admin") {
-							return false;
-						}						
-						return true;
-					}					
-				},
-			},
-			description: {
-				type: "string",
-				label: "Description",
-				input: {
-					type: "textarea",
-					default: "",
-				},
-			},
 
 
 
@@ -132,7 +104,50 @@ export default  {
 				}
 			},
 
-			
+			provider: {
+				type: "string",
+				label: "Provider",
+				input: {
+					type: "select",
+					size: 6,	
+				},
+				restricted: {
+					display: (entry, user) => {						
+						return false
+					},
+					input: (values, user) => {
+						if (user && user.role==="admin") {
+							return false;
+						}						
+						return true;
+					}					
+				},
+				possibilities : {
+					"local": "Local",
+					"kobotoolbox": "Kobotoolbox",
+				}
+			},
+
+			uid: {
+				type: "string",
+				label: "UID",
+				input: {
+					type: "text",
+					size: 6,	
+				},
+				restricted: {
+					display: (entry, user) => {						
+						return false
+					},
+					input: (values, user) => {
+						if (user && user.role==="admin") {
+							return false;
+						}						
+						return true;
+					}					
+				},
+			},
+
 			filter_by: {
 				type: "string",
 				label: "Filter By",
@@ -284,7 +299,7 @@ export default  {
 				},
 				restricted: {
 					display: (entry, user) => {				
-						return false;
+						return true;
 					},
 					input: (values, user) => {						
 						return false;

@@ -1092,7 +1092,7 @@ export default {
 				},
 				possibilities: {
 					queries: "Queries",
-					odk_form: "ODK Form",
+					form: "Form",
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -1163,18 +1163,18 @@ export default {
 				},
 			},
 
-			odk_form: {
+			form: {
 				type: "string",
-				label: "ODK Form",
+				label: "Form",
 				input: {
 					type: (values, user) => {
-						if (values.response_mode === "odk_form") {
+						if (values.response_mode === "form") {
 							return "select";
 						}
 						return "hidden";
 					},
 					required: (values, user) => {
-						/*if (values.response_mode === "odk_form") {
+						/*if (values.response_mode === "form") {
 							return true;
 						}*/
 						return false;
@@ -1183,7 +1183,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (entry) {
-							if (entry.response_mode === "odk_form") {
+							if (entry.response_mode === "form") {
 								return false;
 							}
 						}					
@@ -1191,13 +1191,25 @@ export default {
 					},
 					input: (values, user) => {
 						if (values) {
-							if (values.response_mode === "odk_form") {
+							if (values.response_mode === "form") {
 								return false;
 							}
 							
 						}						
 						return true;
 					}					
+				},
+				reference: {
+					name: "forms",
+					service_query: {active: true},
+					resolves: {
+						value: "_id",
+						display: {
+							primary: ["name"],
+							secondary: [],
+							avatar: false,
+						},
+					},
 				},
 			},
 

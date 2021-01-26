@@ -55,17 +55,35 @@ let storeState = { ...persistedState, ...volatile_state };
 
 //
 //Create Store with persistested save
-const store = createStore(
-	reducers,
-	storeState,
-	compose(
-		middleware,
-		window.__REDUX_DEVTOOLS_EXTENSION__
-			? window.__REDUX_DEVTOOLS_EXTENSION__()
-			: f => f
-	)
-);
+//const store = createStore(reducers, storeState, compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f ));
 //Subscribe store for peristent states
-store.subscribe(() => applyPermanence(store.getState()));
+//store.subscribe(() => applyPermanence(store.getState()));
+
+
+
+const StoreSingleton = (function () {
+	var instance;
+	function createInstance() {
+        var newInstance =  createStore(reducers, storeState, compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f ));
+        //Subscribe store for peristent states
+		newInstance.subscribe(() => applyPermanence(newInstance.getState()));
+        return newInstance;
+    }
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        },
+        destroyInstance: async function() {	
+			instance = undefined;
+			return instance;
+		},
+    };
+
+})();
+
+export const store = StoreSingleton.getInstance();
 
 export default store;
