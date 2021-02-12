@@ -184,9 +184,7 @@ class Topbar extends Component {
 						!notification.read
 					) {
 						this.setState(prevState => ({
-							notifications: Array.isArray(
-								prevState.notifications
-							)
+							notifications: Array.isArray(prevState.notifications)
 								? prevState.notifications.unshift(notification)
 								: [notification],
 							notificationSnackBarOpen: true,
@@ -709,7 +707,7 @@ class Topbar extends Component {
 						horizontal: "right",
 					}}
 					open={this.state.notificationSnackBarOpen}
-					autoHideDuration={3000}
+					autoHideDuration={7000}
 					onClose={this.onCloseNotificationSnackbar}
 				>
 					<SnackbarContent

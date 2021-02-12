@@ -25,6 +25,7 @@ import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
 import { FilesHelper, ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";
 import { withErrorHandler } from "hoc/ErrorHandler";
+import { withGlobals } from "contexts/Globals";
 import styles from "./styles";
 
 class TableView extends React.Component {
@@ -37,9 +38,11 @@ class TableView extends React.Component {
 		dt_columns: [],
 		records: [],
 		raw_data: [],
+		raw_data_mutated: false,
 		mouseX: null,
 		mouseY: null,
 		actionsView: "contextMenu",
+
 		context: null,
 	};
 	constructor(props) {
@@ -53,10 +56,17 @@ class TableView extends React.Component {
 		this.handleDeleteItemConfirm = this.handleDeleteItemConfirm.bind(this);
 		this.handleDeleteItem = this.handleDeleteItem.bind(this);
 		this.handleOnRowContextMenu = this.handleOnRowContextMenu.bind(this);
+		this.handleSocketsOnCreate = this.handleSocketsOnCreate.bind(this);
 	}
 
 	componentDidMount() {
-		const { cache, defination } = this.props;
+		const { cache, defination, sockets } = this.props;
+		console.log("sockets", sockets);
+		if (sockets) {
+			if (sockets.default) {
+				sockets.default.on("create", this.handleSocketsOnCreate);
+			}
+		}
 		this.mounted = true;
 		this.loadContext();
 		this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
@@ -86,6 +96,39 @@ class TableView extends React.Component {
 				this.loadData
 			);
 		}
+		if (this.state.raw_data_mutated) {
+			this.setState({ raw_data_mutated: false }, this.prepareData(this.state.raw_data));
+		}
+	}
+	componentWillUnmount() {
+		const { sockets } = this.props;
+		if (sockets) {
+			if (sockets.default) {
+				sockets.default.off("create", this.handleSocketsOnCreate);
+			}
+		}
+    }
+
+	handleSocketsOnCreate = (event) => {
+		const { defination, sockets } = this.props;
+		const { context, action } = event;
+		const { raw_data } = this.state;
+		if (defination.model === context) {
+			this.setState(prevState => {
+				const { raw_data } = prevState;
+				console.log("handleSocketsOnCreate context", context);
+				console.log("handleSocketsOnCreate action", action);
+				let new_raw_data = Array.isArray(raw_data)? raw_data : [];
+				new_raw_data.unshift(action.result);
+				console.log("handleSocketsOnCreate new_raw_data", new_raw_data);
+				return {
+					raw_data: new_raw_data,
+					raw_data_mutated: true,
+				}
+			});
+				
+		}
+		
 	}
 
 	handleDeleteItemConfirm = item_id => event => {
@@ -335,7 +378,7 @@ class TableView extends React.Component {
 						} else {
 							if (
 								field.reference &&
-								field.input.type !== "file"
+								field.input.type !== "file" && !field.isAttachment
 							) {
 								dt_columns.push({
 									name: name,
@@ -385,7 +428,7 @@ class TableView extends React.Component {
 								});
 							} else if (
 								field.reference &&
-								field.input.type === "file"
+								(field.input.type === "file" || field.isAttachment)
 							) {
 								dt_columns.push({
 									name: name,
@@ -873,6 +916,7 @@ const mapStateToProps = (state, ownProps) => ({
 export default withErrorHandler(
 	compose(
 		withStyles(styles),
+		withGlobals,
 		connect(mapStateToProps, { openDialog, closeDialog, apiCallRequest })
 	)(TableView)
 );

@@ -618,9 +618,11 @@ export default compose(
 	const handleOnClientPositionChange = useCallback(({socketId, ...data}) => {	
 		let {user, position, track} = data;
 		if (!JSON.isEmpty(user) && !JSON.isEmpty(position)) {
-
+			let currentMap = getCurrentMap();
 			if (!regionBoundsClients[socketId]) {
-				let currentMap = getCurrentMap();	
+				regionBoundsClients[socketId] = {};
+					
+
 				if (currentMap) {
 					let mapBounds = currentMap.getBounds();
 					if (mapBounds.contains({lat: data.position.latitude, lng: position.longitude})) {
@@ -641,6 +643,16 @@ export default compose(
 			else {
 				regionBoundsClients[socketId].user = user;
 				regionBoundsClients[socketId].position = position;
+				if (!regionBoundsClients[socketId].marker) {
+					regionBoundsClients[socketId].marker = new google.maps.Marker({
+										position: {lat: position.latitude, lng: position.longitude },
+										title: user.first_name+" "+user.last_name,
+										icon: {url: getclientPositionHeadingMarkerIcon(user, position), scaledSize:  new google.maps.Size(30,30)},
+										onClick: handleOnPressMarker(socketId, data),
+										duration: 250,
+										map: currentMap,
+						});
+				}
 				regionBoundsClients[socketId].marker.setIcon({url: getclientPositionHeadingMarkerIcon(user, position), scaledSize:  new google.maps.Size(30,30)});
 				animateClientMarkerToPosition({socketId, ...data});
 			}		

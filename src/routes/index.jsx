@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { Component } from "react";
-import { Redirect, Switch } from "react-router-dom";
+import { Switch } from "react-router-dom";
 //
 import Route from "./Route";
 import ProgressIndicator from "components/ProgressIndicator";

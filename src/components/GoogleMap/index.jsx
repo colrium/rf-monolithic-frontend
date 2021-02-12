@@ -359,8 +359,10 @@ class CustomGoogleMap extends Component {
 		} = this.state;
 			let defaultCenter = {lat: 41.850033, lng: -87.6500523 };
 			if (mapBounds) {
-				let mapBoundsCenter = mapBounds.getCenter();
-				defaultCenter = {lat: mapBoundsCenter.lat(), lng: mapBoundsCenter.lng() };
+				if (Function.isFunction(mapBounds.getCenter)) {
+					let mapBoundsCenter = mapBounds.getCenter();
+					defaultCenter = {lat: mapBoundsCenter.lat(), lng: mapBoundsCenter.lng() };
+				}				
 			}
 			else {
 				if (Array.isArray(markers) && markers.length > 0) {

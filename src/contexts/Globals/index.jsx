@@ -147,10 +147,14 @@ const GlobalsProvider = props => {
 
 	
 	const handleOnNewMessage = ({conversation, message, user}) => {
-		let sender_id = message.sender;
-		if (JSON.isJSON(sender_id)) {
-			sender_id = sender_id._id;
+		let sender_id = false;
+		if (JSON.isJSON(message.sender)) {
+			sender_id = message.sender._id;
 		}
+		else {
+			sender_id = message.sender;
+		}
+
 		if (sender_id) {
 			if (sender_id !== auth.user._id) {
 				notificationAudio.play();
@@ -268,10 +272,15 @@ const GlobalsProvider = props => {
 	}
 
 	const handleOnMessageSent = ({conversation, message, user}) => {
-		let sender_id = message.sender;
-		if (JSON.isJSON(sender_id)) {
-			sender_id = sender_id._id;
+		let sender_id = false;
+		if (JSON.isJSON(message.sender)) {
+			sender_id = message.sender._id;
 		}
+		else {
+			sender_id = message.sender;
+		}
+
+
 		if (sender_id) {
 					let currentConversation = messaging.active_conversation;
 					if (currentConversation) {
@@ -357,7 +366,7 @@ const GlobalsProvider = props => {
 			});
 
 		}
-		console.log("\n\n total_unread", total_unread);
+		//console.log("\n\n total_unread", total_unread);
 		setMessagingCache("unread_count", total_unread);
 		setMessagingCache("conversations", inbox);
 	}

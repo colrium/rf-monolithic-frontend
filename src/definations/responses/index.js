@@ -298,6 +298,7 @@ export default {
 			response_file: {
 				type: "string",
 				label: "Response file",
+				isAttachment: true, 
 				input: {
 					type: (values, user) => {
 						if (values) {

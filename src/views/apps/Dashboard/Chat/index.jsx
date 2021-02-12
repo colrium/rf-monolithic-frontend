@@ -92,6 +92,13 @@ function Alert(props) {
 	return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+
+const AlwaysScrollToBottom = () => {
+	const elementRef = useRef();
+	useEffect(() => elementRef.current.scrollIntoView());
+	return <div ref={elementRef} />;
+};
+
 function Chat(props) {
 	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, clearMessagingCache, ...rest } = props;
 	let textInputRef = React.createRef();
@@ -1063,7 +1070,7 @@ function Chat(props) {
 			</SwipeableDrawer>
 			{!active_conversation && <GridItem md={12} className={"flex flex-col relative min-h-full p-0"}>					
 						<Paper square className={classes.paper}>
-							<ScrollBars className={classes.bodyWrapper}>
+							<ScrollBars className={classes.bodyWrapper} >
 							{(loadingConversations && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
 								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
@@ -1352,6 +1359,10 @@ function Chat(props) {
 										show_message = false;
 									}
 								}
+								if (cursor === (active_conversation_messages.length - 1)) {
+									console.log("activeChatMessage", activeChatMessage);
+								}
+								
 								if (activeChatMessage && show_message) {
 									if ((activeChatMessage.state === "deleted-for-sender" && activeChatMessage.sender._id === auth.user._id) || activeChatMessage.state === "deleted-for-all") {
 										message_deleted = true;
@@ -1448,7 +1459,7 @@ function Chat(props) {
 										<div  className={classes.typing_loader}></div>
 									</div>
 							</GridItem>}
-							<div  className="w-full h-1" id="chatLastChild"> </div>
+							<AlwaysScrollToBottom />
 						</GridContainer>
 					</ScrollBars>}
 
