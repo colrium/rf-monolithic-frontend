@@ -199,10 +199,10 @@ class CustomGoogleMap extends Component {
 				...updatedPropsState,
 			});
 		}
-		if (prevState.current_device_position.coordinates !== this.state.current_device_position.coordinates && this.props.showCurrentPosition) {
+		/*if (prevState.current_device_position.coordinates !== this.state.current_device_position.coordinates && this.props.showCurrentPosition) {
 			const defaultCenter = this.getDefaultCenter();
 			this.setState({ defaultCenter: defaultCenter });
-		}
+		}*/
 	}
 
 	appendInputValue(append_value = false) {
@@ -501,7 +501,7 @@ class CustomGoogleMap extends Component {
 		}
 	};
 
-	handle
+
 
 	render() {
 		let {
@@ -524,7 +524,7 @@ class CustomGoogleMap extends Component {
 			...rest
 		} = this.state;
 
-		if (this.state.hasError) {
+		/*if (this.state.hasError) {
 			return (
 				<Skeleton variant="rect" width={"100%"} height={mapHeight} />
 			);
@@ -561,7 +561,39 @@ class CustomGoogleMap extends Component {
 						{...rest}
 					/>
 			);
-		}
+		}*/
+			return (
+				<ActualGoogleMap
+						className={classes.googleMap}
+						defaultCenter={this.getDefaultCenter()}
+						currentDevicePosition={current_device_position}
+						loadingElement={<div style={{ height: "100%", minHeight: "100%", }} />}
+						containerElement={
+							<div style={{ height: mapHeight + "px" }} />
+						}
+						mapElement={<div style={{ height: "100%", minHeight: "100%", }} />}
+						markers={markers}
+						circles={circles}
+						polylines={polylines}
+						showSearchBar={showSearchBar}
+						theme={preferences.theme }
+						searchBarProps={{
+							label: "Search for a place",
+							placeholder: "Search for a place...",
+							onSelect: this.onLocationSearchSelect,
+							onClickMyLocationBtn: this.onLocationBtnClick,
+						}}
+						onMapLoad={map=>{
+							_map = map;
+							if (Function.isFunction(onMapLoad)) {
+								onMapLoad(map);
+							}
+						}}
+						onBoundsChanged={this.onMapBoundsChanged}
+						style={{ minHeight: mapHeight + "px" }}
+						{...rest}
+					/>
+			);
 	}
 }
 

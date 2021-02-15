@@ -50,7 +50,7 @@ class Dashboard extends Component {
 
 	componentDidMount() {
 		const { setDashboardSearchbarDisplayed } = this.props;	
-		console.log("type of setDashboardSearchbarDisplayed", typeof setDashboardSearchbarDisplayed)
+		//console.log("type of setDashboardSearchbarDisplayed", typeof setDashboardSearchbarDisplayed)
 		setDashboardSearchbarDisplayed(true);  
 	}
 

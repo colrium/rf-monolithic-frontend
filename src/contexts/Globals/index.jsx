@@ -502,11 +502,11 @@ const GlobalsProvider = props => {
 				// Socket Emitions
 				defaultSocket.emit("get-settings", {user: auth.user});
 				if (auth.isAuthenticated) {
-					defaultSocket.on("reconnect", () => {
-						
+					defaultSocket.on("reconnect", () => {						
 						defaultSocket.emit("set-identity", auth.user._id);
 						defaultSocket.emit("get-settings", auth.user._id);
 						defaultSocket.emit("get-inbox", auth.user);
+						defaultSocket.emit("get-clients-positions", { user: auth.user, type: 'all' });
 					});
 					
 					defaultSocket.on("new-message", handleOnNewMessage);

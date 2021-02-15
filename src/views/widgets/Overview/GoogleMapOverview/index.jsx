@@ -195,15 +195,17 @@ class GoogleMapOverview extends React.Component {
 		this.setState(state => ({ clients_positions: clients_positions }));
 	}
 
-	handleOnClientPositionAvailable(socketId, client) {
-		this.setState(state => ({ clients_positions: {...state.clients_positions, [socketId]: client } }));
-		//console.log("handleOnClientPositionAvailable socketId", socketId);
+	handleOnClientPositionAvailable(clientId, client) {
+		this.setState(prevState => ({ clients_positions: {...prevState.clients_positions, [clientId]: client } }));
+		
 	}
 
 	handleOnClientPositionUnavailable(socketId, client) {		
-		this.setState(state => {
-			let newclientspositions = JSON.fromJSON(state.clients_positions);
+		this.setState(prevState => {
+			let newclientspositions = prevState.clients_positions;
+			
 			delete newclientspositions[socketId];
+
 			return { clients_positions: newclientspositions }
 		});
 	}
@@ -528,10 +530,10 @@ class GoogleMapOverview extends React.Component {
 												}
 											}
 											else{
-												if (googleMap) {		
+												/*if (googleMap) {		
 													googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
 													googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(15);
-												}
+												}*/
 											}
 											if (client.user && show_entry) {
 												return (

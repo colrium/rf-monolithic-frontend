@@ -318,9 +318,7 @@ export default compose(
 	let clientMarkers = {};
 
 
-	const { onMapLoad, device, auth, markers, polylines, circles, showDeviceLocation, showClientsPositions, selectedEntry, selectedEntryType, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition, defaultCenter, onBoundsChanged, zoom, defaultZoom, currentDevicePosition} = props;
-
-	
+	const { onMapLoad, device, auth, markers, polylines, circles, showDeviceLocation, showClientsPositions, selectedEntry, selectedEntryType, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition, defaultCenter, onBoundsChanged, zoom, defaultZoom} = props;
 
 	let globals = useGlobals();
 	let sockets = globals? globals.sockets : {};
@@ -333,7 +331,7 @@ export default compose(
 	
 	const [ socketsInitialized, setSocketsInitialized ] = useState(false);
 
-	/*useEffect(() => {
+	useEffect(() => {
 		if (firstLoad) {
 			_defaultCenter = defaultCenter;
 			_defaultZoom = defaultZoom;
@@ -342,7 +340,7 @@ export default compose(
 		}
 		
 
-	}, [firstLoad, defaultCenter, defaultZoom, zoom]);*/
+	}, [firstLoad, defaultCenter, defaultZoom, zoom]);
 	
 
 	
@@ -354,7 +352,6 @@ export default compose(
 	const [ mapPolylines, setMapPolylines ] = useState(Array.isArray(polylines)? polylines : []);
 	const [ mapCircles, setMapCircles ] = useState(Array.isArray(circles)? circles : []);
 	const [ mapCenter, setMapCenter ] = useState(defaultCenter);
-	const [ mapZoom, setMapZoom ] = useState(defaultZoom);
 	
 	
 
@@ -362,7 +359,6 @@ export default compose(
 
 	const getGoogleMap = (__map) => {
 		if (__map) {
-			//console.log("getGoogleMap __map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED", __map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
 			return __map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 		}
 		return null;
@@ -379,6 +375,100 @@ export default compose(
 	}, [_map]);
 
 	
+	/*const applyMapMarkers = (newMarkers) => {
+		if (Array.isArray(mapMarkers)) {
+			mapMarkers.map(mapMarker => {
+				if (mapMarker instanceof google.maps.Marker) {
+					mapMarker.setMap(null);
+				}
+			});
+		}
+		if (Array.isArray(newMarkers)) {
+			mapMarkers = newMarkers.map(newMarker => {
+				const { infowindow, ...markerProps} = newMarker;
+				let newMapMarker = new google.maps.Marker(markerProps);
+				newMapMarker.setMap(getCurrentMap());
+				return newMapMarker;
+			});
+		}
+		else {
+			mapMarkers = [];
+		}
+			
+	};
+
+	const applyMapPolylines = (newPolylines) => {
+		if (Array.isArray(mapPolylines)) {
+			mapPolylines.map(mapPolyline => {
+				if (mapPolyline instanceof google.maps.Polyline) {
+					mapPolyline.setMap(null);
+				}
+			});
+		}
+		if (Array.isArray(newPolylines)) {
+			mapPolylines = newPolylines.map(newPolyline => {
+				const { infowindow, ...polylineProps} = newPolyline;
+				let newMapPolyline = new google.maps.Polyline(polylineProps);
+				newMapPolyline.setMap(getCurrentMap());
+				return newMapPolyline;
+			});
+		}
+		else {
+			mapPolylines = [];
+		}			
+	};
+
+	const applyMapCircles = (newCircles) => {
+		if (Array.isArray(mapCircles)) {
+			mapCircles.map(mapCircle => {
+				if (mapCircle instanceof google.maps.Circle) {
+					mapCircle.setMap(null);
+				}
+			});
+		}
+		if (Array.isArray(newCircles)) {
+			mapCircles = newCircles.map((newCircle, index) => {
+				const { infowindow, ...circleProps} = newCircle;
+				let newMapCircle = new google.maps.Circle({
+					options: {
+								fillColor: selectedItem.type == "circle" && selectedItem.id === index? colors.hex.accent : (circleProps.fillColor ? circleProps.fillColor : colors.hex.accent),
+								strokeColor: circleProps.color ? circleProps.color : colors.hex.accent,
+								strokeOpacity: selectedItem.type == "circle" && selectedItem.id === index?  1 : (selectedItem.type != "circle" ? circleProps.opacity : 0.2),
+								fillOpacity: selectedItem.type == "circle" && selectedItem.id === index?  0.5 : (selectedItem.type != "circle"? circleProps.opacity : 0.2),
+								strokeWeight: selectedItem.type == "circle" && selectedItem.id === index?  4 : (selectedItem.type != "circle" ? circleProps.strokeWeight : 1),
+					},
+					...circleProps
+				});
+				newMapCircle.setMap(getCurrentMap());
+
+				google.maps.event.addListener(newMapCircle, 'click', function (event) {
+					console.log("newMapCircle click event", event);
+				});
+				console.log("newMapCircle", newMapCircle);
+				return newMapCircle;
+			});
+		}
+		else {
+			mapCircles = [];
+		}			
+	};
+
+	useEffect(() => {				
+		applyMapMarkers((Array.isArray(markers)? markers : []));
+	}, [, _map]);
+
+
+	useEffect(() => {
+		applyMapPolylines((Array.isArray(polylines)? polylines : []));
+	}, [polylines, _map]);
+
+	useEffect(() => {
+		applyMapCircles((Array.isArray(circles)? circles : []));
+	}, [circles, _map]);
+
+	useEffect(() => {
+		applyMapPolylines((Array.isArray(polylines)? polylines : []));
+	}, [polylines, _map]);*/
 
 
 	useEffect(() => {
@@ -422,11 +512,11 @@ export default compose(
 
 		//console.log("computed_gender+\"_heading_\"+computed_heading", computed_gender+"_heading_"+computed_heading);
 
-		/*if (heading_aware_client_position_marker_icons[computed_gender+"_heading_"+computed_heading]) {
+		if (heading_aware_client_position_marker_icons[computed_gender+"_heading_"+computed_heading]) {
 			return heading_aware_client_position_marker_icons[computed_gender+"_heading_"+computed_heading];
-		}*/
+		}
 
-		if (computed_gender === "female") {
+		else if (computed_gender === "female") {
 			return client_user_female_icon;
 		}
 		
@@ -628,7 +718,7 @@ export default compose(
 
 	const handleOnNewClientPosition = useCallback(async ({socketId, ...data}) => {
 		const  {user, position} = data;		
-		if (user) {
+		if (!JSON.isEmpty(user) && !JSON.isEmpty(user)) {
 
 			_clientsPositions = Object.entries(_clientsPositions).reduce((accumulator, [socketId, clientData], index) => {
 				if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
@@ -709,6 +799,7 @@ export default compose(
 			sockets.default.on("client-position-unavailable", handleOnClientPositionUnavailable);
 			sockets.default.on("client-position-changed", handleOnClientPositionChange);
 			sockets.default.on("disconnect", handleOnSocketDisconnect);
+			sockets.default.on("reconnect", handleOnSocketConnect);
 			if (sockets.default.connected) {
 				sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
 			}
@@ -827,6 +918,7 @@ export default compose(
 
 
 	useLayoutEffect(() => {
+		console.log("useLayoutEffect render")
 		if (_map) {
 			if (Function.isFunction(onMapLoad)) {
 				onMapLoad(_map, google);
@@ -849,7 +941,7 @@ export default compose(
 			sockets.default.off("clients-positions", handleOnClientsPositions);
 			sockets.default.off("client-position-unavailable", handleOnClientPositionUnavailable);
 			sockets.default.off("connect", handleOnSocketConnect);
-			//sockets.default.off("reconnect", handleOnSocketConnect);
+			sockets.default.off("reconnect", handleOnSocketConnect);
 		}
 	}, [sockets]);
 
@@ -879,9 +971,9 @@ export default compose(
 		return (
 			<GoogleMap
 				className="relative"
-				defaultZoom={mapZoom}
+				defaultZoom={defaultZoom}
 				zoom={zoom}
-				defaultCenter={mapCenter}
+				defaultCenter={defaultCenter}
 				defaultOptions={{
 					styles: props.mapStyles ? props.mapStyles : (props.theme === "dark"? mapDarkStyles : mapStyles),
 				}}

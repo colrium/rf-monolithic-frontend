@@ -178,7 +178,7 @@ class App extends React.Component {
 	componentWillMount() {
 		let date1 = new Date(2020, 11, 20, 10, 33);	
 		let date2 = new Date(2019, 11, 24, 23, 33);	
-		console.log("date1.difference(date2)", date1.difference(date2))
+		//console.log("date1.difference(date2)", date1.difference(date2))
 	}
 
 	componentWillUnmount() {
