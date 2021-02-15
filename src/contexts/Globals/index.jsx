@@ -487,11 +487,24 @@ const GlobalsProvider = props => {
 				});
 
 				defaultSocket.on("reconnect", () => {
-					console.info("connection to server restored");					
+					console.info("connection to server restored");
+					if (auth.isAuthenticated) {
+						defaultSocket.emit("set-identity", auth.user._id);
+						defaultSocket.emit("get-settings", auth.user._id);
+						defaultSocket.emit("get-inbox", auth.user);
+						defaultSocket.emit("get-clients-positions", { user: auth.user, type: 'all' });
+					}					
 				});
 
 				defaultSocket.on("connect", () => {
-					console.info("connection to server established");					
+					console.info("connection to server established");	
+					if (auth.isAuthenticated) {
+						defaultSocket.emit("set-identity", auth.user._id);
+						defaultSocket.emit("get-settings", auth.user._id);
+						defaultSocket.emit("get-inbox", auth.user);
+						defaultSocket.emit("get-clients-positions", { user: auth.user, type: 'all' });
+					}
+
 				});
 
 				defaultSocket.on("disconnect", () => {
@@ -502,12 +515,12 @@ const GlobalsProvider = props => {
 				// Socket Emitions
 				defaultSocket.emit("get-settings", {user: auth.user});
 				if (auth.isAuthenticated) {
-					defaultSocket.on("reconnect", () => {						
+					/*defaultSocket.on("reconnect", () => {						
 						defaultSocket.emit("set-identity", auth.user._id);
 						defaultSocket.emit("get-settings", auth.user._id);
 						defaultSocket.emit("get-inbox", auth.user);
 						defaultSocket.emit("get-clients-positions", { user: auth.user, type: 'all' });
-					});
+					});*/
 					
 					defaultSocket.on("new-message", handleOnNewMessage);
 					defaultSocket.on("message-sent", handleOnMessageSent);
