@@ -95,7 +95,23 @@ function Alert(props) {
 
 const AlwaysScrollToBottom = () => {
 	const elementRef = useRef();
-	useEffect(() => elementRef.current.scrollIntoView());
+	const { sockets } = useGlobals();
+
+	const scrollIntoView = useCallback(()=> {
+		if (elementRef.current) {
+			elementRef.current.scrollIntoView()
+		}
+	}, [elementRef.current]);
+	
+	useEffect(() => {
+		sockets.default.on("message-sent", scrollIntoView);
+		sockets.default.on("new-message", scrollIntoView);
+		scrollIntoView();
+		return () => {
+			sockets.default.off("message-sent", scrollIntoView);
+			sockets.default.off("new-message", scrollIntoView);
+		}
+	}, []);
 	return <div ref={elementRef} />;
 };
 
@@ -713,19 +729,19 @@ function Chat(props) {
 
 			if (!String.isEmpty(newMessage.content) || (["audio", "file", "video", "image"].includes(newMessage.type) && (Array.isArray(newMessage.attachments)? (newMessage.attachments.length > 0) : false))) {
 					sockets.default.emit("send-message", {message: newMessage, conversation: active_conversation, user: auth.user});
-										if (textInputRef.current) {
-											textInputRef.current.value = "";
-											textInputRef.current.focus();
-										}
+					if (textInputRef.current) {
+						textInputRef.current.value = "";
+						textInputRef.current.focus();
+					}
 										
-										setDraft({
-											is_reply: false,
-											sender: auth.user,
-											reply_for: null,
-											type: "text",
-											content: "",
-											conversation: active_conversation._id,
-										});
+				setDraft({
+					is_reply: false,
+					sender: auth.user,
+					reply_for: null,
+					type: "text",
+					content: "",
+					conversation: active_conversation._id,
+				});
 				
 			}
 		}
@@ -1183,7 +1199,7 @@ function Chat(props) {
 												});
 											}											
 										}
-										if ((chat.state.last_message.state === "deleted-for-sender" && chat.state.last_message.sender._id === auth.user._id) || chat.state.last_message.state === "deleted-for-all") {
+										if ((chat.state.last_message.state === "deleted-for-sender" && (chat.state.last_message.sender._id === auth.user._id || chat.state.last_message.sender === auth.user._id)) || chat.state.last_message.state === "deleted-for-all") {
 											last_message_deleted = true;
 										}
 									}
@@ -1355,13 +1371,13 @@ function Chat(props) {
 								let message_deleted = false;
 								let show_message = true;
 								if (cursor > 0) {
-									if (active_conversation_messages[cursor]._id === active_conversation_messages[(cursor - 1)]._id || activeChatMessage.conversation._id !== active_conversation._id) {
+									if (active_conversation_messages[cursor]._id === active_conversation_messages[(cursor - 1)]._id || (activeChatMessage.conversation._id !== active_conversation._id && activeChatMessage.conversation !== active_conversation._id)) {
 										show_message = false;
 									}
 								}
-								if (cursor === (active_conversation_messages.length - 1)) {
+								/*if (cursor === (active_conversation_messages.length - 1)) {
 									console.log("activeChatMessage", activeChatMessage);
-								}
+								}*/
 								
 								if (activeChatMessage && show_message) {
 									if ((activeChatMessage.state === "deleted-for-sender" && activeChatMessage.sender._id === auth.user._id) || activeChatMessage.state === "deleted-for-all") {
@@ -1370,7 +1386,7 @@ function Chat(props) {
 									return (
 										<GridItem 
 											xs={12} 
-											className={"flex p-0 py-1 "+(activeChatMessage.sender._id === auth.user._id? "flex-row-reverse" : "flex-row")}
+											className={"flex p-0 py-1 "+(activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id? "flex-row-reverse" : "flex-row")}
 											id={"message-"+activeChatMessage._id}
 											key={"conversation-"+active_conversation._id+"-message-"+cursor}
 										>
@@ -1380,44 +1396,76 @@ function Chat(props) {
 											</Avatar> */}
 
 											<ViewPortSensor  
-												className={"p-2 mx-4  flex flex-col px-4 "+(activeChatMessage.sender._id === auth.user._id? ("bg-green-200 "+classes.chatBubbleLocal) : ("bg-white "+classes.chatBubbleExternal))}
+												className={"p-2 mx-4  flex flex-col px-4 "+(activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id? ("bg-green-200 "+classes.chatBubbleLocal) : ("bg-white "+classes.chatBubbleExternal))}
 												onViewportVisibilityChange={(inViewport) => {
 													if (inViewport && sockets.default) {
-														if (activeChatMessage.state === "sent" && activeChatMessage.sender._id !== auth.user._id) {
-															sockets.default.emit("mark-message-as-received", {message: activeChatMessage, user: auth.user});
-														}
-														else if ((activeChatMessage.state === "received" || activeChatMessage.state === "partially-received") && activeChatMessage.sender._id !== auth.user._id) {
-															sockets.default.emit("mark-message-as-read", {message: activeChatMessage, user: auth.user});
-														}
+														if (activeChatMessage.sender._id !== auth.user._id && activeChatMessage.sender !== auth.user._id) {
+															if (activeChatMessage.state === "sent") {
+																sockets.default.emit("mark-message-as-received", {message: activeChatMessage, user: auth.user});
+															}
+															else if ((activeChatMessage.state === "received" || activeChatMessage.state === "partially-received")) {
+																sockets.default.emit("mark-message-as-read", {message: activeChatMessage, user: auth.user});
+															}
+														}															
 													}
 													
 												}}
 											>
-												{(!message_deleted && JSON.isJSON(activeChatMessage.sender)) && <div className={"flex flex-row w-full items-center mb-1"}>
-													<Typography variant="body1" className={"flex-grow text-gray-500 font-bold"}>
+												{!message_deleted && <div className={active_conversation.type !== "individual"? "flex flex-row w-full items-center" : "flex flex-row-reverse w-full items-center"}>
+													{ (active_conversation.type !== "individual" && JSON.isJSON(activeChatMessage.sender)) && <Typography variant="body1" className={"flex-grow text-gray-500 font-bold"}>
 														{activeChatMessage.sender.first_name+" "+activeChatMessage.sender.last_name}
-													</Typography>
+													</Typography>}
 													<IconButton aria-label="Toggle Menu" onClick={handleContextOpen("message", activeChatMessage)} className={""} size="small">
 														<ExpandMoreIcon fontSize="inherit" />
 													</IconButton>
 												</div>}
-												{(!message_deleted && ["audio", "file", "video", "image"].includes(activeChatMessage.type) && Array.isArray(activeChatMessage.attachments)) && <div className={"flex flex-col items-center mb-2"}>
+												{(!message_deleted && ["audio", "file", "video", "image"].includes(activeChatMessage.type) && Array.isArray(activeChatMessage.attachments)) && <div className={"flex flex-col items-center cursor-pointer mb-2"}>
 													{activeChatMessage.attachments.map(attachment => (
 														<div className={"p-2 w-11/12 border border-gray-400 rounded"}>
-															{activeChatMessage.type === "image" && <LazyImage className={"w-full h-auto"} src={AttachmentsService.getAttachmentFileUrl(attachment)} alt={attachment.name}/>}
-															{activeChatMessage.type === "audio" && <div className={"w-full h-auto flex flex-row items-center"} >
+															{activeChatMessage.type === "image" && <LazyImage 
+																className={"w-full h-auto"} 
+																src={AttachmentsService.getAttachmentFileUrl(attachment)} 
+																alt={attachment.name}
+																onClick={e => {
+																		e.preventDefault();
+																		let win = window.open(AttachmentsService.getAttachmentFileUrl(attachment), "_blank");
+																		win.focus();
+																}}
+															/>}
+															{activeChatMessage.type === "audio" && <div 
+																className={"w-full h-auto flex flex-row items-center"} 
+																onClick={e => {
+																		e.preventDefault();
+																		let win = window.open(AttachmentsService.getAttachmentFileUrl(attachment), "_blank");
+																		win.focus();
+																}}
+															>
 																<AudiotrackOutlinedIcon className={"text-2xl"}/>
 																<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"}>
 																	{attachment.name}
 																</Typography>
 															</div>}
-															{activeChatMessage.type === "video" && <div className={"w-full h-auto flex flex-row items-center"} >
+															{activeChatMessage.type === "video" && <div 
+																className={"w-full h-auto flex flex-row items-center"} 
+																onClick={e => {
+																		e.preventDefault();
+																		let win = window.open(AttachmentsService.getAttachmentFileUrl(attachment), "_blank");
+																		win.focus();
+																}}
+															>
 																<MovieOutlinedIcon className={"text-2xl"}/>
 																<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"} >
 																	{attachment.name}
 																</Typography>
 															</div>}
-															{activeChatMessage.type === "file" && <div className={"w-full h-auto flex flex-row items-center"} >
+															{activeChatMessage.type === "file" && <div 
+																className={"w-full h-auto flex flex-row items-center"} 
+																onClick={e => {
+																		e.preventDefault();
+																		let win = window.open(AttachmentsService.getAttachmentFileUrl(attachment), "_blank");
+																		win.focus();
+																}}
+															>
 																<AttachFileIcon className={"text-2xl"}/>
 																<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"} >
 																	{attachment.name}
@@ -1442,9 +1490,9 @@ function Chat(props) {
 													{activeChatMessage.created_on && <Typography variant="body2" className={"text-xs flex-grow"}>
 														{activeChatMessage.created_on instanceof Date? activeChatMessage.created_on.toLocaleString() : new Date(activeChatMessage.created_on).toLocaleString()}
 													</Typography>}
-													{(activeChatMessage.state === "sent" && activeChatMessage.sender._id === auth.user._id) && <DoneIcon className={"mx-2"} fontSize="small"/>}
-													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && activeChatMessage.sender._id === auth.user._id) && <DoneAllIcon className={"mx-2"} fontSize="small"/>}
-													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && activeChatMessage.sender._id === auth.user._id) && <DoneAllIcon className={"mx-2"} color={"secondary"} fontSize="small"/>}
+													{(activeChatMessage.state === "sent" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneIcon className={"mx-2"} fontSize="small"/>}
+													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2"} fontSize="small"/>}
+													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2"} color={"secondary"} fontSize="small"/>}
 												</div>}
 											</ViewPortSensor>
 										</GridItem>
@@ -1626,7 +1674,7 @@ function Chat(props) {
 						Delete Conversation
 					</MenuItem>}
 
-					{(contextMenu.type === "message" && contextMenu.entry.sender._id !== auth.user._id) && <MenuItem 
+					{(contextMenu.type === "message" && (contextMenu.entry.sender._id !== auth.user._id && contextMenu.entry.sender !== auth.user._id)) && <MenuItem 
 						onClick={(event)=>{
 							handleContextClose(event);
 							setDraft({
@@ -1646,7 +1694,7 @@ function Chat(props) {
 					>
 						Reply Message
 					</MenuItem>}
-					{(contextMenu.type === "message" && contextMenu.entry.sender._id === auth.user._id) && <MenuItem 
+					{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem 
 						onClick={(event)=>{
 							handleContextClose(event);
 							if (sockets.default) {
@@ -1657,7 +1705,7 @@ function Chat(props) {
 						Delete For Me
 					</MenuItem>}
 
-					{(contextMenu.type === "message" && contextMenu.entry.sender._id === auth.user._id) && <MenuItem 
+					{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem 
 						onClick={(event)=>{
 							handleContextClose(event);
 							if (sockets.default) {

@@ -272,6 +272,9 @@ const GlobalsProvider = props => {
 	}
 
 	const handleOnMessageSent = ({conversation, message, user}) => {
+
+		
+
 		let sender_id = false;
 		if (JSON.isJSON(message.sender)) {
 			sender_id = message.sender._id;

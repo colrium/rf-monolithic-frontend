@@ -2,6 +2,9 @@
 
 //
 import Chip from "@material-ui/core/Chip";
+import Menu from "@material-ui/core/Menu";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import MenuItem from "@material-ui/core/MenuItem";
 import withStyles from "@material-ui/core/styles/withStyles";
 import EmptyStateImage from "assets/img/empty-state-table.svg";
 import Avatar from "components/Avatar";
@@ -11,8 +14,10 @@ import Typography from "components/Typography";
 import Skeleton from "@material-ui/lab/Skeleton";
 import { formats } from "config/data";
 import MUIDataTable from "mui-datatables";
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
 import PropTypes from "prop-types";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { attachments as AttachmentsService } from "services";
@@ -20,6 +25,7 @@ import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
 import { FilesHelper, ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";
 import { withErrorHandler } from "hoc/ErrorHandler";
+import { withGlobals } from "contexts/Globals";
 import styles from "./styles";
 
 class TableView extends React.Component {
@@ -32,9 +38,11 @@ class TableView extends React.Component {
 		dt_columns: [],
 		records: [],
 		raw_data: [],
+		raw_data_mutated: false,
 		mouseX: null,
 		mouseY: null,
 		actionsView: "contextMenu",
+
 		context: null,
 	};
 	constructor(props) {
@@ -48,10 +56,17 @@ class TableView extends React.Component {
 		this.handleDeleteItemConfirm = this.handleDeleteItemConfirm.bind(this);
 		this.handleDeleteItem = this.handleDeleteItem.bind(this);
 		this.handleOnRowContextMenu = this.handleOnRowContextMenu.bind(this);
+		this.handleSocketsOnCreate = this.handleSocketsOnCreate.bind(this);
 	}
 
 	componentDidMount() {
-		const { cache, defination } = this.props;
+		const { cache, defination, sockets } = this.props;
+		console.log("sockets", sockets);
+		if (sockets) {
+			if (sockets.default) {
+				sockets.default.on("create", this.handleSocketsOnCreate);
+			}
+		}
 		this.mounted = true;
 		this.loadContext();
 		this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
@@ -81,6 +96,39 @@ class TableView extends React.Component {
 				this.loadData
 			);
 		}
+		if (this.state.raw_data_mutated) {
+			this.setState({ raw_data_mutated: false }, this.prepareData(this.state.raw_data));
+		}
+	}
+	componentWillUnmount() {
+		const { sockets } = this.props;
+		if (sockets) {
+			if (sockets.default) {
+				sockets.default.off("create", this.handleSocketsOnCreate);
+			}
+		}
+    }
+
+	handleSocketsOnCreate = (event) => {
+		const { defination, sockets } = this.props;
+		const { context, action } = event;
+		const { raw_data } = this.state;
+		if (defination.model === context) {
+			this.setState(prevState => {
+				const { raw_data } = prevState;
+				console.log("handleSocketsOnCreate context", context);
+				console.log("handleSocketsOnCreate action", action);
+				let new_raw_data = Array.isArray(raw_data)? raw_data : [];
+				new_raw_data.unshift(action.result);
+				console.log("handleSocketsOnCreate new_raw_data", new_raw_data);
+				return {
+					raw_data: new_raw_data,
+					raw_data_mutated: true,
+				}
+			});
+				
+		}
+		
 	}
 
 	handleDeleteItemConfirm = item_id => event => {
@@ -108,10 +156,38 @@ class TableView extends React.Component {
 	handleDeleteItem = item_id => event => {
 		const { openDialog, closeDialog } = this.props;
 		closeDialog();
+		if (item_id._id) {
+			item_id = item_id._id;
+		}
 		this.state.service
 			.delete(item_id)
-			.then(res => {})
-			.catch(e => {
+			.then(res => {
+				this.setState(prevState => {
+					let new_records = prevState.records;
+					if (Array.isArray(new_records)) {
+						new_records = new_records.filter((record)=>{
+							if (record.entry) {
+								if (record.entry._id === item_id ) {
+									return false;
+								}
+							}
+							else if (record._id === item_id) {
+								return false;
+							}
+
+							return true;
+						});
+					}
+
+					if (!Array.isArray(new_records)) {
+						new_records = [];
+					}
+
+					return {
+						records: new_records,
+					}
+				});
+			}).catch(e => {
 				openDialog({
 					title: "Delete failed",
 					body: e.msg,
@@ -143,57 +219,89 @@ class TableView extends React.Component {
 	};
 
 	loadContext() {
-		const { classes, defination, service, query, auth } = this.props;
+		const { classes, defination, service, query, auth, actionsType } = this.props;
 		if (defination) {
 			let columns = defination.scope.columns;
 			let dt_columns = [];
 			if (!defination.access.restricted(auth.user)) {
 				dt_columns.push({
 					name: "entry",
-					label: "Actions",
+					label: String.isString(defination.label)? defination.label.singularize() : ("Action"),
 					options: {
 						filter: false,
 						sort: false,
-						customBodyRender: (value, tableMeta, updateValue) => {
-							return (
-								<GridContainer
-									spacing={2}
-									className={classes.data_actions_wrapper}
-								>
-									{Object.keys(defination.access.actions).map((action_name, action_index) =>
-										defination.access.actions[
-											action_name
-										].restricted(auth.user) ? (
-											""
-										) : (
-											<div
-												key={
-													value +
-													"_" +
-													action_name +
-													"_action"
-												}
-											>
-												{action_name === "delete"
-													? defination.access.actions[
-															action_name
-													  ].link.inline.listing(
-															value,
-															"error_text",
-															this.handleDeleteItemConfirm(
+						/*customBodyRenderLite: (dataIndex, rowIndex) => {
+							console.log("dataIndex", dataIndex);
+							let value = this.state.records[dataIndex].entry;
+							if (actionsType === "inline") {
+								return (
+									<GridContainer
+										spacing={2}
+										className={classes.data_actions_wrapper}
+									>
+										{Object.keys(defination.access.actions).map((action_name, action_index) =>
+											!defination.access.actions[action_name].restricted(auth.user) && (
+												<div
+													key={
+														value +
+														"_" +
+														action_name +
+														"_action"
+													}
+												>
+													{action_name === "delete" ? defination.access.actions[action_name].link.inline.listing(value,
+																"error_text",
+																this.handleDeleteItemConfirm(
+																	value
+																)
+														  )
+														: defination.access.actions[
+																action_name
+														  ].link.inline.listing(
 																value
-															)
-													  )
-													: defination.access.actions[
-															action_name
-													  ].link.inline.listing(
-															value
-													  )}
-											</div>
-										)
-									)}
-								</GridContainer>
-							);
+														  )}
+												</div>
+											)
+										)}
+									</GridContainer>
+								);
+							}
+						},*/
+						customBodyRender: (value, tableMeta, updateValue) => {
+							if (actionsType === "inline") {
+								return (
+									<GridContainer
+										spacing={2}
+										className={classes.data_actions_wrapper}
+									>
+										{Object.keys(defination.access.actions).map((action_name, action_index) =>
+											!defination.access.actions[action_name].restricted(auth.user) && (
+												<div
+													key={
+														value +
+														"_" +
+														action_name +
+														"_action"
+													}
+												>
+													{action_name === "delete" ? defination.access.actions[action_name].link.inline.listing(value,
+																"error_text",
+																this.handleDeleteItemConfirm(
+																	value
+																)
+														  )
+														: defination.access.actions[
+																action_name
+														  ].link.inline.listing(
+																value
+														  )}
+												</div>
+											)
+										)}
+									</GridContainer>
+								);
+							}
+								
 						},
 					},
 				});
@@ -270,7 +378,7 @@ class TableView extends React.Component {
 						} else {
 							if (
 								field.reference &&
-								field.input.type !== "file"
+								field.input.type !== "file" && !field.isAttachment
 							) {
 								dt_columns.push({
 									name: name,
@@ -320,7 +428,7 @@ class TableView extends React.Component {
 								});
 							} else if (
 								field.reference &&
-								field.input.type === "file"
+								(field.input.type === "file" || field.isAttachment)
 							) {
 								dt_columns.push({
 									name: name,
@@ -536,6 +644,7 @@ class TableView extends React.Component {
 		const { auth, cache, defination, apiCallRequest, cache_data, onLoadData, load_data } = this.props;
 		if (defination ) {
 			if (load_data) {
+				this.setState({loading: true, load_error: false});
 				apiCallRequest( defination.name,
 					{
 						uri: defination.endpoint,
@@ -548,6 +657,7 @@ class TableView extends React.Component {
 					if (Function.isFunction(onLoadData)) {
 						onLoadData(data, this.state.query);
 					}
+					this.setState({loading: false});
 					this.prepareData(data);
 				}).catch(e => {
 					this.setState(state => ({
@@ -624,10 +734,10 @@ class TableView extends React.Component {
 	}
 
 	render() {
-		const { classes, defination, api, cache } = this.props;
+		const { classes, defination, api, cache, actionsType } = this.props;
 		const table_options = {
 			filterType: "dropdown",
-			filter: false,
+			filter: true,
 			downloadOptions: {
 				filename:
 					(defination ? defination.label : "Records") +
@@ -640,23 +750,43 @@ class TableView extends React.Component {
 			selectableRows: "none",
 			responsive: "scroll",
 			pagination: false,
-			/*customRowRender: (data, dataIndex, rowIndex) => {
-						console.log("customRowRender data", data);
-						console.log("customRowRender dataIndex", dataIndex);
-						console.log("customRowRender rowIndex", rowIndex);
-						return (
-							<tr onContextMenu={ this.handleOnRowContextMenu(dataIndex) }>
-								{data.map((value, index)=>(
-									<td key={"row-"+index}>{ value }</td>
-								))}
-							</tr>
-						);
-					}*/
+			rowHover: true,
+			/*onCellClick: (colData, cellMeta) => {
+				console.log("onCellClick colData", colData);
+			},
+			setRowProps: (row, dataIndex, rowIndex) => {
+				console.log("setRowProps dataIndex", dataIndex);
+				let rowProps = {};
+				if (actionsType === "context") {
+					rowProps.onContextMenu = this.handleOnRowContextMenu(dataIndex);
+				}
+				return rowProps;
+			},*/
+			customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+				console.log("customToolbarSelect selectedRows", selectedRows);
+				console.log("customToolbarSelect displayData", displayData);
+			}
 		};
+		/*if (actionsType === "context") {
+			table_options.customRowRender = (data, dataIndex, rowIndex) => {
+						console.log("customRowRender data", data);
+						return (
+							<TableRow key={"row-"+rowIndex} onContextMenu={ this.handleOnRowContextMenu(dataIndex) }>
+								{data.map((value, index)=>(
+									<TableCell 
+										key={"row-"+rowIndex+"-cell-"+index}
+									>
+										{ value }
+									</TableCell>
+								))}
+							</TableRow>
+						);
+					};
+		}*/
 		return (
 			<GridContainer className={classes.root}>
 				<GridItem className="p-0 m-0" xs={12}>
-					{ (api.busy && !(defination.name in cache.res) && this.state.records.length===0 ) && <GridContainer className={classes.full_height} justify="center" alignItems="center">
+					{ this.state.loading && <GridContainer className={classes.full_height} justify="center" alignItems="center">
 								<GridItem xs={12} className="flex relative flex-row">
 									<div className="flex-grow">
 										<Skeleton variant="text" width={150}/>
@@ -677,10 +807,11 @@ class TableView extends React.Component {
 								</GridItem>
 					</GridContainer> }
 
-					{(!api.busy && defination.name in cache.res) && <GridContainer className="p-0 m-0">
+					{(!this.state.loading && Array.isArray(this.state.records)) && <GridContainer className="p-0 m-0">
 						<GridContainer className="p-0 m-0">
 							<GridItem className="p-0 m-0" xs={12}>
-								{/* this.state.actionsView === "contextMenu" && <Menu											
+								{actionsType === "context" && <ClickAwayListener onContextMenu={this.handleOnRowContextMenuClose} onClickAway={this.handleOnRowContextMenuClose}>
+										<Menu											
 											open={this.state.mouseY !== null}
 											onClose={this.handleOnRowContextMenuClose}
 											anchorReference="anchorPosition"
@@ -690,17 +821,12 @@ class TableView extends React.Component {
 											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Print</MenuItem>
 											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Highlight</MenuItem>
 											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Email</MenuItem>
-										</Menu> */}
+										</Menu>
+									</ClickAwayListener>}
 
-								{defination && 
-								Array.isArray(this.state.records) &&
-								this.state.records.length > 0 ? (
+								{this.state.records.length > 0 ? (
 									<MUIDataTable
-										title={
-											(api.loading ? "Loading " : "") +
-											defination.label +
-											(api.loading ? "..." : "")
-										}
+										title={(api.loading ? "Loading " : "") + defination.label + (api.loading ? "..." : "")}
 										data={this.state.records}
 										columns={this.state.dt_columns}
 										options={table_options}
@@ -748,6 +874,7 @@ class TableView extends React.Component {
 							</GridContainer>
 						)}
 					</GridContainer> }
+
 				</GridItem>
 			</GridContainer>
 		);
@@ -773,6 +900,7 @@ TableView.defaultProps = {
 	query: { p: 1 },
 	cache_data: true,
 	load_data: true,
+	actionsType: "inline",
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -784,6 +912,7 @@ const mapStateToProps = (state, ownProps) => ({
 export default withErrorHandler(
 	compose(
 		withStyles(styles),
+		withGlobals,
 		connect(mapStateToProps, { openDialog, closeDialog, apiCallRequest })
 	)(TableView)
 );

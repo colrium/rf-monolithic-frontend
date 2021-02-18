@@ -1553,6 +1553,14 @@ export default {
 					},
 				},
 				possibilities: status_names,
+				tableProps: {
+					render: rowData => {
+						return <Status
+									color={status_colors[rowData.status]}
+									text={status_names[rowData.status]}
+								/>
+					}
+				}
 			},
 		},
 		identity: {

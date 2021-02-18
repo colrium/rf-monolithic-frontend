@@ -47,6 +47,7 @@
     "lodash-inflection": "^1.5.0",
     "lodash.merge": "^4.6.2",
     "marker-animate-unobtrusive": "^0.2.8",
+    "material-table": "^1.69.2",
     "material-ui-feature-discovery-prompt": "^1.0.1",
     "material-ui-popup-state": "^1.7.1",
     "mdi-react": "^6.7.0",

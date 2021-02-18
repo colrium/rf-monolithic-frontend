@@ -16,6 +16,7 @@ import {
 	KmlLayer,
 	withScriptjs,
 } from "react-google-maps";
+import { ThemeProvider } from '@material-ui/core/styles';
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
 import Avatar from '@material-ui/core/Avatar';
 import Typography from 'components/Typography';
@@ -61,7 +62,7 @@ import Rating from '@material-ui/lab/Rating';
 import { Link } from "react-router-dom";
 
 import { google_maps } from "config";
-
+import { theme, theme_dark } from "assets/jss/app-theme";
 //
 
 //
@@ -140,10 +141,11 @@ let showInfoWindow = (content, position) => {
 	return <InfoWindow position={position}>{content}</InfoWindow>;
 };
 
-const ClientInfoWindow = ({user, track, position, history, ...rest}) => {
-	
+const ClientInfoWindow = ({user, track, position, history, app, ...rest}) => {
+	const { preferences } = app;
 
 	return (
+		<ThemeProvider theme={preferences? (preferences.theme==="dark"? theme_dark :  theme) :  theme}>
 		<GridContainer style={{maxWidth: 300}}>
 			<GridItem xs={12} className={"flex flex-row items-center"}>
 				{
@@ -243,14 +245,15 @@ const ClientInfoWindow = ({user, track, position, history, ...rest}) => {
 					<Button href={("/messages?with="+user.email_address).toUriWithDashboardPrefix()} style={{background: "#8C189B", color: "#FFFFFF"}}>Message Me</Button>				
 				</GridItem>
 			</GridContainer>
+		</ThemeProvider>
 	)
 };
 
 let _clientsPositionsOpenPopups = [];
 
-let showClientInfoWindow = ({socketId, ...data}, google_map, marker, history) => {
+let showClientInfoWindow = ({socketId, ...data}, google_map, marker, history, app) => {
 	if (google_map, marker && !_clientsPositionsOpenPopups.includes(socketId)) {
-		var infoWindow = new google.maps.InfoWindow({content: ReactDOMServer.renderToStaticMarkup(<ClientInfoWindow history={history} {...data} />)});
+		var infoWindow = new google.maps.InfoWindow({content: ReactDOMServer.renderToStaticMarkup(<ClientInfoWindow history={history} app={app} {...data} />)});
 		infoWindow.open(google_map, marker);
 		_clientsPositionsOpenPopups.push(socketId);
 		google.maps.event.addListener(infoWindow,'closeclick',function(){
@@ -318,7 +321,7 @@ export default compose(
 	let clientMarkers = {};
 
 
-	const { onMapLoad, device, auth, markers, polylines, circles, showDeviceLocation, showClientsPositions, selectedEntry, selectedEntryType, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition, defaultCenter, onBoundsChanged, zoom, defaultZoom, currentDevicePosition} = props;
+	const { onMapLoad, device, auth, app, markers, polylines, circles, showDeviceLocation, showClientsPositions, selectedEntry, selectedEntryType, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition, defaultCenter, onBoundsChanged, zoom, defaultZoom, currentDevicePosition} = props;
 
 	
 
@@ -584,8 +587,12 @@ export default compose(
 	
 
 	const applyMapOnAll = (google_map) => {
-		mapMarkers.map(mapMarker =>{			
-			mapMarker.setMap(google_map);			
+		mapMarkers.map(mapMarker =>{
+			console.log("mapMarker", mapMarker);
+			if (Function.isFunction(mapMarker.setMap)) {
+				mapMarker.setMap(google_map);	
+			}	
+					
 		});
 		if (JSON.isJSON(regionBoundsClients)) {
 			Object.entries(regionBoundsClients).map(([socketId, regionBoundsClient]) => {
@@ -595,12 +602,26 @@ export default compose(
 			});			
 		}
 
+		if (JSON.isJSON(_clientsPositions)) {
+			Object.entries(_clientsPositions).map(([socketId, clientsPosition]) => {
+				if (clientsPosition.marker) {
+					clientsPosition.marker.setMap(google_map);
+				}
+			});			
+		}
+
 		//console.log("mapCircles", mapCircles)
-		mapCircles.map(mapCircle =>{			
-			mapCircle.setMap(google_map);			
+		mapCircles.map(mapCircle =>{	
+			console.log("mapCircle", mapCircle);
+			if (Function.isFunction(mapCircle.setMap)) {
+				mapCircle.setMap(google_map);	
+			}					
 		});
-		mapPolylines.map(mapPolyline =>{			
-			mapPolyline.setMap(google_map);			
+		mapPolylines.map(mapPolyline =>{	
+			console.log("mapPolyline", mapPolyline);
+			if (Function.isFunction(mapPolyline.setMap)) {
+				mapPolyline.setMap(google_map);	
+			}			
 		});
 
 	};
@@ -748,7 +769,7 @@ export default compose(
 								marker.setPosition({lat: position.latitude, lng: position.longitude });
 								marker.setMap(getGoogleMapContextElement());
 								google.maps.event.addListener(marker, 'click', function () {
-									showClientInfoWindow({socketId: socketId, ...clientData}, getGoogleMapContextElement(), marker, history);
+									showClientInfoWindow({socketId: socketId, ...clientData}, getGoogleMapContextElement(), marker, history, app);
 					            });
 					            clientData.marker= marker;
 								accumulator[socketId] = clientData;
