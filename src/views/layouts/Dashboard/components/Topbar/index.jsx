@@ -58,6 +58,7 @@ class Topbar extends Component {
 		loading: false,
 		connectionSnackBarIgnore: false,
 		connectionSnackBarOpened: false,
+		serverConnected: true,
 		connectionSnackBarOpen: false,
 		connectionSnackBarColor: "success",
 		connectionSnackBarMessage: "Connection Restored",
@@ -70,6 +71,7 @@ class Topbar extends Component {
 	constructor(props) {
 		super(props);
 		this.mounted = false;
+		const { sockets, auth, setCurrentUser } = this.props;
 		this.onCloseConnectionSnackbar = this.onCloseConnectionSnackbar.bind(
 			this
 		);
@@ -82,14 +84,17 @@ class Topbar extends Component {
 		this.handleSignOut = this.handleSignOut.bind(this);
 		this.onOpenUserPresenceMenu = this.onOpenUserPresenceMenu.bind(this);
 		this.onCloseUserPresenceMenu = this.onCloseUserPresenceMenu.bind(this);
-		this.onChangeUserPresenceMenu = this.onChangeUserPresenceMenu.bind(
-			this
-		);
+		this.onChangeUserPresenceMenu = this.onChangeUserPresenceMenu.bind(this);
+		if (sockets.default) {
+			this.state.serverConnected = sockets.default.connected;
+		}
+
 		this.initSocketActionsListener();
 	}
 
 	componentDidMount() {
 		let {dashboard} = this.props;
+		
 		this.signal = true;
 		this.mounted = true;
 		this.setState({ prominent: true });
@@ -145,31 +150,32 @@ class Topbar extends Component {
 		const { sockets, auth, setCurrentUser } = this.props;
 		if (sockets.default) {
 			sockets.default.on("connect", () => {
-				if ( this.state.connectionSnackBarOpened && !this.ignoreConnectionState) {
-					this.setState({
-						connectionSnackBarOpen: true,
+				this.setState({
+						connectionSnackBarOpen: false,
+						serverConnected: true,
 						connectionSnackBarColor: "success",
 						connectionSnackBarMessage: "Connection Restored",
 					});
-				}
 			});
 			sockets.default.on("disconnect", () => {
-				/*if (!this.ignoreConnectionState) {
+				if (!this.ignoreConnectionState) {
 					this.setState({
-						connectionSnackBarOpened: true,
-						connectionSnackBarOpen: true,
+						connectionSnackBarOpened: false,
+						serverConnected: false,
+						connectionSnackBarOpen: false,
 						connectionSnackBarColor: "error",
 						connectionSnackBarMessage: "Connection Lost",
 					});
-				}*/
+				}
 			});
 
 			sockets.default.on("reconnect_failed", (attemptNumber) => {
 					////console.log("sockets.default reconnect_failed attemptNumber", attemptNumber);			
 				if (attemptNumber >= 10 && !this.ignoreConnectionState) {
 					this.setState({
-						connectionSnackBarOpened: true,
-						connectionSnackBarOpen: true,
+						connectionSnackBarOpened: false,
+						connectionSnackBarOpen: false,
+						serverConnected: false,
 						connectionSnackBarColor: "error",
 						connectionSnackBarMessage: "Connection Lost",
 					});
@@ -195,17 +201,13 @@ class Topbar extends Component {
 				}
 			});
 
+			
+
 			sockets.default.on("update", ({ context, action }) => {
 				if (context.toLowerCase() === "notification") {
 					if (action.effects.notify === auth.user._id) {
 						this.setState(prevState => ({
-							notifications: Array.isArray(
-								prevState.notifications
-							)
-								? prevState.notifications.unshift(
-										action.effects
-								  )
-								: [action.effects],
+							notifications: Array.isArray(prevState.notifications)? prevState.notifications.unshift(action.effects) : [action.effects],
 							notificationSnackBarOpen: true,
 							notificationSnackBarMessage: action.effects.body,
 						}));
@@ -539,7 +541,7 @@ class Topbar extends Component {
 										horizontal: 'right',
 									}}
 									classes={{
-										dot: auth.user.presence === "online"? "bg-green-600" : (auth.user.presence == "away"? "bg-orange-500" : "bg-gray-500")
+										dot: this.state.serverConnected? (auth.user.presence === "online"? "bg-green-700" : (auth.user.presence == "away"? "bg-orange-700" : "bg-gray-700")) : "bg-red-700"
 									}}
 								>
 									{auth.user.avatar ? (
@@ -598,7 +600,7 @@ class Topbar extends Component {
 							>
 								<MenuItem 
 									classes={{
-										root: "opacity-100 inverse-text "+(auth.user.presence === "online"? "bg-green-600" : (auth.user.presence == "away"? "bg-orange-500" : "bg-gray-500"))
+										root: "opacity-100 inverse-text "+(this.state.serverConnected? (auth.user.presence === "online"? "bg-green-700" : (auth.user.presence == "away"? "bg-orange-700" : "bg-gray-700")) : "bg-red-700")
 									}} 
 									disabled
 								>
@@ -612,6 +614,7 @@ class Topbar extends Component {
 												: "online"
 											: "online"
 									)}
+									disabled={!this.state.serverConnected}
 								>
 									{auth.user
 										? auth.user.presence === "online"
@@ -626,6 +629,7 @@ class Topbar extends Component {
 										onClick={this.onChangeUserPresenceMenu(
 											"offline"
 										)}
+										disabled={!this.state.serverConnected}
 									>
 										Set to offline
 									</MenuItem>

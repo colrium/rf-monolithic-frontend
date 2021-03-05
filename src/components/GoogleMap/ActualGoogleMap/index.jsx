@@ -329,23 +329,11 @@ export default compose(
 	let sockets = globals? globals.sockets : {};
 	let services = globals? globals.services : {};
 
-	/*let mapMarkers = [];
-	let mapPolylines = [];
-	let mapCircles = [];*/
+	
 
 	
 	const [ socketsInitialized, setSocketsInitialized ] = useState(false);
 
-	/*useEffect(() => {
-		if (firstLoad) {
-			_defaultCenter = defaultCenter;
-			_defaultZoom = defaultZoom;
-			_zoom = zoom;
-			firstLoad = false;
-		}
-		
-
-	}, [firstLoad, defaultCenter, defaultZoom, zoom]);*/
 	
 
 	
@@ -353,9 +341,6 @@ export default compose(
 	const [ infoWindowContent, setInfoWindowContent ] = useState(null);
 	const [ infoWindowPosition, setInfoWindowPosition ] = useState(null);	
 	const [ infoWindowOpen, setInfoWindowOpen ] = useState(false);
-	const [ mapMarkers, setMapMarkers ] = useState(Array.isArray(markers)? markers : []);
-	const [ mapPolylines, setMapPolylines ] = useState(Array.isArray(polylines)? polylines : []);
-	const [ mapCircles, setMapCircles ] = useState(Array.isArray(circles)? circles : []);
 	const [ mapCenter, setMapCenter ] = useState(defaultCenter);
 	const [ mapZoom, setMapZoom ] = useState(defaultZoom);
 	
@@ -384,11 +369,6 @@ export default compose(
 	
 
 
-	useEffect(() => {
-		setMapMarkers((Array.isArray(markers)? markers : []));
-		setMapPolylines((Array.isArray(polylines)? polylines : []));
-		setMapCircles((Array.isArray(circles)? circles : []));
-	}, [polylines, circles, markers]);
 	
 	
 
@@ -587,13 +567,16 @@ export default compose(
 	
 
 	const applyMapOnAll = (google_map) => {
-		mapMarkers.map(mapMarker =>{
-			console.log("mapMarker", mapMarker);
-			if (Function.isFunction(mapMarker.setMap)) {
-				mapMarker.setMap(google_map);	
-			}	
-					
-		});
+		if (Array.isArray(markers)) {
+			markers.map(mapMarker =>{
+				console.log("mapMarker", mapMarker);
+				if (Function.isFunction(mapMarker.setMap)) {
+					mapMarker.setMap(google_map);	
+				}	
+						
+			});
+		}
+			
 		if (JSON.isJSON(regionBoundsClients)) {
 			Object.entries(regionBoundsClients).map(([socketId, regionBoundsClient]) => {
 				if (regionBoundsClient.marker) {
@@ -611,18 +594,23 @@ export default compose(
 		}
 
 		//console.log("mapCircles", mapCircles)
-		mapCircles.map(mapCircle =>{	
-			console.log("mapCircle", mapCircle);
-			if (Function.isFunction(mapCircle.setMap)) {
-				mapCircle.setMap(google_map);	
-			}					
-		});
-		mapPolylines.map(mapPolyline =>{	
-			console.log("mapPolyline", mapPolyline);
-			if (Function.isFunction(mapPolyline.setMap)) {
-				mapPolyline.setMap(google_map);	
-			}			
-		});
+		if (Array.isArray(circles)) {
+			circles.map(mapCircle =>{	
+				console.log("mapCircle", mapCircle);
+				if (Function.isFunction(mapCircle.setMap)) {
+					mapCircle.setMap(google_map);	
+				}					
+			});
+		}
+
+		if (Array.isArray(polylines)) {
+			polylines.map(mapPolyline =>{	
+				console.log("mapPolyline", mapPolyline);
+				if (Function.isFunction(mapPolyline.setMap)) {
+					mapPolyline.setMap(google_map);	
+				}			
+			});
+		}
 
 	};
 	//Memoized Method
@@ -937,8 +925,8 @@ export default compose(
 						}}
 					/>
 				)}
-				{Array.isArray(mapPolylines) &&
-					mapPolylines.map((polyline, index) => (
+				{Array.isArray(polylines) &&
+					polylines.map((polyline, index) => (
 						<Polyline
 							path={polyline.path}
 							geodesic={true}
@@ -972,8 +960,8 @@ export default compose(
 						/>
 					))}
 
-				{Array.isArray(mapCircles) &&
-					mapCircles.map(({ infoWindow, ...rest }, index) => (
+				{Array.isArray(circles) &&
+					circles.map(({ infoWindow, ...rest }, index) => (
 						<Circle
 							{...rest}
 							options={{
@@ -1001,8 +989,8 @@ export default compose(
 						/>
 					))}
 
-				{Array.isArray(mapMarkers) &&
-					mapMarkers.map(
+				{Array.isArray(markers) &&
+					markers.map(
 						({ position, title, infoWindow, ...rest }, index) =>
 							typeof google !== undefined && (
 								<Marker
@@ -1032,23 +1020,7 @@ export default compose(
 							)
 					)}
 
-				{/*(JSON.isJSON(regionBoundsClients) && showClientsPositions) && Object.entries(regionBoundsClients).map(([socketId, { position, user, ...rest }], index) =>
-						(typeof google !== undefined && JSON.isJSON(position) && JSON.isJSON(user)) && (
-								<Marker
-									position={{lat: position.latitude, lng: position.longitude }}
-									title={user.first_name+" "+user.last_name}
-									key={"client-marker-" + index}
-									icon={{url: client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation: position.heading } }
-									onClick={handleOnPressMarker(socketId, { position: position, user: user, ...rest })}
-									style={{transform: "rotate(" + 100 + "deg)"}}
-									shape={[16, 16, 8]}
-									ref={ _marker => {
-										//console.log("_marker", _marker)
-									}}
-									{...rest}
-								/>
-						)
-					)*/}
+				
 
 				{JSON.isJSON(props.currentDevicePosition) &&
 					props.showCurrentPosition && (

@@ -7,8 +7,17 @@ import Route from "./Route";
 import asyncComponent from "views/widgets/asyncComponent";
 import { builderIO } from "config";
 // Routes components
-
-const NotFound = asyncComponent(() => import("views/pages/System/NotFound"));
+import NotFound from "views/pages/System/NotFound";
+import Preferences from "views/pages/Dashboard/Preferences";
+import Settings from "views/pages/Dashboard/Settings";
+import RecordForm from "views/pages/Dashboard/RecordForm";
+import RecordsListing from "views/pages/Dashboard/RecordsListing";
+import RecordView from "views/pages/Dashboard/RecordView";
+import Account from "views/pages/Dashboard/Account";
+import Messages from "views/pages/Dashboard/Messages";
+import Dashboard from "views/pages/Dashboard/Home";
+import PageBuilder from "views/pages/Dashboard/PageBuilder";
+/*const NotFound = asyncComponent(() => import("views/pages/System/NotFound"));
 const Preferences = asyncComponent(() =>
 	import("views/pages/Dashboard/Preferences")
 );
@@ -31,7 +40,7 @@ const Messages = asyncComponent(() =>
 	import("views/pages/Dashboard/Messages")
 );
 
-const Dashboard = asyncComponent(() => import("views/pages/Dashboard/Home"));
+const Dashboard = asyncComponent(() => import("views/pages/Dashboard/Home"));*/
 
 export default class DashboardRoutes extends Component {
 	render() {

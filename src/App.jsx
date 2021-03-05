@@ -24,6 +24,9 @@ import Intercom from "react-intercom";
 
 import { ThemeProvider } from "@material-ui/styles";
 import { MuiThemeProvider } from "@material-ui/core/styles";
+
+import { FirebaseAppProvider } from 'reactfire';
+
 import CssBaseline from "@material-ui/core/CssBaseline";
 import ProgressDialog from "components/ProgressDialog";
 
@@ -54,6 +57,7 @@ import appStyle from "assets/jss/appStyle";
 import { app, theme, theme_dark } from "assets/jss/app-theme";
 //
 import Routes from "routes";
+import { firebase as firebaseConfig } from "config";
 
 
 import "assets/scss/style.scss?v=1.4.0";
@@ -191,6 +195,10 @@ class App extends React.Component {
 		Auth.destroyInstance();
 	}
 
+	async componentDidMount() {
+		
+	}
+
 	async onWindowResize() {
 		const { setWindowSize } = this.props;
 		setWindowSize({
@@ -221,22 +229,24 @@ class App extends React.Component {
 					}
 
 					return (
-						<GlobalsProvider >
-							<ThemeProvider theme={preferences.theme==="dark"? theme_dark :  theme}>
-								<MuiThemeProvider theme={preferences.theme==="dark"? theme_dark :  theme}>
-									<CssBaseline />
-									<JssProvider jss={jss} generateClassName={generateClassName} registry={sheets} >
-										<MuiPickersUtilsProvider utils={MomentUtils}>
-											<BrowserRouter forceRefresh={false}>												
-												<Routes />												
-											</BrowserRouter>
-										</MuiPickersUtilsProvider>
-									</JssProvider>
-									<CookiesConsentDialog/>
-									<ProgressDialog open={!initialized} hideBackdrop={false}/>
-								</MuiThemeProvider>
-							</ThemeProvider>			
-						</GlobalsProvider>
+						<FirebaseAppProvider firebaseConfig={firebaseConfig}>
+							<GlobalsProvider >
+								<ThemeProvider theme={preferences.theme==="dark"? theme_dark :  theme}>
+									<MuiThemeProvider theme={preferences.theme==="dark"? theme_dark :  theme}>
+										<CssBaseline />
+										<JssProvider jss={jss} generateClassName={generateClassName} registry={sheets} >
+											<MuiPickersUtilsProvider utils={MomentUtils}>
+												<BrowserRouter forceRefresh={false}>												
+													<Routes />												
+												</BrowserRouter>
+											</MuiPickersUtilsProvider>
+										</JssProvider>
+										<CookiesConsentDialog/>
+										<ProgressDialog open={!initialized} hideBackdrop={false}/>
+									</MuiThemeProvider>
+								</ThemeProvider>			
+							</GlobalsProvider>
+						</FirebaseAppProvider>
 					);
 				}}
 			</CacheBuster>

@@ -1,5 +1,3 @@
-/** @format */
-
 import React from "react";
 import ReactHtmlParser from "react-html-parser";
 import { Dialog } from "@material-ui/core";

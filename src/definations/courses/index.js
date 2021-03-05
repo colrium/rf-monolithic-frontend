@@ -94,7 +94,7 @@ export default {
 				},
 				restricted: {
 					display: () => {
-						return false;
+						return true;
 					},
 					input: (values, user) => {
 						if (user) {

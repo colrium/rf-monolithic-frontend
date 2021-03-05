@@ -10,10 +10,10 @@ export default theme => ({
 		left: 0,
 		right: "auto",		
 		[theme.breakpoints.up("md")]: {
-			zIndex: theme.zIndex.modal*1.5,
+			zIndex: theme.zIndex.appBar+1,
 		},
 		[theme.breakpoints.down("sm")]: {
-			zIndex: theme.zIndex.appBar*1.5,
+			zIndex: theme.zIndex.appBar+1,
 		},
 		transition: theme.transitions.create(["margin", "width"], {
 			easing: theme.transitions.easing.sharp,

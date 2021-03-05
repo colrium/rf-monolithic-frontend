@@ -69,6 +69,9 @@ import ScrollBars from "components/ScrollBars";
 import LazyImage from "components/LazyImage";
 import ViewPortSensor from "components/ViewPortSensor";
 import Listings from "views/widgets/Listings";
+
+import {firestore as fcFirestore, messaging as fcMessaging} from "utils/Firebase";
+
 import {
 	FileInput,
 	TextInput,
@@ -80,7 +83,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
 import compose from "recompose/compose";
-import { apiCallRequest, setMessagingCache, clearMessagingCache } from "state/actions";
+import { apiCallRequest, setMessagingCache, clearMessagingCache, sendMessage } from "state/actions";
 
 import { attachments as AttachmentsService } from "services";
 
@@ -116,7 +119,7 @@ const AlwaysScrollToBottom = () => {
 };
 
 function Chat(props) {
-	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, clearMessagingCache, ...rest } = props;
+	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, sendMessage, theme, setMessagingCache, clearMessagingCache, ...rest } = props;
 	let textInputRef = React.createRef();
 	let messagesWrapperRef = React.createRef();
 	let location = useLocation();
@@ -137,6 +140,7 @@ function Chat(props) {
 	const [loadingContacts, setLoadingContacts] = useState(true);
 	const [draft, setDraft] = useState({});
 	const [individualConversationsRecipients, setIndividualConversationsRecipients] = useState([]);
+	const [activeConversationRecipients, setActiveConversationRecipients] = useState([]);
 	const [error, setError] = useState(false);
 	const [contacts, setContacts] = useState([]);
 	const [contactsDrawerOpen, setContactsDrawerOpen] = useState(false);
@@ -717,7 +721,7 @@ function Chat(props) {
 
 	const handleOnSendMessage = (messageToSend) => {
 		if (active_conversation) {
-			let newMessage = { ...draft, sender: auth.user, created_on: new Date()};
+			let newMessage = { ...draft, sender: auth.user._id, conversation: active_conversation._id, created_on: new Date()};
 			if (messageToSend) {			
 				if (JSON.isJSON(messageToSend)) {
 					newMessage = JSON.merge(messageToSend, newMessage);
@@ -728,12 +732,18 @@ function Chat(props) {
 			}
 
 			if (!String.isEmpty(newMessage.content) || (["audio", "file", "video", "image"].includes(newMessage.type) && (Array.isArray(newMessage.attachments)? (newMessage.attachments.length > 0) : false))) {
-					sockets.default.emit("send-message", {message: newMessage, conversation: active_conversation, user: auth.user});
+					//sockets.default.emit("send-message", {message: newMessage, conversation: active_conversation, user: auth.user});
+
+					sendMessage(newMessage);
+					
 					if (textInputRef.current) {
 						textInputRef.current.value = "";
 						textInputRef.current.focus();
 					}
-										
+
+
+
+									
 				setDraft({
 					is_reply: false,
 					sender: auth.user,
@@ -745,9 +755,6 @@ function Chat(props) {
 				
 			}
 		}
-			
-			
-				
 	}
 
 	const handleMessageInputKeyDown = (event) => {
@@ -845,6 +852,8 @@ function Chat(props) {
 
 			
 	}, [active_conversation, firstLoad]);
+
+	
 
 	/*useEffect(() => {
 
@@ -1743,6 +1752,6 @@ Chat.defaultProps = {
 
 export default compose(
 	withStyles(styles),
-	connect(mapStateToProps, {apiCallRequest, setMessagingCache, clearMessagingCache}),
+	connect(mapStateToProps, {apiCallRequest, setMessagingCache, clearMessagingCache, sendMessage}),
 	withTheme,
 )((Chat));

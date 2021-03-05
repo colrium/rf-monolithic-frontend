@@ -83,8 +83,8 @@ class TableView extends React.Component {
 		raw_data_mutated: false,
 		mouseX: null,
 		mouseY: null,
+		actions: [],
 		actionsView: "contextMenu",
-
 		context: null,
 	};
 	constructor(props) {
@@ -99,6 +99,9 @@ class TableView extends React.Component {
 		this.handleDeleteItem = this.handleDeleteItem.bind(this);
 		this.handleOnRowContextMenu = this.handleOnRowContextMenu.bind(this);
 		this.handleSocketsOnCreate = this.handleSocketsOnCreate.bind(this);
+
+
+		
 	}
 
 	componentDidMount() {
@@ -159,11 +162,11 @@ class TableView extends React.Component {
 		if (defination.model === context) {
 			this.setState(prevState => {
 				const { raw_data } = prevState;
-				console.log("handleSocketsOnCreate context", context);
-				console.log("handleSocketsOnCreate action", action);
+				/*console.log("handleSocketsOnCreate context", context);
+				console.log("handleSocketsOnCreate action", action);*/
 				let new_raw_data = Array.isArray(raw_data)? raw_data : [];
 				new_raw_data.unshift(action.result);
-				console.log("handleSocketsOnCreate new_raw_data", new_raw_data);
+				/*console.log("handleSocketsOnCreate new_raw_data", new_raw_data);*/
 				return {
 					raw_data: new_raw_data,
 					raw_data_mutated: true,
@@ -179,8 +182,7 @@ class TableView extends React.Component {
 		let that = this;
 		openDialog({
 			title: "Confirm Delete",
-			body:
-				"Are you sure you want delete entry? This action might be irreversible",
+			body: "Are you sure you want delete entry? This action might be irreversible",
 			actions: {
 				cancel: {
 					text: "Cancel",
@@ -244,7 +246,6 @@ class TableView extends React.Component {
 		const mouseX = event.clientX - 2;
 		const mouseY = event.clientY - 4;
 
-		console.log("this.state.raw_data[index]", this.state.raw_data[index]);
 		this.setState(prevState => ({
 			mouseX: mouseX,
 			mouseY: mouseY,
@@ -573,6 +574,8 @@ class TableView extends React.Component {
 			let all_records = resolved_data.map(entry => {
 				return that.parseData(entry);
 			});
+
+			console.log("all_records", all_records);
 			this.setState(state => ({ records: all_records }));
 	}
 
@@ -581,7 +584,7 @@ class TableView extends React.Component {
 	}
 
 	render() {
-		const { classes, defination, api, cache, actionsType, history, location } = this.props;
+		const { classes, defination, api, cache, actionsType, history, location, auth } = this.props;
 		
 
 		return (
@@ -654,8 +657,9 @@ class TableView extends React.Component {
 										title={(api.loading ? "Loading " : "") + defination.label + (api.loading ? "..." : "")}
 										onRowClick={(event, rowData) => {
 											//console.log("onRowClick rowData", rowData);
-											history.push(('/'+defination.name+'/view/'+rowData._id).toUriWithDashboardPrefix());
+											//history.push(('/'+defination.name+'/view/'+rowData._id).toUriWithDashboardPrefix());
 										}}
+										actions={Function.isFunction(defination.access.actions.tableview)? defination.access.actions.tableview(auth.user) : defination.access.actions.tableview}
 									/>
 								) : (
 									<GridContainer

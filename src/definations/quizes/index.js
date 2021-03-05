@@ -24,23 +24,7 @@ export default {
 	views: {
 		single: {
 			default: "cardview",
-			cardview: {				
-				resolveData: entry => {
-					let view_data = {};
-					
-					return view_data;
-				},
-				title: ["action"],
-				subtitle: ["context"],
-				body: [
-					"description",
-					"catalyst",
-					"generator",
-					"record",
-					"catalyst_ip",
-					"action_timestamp",
-				],
-			},
+			cardview: {	},
 		},
 		listing: {
 			default: "tableview",
@@ -172,6 +156,10 @@ export default {
 		dependencies: [],
 		dependants: {
 			questions: {
+				column: "quiz",
+				query: {},
+			},
+			results: {
 				column: "quiz",
 				query: {},
 			}

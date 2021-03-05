@@ -228,6 +228,7 @@ export default {
 					audio: "Audio",
 					video: "Video",
 					file: "File",
+					form: "Form",
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -411,13 +412,35 @@ export default {
 					},
 				},
 			},
+			response_form_value: {
+				type: "object",
+				label: "Form value",
+				input: {
+					type: "hidden",
+					placeholder: "Response form value",
+					required: false,
+				},
+				restricted: {
+					display: (entry, user) => {
+						return false;
+					},
+					input: (values, user) => {
+						if (user) {
+							return !user.isAdmin;
+						}
+
+						return true;
+					},
+				},
+
+			},
 			coordinates: {
 				type: "object",
 				label: "Location",
 				input: {
 					type: "coordinates",
 					placeholderType: "formatted_address",
-					required: true,
+					required: false,
 				},
 				restricted: {
 					display: (entry, user) => {

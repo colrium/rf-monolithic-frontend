@@ -334,8 +334,10 @@ Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 				}
 				else if (row[j] instanceof Object) {
 					innerValue = JSON.stringify(row[j]);
-				};
-				var result = innerValue.replace(/"/g, '""');
+				};				
+				//var result = innerValue.replace(/"/g, '""');
+				var result = innerValue;
+
 				if (result.search(/(,|\n)/g) >= 0){
 					//result = '"' + result + '"';
 					result = '"' + result + '"';
@@ -595,14 +597,16 @@ JSON.prettyStringify = function(input, spaces = 4) {
 				} else if (/null/.test(match)) {
 					cls = "text-gray-500";
 				}
-				return '<span class="' + cls + '">' + match + "</span>";
+				//return '<span class="' + cls + '">' + match + "</span>";
+				return match;
 			}
 		);
 	}
 	let str = "";
-	if (JSON.isJSON(input)) {
-		str = syntaxHighlight(JSON.stringify(input, undefined, spaces));
-		str = str.replaceAll(spacing, " \t \t ");
+	if (typeof input === "object") {
+		//str = syntaxHighlight(JSON.stringify(input, undefined, spaces));
+		str = JSON.stringify(input);
+		//str = str.replaceAll(spacing, " \t \t ");
 	}
 	return str;
 };

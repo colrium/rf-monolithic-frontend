@@ -46,8 +46,8 @@ class Page extends React.Component {
 			return result;
 		}, {});
 
-		console.log("window.location.search", decodeURI(window.location.search));
-		console.log("urlQuery", urlQuery);
+		/*console.log("window.location.search", decodeURI(window.location.search));
+		console.log("urlQuery", urlQuery);*/
 
 		this.state.query = {...this.state.query, ...urlQuery}
 	}

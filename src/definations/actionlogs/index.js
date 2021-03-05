@@ -86,8 +86,8 @@ export default {
 			},
 		},
 		listing: {
-			default: "listview",
-			listview: {
+			default: "tableview",
+			/*listview: {
 				avatar: false,
 				primary: ["action"],
 				secondary: [
@@ -96,7 +96,7 @@ export default {
 					"catalyst",
 					"action_timestamp",
 				],
-			},
+			},*/
 			tableview: {
 				title: ["name"],
 			},

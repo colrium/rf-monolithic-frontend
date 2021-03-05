@@ -10,13 +10,14 @@ import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+//import Typography from "components/Typography";
 import { formats } from "config/data";
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 import { ServiceDataHelper } from "hoc/Helpers";
 import { withErrorHandler } from "hoc/ErrorHandler";
+import { Button, Typography } from "@material-ui/core";
 
 
 
@@ -110,7 +111,7 @@ function CardView({ ...props }) {
 						{resolvedRefRecord[name].map((entry, index) => (
 							<Typography
 								color="default"
-								paragraph
+								
 								key={name + "-" + index}
 							>
 								{entry.resolve}
@@ -120,7 +121,7 @@ function CardView({ ...props }) {
 				);
 			} else {
 				return (
-					<Typography color="default" paragraph>
+					<Typography color="default" >
 						{resolvedRefRecord[name].resolve}
 					</Typography>
 				);
@@ -132,7 +133,6 @@ function CardView({ ...props }) {
 						{resolvedRefRecord[name].map((entry, index) => (
 							<Typography
 								color="default"
-								paragraph
 								key={name + "-" + index}
 							>
 								{entry}
@@ -147,7 +147,7 @@ function CardView({ ...props }) {
 				) {
 					if (defination.scope.columns[name].input.type === "date") {
 						return (
-							<Typography color="default" paragraph>
+							<Typography className="pl-4">
 								{resolvedRefRecord[name]
 									? new Date(resolvedRefRecord[name]).format(
 											formats.dateformats.date
@@ -157,7 +157,7 @@ function CardView({ ...props }) {
 						);
 					} else {
 						return (
-							<Typography color="default" paragraph>
+							<Typography color="default">
 								{resolvedRefRecord[name]
 									? new Date(resolvedRefRecord[name]).format(
 											formats.dateformats.datetime
@@ -168,13 +168,13 @@ function CardView({ ...props }) {
 					}
 				} else if (defination.scope.columns[name].type === "boolean") {
 					return (
-						<Typography color="default" paragraph>
+						<Typography color="default">
 							{resolvedRefRecord[name] ? "Yes" : "No"}
 						</Typography>
 					);
 				} else {
 					return (
-						<Typography color="default" paragraph>
+						<Typography color="default">
 							{resolvedRefRecord[name]
 								? resolvedRefRecord[name]
 								: ""}
@@ -183,7 +183,7 @@ function CardView({ ...props }) {
 				}
 			} else {
 				return (
-					<Typography color="default" paragraph>
+					<Typography color="default" >
 						{JSON.stringify(resolvedRefRecord[name])}
 					</Typography>
 				);
@@ -206,29 +206,29 @@ function CardView({ ...props }) {
 									auth.user
 								) && (
 									<GridContainer
-										className="p-0 m-0"
+										className="pl-4 m-0"
 										key={index}
 									>
-										<GridItem xs={5}>
-											<Typography color="grey" paragraph>
+										<GridItem xs={12} className="py-0">
+											<Typography variant={"body2"} color="grey">
 												{column.label}
 											</Typography>
 										</GridItem>
 
-										<GridItem xs={7}>
+										<GridItem xs={12} className="py-0">
 											{resolveDisplayValue(name)}
 										</GridItem>
 									</GridContainer>
 								)
 							) : (
-								<GridContainer className="p-0 m-0" key={index}>
-									<GridItem xs={5}>
-										<Typography color="grey" paragraph>
+								<GridContainer className="pl-4 m-0" key={index}>
+									<GridItem xs={12} className="py-0">
+										<Typography variant={"body2"} color="grey">
 											{column.label}
 										</Typography>
 									</GridItem>
 
-									<GridItem xs={7}>
+									<GridItem xs={12} className="py-0">
 										{resolveDisplayValue(name)}
 									</GridItem>
 								</GridContainer>
@@ -250,7 +250,10 @@ function CardView({ ...props }) {
 			/>
 
 			<CardContent className="p-0 m-0">{resolveValue()}</CardContent>
-			<CardActions></CardActions>
+			{/*<CardActions>
+				<Button variant="outlined" color="primary" onClick={event => { console.log("Edit clicked")}} className="mx-2">Edit</Button> 
+				<Button variant="outlined" color="secondary" onClick={event => { console.log("Delete clicked")}} className="mx-2">Delete</Button>
+			</CardActions>*/}
 		</Card>
 	) : (
 		<GridContainer />

@@ -26,6 +26,7 @@ import Typography from "components/Typography";
 import { formats } from "config/data";
 import React from "react";
 import ReactHtmlParser from "react-html-parser";
+import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { attachments as AttachmentsService } from "services";
 
@@ -333,6 +334,7 @@ export default {
 											component="div"
 											variant="body2"
 											color="default"
+											paragraph
 										>
 											{" "}
 											Survey : {entry.survey.title} <br />
@@ -345,7 +347,7 @@ export default {
 										component="div"
 										variant="body2"
 										color="default"
-										gutterBottom
+										paragraph
 									>
 										{" "}
 										From:{" "}
@@ -357,7 +359,7 @@ export default {
 										component="div"
 										variant="body2"
 										color="default"
-										gutterBottom
+										paragraph
 									>
 										{" "}
 										To:{" "}
@@ -369,7 +371,7 @@ export default {
 										component="div"
 										variant="body2"
 										color="default"
-										gutterBottom
+										paragraph
 									>
 										{" "}
 										Involvement:{" "}
@@ -381,7 +383,7 @@ export default {
 										component="div"
 										variant="body2"
 										color="default"
-										gutterBottom
+										paragraph
 									>
 										{" "}
 										Radius:{" "}
@@ -393,7 +395,7 @@ export default {
 										component="div"
 										variant="body2"
 										color="default"
-										gutterBottom
+										paragraph
 									>
 										{entry.involvement === "team" && (
 												<Chip
@@ -462,7 +464,7 @@ export default {
 										component="div"
 										variant="body2"
 										color="default"
-										gutterBottom
+										paragraph
 									>
 										{" "}
 										Status:{" "}
@@ -495,7 +497,7 @@ export default {
 			},
 		},
 		listing: {
-			default: "googlemapview",
+			default: "tableview",
 			listview: {
 				avatar: false,
 				resolveData: async (
@@ -558,6 +560,7 @@ export default {
 												component="span"
 												variant="body1"
 												color="default"
+												paragraph
 											>
 												{" "}
 												Survey : {
@@ -573,6 +576,7 @@ export default {
 											component="span"
 											variant="body2"
 											color="default"
+											paragraph
 										>
 											{entry.involvement === "team" && (
 												<Chip
@@ -669,156 +673,7 @@ export default {
 				},
 			},
 			tableview: {
-				resolveData: async (entries, isPopulated = true) => {
-					let resolvedData = entries.map((entry, index) => {
-						return {
-							_id: entry._id,
-							survey: entry.survey ? entry.survey.title : "",
-							queries:
-								entry.queries &&
-								Array.isArray(entry.queries) ? (
-									<GridContainer>
-										{entry.queries.map((query, cursor) => (
-											<GridItem
-												xs={12}
-												key={"query-" + cursor}
-											>
-												<Badge
-													badgeContent={
-														query.sample_size
-													}
-													color="transparent"
-													textColor={
-														colors.hex.accent
-													}
-													position="top-right"
-												>
-													<Typography
-														component="span"
-														variant="body2"
-														paragraph
-													>
-														{query.question}{" "}
-													</Typography>
-												</Badge>
-											</GridItem>
-										))}
-									</GridContainer>
-								) : (
-									""
-								),
-							involvement: entry.involvement
-								? entry.involvement === "individual"
-									? "Individual"
-									: "Team"
-								: "",
 
-							team: entry.involvement === "team" && (
-									<Chip size="small" label={entry.status} />
-								) && (
-									<Chip
-										size="small"
-										avatar={
-											entry.team.avatar ? (
-												<Avatar
-													alt={entry.team.name}
-													src={AttachmentsService.getAttachmentFileUrl(
-														entry.team.avatar
-													)}
-												/>
-											) : null
-										}
-										label={entry.team.name}
-									/>
-								),
-
-							lead: entry.lead && (
-								<Chip
-									size="small"
-									avatar={
-										entry.lead.avatar ? (
-											<Avatar
-												alt={entry.lead.first_name}
-												src={AttachmentsService.getAttachmentFileUrl(
-													entry.lead.avatar
-												)}
-											/>
-										) : null
-									}
-									label={
-										entry.lead.first_name +
-										" " +
-										entry.lead.last_name
-									}
-								/>
-							),
-
-							individual: entry.involvement === "individual" &&
-								entry.individual && (
-									<Chip
-										size="small"
-										avatar={
-											entry.individual.avatar ? (
-												<Avatar
-													alt={
-														entry.individual
-															.first_name
-													}
-													src={AttachmentsService.getAttachmentFileUrl(
-														entry.individual.avatar
-													)}
-												/>
-											) : null
-										}
-										label={
-											entry.individual.first_name +
-											" " +
-											entry.individual.last_name
-										}
-									/>
-								),
-							focus_center: entry.focus_center
-								? ReactHtmlParser(
-										JSON.prettyStringify(entry.focus_center)
-								  )
-								: "",
-							focus_radius_metric: entry.focus_radius_metric
-								? entry.focus_radius_metric
-								: "",
-							focus_radius: entry.focus_radius
-								? entry.focus_radius
-								: "",
-							requirements: entry.survey
-								? entry.requirements
-								: "",
-							start_date: entry.start_date
-								? new Date(entry.start_date).format(
-										formats.dateformats.date
-								  )
-								: "",
-							end_date: entry.end_date
-								? new Date(entry.end_date).format(
-										formats.dateformats.date
-								  )
-								: "",
-							files:
-								entry.files && Array.isArray(entry.files) ? (
-									<GridContainer> </GridContainer>
-								) : (
-									""
-								),
-							status: entry.status ? (
-								<Status
-									color={status_colors[entry.status]}
-									text={status_names[entry.status]}
-								/>
-							) : (
-								""
-							),
-						};
-					});
-					return resolvedData;
-				},
 			},
 			calendarview: {
 				type: "task",
@@ -884,6 +739,7 @@ export default {
 										variant="subtitle2"
 										color="primary"
 										bold
+										paragraph
 									>
 										Commission
 									</Typography>
@@ -905,6 +761,7 @@ export default {
 										variant="body2"
 										color="default"
 										gutterBottom
+										paragraph
 									>
 										{" "}
 										From:{" "}
@@ -917,6 +774,7 @@ export default {
 										variant="body2"
 										color="default"
 										gutterBottom
+										paragraph
 									>
 										{" "}
 										To:{" "}
@@ -929,6 +787,7 @@ export default {
 										variant="body2"
 										color="default"
 										gutterBottom
+										paragraph
 									>
 										{" "}
 										Involvement:{" "}
@@ -941,6 +800,7 @@ export default {
 										variant="body2"
 										color="default"
 										gutterBottom
+										paragraph
 									>
 										{" "}
 										Radius:{" "}
@@ -953,6 +813,7 @@ export default {
 										variant="body2"
 										color="default"
 										gutterBottom
+										paragraph
 									>
 										{entry.involvement === "team" && (
 												<Chip
@@ -1390,6 +1251,34 @@ export default {
 						return true;
 					},
 				},
+				tableProps: {
+					render: rowData => {
+						try {
+							let focus_center = JSON.parse(rowData.focus_center);
+							return (
+								<GridContainer>
+									<GridItem className="py-0 flex-col">
+										<Typography className="px-2" variant="body2">Latitude</Typography>
+										<Typography>{focus_center.lat}</Typography>
+									</GridItem>
+									<GridItem className="py-0 flex-col">
+										<Typography className="px-2" variant="body2">Longitude</Typography>
+										<Typography>{focus_center.lng}</Typography>
+									</GridItem>
+								</GridContainer>
+							);
+						} catch(err){
+							return (
+								<GridContainer>
+									<GridItem className="py-0 flex-col">
+										<Typography className="px-2" variant="body2">{""+err}</Typography>
+									</GridItem>
+								</GridContainer>
+							);
+						}
+							
+					}
+				}
 			},
 
 			focus_radius_metric: {
@@ -1555,10 +1444,12 @@ export default {
 				possibilities: status_names,
 				tableProps: {
 					render: rowData => {
-						return <Status
-									color={status_colors[rowData.status]}
-									text={status_names[rowData.status]}
-								/>
+						return (
+							<Status
+								color={status_colors[(rowData.status.toLowerCase())]}
+								text={status_names[(rowData.status.toLowerCase())]}
+							/>
+						);
 					}
 				}
 			},
@@ -1609,6 +1500,62 @@ export default {
 			},
 		},
 		actions: {
+			tableview: user => {
+				let actions = [];
+
+				if (user) {
+					if (user.isAdmin || user.isCollector) {
+						
+						actions.push({
+							icon: 'launch',
+							tooltip: 'View',
+							iconProps: {
+								fontSize: "small",
+								color: "action"
+							},
+							onClick: (event, rowData) => {
+								document.location.href = ("commissions/view/" + rowData._id).toUriWithDashboardPrefix();
+							}
+						});
+						if (user.isAdmin) {
+							actions.push({
+								icon: 'add',
+								tooltip: 'Add Commission',
+								isFreeAction: true,
+								onClick: (event, rowData) => {
+									document.location.href = "commissions/add".toUriWithDashboardPrefix();
+								}
+							});
+
+							actions.push({
+								icon: 'edit',
+								tooltip: 'Edit',
+								iconProps: {
+									fontSize: "small",
+									color: "secondary"
+								},
+								onClick: (event, rowData) => {
+									document.location.href = ("commissions/edit/" + rowData._id).toUriWithDashboardPrefix();
+								}
+							});
+
+							actions.push({
+								icon: 'delete',
+								tooltip: 'Delete',
+								iconProps: {
+									fontSize: "small",
+									color: "error"
+								},
+								onClick: (event, rowData) => {
+									document.location.href = ("commissions/delete/" + rowData._id).toUriWithDashboardPrefix();
+								}
+							});
+						}
+
+					}
+				}
+				return actions;
+			},
 			view_single: {
 				restricted: user => {
 					if (user) {

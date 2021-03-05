@@ -148,7 +148,11 @@ export default {
 			answers: {
 				column: "question",
 				query: {},
-			}
+			},
+			actionlogs: {
+				column: "record",
+				query: { context: "Question" },
+			},
 		},
 	},
 	access: {

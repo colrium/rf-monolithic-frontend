@@ -37,6 +37,20 @@ export const environment = process.env.NODE_ENV;
 export const client_id = process.env.REACT_APP_CLIENT_ID;
 export const client_secret = process.env.REACT_APP_CLIENT_SECRET;
 
+export const firebase = {
+	apiKey: "AIzaSyDnzjktxxiPEcfjmkxgxcTT0U1D70c-h9U",
+	authDomain: "realfield-io.firebaseapp.com",
+	databaseURL: "https://realfield-io.firebaseio.com",
+	projectId: "realfield-io",
+	storageBucket: "realfield-io.appspot.com",
+	messagingSenderId: "47480102815",
+	appId: "1:47480102815:web:aef14d1c29e4832f97a7aa",
+	measurementId: "G-SPZ1031JXB"
+};
+
+export const firebaseWebPushCertificate = "BCRs2cCvL59gp6AyJybuna4N7migtv4c6O6Twvgpg0-FE8yAhAmEpYNRc7YwV4T4QjhLQkds8U2NUS6ZVxVChXw";
+
+
 export const baseUrls = {
 	development: {
 		domain: "localhost",

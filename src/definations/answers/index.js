@@ -189,7 +189,13 @@ export default {
 			avatar: false,
 		},
 		dependencies: [],
-		dependants: {},
+		dependants: {
+			
+			actionlogs: {
+				column: "record",
+				query: { context: "Commission" },
+			},
+		},
 	},
 	access: {
 		restricted: user => {

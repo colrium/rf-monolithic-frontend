@@ -34,6 +34,7 @@
     "draft-js": "^0.11.7",
     "draft-js-export-html": "^1.4.1",
     "enketo-core": "^5.17.1",
+    "firebase": "^8.2.9",
     "framer-motion": "^2.6.13",
     "history": "^4.7.2",
     "js-cookie": "^2.2.0",
@@ -78,7 +79,7 @@
     "react-masonry-css": "1.0.12",
     "react-number-format": "4.0.8",
     "react-perfect-scrollbar": "^1.4.4",
-    "react-places-autocomplete": "^7.2.1",
+    "react-places-autocomplete": "^7.3.0",
     "react-popper": "1.0.2",
     "react-redux": "^7.0.3",
     "react-router-dom": "^5.2.0",
@@ -90,6 +91,7 @@
     "react-slick": "^0.23.2",
     "react-swipeable-views": "^0.13.1",
     "react-visibility-sensor": "^5.1.1",
+    "reactfire": "^3.0.0-rc.0",
     "recharts": "^1.6.2",
     "recompose": "^0.30.0",
     "redux": "^4.0.1",
@@ -125,6 +127,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
+    "eslint-plugin-unused-imports": "^1.1.0",
     "husky": "^4.2.1",
     "lint-staged": "^10.0.7",
     "npm-run-all": "^4.1.5",
@@ -180,7 +183,8 @@
     "extends": [
       "eslint:recommended",
       "plugin:react/recommended",
-      "prettier"
+      "prettier",
+      "unused-imports"
     ],
     "rules": {
       "no-console": 0,
@@ -193,7 +197,13 @@
       "no-unreachable": 0,
       "react/no-direct-mutation-state": 0,
       "react-hooks/exhaustive-deps": 0,
-      "react/prop-types": 0
+      "react/prop-types": 0,
+      "no-unused-vars": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+      ]
     }
   },
   "prettier": {

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 
 import { connect } from "react-redux";
 import { useStore, useDispatch, useSelector } from 'react-redux';
+
+
 import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } from "state/actions";
 import AuthHelper from 'hoc/Auth';
 import {default_location} from "config";
@@ -9,6 +11,7 @@ import {socket as defaultSocket} from "utils/Sockets";
 import * as definations from "definations";
 import * as services from "services";
 import notificationSound from "assets/audio/notification.mp3";
+import {firestore as fcFirestore, messaging as fcMessaging} from "utils/Firebase";
 
 
 let models = {};
@@ -48,7 +51,7 @@ function loadScript(src, position, id) {
 export const GlobalsContext = React.createContext(defaultValue);
 
 const GlobalsProvider = props => {
-	const dispatch = useDispatch()
+	const dispatch = useDispatch();
 	let notificationAudio = new Audio(notificationSound)
 	let [value, setValue] = useState(defaultValue);	
 	let [valueInitialized, setValueInitialized] = useState(false);	
@@ -57,6 +60,7 @@ const GlobalsProvider = props => {
 
 	let { auth, cache: { data: dataCache}, communication: {messaging}, api, app, clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } = props;
 	
+	const {isAuthenticated} = auth;
 
 	const handleOnInternetAvailabilityChange = () => {
 		const condition = navigator.onLine ? 'online' : 'offline';
@@ -369,7 +373,7 @@ const GlobalsProvider = props => {
 			});
 
 		}
-		//console.log("\n\n total_unread", total_unread);
+		console.log("\n\n total_unread", total_unread);
 		setMessagingCache("unread_count", total_unread);
 		setMessagingCache("conversations", inbox);
 	}
@@ -491,12 +495,12 @@ const GlobalsProvider = props => {
 
 				defaultSocket.on("reconnect", () => {
 					console.info("connection to server restored");
-					if (auth.isAuthenticated) {
+					/*if (auth.isAuthenticated) {
 						defaultSocket.emit("set-identity", auth.user._id);
 						defaultSocket.emit("get-settings", auth.user._id);
 						defaultSocket.emit("get-inbox", auth.user);
 						defaultSocket.emit("get-clients-positions", { user: auth.user, type: 'all' });
-					}					
+					}		*/			
 				});
 
 				defaultSocket.on("connect", () => {
@@ -679,7 +683,9 @@ const GlobalsProvider = props => {
 
 		}
 
+		
 
+			
 			
 		setInitialized(true);
 		setValueInitialized(true);	
@@ -692,6 +698,37 @@ const GlobalsProvider = props => {
 			clearResponseCache();
 		}
 	},[]);
+
+
+	useEffect(()=>{
+		if (auth.isAuthenticated && Object.size(auth.user) > 0) {
+			fcMessaging.requestPermission().then(async function() {
+				const token = await fcMessaging.getToken();
+				fcFirestore.collection("users").doc(auth.user._id).get().then(async (querySnapshot) => {
+					let querySnapshotDoc = querySnapshot.data();
+					let tokens = [token];
+					let saveToken = !Boolean(querySnapshotDoc);
+					if (querySnapshotDoc) {
+						if (Array.isArray(querySnapshotDoc.tokens)) {
+							if (!querySnapshotDoc.tokens.includes(token)) {
+								tokens = tokens.concat(querySnapshotDoc.tokens);
+								saveToken = true;
+							}
+						}
+					}
+					console.log("querySnapshotDoc", querySnapshotDoc);
+
+					if (saveToken) {
+						fcFirestore.collection("users").doc(auth.user._id).set({...auth.user, tokens: tokens});
+					}
+				});		
+				
+			}).catch(function(err) {
+				console.log("Unable to get permission to notify.", err);
+			});
+			navigator.serviceWorker.addEventListener("message", (message) => console.log(message));
+		}
+	}, [auth]);
 	
 
 
