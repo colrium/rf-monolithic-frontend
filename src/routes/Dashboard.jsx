@@ -1,11 +1,9 @@
 /** @format */
 
-import React, { Component, Suspense } from "react";
+import React, { Component } from "react";
 import { Redirect, Switch } from "react-router-dom";
 //
 import Route from "./Route";
-import asyncComponent from "views/widgets/asyncComponent";
-import { builderIO } from "config";
 // Routes components
 import NotFound from "views/pages/System/NotFound";
 import Preferences from "views/pages/Dashboard/Preferences";

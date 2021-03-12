@@ -1,7 +1,6 @@
 /** @format */
 
 import React, {useState, useEffect} from "react";
-import ReactHtmlParser from "react-html-parser";
 import { Dialog } from "@material-ui/core";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -10,29 +9,17 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { useLocation } from "react-router-dom";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
-import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
 import compose from "recompose/compose";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { apiCallRequest, setEmailingCache, clearEmailingCache } from "state/actions";
-import {
-	FileInput,
-	TextInput,
-	WysiwygInput,
-} from "components/FormInputs";
+import { TextInput } from "components/FormInputs";
 import ScrollBars from "components/ScrollBars";
-import { attachments as AttachmentsService } from "services";
 import styles from "./styles";
 
 const Transition = React.forwardRef(function Transition(props, ref) {

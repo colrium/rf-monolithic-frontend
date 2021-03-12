@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 
 import { withStyles } from "@material-ui/core/styles";
-import withRoot from "hoc/withRoot";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import Icon from "@material-ui/core/Icon";

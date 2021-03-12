@@ -1,7 +1,3 @@
-/** @format */
-
-import { colors } from "assets/jss/app-theme.jsx";
-import { app } from "assets/jss/app-theme";
 export default theme => ({
 	root: {
 		//borderBottom: `1px solid ${theme.palette.border}`,

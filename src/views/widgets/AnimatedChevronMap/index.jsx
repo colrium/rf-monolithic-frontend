@@ -1,12 +1,10 @@
 import withStyles from "@material-ui/core/styles/withStyles";
-import { colors, gradients, shadows } from "assets/jss/app-theme.jsx";
-import classNames from "classnames";
+import { colors } from "assets/jss/app-theme.jsx";
 import PropTypes from "prop-types";
 import React, {useState, useEffect } from "react";
-import Popover from '@material-ui/core/Popover';
 import Typography from '@material-ui/core/Typography';
 import { withErrorHandler } from "hoc/ErrorHandler";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { useMotionValue, useTransform } from "framer-motion";
 
 
 

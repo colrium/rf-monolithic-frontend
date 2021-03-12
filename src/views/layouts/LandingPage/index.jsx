@@ -1,17 +1,14 @@
 /** @format */
 
 import React, { Component } from "react";
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import LandingPageRoutes from "routes/LandingPageRoutes";
 import ActionDialog from "components/ActionDialog";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import styles from "./styles";
-import { HashRouter } from "react-router-dom";
 import {withErrorHandler} from "hoc/ErrorHandler";
 
 class LandingPage extends Component {

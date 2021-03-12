@@ -2,8 +2,6 @@
 
 import React, { Suspense, lazy } from "react";
 import ProgressIndicator from "components/ProgressIndicator";
-import compose from "recompose/compose";
-import { withTheme } from '@material-ui/core/styles';
 import { withRouter } from "react-router-dom";
 
 const asyncComponent = (importComponent) => {

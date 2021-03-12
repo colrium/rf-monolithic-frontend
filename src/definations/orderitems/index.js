@@ -5,7 +5,6 @@
  */
 
 import { IconButton } from "@material-ui/core";
-import Chip from "@material-ui/core/Chip";
 import {
 	Add as AddIcon,
 	DeleteOutlined as DeleteIcon,
@@ -13,16 +12,9 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 	ReceiptOutlined as DefinationContextIcon,
 } from "@material-ui/icons";
-import Avatar from "components/Avatar";
 import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
-import { formats } from "config/data";
 import React from "react";
-import ReactDOMServer from "react-dom/server";
 import { Link } from "react-router-dom";
-import { attachments as AttachmentsService } from "services";
 
 export default {
 	name: "orderitems",

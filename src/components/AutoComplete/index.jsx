@@ -1,14 +1,8 @@
-import Chip from "@material-ui/core/Chip";
-import withStyles from "@material-ui/core/styles/withStyles";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import classNames from "classnames";
-import { withTheme } from '@material-ui/core/styles';
 import React, { useState, useEffect } from "react";
-import { colors } from "assets/jss/app-theme";
-import styles from "./styles";
 import debounce from 'lodash/debounce';
 
 

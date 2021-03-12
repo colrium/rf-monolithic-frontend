@@ -21,7 +21,7 @@ import { withErrorHandler } from "hoc/ErrorHandler";
 import styles from "./styles";
 
 const TableView = (props) => {
-	const { classes, defination, service, query, auth, api, defination, service, query, cache: { data }  } = props;
+	const { classes, defination, service, query, auth, api, cache: { data }  } = props;
 	const { definations, sockets } = useGlobals();
 	let contextDefination = JSON.isJSON(defination)? defination : definations[defination];
 	const {[contextDefination.name] : cachedData } = data;
@@ -30,7 +30,6 @@ const TableView = (props) => {
 	const [currentQuery, setCurrentQuery] = useState(query ? { ...query, p: 1 } : { p: 1 });
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(false);
-	const [service, setService] = useState(service);
 	const [dataTableColumns, setDataTableColumns] = useState([]);
 	const [rawData, setRawData] = useState([]);
 	const [context, setContext] = useState(null);

@@ -1451,11 +1451,7 @@ class DefinationView extends React.Component {
 								);
 							}}
 							options={context.possibilities}
-							value={
-								context.input
-									? (context.input.default: undefined)
-									: undefined
-							}
+							value={context.input? (context.input.default? context.input.default: undefined) : undefined}
 							placeholder="Select Default"
 						/>
 					</GridItem>

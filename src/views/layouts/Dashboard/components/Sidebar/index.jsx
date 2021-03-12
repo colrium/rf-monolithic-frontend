@@ -5,31 +5,28 @@
  */
 
 // Material helpers
-import { Toolbar, Divider, Icon, List, ListItem, ListItemIcon, ListItemText, ListSubheader, Typography, withStyles } from "@material-ui/core";
-import Fade from "@material-ui/core/Fade";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import { PersonOutlined as UserIcon } from "@material-ui/icons";
-//
-import { app } from "assets/jss/app-theme";
+import {
+    Divider,
+    Icon,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    ListSubheader,
+    withStyles,
+} from "@material-ui/core";
 // Externals
 import classNames from "classnames";
-import Avatar from "components/Avatar";
-import Button from "components/Button";
-import LazyImage from "components/LazyImage";
 import ScrollBars from "components/ScrollBars";
-import Status from "components/Status";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 //Redux imports
 import { connect } from "react-redux";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import compose from "recompose/compose";
 import {withErrorHandler} from "hoc/ErrorHandler";
-import { attachments as AttachmentsService } from "services";
 import { logout } from "state/actions/auth";
 import { UtilitiesHelper } from "hoc/Helpers";
-import withRoot from "hoc/withRoot";
 import {withGlobals} from "contexts/Globals";
 // Component styles
 import styles from "./styles";

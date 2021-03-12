@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import Placeholder from "components/Placeholder";
 import ViewPortSensor from "components/ViewPortSensor";

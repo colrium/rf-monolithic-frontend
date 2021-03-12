@@ -6,7 +6,6 @@ import "perfect-scrollbar/css/perfect-scrollbar.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import withRoot from "hoc/withRoot";
 
 const handlerNameByEvent = {
 	"ps-scroll-y": "onScrollY",

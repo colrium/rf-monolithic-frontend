@@ -4,7 +4,6 @@ import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import withRoot from "hoc/withRoot";
 
 function CustomAvatar(props) {

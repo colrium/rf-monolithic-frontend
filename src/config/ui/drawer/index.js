@@ -1,11 +1,9 @@
 /** @format */
 
 import {
-	AccountCircleOutlined as ProfileIcon,
-	DashboardOutlined as DashboardIcon,
-	HelpOutlined as HelpSupportIcon,
-	HistoryOutlined as ActionsLogIcon,
-	SettingsApplicationsOutlined as SettingsIcon,
+    AccountCircleOutlined as ProfileIcon,
+    DashboardOutlined as DashboardIcon,
+    SettingsApplicationsOutlined as SettingsIcon,
 } from "@material-ui/icons";
 import * as definations from "definations";
 import React from "react";

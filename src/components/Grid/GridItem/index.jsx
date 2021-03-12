@@ -6,8 +6,7 @@ import { colors } from "assets/jss/app-theme";
 import gridStyle from "assets/jss/components/gridStyle.jsx";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useState, useEffect } from "react";
-import withRoot from "hoc/withRoot";
+import React from "react";
 
 function GridItem(props) {
 	let {

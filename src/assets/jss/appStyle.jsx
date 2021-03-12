@@ -5,7 +5,7 @@
  */
 
 import Color from "color";
-import { theme, colors, shadows, gradients } from "assets/jss/app-theme";
+import { colors, shadows, gradients } from "assets/jss/app-theme";
 
 let color_based_styles = {
 	".outlined": {

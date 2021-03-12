@@ -1,36 +1,30 @@
 /*global google*/
 
 import React, { useEffect, useState, useCallback, useLayoutEffect } from "react";
-import PropTypes from "prop-types";
 import ReactDOMServer from "react-dom/server";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { connect } from "react-redux";
 import {
-	GoogleMap,
-	InfoWindow,
-	Circle,
-	Marker,
-	Polyline,
-	withGoogleMap,
-	KmlLayer,
-	withScriptjs,
+    GoogleMap,
+    InfoWindow,
+    Circle,
+    Marker,
+    Polyline,
+    withGoogleMap,
+    withScriptjs,
 } from "react-google-maps";
 import { ThemeProvider } from '@material-ui/core/styles';
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
 import Avatar from '@material-ui/core/Avatar';
 import Typography from 'components/Typography';
-import { mdiTooltipAccount as clientPositionMarkerPath } from '@mdi/js';
-import RotateIcon from "../RotateIcon";
 import mapStyles, {mapDarkStyles} from "./mapStyles";
 import {LocationInput as LocationSearchInput } from "components/FormInputs";
 import { compose } from "recompose";
-import { withStyles } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 
 import {useGlobals} from "contexts/Globals";
 import { colors } from "assets/jss/app-theme";
-import client_position_marker_icon from "assets/img/maps/marker-person.svg";
 import client_position_female_heading_135_icon from "assets/img/maps/heading/female-135.png";
 import client_position_female_heading_180_icon from "assets/img/maps/heading/female-180.png";
 import client_position_female_heading_225_icon from "assets/img/maps/heading/female-225.png";
@@ -56,10 +50,8 @@ import { attachments as AttachmentsService } from "services";
 import {
 	PersonOutlined as UserIcon,
 } from "@material-ui/icons";
-import Chip from "@material-ui/core/Chip";
 import Button from '@material-ui/core/Button';
 import Rating from '@material-ui/lab/Rating';
-import { Link } from "react-router-dom";
 
 import { google_maps } from "config";
 import { theme, theme_dark } from "assets/jss/app-theme";

@@ -5,7 +5,6 @@
  */
 
 import Card from "components/Card";
-import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
 import GridContainer from "components/Grid/GridContainer";
@@ -17,7 +16,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { ServiceDataHelper } from "hoc/Helpers";
 import { withErrorHandler } from "hoc/ErrorHandler";
-import { Button, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 
 
 
@@ -258,7 +257,7 @@ function CardView({ ...props }) {
 	) : (
 		<GridContainer />
 	);
-} /**/
+}/**/
 
 CardView.propTypes = {
 	className: PropTypes.string,

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
-import { CheckboxInput, RadioInput, TextInput, SelectInput } from "components/FormInputs";
+import { RadioInput, SelectInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { useGlobals } from "contexts/Globals";

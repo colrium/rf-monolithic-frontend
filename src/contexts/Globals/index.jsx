@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 
 import { connect } from "react-redux";
-import { useStore, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { osName, osVersion, browserName, fullBrowserVersion } from 'react-device-detect';
 
 import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache, setActiveConversation } from "state/actions";
-import AuthHelper from 'hoc/Auth';
 import {default_location} from "config";
 import {socket as defaultSocket} from "utils/Sockets";
 import * as definations from "definations";

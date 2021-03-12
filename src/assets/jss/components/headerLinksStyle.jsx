@@ -1,7 +1,3 @@
-/** @format */
-
-import { colors } from "assets/jss/app-theme.jsx";
-
 const headerLinksStyle = theme => ({
 	list: {
 		fontSize: "1rem",

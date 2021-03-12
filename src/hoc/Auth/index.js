@@ -3,12 +3,7 @@
 import Cookies from "universal-cookie";
 import axios from "axios";
 import decode from "jwt-decode";
-import {
-	authTokenLocation,
-	authTokenName,
-	baseUrls,
-	environment,
-} from "../../config";
+import { authTokenLocation, authTokenName } from "../../config";
 
 export default class Auth {
 	static instance;
@@ -75,7 +70,7 @@ export default class Auth {
 		return null;
 	}
 
-	setOnAccessTokenChange(onAccessTokenChange: Function) {
+	setOnAccessTokenChange(onAccessTokenChange) {
 		this.onAccessTokenChange.push(onAccessTokenChange);
 	}
 
@@ -83,7 +78,7 @@ export default class Auth {
 		return this.access_token;
 	}
 
-	setAccessToken(access_token: any) {
+	setAccessToken(access_token) {
 		const prev_access_token = this.access_token;
 		this.access_token = access_token;
 		this.setAuthorizationHeader();
@@ -139,7 +134,7 @@ export default class Auth {
 		if (JSON.isJSON(token)) {
 			//try to decode token
 			try {
-				const decodedToken: Object = decode(token.access_token);
+				const decodedToken = decode(token.access_token);
 				if (decodedToken != null) {
 					isValid = true;
 				}

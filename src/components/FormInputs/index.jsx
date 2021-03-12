@@ -2,21 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import {
-	Checkbox,
-	CircularProgress,
-	FormControl,
-	FormControlLabel,
-	FormGroup,
-	FormHelperText,
-	FormLabel,
-	IconButton,
-	InputAdornment,
-	Radio,
-	RadioGroup,
-	Slider,
-	TextField,
-	Typography,
-	Switch,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    FormHelperText,
+    FormLabel,
+    Slider,
+    TextField,
+    Typography,
+    Switch,
 } from "@material-ui/core";
 //
 import { DatePicker, DateTimePicker } from "@material-ui/pickers";
@@ -26,10 +21,6 @@ import FileDropZone from "components/FileDropZone";
 import GridContainer from "components/Grid/GridContainer";
 import TransferList from "components/TransferList";
 import GoogleMap from "components/GoogleMap";
-import {
-	VisibilityOffOutlined as HidePasswordIcon,
-	VisibilityOutlined as ShowPasswordIcon,
-} from "@material-ui/icons";
 
 import WysiwygEditor from "components/WysiwygEditor";
 

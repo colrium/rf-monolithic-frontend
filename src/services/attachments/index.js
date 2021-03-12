@@ -6,7 +6,6 @@
 
 import axios from "axios";
 import ApiService from "services/api";
-import { UtilitiesHelper } from "hoc/Helpers";
 
 class AttachmentsApiService extends ApiService {
 	constructor() {

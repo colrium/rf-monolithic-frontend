@@ -13,13 +13,10 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import Skeleton from "@material-ui/lab/Skeleton";
 import { formats } from "config/data";
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
 import PropTypes from "prop-types";
-import React, {forwardRef, useEffect, useState} from "react";
+import React, { forwardRef } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import RecordView from "views/widgets/RecordView";
 
 
 import AddBox from '@material-ui/icons/AddBox';
@@ -44,8 +41,7 @@ import { withRouter } from "react-router";
 import { attachments as AttachmentsService } from "services";
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
-import { FilesHelper, ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";
-import { withErrorHandler } from "hoc/ErrorHandler";
+import { FilesHelper, ServiceDataHelper } from "hoc/Helpers";
 import { withGlobals } from "contexts/Globals";
 import styles from "./styles";
 

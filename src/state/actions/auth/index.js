@@ -2,7 +2,6 @@
 
 import Auth from "hoc/Auth";
 import AuthService from "services/auth";
-import { authTokenLocation } from "config";
 import {
 	SET_AUTHENTICATED,
 	SET_ACCESS_TOKEN,

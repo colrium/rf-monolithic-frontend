@@ -1,7 +1,6 @@
 /** @format */
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { app, colors } from "assets/jss/app-theme.jsx";
 import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -10,17 +9,7 @@ import Section from "components/Section";
 import React from "react";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
-import Timeline from '@material-ui/lab/Timeline';
-import TimelineItem from '@material-ui/lab/TimelineItem';
-import TimelineSeparator from '@material-ui/lab/TimelineSeparator';
-import TimelineConnector from '@material-ui/lab/TimelineConnector';
-import TimelineContent from '@material-ui/lab/TimelineContent';
-import TimelineOppositeContent from '@material-ui/lab/TimelineOppositeContent';
-import TimelineDot from '@material-ui/lab/TimelineDot';
 import compose from "recompose/compose";
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@mdi/react';
-import { mdiNumeric1, mdiNumeric2, mdiNumeric3, mdiNumeric4 } from '@mdi/js';
 import { Link } from "react-router-dom";
 import Hidden from '@material-ui/core/Hidden';
 import { withErrorHandler } from "hoc/ErrorHandler";

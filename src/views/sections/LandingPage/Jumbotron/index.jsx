@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import { app, colors } from "assets/jss/app-theme.jsx";
+import React from "react";
+import { colors } from "assets/jss/app-theme.jsx";
 import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
 import Hidden from '@material-ui/core/Hidden';
 import ChevronMap from 'assets/img/realfield/chevron-map.png';
-import { Link, HashRouter, Route, Switch } from "react-router-dom";
+import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { withErrorHandler } from "hoc/ErrorHandler";

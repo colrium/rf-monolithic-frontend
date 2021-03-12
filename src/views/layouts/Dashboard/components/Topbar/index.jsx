@@ -1,8 +1,6 @@
 /** @format */
 
-import { AppBar, Badge, Box, Breadcrumbs, IconButton, Popover, Snackbar, Toolbar, withStyles } from "@material-ui/core";
-import Hidden from "@material-ui/core/Hidden";
-import { NotificationsOutlined as NotificationsIcon, PowerSettingsNew as LogoutIcon } from "@material-ui/icons";
+import { AppBar, Badge, Box, IconButton, Popover, Snackbar, Toolbar, withStyles } from "@material-ui/core";
 import CloseSideBarIcon from '@material-ui/icons/MenuOpen';
 import OpenSideBarIcon from "@material-ui/icons/Menu";
 import classNames from "classnames";
@@ -10,21 +8,17 @@ import SnackbarContent from "components/Snackbar/SnackbarContent";
 import Typography from "components/Typography";
 import { notifications as notificationsDefination } from "definations";
 import Icon from '@mdi/react'
-import { mdiBellOutline, mdiLogoutVariant } from '@mdi/js';
-import Button from "components/Button";
+import { mdiBellOutline } from '@mdi/js';
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import Status from "components/Status";
 import Fade from "@material-ui/core/Fade";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import Chip from '@material-ui/core/Chip';
 import { connect } from "react-redux";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import { withTheme } from '@material-ui/core/styles';
 import Avatar from "components/Avatar";
-import LazyImage from "components/LazyImage";
 import { attachments as AttachmentsService } from "services";
 import { PersonOutlined as UserIcon } from "@material-ui/icons";
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
@@ -33,13 +27,10 @@ import { logout, setCurrentUser } from "state/actions";
 import { ServiceDataHelper } from "hoc/Helpers";
 import {withGlobals} from "contexts/Globals";
 import {withErrorHandler} from "hoc/ErrorHandler";
-import SearchBar from "components/SearchBar";
-import MailOutlineIcon from '@material-ui/icons/MailOutline';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 // Custom components
 import { NotificationList } from "./components";
 import { app } from "assets/jss/app-theme";
-import {getFirestoreDoc, createUpdateFirestoreDoc} from "utils/Firebase";
+import { createUpdateFirestoreDoc } from "utils/Firebase";
 // Component styles
 import styles from "./styles";
 

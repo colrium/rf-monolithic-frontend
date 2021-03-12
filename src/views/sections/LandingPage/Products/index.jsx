@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { app, colors } from "assets/jss/app-theme.jsx";
+import { colors } from "assets/jss/app-theme.jsx";
 import Button from '@material-ui/core/Button';
 import Section from "components/Section";
 import GridContainer from "components/Grid/GridContainer";
@@ -12,7 +12,6 @@ import { withTheme } from '@material-ui/core/styles';
 import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';

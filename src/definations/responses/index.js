@@ -2,12 +2,6 @@
 
 import { IconButton } from "@material-ui/core";
 import {
-	ImageOutlined as ImageIcon,
-	AudiotrackOutlined as AudioIcon,
-	InsertDriveFileOutlined as FileIcon,
-	MovieOutlined as VideoIcon,
-} from "@material-ui/icons";
-import {
 	Add as AddIcon,
 	AssignmentTurnedInOutlined as DefinationContextIcon,
 	DeleteOutlined as DeleteIcon,
@@ -18,7 +12,6 @@ import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
 import {context_country_data} from "config/data";
-import commissionService from "services/commissions";
 
 const getRegions = ()=>{
 	let regions = {};

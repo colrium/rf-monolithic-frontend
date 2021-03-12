@@ -1,24 +1,18 @@
 /** @format */
 
 import Button from "@material-ui/core/Button";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
 import withStyles from "@material-ui/core/styles/withStyles";
 //
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
 import PropTypes from "prop-types";
-import React, {useEffect} from "react";
+import React from "react";
 //Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import Pagination from '@material-ui/lab/Pagination';
 import TablePagination from '@material-ui/core/TablePagination';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionActions from '@material-ui/core/AccordionActions';
-import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -30,19 +24,13 @@ import { useTheme } from '@material-ui/core/styles';
 import {
 	TextInput
 } from "components/FormInputs";
-import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import CalendarView from "./CalendarView";
-import GoogleMapView from "./GoogleMapView";
 import GoogleMapOverview from "views/widgets/Overview/GoogleMapOverview";
 import ListView from "./ListView";
 import Chip from '@material-ui/core/Chip';
-import ContextDataForm from "views/forms/BaseForm";
 import { withErrorHandler } from "hoc/ErrorHandler";
 //
 import styles from "./styles";

@@ -1,8 +1,6 @@
 /** @format */
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { app, colors } from "assets/jss/app-theme.jsx";
-import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
@@ -10,18 +8,7 @@ import Section from "components/Section";
 import React from "react";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
-import Hidden from '@material-ui/core/Hidden';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@mdi/react';
-import SvgIcon from '@material-ui/core/SvgIcon';
 import LogoChevronWhite from 'assets/img/realfield/chevron-white.svg';
-import LogoChevronBlack from 'assets/img/realfield/chevron-black.svg';
-
-import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import { withErrorHandler } from "hoc/ErrorHandler";
 

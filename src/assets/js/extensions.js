@@ -2,7 +2,6 @@
 
 import lodash from "lodash";
 import lodash_inflection from "lodash-inflection";
-import lodash_merge from "lodash.merge";
 import { dashboardBaseUri, landingPageBaseUri, orderFormBaseUri } from "config";
 
 lodash.mixin(lodash_inflection);

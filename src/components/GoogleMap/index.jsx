@@ -2,23 +2,14 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import ReactDOMServer from "react-dom/server";
 import { connect } from "react-redux";
-import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
-
-//import { SearchBox } from "react-google-maps/lib/components/places/SearchBox";
-import Skeleton from "@material-ui/lab/Skeleton";
 import ActualGoogleMap from "./ActualGoogleMap";
 
 import { compose } from "recompose";
 import { withStyles } from "@material-ui/core";
 
-import {withGlobals} from "contexts/Globals";
-import { colors } from "assets/jss/app-theme";
 //
 import { default_location, google_maps_url } from "config";
-
-import withRoot from "hoc/withRoot";
 
 //
 

@@ -1,18 +1,13 @@
 /** @format */
 
 import { withStyles } from "@material-ui/core";
-import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
-import Color from "color";
-import Avatar from "components/Avatar";
 import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-//
-import LazyModule from "components/LazyModule";
 import Typography from "components/Typography";
 import {withGlobals} from "contexts/Globals";
 import PropTypes from "prop-types";

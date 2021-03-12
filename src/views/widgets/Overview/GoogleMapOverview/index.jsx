@@ -2,8 +2,6 @@
 
 import IconButton from "@material-ui/core/IconButton";
 import classNames from "classnames";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
@@ -12,17 +10,12 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Icon from '@mdi/react'
-import { mdiMapMarkerMultiple, mdiMapMarkerMultipleOutline, mdiMapMarkerOff, mdiForwardburger, mdiTooltipAccount as clientPositionMarkerPath, mdiAccountCircleOutline, mdiFolderOutline } from '@mdi/js';
-import MenuOpenIcon from '@material-ui/icons/MenuOpen';
-import MenuIcon from '@material-ui/icons/Menu';
-import ImageIcon from '@material-ui/icons/Image';
-import { colors } from "assets/jss/app-theme";
+import { mdiForwardburger, mdiAccountCircleOutline, mdiFolderOutline } from '@mdi/js';
 import Avatar from "components/Avatar";
 import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
-import Chip from "@material-ui/core/Chip";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
@@ -30,16 +23,12 @@ import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import { withTheme } from '@material-ui/core/styles';
 import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
-import PeopleIcon from '@material-ui/icons/People';
-import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import React from "react";
 import { connect } from "react-redux";
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 import {withGlobals} from "contexts/Globals";
-import Pagination from '@material-ui/lab/Pagination';
 import compose from "recompose/compose";
 import GoogleMap from "components/GoogleMap";
-import GoogleMapView from "views/widgets/Listings/GoogleMapView";
 import Listings from "views/widgets/Listings";
 import { SwitchInput } from "components/FormInputs";
 import {withErrorHandler} from "hoc/ErrorHandler";

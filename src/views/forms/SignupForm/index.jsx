@@ -3,7 +3,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import MenuItem from "@material-ui/core/MenuItem";
 import Snackbar from "@material-ui/core/Snackbar";
 import { withStyles } from "@material-ui/core/styles";
 import authService from "services/auth";
@@ -18,17 +17,10 @@ import { baseUrls, environment } from "config";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import { CountriesHelper } from "hoc/Helpers";
 import {withGlobals} from "contexts/Globals";
-import { Link } from "react-router-dom";
 import {LocationInput } from "components/FormInputs";
 
 
-import {
-	TextInput,
-	RadioInput,
-	CheckboxInput,
-	SelectInput,
-	FileInput,
-} from "components/FormInputs";
+import { TextInput, RadioInput, SelectInput } from "components/FormInputs";
 
 const styles = theme => ({
 	root: {

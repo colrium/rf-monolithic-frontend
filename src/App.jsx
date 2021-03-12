@@ -1,10 +1,7 @@
 /** @format */
 
 import React from "react";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { createBrowserHistory } from "history";
-import { BrowserRouter, Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import {
 	deviceDetect,
@@ -19,8 +16,6 @@ import {
 } from "react-device-detect";
 
 import CacheBuster from 'hoc/CacheBuster';
-
-import Intercom from "react-intercom";
 
 import { ThemeProvider } from "@material-ui/styles";
 import { MuiThemeProvider } from "@material-ui/core/styles";
@@ -54,7 +49,7 @@ import {
 import Auth from "hoc/Auth";
 
 import appStyle from "assets/jss/appStyle";
-import { app, theme, theme_dark } from "assets/jss/app-theme";
+import { theme, theme_dark } from "assets/jss/app-theme";
 //
 import Routes from "routes";
 import { firebase as firebaseConfig } from "config";

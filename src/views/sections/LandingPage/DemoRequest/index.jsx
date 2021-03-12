@@ -1,8 +1,6 @@
 /** @format */
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { app, colors } from "assets/jss/app-theme.jsx";
-import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
@@ -11,7 +9,6 @@ import React from "react";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
 import RequestDemoForm from "views/forms/RequestDemoForm";
-import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import { withErrorHandler } from "hoc/ErrorHandler";
 

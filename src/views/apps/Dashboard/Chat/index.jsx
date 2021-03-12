@@ -1,5 +1,4 @@
-import React, {memo, useState, useEffect, useCallback, useRef} from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Badge from "@material-ui/core/Badge";
@@ -8,32 +7,21 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import MenuIcon from '@material-ui/icons/Menu';
-import AddIcon from '@material-ui/icons/Add';
-import SearchIcon from '@material-ui/icons/Search';
-import MoreIcon from '@material-ui/icons/MoreVert';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PersonIcon from '@material-ui/icons/Person';
 import PeopleIcon from '@material-ui/icons/People';
 import ContactsIcon from '@material-ui/icons/Contacts';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import SendIcon from '@material-ui/icons/Send';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
-import Backdrop from '@material-ui/core/Backdrop';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
-import ForumIcon from '@material-ui/icons/Forum';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import CloseIcon from '@material-ui/icons/Close';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
@@ -52,23 +40,15 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Fab from '@material-ui/core/Fab';
-import Card from "components/Card";
-import CardActions from "components/Card/CardActions";
-import CardContent from "components/Card/CardContent";
-import CardHeader from "components/Card/CardHeader";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Skeleton from '@material-ui/lab/Skeleton';
 import Paper from '@material-ui/core/Paper';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from "@material-ui/core/IconButton";
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ScrollBars from "components/ScrollBars";
 import LazyImage from "components/LazyImage";
 import ViewPortSensor from "components/ViewPortSensor";
 import Listings from "views/widgets/Listings";
-
-import {firestore as fcFirestore, messaging as fcMessaging} from "utils/Firebase";
 
 import {
 	FileInput,
@@ -76,7 +56,6 @@ import {
 } from "components/FormInputs";
 
 import { useGlobals } from "contexts/Globals";
-import { app } from "assets/jss/app-theme.jsx";
 import { useLocation, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';

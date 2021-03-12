@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from "react";
-import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import Chip from '@material-ui/core/Chip';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
-import InputBase from '@material-ui/core/InputBase';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from "@material-ui/core/IconButton";
 import MyLocationIcon from "@material-ui/icons/MyLocation";
-import MarkerIcon from "@material-ui/icons/Room";
-import SearchIcon from "@material-ui/icons/Search";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { connect } from "react-redux";
 import { google_maps_url } from "config";
 import { TextInput } from "components/FormInputs";
 import { compose } from "recompose";
-import { withStyles } from "@material-ui/core";
 import parse from 'autosuggest-highlight/parse';
 import throttle from 'lodash/throttle';
 

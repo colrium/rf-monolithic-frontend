@@ -1,19 +1,14 @@
-import firebase from "firebase/app";
 import {
-	SET_MESSAGING_CACHE,
-	SEND_MESSAGE,
-	REMOVE_MESSAGING_CACHE,
-	CLEAR_MESSAGING_CACHE,
-	SET_EMAILING_CACHE,
-	REMOVE_EMAILING_CACHE,
-	CLEAR_EMAILING_CACHE,
-	CLEAR_COMMUNICATION_CACHE,
-	apiCallRequest
+    SET_MESSAGING_CACHE,
+    REMOVE_MESSAGING_CACHE,
+    CLEAR_MESSAGING_CACHE,
+    SET_EMAILING_CACHE,
+    REMOVE_EMAILING_CACHE,
+    CLEAR_EMAILING_CACHE,
+    CLEAR_COMMUNICATION_CACHE,
 } from "state/actions";
 import {messages as messagesDefination} from "definations";
 import ApiService from "services/api";
-
-import firebaseApp, {firestore as fcFirestore, messaging as fcMessaging} from "utils/Firebase";
 
 
 export function setMessagingCache(key, messaging) {

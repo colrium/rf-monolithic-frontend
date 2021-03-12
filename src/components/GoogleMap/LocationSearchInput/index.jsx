@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import Chip from '@material-ui/core/Chip';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from "@material-ui/core/IconButton";
 import MyLocationIcon from "@material-ui/icons/MyLocation";
-import MarkerIcon from "@material-ui/icons/Room";
 import SearchIcon from "@material-ui/icons/Search";
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { connect } from "react-redux";

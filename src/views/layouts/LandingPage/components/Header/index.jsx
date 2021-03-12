@@ -1,7 +1,6 @@
 /** @format */
 
 import AppBar from "@material-ui/core/AppBar";
-import Badge from "@material-ui/core/Badge";
 import Button from "@material-ui/core/Button";
 import Fab from '@material-ui/core/Fab';
 import Hidden from "@material-ui/core/Hidden";
@@ -14,7 +13,6 @@ import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Toolbar from "@material-ui/core/Toolbar";
 import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 import MenuIcon from "@material-ui/icons/Menu";
-import CartIcon from "@material-ui/icons/ShoppingCartOutlined";
 import logo from "assets/img/realfield/logo.svg";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";

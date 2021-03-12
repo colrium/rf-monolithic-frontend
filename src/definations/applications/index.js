@@ -10,7 +10,6 @@ import {
 } from "@material-ui/icons";
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
-import Tooltip from '@material-ui/core/Tooltip';
 import Button from "components/Button";
 import React, {useEffect, useState} from "react";
 import Snackbar from '@material-ui/core/Snackbar';
@@ -18,13 +17,9 @@ import MuiAlert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Link } from "react-router-dom";
 import { CountriesHelper, UtilitiesHelper } from "hoc/Helpers";
-import Icon from '@mdi/react';
-import { mdiAccountBoxOutline, mdiFileAccountOutline  } from '@mdi/js';
 import { useGlobals } from "contexts/Globals";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
-import classNames from "classnames";
-import withStyles from "@material-ui/core/styles/withStyles";
 import compose from "recompose/compose";
 import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions";
 

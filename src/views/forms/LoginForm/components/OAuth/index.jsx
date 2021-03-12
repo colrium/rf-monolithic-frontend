@@ -4,7 +4,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import FacebookIcon from "@material-ui/icons/Facebook";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import GoogleIcon from 'mdi-react/GooglePlusIcon';
 import { AUTH } from "config/api";
@@ -12,7 +11,6 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import withRoot from "hoc/withRoot";
 import {withGlobals} from "contexts/Globals";
 import styles from "./styles";
 

@@ -1,19 +1,14 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { app, colors } from "assets/jss/app-theme.jsx";
 import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from '@material-ui/core/Typography';
-import ScrollBars from "components/ScrollBars";
 import Section from "components/Section";
-import ProgressIndicator from "components/ProgressIndicator";
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
@@ -25,12 +20,9 @@ import BlueBg4 from "assets/img/realfield/Blue_BG/4_Blue_BG.png";
 import GreenBg1 from "assets/img/realfield/Green_Bg/1_Green_BG.png";
 import GreenBg2 from "assets/img/realfield/Green_Bg/2_Green_BG.png";
 import GreenBg3 from "assets/img/realfield/Green_Bg/3_Green_BG.png";
-import GreenBg4 from "assets/img/realfield/Green_Bg/4_Green_BG.png";
 import LogoChevron from "assets/img/realfield/logo-chevron.svg";
 
-import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 import { Link } from "react-router-dom";
-import { useGlobals } from "contexts/Globals";
 import compose from "recompose/compose";
 import { withErrorHandler } from "hoc/ErrorHandler";
 

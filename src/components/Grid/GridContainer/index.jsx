@@ -6,7 +6,7 @@ import { colors } from "assets/jss/app-theme.jsx";
 import gridStyle from "assets/jss/components/gridStyle.jsx";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 function GridContainer(props) {
 	/*let [state, setState] = useState(props);

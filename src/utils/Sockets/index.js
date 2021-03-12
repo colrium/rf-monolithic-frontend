@@ -1,6 +1,6 @@
 /** @format */
 import io from "socket.io-client";
-import { appName, baseUrls, environment, apiClient } from "config";
+import { appName, baseUrls, environment } from "config";
 import { store } from "state/store";
 
 const SocketsSingleton = (function () {

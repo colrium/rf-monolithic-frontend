@@ -1,7 +1,3 @@
-/** @format */
-
-import AuthService from "services/auth";
-import { AuthHelper } from "hoc/Helpers";
 import {
 	SET_AUTHENTICATED,
 	SET_ACCESS_TOKEN,

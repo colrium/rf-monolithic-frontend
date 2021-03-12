@@ -1,12 +1,11 @@
 /** @format */
 
-import React, { Component, lazy } from "react";
-import { Redirect, Switch } from "react-router-dom";
+import React, { Component } from "react";
+import { Switch } from "react-router-dom";
 //
 
 import Route from "routes/Route";
 import asyncComponent from "views/widgets/asyncComponent";
-import ProgressIndicator from "components/ProgressIndicator";
 
 const HomePage = asyncComponent(() => import("views/pages/LandingPage/Home"));
 const RecruitmentPage = asyncComponent(() => import("views/pages/LandingPage/Recruitment"));

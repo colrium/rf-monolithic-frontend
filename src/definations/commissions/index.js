@@ -9,7 +9,6 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@material-ui/icons";
 import DefinationContextIcon from "@material-ui/icons/WorkOutlineOutlined";
-import { colors } from "assets/jss/app-theme";
 import Avatar from "components/Avatar";
 import Badge from "components/Badge";
 import Button from "components/Button";
@@ -17,16 +16,9 @@ import GoogleMap from "components/GoogleMap";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Status from "components/Status";
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Typography from "components/Typography";
 import { formats } from "config/data";
 import React from "react";
-import ReactHtmlParser from "react-html-parser";
-import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { attachments as AttachmentsService } from "services";
 

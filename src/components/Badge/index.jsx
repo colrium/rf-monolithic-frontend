@@ -1,8 +1,6 @@
 /** @format */
 
 import React from "react";
-// nodejs library to set properties for components
-import PropTypes from "prop-types";
 import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Badge from "@material-ui/core/Badge";

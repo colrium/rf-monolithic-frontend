@@ -1,7 +1,6 @@
 /** @format */
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import EmptyStateImage from "assets/img/empty-state-table.svg";
 import GoogleMap from "components/GoogleMap";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";

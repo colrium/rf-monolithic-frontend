@@ -12,7 +12,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import EmptyStateImage from "assets/img/empty-state-table.svg";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import ProgressIndicator from "components/ProgressIndicator";
 import Typography from "components/Typography";
 import PropTypes from "prop-types";
 import React from "react";
@@ -21,8 +20,6 @@ import compose from "recompose/compose";
 import * as Actions from "state/actions";
 import Skeleton from '@material-ui/lab/Skeleton';
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
-//
-import { UtilitiesHelper } from "hoc/Helpers";
 import { withErrorHandler } from "hoc/ErrorHandler";
 import styles from "./styles";
 

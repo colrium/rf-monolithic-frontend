@@ -1,43 +1,34 @@
 /** @format */
 
 import React, { Component } from "react";
-import classNames from "classnames";
-import PropTypes from "prop-types";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { Editor } from "react-draft-wysiwyg";
-import {
-	EditorState,
-	convertFromHTML,
-	ContentState,
-	convertToRaw,
-} from "draft-js";
+import { EditorState, convertFromHTML, ContentState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
-import Popover from "@material-ui/core/Popover";
 import {
-	FormatBold as BoldIcon,
-	FormatItalic as ItalicIcon,
-	FormatUnderlined as UnderlinedIcon,
-	FormatStrikethrough as StrikethroughIcon,
-	FormatSize as SizeIcon,
-	VerticalAlignTop as SuperscriptIcon,
-	VerticalAlignBottom as SubscriptIcon,
-	FormatListBulleted as UnorderedListIcon,
-	FormatListNumbered as OrderedListIcon,
-	FormatIndentIncrease as IndentIcon,
-	FormatIndentDecrease as OutdentIcon,
-	FormatAlignLeft as LeftAlignIcon,
-	FormatAlignRight as RightAlignIcon,
-	FormatAlignCenter as CenterAlignIcon,
-	FormatAlignJustify as JustifyAlignIcon,
-	InsertLink as InsertLinkIcon,
-	LinkOff as RemoveLinkIcon,
-	InsertPhoto as InsertPhotoIcon,
-	Delete as EraseIcon,
-	Undo as UndoIcon,
-	Redo as RedoIcon,
-	ExpandMore,
-	ExpandLess,
+    FormatBold as BoldIcon,
+    FormatItalic as ItalicIcon,
+    FormatUnderlined as UnderlinedIcon,
+    FormatStrikethrough as StrikethroughIcon,
+    VerticalAlignTop as SuperscriptIcon,
+    VerticalAlignBottom as SubscriptIcon,
+    FormatListBulleted as UnorderedListIcon,
+    FormatListNumbered as OrderedListIcon,
+    FormatIndentIncrease as IndentIcon,
+    FormatIndentDecrease as OutdentIcon,
+    FormatAlignLeft as LeftAlignIcon,
+    FormatAlignRight as RightAlignIcon,
+    FormatAlignCenter as CenterAlignIcon,
+    FormatAlignJustify as JustifyAlignIcon,
+    InsertLink as InsertLinkIcon,
+    LinkOff as RemoveLinkIcon,
+    InsertPhoto as InsertPhotoIcon,
+    Delete as EraseIcon,
+    Undo as UndoIcon,
+    Redo as RedoIcon,
+    ExpandMore,
+    ExpandLess,
 } from "@material-ui/icons";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";

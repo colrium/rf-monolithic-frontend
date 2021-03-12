@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react';
 
 import {withErrorHandler} from "hoc/ErrorHandler";
 import { withTheme } from '@material-ui/core/styles';
@@ -8,7 +8,6 @@ import compose from "recompose/compose";
 import classNames from 'classnames';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import ScrollBars from "components/ScrollBars";
 import Typography from '@material-ui/core/Typography';
 
 

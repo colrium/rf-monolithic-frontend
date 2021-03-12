@@ -5,10 +5,7 @@
  */
 
 import React from "react";
-import Cookies from "universal-cookie";
-import axios from "axios";
 import Color from "color";
-import decode from "jwt-decode";
 import lodash from "lodash";
 import lodash_inflection from "lodash-inflection";
 import kenya_geodata from "assets/geodata/kenya.json";
@@ -17,12 +14,7 @@ import {
 	InsertDriveFileOutlined as FileIcon,
 	MovieOutlined as VideoIcon,
 } from "@material-ui/icons";
-import {
-	authTokenLocation,
-	authTokenName,
-	baseUrls,
-	environment,
-} from "config";
+import { environment } from "config";
 
 lodash.mixin(lodash_inflection);
 

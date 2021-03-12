@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { IconButton } from "@material-ui/core";
 import Button from "components/Button";
-import Avatar from "components/Avatar";
 import {
 	AssignmentOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core";
 import Fab from "@material-ui/core/Fab";
@@ -14,7 +14,7 @@ import WhatsAppIcon from "@material-ui/icons/WhatsApp";
 import YouTubeIcon from "@material-ui/icons/YouTube";
 import GooglePlusIcon from 'mdi-react/GooglePlusIcon';
 import logo from "assets/img/realfield/logo.svg";
-import { app, colors } from "assets/jss/app-theme";
+import { colors } from "assets/jss/app-theme";
 import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";

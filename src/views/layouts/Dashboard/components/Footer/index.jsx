@@ -1,14 +1,7 @@
-/** @format */
-
-// Material helpers
-import { Divider, Typography } from "@material-ui/core";
-import { app } from "assets/jss/app-theme";
 // Externals
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import {withErrorHandler} from "hoc/ErrorHandler";
-import { intercom } from "config";
-import Intercom from "react-intercom";
 
 // Component styles
 const styles = theme => ({

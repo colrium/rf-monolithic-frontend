@@ -2,39 +2,24 @@
 import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import {
-	Checkbox,
-	CircularProgress,
-	IconButton,
-	InputAdornment,
-	Snackbar,
-	Typography
-} from "@material-ui/core";
+import { Snackbar } from "@material-ui/core";
 import withStyles from "@material-ui/core/styles/withStyles";
+import { Add as AddIcon, EditOutlined as EditIcon } from "@material-ui/icons";
 import {
-	Add as AddIcon,
-	EditOutlined as EditIcon,
-	VisibilityOffOutlined as HidePasswordIcon,
-	VisibilityOutlined as ShowPasswordIcon
-} from "@material-ui/icons";
-import Skeleton from "@material-ui/lab/Skeleton";
-import {
-	TextInput,
-	DateInput,
-	DateTimeInput,
-	RadioInput,
-	TimeInput,
-	WysiwygInput,
-	CheckboxInput,
-	SliderInput,
-	TranferListInput,
-	InputFormHelper,
-	MultiSelectInput,
-	SelectInput,
-	FileInput,
-	MapInput,
-	DynamicInput,
-	LocationInput
+    TextInput,
+    DateInput,
+    DateTimeInput,
+    RadioInput,
+    WysiwygInput,
+    CheckboxInput,
+    SliderInput,
+    TranferListInput,
+    MultiSelectInput,
+    SelectInput,
+    FileInput,
+    MapInput,
+    DynamicInput,
+    LocationInput,
 } from "components/FormInputs";
 import { colors } from "assets/jss/app-theme";
 // Externals
@@ -45,12 +30,9 @@ import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
-import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 //
 import GridContainer from "components/Grid/GridContainer";
@@ -66,8 +48,6 @@ import {withGlobals} from "contexts/Globals";
 import {withErrorHandler} from "hoc/ErrorHandler";
 //
 import { ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";
-//
-import withRoot from "hoc/withRoot";
 import styles from "./styles";
 
 

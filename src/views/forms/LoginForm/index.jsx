@@ -5,7 +5,7 @@ import Cookies from "universal-cookie";
 import Snackbar from "@material-ui/core/Snackbar";
 import { withStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { alignments, colors } from "assets/jss/app-theme.jsx";
+import { colors } from "assets/jss/app-theme.jsx";
 import classNames from "classnames";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
@@ -26,16 +26,10 @@ import {
 	setAccessToken
 } from "state/actions/auth";
 
-import {
-	authTokenLocation,
-	authTokenName,
-	baseUrls,
-	environment
-} from "config";
+import { authTokenLocation, authTokenName, baseUrls, environment } from "config";
 import { AppHelper } from "hoc/Helpers";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import Auth from "hoc/Auth";
-import withRoot from "hoc/withRoot";
 import {
 	TextInput,
 	CheckboxInput,

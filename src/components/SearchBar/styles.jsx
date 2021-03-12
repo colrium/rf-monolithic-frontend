@@ -1,6 +1,5 @@
 /** @format */
 import { fade } from '@material-ui/core/styles';
-import { colors } from "assets/jss/app-theme.jsx";
 export default theme => ({
 	search: {
 		display: 'flex',

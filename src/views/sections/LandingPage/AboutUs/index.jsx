@@ -1,25 +1,15 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { app, colors } from "assets/jss/app-theme.jsx";
-import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from '@material-ui/core/Typography';
 import Section from "components/Section";
-import ProgressIndicator from "components/ProgressIndicator";
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
 import { mdiFormatQuoteOpen } from '@mdi/js';
 import Icon from '@mdi/react'
 import Hidden from '@material-ui/core/Hidden';
-import { apiCallRequest, closeDialog, openDialog } from "state/actions";
-import { Link } from "react-router-dom";
-import { useGlobals } from "contexts/Globals";
 import compose from "recompose/compose";
 import { withErrorHandler } from "hoc/ErrorHandler";
 

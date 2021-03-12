@@ -1,6 +1,3 @@
-/** @format */
-
-import { app } from "assets/jss/app-theme";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import React, { Component } from "react";

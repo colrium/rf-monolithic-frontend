@@ -2,30 +2,21 @@
 /** @format */
 
 // Material helpers
-import { Drawer, withStyles, Breadcrumbs } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
+import { Drawer, withStyles } from "@material-ui/core";
 import { app } from "assets/jss/app-theme";
 // Externals
 import classNames from "classnames";
 
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { isMobile } from "react-device-detect";
-import Typography from "components/Typography";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import { Link } from "react-router-dom";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import { Footer, Sidebar, Topbar } from "./components";
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@mdi/react'
-import { mdiForwardburger } from '@mdi/js';
 import { withTheme } from '@material-ui/core/styles';
 import styles from "./styles";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import DashboardRoutes from "routes/Dashboard";
 import ActionDialog from "components/ActionDialog";
 import ComposeEmailDialog from "components/ComposeEmailDialog";
 import { setDashboardSearchbarDisplayed } from "state/actions";
