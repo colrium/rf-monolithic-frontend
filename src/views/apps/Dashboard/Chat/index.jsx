@@ -1,5 +1,3 @@
-/** @format */
-
 import React, {memo, useState, useEffect, useCallback, useRef} from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
@@ -83,7 +81,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
 import compose from "recompose/compose";
-import { apiCallRequest, setMessagingCache, clearMessagingCache, sendMessage } from "state/actions";
+import { apiCallRequest, setMessagingCache, setActiveConversation, sendMessage } from "state/actions";
 
 import { attachments as AttachmentsService } from "services";
 
@@ -96,15 +94,15 @@ function Alert(props) {
 }
 
 
-const AlwaysScrollToBottom = () => {
-	const elementRef = useRef();
+const AlwaysScrollToBottom = React.forwardRef((props, ref) => {
+	
 	const { sockets } = useGlobals();
 
 	const scrollIntoView = useCallback(()=> {
-		if (elementRef.current) {
-			elementRef.current.scrollIntoView()
+		if (ref.current) {
+			ref.current.scrollIntoView({ behavior: 'smooth' })
 		}
-	}, [elementRef.current]);
+	}, [ref.current]);
 	
 	useEffect(() => {
 		sockets.default.on("message-sent", scrollIntoView);
@@ -115,13 +113,14 @@ const AlwaysScrollToBottom = () => {
 			sockets.default.off("new-message", scrollIntoView);
 		}
 	}, []);
-	return <div ref={elementRef} />;
-};
+	return <div ref={ref} />;
+});
 
 function Chat(props) {
-	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, sendMessage, theme, setMessagingCache, clearMessagingCache, ...rest } = props;
+	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, setActiveConversation, sendMessage, ...rest } = props;
 	let textInputRef = React.createRef();
 	let messagesWrapperRef = React.createRef();
+	let conversationBottomRef = useRef();
 	let location = useLocation();
 	let history = useHistory();
 
@@ -358,8 +357,9 @@ function Chat(props) {
 				updatedChats.unshift(existingChat);
 				getConversationMessages(existingChat);
 				setMessagingCache("conversations", updatedChats);
-				setMessagingCache("active_conversation_messages", []);	
-				setMessagingCache("active_conversation", existingChat);	
+				//setMessagingCache("active_conversation_messages", []);	
+				//setMessagingCache("active_conversation", existingChat);	
+				setActiveConversation(existingChat);
 
 
 				setDraft({
@@ -706,12 +706,37 @@ function Chat(props) {
 
 	
 
-	const getConversationMessages = (conversation) => {
+	const getConversationMessages = (conversation, query={desc: "created_on", p: "1", page: 1, pagination: 10}) => {
 		if (conversation) {
+			let conversation_id = conversation._id? conversation._id : conversation;
 			setLoadingActiveChatMessages(true);
 			setMessagingCache("active_conversation_messages", []);	
+			setError(false);
+			apiCallRequest( definations.messages.name, {
+						uri: definations.messages.endpoint,
+						type: "records",
+						params: {conversation: conversation_id, ...query},
+						data: {},
+						cache: false,
+			}).then(data => {
+						//console.log("handleOnSendMessage data", data);
+						setError(false);				
+			}).catch(e => {
+						console.log("handleOnSendMessage e", e);
+						let errorMsg = e;
+						if (JSON.isJSON(e)) {
+							if ("msg" in e) {
+								errorMsg = e.msg;
+							}
+							else {
+								errorMsg = JSON.stringify(e);
+							}
+						}
+						
+						setError(errorMsg);
+			});
 			if (sockets.default) {
-				sockets.default.emit("get-conversation-messages", {conversation: conversation._id, user: auth.user});
+				//sockets.default.emit("get-conversation-messages", {conversation: conversation._id, user: auth.user});
 			}
 		}
 		else {
@@ -732,8 +757,7 @@ function Chat(props) {
 			}
 
 			if (!String.isEmpty(newMessage.content) || (["audio", "file", "video", "image"].includes(newMessage.type) && (Array.isArray(newMessage.attachments)? (newMessage.attachments.length > 0) : false))) {
-					//sockets.default.emit("send-message", {message: newMessage, conversation: active_conversation, user: auth.user});
-
+					
 					sendMessage(newMessage);
 					
 					if (textInputRef.current) {
@@ -841,12 +865,15 @@ function Chat(props) {
 
 
 	useEffect(() => {
-		setChats(conversations);
-	}, [conversations]);
+		if (conversationBottomRef.current) {
+			conversationBottomRef.current.scrollIntoView()
+		}
+	}, [active_conversation_messages]);
 
 	useEffect(() => {
 		if (active_conversation && firstLoad) {
-			getConversationMessages(active_conversation);
+			setActiveConversation(active_conversation);
+			//getConversationMessages(active_conversation);
 			setFirstLoad(false);			
 		}
 
@@ -855,33 +882,12 @@ function Chat(props) {
 
 	
 
-	/*useEffect(() => {
-
-		return () => {
-			if (!activeChat) {
-				setMessagingCache("active_conversation", false);	
-				
-			}
-			else {
-				try {
-					let newActiveChat = JSON.parse(JSON.stringify(activeChat));
-					newActiveChat.typing = [];
-					setMessagingCache("active_conversation", newActiveChat);
-				} catch(err) {
-					console.error(err);
-				}
-				
-			}
-		}
-		
-	}, [activeChat]);*/
 
 
 	useEffect(()=>{
 		if (location && !locationHasWith) {
 			let params = new URLSearchParams(location.search);
 			const withRecipient = params.get('with');
-			console.log("location withRecipient", withRecipient);	
 			if (!String.isEmpty(withRecipient)) {
 				if (withRecipient.indexOf("@") !== -1) {
 					setContactsQuery({email_address: withRecipient.trim()});
@@ -990,8 +996,7 @@ function Chat(props) {
 							if (history && locationHasWith) {
 								history.push(history.location.pathname);
 							}
-							setMessagingCache("active_conversation_messages", []);
-							setMessagingCache("active_conversation", false);
+							setActiveConversation(false);
 							
 						}}
 						className={"mr-2"}
@@ -1243,9 +1248,10 @@ function Chat(props) {
 										<ListItem 
 											className={"px-8 content-between"} 
 											onClick={(event)=> {
-												setMessagingCache("active_conversation_messages", []);	
-												setMessagingCache("active_conversation", chat);	
-												getConversationMessages(chat);			
+												//setMessagingCache("active_conversation_messages", []);	
+												//setMessagingCache("active_conversation", chat);	
+												setActiveConversation(chat);
+												//getConversationMessages(chat);			
 											}}										
 											onContextMenu={handleContextOpen("conversation", chat)}
 											key={"chat-"+index}
@@ -1379,10 +1385,14 @@ function Chat(props) {
 							{active_conversation_messages.map((activeChatMessage, cursor) =>{
 								let message_deleted = false;
 								let show_message = true;
+
 								if (cursor > 0) {
 									if (active_conversation_messages[cursor]._id === active_conversation_messages[(cursor - 1)]._id || (activeChatMessage.conversation._id !== active_conversation._id && activeChatMessage.conversation !== active_conversation._id)) {
 										show_message = false;
 									}
+								}
+								else {
+									show_message = (activeChatMessage.conversation._id === active_conversation._id || activeChatMessage.conversation === active_conversation._id);
 								}
 								/*if (cursor === (active_conversation_messages.length - 1)) {
 									console.log("activeChatMessage", activeChatMessage);
@@ -1516,7 +1526,7 @@ function Chat(props) {
 										<div  className={classes.typing_loader}></div>
 									</div>
 							</GridItem>}
-							<AlwaysScrollToBottom />
+							<AlwaysScrollToBottom ref={conversationBottomRef}/>
 						</GridContainer>
 					</ScrollBars>}
 
@@ -1622,7 +1632,6 @@ function Chat(props) {
 									}
 									if (active_conversation._id && sockets.default) {
 										sockets.default.emit("stopped-typing-message", {conversation: active_conversation._id, user: auth.user});
-										
 									}
 								}}
 								onFocus={()=>{
@@ -1663,7 +1672,8 @@ function Chat(props) {
 					}
 				  >
 					{contextMenu.type === "conversation" && <MenuItem onClick={(event)=>{
-						setMessagingCache("active_conversation", contextMenu.entry);
+						//setMessagingCache("active_conversation", contextMenu.entry);
+						setActiveConversation(contextMenu.entry);
 						handleContextClose(event);
 					}}>Open Conversation</MenuItem>}
 					{contextMenu.type === "conversation" && <MenuItem 
@@ -1752,6 +1762,6 @@ Chat.defaultProps = {
 
 export default compose(
 	withStyles(styles),
-	connect(mapStateToProps, {apiCallRequest, setMessagingCache, clearMessagingCache, sendMessage}),
+	connect(mapStateToProps, {apiCallRequest, setMessagingCache, setActiveConversation, sendMessage}),
 	withTheme,
 )((Chat));

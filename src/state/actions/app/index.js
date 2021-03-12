@@ -3,7 +3,8 @@ import {
 	SET_ONBOARDED,
 	SET_INITIALIZED,
 	SET_SETTINGS,
-	SET_PREFERENCES,	
+	SET_PREFERENCES,
+	CLEAR_APP_STATE,
 } from "state/actions";
 
 export function setOnboarded(onboarded) {
@@ -38,5 +39,11 @@ export function setPreferences(preferences) {
 	return {
 		type: SET_PREFERENCES,
 		preferences,
+	};
+}
+
+export function clearAppState() {
+	return {
+		type: CLEAR_APP_STATE
 	};
 }

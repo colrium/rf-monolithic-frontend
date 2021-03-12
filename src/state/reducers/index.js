@@ -1,4 +1,6 @@
-/** @format */
+import {
+	CLEAR_APP_STATE
+} from "state/actions";
 
 import { combineReducers } from "redux";
 import { reducer as form } from "redux-form";
@@ -15,8 +17,9 @@ import dialog from "./dialog";
 import ecommerce from "./ecommerce";
 import communication from "./communication";
 
-export default combineReducers({
-	api,
+
+const combinedReducer = combineReducers({
+    api,
 	app,
 	auth,
 	cache,
@@ -29,3 +32,16 @@ export default combineReducers({
 	ecommerce,
 	communication,
 });
+const appReducer = combineReducers((state = {}) => state);
+
+const rootReducer = (state, action) => {
+    if (action.type === CLEAR_APP_STATE) {
+        // clear everything but keep the stuff we want to be preserved ..
+        const { app } = state;
+    	state = { app };
+    	return combinedReducer(state, action);
+    }
+    return combinedReducer(state, action);
+}
+
+export default rootReducer;

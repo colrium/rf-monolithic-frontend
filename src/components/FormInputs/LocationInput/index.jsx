@@ -15,7 +15,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { connect } from "react-redux";
 import { google_maps_url } from "config";
-
+import { TextInput } from "components/FormInputs";
 import { compose } from "recompose";
 import { withStyles } from "@material-ui/core";
 import parse from 'autosuggest-highlight/parse';
@@ -88,7 +88,7 @@ const targetTypes = {
 function LocationInput(props) {
 	const [open, setOpen] = useState(false);
 	const loaded = React.useRef(false);
-	const { className, device, placeholder, placeholderType, label, value, type, variant, isMulti, required, touched, disabled, error, invalid, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, loading, query, onOpen, onClose, onChange, isClearable, onClickMyLocationBtn, result_type, short_name, showMyLocationBtn, ...rest} = props;
+	const { className, device, placeholder, placeholderType, label, value, type, variant, isMulti, required, touched, disabled, error, invalid, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, loading, query, onOpen, onClose, onChange, isClearable, onClickMyLocationBtn, result_type, short_name, showMyLocationBtn, controlPosition, ...rest} = props;
 	const [autocompleteValue, setAutocompleteValue] = useState(value? value : null);
 	const [typeValue, setTypeValue] = useState(value? value : null);
 	const [textFieldValue, setTextFieldValue] = useState('');
@@ -606,46 +606,7 @@ function LocationInput(props) {
 				/*console.log("autocompleteOptions", autocompleteOptions);
 		console.log("autocompleteValue", autocompleteValue);*/
 				return (
-					variant == "plain"? (
-						<InputBase
-							{...params}
-							{...params.InputProps}
-							autocomplete={"new-password"}
-							startAdornment={showMyLocationBtn? (
-				            		<InputAdornment className="p-0 m-0" position="start">
-										<IconButton
-											size={size}
-											aria-label="my-location"
-											onClick={handleOnClickMyLocationBtn}
-										>
-											<MyLocationIcon fontSize="inherit"/>
-										</IconButton>
-									</InputAdornment>
-							) : undefined}
-				            endAdornment={(
-				            		<InputAdornment position="end">
-										<IconButton
-											size={size}
-											aria-label="search-location"
-										>
-											<SearchIcon fontSize="inherit"/>
-										</IconButton>
-									</InputAdornment>
-							)}
-
-							label={label} 
-							placeholder={placeholder}
-							variant={variant} 
-							margin={margin}
-							size={size}
-							required={required}
-							disabled={inputDisabled}
-							error={inputError ? true : isInvalid}
-							helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
-							fullWidth 
-						/>
-					) : (
-						<TextField 
+					<TextInput 
 							{...params} 
 							InputLabelProps={{
 								...params.InputLabelProps,
@@ -683,7 +644,7 @@ function LocationInput(props) {
 							helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
 							fullWidth 
 						/>
-					)
+					
 				);
 			}}
 			forcePopupIcon={true}

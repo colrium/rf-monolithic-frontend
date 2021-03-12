@@ -40,7 +40,7 @@ const CustomCard =  React.forwardRef((props, ref) => {
 		cardStyles.borderColor = outlineColor;
 	}
 	return (
-		<Card className={cardClasses} {...rest}>
+		<Card className={cardClasses} ref={ref} {...rest}>
 			{children}
 		</Card>
 	);

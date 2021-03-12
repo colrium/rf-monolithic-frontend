@@ -284,17 +284,7 @@ class TableView extends React.Component {
 														"_action"
 													}
 												>
-													{action_name === "delete" ? defination.access.actions[action_name].link.inline.listing(value,
-																"error_text",
-																this.handleDeleteItemConfirm(
-																	value
-																)
-														  )
-														: defination.access.actions[
-																action_name
-														  ].link.inline.listing(
-																value
-														  )}
+													{action_name === "delete" ? defination.access.actions[action_name].link.inline.listing(value, "error_text", this.handleDeleteItemConfirm(value)) : defination.access.actions[action_name].link.inline.listing(value)}
 												</div>
 											)
 										)}

@@ -39,6 +39,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 // Custom components
 import { NotificationList } from "./components";
 import { app } from "assets/jss/app-theme";
+import {getFirestoreDoc, createUpdateFirestoreDoc} from "utils/Firebase";
 // Component styles
 import styles from "./styles";
 
@@ -133,12 +134,14 @@ class Topbar extends Component {
 	};
 
 	onChangeUserPresenceMenu = presence => event => {
-		const { auth, sockets } = this.props;
+		const { auth, sockets, setCurrentUser } = this.props;
 		if (sockets.default && auth.isAuthenticated) {
-			sockets.default.emit("change-user-presence", {
+			createUpdateFirestoreDoc("users", auth.user._id, {presence: presence});
+			setCurrentUser({...auth.user, presence: presence});
+			/*sockets.default.emit("change-user-presence", {
 				id: auth.user._id,
 				presence: presence,
-			});
+			});*/
 		}
 		this.setState({
 			userPresenceMenuAnchorEl: null,

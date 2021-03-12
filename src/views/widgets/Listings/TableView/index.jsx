@@ -332,7 +332,7 @@ class TableView extends React.Component {
 												);
 										} 
 										else {
-												return Boolean(rowData[name])? ( <Chip label={rowData[name].resolve} /> ) : ( "" );
+												return rowData[name]? ( <Chip label={rowData[name].resolve} /> ) : ( "" );
 										}
 									},
 									...field.tableProps
@@ -384,7 +384,7 @@ class TableView extends React.Component {
 												);
 											} 
 											else {
-												return Boolean(rowData[name])? (
+												return rowData[name]? (
 													<Chip
 														avatar={
 															<Avatar

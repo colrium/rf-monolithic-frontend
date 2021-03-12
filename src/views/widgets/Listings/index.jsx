@@ -476,6 +476,7 @@ class ListingView extends React.Component {
 									        		onClick={()=> {
 									        			this.setState({filterContext: (this.state.filterContext === filterableField? false : filterableField), filterMenuAnchor: null});									        			
 									        		}}
+									        		key={"filterableField-"+filterableField+"-"+cursor}
 									        	>
 									        		{Function.isFunction(filterableFieldProps.label)? filterableField.humanize() : filterableFieldProps.label}
 									        	</MenuItem>
@@ -601,6 +602,7 @@ class ListingView extends React.Component {
 							rowsPerPageOptions={[5, 10, 25, 50, 100, { value: -1, label: 'All' }]}
 							onChangeRowsPerPage={this.handleOnRecordsPerPageChanged}
 							ActionsComponent={TablePaginationActions}
+							component="div"
 							SelectProps={{
 								label: "Records per page",
 								variant: "outlined",

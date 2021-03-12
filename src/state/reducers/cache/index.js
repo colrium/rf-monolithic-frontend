@@ -21,7 +21,6 @@ const initialState = {
 };
 
 export default (state = initialState, action = {}) => {
-	state = JSON.merge(initialState, state);
 
 	switch (action.type) {
 		case SET_DATA_CACHE: {

@@ -17,12 +17,12 @@ import {
 
 
 
-const Input = (props) => {
+const Input = React.forwardRef((props, ref) => {
 	let debouncedOnChange;
-	let [state, setState] = useState(props);
+	/*let [state, setState] = useState(props);
 	useEffect(() => {
 		setState(props);
-	}, [props]);
+	}, [props]);*/
 	let {
 		label,
 		touched,
@@ -44,8 +44,9 @@ const Input = (props) => {
 		className,
 		inputProps,
 		InputProps,
+		InputLabelProps,
 		...rest
-	} = state;
+	} = props;
 
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
 	const [inputDisabled, setInputDisabled] = useState(disabled);
@@ -190,7 +191,7 @@ const Input = (props) => {
 		}
 	}, [value, defaultValue, inputFocused]);
 
-	if (variant === "base") {
+	if (variant === "base" || variant === "plain") {
 		return (
 			<InputBase
 				className={"flex-1"+(className? (" "+className) : "")}
@@ -256,8 +257,9 @@ const Input = (props) => {
 				defaultValue={inputValue}
 				disabled={inputDisabled}
 				error={inputError ? true : isInvalid}
-				helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
 				type={inputType}
+				ref={ref}
+
 				{...inputProps}
 				{...rest}
 			/>
@@ -348,19 +350,21 @@ const Input = (props) => {
 						</InputAdornment>
 					),
 				}}
+				InputLabelProps={InputLabelProps}
 				variant={variant ? variant : "outlined"}
 				defaultValue={inputValue}
 				disabled={inputDisabled}
 				error={inputError ? true : isInvalid}
 				helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
 				type={inputType}
+				ref={ref}
 				{...rest}
 			/>
 		);
 	}
 
 		
-};
+});
 
 Input.defaultProps = {
 	margin: "dense",

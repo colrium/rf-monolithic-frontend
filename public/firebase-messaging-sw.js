@@ -1,5 +1,5 @@
-importScripts("https://www.gstatic.com/firebasejs/5.9.4/firebase-app.js");
-importScripts("https://www.gstatic.com/firebasejs/5.9.4/firebase-messaging.js");
+importScripts('https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/8.2.10/firebase-messaging.js');
 
 /*import firebase from "firebase";
 import { firebase as firebaseConfig } from "config";*/
@@ -14,9 +14,27 @@ const firebaseConfig = {
      appId: "1:47480102815:web:aef14d1c29e4832f97a7aa",
      measurementId: "G-SPZ1031JXB"
 }
+const firebaseWebPushCertificate = "BCRs2cCvL59gp6AyJybuna4N7migtv4c6O6Twvgpg0-FE8yAhAmEpYNRc7YwV4T4QjhLQkds8U2NUS6ZVxVChXw";
 
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
+
+//messaging.usePublicVapidKey(firebaseWebPushCertificate);
+
+/*messaging.getToken({ vapidKey: firebaseWebPushCertificate }).then((currentToken) => {
+  if (currentToken) {
+    console.log('currentToken', currentToken);
+  } else {
+    // Show permission request UI
+    console.log('No registration token available. Request permission to generate one.');
+    // ...
+  }
+}).catch((err) => {
+  console.log('An error occurred while retrieving token. ', err);
+  // ...
+});*/
+
+
 messaging.setBackgroundMessageHandler(function(payload) {
      const promiseChain = clients
           .matchAll({
@@ -30,10 +48,44 @@ messaging.setBackgroundMessageHandler(function(payload) {
                }
           })
           .then(() => {
-               return registration.showNotification("my notification title");
+               const notificationTitle = payload.data.title;
+               const notificationOptions = {
+                    body: payload.data.message,
+                    icon: payload.data.icon,
+                    data: { url: payload.data.onClick }, //the url which we gonna use later
+               };
+               return self.registration.showNotification(notificationTitle,notificationOptions);
           });
      return promiseChain;
 });
-self.addEventListener("notificationclick", function(event) {
-     console.log(event);
+/*
+
+messaging.setBackgroundMessageHandler(function(payload) {
+
+     const notificationTitle = payload.data.title;
+     const notificationOptions = {
+          body: payload.data.message,
+          icon: payload.data.icon,
+          data: { url: payload.data.onClick }, //the url which we gonna use later
+     };
+     return self.registration.showNotification(notificationTitle,notificationOptions);
+});*/
+//Code for adding event on click of notification
+self.addEventListener('notificationclick', function(event) {
+     let url = event.notification.data.url;
+     event.notification.close(); 
+     event.waitUntil(clients.matchAll({type: 'window'}).then( windowClients => {
+               // Check if there is already a window/tab open with the target URL
+               for (var i = 0; i < windowClients.length; i++) {
+                    var client = windowClients[i];
+                    // If so, just focus it.
+                    if (client.url === url && 'focus' in client) {
+                         return client.focus();
+                    }
+               }
+               // If not, then open the target URL in a new window/tab.
+               if (clients.openWindow) {
+                    return clients.openWindow(url);
+               }
+     }));
 });

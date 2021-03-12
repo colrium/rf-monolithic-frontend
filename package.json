@@ -175,7 +175,8 @@
     },
     "plugins": [
       "react",
-      "prettier"
+      "prettier",
+      "unused-imports"
     ],
     "globals": {
       "google": true
@@ -183,13 +184,15 @@
     "extends": [
       "eslint:recommended",
       "plugin:react/recommended",
-      "prettier",
-      "unused-imports"
+      "prettier"
+      
     ],
     "rules": {
       "no-console": 0,
       "no-extend-native": 0,
       "react/display-name": 0,
+      "react/jsx-uses-react": "error",
+      "react/jsx-uses-vars": "error",
       "array-bracket-newline": 0,
       "function-call-argument-newline": 0,
       "function-paren-newline": 0,
@@ -199,11 +202,17 @@
       "react-hooks/exhaustive-deps": 0,
       "react/prop-types": 0,
       "no-unused-vars": "off",
+      "no-dupe-keys": "error",
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": [
         "warn",
         { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
       ]
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
     }
   },
   "prettier": {

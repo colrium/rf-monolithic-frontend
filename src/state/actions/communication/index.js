@@ -1,4 +1,4 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 import {
 	SET_MESSAGING_CACHE,
 	SEND_MESSAGE,
@@ -7,8 +7,11 @@ import {
 	SET_EMAILING_CACHE,
 	REMOVE_EMAILING_CACHE,
 	CLEAR_EMAILING_CACHE,
-	CLEAR_COMMUNICATION_CACHE
+	CLEAR_COMMUNICATION_CACHE,
+	apiCallRequest
 } from "state/actions";
+import {messages as messagesDefination} from "definations";
+import ApiService from "services/api";
 
 import firebaseApp, {firestore as fcFirestore, messaging as fcMessaging} from "utils/Firebase";
 
@@ -41,75 +44,90 @@ export function setEmailingCache(key, emailing) {
 	};
 }
 
+export function setActiveConversation(conversation) {
+	return async (dispatch, getState) => {
+		const {auth, communication: { messaging : {conversations, active_conversation, active_conversation_messages}}} = getState();
+		let conversation_messages = [];
+		if (auth.isAuthenticated && conversation) {
+			let conversation_id = conversation._id? conversation._id : conversation;
+			const ApiServiceInstance = new ApiService();
+			ApiServiceInstance.refresh();
+			ApiServiceInstance.setServiceUri(messagesDefination.endpoint);
+			if (active_conversation._id !== conversation_id) {
+				dispatch(setMessagingCache("active_conversation_messages", []));
+				dispatch(setMessagingCache("active_conversation", conversation));
+			}
+			
+			conversation_messages = await ApiServiceInstance.getRecords({conversation: conversation_id, asc: "created_on", p: "1", page: 1, pagination: 100}).then(res => {
+				//console.log("setActiveConversation active_conversation_messages res.body", res.body);
+				const { count, page, pages, data } = res.body;
+				//dispatch(setMessagingCache("active_conversation", {...conversation, page: page, pages: pages}));
+				if (Array.isArray(data)) {
+					return data;
+				}
+
+				return [];				
+			}).catch(e => {				
+				console.error("setActiveConversation active_conversation_messages e"+ e);
+				return [];
+			});
+			dispatch(setMessagingCache("active_conversation_messages", conversation_messages));
+
+
+		}
+		else {
+			dispatch(setMessagingCache("active_conversation", false));
+			dispatch(setMessagingCache("active_conversation_messages", []));
+		}
+
+	}
+}
+
 export function sendMessage(message) {
 	return async (dispatch, getState) => {
 		const {auth, communication: { messaging : {conversations, active_conversation, active_conversation_messages}}} = getState();
-		if (auth.isAuthenticated) {
-			let notifees_ids = [];
-			let targetConversation = active_conversation._id === message.conversation? active_conversation : false;
-
-			if (!targetConversation && Array.isArray(conversations)) {
-				for (var i = 0; i < conversations.length; i++) {
-					if (conversations[i]._id === message.conversation) {
-						targetConversation = conversations[i];
-						break;
-					}
-				}
-			}
-
-			if (targetConversation) {
-				if (targetConversation.owner !== auth.user._id && targetConversation.owner._id !== auth.user._id) {
-					if (active_conversation.owner._id) {
-						notifees_ids.push(active_conversation.owner._id);
-					}
-					else if (active_conversation.owner) {
-						notifees_ids.push(active_conversation.owner);
-					}
-					
-				}
-				targetConversation.recipients.map(recipient => {
-					if (JSON.isJSON(recipient) && "_id" in recipient && recipient._id !== auth.user._id) {
-						notifees_ids.push(recipient._id);
-					}
-					else if (!String.isEmpty(recipient) && recipient !== auth.user._id) {
-						notifees_ids.push(recipient);
-					}
+		
+		if (auth.isAuthenticated && message) {
+			let conversation_id = message.conversation? (message.conversation._id? message.conversation._id : message.conversation) : false;
+			if (conversation_id) {
+				const ApiServiceInstance = new ApiService();
+				ApiServiceInstance.refresh();
+				ApiServiceInstance.setServiceUri(messagesDefination.endpoint);
+				
+				let conversation_message = await ApiServiceInstance.create({...message, conversation: conversation_id, "created_on": new Date(), sender: auth.user._id}).then(res => {
+					const { data } = res.body;
+					return data;			
+				}).catch(e => {				
+					console.error("sendMessage e"+ e);
+					return false;
 				});
 
-
-				let tokens = await firebaseApp.firestore().collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', notifees_ids).get().then(querySnapshot => {
-				    	let tokensArr = [];
-						let docs = querySnapshot.docs;
-						
-						for (let doc of docs) {
-							let tokens = doc.get("tokens");
-							tokensArr = tokensArr.concat(tokens);
+				if (active_conversation && conversation_message) {
+					if (active_conversation._id === conversation_id) {
+						let new_active_conversation_messages = active_conversation_messages;
+						new_active_conversation_messages.push(conversation_message);
+						dispatch(setMessagingCache("active_conversation_messages", new_active_conversation_messages));
+					}
+				}
+				let new_conversations = conversations.map(conversation => {
+					if (conversation._id == conversation_id) {
+						conversation.state = {
+							...conversation.state,
+							total: conversation.state.total+1,
+							outgoing_total: conversation.state.outgoing_total+1,
+							last_message: conversation_message
 						}
-						return tokensArr;
-				});
-
-				console.log("sendMessage tokens", tokens)
-
-				let fcmMessage = {
-						"data": {
-							...message,
-							type: "new-message",
-						},
-						"tokens": tokens,
-						"notification": {
-						   "title": auth.user.first_name+" "+auth.user.last_name,
-						   "body": message.content
-						},
 					}
 
-				console.log("sendMessage fcmMessage", fcmMessage)
-						
-				fcMessaging.sendMulticast(fcmMessage);
+					return conversation;
+				});
+				dispatch(setMessagingCache("conversations", new_conversations));
+
 
 			}
-				
+
 		}
-				
+
 	}
 }
 

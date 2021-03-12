@@ -63,8 +63,8 @@ let storeState = { ...persistedState, ...volatile_state };
 
 const StoreSingleton = (function () {
 	var instance;
-	function createInstance() {
-        var newInstance =  createStore(reducers, storeState, compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f ));
+	function createInstance(state=false) {
+        var newInstance =  createStore(reducers, (state? state : storeState), compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f ));
         //Subscribe store for peristent states
 		newInstance.subscribe(() => applyPermanence(newInstance.getState()));
         return newInstance;
@@ -76,8 +76,12 @@ const StoreSingleton = (function () {
             }
             return instance;
         },
-        destroyInstance: async function() {	
+        destroyInstance: function() {	
 			instance = undefined;
+			return instance;
+		},
+		newInstance: function(state) {	
+			instance = createInstance(state);
 			return instance;
 		},
     };

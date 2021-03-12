@@ -224,7 +224,6 @@ const initialState = {
 
 
 const app = function(state = initialState, action) {
-	state = JSON.merge(initialState, state);
 	switch (action.type) {
 		case SET_VERSION: {
 			return {

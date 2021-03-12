@@ -2,23 +2,62 @@ import React, { useState, useEffect } from "react";
 
 import { connect } from "react-redux";
 import { useStore, useDispatch, useSelector } from 'react-redux';
+import { osName, osVersion, browserName, fullBrowserVersion } from 'react-device-detect';
 
-
-import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } from "state/actions";
+import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache, setActiveConversation } from "state/actions";
 import AuthHelper from 'hoc/Auth';
 import {default_location} from "config";
 import {socket as defaultSocket} from "utils/Sockets";
 import * as definations from "definations";
 import * as services from "services";
 import notificationSound from "assets/audio/notification.mp3";
-import {firestore as fcFirestore, messaging as fcMessaging} from "utils/Firebase";
+import {firestore as fcFirestore, messaging as fcMessaging, getFirestoreDoc, createUpdateFirestoreDoc} from "utils/Firebase";
 
 
-let models = {};
+let models = {
+	actionlogs: "ActionTrail",
+	answers: "Answer",
+	applications: "Application",
+	attachments: "Attachment",
+	commissions: "Commission",
+	conversations: "Conversation",
+	coupons: "Coupon",
+	courses: "Course",
+	currencies: "Currency",
+	demorequests: "DemoRequest",
+	emails: "Email",
+	events: "Event",
+	forms: 'Form',
+	formvalues: "FormValue",
+	fulfilments: "Fulfilment",
+	invoices: "Invoice",
+	messages: "Message",
+	notifications: "Notification",
+	orderitems: "OrderItem",
+	orders: "Order",
+	payments: "Payment",
+	posts: "Post",
+	preferences: "Preference",
+	queries: "SurveyQuery",
+	questions: "Question",
+	quizes: "Quiz",
+	quoterequests: "ProposalRequest",
+	responses: "Response",
+	results: "Result",
+	retailitems: "RetailItem",
+	settings: "Setting",
+	surveys: "Survey",
+	teams: "Team",
+	tracks: "Track",
+	users: "User",
+	vacancies: "Vacancy",
+};
+//console.log("definations", definations)
+/*
 for (let defination of Object.values(definations)) {
 	models[defination.name] = defination.model;
 }
-
+*/
 let defaultValue = {
 	models: models,
 	definations: definations,
@@ -58,7 +97,7 @@ const GlobalsProvider = props => {
 	let [settingsChangeCallBacks, setSettingsChangeCallBacks] = useState([]);
 	let [preferencesChangeCallBacks, setPreferencesChangeCallBacks] = useState([]);	
 
-	let { auth, cache: { data: dataCache}, communication: {messaging}, api, app, clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache } = props;
+	let { auth, cache: { data: dataCache}, communication: {messaging}, api, app, clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache, setActiveConversation } = props;
 	
 	const {isAuthenticated} = auth;
 
@@ -150,7 +189,8 @@ const GlobalsProvider = props => {
 	}
 
 	
-	const handleOnNewMessage = ({conversation, message, user}) => {
+	const handleOnNewMessage = (message) => {
+		const {conversation, sender} = message;
 		let sender_id = false;
 		if (JSON.isJSON(message.sender)) {
 			sender_id = message.sender._id;
@@ -161,7 +201,7 @@ const GlobalsProvider = props => {
 
 		if (sender_id) {
 			if (sender_id !== auth.user._id) {
-				notificationAudio.play();
+				//notificationAudio.play();
 			}
 			let currentConversation = messaging.active_conversation;
 				if (currentConversation) {
@@ -275,9 +315,9 @@ const GlobalsProvider = props => {
 
 	}
 
-	const handleOnMessageSent = ({conversation, message, user}) => {
+	const handleOnMessageSent = (message) => {
 
-		
+		const {conversation, sender} = message;
 
 		let sender_id = false;
 		if (JSON.isJSON(message.sender)) {
@@ -378,13 +418,16 @@ const GlobalsProvider = props => {
 		setMessagingCache("conversations", inbox);
 	}
 
+
+	
+
 	
 	
 	useEffect(()=> {
 				defaultSocket.on("create", async ({ context, action }) => {
 					let defination = definations[JSON.keyOf(models, context)];
 					
-					if (defination && auth.isAuthenticated ) {
+					if (defination && isAuthenticated ) {
 						let cacheData = defination.cache;
 						if (!["preferences", "settings"].includes(defination.name) && cacheData && defination.access.view.single(auth.user, action.result)) {
 							let newDataCache = Array.isArray(dataCache[defination.name])? dataCache[defination.name] : [];
@@ -402,7 +445,7 @@ const GlobalsProvider = props => {
 					let defination = definations[JSON.keyOf(models, context)];
 					
 
-					if (defination && auth.isAuthenticated) {
+					if (defination && isAuthenticated) {
 						let cacheData = defination.cache;
 						if (["users", "preferences", "settings"].includes(defination.name)) {
 							if (defination.name === "users") {
@@ -493,19 +536,12 @@ const GlobalsProvider = props => {
 							});
 				});
 
-				defaultSocket.on("reconnect", () => {
-					console.info("connection to server restored");
-					/*if (auth.isAuthenticated) {
-						defaultSocket.emit("set-identity", auth.user._id);
-						defaultSocket.emit("get-settings", auth.user._id);
-						defaultSocket.emit("get-inbox", auth.user);
-						defaultSocket.emit("get-clients-positions", { user: auth.user, type: 'all' });
-					}		*/			
-				});
+				
 
 				defaultSocket.on("connect", () => {
 					console.info("connection to server established");	
 					if (auth.isAuthenticated) {
+
 						defaultSocket.emit("set-identity", auth.user._id);
 						defaultSocket.emit("get-settings", auth.user._id);
 						defaultSocket.emit("get-inbox", auth.user);
@@ -636,23 +672,6 @@ const GlobalsProvider = props => {
 		}
 
 		if (window) {
-			//console.log("window", window);
-			if (window.navigator.geolocation && auth.isAuthenticated) {
-				window.navigator.geolocation.getCurrentPosition((position) => {
-					let deviceLocation = { 
-						lat: position.coords.latitude, 
-						lng: position.coords.longitude,
-						altitude: position.coords.altitude? position.coords.altitude : 0,
-						accuracy: position.coords.accuracy? position.coords.accuracy : 0,
-						altitudeAccuracy: position.coords.altitudeAccuracy? position.coords.altitudeAccuracy : 0,
-						heading: position.coords.heading? position.coords.heading : 0,
-						speed: position.coords.speed? position.coords.speed : 0,
-						timestamp: position.timestamp? position.timestamp : new Date().getTime() / 1000,
-					};
-					//console.log("deviceLocation", deviceLocation);
-					setDeviceLocation(deviceLocation);
-				});
-			}
 			window.addEventListener('online', handleOnInternetAvailabilityChange);
 			window.addEventListener('offline', handleOnInternetAvailabilityChange);
 			window.addEventListener('hashchange', handleOnHashChange, false);
@@ -684,7 +703,7 @@ const GlobalsProvider = props => {
 		}
 
 		
-
+		
 			
 			
 		setInitialized(true);
@@ -700,14 +719,15 @@ const GlobalsProvider = props => {
 	},[]);
 
 
+
 	useEffect(()=>{
 		if (auth.isAuthenticated && Object.size(auth.user) > 0) {
 			fcMessaging.requestPermission().then(async function() {
 				const token = await fcMessaging.getToken();
-				fcFirestore.collection("users").doc(auth.user._id).get().then(async (querySnapshot) => {
-					let querySnapshotDoc = querySnapshot.data();
+				//console.log("fcMessaging.requestPermission token", token);
+				let tokens = await getFirestoreDoc("users", auth.user._id).then(async (querySnapshotDoc) => {
 					let tokens = [token];
-					let saveToken = !Boolean(querySnapshotDoc);
+					let saveToken = !querySnapshotDoc;
 					if (querySnapshotDoc) {
 						if (Array.isArray(querySnapshotDoc.tokens)) {
 							if (!querySnapshotDoc.tokens.includes(token)) {
@@ -716,20 +736,69 @@ const GlobalsProvider = props => {
 							}
 						}
 					}
-					console.log("querySnapshotDoc", querySnapshotDoc);
+					//console.log("querySnapshotDoc", querySnapshotDoc);
 
 					if (saveToken) {
-						fcFirestore.collection("users").doc(auth.user._id).set({...auth.user, tokens: tokens});
+						console.log("saveToken tokens", tokens);
+
+						createUpdateFirestoreDoc("users", auth.user._id, {...auth.user, tokens: tokens});
+						//fcFirestore.collection("users").doc(auth.user._id).set({...auth.user, tokens: tokens});
 					}
+					return tokens;
 				});		
 				
 			}).catch(function(err) {
 				console.log("Unable to get permission to notify.", err);
 			});
-			navigator.serviceWorker.addEventListener("message", (message) => console.log(message));
+			let unsubscribeFcMessagingOnMessage =  fcMessaging.onMessage((payload) => {
+				const {data} = payload;
+		    	if (data.event_name === "new-message" || data.event_name === "message-sent") {
+		    		if (data.event_name === "new-message") {
+			    		if (messaging.active_conversation._id === data.conversation) {
+			    			setActiveConversation(messaging.active_conversation);
+			    		}
+		    		}
+		    	}
+				//console.log("fcMessaging.onMessage payload", payload);
+			});
+
+			let unsubscribeFcFirestoreUserOnSnapshot =  fcFirestore.collection("users").doc(auth.user._id).onSnapshot(function(docSnapshot) {
+				let docSnapshotData = docSnapshot.data();
+				if (docSnapshotData) {
+					setCurrentUser({...auth.user, ...docSnapshotData});
+				}
+			});
+
+			if (window) {
+				window.navigator.geolocation.getCurrentPosition((position) => {
+						let deviceLocation = { 
+							longitude: position.coords.latitude, 
+							longitude: position.coords.longitude,
+							altitude: position.coords.altitude? position.coords.altitude : 0,
+							accuracy: position.coords.accuracy? position.coords.accuracy : 0,
+							altitudeAccuracy: position.coords.altitudeAccuracy? position.coords.altitudeAccuracy : 0,
+							heading: position.coords.heading? position.coords.heading : 0,
+							speed: position.coords.speed? position.coords.speed : 0,
+							timestamp: new Date().toString(),
+							provider: +osName+" "+osVersion+", "+browserName+" "+fullBrowserVersion,
+						};
+
+						createUpdateFirestoreDoc("users", auth.user._id, {...auth.user, last_known_position: deviceLocation});
+						console.log("deviceLocation", deviceLocation);
+				});
+
+			}
+
+			return () => {
+				unsubscribeFcMessagingOnMessage();
+				unsubscribeFcFirestoreUserOnSnapshot();
+			}
+			
 		}
-	}, [auth]);
-	
+		else {
+			
+		}
+	}, [isAuthenticated]);
 
 
 	
@@ -749,31 +818,8 @@ const mapStateToProps = state => ({
 	communication: state.communication,
 });
 
-export default connect(mapStateToProps, { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache })(GlobalsProvider);
+export default connect(mapStateToProps, { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache, setActiveConversation })(GlobalsProvider);
 
-/*export const useGlobals = () => {
-	const context = React.useContext(GlobalsContext);
-	if (context === undefined) {
-		throw new Error(
-			"useGlobals must be used within a GlobalsProvider"
-		);
-	}
-	return context;
-};
-
-export const withGlobals = Component => {
-	function WithGlobals(props) {
-		let context = React.useContext(GlobalsContext);
-		
-		if (context === undefined) {
-			throw new Error("withGlobals must be used within a GlobalsProvider");
-		}
-
-		return <Component {...props} globals={context} />;
-	}
-
-	return WithGlobals;
-};*/
 
 
 export const useGlobals = () => {

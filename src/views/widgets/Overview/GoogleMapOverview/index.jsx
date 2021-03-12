@@ -381,7 +381,7 @@ class GoogleMapOverview extends React.Component {
 		
 
 		return (
-			<Card elevation={0} outlineColor={theme.palette.text.primary} style={{backgroundColor: theme.palette.background.paper }}  ref={this.elementRef}>
+			<Card elevation={0} outlineColor={theme.palette.text.primary} style={{backgroundColor: theme.palette.background.paper }}  >
 				<CardHeader
 					avatar={
 						<Avatar style={{backgroundColor: "rgba(0,0,0,0.05)", color:theme.palette.text.primary}}>
@@ -441,7 +441,7 @@ class GoogleMapOverview extends React.Component {
 				<CardContent className="p-0 m-0 overflow-x-hidden">
 					<GridContainer className="p-0 m-0">
 						<GridItem xs={12} className={classes.wrapper}>
-							<div className={classNames(classes.content, { [classes.contentDrawerMargin]: device.window_size.width >= 1280,  [classes.contentShift]: this.state.drawerOpen && device.window_size.width >= 1280})} style={{minHeight: device.window_size.height, backgroundColor: theme.palette.background.paper }}>
+							<div className={classNames(classes.content, { [classes.contentDrawerMargin]: device.window_size.width >= 1280,  [classes.contentShift]: this.state.drawerOpen && device.window_size.width >= 1280})} style={{minHeight: device.window_size.height, backgroundColor: theme.palette.background.paper }} ref={this.elementRef}>
 								
 
 								<GoogleMap									

@@ -322,11 +322,7 @@ class ListView extends React.Component {
 														{this.state.records.map(
 															(entry, index) => (
 																<div
-																	key={
-																		defination.name +
-																		"-" +
-																		index
-																	}
+																	key={defination.name +"-" +index}
 																>
 																	<ListItem 
 																		button 
@@ -340,10 +336,7 @@ class ListView extends React.Component {
 																	>
 																		{entry.avatar && (
 																			<ListItemAvatar>
-																				{" "}
-																				{
-																					entry.avatar
-																				}{" "}
+																				{entry.avatar}
 																			</ListItemAvatar>
 																		)}
 																		{entry.icon && (

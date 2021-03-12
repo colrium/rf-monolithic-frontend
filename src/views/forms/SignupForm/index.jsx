@@ -338,7 +338,7 @@ class SignupForm extends React.Component {
 					style={{ width: "100%" }}
 					noValidate={environment === "development"}
 					onSubmit={this.handleSignupSubmit}
-					autocomplete="off"
+					autoComplete="off"
 				>
 					<GridContainer>
 						{this.state.verifingAccount ? (
