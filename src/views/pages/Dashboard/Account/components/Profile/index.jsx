@@ -1,5 +1,11 @@
 /** @format */
-
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import IconButton from '@material-ui/core/IconButton';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import StarIcon from '@material-ui/icons/Star';
+import Avatar from '@material-ui/core/Avatar';
 import { Call as PhoneIcon, MailOutline as EmailIcon, Person as UserRoleIcon } from "@material-ui/icons";
 import Card from "components/Card";
 import GridContainer from "components/Grid/GridContainer";
@@ -9,12 +15,17 @@ import Status from "components/Status";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
+import Badge from '@material-ui/core/Badge';
 import { attachments as AttachmentsService } from "services";
+import { updateCurrentUser } from "state/actions/auth";
 import {withErrorHandler} from "hoc/ErrorHandler";
+
+
+const icon_names = ["female", "female_1", "female_2", "female_3", "female_4", "female_5", "female_6", "male", "male_1", "male_2", "male_3", "male_4", "male_5", "male_6", "them_1", "them_2", "them_3" ]
 
 class Profile extends Component {
 	render() {
-		const { auth } = this.props;
+		const { auth, updateCurrentUser } = this.props;
 
 		return (
 			<GridContainer>
@@ -63,13 +74,40 @@ class Profile extends Component {
 						</Card>
 
 						<LazyImage
-							src={AttachmentsService.getAttachmentFileUrl(
-								auth.user.avatar
-							)}
+							src={AttachmentsService.getAttachmentFileUrl(auth.user.avatar)}
+							fallbackSrc={`${process.env.PUBLIC_URL}/img/${auth.user.icon}.png`}
 							className="rounded-none lg:rounded-lg shadow-xl hidden lg:w-2/5 lg:block"
 							style={{ height: "50vh" }}
 						/>
 					</div>
+				</GridItem>
+
+				<GridItem xs={12} className={""}>
+
+					<Card className="w-full rounded-lg lg:rounded-l-lg lg:rounded-r-none p-4  mx-6 lg:mx-0">
+						<GridItem xs={12}>
+							<h1 className="text-xl pt-8 lg:pt-0">Preffered Icon</h1>
+						</GridItem>
+						<GridItem xs={12} className={"inline-flex flex-wrap flex-row items-center"}>
+					        {icon_names.map((icon_name) => (
+					            auth.user.icon === icon_name? (
+					            	<Avatar className={"m-2 h-20 w-20 border-2 border-green-600"} src={`${process.env.PUBLIC_URL}/img/${icon_name}.png`} key={icon_name}  alt={icon_name} />
+					            ) : (
+					            	<Avatar 
+					            		className={"m-2 h-16 w-16 cursor-pointer"} 
+					            		src={`${process.env.PUBLIC_URL}/img/${icon_name}.png`} 
+					            		alt={icon_name}  
+					            		key={icon_name} 
+					            		onClick={()=> {
+					            			updateCurrentUser({...auth.user, icon: icon_name});
+					            		}}
+					            	/>
+					            )
+					           
+					            
+					        ))}
+				        </GridItem>
+				    </Card>
 				</GridItem>
 			</GridContainer>
 		);
@@ -80,4 +118,4 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(compose(connect(mapStateToProps, {}))(Profile));
+export default withErrorHandler(compose(connect(mapStateToProps, {updateCurrentUser}))(Profile));

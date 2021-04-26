@@ -255,7 +255,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: {role: "admin"},
+					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "admin"},
 					resolves: {
 						value: "_id",
 						display: {
@@ -275,7 +275,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: {role: "collector"},
+					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector"},
 					resolves: {
 						value: "_id",
 						display: {

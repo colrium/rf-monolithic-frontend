@@ -75,10 +75,9 @@ const SectionComponent = (props) => {
 					setError(false);
 					setLoading(false);					
 				}).catch(e => {
-					console.log("faqs e", e);
-					setError(e);
-					setLoading(false);
-				});
+                    setError(e);
+                    setLoading(false);
+                });
 			}
 		}, [definations]);
 

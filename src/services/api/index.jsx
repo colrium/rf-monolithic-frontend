@@ -49,47 +49,38 @@ class ApiService {
 	}
 
 	handleRequestError(error) {
-		let resobj = {
-			err: {
-				code: 400,
-				msg: "Request Error: ",
-			},
+        let resobj = {
+			msg: "Request Error: ",
 			body: null,
 			code: 400,
+			status: 400,
 			headers: null,
 		};
-		if (error.response) {
+        if (error.response) {
+
 			resobj = {
-				err: {
-					code: error.response.status,
-					msg: error.response.statusText,
-				},
+				msg: error.response.statusText,
 				body: error.response.data,
 				code: error.response.status,
+				status: error.response.status,
 				headers: error.response.headers,
 			};
 			if (error.response.data) {
 				if (error.response.data.message) {
-					resobj.err.msg = error.response.data.message;
+					resobj.msg = error.response.data.message;
 				}
 			}
 		} else if (error.request) {
 			resobj = {
-				err: {
-					code: 500,
-					msg: "Request Error: " + error.message,
-				},
+				msg: "Request Error: " + error.message,
 				body: null,
 				code: 500,
+				status: 500,
 				headers: null,
 			};
 		}
-
-		console.error("Request Error", resobj);
-
-		let request_error = resobj.err;
-		throw request_error;
-	}
+        throw resobj;
+    }
 
 	async getRecords(params) {
 		let endpoint_uri = this.service_uri;
@@ -101,6 +92,26 @@ class ApiService {
 					err: false,
 					body: response.data,
 					code: response.status,
+					status: response.status,
+					headers: response.headers,
+				};
+			})
+			.catch(function(error) {
+				that.handleRequestError(error);
+			});
+	}
+
+	async get(params) {
+		let endpoint_uri = this.service_uri;
+		let that = this;
+		return await this.apiInstance
+			.get(endpoint_uri, { params: params })
+			.then(function(response) {
+				return {
+					err: false,
+					body: response.data,
+					code: response.status,
+					status: response.status,
 					headers: response.headers,
 				};
 			})
@@ -119,6 +130,7 @@ class ApiService {
 					err: false,
 					body: response.data,
 					code: response.status,
+					status: response.status,
 					headers: response.headers,
 				};
 			})
@@ -137,6 +149,7 @@ class ApiService {
 					err: false,
 					body: response.data,
 					code: response.status,
+					status: response.status,
 					headers: response.headers,
 				};
 			})
@@ -155,6 +168,7 @@ class ApiService {
 					err: false,
 					body: response.data,
 					code: response.status,
+					status: response.status,
 					headers: response.headers,
 				};
 			})
@@ -173,6 +187,7 @@ class ApiService {
 					err: false,
 					body: response.data,
 					code: response.status,
+					status: response.status,
 					headers: response.headers,
 				};
 			})
@@ -191,6 +206,7 @@ class ApiService {
 					err: false,
 					body: response.data,
 					code: response.status,
+					status: response.status,
 					headers: response.headers,
 				};
 			})
@@ -198,6 +214,46 @@ class ApiService {
 				that.handleRequestError(error);
 			});
 	}
+
+	async post(data) {
+		let endpoint_uri = this.service_uri;
+		let that = this;
+		return await this.apiInstance
+			.post(endpoint_uri, data)
+			.then(function(response) {
+				return {
+					err: false,
+					body: response.data,
+					code: response.status,
+					status: response.status,
+					headers: response.headers,
+				};
+			})
+			.catch(function(error) {
+				that.handleRequestError(error);
+			});
+	}
+
+	async put(data, params = {}) {
+		let endpoint_uri = this.service_uri;
+		let that = this;
+		return await this.apiInstance
+			.put(endpoint_uri, data, { params: params })
+			.then(function(response) {
+				return {
+					err: false,
+					body: response.data,
+					code: response.status,
+					status: response.status,
+					headers: response.headers,
+				};
+			})
+			.catch(function(error) {
+				that.handleRequestError(error);
+			});
+	}
+
+	
 
 	async delete(id) {
 		let endpoint_uri = this.service_uri + "/" + id;

@@ -127,9 +127,8 @@ class TimelineView extends React.Component {
 				this.loadData();
 			})
 			.catch(e => {
-				console.log("CalendarView delete error", e);
-				closeDialog();
-			});
+            closeDialog();
+        });
 	};
 
 	loadContext() {
@@ -174,22 +173,20 @@ class TimelineView extends React.Component {
 							}));
 						})
 						.catch(err => {
-							console.error("CalendarView resolveData err", err);
-							this.setState(state => ({
-								records: [],
-								load_error: { msg: err },
-								loading: false,
-							}));
-						});
+                        this.setState(state => ({
+                            records: [],
+                            load_error: { msg: err },
+                            loading: false,
+                        }));
+                    });
 				})
 				.catch(err => {
-					console.error("CalendarView loadData err", err);
-					this.setState(state => ({
-						records: [],
-						load_error: { msg: err },
-						loading: false,
-					}));
-				});
+                this.setState(state => ({
+                    records: [],
+                    load_error: { msg: err },
+                    loading: false,
+                }));
+            });
 		} else {
 			this.setState(state => ({
 				records: [],

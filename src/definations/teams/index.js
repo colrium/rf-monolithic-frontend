@@ -33,11 +33,6 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
-				avatar: "avatar",
-				primary: ["name"],
-				secondary: ["bias", "description"],
-			},
 			tableview: {
 				avatar: false,
 				title: ["name"],
@@ -112,10 +107,10 @@ export default {
 					required: false,
 				},
 				possibilities: {
-					none: "No Bias",
+					"none": "No Bias",
 					"all male": "All Male",
 					"all female": "All Female",
-					mixed: "Mixed",
+					"mixed": "Mixed",
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -159,7 +154,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "collector" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -211,7 +206,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "collector" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {

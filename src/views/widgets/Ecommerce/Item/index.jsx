@@ -64,12 +64,11 @@ class Widget extends React.Component {
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		if (snapshot.applyChanges) {
-			let newState = JSON.updateJSON(this.state, this.props);
-			console.log("newState", newState);
-			this.setState(newState);
-			this.calculateOptionsPrice();
-			this.canAddToCart();
-		}
+            let newState = JSON.updateJSON(this.state, this.props);
+            this.setState(newState);
+            this.calculateOptionsPrice();
+            this.canAddToCart();
+        }
 	}
 
 	handleOnItemAdd = event => {

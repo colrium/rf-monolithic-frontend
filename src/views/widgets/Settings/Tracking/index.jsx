@@ -31,10 +31,9 @@ function Widget(props) {
 			setLoading({...loading, [name] : false});
 			setAlerts({ [name]: name.humanize() + " saved", });
 		}).catch(e => {
-			setLoading({...loading, [name] : false});
-			setErrors({...errors, [name] : e.msg});
-			console.error("update tracking settings error", e);
-		});
+            setLoading({...loading, [name] : false});
+            setErrors({...errors, [name] : e.msg});
+        });
 	};
 
 

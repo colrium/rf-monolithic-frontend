@@ -246,13 +246,12 @@ let showClientInfoWindow = ({socketId, ...data}, google_map, marker, history) =>
 		infoWindow.open(google_map, marker);
 		_clientsPositionsOpenPopups.push(socketId);
 		google.maps.event.addListener(infoWindow,'closeclick',function(){
-			let position = _clientsPositionsOpenPopups.indexOf(socketId);
-			console.log("position", position)
-		   	_clientsPositionsOpenPopups = _clientsPositionsOpenPopups.remove(position);
-		   	if (!Array.isArray(_clientsPositionsOpenPopups)) {
+            let position = _clientsPositionsOpenPopups.indexOf(socketId);
+            _clientsPositionsOpenPopups = _clientsPositionsOpenPopups.remove(position);
+            if (!Array.isArray(_clientsPositionsOpenPopups)) {
 		   		_clientsPositionsOpenPopups = [];
 		   	}
-		});
+        });
 	}
 };
 
@@ -659,9 +658,8 @@ export default compose(
 	}, [regionBoundsClients]);
 
 	const handleOnSocketConnect = () => {
-		console.log("handleOnSocketConnect sockets.default.conected", sockets.default.conected);
-		sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
-	};
+        sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
+    };
 
 	
 
@@ -910,8 +908,7 @@ export default compose(
 
 
 	useLayoutEffect(() => {
-		console.log("useLayoutEffect render")
-		if (_map) {
+        if (_map) {
 			if (Function.isFunction(onMapLoad)) {
 				onMapLoad(_map, google);
 			}
@@ -920,7 +917,7 @@ export default compose(
 		else {
 			setMapOnAll(null);
 		}
-	}, [_map]);
+    }, [_map]);
 
 
 	useEffect(() => {	

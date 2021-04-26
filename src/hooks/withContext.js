@@ -70,13 +70,13 @@ function withContext(Component) {
 
 		const updateContextSettings = async (name, value) => {
 			if (String.isString(name)) {
-				let slug = name.toLowerCase().variablelize("-");
-				let postData = {
+                let slug = name.toLowerCase().variablelize("-");
+                let postData = {
 					name: name,
 					slug: slug,
 					value: value,
 				};
-				let updatedContext = await SettingsService.update(
+                let updatedContext = await SettingsService.update(
 					slug,
 					postData,
 					{ create: 1 }
@@ -90,12 +90,11 @@ function withContext(Component) {
 					.catch(e => {
 						return false;
 					});
-				if (updatedContext) {
+                if (updatedContext) {
 					setContext(updatedContext);
 				}
-				console.log("updatedContext", updatedContext);
-				return updatedContext;
-			}
+                return updatedContext;
+            }
 		};
 
 		if (!fetched && !fetching) {

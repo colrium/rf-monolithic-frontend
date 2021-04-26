@@ -13,58 +13,19 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import Skeleton from "@material-ui/lab/Skeleton";
 import { formats } from "config/data";
+import MUIDataTable from "mui-datatables";
 import PropTypes from "prop-types";
-import React, { forwardRef } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-
-
-import AddBox from '@material-ui/icons/AddBox';
-import ArrowDownward from '@material-ui/icons/ArrowDownward';
-import Check from '@material-ui/icons/Check';
-import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import ChevronRight from '@material-ui/icons/ChevronRight';
-import Clear from '@material-ui/icons/Clear';
-import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import Edit from '@material-ui/icons/Edit';
-import FilterList from '@material-ui/icons/FilterList';
-import FirstPage from '@material-ui/icons/FirstPage';
-import LastPage from '@material-ui/icons/LastPage';
-import Remove from '@material-ui/icons/Remove';
-import SaveAlt from '@material-ui/icons/SaveAlt';
-import Search from '@material-ui/icons/Search';
-import ViewColumn from '@material-ui/icons/ViewColumn';
-
-import MaterialTable from "material-table";
-
-import { withRouter } from "react-router";
+import ReactJson from 'react-json-view'
 import { attachments as AttachmentsService } from "services";
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
-import { FilesHelper, ServiceDataHelper } from "hoc/Helpers";
+import { FilesHelper, ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";
+import { withErrorHandler } from "hoc/ErrorHandler";
 import { withGlobals } from "contexts/Globals";
 import styles from "./styles";
-
-
-const tableIcons = {
-	Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-	Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-	Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-	Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-	DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-	Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-	Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
-	Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
-	FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-	LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-	NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-	PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
-	ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-	Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-	SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
-	ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-	ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
-};
 
 class TableView extends React.Component {
 	state = {
@@ -79,8 +40,8 @@ class TableView extends React.Component {
 		raw_data_mutated: false,
 		mouseX: null,
 		mouseY: null,
-		actions: [],
 		actionsView: "contextMenu",
+
 		context: null,
 	};
 	constructor(props) {
@@ -95,22 +56,19 @@ class TableView extends React.Component {
 		this.handleDeleteItem = this.handleDeleteItem.bind(this);
 		this.handleOnRowContextMenu = this.handleOnRowContextMenu.bind(this);
 		this.handleSocketsOnCreate = this.handleSocketsOnCreate.bind(this);
-
-
-		
 	}
 
 	componentDidMount() {
-		const { cache, defination, sockets } = this.props;
-		if (sockets) {
+        const { cache, defination, sockets } = this.props;
+        if (sockets) {
 			if (sockets.default) {
 				sockets.default.on("create", this.handleSocketsOnCreate);
 			}
 		}
-		this.mounted = true;
-		this.loadContext();
-		this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
-	}
+        this.mounted = true;
+        this.loadContext();
+        this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
+    }
 
 	getSnapshotBeforeUpdate(prevProps) {
 		this.mounted = false;
@@ -132,10 +90,8 @@ class TableView extends React.Component {
 		if (snapshot.dataReloadRequired) {
 			const { query } = this.props;
 			this.setState(
-				{ query: query ? { ...query, p: 1 } : { p: 1 } },
-				() => {
-					this.loadData(query ? { ...query, p: 1 } : { p: 1 })
-				}
+				{ query: query ? { p: 1, ...query } : { p: 1 } },
+				this.loadData
 			);
 		}
 		if (this.state.raw_data_mutated) {
@@ -149,7 +105,7 @@ class TableView extends React.Component {
 				sockets.default.off("create", this.handleSocketsOnCreate);
 			}
 		}
-	}
+    }
 
 	handleSocketsOnCreate = (event) => {
 		const { defination, sockets } = this.props;
@@ -157,17 +113,14 @@ class TableView extends React.Component {
 		const { raw_data } = this.state;
 		if (defination.model === context) {
 			this.setState(prevState => {
-				const { raw_data } = prevState;
-				/*console.log("handleSocketsOnCreate context", context);
-				console.log("handleSocketsOnCreate action", action);*/
-				let new_raw_data = Array.isArray(raw_data)? raw_data : [];
-				new_raw_data.unshift(action.result);
-				/*console.log("handleSocketsOnCreate new_raw_data", new_raw_data);*/
-				return {
+                const { raw_data } = prevState;
+                let new_raw_data = Array.isArray(raw_data)? raw_data : [];
+                new_raw_data.unshift(action.result);
+                return {
 					raw_data: new_raw_data,
 					raw_data_mutated: true,
 				}
-			});
+            });
 				
 		}
 		
@@ -178,7 +131,8 @@ class TableView extends React.Component {
 		let that = this;
 		openDialog({
 			title: "Confirm Delete",
-			body: "Are you sure you want delete entry? This action might be irreversible",
+			body:
+				"Are you sure you want delete entry? This action might be irreversible",
 			actions: {
 				cancel: {
 					text: "Cancel",
@@ -238,16 +192,16 @@ class TableView extends React.Component {
 	};
 
 	handleOnRowContextMenu = index => event => {
-		event.preventDefault();
-		const mouseX = event.clientX - 2;
-		const mouseY = event.clientY - 4;
+        event.preventDefault();
+        const mouseX = event.clientX - 2;
+        const mouseY = event.clientY - 4;
 
-		this.setState(prevState => ({
+        this.setState(prevState => ({
 			mouseX: mouseX,
 			mouseY: mouseY,
 			context: prevState.raw_data[index],
 		}));
-	};
+    };
 
 	handleOnRowContextMenuClose = event => {
 		event.preventDefault();
@@ -265,8 +219,75 @@ class TableView extends React.Component {
 			let dt_columns = [];
 			if (!defination.access.restricted(auth.user)) {
 				dt_columns.push({
-					title: String.isString(defination.label)? defination.label.singularize() : ("ID"),
-					field: '_id',
+					name: "entry",
+					label: String.isString(defination.label)? defination.label.singularize() : ("Action"),
+					options: {
+						filter: false,
+						sort: false,
+						/*customBodyRenderLite: (dataIndex, rowIndex) => {
+							console.log("dataIndex", dataIndex);
+							let value = this.state.records[dataIndex].entry;
+							if (actionsType === "inline") {
+								return (
+									<GridContainer
+										spacing={2}
+										className={classes.data_actions_wrapper}
+									>
+										{Object.keys(defination.access.actions).map((action_name, action_index) =>
+											!defination.access.actions[action_name].restricted(auth.user) && (
+												<div
+													key={
+														value +
+														"_" +
+														action_name +
+														"_action"
+													}
+												>
+													{action_name === "delete" ? defination.access.actions[action_name].link.inline.listing(value,
+																"error_text",
+																this.handleDeleteItemConfirm(
+																	value
+																)
+														  )
+														: defination.access.actions[
+																action_name
+														  ].link.inline.listing(
+																value
+														  )}
+												</div>
+											)
+										)}
+									</GridContainer>
+								);
+							}
+						},*/
+						customBodyRender: (value, tableMeta, updateValue) => {
+							if (actionsType === "inline") {
+								return (
+									<GridContainer
+										spacing={2}
+										className={classes.data_actions_wrapper}
+									>
+										{Object.keys(defination.access.actions).map((action_name, action_index) =>
+											(Function.isFunction(defination.access.actions[action_name].restricted) && !defination.access.actions[action_name].restricted(auth.user)) && (
+												<div
+													key={
+														value +
+														"_" +
+														action_name +
+														"_action"
+													}
+												>
+													{action_name === "delete" ? defination.access.actions[action_name].link.inline.listing(value, "error_text", this.handleDeleteItemConfirm(value)) : defination.access.actions[action_name].link.inline.listing(value)}
+												</div>
+											)
+										)}
+									</GridContainer>
+								);
+							}
+								
+						},
+					},
 				});
 
 				for (let [name, field] of Object.entries(columns)) {
@@ -281,79 +302,146 @@ class TableView extends React.Component {
 					}
 
 					if (display_field) {
-						if (Function.isFunction(this.state.defination.views.listing.tableview.resolveData)) {
+						if (
+							UtilitiesHelper.isOfType(
+								this.state.defination.views.listing.tableview
+									.resolveData,
+								"function"
+							)
+						) {
 							if (field.reference || field.possibilities) {
-
 								dt_columns.push({
-									field: name,
-									title: field.label,
-									render: rowData => {
-										if (Array.isArray(rowData[name])) {
+									name: name,
+									label: field.label,
+									options: {
+										filter: field.possibilities
+											? true
+											: false,
+										sort: true,
+										customBodyRender: (
+											value,
+											tableMeta,
+											updateValue
+										) => {
+											if (Array.isArray(value)) {
 												return (
 													<GridContainer spacing={2}>
-														{rowData[name].map((entry, cursor) => (
-																<div key={cursor} >{entry} </div>
-														))}
-													</GridContainer>
-												);
-										} 
-										else {
-												return rowData? rowData : "";
-										}
-									},
-									...field.tableProps
-								});
-							} else {
-								dt_columns.push({
-									field: name,
-									title: field.label,
-									...field.tableProps
-								});
-							}
-						} 
-						else {
-							if (field.reference && field.input.type !== "file" && !field.isAttachment ) {
-								dt_columns.push({
-									field: name,
-									title: field.label,
-									render: rowData => {
-										if (Array.isArray(rowData[name])) {
-												return (
-													<GridContainer spacing={2}>
-														{rowData[name].map((entry, cursor) => (
-																<Chip className={classes.valueChip} key={entry.value} label={entry.resolve}/>
+														{value.map(
+															(entry, cursor) => (
+																<div
+																	key={cursor}
+																>
+																	{" "}
+																	{entry}{" "}
+																</div>
 															)
 														)}
 													</GridContainer>
 												);
-										} 
-										else {
-												return rowData[name]? ( <Chip label={rowData[name].resolve} /> ) : ( "" );
-										}
+											} else {
+												return value !== null &&
+													value !== undefined
+													? value
+													: "";
+											}
+										},
 									},
-									...field.tableProps
+								});
+							} else {
+								dt_columns.push({
+									name: name,
+									label: field.label,
+									options: {
+										filter: field.possibilities
+											? true
+											: false,
+										sort: true,
+									},
+								});
+							}
+						} else {
+							if (
+								field.reference &&
+								field.input.type !== "file" && !field.isAttachment
+							) {
+								dt_columns.push({
+									name: name,
+									label: field.label,
+									options: {
+										filter: field.possibilities
+											? true
+											: false,
+										sort: true,
+										customBodyRender: (
+											value,
+											tableMeta,
+											updateValue
+										) => {
+											if (Array.isArray(value)) {
+												return (
+													<GridContainer spacing={2} className={"flex"}>
+														{value.map(
+															(entry, cursor) => (
+																<Typography
+																	key={entry.value}
+																>
+																{entry.resolve}
+																</Typography>
+															)
+														)}
+													</GridContainer>
+												);
+											} else {
+												return value !== null &&
+													value !== undefined ? (
+													value.resolve
+												) : (
+													""
+												);
+											}
+										},
+									},
 								});
 							} 
-							else if (field.reference && (field.input.type === "file" || field.isAttachment)) {
+							else if ( field.reference && (field.input.type === "file" || field.isAttachment) ) {
 								dt_columns.push({
-									field: name,
-									title: field.label,
-									render: rowData => {
-										if (Array.isArray(rowData[name])) {
+									name: name,
+									label: field.label,
+									options: {
+										filter: Boolean(field.possibilities),
+										sort: true,
+										customBodyRender: (
+											value,
+											tableMeta,
+											updateValue
+										) => {
+											if (Array.isArray(value)) {
 												return (
 													<GridContainer spacing={2}>
-														{rowData[name].map(
+														{value.map(
 															(entry, cursor) => (
 																<Chip
-																	className={classes.valueChip}
+																	className={
+																		classes.valueChip
+																	}
 																	avatar={
-																		<Avatar color="#cfd8dc" textColor="#000000"
+																		<Avatar
+																			color="#cfd8dc"
+																			textColor="#000000"
 																			src={
-																				FilesHelper.fileType(entry.resolve) ==="image"
-																					? AttachmentsService.getAttachmentFileUrl(entry.value): undefined
+																				FilesHelper.fileType(
+																					entry.resolve
+																				) ===
+																				"image"
+																					? AttachmentsService.getAttachmentFileUrl(
+																							entry.value
+																					  )
+																					: undefined
 																			}
 																		>
-																			{FilesHelper.fileIcon(entry.resolve)}
+																			{FilesHelper.fileIcon(
+																				entry.resolve
+																			)}
 																		</Avatar>
 																	}
 																	label={
@@ -379,45 +467,90 @@ class TableView extends React.Component {
 													</GridContainer>
 												);
 											} 
+
 											else {
-												return rowData[name]? (
+												return value !== null &&
+													value !== undefined ? (
 													<Chip
 														avatar={
 															<Avatar
 																color="#cfd8dc"
 																textColor="#000000"
 																src={
-																	FilesHelper.fileType(rowData[name].resolve) ==="image"? AttachmentsService.getAttachmentFileUrl(rowData[name].value): undefined
+																	FilesHelper.fileType(
+																		value.resolve
+																	) ===
+																	"image"
+																		? AttachmentsService.getAttachmentFileUrl(
+																				value.value
+																		  )
+																		: undefined
 																}
 															>
-																{FilesHelper.fileIcon(rowData[name].resolve)}
+																{FilesHelper.fileIcon(
+																	value.resolve
+																)}
 															</Avatar>
 														}
 														onClick={e => {
 															e.preventDefault();
 															let win = window.open(
 																AttachmentsService.getAttachmentFileUrl(
-																	rowData[name].value
+																	value.value
 																),
 																"_blank"
 															);
 															win.focus();
 														}}
-														label={rowData[name].resolve}
+														label={value.resolve}
 													/>
 												) : (
 													""
 												);
 											}
 										},
-										...field.tableProps
-									
+									},
 								});
-							} else {
+							}
+							else if ( field.type === "object") {
 								dt_columns.push({
-									field: name,
-									title: field.label,
-									...field.tableProps
+									name: name,
+									label: field.label,
+									options: {
+										filter: false,
+										sort: false,
+										customBodyRender: (
+											value,
+											tableMeta,
+											updateValue
+										) => {
+											try {
+												value = JSON.parse(value);
+												return (
+													<ReactJson name={field.label} src={value} enableClipboard={false}  displayDataTypes={false} collapsed/>
+												);
+											}catch(err) {
+												return;
+											}
+											
+												
+											
+											
+											
+										},
+									},
+								});
+							} 
+							else {
+								dt_columns.push({
+									name: name,
+									label: field.label,
+									options: {
+										filter: field.possibilities
+											? true
+											: false,
+										sort: true,
+									},
 								});
 							}
 						}
@@ -437,10 +570,8 @@ class TableView extends React.Component {
 					dt_columns: dt_columns,
 					records: [],
 					loading: false,
-				}, () => {
-					this.loadData(query ? { ...query, p: 1 } : { p: 1 })
-				}
-				
+				},
+				this.loadData
 			);
 		}
 	}
@@ -449,7 +580,7 @@ class TableView extends React.Component {
 		const { defination, auth } = this.props;
 		let parsed_data = entry;
 		let columns = defination.scope.columns;
-		//parsed_data["entry"] = entry;
+		parsed_data["entry"] = entry;
 		for (let [field_name, field] of Object.entries(columns)) {
 			if (field.input.type === "date") {
 				if (entry[field_name]) {
@@ -485,10 +616,8 @@ class TableView extends React.Component {
 					parsed_data[field_name] = "No";
 				}
 			}
-			if (JSON.isJSON(parsed_data[field_name]) && !field.reference) {
-				parsed_data[field_name] = JSON.stringify(
-					parsed_data[field_name]
-				);
+			if (JSON.isJSON(parsed_data[field_name]) && !field.reference && field.type !== "object") {
+				parsed_data[field_name] = JSON.stringify(parsed_data[field_name]);
 			}
 			if (field.possibilities) {
 				if (JSON.isJSON(field.possibilities)) {
@@ -513,7 +642,7 @@ class TableView extends React.Component {
 		return parsed_data;
 	}
 
-	loadData(query={}) {
+	loadData() {
 		const { auth, cache, defination, apiCallRequest, cache_data, onLoadData, load_data } = this.props;
 		if (defination ) {
 			if (load_data) {
@@ -522,13 +651,13 @@ class TableView extends React.Component {
 					{
 						uri: defination.endpoint,
 						type: "records",
-						params: query,
+						params: this.state.query,
 						data: {},
 						cache: cache_data,
 					}
 				).then(data => {
 					if (Function.isFunction(onLoadData)) {
-						onLoadData(data, query);
+						onLoadData(data, this.state.query);
 					}
 					this.setState({loading: false});
 					this.prepareData(data);
@@ -541,11 +670,11 @@ class TableView extends React.Component {
 				});
 			}
 			else {
-				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];				
-				this.prepareData(data);
+				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];
 				if (Function.isFunction(onLoadData)) {
-					onLoadData(data, query);
+					onLoadData(data, this.state.query);
 				}
+				this.prepareData(data);
 			}
 		}
 		else {
@@ -565,24 +694,94 @@ class TableView extends React.Component {
 
 
 
-		resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(target_data, columns, auth.user);
+		if (Function.isFunction(defination.views.listing.tableview.resolveData)) {
+			defination.views.listing.tableview
+				.resolveData(target_data, true)
+				.then(resolve => {
+					if (this.mounted) {
+						this.setState(state => ({
+							raw_data: target_data,
+							records: resolve,
+							loading: false,
+						}));
+					} else {
+						this.state.records = resolve;
+						this.state.loading = false;
+					}
+				})
+				.catch(e => {
+					if (this.mounted) {
+						this.setState(state => ({
+							raw_data: [],
+							records: [],
+							loading: false,
+						}));
+					} else {
+						this.state.records = [];
+						this.state.loading = false;
+					}
+				});
+		} else {
+			resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(
+				target_data,
+				columns,
+				auth.user
+			);
 			let that = this;
 			let all_records = resolved_data.map(entry => {
 				return that.parseData(entry);
 			});
-
-			console.log("all_records", all_records);
 			this.setState(state => ({ records: all_records }));
-	}
-
-	downloadCSV(data) {
-		data.toCSV();
+		}
 	}
 
 	render() {
-		const { classes, defination, api, cache, actionsType, history, location, auth } = this.props;
-		
-
+		const { classes, defination, api, cache, actionsType } = this.props;
+		const table_options = {
+			filterType: "dropdown",
+			filter: true,
+			downloadOptions: {
+				filename:
+					(defination ? defination.label : "Records") +
+					" - " +
+					new Date().format("d M Y H:i:s A") +
+					".csv",
+				separator: ",",
+			},
+			resizableColumns: false,
+			selectableRows: "none",
+			responsive: "scroll",
+			pagination: false,
+			rowHover: true,
+			/*onCellClick: (colData, cellMeta) => {
+				console.log("onCellClick colData", colData);
+			},
+			setRowProps: (row, dataIndex, rowIndex) => {
+				console.log("setRowProps dataIndex", dataIndex);
+				let rowProps = {};
+				if (actionsType === "context") {
+					rowProps.onContextMenu = this.handleOnRowContextMenu(dataIndex);
+				}
+				return rowProps;
+			},*/
+			customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {}
+		};
+		/*if (actionsType === "context") {
+			table_options.customRowRender = (data, dataIndex, rowIndex) => {
+						console.log("customRowRender data", data);
+						return (
+							<TableRow key={"row-"+rowIndex} onContextMenu={ this.handleOnRowContextMenu(dataIndex) }>
+								{data.map((value, index)=>(
+									<TableCell 
+										key={"row-"+rowIndex+"-cell-"+index}
+									>
+										{ value }
+									</TableCell>
+								))}
+							</TableRow>
+						);
+					};
+		}*/
 		return (
 			<GridContainer className={classes.root}>
 				<GridItem className="p-0 m-0" xs={12}>
@@ -625,37 +824,11 @@ class TableView extends React.Component {
 									</ClickAwayListener>}
 
 								{this.state.records.length > 0 ? (
-									<MaterialTable
-										icons={tableIcons}
-										columns={this.state.dt_columns}
-										data={this.state.records}
-										options={{
-											search: false,
-											exportButton: true,
-											exportCsv: (tableColumns, tableData) => {
-												let csvDataColumns = {};
-												tableColumns.map(column => {
-													csvDataColumns[column.field] = column.title;
-												});
-												tableData.unshift(csvDataColumns);
-												
-												tableData.forEach(row => {
-													Object.entries(row).map(([column, value]) => {
-														if (JSON.isJSON(value)) {
-															row[column] = value.resolve;
-														}
-													});
-												});
-												tableData.toCSV(((defination ? defination.label : "Records") +" - " + new Date().format("d M Y H:i:s A") + ".csv"));
-									        },
-									        paging: false,
-										}}
+									<MUIDataTable
 										title={(api.loading ? "Loading " : "") + defination.label + (api.loading ? "..." : "")}
-										onRowClick={(event, rowData) => {
-											//console.log("onRowClick rowData", rowData);
-											//history.push(('/'+defination.name+'/view/'+rowData._id).toUriWithDashboardPrefix());
-										}}
-										actions={Function.isFunction(defination.access.actions.tableview)? defination.access.actions.tableview(auth.user) : defination.access.actions.tableview}
+										data={this.state.records}
+										columns={this.state.dt_columns}
+										options={table_options}
 									/>
 								) : (
 									<GridContainer
@@ -735,10 +908,10 @@ const mapStateToProps = (state, ownProps) => ({
 	api:state.api,
 });
 
-export default 
+export default withErrorHandler(
 	compose(
 		withStyles(styles),
 		withGlobals,
-		withRouter,
 		connect(mapStateToProps, { openDialog, closeDialog, apiCallRequest })
-	)(TableView);
+	)(TableView)
+);

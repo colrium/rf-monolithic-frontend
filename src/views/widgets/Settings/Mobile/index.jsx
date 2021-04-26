@@ -31,10 +31,9 @@ function Widget(props) {
 			setLoading({...loading, [name] : false});
 			setAlerts({ [name]: name.humanize() + " saved", });
 		}).catch(e => {
-			setLoading({...loading, [name] : false});
-			setErrors({...errors, [name] : e.msg});
-			console.error("update mobile settings error", e);
-		});
+            setLoading({...loading, [name] : false});
+            setErrors({...errors, [name] : e.msg});
+        });
 	};
 
 	const handleOnTextChange = name => async (value, event) => {
@@ -46,10 +45,9 @@ function Widget(props) {
 			setLoading({...loading, [name] : false});
 			setAlerts({ [name]: name.humanize() + " saved", });
 		}).catch(e => {
-			setLoading({...loading, [name] : false});
-			setErrors({...errors, [name] : e.msg});
-			console.error("update mobile settings error", e);
-		});
+            setLoading({...loading, [name] : false});
+            setErrors({...errors, [name] : e.msg});
+        });
 	};
 
 	return (

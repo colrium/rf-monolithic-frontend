@@ -28,6 +28,7 @@ function sanitizeUser(user) {
 			delete parsedUser.__v;
 			delete parsedUser.last_login_attempt;
 
+			
 			const isOwner = Array.isArray(user.role)
 				? user.role.includes("owner")
 				: user.role == "owner";

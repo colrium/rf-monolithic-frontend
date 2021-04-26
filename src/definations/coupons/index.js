@@ -38,11 +38,6 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
-				avatar: false,
-				primary: ["name"],
-				secondary: ["code", "status", "expiration_date", "use"],
-			},
 			tableview: {
 				avatar: false,
 				title: ["name"],
@@ -147,7 +142,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "customer" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "customer" },
 					resolves: {
 						value: "_id",
 						display: {

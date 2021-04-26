@@ -320,10 +320,9 @@ const AnimatedChevronMap = (props) => {
 		useEffect(()=>{
 			
 			if (points.length > 0 && !paused && mapPopup) {
-				let currentItem = (activePoint >= (points.length-1) || activePoint < 0? 0 : activePoint+1);
-				let previousItem = currentItem > 0? (currentItem-1) : (points.length-1); 
-				console.log(" points.length", points.length)
-				if (started) {
+                let currentItem = (activePoint >= (points.length-1) || activePoint < 0? 0 : activePoint+1);
+                let previousItem = currentItem > 0? (currentItem-1) : (points.length-1);
+                if (started) {
 					
 
 					nextAnimTimeOut = setInterval(function() {
@@ -504,12 +503,7 @@ const AnimatedChevronMap = (props) => {
 					
 						
 				}
-
-				
-				
-				
-				
-			}
+            }
 			else{
 				clearTimeout(startAnimTimeOut);
 				clearInterval(nextAnimTimeOut);

@@ -43,7 +43,7 @@ export default class Routes extends Component {
 					component={Login}
 					placeholder={<RouteComponentPlaceHolder />}
 				/>
-				<Route
+				{/*<Route
 					path="/signin"
 					component={Login}
 					placeholder={<RouteComponentPlaceHolder />}
@@ -59,7 +59,7 @@ export default class Routes extends Component {
 					path="/register"
 					component={Register}
 					placeholder={<RouteComponentPlaceHolder />}
-				/>
+				/>*/}
 				<Route path="/" entry entryPaths={{unauthenticated: "/home".toUriWithLandingPagePrefix(), authenticated: "/home".toUriWithDashboardPrefix() }} />
 				<Route
 					path="*"

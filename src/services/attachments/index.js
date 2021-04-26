@@ -114,15 +114,12 @@ class AttachmentsApiService extends ApiService {
 	}
 
 	async image(attachment) {
-		let image_url = this.getAttachmentFileUrl(attachment);
-		let image = new Image();
+        let image_url = this.getAttachmentFileUrl(attachment);
+        let image = new Image();
 
-		image.onload = () => {
-			console.log("image onload", this);
-		};
-		console.log("image", image);
-		image.src = image_url;
-	}
+        image.onload = () => {};
+        image.src = image_url;
+    }
 
 	async getAttachmentFileById(id) {
 		let file_url = this.service_uri + "/download/" + id;

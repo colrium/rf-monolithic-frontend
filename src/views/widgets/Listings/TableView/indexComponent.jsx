@@ -58,17 +58,16 @@ class TableView extends React.Component {
 	}
 
 	componentDidMount() {
-		const { cache, defination, sockets } = this.props;
-		console.log("sockets", sockets);
-		if (sockets) {
+        const { cache, defination, sockets } = this.props;
+        if (sockets) {
 			if (sockets.default) {
 				sockets.default.on("create", this.handleSocketsOnCreate);
 			}
 		}
-		this.mounted = true;
-		this.loadContext();
-		this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
-	}
+        this.mounted = true;
+        this.loadContext();
+        this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
+    }
 
 	getSnapshotBeforeUpdate(prevProps) {
 		this.mounted = false;
@@ -113,17 +112,14 @@ class TableView extends React.Component {
 		const { raw_data } = this.state;
 		if (defination.model === context) {
 			this.setState(prevState => {
-				const { raw_data } = prevState;
-				console.log("handleSocketsOnCreate context", context);
-				console.log("handleSocketsOnCreate action", action);
-				let new_raw_data = Array.isArray(raw_data)? raw_data : [];
-				new_raw_data.unshift(action.result);
-				console.log("handleSocketsOnCreate new_raw_data", new_raw_data);
-				return {
+                const { raw_data } = prevState;
+                let new_raw_data = Array.isArray(raw_data)? raw_data : [];
+                new_raw_data.unshift(action.result);
+                return {
 					raw_data: new_raw_data,
 					raw_data_mutated: true,
 				}
-			});
+            });
 				
 		}
 		
@@ -195,17 +191,16 @@ class TableView extends React.Component {
 	};
 
 	handleOnRowContextMenu = index => event => {
-		event.preventDefault();
-		const mouseX = event.clientX - 2;
-		const mouseY = event.clientY - 4;
+        event.preventDefault();
+        const mouseX = event.clientX - 2;
+        const mouseY = event.clientY - 4;
 
-		console.log("this.state.raw_data[index]", this.state.raw_data[index]);
-		this.setState(prevState => ({
+        this.setState(prevState => ({
 			mouseX: mouseX,
 			mouseY: mouseY,
 			context: prevState.raw_data[index],
 		}));
-	};
+    };
 
 	handleOnRowContextMenuClose = event => {
 		event.preventDefault();
@@ -750,10 +745,7 @@ class TableView extends React.Component {
 				}
 				return rowProps;
 			},*/
-			customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
-				console.log("customToolbarSelect selectedRows", selectedRows);
-				console.log("customToolbarSelect displayData", displayData);
-			}
+			customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {}
 		};
 		/*if (actionsType === "context") {
 			table_options.customRowRender = (data, dataIndex, rowIndex) => {

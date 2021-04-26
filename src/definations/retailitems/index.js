@@ -40,11 +40,11 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
+			/*listview: {
 				avatar: false,
 				primary: ["name"],
 				secondary: ["currency", "cost", "available"],
-			},
+			},*/
 			tableview: {
 				avatar: false,
 				title: ["name"],

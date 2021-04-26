@@ -151,10 +151,9 @@ class BaseForm extends React.Component {
 
 		if (form_state) {
 			if (JSON.isJSON(form_state.values)) {
-				console.log("form_state.values", form_state.values);
-				field_values = form_state.values;
-				initializeRedux = false;
-				if (Function.isFunction(onValuesChange)) {
+                field_values = form_state.values;
+                initializeRedux = false;
+                if (Function.isFunction(onValuesChange)) {
 					let labels = {};
 					for (let key of Object.keys(field_values)) {
 						if (key in this.state.value_possibilities) {
@@ -166,7 +165,7 @@ class BaseForm extends React.Component {
 					}
 					onValuesChange(field_values, labels);
 				}
-			}				
+            }				
 		} 
 		else if (JSON.isJSON(initialValues) && Object.size(initialValues) > 0) {
 			field_values = initialValues;
@@ -750,11 +749,9 @@ class BaseForm extends React.Component {
 		else if (method.length === 3) {
 			method_data = method(this.state.field_values, auth.user, this);
 		}
-		return  Promise.all([method_data]).then(data => {
+		return Promise.all([method_data]).then(data => {
 					return method_data;
-		}).catch(err => {
-			console.error("called method error", err);
-		});
+		}).catch(err => {});
 	}
 
 	renderFieldInput(name, field, restricted = false) {

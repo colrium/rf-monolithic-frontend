@@ -86,48 +86,37 @@ class Notification extends React.Component {
 	}
 
 	handleDesktopPermissionGranted() {
-		console.log("Permission Granted");
-		this.setState({
+        this.setState({
 			ignore: false,
 		});
-	}
+    }
 	handleDesktopPermissionDenied() {
-		console.log("Permission Denied");
-		this.setState({
+        this.setState({
 			ignore: true,
 		});
-	}
+    }
 	handleDesktopNotSupported() {
-		console.log("Web Notification not Supported");
-		this.setState({
+        this.setState({
 			ignore: true,
 		});
-	}
+    }
 
-	handleDesktopNotificationOnClick(e, tag) {
-		console.log(e, "Notification clicked tag:" + tag);
-	}
+	handleDesktopNotificationOnClick(e, tag) {}
 
-	handleDesktopNotificationOnError(e, tag) {
-		console.log(e, "Notification error tag:" + tag);
-	}
+	handleDesktopNotificationOnError(e, tag) {}
 
-	handleDesktopNotificationOnClose(e, tag) {
-		console.log(e, "Notification closed tag:" + tag);
-	}
+	handleDesktopNotificationOnClose(e, tag) {}
 
 	handleDesktopNotificationOnShow(e, tag) {
-		this.playSound();
-		console.log(e, "Notification shown tag:" + tag);
-	}
+        this.playSound();
+    }
 
 	playSound(filename) {
 		document.getElementById("sound").play();
 	}
 
 	render() {
-		console.log("Notification this.state", this.state);
-		const {
+        const {
 			type,
 			title,
 			body,
@@ -142,9 +131,8 @@ class Notification extends React.Component {
 			windowNotificationProps,
 			embeddedNotificationProps,
 		} = this.state;
-		let typeArr = Array.isArray(type) ? type : [type];
-		console.log("typeArr", typeArr);
-		return (
+        let typeArr = Array.isArray(type) ? type : [type];
+        return (
 			<Box>
 				<audio id="sound" preload="auto">
 					<source src={NotificationMp3} type="audio/mpeg" />
@@ -189,7 +177,7 @@ class Notification extends React.Component {
 				)}
 			</Box>
 		);
-	}
+    }
 
 	close(n) {
 		if (n && typeof n.close === "function") {

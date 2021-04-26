@@ -39,9 +39,9 @@ class Page extends React.Component {
 					<JumbotronSection />
 				</GridContainer>
 
-				<GridContainer className={"p-0 px-4 md:px-48 py-4"} style={{ background: theme.palette.background.paper }}>
+				{/*<GridContainer className={"p-0 px-4 md:px-48 py-4"} style={{ background: theme.palette.background.paper }}>
 					<ProductsSection />
-				</GridContainer>
+				</GridContainer>*/}
 
 				<GridContainer className={"p-0 px-4 md:px-0"} style={{ background: theme.palette.background.default }}>
 					<CommisionSurveySection />

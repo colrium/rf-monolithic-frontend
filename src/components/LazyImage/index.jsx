@@ -31,18 +31,23 @@ const Image = styled.img`
 	}
 `;
 
-const LazyImage = ({ src, alt, onClick, lightbox, className, ...rest }) => {
+const LazyImage = (props) => {
+	const { src, alt, onClick, lightbox, className, fallbackSrc, ...rest } = props;
 	const [imageSrc, setImageSrc] = useState(placeHolder);
 	const [imageRef, setImageRef] = useState();
 	const [lightboxOpen, setLightboxOpen] = useState(false);
+	const [hasError, setHasError] = useState(false);
 
 	const onLoad = event => {
 		event.target.classList.add("loaded");
 	};
 
 	const onError = event => {
-		event.target.src = ErrorImage;
+		event.target.src = fallbackSrc;
+		setHasError(true);
 	};
+
+
 
 	useEffect(() => {
 		let observer = undefined;
@@ -92,7 +97,7 @@ const LazyImage = ({ src, alt, onClick, lightbox, className, ...rest }) => {
 			)}
 			<Image
 				ref={setImageRef}
-				src={imageSrc}
+				src={hasError? fallbackSrc : imageSrc}
 				alt={alt}
 				onLoad={onLoad}
 				onError={onError}
@@ -115,6 +120,7 @@ const LazyImage = ({ src, alt, onClick, lightbox, className, ...rest }) => {
 
 LazyImage.defaultProps = {
 	lightbox: true,
+	fallbackSrc: ErrorImage,
 };
 
 export default LazyImage;

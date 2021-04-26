@@ -127,12 +127,12 @@ class Topbar extends Component {
 	onChangeUserPresenceMenu = presence => event => {
 		const { auth, sockets, setCurrentUser } = this.props;
 		if (sockets.default && auth.isAuthenticated) {
-			createUpdateFirestoreDoc("users", auth.user._id, {presence: presence});
+			//createUpdateFirestoreDoc("users", auth.user._id, {presence: presence});
 			setCurrentUser({...auth.user, presence: presence});
-			/*sockets.default.emit("change-user-presence", {
+			sockets.default.emit("change-user-presence", {
 				id: auth.user._id,
 				presence: presence,
-			});*/
+			});
 		}
 		this.setState({
 			userPresenceMenuAnchorEl: null,

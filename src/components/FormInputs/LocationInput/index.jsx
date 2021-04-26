@@ -126,9 +126,8 @@ function LocationInput(props) {
 				try {
 					validationError = await validator(input_value);
 				} catch(err) {
-					console.error(label+" validator error ", err);					
-					validationError = " validity cannot be determined.";
-				};
+                    validationError = " validity cannot be determined.";
+                };
 				valid = !String.isString(validationError);
 			}
 		}
@@ -169,9 +168,8 @@ function LocationInput(props) {
 			Promise.all([changed]).then(()=>{
 				setInputDisabled(false);
 			}).catch(e => {
-				console.error(label+" onChange error", e);
-				setInputDisabled(false);
-			});
+                setInputDisabled(false);
+            });
 			
 		}
 		else{
@@ -197,11 +195,11 @@ function LocationInput(props) {
 			}
 			autocompleteGeocoder.current.geocode( {...options, [targetType]: targetValue}, function(results, status) {				
 				if (status == 'OK') {
-					let resultValue = undefined;
-					let resultsNewAutoCompleteOptions = [];
-					let resultsNewAutoCompleteValue = autocompleteValue;
+                    let resultValue = undefined;
+                    let resultsNewAutoCompleteOptions = [];
+                    let resultsNewAutoCompleteValue = autocompleteValue;
 
-					if (Array.isArray(targetValue)) {
+                    if (Array.isArray(targetValue)) {
 						resultValue = [];
 						resultsNewAutoCompleteOptions = [];
 						resultsNewAutoCompleteValue = undefined;
@@ -273,36 +271,32 @@ function LocationInput(props) {
 							resultValue = results[0].place_id;
 						}
 						else if (["street_number", "route", "neighborhood", "political", "locality", "administrative_area_level_1", "administrative_area_level_2", "country", "postal_code"].includes(resultType)) {
-								
-									let resultStr = "";
-									let address_components = results[0].address_components;
-									let name_type = short_name? "short_name" : "long_name";
-									for (var i = 0; i < address_components.length; i++) {
-										if (Array.isArray(address_components[i].types) && address_components[i].types.includes(resultType)) {
-											resultsNewAutoCompleteOptions.push(results[0]);
-											resultsNewAutoCompleteValue = results[0];
-											resultStr = resultStr+(resultStr.length > 0? " ": "")+address_components[i][name_type]; 
-										}
-										
-									}
-									console.log("resultType", resultType, "resultStr", resultStr)
-									resultValue = resultStr;
-						}
+                            let resultStr = "";
+                            let address_components = results[0].address_components;
+                            let name_type = short_name? "short_name" : "long_name";
+                            for (var i = 0; i < address_components.length; i++) {
+                                if (Array.isArray(address_components[i].types) && address_components[i].types.includes(resultType)) {
+                                    resultsNewAutoCompleteOptions.push(results[0]);
+                                    resultsNewAutoCompleteValue = results[0];
+                                    resultStr = resultStr+(resultStr.length > 0? " ": "")+address_components[i][name_type]; 
+                                }
+                                
+                            }
+                            resultValue = resultStr;
+                        }
 						else {
 							resultsNewAutoCompleteOptions.push(results[0]);
 							resultsNewAutoCompleteValue = results[0];
 							resultValue = results[0].formatted_address;
 						}
 					}
-					if (appendData) {
+                    if (appendData) {
 						setAutocompleteOptions(resultsNewAutoCompleteOptions);
 						setAutocompleteValue(resultsNewAutoCompleteValue);
 					}
-					setInputLoading(false);
-					console.log("parseValueToType resultValue", resultValue, "\n results", results);
-					resolve(resultValue);
-					
-				} else {
+                    setInputLoading(false);
+                    resolve(resultValue);
+                } else {
 					setInputLoading(false);
 					reject("Geocode was not successful." + status);
 				}
@@ -321,20 +315,10 @@ function LocationInput(props) {
 	);
 
 	React.useEffect(() => {
-		let active = true;
-		let executeFetch = true;
-		/*if (autocompleteValue && !Array.isArray(autocompleteValue)) {
-			if (textFieldValue === autocompleteValue.description) {
-				executeFetch = false;
-			}			
-		}
-		
+        let active = true;
+        let executeFetch = true;
 
-		console.log("executeFetch", executeFetch)*/
-
-		console.log("query", query)
-
-		if (executeFetch) {
+        if (executeFetch) {
 			if (!autocompleteService.current && window.google) {
 				autocompleteService.current = new window.google.maps.places.AutocompleteService();
 			}
@@ -390,25 +374,22 @@ function LocationInput(props) {
 
 			});
 		}
-			
 
-		return () => {
+
+        return () => {
 			active = false;
 		};
-	}, [textFieldValue, fetch, query]);
+    }, [textFieldValue, fetch, query]);
 
 	useEffect(() => {
 		if (inputTouched) {
-			console.log("inputValue", inputValue);
-			let valueValid = inputValueValid(inputValue);
-			Promise.all([valueValid]).then(validity => {
+            let valueValid = inputValueValid(inputValue);
+            Promise.all([valueValid]).then(validity => {
 				if (validity[0]) {
 					triggerOnChange(inputValue);
 				}
-			}).catch(e => {
-				console.error(label+" validity check error", e);
-			});			
-		}
+			}).catch(e => {});
+        }
 		else {
 			/*if (inputValue) {
 				if (type === "coordinates" && JSON.isJSON(value)) {					
@@ -514,23 +495,20 @@ function LocationInput(props) {
 		}
 	}, [value, type, placeholderType]);*/
 
-	const handleOnChange = async (event, newValue) => {		
-		let newAutocompleteOptions = newValue ? [newValue, ...autocompleteOptions] : autocompleteOptions;
-		setAutocompleteOptions(newAutocompleteOptions);
-		setAutocompleteValue(newValue);
-		console.log("handleOnChange newValue\n", newValue);
-		if (!inputTouched) {
+	const handleOnChange = async (event, newValue) => {
+        let newAutocompleteOptions = newValue ? [newValue, ...autocompleteOptions] : autocompleteOptions;
+        setAutocompleteOptions(newAutocompleteOptions);
+        setAutocompleteValue(newValue);
+        if (!inputTouched) {
 			setInputTouched(true);
 		}
-		if (newValue) {
+        if (newValue) {
 			parseValueToType(newValue.description, "address", type, {}, true).then(parsedTypeValue => {
-				setInputValue(parsedTypeValue);
-				setInputError(false);
-				console.log("handleOnChange newValue\n", newValue, "\n parsedTypeValue \n", parsedTypeValue, "autocompleteValue", autocompleteValue);
-			}).catch(parseErr => {
-				console.log("parseValueToType parseErr", parseErr);
-				setInputError(parseErr);
-			});
+                setInputValue(parsedTypeValue);
+                setInputError(false);
+            }).catch(parseErr => {
+                setInputError(parseErr);
+            });
 		}
 		else {
 			if (isMulti) {
@@ -541,18 +519,16 @@ function LocationInput(props) {
 			}
 			setInputError(false);
 		}
-			
-	};
+    };
 
 	const handleOnClickMyLocationBtn = event => {
-		const {device} = props;
-		console.log("device.location", device.location);
-		if (device.location) {
+        const {device} = props;
+        if (device.location) {
 			parseValueToType({lat: device.location.lat, lng: device.location.lng}, "location", (placeholderType? placeholderType : (targetTypes[type] === "address"? type : "formatted_address")), {}, true).then(parsedTypeValue => {
-				setTextFieldValue(parsedTypeValue);
-				setInputError(false);
-				
-				if (targetTypes[type] && targetTypes[type] !== "address") {
+                setTextFieldValue(parsedTypeValue);
+                setInputError(false);
+
+                if (targetTypes[type] && targetTypes[type] !== "address") {
 					parseValueToType({lat: device.location.lat, lng: device.location.lng}, "location", type).then(parsedTypeValue => {
 						setInputValue(parsedTypeValue);
 						if (!inputTouched) {
@@ -566,18 +542,14 @@ function LocationInput(props) {
 							setInputTouched(true);
 						}					
 				}
-				console.log("handleOnClickMyLocationBtn parsedTypeValue \n", parsedTypeValue, "\n placeholderType", placeholderType, "autocompleteValue", autocompleteValue);
-				
-			}).catch(parseErr => {
-				console.log("parseValueToType parseErr", parseErr);
-				setInputError(parseErr);
-			});
+            }).catch(parseErr => {
+                setInputError(parseErr);
+            });
 			if (Function.isFunction(onClickMyLocationBtn)) {
 				onClickMyLocationBtn(device.location);
 			}
 		}
-			
-	};
+    };
 
 	return (
 

@@ -53,12 +53,12 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
+			/*listview: {
 				avatar: false,
 				primary: ["reference"],
 				secondary: ["date_made", "status"],
 				tags: ["apply_coupon", "status"],
-			},
+			},*/
 			tableview: {
 				avatar: false,
 				title: ["reference"],
@@ -189,7 +189,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "customer" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "customer" },
 					resolves: {
 						value: "_id",
 						display: {

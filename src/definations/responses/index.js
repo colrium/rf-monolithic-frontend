@@ -9,9 +9,17 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@material-ui/icons";
 import Button from "components/Button";
-import React from "react";
+import React, {useState, useEffect, memo} from "react";
 import { Link } from "react-router-dom";
 import {context_country_data} from "config/data";
+import GridContainer from "components/Grid/GridContainer";
+import GridItem from "components/Grid/GridItem";
+import ApiService from "services/api";
+import compose from "recompose/compose";
+import { connect } from "react-redux";
+import { withTheme } from '@material-ui/core/styles';
+import { HorizontalBar } from "react-chartjs-2";
+import { UtilitiesHelper } from "hoc/Helpers";
 
 const getRegions = ()=>{
 	let regions = {};
@@ -23,6 +31,59 @@ const getRegions = ()=>{
 	return regions;
 }
 
+const mapStateToProps = state => ({
+	auth: state.auth,
+	cache: state.cache,
+});
+
+const CountSummaryGraph = (props) => {
+	const {auth: {isAuthenticated}} = props;
+
+	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [report, setReport] = useState(false);
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			const ApiServiceInstance = new ApiService();
+			ApiServiceInstance.refresh();
+			ApiServiceInstance.setServiceUri("/responses/reports/date-count-summary");
+			
+			ApiServiceInstance.get().then(res => {
+				const {body: {data}} = res;
+				let labels = [];
+				let entries = [];
+				if (Array.isArray(data)) {
+					data.map(entry => {
+						labels.push(entry._id.submission_date);
+						entries.push(entry.count);
+					})
+				}
+				setReport({labels: labels, data: entries});
+				setLoading(false);
+				setError(false);
+			}).catch(err => {
+				setLoading(false);
+				setReport(false);
+				setError(err);
+			});
+		}
+
+	}, [isAuthenticated]);
+
+	return (
+		<GridContainer>
+			<GridItem>
+				{report && <HorizontalBar data={{labels: report.labels, datasets: [{label: "Responses count by date", data:  report.data, backgroundColor: "#00AF41", hoverBackgroundColor: "#76C4D5",}]}} />}
+			</GridItem>
+		</GridContainer>
+	)
+}
+const DashboardCountGraph = compose(
+	connect(mapStateToProps, {}),
+	withTheme,
+)(CountSummaryGraph);
+
 export default {
 	name: "responses",
 	label: "Responses",
@@ -32,6 +93,9 @@ export default {
 	endpoint: "/responses",
 	cache: true,
 	views: {
+		dashboard:  {
+			counts: DashboardCountGraph
+		},
 		single: {
 			default: "cardview",
 			cardview: {
@@ -49,11 +113,11 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
+			/*listview: {
 				avatar: false,
 				primary: ["response_date"],
 				secondary: ["commission", "response_type", "submitter"],
-			},
+			},*/
 			tableview: {
 				avatar: false,
 				title: ["response_date"],
@@ -118,8 +182,49 @@ export default {
 					resolves: {
 						value: "_id",
 						display: {
-							primary: ["start_date"],
-							secondary: ["involvement"],
+							primary: ["requirements"],
+							secondary: [],
+							avatar: false,
+						},
+					},
+				},
+			},
+			child_commission: {
+				type: "string",
+				label: "Child Commission",
+				input: {
+					type: "select",
+					default: "",
+					required: true,
+				},
+				restricted: {
+					display: (entry, user) => {
+						return false;
+					},
+					input: (values, user) => {
+						if (values) {
+							if (
+								["accepted", "disputed"].includes(values.status)
+							) {
+								return true;
+							}
+						}
+						if (user) {
+							if (user.role === "admin") {
+								return false;
+							}
+						}
+						return true;
+					},
+				},
+				reference: {
+					name: "commissions",
+					service_query: { p: 1 },
+					resolves: {
+						value: "_id",
+						display: {
+							primary: ["requirements"],
+							secondary: ["involvement", "start_date"],
 							avatar: false,
 						},
 					},
@@ -475,7 +580,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "collector" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -679,10 +784,7 @@ export default {
 			},
 			create: {
 				restricted: user => {
-					return (user && user.role === "admin") ||
-						user.role === "collector"
-						? false
-						: true;
+					return (user && user.role !== "admin");
 				},
 				uri: "responses/add",
 				link: {
@@ -709,10 +811,7 @@ export default {
 			},
 			update: {
 				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
+					return (user && user.role !== "admin");
 				},
 				uri: entry => {
 					return "responses/edit/" + entry._id;
@@ -740,10 +839,7 @@ export default {
 			},
 			delete: {
 				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
+					return (user && user.role !== "admin");
 				},
 				uri: entry => {
 					return "responses/delete/" + entry._id;

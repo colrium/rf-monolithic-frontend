@@ -274,8 +274,9 @@ class RecordView extends React.Component {
 								</Typography>
 							)}
 
-							{JSON.isJSON(defination.scope.dependants) &&
-								Object.entries(defination.scope.dependants).map(
+							
+
+							{JSON.isJSON(defination.scope.dependants) && Object.entries(defination.scope.dependants).map(
 									([dependant, properties], cursor) =>
 										!definations[
 											dependant
@@ -303,7 +304,7 @@ class RecordView extends React.Component {
 												/>
 											</TabPanel>
 										)
-								)}
+							)}
 						</Collapse>
 					</GridItem>
 				</GridContainer>

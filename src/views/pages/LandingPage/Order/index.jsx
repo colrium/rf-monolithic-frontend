@@ -137,9 +137,7 @@ class Page extends React.Component {
 		}));
 	}
 
-	handleStepNavigation(prev, current) {
-		console.log("handleStepNavigation ", current);
-	}
+	handleStepNavigation(prev, current) {}
 
 	handleOnStepComplete(data = {}) {
 		const { auth, order_progress, setOrderProgress } = this.props;

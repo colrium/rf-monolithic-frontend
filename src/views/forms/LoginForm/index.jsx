@@ -205,10 +205,9 @@ class LoginForm extends React.Component {
 				return result;
 			}, {});
 			if (("c" in uriQueries || "code" in uriQueries) && ("e" in uriQueries || "email" in uriQueries)) {
-				let reset_code = "c" in uriQueries ? uriQueries.c : uriQueries.code;
-				let email = "e" in uriQueries ? uriQueries.e : uriQueries.email;
-				console.log("email", email);
-				if (!String.isEmpty(reset_code) && !String.isEmpty(email)) {
+                let reset_code = "c" in uriQueries ? uriQueries.c : uriQueries.code;
+                let email = "e" in uriQueries ? uriQueries.e : uriQueries.email;
+                if (!String.isEmpty(reset_code) && !String.isEmpty(email)) {
 					this.setState(prevState => ({
 						forgotPassword: false,
 						resettingPassword: true,
@@ -226,7 +225,7 @@ class LoginForm extends React.Component {
 						email: email,				
 					}));
 				}
-			}
+            }
 		}	
 	}
 
@@ -418,14 +417,13 @@ class LoginForm extends React.Component {
 					}
 
 			}).catch(err => {
-					console.log("err", err);
-					this.setState(state => ({
-						submitting: false,
-						loginerror: true,
-						loginsuccess: false,
-						alert: err.msg
-					}));
-			});
+                this.setState(state => ({
+                    submitting: false,
+                    loginerror: true,
+                    loginsuccess: false,
+                    alert: err.msg
+                }));
+            });
 			
 		} else {
 			let formData = {
@@ -443,14 +441,13 @@ class LoginForm extends React.Component {
 					this.handleOnUserLogin({access_token: access_token, user: user});
 				})
 				.catch(err => {
-					console.log("err", err);
-					this.setState(state => ({
-						submitting: false,
-						loginerror: true,
-						loginsuccess: false,
-						alert: err.msg
-					}));
-				});
+                this.setState(state => ({
+                    submitting: false,
+                    loginerror: true,
+                    loginsuccess: false,
+                    alert: err.msg
+                }));
+            });
 		}
 	}
 
@@ -649,7 +646,7 @@ class LoginForm extends React.Component {
 									</Button>
 								</GridItem>
 								<GridItem md={6} className="p-0 flex flex-col items-center md:justify-end sm:justify-center">
-									{!this.state.forgotPassword && !this.state.resettingPassword  && <Link to={"/register"} className="transparent">
+									{/*!this.state.forgotPassword && !this.state.resettingPassword  && <Link to={"/register"} className="transparent">
 										<Button
 											variant="text"
 											color="default"
@@ -658,6 +655,17 @@ class LoginForm extends React.Component {
 											href="/register"
 										>
 											Create account
+	                  					</Button>
+                  					</Link>*/}
+                  					{!this.state.forgotPassword && !this.state.resettingPassword  && <Link to={"/jobs".toUriWithLandingPagePrefix()} className="transparent">
+										<Button
+											variant="text"
+											color="default"
+											size="md"
+											simple
+											href={"/jobs".toUriWithLandingPagePrefix()}
+										>
+											Join Us
 	                  					</Button>
                   					</Link>}
                   					{/*this.state.forgotPassword && <Button

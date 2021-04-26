@@ -1141,7 +1141,7 @@ class CountriesData {
 		let names = {};
 
 		if (String.isString(region)) {
-			kenya_geodata.regions.map(regionentry=> {
+            kenya_geodata.regions.map(regionentry=> {
 				if (regionentry.name.toLowerCase() === region.toLowerCase()) {
 					regionentry.sub_counties.map(sub_county=> {
 						names[sub_county] = sub_county;
@@ -1149,10 +1149,7 @@ class CountriesData {
 				}
 				
 			});
-
-			console.log("names", names)
-			
-		}
+        }
 
 		return names;
 	}

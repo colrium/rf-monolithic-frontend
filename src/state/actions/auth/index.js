@@ -9,6 +9,8 @@ import {
 	clearAppState,
 } from "state/actions";
 
+import ApiService from "services/api";
+
 export function setAuthenticated(authenticated) {
 	return {
 		type: SET_AUTHENTICATED,
@@ -31,10 +33,21 @@ export function setCurrentUser(user) {
 }
 
 export function updateCurrentUser(user) {
-	return {
-		type: SET_USER,
-		user,
-	};
+	return async (dispatch, getState) => {
+		const {auth} = getState();
+		if (auth.isAuthenticated) {
+			dispatch(setCurrentUser(user));
+			const ApiServiceInstance = new ApiService();
+		    ApiServiceInstance.refresh();
+		    ApiServiceInstance.setServiceUri("/profile");
+		    let persistedServerUser = await  ApiServiceInstance.put(user).then(res => {
+				return res.body.data
+			}).catch(err => {
+				return false;
+			});
+		}
+			
+	}
 }
 
 export function logout() {
@@ -62,20 +75,15 @@ export function login(data) {
 						return prof_res.body.data;
 					})
 					.catch(err => {
-						console.log(
-							"login action AuthService.profile() err",
-							err
-						);
-						throw err;
-					});
+                    throw err;
+                });
 				if (JSON.isJSON(user)) {
 					dataObj.user = user;
 				}
 				return dataObj;
 			})
 			.catch(err => {
-				console.log("login action AuthService.login() err", err);
-				throw err;
-			});
+            throw err;
+        });
 	};
 }

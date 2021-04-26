@@ -426,44 +426,7 @@ class FileDropZone extends Component {
 						snackbarColor: "info",
 					});
 				})
-				.catch(err => {
-					console.log("err", err);
-					/* if (err.code === 404) {
-						fileObjects.remove(fileIndex);
-						fileObjects = fileObjects;
-						this.setState({ fileObjects: fileObjects }, () => {
-							if (this.props.onDelete) {
-								this.props.onDelete(fileObject);
-							}
-							if (this.state.isMultiple && this.props.upload) {
-								let value_arr = [];
-
-								if (Array.isArray(fileObjects)) {
-									for (let j = 0; j < fileObjects.length; j++) {
-										if (fileObjects[j].attachment) {
-											value_arr.push(fileObjects[j].attachment._id);
-										}
-									}
-								}
-								this.setState({ value: value_arr });
-
-								if (this.props.onChange) {
-									this.props.onChange(value_arr);
-								}
-							} else {								
-								if (this.props.onChange) {
-									this.props.onChange(null);
-								}
-								this.setState({ value: null });
-							}
-							this.setState({
-								openSnackBar: true,
-								snackbarMessage: "File " + fileObject.file.name + " removed",
-								snackbarColor: "inverse"
-							});
-						});
-					} */
-				});
+				.catch(err => {});
 		} else {
 			fileObjects.remove(fileIndex);
 			fileObjects = fileObjects;

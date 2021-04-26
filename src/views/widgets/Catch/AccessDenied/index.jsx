@@ -12,7 +12,7 @@ import { withErrorHandler } from "hoc/ErrorHandler";
 
 class AccessDenied extends React.Component {
 	render() {
-		const { icon, title, description, color, link } = this.props;
+		const { icon, title, description, color, link, linkText } = this.props;
 
 		return (
 			<GridContainer
@@ -28,58 +28,45 @@ class AccessDenied extends React.Component {
 						justify="center"
 						alignItems="center"
 					>
-						<GridItem xs={12}>
+						<GridItem xs={12} className={"flex justify-center"}>
 							<Typography
 								color="error"
-								className="text-4xl"
+								style={{fontSize: "12rem"}}
 								variant="h1"
-								center
-								fullWidth
 							>
 								{icon}
 							</Typography>
 						</GridItem>
-						<GridItem xs={12}>
+						<GridItem xs={12}  className={"flex justify-center"}>
 							<Typography
 								color={color}
 								variant="h3"
-								center
-								fullWidth
+								className={"text-center"}
 							>
 								{title}
 							</Typography>
 						</GridItem>
 
-						<GridItem xs={12}>
+						<GridItem xs={12} className={"flex justify-center"}>
 							<Typography
 								color="default"
 								variant="body1"
-								center
-								fullWidth
+								className={"text-center"}
 							>
 								{description}
 							</Typography>
 						</GridItem>
 
-						<GridItem xs={12}>
-							<Typography
-								color="error"
-								variant="body1"
-								center
-								fullWidth
-							>
-								<Link to={link}>
-									{" "}
+						<GridItem xs={12} className={"flex justify-center"}>
+							<Link to={link}>
 									<Button
 										variant="text"
 										color="default"
 										simple
 									>
-										{" "}
-										Back{" "}
-									</Button>{" "}
+										{linkText}
+									</Button>
 								</Link>
-							</Typography>
 						</GridItem>
 					</GridContainer>
 				</GridItem>
@@ -91,10 +78,11 @@ class AccessDenied extends React.Component {
 AccessDenied.defaultProps = {
 	title: "Access Denied!",
 	description:
-		"Sorry! Access to this resource has been denied since you lack required priviledges. <br /> Please contact the system administrator for further details.",
-	icon: <WarningRoundedIcon className="text-6xl" />,
+		"Sorry! Access to this resource has been denied since you lack required priviledges. \n Please contact the system administrator for further details.",
+	icon: <WarningRoundedIcon fontSize="inherit" />,
 	color: "grey",
 	link: "home".toUriWithDashboardPrefix(),
+	linkText: "Home",
 };
 
 export default withErrorHandler(AccessDenied);

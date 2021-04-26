@@ -315,6 +315,44 @@ export default {
 		flexBasis: "100%",
 		width: 0,
 	},
+	".group-or-rule-container": {
+		flexGrow: 1,
+	},
+	".rule--field": {
+		"display": "flex",
+		"alignItems": "center",
+		flexGrow: 0.3,
+	},
+	".rule--operator": {
+		"display": "flex",
+		"alignItems": "center"
+	},
+	".rule--body": {
+		display: "flex",
+		"& .rule--value": {
+			"flexGrow": "1",
+			"display": "flex",
+			"justifyContent": "space-around",
+			"& .rule--widget": {
+				"display": "flex",
+				"flexGrow": "1",
+				"flexDirection": "row",
+				"alignContent": "center",
+				"alignItems": "center",
+				"& .widget--widget": {
+					"flexGrow": "1",
+				},
+			},
+		},
+	},
+	
+	/*".rule--body": {
+		display: "flex",
+    	justifyContent: "space-around",
+	},
+	".rule--field": {
+		flexGrow: 1,
+	},*/
 	...muiGlobalStyles,
 	...color_based_styles,
 	

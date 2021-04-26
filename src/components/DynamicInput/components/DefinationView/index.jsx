@@ -1323,17 +1323,16 @@ class DefinationView extends React.Component {
 		let appendableProps = this.getAppendableProps();
 
 		return (
-			<GridContainer className="p-0 m-0">
+            <GridContainer className="p-0 m-0">
 				{appendableProps.map((appendableProp, cursor) => {
-					const {
+                    const {
 						name,
 						label,
 						input,
 						size,
 						possibilities,
 					} = appendableProp;
-					console.log("appendableProp", appendableProp);
-					if (JSON.isJSON(appendableProp.input)) {
+                    if (JSON.isJSON(appendableProp.input)) {
 						const {
 							type,
 							size,
@@ -1420,9 +1419,9 @@ class DefinationView extends React.Component {
 							</GridItem>
 						);
 					}
-				})}
+                })}
 			</GridContainer>
-		);
+        );
 	}
 
 	inputDefaultValueDefinationHelper() {

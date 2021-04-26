@@ -41,19 +41,17 @@ class Step extends React.Component {
 				}));
 			})
 			.catch(err => {
-				console.error("Checkout loadData Error", err);
-				this.setState(state => ({
-					gatewayData: {},
-					load_error: err,
-					loading: false,
-				}));
-			});
+            this.setState(state => ({
+                gatewayData: {},
+                load_error: err,
+                loading: false,
+            }));
+        });
 	}
 
 	render() {
-		const { onComplete, onCancel } = this.props;
-		console.log("Checkout this.state.gatewayData ", this.state.gatewayData);
-		return (
+        const { onComplete, onCancel } = this.props;
+        return (
 			<GridContainer className="p-0 m-0">
 				<GridContainer>
 					<GridItem xs={12}>
@@ -156,7 +154,7 @@ class Step extends React.Component {
 				</GridContainer>
 			</GridContainer>
 		);
-	}
+    }
 }
 
 export default withRoot(Step);

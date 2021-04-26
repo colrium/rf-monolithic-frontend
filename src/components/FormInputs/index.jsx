@@ -484,9 +484,8 @@ export const SwitchInput = ({
 				try {
 					validationError = await validator(input_value);
 				} catch(err) {
-					console.error(label+" validator error ", err);					
-					validationError = " validity cannot be determined.";
-				};
+                    validationError = " validity cannot be determined.";
+                };
 				valid = !String.isString(validationError);
 			}			
 		}
@@ -506,9 +505,8 @@ export const SwitchInput = ({
 			Promise.all([changed]).then(()=>{
 				setInputDisabled(false);
 			}).catch(e => {
-				console.error(label+" onChange error", e);
-				setInputDisabled(false);
-			});
+                setInputDisabled(false);
+            });
 			
 		}
 		else{
@@ -524,9 +522,7 @@ export const SwitchInput = ({
 				if (validity) {
 					triggerOnChange(inputValue);
 				}
-			}).catch(e => {
-				console.error(label+" validity check error", e);
-			});
+			}).catch(e => {});
 							
 		}
 	}, [inputValue, inputTouched]);

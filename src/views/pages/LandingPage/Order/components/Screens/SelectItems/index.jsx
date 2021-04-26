@@ -47,17 +47,16 @@ class Step extends React.Component {
 	}
 
 	handleOnItemSelect = (item, event) => {
-		const { onContextChange } = this.props;
-		this.setState(prevState => ({
+        const { onContextChange } = this.props;
+        this.setState(prevState => ({
 			view: "itemview",
 			context: item,
 			prev_view: prevState.view,
 		}));
-		if (Function.isFunction(onContextChange)) {
+        if (Function.isFunction(onContextChange)) {
 			onContextChange(item, "itemview");
 		}
-		console.log("handleOnItemSelect item", item);
-	};
+    };
 
 	handleOnItemAdd = selection => {
 		const { onAddToCart, onContextChange } = this.props;

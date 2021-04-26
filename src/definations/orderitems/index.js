@@ -32,7 +32,7 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {},
+			/*listview: {},*/
 			tableview: {},
 		},
 	},

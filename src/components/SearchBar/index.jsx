@@ -74,7 +74,7 @@ const SearchBar = (props) => {
 
 
 	return (
-		<div className={classNames({[className]:true, "flex": true})}>
+        <div className={classNames({[className]:true, "flex": true})}>
 		<div className={classNames({[classes.search]: true, [classes.open]: searchOpen})} ref={searchRef}>
 						{!searchOpen && <IconButton
 							onClick={() => {
@@ -131,13 +131,12 @@ const SearchBar = (props) => {
 						
 						{(searchOpen && String.isString(inputValue) && inputValue.trim() !== "") && <IconButton
 							onClick={() => {
-								if (inputRef.current) {
+                                if (inputRef.current) {
 									inputRef.current.value="";
 									inputRef.current.focus();
 								}
-								console.log("Searchbar inputBaseRef", inputBaseRef);
-								setInputValue("");
-							}}
+                                setInputValue("");
+                            }}
 							className={classes.searchIcon}
 							disabled={disabled}
 						>
@@ -205,7 +204,7 @@ const SearchBar = (props) => {
 							))}
 			</Popover>}
 		</div>
-	);
+    );
 };
 
 SearchBar.defaultProps = {

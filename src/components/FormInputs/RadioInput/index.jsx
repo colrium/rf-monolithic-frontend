@@ -66,9 +66,8 @@ const Input = props => {
 				try {
 					validationError = await validator(input_value);
 				} catch(err) {
-					console.error(label+" validator error ", err);					
-					validationError = " validity cannot be determined.";
-				};
+                    validationError = " validity cannot be determined.";
+                };
 				valid = !String.isString(validationError);
 			}
 		}
@@ -88,9 +87,8 @@ const Input = props => {
 			Promise.all([changed]).then(()=>{
 				setInputDisabled(false);
 			}).catch(e => {
-				console.error(label+" onChange error", e);
-				setInputDisabled(false);
-			});
+                setInputDisabled(false);
+            });
 			
 		}
 		else{
@@ -106,9 +104,7 @@ const Input = props => {
 				if (validity[0]) {
 					triggerOnChange(inputValue);
 				}
-			}).catch(e => {
-				console.error(label+" validity check error", e);
-			});
+			}).catch(e => {});
 							
 		}
 	}, [inputTouched, inputValue]);

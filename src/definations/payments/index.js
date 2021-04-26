@@ -42,11 +42,11 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
+			/*listview: {
 				avatar: false,
 				primary: ["currency", "amount"],
 				secondary: ["context", "method", "date_made"],
-			},
+			},*/
 			tableview: {
 				avatar: false,
 				title: ["currency", "amount"],
@@ -343,7 +343,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "customer" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "customer" },
 					resolves: {
 						value: "_id",
 						display: {

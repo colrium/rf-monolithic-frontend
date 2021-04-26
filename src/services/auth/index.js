@@ -28,7 +28,7 @@ class AuthApiService {
 	}
 
 	handleRequestError(error) {
-		let resobj = {
+        let resobj = {
 			err: {
 				code: 400,
 				msg: "Request Failed ",
@@ -37,7 +37,7 @@ class AuthApiService {
 			code: 400,
 			headers: null,
 		};
-		if (error.response) {
+        if (error.response) {
 			resobj = {
 				err: {
 					code: error.response.status,
@@ -64,11 +64,9 @@ class AuthApiService {
 			};
 		}
 
-		console.error("Request Error", resobj);
-
-		let request_error = resobj.err;
-		throw request_error;
-	}
+        let request_error = resobj.err;
+        throw request_error;
+    }
 
 	async login(data) {
 		let that = this;
@@ -95,12 +93,11 @@ class AuthApiService {
 				return resobj;
 			})
 			.catch(function(error) {
-				console.log("Auth error", error);
-				Auth.getInstance().removeAuthToken();
-				Auth.getInstance().setAuthorizationHeader(false);
-				that.apiInstance = that.endpoint();
-				that.handleRequestError(error);
-			});
+            Auth.getInstance().removeAuthToken();
+            Auth.getInstance().setAuthorizationHeader(false);
+            that.apiInstance = that.endpoint();
+            that.handleRequestError(error);
+        });
 	}
 
 	async profile(data = {}) {

@@ -31,10 +31,9 @@ function Widget(props) {
 			setLoading({...loading, [name] : false});
 			setAlerts({ [name]: name.humanize() + " saved", });
 		}).catch(e => {
-			setLoading({...loading, [name] : false});
-			setErrors({...errors, [name] : e.msg});
-			console.error("update legal settings error", e);
-		});
+            setLoading({...loading, [name] : false});
+            setErrors({...errors, [name] : e.msg});
+        });
 	};
 
 	const handleOnBlurText = name => async (value, event) => {
@@ -45,10 +44,9 @@ function Widget(props) {
 			setLoading({...loading, [name] : false});
 			setAlerts({ [name]: name.humanize() + " saved", });
 		}).catch(e => {
-			setLoading({...loading, [name] : false});
-			setErrors({...errors, [name] : e.msg});
-			console.error("update legal settings error", e);
-		});
+            setLoading({...loading, [name] : false});
+            setErrors({...errors, [name] : e.msg});
+        });
 	};
 
 	return (

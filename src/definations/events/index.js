@@ -282,7 +282,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "collector" },
+					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -305,9 +305,9 @@ export default {
 					name: "users",
 					service_query: (values, user) => {
 						if (user && user.role !== "admin") {
-							return { _id: user._id };
+							return { sort: "first_name", fields: "first_name,last_name,email_address,avatar", _id: user._id };
 						}
-						return {};
+						return {sort: "first_name", fields: "first_name,last_name,email_address,avatar", };
 					},
 					resolves: {
 						value: "_id",

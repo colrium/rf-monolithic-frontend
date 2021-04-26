@@ -18,13 +18,111 @@ import {withErrorHandler} from "hoc/ErrorHandler";
 import { withTheme } from '@material-ui/core/styles';
 //
 import styles from "views/pages/styles";
+import {responses} from "definations";
 
 
 
 class Page extends React.Component {
 	state = {
 		mainMapInFullWidth: true,
+		counts_overview_contexts: {
+			surveys: {
+				type: "count",
+				query: {},
+			},
+			commissions: {
+				type: "count",
+				query: {},
+			},
+			responses: {
+				type: "count",
+				query: {},
+			},
+			tracks: {
+				type: "count",
+				query: {},
+			},
+			
+		}
 	};
+
+	constructor(props){
+		super(props);
+		const {auth} = props;
+		console.log("Home auth.user", auth.user)
+		if (auth.user.isAdmin) {
+			this.state.counts_overview_contexts = {
+				surveys: {
+					type: "count",
+					query: {},
+				},
+				commissions: {
+					type: "count",
+					query: {},
+				},
+				responses: {
+					type: "count",
+					query: {},
+				},
+				queries: {
+					type: "count",
+					query: {},
+				},
+				tracks: {
+					type: "count",
+					query: {},
+				},
+				applications: {
+					type: "count",
+					query: {},
+				},
+				users: {
+					type: "aggregates",
+					query: {
+						group: "gender",
+						role: "collector",
+					},
+					title: (value)=>{
+						let new_value = "";
+						if (Array.isArray(value)) {
+							value.map(entry => {
+								if (entry._id) {
+									new_value = new_value+(new_value.length>0? " / ": "")+entry._id.humanize();
+								}						
+							});
+						}
+						return new_value;
+					},
+					description: (value)=>{
+						let new_value = "";
+						if (Array.isArray(value)) {
+							value.map(entry => {
+								if (entry._id) {
+									new_value = new_value+(new_value.length>0? " / ": "")+entry._id.humanize();
+								}
+								
+							});
+						}
+						return "Total "+new_value;
+					},
+					resolveValue: (value)=>{
+						let new_value = "";
+						if (Array.isArray(value)) {
+							value.map(entry => {
+								if (entry._id && entry.count) {
+									new_value = new_value+(new_value.length>0? " / ": "")+entry.count;
+								}
+								
+							});
+						}
+						return new_value;
+					},
+				}
+			};
+		}
+
+		console.log("this.state", this.state)
+	}
 
 	componentDidMount() {
 		const { location, appendNavHistory } = this.props;
@@ -49,20 +147,12 @@ class Page extends React.Component {
 			theme,
 			device,
 		} = this.props;
-		/*let homepageSections = {
-			quicklinks: preferences.dashboard["quicklinks"],
-			static_aggregates: preferences.dashboard["static-aggregates"],
-			static_map: preferences.dashboard["static-map"],
-			compact_aggregates: preferences.dashboard["compact-aggregates"],
-			compact_maps: preferences.dashboard["compact-maps"],
-			calendar: preferences.dashboard["calendar"],
-		};*/
+
+		const {views: {dashboard: {counts: ResponsesCountsReport}}} = responses;
 		
 
 		return (
 			<GridContainer className={classes.root}>
-				
-
 
 					<GridItem xs={12} lg={this.state.mainMapInFullWidth? 12 : 7} className="p-2">
 						<Card>
@@ -116,6 +206,12 @@ class Page extends React.Component {
 						</Card>
 					</GridItem>
 
+					<GridItem xs={12} className="p-2">
+						<Card>
+							<ResponsesCountsReport/>
+						</Card>
+					</GridItem>
+
 					<GridItem xs={12} lg={this.state.mainMapInFullWidth? 12 : 5} className="p-2">
 						<GridContainer className="p-0 m-0">
 										<LazyModule
@@ -138,6 +234,7 @@ class Page extends React.Component {
 															className: "mt-2 ml-4",
 														},
 												]}
+												contexts={this.state.counts_overview_contexts}
 												wrapperSize={this.state.mainMapInFullWidth? 12 : 5}
 										/>
 						</GridContainer>

@@ -3,9 +3,7 @@
 const error = ({ dispatch, getState }) => next => action => {
 	try {
 		next(action);
-	} catch (e) {
-		console.error(e);
-	}
+	} catch (e) {}
 };
 
 export default error;

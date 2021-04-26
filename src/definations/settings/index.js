@@ -27,7 +27,6 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {},
 			tableview: {},
 		},
 	},

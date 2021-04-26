@@ -61,7 +61,7 @@ const ConvertToUserIconAction = (props) => {
 						silent: true,
 					}
 			).then(data => {
-				if (sendEmail) {
+                if (sendEmail) {
 					setEmailingCache("recipient_address", data.email_address);
 					setEmailingCache("recipient_name", data.first_name);
 					setEmailingCache("subject", "Your Realfield user account");
@@ -72,11 +72,10 @@ const ConvertToUserIconAction = (props) => {
 					setEmailCacheTouched(true);
 
 				}
-				console.log("handleCreateApplicantUserAccount data", data)
-				
-				setError(false);
-				setLoading(false);					
-			}).catch(e => {
+
+                setError(false);
+                setLoading(false);
+            }).catch(e => {
 				let errMsg = e;
 				if (JSON.isJSON(e)) {
 					if (String.isString(e.error)) {
@@ -220,8 +219,7 @@ const ConvertToUserIconAction = (props) => {
 						silent: true,
 					}
 			).then(data => {
-				console.log("checkStaffIDAvailability data", data)
-				if (Array.isArray(data)) {
+                if (Array.isArray(data)) {
 					if (data.length > 0) {
 						let staff_id = String.uid(8, false, true);
 						setStaffID(staff_id);
@@ -229,8 +227,8 @@ const ConvertToUserIconAction = (props) => {
 					else {
 						handleOnCreateUserAccountConfirm();
 					}
-				}				
-			}).catch(e => {
+				}
+            }).catch(e => {
 				let errMsg = e;
 				if (JSON.isJSON(e)) {
 					if (String.isString(e.error)) {

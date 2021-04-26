@@ -32,11 +32,11 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
+			/*listview: {
 				avatar: false,
 				primary: ["title"],
 				secondary: ["context", "priority", "read"],
-			},
+			},*/
 			tableview: {
 				avatar: false,
 				title: ["title"],
@@ -147,7 +147,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "admin" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "admin" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -186,7 +186,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: {},
+					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar", },
 					resolves: {
 						value: "_id",
 						display: {

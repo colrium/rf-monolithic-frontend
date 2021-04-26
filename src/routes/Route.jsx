@@ -81,10 +81,9 @@ const CustomRoute = props => {
 	
 
 	if (entry) {
-		let {location} = rest;
-		let current_path = location? location.pathname : false;
-		console.log("CustomRoute current_path", current_path);
-		if (
+        let {location} = rest;
+        let current_path = location? location.pathname : false;
+        if (
 				Auth.getInstance().authTokenSet() &&
 				auth.isAuthenticated &&
 				JSON.isJSON(auth.user) &&
@@ -112,8 +111,7 @@ const CustomRoute = props => {
 				}
 				return;
 		}
-			
-	} else if (authRestrict) {
+    } else if (authRestrict) {
 		if (
 			Auth.getInstance().authTokenSet() &&
 			auth.isAuthenticated &&

@@ -26,13 +26,12 @@ function Widget({ app: {preferences} }) {
 	
 
 	const handleOnChange = (name) => async value => {
-		setAlerts({[name]: undefined });
-		setErrors({...errors, [name]: undefined });
-		setLoading({...loading, [name]: true });
-		let new_value = value;
-		console.log("new_value", new_value);
+        setAlerts({[name]: undefined });
+        setErrors({...errors, [name]: undefined });
+        setLoading({...loading, [name]: true });
+        let new_value = value;
 
-		updatePreferences(name, new_value).then(updated_prefs => {
+        updatePreferences(name, new_value).then(updated_prefs => {
 			setAlerts({[name]: name + " saved"});
 			setErrors({...errors, [name]: false });
 			setLoading({...loading, [name]: false });
@@ -41,7 +40,7 @@ function Widget({ app: {preferences} }) {
 			setErrors({...errors, [name]: e.msg });
 			setLoading({...loading, [name]: false });
 		});
-	};
+    };
 
 	return (
 		<GridContainer className="px-2">

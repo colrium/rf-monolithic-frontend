@@ -6,11 +6,7 @@
 
 import { baseUrls, environment } from "config";
 
-const DEFAULT = baseUrls[environment].endpoints.default.endsWith("/")
-	? baseUrls[environment].endpoints.default
-	: baseUrls[environment].endpoints.default + "/";
-const AUTH = baseUrls[environment].endpoints.auth.endsWith("/")
-	? baseUrls[environment].endpoints.auth
-	: baseUrls[environment].endpoints.auth + "/";
+const DEFAULT = baseUrls[environment].endpoint.endsWith("/")? baseUrls[environment].endpoint : (baseUrls[environment].endpoint + "/");
 
-export { DEFAULT, AUTH };
+
+export { DEFAULT };

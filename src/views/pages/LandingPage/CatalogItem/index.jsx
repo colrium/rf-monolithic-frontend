@@ -45,13 +45,12 @@ class Page extends React.Component {
 				this.setState(state => ({ item: item, loading: false }));
 			})
 			.catch(err => {
-				console.log(err);
-				if (err.code === 404) {
-					history.push("/not-found");
-				} else {
-					this.setState(state => ({ error: err, loading: false }));
-				}
-			});
+            if (err.code === 404) {
+                history.push("/not-found");
+            } else {
+                this.setState(state => ({ error: err, loading: false }));
+            }
+        });
 	}
 
 	render() {

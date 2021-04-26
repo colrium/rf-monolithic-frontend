@@ -7,6 +7,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import PropTypes from "prop-types";
 import React from "react";
+import lodash from "lodash";
 //Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
@@ -21,9 +22,8 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import { useTheme } from '@material-ui/core/styles';
-import {
-	TextInput
-} from "components/FormInputs";
+import {TextInput} from "components/FormInputs";
+import QueryBuilder from "components/QueryBuilder";
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
@@ -32,10 +32,14 @@ import GoogleMapOverview from "views/widgets/Overview/GoogleMapOverview";
 import ListView from "./ListView";
 import Chip from '@material-ui/core/Chip';
 import { withErrorHandler } from "hoc/ErrorHandler";
+import { ServiceDataHelper } from "hoc/Helpers";
+import * as services from "services";
+import * as definations from "definations";
 //
 import styles from "./styles";
 //
 import TableView from "./TableView";
+
 
 function TablePaginationActions(props) {
 	const theme = useTheme();
@@ -117,7 +121,12 @@ class ListingView extends React.Component {
 		filters: {
 			values: {},
 			labels: {},
-		}
+		},
+		fields: {},
+		loading: {},
+		value_possibilities: {},
+		queryBuilderProps: {value: { populate: true, config: {fields: {}}}}
+
 	};
 	mounted = false;
 	searchkeywordRef = React.createRef();
@@ -184,6 +193,7 @@ class ListingView extends React.Component {
 		this.handleOnPageChanged = this.handleOnPageChanged.bind(this);
 
 		this.handleOnRecordsPerPageChanged = this.handleOnRecordsPerPageChanged.bind(this);
+		this.handleOnQueryBuilderChange = this.handleOnQueryBuilderChange.bind(this);
 	}
 
 	
@@ -197,17 +207,30 @@ class ListingView extends React.Component {
 		this.mounted = false;
 	}
 
-	getSnapshotBeforeUpdate(prevProps) {
+	getSnapshotBeforeUpdate(prevProps, prevState) {
 		this.mounted = false;
+		console.log("prevState.fields", prevState.fields);
 		return {
-			prepareForRenderRequired: !Object.areEqual(prevProps.query, this.props.query),
+			prepareForRenderRequired: !lodash.isEqual(prevProps.query, this.props.query),
+			loadQueryBuilderPropsRequired: !lodash.isEqual(prevState.fields, this.state.fields) || !lodash.isEqual(prevState.value_possibilities, this.state.value_possibilities),
 		};
+	}
+
+
+	shouldComponentUpdate(nextProps, nextState) {
+		let shouldUpdate = !lodash.isEqual(this.props, nextProps) || !lodash.isEqual(this.state, nextState);
+		console.log("shouldComponentUpdate", shouldUpdate);
+    	return shouldUpdate;
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		this.mounted = true;
 		if (snapshot.prepareForRenderRequired) {
 			this.prepareForRender();
+			this.loadFieldValuePosibilities();
+		}
+		if (snapshot.loadQueryBuilderPropsRequired) {
+			this.setQueryBuilderProps();
 		}
 	}
 
@@ -263,105 +286,557 @@ class ListingView extends React.Component {
 	async prepareForRender() {
 		const { defination, service, query, view, showViewOptions, showAddBtn, app } = this.props;
 		if (defination && service) {
-			let all_views = {
+            let all_views = {
 				tableview: "Table View",
 				listview: "List View",
 				googlemapview: "Map View",
 				vectormapview: "Vector Map View",
 				calendarview: "Calendar View",
 			};
-			let views = {};
-			let default_view = "tableview";
-			if (defination.views.listing.default in all_views) {
+            let views = {};
+            let default_view = "tableview";
+            if (defination.views.listing.default in all_views) {
 				default_view = defination.views.listing.default;
 			}
-			for (let [name, label] of Object.entries(all_views)) {
+            for (let [name, label] of Object.entries(all_views)) {
 				if (name in defination.views.listing) {
 					views[name] = label;
 				}
 			}
-			let filterableFields = {};
-			let filterContext = false;
-			let searchKeyword = "";
-			Object.entries(defination.scope.columns).map(([column_name, column_props], cursor) => {
-				if (!["file", "dynamic", "textarea", "password", "wysiwyg", "map", "file", "slider", "multiselect"].includes(column_props.input.type)) {
-					filterableFields[column_name] = column_props;
+            let filterableFields = {};
+            let filterContext = false;
+            let searchKeyword = "";
+            this.evaluateFields().then(({ evaluatedFields, onChangeEffects }) => {
+				if (this.mounted) {
+					this.setState({
+						defination: defination,						
+						service: service,
+						fields: evaluatedFields, 
+						onChangeEffects: onChangeEffects,
+						query: query ? { 
+							...query, 
+							p: 1,
+							pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
+							page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
+						} : { 
+							p: 1,
+							pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
+							page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
+						},
+						views: views,
+						view: view ? view : default_view,
+						showViewOptions: showViewOptions,
+						showAddBtn: showAddBtn,
+
+					}, () =>{
+						this.loadFieldValuePosibilities();
+					});
+				} 
+				else {
+					this.state = {
+						...this.state,
+						defination: defination,
+						service: service,
+						fields: evaluatedFields, 
+						onChangeEffects: onChangeEffects,
+						query: query ? { 
+							...query, 
+							p: 1,
+							pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
+							page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
+						} : { 
+							p: 1,
+							pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
+							page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
+						},
+						views: views,
+						view: view ? view : default_view,
+						showViewOptions: showViewOptions,
+						showAddBtn: showAddBtn,
+					};
+					this.loadFieldValuePosibilities();
 				}
+				
+
+			}).catch(err => {
+				console.error(err)
 			});
-			if (JSON.isJSON(query)) {
-				let filterContextMatched = false;
-				let filterableColumns = Object.keys(filterableFields);
-				Object.entries(query).map(([queryColumn, queryValue]) => {
-					if (!filterContextMatched && filterableColumns.includes(queryColumn)) {
-						filterContext = queryColumn;
-						searchKeyword = queryValue;
-						if (String.isString(queryValue)) {
-							searchKeyword = queryValue;
+            
+	            
+        }
+	}
+
+	async callDefinationMethod(method) {
+		const { auth } = this.props;
+		let field_values = {};
+		let method_data = null;
+		if (method.length === 0) {
+			method_data = method();
+		}
+		else if (method.length === 1) {
+			method_data = method(this);
+		}
+		else if (method.length === 2) {
+			method_data = method({}, auth.user);
+		}
+		else if (method.length === 3) {
+			method_data = method({}, auth.user);
+		}
+		return Promise.all([method_data]).then(data => {
+			return method_data;
+		}).catch(err => { return method_data; });
+	}
+
+	async evaluateFields() {
+		const { defination } = this.props;
+		let fields = {};
+		let onChangeEffects = {};
+		if (defination) {
+			const columns = defination.scope.columns;
+			for (const [name, properties] of Object.entries(columns)) {
+				// Define onChange effects
+
+				//Evaluate value
+				let field = JSON.parse(JSON.stringify(properties));
+
+				if (properties.input.default) {
+					if (Function.isFunction(properties.input.default)) {
+						field.input.default = await this.callDefinationMethod(properties.input.default);
+					} else {
+						field.input.default = properties.input.default;
+					}
+				}
+
+				if (Function.isFunction(properties.label)) {
+					field.label = await this.callDefinationMethod(properties.label);
+				}
+				if (Function.isFunction(properties.input.type)) {
+					field.input.type = await this.callDefinationMethod(properties.input.type);
+				}
+
+				if (Function.isFunction(properties.input.default)) {
+					field.input.value = await this.callDefinationMethod(properties.input.default);
+				}
+
+				if (Function.isFunction(properties.input.value)) {
+					field.input.value =  await this.callDefinationMethod(properties.input.value);
+				}
+
+				if (Function.isFunction(properties.input.required)) {
+					field.input.required = await this.callDefinationMethod(properties.input.required);
+				}
+				if (Function.isFunction(properties.input.props)) {
+					field.input.props = await this.callDefinationMethod(properties.input.props);
+				}
+
+				if (properties.restricted) {
+					if (Function.isFunction(properties.restricted.input)) {
+						field.restricted.input = await this.callDefinationMethod(properties.restricted.input);
+					}
+					else if (Boolean.isBoolean(properties.restricted.input)) {
+						field.restricted.input = properties.restricted.input;
+					}
+
+				}
+				if (properties.reference) {
+					if (Function.isFunction(properties.reference)) {
+							field.reference = await this.callDefinationMethod(properties.reference);
+							if (JSON.isJSON(field.reference)) {
+								if (Function.isFunction(field.reference.name)) {
+									field.reference.name = await this.callDefinationMethod(field.reference.name);
+								}
+								if (Function.isFunction(field.reference.resolves)) {
+									field.reference.resolves = await this.callDefinationMethod(field.reference.resolves);
+								}
+								if (Function.isFunction(field.reference.service_query)) {
+									field.reference.service_query = await this.callDefinationMethod(field.reference.service_query);
+								}
+							}
+							else{
+								delete field.reference;
+							}
+								
+					}
+					else{
+						if (Function.isFunction(properties.reference.name)) {
+							field.reference.name = await this.callDefinationMethod(properties.reference.name);
+						}
+						else {
+							field.reference.name = properties.reference.name;
+						}
+						if (Function.isFunction(properties.reference.resolves)) {
+							field.reference.resolves = await this.callDefinationMethod(properties.reference.resolves);
+						}
+						else {
+							field.reference.resolves = properties.reference.resolves;
+						}
+						if (Function.isFunction(properties.reference.service_query)) {
+							field.reference.service_query = await this.callDefinationMethod(properties.reference.service_query);
+						}
+						else {
+							field.reference.service_query = properties.reference.service_query;
+						}
+					}
+							
+						
+				}
+				if (properties.possibilities) {
+					if (Function.isFunction(properties.possibilities)) {
+						field.possibilities = await this.callDefinationMethod(properties.possibilities);
+					}
+				}
+
+				fields[name] = field;
+
+				onChangeEffects[name] = async (instance) => {
+					let field_with_effects = JSON.parse(JSON.stringify(properties));
+					if (properties.input.default) {
+						if (Function.isFunction(properties.input.default)) {
+							field_with_effects.input.default = await instance.callDefinationMethod(properties.input.default);
+						}
+					}
+
+					if (Function.isFunction(properties.label)) {
+						field_with_effects.label = await instance.callDefinationMethod(properties.label);
+					}
+					if (Function.isFunction(properties.input.type)) {
+						field_with_effects.input.type = await instance.callDefinationMethod(properties.input.type);
+					}
+					if (Function.isFunction(properties.input.disabled)) {
+						field_with_effects.input.disabled = await instance.callDefinationMethod(properties.input.disabled);
+					}
+					if (Function.isFunction(properties.input.default)) {
+						field_with_effects.input.default = await instance.callDefinationMethod(properties.input.default);
+					}
+					if (Function.isFunction(properties.input.value)) {
+						field_with_effects.input.value = await instance.callDefinationMethod(properties.input.value);
+					}
+					if (Function.isFunction(properties.input.required)) {
+						field_with_effects.input.required = await instance.callDefinationMethod(properties.input.required);
+					}
+					if (Function.isFunction(properties.input.props)) {
+						field_with_effects.input.props = await instance.callDefinationMethod(properties.input.props);
+					}
+					if (properties.restricted) {
+						if (Function.isFunction(properties.restricted.input)) {
+							field_with_effects.restricted.input = await instance.callDefinationMethod(properties.restricted.input);
+						}
+						else if (Boolean.isBoolean(properties.restricted.input)) {
+							field_with_effects.restricted.input = properties.restricted.input;
+						}
+						else {
+							field_with_effects.restricted.input = false;
+						}
+					}
+
+					if (properties.reference) {
+						//field_with_effects.reference = properties.reference;
+						if (Function.isFunction(properties.reference)) {
+							field_with_effects.reference = await instance.callDefinationMethod(properties.reference);
+							if (JSON.isJSON(field_with_effects.reference)) {
+								if (Function.isFunction(field_with_effects.reference.name)) {
+									field_with_effects.reference.name = await instance.callDefinationMethod(field_with_effects.reference.name);
+								}
+								if (Function.isFunction(field_with_effects.reference.resolves)) {
+									field_with_effects.reference.resolves = await instance.callDefinationMethod(field_with_effects.reference.resolves);
+								}
+								if (Function.isFunction(field_with_effects.reference.service_query)) {
+									field_with_effects.reference.service_query = await instance.callDefinationMethod(field_with_effects.reference.service_query);
+								}
+							}
+							else{
+								delete field_with_effects.reference;
+							}							
 						}
 						else{
-							searchKeyword = String(queryValue);
+							if (Function.isFunction(properties.reference.name)) {
+								field_with_effects.reference.name = await instance.callDefinationMethod(properties.reference.name);
+							}
+							else {
+								field_with_effects.reference.name = properties.reference.name;
+							}
+							if (Function.isFunction(properties.reference.resolves)) {
+								field_with_effects.reference.resolves = await instance.callDefinationMethod(properties.reference.resolves);
+							}
+							else {
+								field_with_effects.reference.resolves = properties.reference.resolves;
+							}
+							if (Function.isFunction(properties.reference.service_query)) {
+								field_with_effects.reference.service_query = await instance.callDefinationMethod(properties.reference.service_query);
+							}
+							else {
+								field_with_effects.reference.service_query = properties.reference.service_query;
+							}
 						}
-						filterContextMatched = true;
+							
 					}
-				})
+					if (properties.possibilities) {
+						if (Function.isFunction(properties.possibilities)) {
+							field_with_effects.possibilities = await instance.callDefinationMethod(properties.possibilities);
+						}					
+					}
+					
+					if (!Object.areEqual(instance.state.fields[name], field_with_effects) ) {
+						return field_with_effects;
+					}
+					else {
+						return false;
+					}
 
-			}
-			console.log("this.searchkeywordRef", "this.searchkeywordRef")
-			if (this.mounted) {
-				this.setState(state => ({
-					defination: defination,
-					service: service,
-					query: query ? { 
-						...query, 
-						p: 1,
-						pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
-						page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
-					} : { 
-						p: 1,
-						pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
-						page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
-					},
-					views: views,
-					view: view ? view : default_view,
-					showViewOptions: showViewOptions,
-					showAddBtn: showAddBtn,
-					filterableFields: filterableFields,
-					searchKeyword: searchKeyword,
-					filterContext: filterContext,
 
-				}));
-			} else {
-				this.state = {
-					...this.state,
-					defination: defination,
-					service: service,
-					query: query ? { 
-						...query, 
-						p: 1,
-						pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
-						page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
-					} : { 
-						p: 1,
-						pagination: ('rpp' in query? query['rpp'] : ('pagination' in query? query['pagination'] : app.preferences.data.pagination)), 
-						page: ('pg' in query? query['pg'] : ('page' in query? query['page'] : 1)), 
-					},
-					views: views,
-					view: view ? view : default_view,
-					showViewOptions: showViewOptions,
-					showAddBtn: showAddBtn,
-					filterableFields: filterableFields,
-					searchKeyword: searchKeyword,
-					filterContext: filterContext,
+
 				};
 			}
 		}
+			
+		return { evaluatedFields: fields, onChangeEffects: onChangeEffects };
+
+	}
+
+	loadFieldValuePosibilities() {
+		const { auth, fields, exclude } = this.props;
+		let fields_to_load = {};
+		let loading_fields = {};
+		let value_possibilities = {};
+		if (Object.size(this.state.onChangeEffectsFields) > 0) {
+			for (let [effect_field_name, effect_field_properties] of Object.entries(this.state.onChangeEffectsFields)) {
+			
+				if (JSON.isJSON(effect_field_properties.reference) && !this.state.loading[effect_field_name]) {
+					fields_to_load[effect_field_name] = effect_field_properties;
+					loading_fields[effect_field_name] = true;
+				}
+				else if ((JSON.isJSON(effect_field_properties.possibilities) && !(effect_field_name in this.state.value_possibilities)) || !Object.areEqual(this.state.value_possibilities[effect_field_name], effect_field_properties.possibilities)) {
+					value_possibilities[effect_field_name] = effect_field_properties.possibilities;
+				}
+				else if (Array.isArray(effect_field_properties.possibilities) && !(effect_field_name in this.state.value_possibilities)) {
+					let possibilities = {};
+					for (var i = 0; i < effect_field_properties.possibilities.length; i++) {
+						possibilities[effect_field_properties.possibilities[i]] = effect_field_properties.possibilities[i];
+					}
+					value_possibilities[effect_field_name] = possibilities;
+				}
+
+			}
+		}
+		else {
+			for (let [field_name, field_properties] of Object.entries(this.state.fields)) {
+				
+				if (JSON.isJSON(field_properties.reference) && !this.state.loading[field_name]) {
+					if (!(field_name in this.state.value_possibilities)) {
+						fields_to_load[field_name] = field_properties;
+						loading_fields[field_name] = true;
+					}
+				}
+				else if ((JSON.isJSON(field_properties.possibilities) && !(field_name in this.state.value_possibilities)) || !Object.areEqual(this.state.value_possibilities[field_name], field_properties.possibilities)) {
+					value_possibilities[field_name] = field_properties.possibilities;
+				}
+				else if (Array.isArray(field_properties.possibilities) && !(field_name in this.state.value_possibilities)) {
+					let possibilities = {};
+					for (var i = 0; i < field_properties.possibilities.length; i++) {
+						possibilities[field_properties.possibilities[i]] = field_properties.possibilities[i];
+					}
+					value_possibilities[field_name] = possibilities;
+				}
+			}
+		}
+		
+		if (Object.size(value_possibilities) > 0 ) {
+			//console.log("loadFieldValuePosibilities fields_to_load", fields_to_load, "value_possibilities", value_possibilities);
+			
+			this.state.value_possibilities = { ...this.state.value_possibilities, ...value_possibilities };
+		}
+		
+		if (Object.size(fields_to_load) > 0) {
+			for (let [name, field] of Object.entries(fields_to_load)) {
+				if (Array.isArray(fields) && fields.length > 0) {
+					if ((exclude && fields.includes(name)) || !fields.includes(name)) {
+						continue;
+					}
+				}
+
+				if (JSON.isJSON(field.reference)) {
+					//Reference field Service Calls
+					if (String.isString(field.reference.name) && JSON.isJSON(field.reference.service_query)) {
+						let service = false;
+						let service_key = field.reference.name;
+						let service_query = field.reference.service_query;
+						
+						if (service_key in services) {
+							service_key = field.reference.name;
+							service = services[service_key];
+						}
+
+						let execute_service_call = service_query && this.state.last_field_changed !== name;
+
+						if (execute_service_call) {							
+							this.setState(prevState => ({ loading: { ...prevState.loading, [name]: true } }));
+							service.getRecords(service_query).then(response => {
+								let raw_data = response.body.data;
+
+								let possibilities = {};
+								let resolves = field.reference.resolves;
+								let resolve_columns = fields_to_load;
+
+								if (resolves.emulation) {
+
+									if (resolves.emulation.defination in definations) {
+										if (Array.isArray(raw_data)) {
+											let new_raw_data = []
+											for (let j = 0; j < raw_data.length; j++) {
+												if (resolves.emulation.key in raw_data[j]) {
+													if (Array.isArray(raw_data[j][resolves.emulation.key])) {
+														new_raw_data = new_raw_data.concat(raw_data[j][resolves.emulation.key])
+													}
+													else {
+														new_raw_data.push(raw_data[j][resolves.emulation.key])
+													}
+
+												}
+											}
+											raw_data = new_raw_data;
+										}
+										resolve_columns = definations[resolves.emulation.defination].scope.columns;
+									}
+									else {
+										raw_data = [];
+									}
+
+								}
+								if (raw_data.length > 0) {
+
+									let resolvable_data = [];
+									for (var i = 0; i < raw_data.length; i++) {
+										resolvable_data.push({ [name]: raw_data[i] });
+									}
+									let resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(
+										resolvable_data,
+										resolve_columns,
+										auth.user
+									);
+									for (var j = 0; j < resolved_data.length; j++) {
+										possibilities[resolved_data[j][name].value] = resolved_data[j][name].resolve;
+									}
+								}
+								if (this.mounted) {
+									this.setState(state => ({
+										value_possibilities: {
+											...state.value_possibilities,
+											[name]: possibilities
+										},
+										loading: { ...state.loading, [name]: false }
+									}));
+								}
+								else{
+									this.state.value_possibilities = { ...this.state.value_possibilities, [name]: possibilities };
+									this.state.loading = { ...this.state.loading, [name]: false }
+								}
+									
+
+							}).catch(err => {
+								if (this.mounted) {
+									this.setState(state => ({
+										loading: { ...state.loading, [name]: false },
+										openSnackBar: true,
+										snackbarMessage: "Error fetching " + field.label + " ::: " + err.msg,
+										snackbarColor: "warning"
+									}));
+								}
+								else{
+									this.state.loading = { ...this.state.loading, [name]: false };
+									this.state.openSnackBar = true;
+									this.state.snackbarMessage = "Error fetching " + field.label + " ::: " + err.msg;
+									this.state.snackbarColor = "warning";
+								}
+
+							});
+						}
+					}
+				}
+
+			}
+			this.setState({ onChangeEffectsFields: {} });
+		}
+		
+
+	}
+
+
+	async setQueryBuilderProps() {
+		const {auth, query, defination} = this.props; 
+		const {fields, value_possibilities} = this.state;
+		let query_builder_fields = {
+				_id: {
+					label: "ID",
+					type: "text",
+					valueSources: ['value', 'field'],
+					fieldSettings: {
+						//allowCustomValues: true,
+					}
+				},
+				
+			};
+
+			if (fields) {
+				Object.entries(fields).map(([column_name, column_props]) => {				
+					
+					let input_type = column_props.input.type;
+					input_type = input_type === "checkbox"? "boolean" : input_type;
+					input_type = input_type === "textarea" || input_type === "file"? "text" : input_type;
+					input_type = input_type === "radio"? "select" : input_type;
+					input_type = input_type === "slider"? (column_props.type === "integer"? "slider" : "select") : input_type;
+					query_builder_fields[column_name] = {
+						label: column_props.label,
+						type: input_type,
+						valueSources: ['value', 'field'],
+						fieldSettings: {
+							min: column_props.input.min,
+							max: column_props.input.max,
+						},
+					}
+					if (input_type === "slider") {
+						query_builder_fields[column_name].type = 'number';
+						query_builder_fields[column_name].fieldSettings.preferWidgets = ['slider'];
+					}
+
+					if (!JSON.isEmpty(value_possibilities[column_name])) {
+						let listValues = [];
+						Object.entries(value_possibilities[column_name]).map(([key, value]) => {
+							listValues.push({ value: key, title: value })
+						});
+						query_builder_fields[column_name].fieldSettings.listValues = listValues;
+					}
+				});
+			}
+			console.log("query_builder_fields", query_builder_fields);
+			if (this.mounted) {
+				this.setState(prevState => ({queryBuilderProps: {format: "mongodb", value: { populate: (prevState.query.p || prevState.query.populate), config: {fields: query_builder_fields}}}}));
+			}
+			else {
+				this.state.queryBuilderProps = {format: "mongodb", value:{ populate: (this.state.query.p || this.state.query.populate), config: {fields: query_builder_fields}}};
+			}
+		
+			
+	}
+
+	handleOnQueryBuilderChange(new_value) {
+		console.log("handleOnQueryBuilderChange new_value", new_value);
+		this.setState(prevState => {
+			return {
+				query: {
+					...prevState.query,
+					q: new_value.search,
+					filter: new_value.mongodb,
+					p: new_value.populate? 1 : 0,
+				},
+			};
+		});
 	}
 
 	render() {
 		const { classes, auth, query, defination, service, cache, api, showPagination, showSorter, cache_data, onLoadData, load_data, onClickEntry, sorterFormLayoutType } = this.props;
-		const { view } = this.state;
+		const { view, queryBuilderProps } = this.state;
 		return (
-			<GridContainer className="p-0 m-0">
+            <GridContainer className="p-0 m-0">
 				<GridContainer className="p-0 m-0">
 					{this.state.showViewOptions && (
 						<GridItem sm={12} md={8}>
@@ -372,9 +847,8 @@ class ListingView extends React.Component {
 											color={"primary"}
 											variant={name === view? "contained" : "text"}
 											onClick={(event) => {
-												console.log(name);
-												this.setState({ view: name, viewMenuAnchorEl: null });
-											}}
+                                                this.setState({ view: name, viewMenuAnchorEl: null });
+                                            }}
 											key={"btn-view-"+name}
 										>
 											{label}
@@ -382,7 +856,7 @@ class ListingView extends React.Component {
 									)
 								)}
 						</GridItem>
-					)}
+				)}
 					{this.state.showAddBtn &&
 						defination &&
 						!defination.access.actions.create.restricted(
@@ -401,131 +875,10 @@ class ListingView extends React.Component {
 
 				<GridContainer className="p-1 m-0">
 					{ (showSorter && view !== "googlemapview") && <GridItem xs={12} className="p-0 m-0 mb-2" >
-						<GridContainer className="p-0 m-0">
-							
-
-							<GridItem xs={12} className={"p-0"}>
-								<Accordion 
-									expanded={this.state.filterAccordionExpanded}
-									className="p-0"
-									variant="outlined"
-								>
-									{/*<AccordionSummary
-										expandIcon={this.state.filterAccordionExpanded? <ExpandLessIcon /> : <FilterListIcon />}
-										aria-controls="filter-panel1c-content"
-										id="filter-panel1c-header"
-										className="flex m-0 p-0 flex-grow"
-										
-									>*/}
-									<Paper 
-										component="form" 
-										elevation={0}
-										className={classes.searchRoot} 
-										onSubmit={event => {
-											event.preventDefault();
-											this.setState(prevState => ({
-												query: prevState.filterContext? {...prevState.query, [prevState.filterContext]: prevState.searchKeyword} : {...prevState.query, q: prevState.searchKeyword}
-											}));
-											console.log("Search submit searchKeyword", this.state.searchKeyword)
-										}}
-									>
-										{!this.state.filterContext && <IconButton 
-											className={classes.filterIconButton} 
-											aria-label="Filter"
-											onClick={(event)=>{
-												event.preventDefault();
-												this.setState({filterMenuAnchor: event.currentTarget});
-											}}
-										>
-											<MenuIcon />
-										</IconButton>}
-										{(this.state.filterContext && this.state.filterableFields[this.state.filterContext])&& <Button  
-											aria-label="Filter"
-											size={"small"}
-											color="secondary"
-											onClick={(event)=>{
-												event.preventDefault();
-												this.setState({filterMenuAnchor: event.currentTarget});
-											}}
-										>
-											{Function.isFunction(this.state.filterableFields[this.state.filterContext].label)? this.state.filterContext.humanize() : this.state.filterableFields[this.state.filterContext].label}
-										</Button>}
-										<Menu
-									        id="filter-fields-menu"
-									        anchorEl={this.state.filterMenuAnchor}
-									        keepMounted
-									        open={Boolean(this.state.filterMenuAnchor)}
-									        onClose={() => this.setState({filterMenuAnchor: null})}
-									    >
-									    	
-
-									        {Object.entries(this.state.filterableFields).map(([filterableField, filterableFieldProps], cursor) => (
-									        	<MenuItem 
-									        		onClick={()=> {
-									        			this.setState({filterContext: (this.state.filterContext === filterableField? false : filterableField), filterMenuAnchor: null});									        			
-									        		}}
-									        		key={"filterableField-"+filterableField+"-"+cursor}
-									        	>
-									        		{Function.isFunction(filterableFieldProps.label)? filterableField.humanize() : filterableFieldProps.label}
-									        	</MenuItem>
-									        ))}
-									    </Menu>
-										<TextInput
-											className={classes.searchInput}
-											placeholder="Search..."
-											inputProps={{ 'aria-label': 'Search' }}
-											defaultValue={this.state.searchKeyword}
-											onFocus={() => {
-												if (!this.state.filterAccordionExpanded) {
-													this.setState({ filterAccordionExpanded: true });
-												}
-											}}
-											onChange={newKeyword => {
-												this.setState(prevState=>{
-													let newState = { searchKeyword: newKeyword };
-													if (prevState.query) {
-														if (prevState.query.q) {
-															let newQuery = JSON.fromJSON(prevState.query);
-															delete newQuery["q"];
-															newState.query = newQuery;
-														}
-													}
-													return newState;
-												});
-											}}
-											variant={"base"}
-											ref={ref => (this.searchkeywordRef = ref)}
-										/>
-										<IconButton 
-											type="submit" className={classes.searchIconButton} aria-label="search">
-											<SearchIcon />
-										</IconButton>
-									</Paper>
-										
-											
-										
-									{/*</AccordionSummary>*/}
-									<AccordionDetails className={"p-0"}>
-											{ Object.keys(this.state.filters.values).length > 0 && <GridContainer className="m-0">
-												{Object.entries(this.state.filters.labels).map(([filter_name, filter_label], cursor) => {
-														return (
-															<Chip 
-																className="mx-1 my-1 max-w-xs" 
-																color="secondary"
-																label={(String.isString(defination.scope.columns[filter_name].label)? (defination.scope.columns[filter_name].label+" : ") : "")+filter_label} 
-																variant="outlined" 
-																style={{maxWidth: 180}}
-																key={"filter-chip-"+cursor}
-															/>
-														)
-
-																	})}
-											</GridContainer>}
-									</AccordionDetails>
-								</Accordion>
-								
-							</GridItem>
-						</GridContainer>
+						<Paper>
+							<QueryBuilder onChange={this.handleOnQueryBuilderChange} {...queryBuilderProps}/>
+						</Paper>
+						
 						
 					</GridItem>}
 					
@@ -587,7 +940,7 @@ class ListingView extends React.Component {
 							rowsPerPage={this.state.query.pagination}
 							onChangePage={this.handleOnPageChanged}
 							labelRowsPerPage={"Records per page"}
-							rowsPerPageOptions={[5, 10, 25, 50, 100, { value: -1, label: 'All' }]}
+							rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500, 1000, { value: -1, label: 'All' }]}
 							onChangeRowsPerPage={this.handleOnRecordsPerPageChanged}
 							ActionsComponent={TablePaginationActions}
 							component="div"
@@ -602,7 +955,7 @@ class ListingView extends React.Component {
 					</GridItem>
 				</GridContainer> }
 			</GridContainer>
-		);
+        );
 	}
 }
 ListingView.propTypes = {

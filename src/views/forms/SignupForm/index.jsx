@@ -164,7 +164,7 @@ class SignupForm extends React.Component {
 	}
 
 	componentDidMount() {
-		let uriQueries = (
+        let uriQueries = (
 			window.location.search.match(
 				new RegExp("([^?=&]+)(=([^&]*))?", "g")
 			) || []
@@ -174,8 +174,7 @@ class SignupForm extends React.Component {
 			return result;
 		}, {});
 
-		console.log("uriQueries", uriQueries);
-		if (
+        if (
 			("e" in uriQueries || "email" in uriQueries) &&
 			("c" in uriQueries || "code" in uriQueries)
 		) {
@@ -193,14 +192,14 @@ class SignupForm extends React.Component {
 			}));
 		}
 		else if (window) {}{
-			this.setState(prevState => ({
-				form_values: {
-					...prevState.form_values,
-					cb: window.location.href
-				},				
-			}));
-		}
-	}
+                this.setState(prevState => ({
+                    form_values: {
+                        ...prevState.form_values,
+                        cb: window.location.href
+                    },				
+                }));
+            }
+    }
 
 	handleChange = name => value => {
 		this.setState(prevState => ({ form_values: {...prevState.form_values, [name]: value } }));

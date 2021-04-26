@@ -52,16 +52,11 @@ export default {
 		},
 		listing: {
 			default: "listview",
-			listview: {
-				avatar: (entry, user) => {
-					if (entry) {
-						return FilesHelper.fileIcon(entry.name);
-					}
-					return FilesHelper.fileIcon("file.unknown");
-				},
+			/*listview: {
+				
 				primary: ["name"],
 				secondary: ["size", "description", "context"],
-			},
+			},*/
 			tableview: {
 				avatar: (entry, user) => {
 					if (entry) {
@@ -370,7 +365,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: {},
+					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar"},
 					resolves: {
 						value: "_id",
 						display: {

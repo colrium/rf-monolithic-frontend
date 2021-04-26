@@ -5,10 +5,9 @@ import { app as themeApp } from "assets/jss/app-theme";
 
 // version from response - first param, local version second param
 const semverGreaterThan = (versionA, versionB) => {
-	const versionsA = versionA.replaceAll(".", "").split(/\./g);
-	console.log("versionA", versionA, "versionB", versionB);
-	const versionsB = versionB.replaceAll(".", "").split(/\./g);
-	while (versionsA.length || versionsB.length) {
+    const versionsA = versionA.replaceAll(".", "").split(/\./g);
+    const versionsB = versionB.replaceAll(".", "").split(/\./g);
+    while (versionsA.length || versionsB.length) {
 		const a = Number(versionsA.shift());
 
 		const b = Number(versionsB.shift());
@@ -17,7 +16,7 @@ const semverGreaterThan = (versionA, versionB) => {
 		// eslint-disable-next-line no-restricted-globals
 		return a > b || isNaN(b);
 	}
-	return false;
+    return false;
 };
 
 class CacheBuster extends React.Component {
@@ -68,29 +67,25 @@ class CacheBuster extends React.Component {
 				const latestVersion = meta.version;
 
 				if (currentVersion === "0.0.0") {
-					console.log(`${currentVersion}. Should force refresh`);
-					this.setState({ loading: false, isLatestVersion: false, latestVersion: latestVersion });
-					setVersion(latestVersion);
-					setInitialized(true);
-				}
+                    this.setState({ loading: false, isLatestVersion: false, latestVersion: latestVersion });
+                    setVersion(latestVersion);
+                    setInitialized(true);
+                }
 				else {
 					const shouldForceRefresh = currentVersion !== latestVersion;
 					if (shouldForceRefresh) {
-						console.log(`We have a new version - ${latestVersion}. Should force refresh`);
-						this.setState({ loading: false, isLatestVersion: false, latestVersion: latestVersion });
-						setVersion(latestVersion);
-						setInitialized(true);
-					} else {
-						console.log(`${themeApp.name} version - ${latestVersion}.`);
-						this.setState({ loading: false, isLatestVersion: true, latestVersion });
-						setInitialized(true);
-					}
+                        this.setState({ loading: false, isLatestVersion: false, latestVersion: latestVersion });
+                        setVersion(latestVersion);
+                        setInitialized(true);
+                    } else {
+                        this.setState({ loading: false, isLatestVersion: true, latestVersion });
+                        setInitialized(true);
+                    }
 				}
 					
 			}).catch(e => {
-				console.log("meta.json error", e);
-				this.setState({ loading: false, isLatestVersion: true });
-			});
+            this.setState({ loading: false, isLatestVersion: true });
+        });
 	}
 	render() {
 		const { loading, isLatestVersion, refreshCacheAndReload, latestVersion } = this.state;

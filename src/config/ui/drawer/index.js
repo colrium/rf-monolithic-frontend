@@ -29,7 +29,9 @@ export const items = [
 				icon: definations.events.icon,
 				text: "Calendar",
 				route: "/calendar".toUriWithDashboardPrefix(),
-				restricted: false,
+				restricted: user => {
+					return !(user.isAdmin || user.isCollector);
+				},
 			},
 		],
 	},
@@ -101,13 +103,17 @@ export const items = [
 		text: definations.commissions.label,
 		section: true,
 		restricted: user => {
-			return !(user.isAdmin || user.isCollector);
+			//return !(user.isAdmin || user.isCollector);
+			return !(user.isAdmin || user.isCollector || user.isCustomer);
 		},
 		links: [
 			{
 				icon: definations.commissions.icon,
 				text: definations.commissions.label,
 				route: "/commissions".toUriWithDashboardPrefix(),
+				restricted: user => {
+					return !(user.isAdmin || user.isCollector || user.isCustomer);
+				},
 			},
 			{
 				icon: definations.teams.icon,

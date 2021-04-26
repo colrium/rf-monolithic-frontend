@@ -17,6 +17,7 @@ import Typography from "components/Typography";
 import React from "react";
 import { Link } from "react-router-dom";
 import { attachments as AttachmentsService } from "services";
+import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 
 export default {
 	name: "tracks",
@@ -53,25 +54,21 @@ export default {
 							return {
 								id: entry._id,
 								icon: false,
-								avatar: entry.user ? (
-										entry.user.avatar ? (
-											<Avatar
-												alt={
-													entry.user.first_name
-												}
-												src={AttachmentsService.getAttachmentFileUrl(
-													entry.user.avatar
-												)}
-											/>
-										) : (<Avatar className="twitter_text">
-												<UserIcon />
-											</Avatar>)
-									) : <Avatar className="twitter_text ">
-												<UserIcon />
-										</Avatar>,
+								avatar: ( 
+										<Avatar className="accent_text ">
+											<GpsFixedIcon />
+										</Avatar>
+									),
 								title: new Date(entry.start_time).toString()+ " - " + new Date(entry.stop_time).toString(),
 								body: (
 									<React.Fragment>
+										{entry.user && <Typography
+											component="span"
+											variant="body2"
+											color="default"
+										>
+											{isPopulated? (entry.user.first_name+" "+entry.user.last_name) : entry.user}
+										</Typography>}
 										{entry.time_type ? (
 											<Status
 												color={
@@ -89,13 +86,7 @@ export default {
 											""
 										)}
 
-										<Typography
-											component="span"
-											variant="body2"
-											color="default"
-										>
-											
-										</Typography>
+										
 										
 										{entry.context && (
 											<Status
@@ -276,14 +267,13 @@ export default {
 								);
 							}),
 
-							color: "#870036",
+							color: "#8C189B",
 							title:
 								(entry.start_time
 									? " Start Time: " +
 									  new Date(entry.start_time).format(
 											"d M Y H:i:s A"
-									  ) +
-									  " <br/>"
+									  ) 
 									: "") +
 								(entry.user
 									? " (User: " +
@@ -668,7 +658,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "collector" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {

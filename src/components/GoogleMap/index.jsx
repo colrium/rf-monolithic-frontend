@@ -163,11 +163,7 @@ class CustomGoogleMap extends Component {
 		this.state.defaultCenter = this.getDefaultCenter();
 	}
 
-	componentDidCatch(error) {
-		this.setState({ hasError: error }, () =>
-			console.error("GoogleMap Error", error)
-		);
-	}
+	
 
 	componentDidMount() {
 		if (this.props.showCurrentPosition) {

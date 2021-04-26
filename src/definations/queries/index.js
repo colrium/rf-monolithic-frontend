@@ -38,11 +38,11 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
+			/*listview: {
 				avatar: false,
 				primary: ["question"],
 				secondary: ["survey", "response_type", "status"],
-			},
+			},*/
 			tableview: {
 				avatar: false,
 				title: ["question"],

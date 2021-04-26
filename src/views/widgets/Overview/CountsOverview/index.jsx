@@ -150,8 +150,8 @@ class Overview extends Component {
 							<CardContent className="p-0 m-0">
 								<GridContainer className="p-0 m-0">
 									<GridItem xs={12} className="flex items-center justify-center">
-										{type === "count" && <Typography variant="h1" style={{color:theme.palette.accent.main, fontWeight: "700", fontSize: "3rem"}}> {value} </Typography>}
-										{(type === "aggregates" && !view && Function.isFunction(resolveValue)) && <Typography variant="h1" style={{color:theme.palette.accent.main, fontWeight: "700", fontSize: "3rem"}}> {resolveValue(value)} </Typography>}
+										{type === "count" && <Typography variant="h2" style={{color:theme.palette.accent.main, fontWeight: "700", fontSize: "2rem"}}> {value} </Typography>}
+										{(type === "aggregates" && !view && Function.isFunction(resolveValue)) && <Typography variant="h2" style={{color:theme.palette.accent.main, fontWeight: "700", fontSize: "2rem"}}> {resolveValue(value)} </Typography>}
 									</GridItem>
 								</GridContainer>
 

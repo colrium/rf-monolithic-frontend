@@ -19,8 +19,8 @@ const AutocompleteTextField = (props) => {
 			}
 
 
-function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, label, required, variant, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, onOpen, onClose, touched, invalid, isClearable, error, value, options, freeSolo, popupIcon, ...rest }) {
-
+const CustomAutocomplete = (props) => {
+	const { className, disabled, isMulti, loading, onChange, label, required, variant, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, onOpen, onClose, touched, invalid, isClearable, error, value, options, freeSolo, popupIcon, ...rest } = props
 	const uniqueAutocompleteValue = String.uid(20);
 	let formattedData = { options: [], value: [] }
 	
@@ -60,9 +60,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 					if (Array.isArray(value)) {
 						let position = value.indexOf(entry_key);
 						if (isMulti) {
-							if (
-								position !== -1 &&
-								!formatedValue.includes({
+							if (position !== -1 && !formatedValue.includes({
 									value: entry_key,
 									label: entry_value,
 								})
@@ -138,9 +136,8 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 				try {
 					validationError = await validator(input_value);
 				} catch(err) {
-					console.error(label+" validator error ", err);					
-					validationError = " validity cannot be determined.";
-				};
+                    validationError = " validity cannot be determined.";
+                };
 				valid = !String.isString(validationError);
 			}
 		}
@@ -180,9 +177,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 							let changed = onChange(new_value);
 							Promise.all([changed]).then(()=>{
 								
-							}).catch(e => {
-								console.error(label+" onChange error", e);
-							});
+							}).catch(e => {});
 							
 		}
 		
@@ -297,16 +292,14 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 				if (validity[0]) {
 					triggerOnChange(inputValue);
 				}
-			}).catch(e => {
-				console.error(label+" validity check error", e);
-			});			
+			}).catch(e => {});			
 		}
 	}, [inputTouched, inputValue]);
 
 	
 
 	return (
-		<Autocomplete
+        <Autocomplete
 			className={"flex-1 my-0"+(className? (" "+className) : "")}
 			multiple={isMulti}
 			margin={margin}
@@ -338,7 +331,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 			}}
 			renderInput={(params) => {							
 				return (
-					<TextField					
+                    <TextField					
 						label={label}
 						variant={variant? variant : "filled"}
 						margin={margin}
@@ -368,9 +361,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 														
 														triggerOnChange(new_value);
 													}
-												}).catch(e => {
-													console.error(label+" validity check error", e);
-												});
+												}).catch(e => {});
 												
 												/*if (!inputTouched) {
 													setInputTouched(true);
@@ -396,7 +387,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 						}}
 						InputProps={{
 							...params.InputProps,
-							autocomplete: 'none',
+							autoComplete: 'none',
 						}}
 						error={inputError ? true : isInvalid}
 						helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
@@ -409,7 +400,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 						required={required}
 						disabled={inputDisabled}
 					/>
-				)
+                );
 			}}
 			forcePopupIcon={true}
 			popupIcon={loading ? <CircularProgress size={"1.2rem"}  color="inherit" /> : (popupIcon? popupIcon : <ArrowDropDownIcon  fontSize="inherit" />)}
@@ -434,7 +425,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 			freeSolo={freeSolo}
 			fullWidth
 		/>
-	);
+    );
 }
 
 

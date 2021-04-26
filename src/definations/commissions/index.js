@@ -18,9 +18,33 @@ import GridItem from "components/Grid/GridItem";
 import Status from "components/Status";
 import Typography from "components/Typography";
 import { formats } from "config/data";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import { attachments as AttachmentsService } from "services";
+import LazyModule from "components/LazyModule";
+import { withTheme } from '@material-ui/core/styles';
+import compose from "recompose/compose";
+import { connect } from "react-redux";
+import * as definations from "definations";
+import * as services from "services";
+import { apiCallRequest } from "state/actions";
+import ApiService from "services/api";
+import { defaults, Pie, Bar, HorizontalBar } from "react-chartjs-2";
+import { UtilitiesHelper } from "hoc/Helpers";
+import MuiAlert from '@material-ui/lab/Alert';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import { FixedSizeList } from 'react-window';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import List from '@material-ui/core/List';
+
+import ReactJsonView from 'react-json-view'
+
+
+function Alert(props) {
+	return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 let status_names = {
 	scheduled: "Scheduled",
@@ -50,77 +74,53 @@ let distanceToMeters = (distance, unit = "meters") => {
 	return distance;
 };
 
-export default {
-	name: "commissions",
-	label: "Commissions",
-	icon: <DefinationContextIcon />,
-	color: "#4a148c",
-	model: "Commission",
-	endpoint: "/commissions",
-	cache: true,
-	views: {
-		single: {
-			default: "cardview",
-			cardview: {
-				avatar: false,
-				resolveData: (entry, user = null, isPopulated = true) => {
-					return {
-						avatar:
-							entry.involvement === "team" && entry.team ? (
-								entry.team.avatar ? (
-									<Avatar
-										alt={entry.team.name}
-										src={AttachmentsService.getAttachmentFileUrl(
-											entry.team.avatar
-										)}
-									/>
-								) : null
-							) : entry.involvement === "individual" &&
-							  entry.individual ? (
-								entry.individual.avatar && (
-									<Avatar
-										alt={entry.individual.first_name}
-										src={AttachmentsService.getAttachmentFileUrl(
-											entry.individual.avatar
-										)}
-									/>
-								)
-							) : null,
-						title: (
-							<Typography variant="h4" gutterBottom>
-								{entry.start_date
-									? new Date(entry.start_date).format(
-											formats.dateformats.date
-									  ) + (entry.end_date ? " - " : "")
-									: ""}
-								{entry.end_date
-									? new Date(entry.end_date).format(
-											formats.dateformats.date
-									  )
-									: ""}
-							</Typography>
-						),
-						subtitle: (
-							<React.Fragment>
-								{entry.status && (
-									<Status
-										color={status_colors[entry.status]}
-										text={status_names[entry.status]}
-									/>
-								)}
-							</React.Fragment>
-						),
-						body: (
-							<GridContainer className="p-0 m-0">
+const renderResponseSummaryRow = (data) => (props) => {
+	const {index, ...rest } = props;
+
+	return (
+		<ListItem button {...rest} key={index}>
+			<ListItemText primary={Object.keys(data)[index]} />
+			<ListItemSecondaryAction>
+				<Typography>{Object.values(data)[index]}</Typography>
+			</ListItemSecondaryAction>
+		</ListItem>
+	);
+}
+
+
+const CardViewBody = (props) => {
+	const {entry, user, isPopulated } = props;
+
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(false);
+	const [commissionFormSummary, setCommissionFormSummary] = useState(false);
+
+	useEffect(() => {
+		const ApiServiceInstance = new ApiService();
+		ApiServiceInstance.refresh();
+		ApiServiceInstance.setServiceUri("/responses/form-responses-summary/"+entry._id);
+		
+		ApiServiceInstance.get().then(res => {
+			const {body: {data}} = res;
+			setCommissionFormSummary(data);
+			setLoading(false);
+			setError(false);
+		}).catch(err => {
+			setLoading(false);
+			setCommissionFormSummary(false);
+			setError(err);
+		});
+
+	}, [])
+	return (
+		<GridContainer className="p-0 m-0">
 								<GridItem className="p-0 m-0" xs={12}>
 									<GoogleMap
-										markers={[
+										circles={[
 											{
-												position: entry.focus_center,
-												title: entry.survey
-													? entry.survey.title +
-													  " Survey Commission"
-													: "Commission",
+												id: entry._id,
+												center: entry.focus_center,
+												//title: entry.survey? entry.survey.title+' Survey Commission' : 'Commission',
 												infoWindow: (
 													<React.Fragment>
 														<Typography
@@ -128,6 +128,7 @@ export default {
 															variant="subtitle2"
 															color="primary"
 															bold
+															paragraph
 														>
 															Commission
 														</Typography>
@@ -138,12 +139,7 @@ export default {
 																color="default"
 															>
 																{" "}
-																Survey :{" "}
-																{
-																	entry.survey
-																		.title
-																}{" "}
-																<br />
+																Survey : {entry.survey.title} <br />
 															</Typography>
 														) : (
 															""
@@ -154,25 +150,11 @@ export default {
 															variant="body2"
 															color="default"
 															gutterBottom
+															paragraph
 														>
 															{" "}
-															From: 
-															{new Date(
-																entry.start_date
-															).format(
-																"d M Y H:i:s A"
-															)}
-														</Typography>
-														<Typography
-															component="p"
-															variant="body2"
-															color="default"
-															gutterBottom
-														>
-															To:
-															{new Date(
-																entry.end_date
-															).format(
+															From:{" "}
+															{new Date(entry.start_date).format(
 																"d M Y H:i:s A"
 															)}{" "}
 														</Typography>
@@ -181,11 +163,24 @@ export default {
 															variant="body2"
 															color="default"
 															gutterBottom
+															paragraph
+														>
+															{" "}
+															To:{" "}
+															{new Date(entry.end_date).format(
+																"d M Y H:i:s A"
+															)}{" "}
+														</Typography>
+														<Typography
+															component="p"
+															variant="body2"
+															color="default"
+															gutterBottom
+															paragraph
 														>
 															{" "}
 															Involvement:{" "}
-															{entry.involvement ===
-															"team"
+															{entry.involvement === "team"
 																? "Team"
 																: "Individual"}{" "}
 														</Typography>
@@ -194,6 +189,7 @@ export default {
 															variant="body2"
 															color="default"
 															gutterBottom
+															paragraph
 														>
 															{" "}
 															Radius:{" "}
@@ -206,58 +202,45 @@ export default {
 															variant="body2"
 															color="default"
 															gutterBottom
+															paragraph
 														>
-															{entry.involvement ===
-																"team" && (
+															{entry.involvement === "team" && (
 																	<Chip
 																		size="small"
-																		label={
-																			entry.status
-																		}
+																		label={entry.status}
 																	/>
 																) && (
 																	<Chip
 																		size="small"
 																		avatar={
-																			entry
-																				.team
-																				.avatar ? (
+																			entry.team.avatar ? (
 																				<Avatar
 																					alt={
-																						entry
-																							.team
+																						entry.team
 																							.name
 																					}
 																					src={AttachmentsService.getAttachmentFileUrl(
-																						entry
-																							.team
+																						entry.team
 																							.avatar
 																					)}
 																				/>
 																			) : null
 																		}
-																		label={
-																			entry
-																				.team
-																				.name
-																		}
+																		label={entry.team.name}
 																	/>
 																)}
-															{entry.involvement ===
-																"individual" && (
+															{entry.involvement === "individual" && (
 																<Chip
 																	size="small"
 																	label="Individual"
 																/>
 															)}
-															{entry.involvement ===
-																"individual" &&
+															{entry.involvement === "individual" &&
 																entry.individual && (
 																	<Chip
 																		size="small"
 																		avatar={
-																			entry
-																				.individual
+																			entry.individual
 																				.avatar ? (
 																				<Avatar
 																					alt={
@@ -274,66 +257,42 @@ export default {
 																			) : null
 																		}
 																		label={
-																			entry
-																				.individual
+																			entry.individual
 																				.first_name +
 																			" " +
-																			entry
-																				.individual
+																			entry.individual
 																				.last_name
 																		}
 																	/>
 																)}
 															&nbsp;
 														</Typography>
-														<Typography
-															component="p"
-															variant="body2"
-															color="default"
-															gutterBottom
-														>
-															{" "}
-															Status:{" "}
-															{entry.status && (
-																<Status
-																	color={
-																		status_colors[
-																			entry
-																				.status
-																		]
-																	}
-																	text={
-																		status_names[
-																			entry
-																				.status
-																		]
-																	}
-																/>
-															)}{" "}
-														</Typography>
+														<Badge color="primary" variant="dot">
+															<Chip
+																size="small"
+																label={entry.status}
+															/>{" "}
+														</Badge>
 													</React.Fragment>
 												),
-												color: "#4a148c",
-											},
+												//color: '#4a148c',
+												radius: distanceToMeters(
+													entry.focus_radius,
+													entry.focus_radius_metric
+												),
+												options: {
+													fillColor: "#4a148c",
+													strokeColor: "#4a148c",
+												},
+											}
 										]}
-										defaultZoom={12}
+										
+										selectedEntryType={"circle"}
+										selectedEntry={0}
 									/>
 								</GridItem>
 
-								<GridItem xs={12}>
-									{entry.survey ? (
-										<Typography
-											component="div"
-											variant="body2"
-											color="default"
-											paragraph
-										>
-											{" "}
-											Survey : {entry.survey.title} <br />
-										</Typography>
-									) : (
-										""
-									)}
+								<GridItem xs={12} className="p-4">
 
 									<Typography
 										component="div"
@@ -341,11 +300,49 @@ export default {
 										color="default"
 										paragraph
 									>
-										{" "}
-										From:{" "}
-										{new Date(entry.start_date).format(
-											"d M Y H:i:s A"
-										)}{" "}
+										Survey
+									</Typography>
+									<Typography
+										component="div"
+										variant="body1"
+										color="default"
+										paragraph
+									>
+										{entry.survey? entry.survey.title : ""}
+									</Typography>
+
+									<Typography
+										component="div"
+										variant="body2"
+										color="default"
+										paragraph
+									>
+										From
+									</Typography>
+									<Typography
+										component="div"
+										variant="body1"
+										color="default"
+										paragraph
+									>
+										{new Date(entry.start_date).toString()}
+									</Typography>
+
+									<Typography
+										component="div"
+										variant="body2"
+										color="default"
+										paragraph
+									>
+										To
+									</Typography>
+									<Typography
+										component="div"
+										variant="body1"
+										color="default"
+										paragraph
+									>
+										{new Date(entry.end_date).toString()}
 									</Typography>
 									<Typography
 										component="div"
@@ -353,39 +350,29 @@ export default {
 										color="default"
 										paragraph
 									>
-										{" "}
-										To:{" "}
-										{new Date(entry.end_date).format(
-											"d M Y H:i:s A"
-										)}{" "}
+										Involvement
 									</Typography>
+									<Typography
+										component="div"
+										variant="body1"
+										color="default"
+										paragraph
+									>
+										{String.isString(entry.involvement)? entry.involvement.humanize() : ""}
+									</Typography>
+
 									<Typography
 										component="div"
 										variant="body2"
 										color="default"
 										paragraph
 									>
-										{" "}
-										Involvement:{" "}
-										{entry.involvement === "team"
-											? "Team"
-											: "Individual"}{" "}
+										{String.isString(entry.involvement)? entry.involvement.humanize() : ""}
 									</Typography>
+
 									<Typography
 										component="div"
-										variant="body2"
-										color="default"
-										paragraph
-									>
-										{" "}
-										Radius:{" "}
-										{entry.focus_radius +
-											" " +
-											entry.focus_radius_metric}{" "}
-									</Typography>
-									<Typography
-										component="div"
-										variant="body2"
+										variant="body1"
 										color="default"
 										paragraph
 									>
@@ -452,28 +439,140 @@ export default {
 											)}
 										&nbsp;
 									</Typography>
+
 									<Typography
 										component="div"
 										variant="body2"
 										color="default"
 										paragraph
 									>
-										{" "}
-										Status:{" "}
-										{entry.status && (
-											<Status
-												color={
-													status_colors[entry.status]
-												}
-												text={
-													status_names[entry.status]
-												}
-											/>
-										)}{" "}
+										Focus Center
+									</Typography>
+									<Typography
+										component="div"
+										variant="body1"
+										color="default"
+										paragraph
+									>
+										<ReactJsonView name={"Coordinates"} src={entry.focus_center} displayDataTypes={false} />
+									</Typography>
+
+									<Typography
+										component="div"
+										variant="body2"
+										color="default"
+										paragraph
+									>
+										Focus Radius
+									</Typography>
+									<Typography
+										component="div"
+										variant="body1"
+										color="default"
+										paragraph
+									>
+										{entry.focus_radius +" " +entry.focus_radius_metric}
 									</Typography>
 								</GridItem>
+								{commissionFormSummary && <GridContainer className={"mb-8"}>
+									<GridItem xs={12}>
+										<Typography variant="subtitle1"> Responses Summary</Typography>
+									</GridItem>
+									<GridItem xs={12}>
+										<Alert severity="warning">This is an automated report based on raw data submitted to this project. Please conduct proper data cleaning prior to using the graphs and figures used on this page.</Alert>
+									</GridItem>
+									<GridContainer className={"mb-8"}>
+										
+										{ Object.entries(commissionFormSummary).map(([key, value]) => (
+											!JSON.isEmpty(value) && <GridItem xs={12}>
+												<GridContainer className={"mb-8"}>
+													<GridItem xs={12}>
+														<Typography  variant="subtitle2" className={"w-full text-center"}> {key}</Typography>
+													</GridItem>
+
+													<GridItem xs={12}>
+														{Object.size(value) <= 5? <Pie data={{labels: Object.keys(value), datasets: [{data:  Object.values(value), backgroundColor: UtilitiesHelper.monochromeColorScheme("#00AF41", Object.size(value)), hoverBackgroundColor: "#76C4D5"}]}} /> : (Object.size(value) <= 10? <Bar data={{labels: Object.keys(value), datasets: [{label: key, data:  Object.values(value), backgroundColor: UtilitiesHelper.monochromeColorScheme("#00AF41", Object.size(value)), hoverBackgroundColor: "#76C4D5",}]}} /> : <HorizontalBar data={{labels: Object.keys(value), datasets: [{label: key, data:  Object.values(value), backgroundColor: UtilitiesHelper.monochromeColorScheme("#00AF41", Object.size(value)), hoverBackgroundColor: "#76C4D5",}]}} />)}
+														
+													</GridItem>
+												</GridContainer>
+											</GridItem>
+										))}
+									</GridContainer>
+								</GridContainer>}
+								
 							</GridContainer>
+	)
+}
+
+
+export default {
+	name: "commissions",
+	label: "Commissions",
+	icon: <DefinationContextIcon />,
+	color: "#4a148c",
+	model: "Commission",
+	endpoint: "/commissions",
+	cache: true,
+	views: {
+		single: {
+			default: "cardview",
+			cardview: {
+				avatar: false,
+				resolveData: (entry, user = null, isPopulated = true) => {
+					return {
+						avatar:
+							entry.involvement === "team" && entry.team ? (
+								entry.team.avatar ? (
+									<Avatar
+										alt={entry.team.name}
+										src={AttachmentsService.getAttachmentFileUrl(
+											entry.team.avatar
+										)}
+									/>
+								) : null
+							) : entry.involvement === "individual" &&
+							  entry.individual ? (
+								entry.individual.avatar && (
+									<Avatar
+										alt={entry.individual.first_name}
+										src={AttachmentsService.getAttachmentFileUrl(
+											entry.individual.avatar
+										)}
+									/>
+								)
+							) : null,
+						title: (
+							<Typography variant="h4" gutterBottom>
+								{entry.start_date
+									? new Date(entry.start_date).format(
+											formats.dateformats.date
+									  ) + (entry.end_date ? " - " : "")
+									: ""}
+								{entry.end_date
+									? new Date(entry.end_date).format(
+											formats.dateformats.date
+									  )
+									: ""}
+							</Typography>
 						),
+						subtitle: (
+							<React.Fragment>
+								<GridContainer className={"p-0"}>
+									<GridItem xs={12}>										
+										<Typography variant="subtitle2" paragraph>{entry.requirements}</Typography>
+									</GridItem>
+									<GridItem xs={12}>										
+										{entry.status && (
+											<Status
+												color={status_colors[entry.status]}
+												text={status_names[entry.status]}
+											/>
+										)}
+									</GridItem>
+								</GridContainer>
+							</React.Fragment>
+						),
+						body: ( <CardViewBody entry={entry} user={user} isPopulated={isPopulated}/>),
 					};
 				},
 			},
@@ -492,11 +591,7 @@ export default {
 			default: "tableview",
 			listview: {
 				avatar: false,
-				resolveData: async (
-					entries,
-					user = null,
-					isPopulated = true
-				) => {
+				resolveData: async (entries,user = null,isPopulated = true) => {
 					let resolved_data = [];
 
 					if (Array.isArray(entries)) {
@@ -770,9 +865,7 @@ export default {
 									>
 										{" "}
 										To:{" "}
-										{new Date(entry.end_date).format(
-											"d M Y H:i:s A"
-										)}{" "}
+										{new Date(entry.end_date).toString()}
 									</Typography>
 									<Typography
 										component="p"
@@ -966,7 +1059,7 @@ export default {
 				icon: "label",
 				input: {
 					type: (values, user) => {
-						if (values.response_mode === "queries") {
+						if (JSON.isEmpty(values) || (values && values.response_mode === "queries")) {
 							return "multiselect";
 						}
 						return "hidden";
@@ -1021,7 +1114,7 @@ export default {
 				label: "Form",
 				input: {
 					type: (values, user) => {
-						if (values.response_mode === "form") {
+						if (JSON.isEmpty(values) || (values && values.response_mode === "form")) {
 							return "select";
 						}
 						return "hidden";
@@ -1098,7 +1191,7 @@ export default {
 				icon: "people",
 				input: {
 					type: (values, user) => {
-						if (values.involvement === "team") {
+						if (JSON.isEmpty(values) || (values && values.involvement === "team")) {
 							return "select";
 						}
 						return "hidden";
@@ -1133,7 +1226,8 @@ export default {
 						value: "_id",
 						display: {
 							primary: ["name"],
-							secondary: ["bias"],
+							//secondary: ["bias"],
+							secondary: [],
 							avatar: false,
 						},
 					},
@@ -1144,7 +1238,7 @@ export default {
 				label: "Lead",
 				input: {
 					type: (values, user) => {
-						if (values.involvement === "team") {
+						if (JSON.isEmpty(values) || (values && values.involvement === "team")) {
 							return "select";
 						}
 						return "hidden";
@@ -1166,7 +1260,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "collector" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -1182,14 +1276,14 @@ export default {
 				label: "Individual",
 				input: {
 					type: (values, user) => {
-						if (values.involvement === "individual") {
+						if (JSON.isEmpty(values) || (values && values.involvement === "individual")) {
 							return "select";
 						}
 						return "hidden";
 					},
 					default: "",
 					required: (values, user) => {
-						if (values.involvement === "individual") {
+						if (values && values.involvement === "individual") {
 							return true;
 						}
 						return false;
@@ -1211,7 +1305,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "collector" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -1469,26 +1563,30 @@ export default {
 	},
 	access: {
 		restricted: user => {
-			if (user) {
+			/*if (user) {
 				return !(user.isAdmin || user.isCollector);
 			}
 			return true;
+			*/
+			return !user;
 		},
 		view: {
 			summary: user => {				
-				return true;
+				return !JSON.isEmpty(user);
 			},
 			all: user => {
-				if (user) {
+				/*if (user) {
 					return user.isAdmin || user.isCollector;
 				}
-				return false;
+				return false;*/
+				return !JSON.isEmpty(user);
 			},
 			single: (user, record) => {
-				if (user) {
+				/*if (user) {
 					return user.isAdmin || user.isCollector;
 				}
-				return false;
+				return false;*/
+				return !JSON.isEmpty(user);
 			},
 		},
 		actions: {
@@ -1550,15 +1648,14 @@ export default {
 			},
 			view_single: {
 				restricted: user => {
-					if (user) {
+					/*if (user) {
 						return !(user.isAdmin || user.isCollector);
 					}
-					return true;
+					return true;*/
+					return JSON.isEmpty(user);
 				},
 				uri: entry => {
-					return (
-						"commissions/view/" + entry._id
-					).toUriWithDashboardPrefix();
+					return ("commissions/view/" + entry._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

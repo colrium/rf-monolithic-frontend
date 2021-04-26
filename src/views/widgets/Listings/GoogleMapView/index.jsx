@@ -200,7 +200,6 @@ class GoogleMapView extends React.Component {
 												defaultZoom={12}
 												zoom={12}
 												{...googleMapProps}
-
 												
 												polylines={
 													defination &&

@@ -122,8 +122,8 @@ export default {
 						resolved_data = entries.map((entry, index) => {
 							return {
 								id: entry._id,
-								icon: entry.avatar? null : (<EntryIcon />),
-								avatar: (entry.avatar ? (
+								icon: isPopulated && entry.avatar? null : (<EntryIcon />),
+								avatar: (isPopulated && entry.avatar ? (
 											<Avatar
 												alt={entry.first_name}
 												src={AttachmentsService.getAttachmentFileUrl(entry.avatar)}

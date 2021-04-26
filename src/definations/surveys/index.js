@@ -47,11 +47,6 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
-				avatar: false,
-				primary: ["title"],
-				secondary: ["project_objectives"],
-			},
 			tableview: {
 				avatar: false,
 				title: ["title"],
@@ -865,7 +860,7 @@ export default {
 			},
 			create: {
 				restricted: user => {
-					return user && user.role === "admin" ? false : true;
+					return user && user.role !== "admin";
 				},
 				uri: "surveys/add",
 				link: {
@@ -892,10 +887,7 @@ export default {
 			},
 			update: {
 				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
+					return user && user.role !== "admin";
 				},
 				uri: entry => {
 					return "surveys/edit/" + entry._id;
@@ -923,10 +915,7 @@ export default {
 			},
 			delete: {
 				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
+					return user && user.role !== "admin";
 				},
 				uri: entry => {
 					return "surveys/delete/" + entry._id;

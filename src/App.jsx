@@ -57,6 +57,8 @@ import { firebase as firebaseConfig } from "config";
 
 import "assets/scss/style.scss?v=1.4.0";
 import "assets/css/tui-calendar.min.css";
+import 'react-awesome-query-builder/lib/css/styles.css';
+//import 'react-awesome-query-builder/lib/css/compact_styles.css';
 
 const jss = createJss();
 jss.use(VendorPrefixer(), NestedJSS());

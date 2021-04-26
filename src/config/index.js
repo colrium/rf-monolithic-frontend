@@ -38,14 +38,14 @@ export const client_id = process.env.REACT_APP_CLIENT_ID;
 export const client_secret = process.env.REACT_APP_CLIENT_SECRET;
 
 export const firebase = {
-	apiKey: "AIzaSyDnzjktxxiPEcfjmkxgxcTT0U1D70c-h9U",
-	authDomain: "realfield-io.firebaseapp.com",
-	databaseURL: "https://realfield-io.firebaseio.com",
-	projectId: "realfield-io",
-	storageBucket: "realfield-io.appspot.com",
-	messagingSenderId: "47480102815",
-	appId: "1:47480102815:web:aef14d1c29e4832f97a7aa",
-	measurementId: "G-SPZ1031JXB"
+	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+	authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+	databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+	projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+	storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+	messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+	appId: process.env.REACT_APP_FIREBASE_APP_ID,
+	measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 export const firebaseWebPushCertificate = "BCRs2cCvL59gp6AyJybuna4N7migtv4c6O6Twvgpg0-FE8yAhAmEpYNRc7YwV4T4QjhLQkds8U2NUS6ZVxVChXw";
@@ -54,30 +54,23 @@ export const firebaseWebPushCertificate = "BCRs2cCvL59gp6AyJybuna4N7migtv4c6O6Tw
 export const baseUrls = {
 	development: {
 		domain: "localhost",
-		endpoints: {
-			default: "http://localhost:8080/",
-			auth: "http://localhost:8080/",
-		},
+		endpoint: process.env.REACT_APP_API_DEV_ENDPOINT,
 	},
 	production: {
 		domain: "realfield.io",
-		endpoints: {
-			default: "https://api.realfield.io/",
-			auth: "https://auth.api.realfield.io/",
-		},
+		endpoint: process.env.REACT_APP_API_ENDPOINT,
 	},
 };
 
-export const google_maps_url =
-	"https://maps.googleapis.com/maps/api/js?key=" +
-	process.env.REACT_APP_GOOGLE_MAPS_KEY +
-	"&v=3.exp&libraries=geometry,drawing,places";
+export const apiBaseUrl = baseUrls[environment].endpoint.endsWith("/")? baseUrls[environment].endpoint : (baseUrls[environment].endpoint + "/");
+
+export const google_maps_url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_MAPS_KEY + "&v=3.exp&libraries=geometry,drawing,places";
 	
 export const default_location = { lat: -1.2921, lng: 36.8219 };
 
 export const auth_token = {
-	location: "cookie", // "cookie" or "redux"
-	name: "rf_auth",
+	location: process.env.REACT_APP_AUTH_TOKEN_LOCATION,
+	name: process.env.REACT_APP_AUTH_TOKEN_NAME,
 };
 
 export const apiClient = {

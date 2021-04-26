@@ -24,6 +24,7 @@ import { withErrorHandler } from "hoc/ErrorHandler";
 import styles from "views/pages/styles";
 //Context Views Imports
 import Listings from "views/widgets/Listings";
+import AccessDenied from "views/widgets/Catch/AccessDenied";
 
 
 
@@ -79,74 +80,61 @@ class Page extends React.Component {
 		return (
 			<GridContainer className={classes.root}>
 				<GridItem xs={12}>
-					{this.defination.access.restricted(auth.user) && (
+					{/*this.defination.access.restricted(auth.user) && (
 						<GridContainer
 							className={classes.fullPageHeight}
 							direction="column"
 							justify="center"
 							alignItems="center"
 						>
-							<GridItem xs={12}>
+							<GridItem xs={12} className={"flex items-center"}>
 								<Typography
 									color="error"
 									variant="h1"
-									center
-									fullWidth
 								>
 									<WarningRoundedIcon
 										className={classes.errorIcon}
 									/>
 								</Typography>
 							</GridItem>
-							<GridItem xs={12}>
+							<GridItem xs={12} className={"flex items-center"}>
 								<Typography
 									color="grey"
 									variant="h3"
-									center
-									fullWidth
 								>
 									Access Denied!
 								</Typography>
 							</GridItem>
 
-							<GridItem xs={12}>
+							<GridItem xs={12} className={"flex items-center"}>
 								<Typography
 									color="default"
 									variant="body1"
-									center
-									fullWidth
 								>
 									Sorry! Access to this resource has been
-									denied since you lack required priviledges.{" "}
+									denied since you lack required priviledges.
 									<br /> Please contact the system
 									administrator for further details.
 								</Typography>
 							</GridItem>
 
-							<GridItem xs={12}>
-								<Typography
-									color="error"
-									variant="body1"
-									center
-									fullWidth
-								>
+							<GridItem xs={12} className={"flex items-center"}>
 									<Link
 										to={"home".toUriWithDashboardPrefix()}
 									>
-										{" "}
 										<Button
 											variant="text"
 											color="default"
 											simple
 										>
-											{" "}
-											Home{" "}
-										</Button>{" "}
+											Home
+										</Button>
 									</Link>
-								</Typography>
 							</GridItem>
 						</GridContainer>
-					)}
+					)*/}
+
+					{this.defination.access.restricted(auth.user) && <AccessDenied />}
 
 					{!this.defination.access.restricted(auth.user) && (
 						<Listings

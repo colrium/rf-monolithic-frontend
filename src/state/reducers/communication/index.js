@@ -19,9 +19,12 @@ const initialState = {
 		conversations: [],
 		drafts: [],
 		contacts: [],
+		contactactable_contacts_ids: [],
 		active_conversation: false,
 		active_conversation_messages: [],
 		contacts_open: false,
+		fetching_inbox: false,
+		creating_conversation: false,
 	},
 	emailing: {
 		popup_open: false,

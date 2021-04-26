@@ -58,9 +58,7 @@ class AccountProfile extends Component {
 					}
 				}
 			})
-			.catch(e => {
-				console.log(e);
-			});
+			.catch(e => {});
 	}
 
 	handleProfileFormSubmit(data, event) {

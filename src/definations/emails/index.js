@@ -37,11 +37,11 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
+			/*listview: {
 				avatar: false,
 				primary: ["name"],
 				secondary: ["code", "status", "expiration_date", "use"],
-			},
+			},*/
 			tableview: {
 				avatar: false,
 				title: ["name"],

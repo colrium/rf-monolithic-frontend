@@ -128,9 +128,8 @@ class CalendarView extends React.Component {
 				this.loadData();
 			})
 			.catch(e => {
-				console.log("CalendarView delete error", e);
-				closeDialog();
-			});
+            closeDialog();
+        });
 	};
 
 	loadContext() {
@@ -170,19 +169,17 @@ class CalendarView extends React.Component {
 						cache: cache_data,
 					}
 				).then(data => {
-					console.log("calendar data", data);
-					if (Function.isFunction(onLoadData)) {
+                    if (Function.isFunction(onLoadData)) {
 						onLoadData(data, this.state.query);
 					}
-					this.prepareData(data);
-				}).catch(e => {
-					console.log("calendar error", e);
-					this.setState(state => ({
+                    this.prepareData(data);
+                }).catch(e => {
+                    this.setState(state => ({
 						records: [],
 						load_error: e,
 						loading: false,
 					}));
-				});
+                });
 			}
 			else {
 				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];

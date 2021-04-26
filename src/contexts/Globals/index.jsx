@@ -4,13 +4,18 @@ import { connect } from "react-redux";
 import { useDispatch } from 'react-redux';
 import { osName, osVersion, browserName, fullBrowserVersion } from 'react-device-detect';
 
-import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache, setActiveConversation } from "state/actions";
+import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation } from "state/actions";
+import { setMessagingCache, sendUnsentMessages, fetchInbox, updateMessage, appendMessage, fetchContacts } from "state/actions/communication";
+
 import {default_location} from "config";
 import {socket as defaultSocket} from "utils/Sockets";
 import * as definations from "definations";
 import * as services from "services";
-import notificationSound from "assets/audio/notification.mp3";
+
 import {firestore as fcFirestore, messaging as fcMessaging, getFirestoreDoc, createUpdateFirestoreDoc} from "utils/Firebase";
+
+
+
 
 
 let models = {
@@ -89,16 +94,18 @@ function loadScript(src, position, id) {
 export const GlobalsContext = React.createContext(defaultValue);
 
 const GlobalsProvider = props => {
+
+	let { auth: {isAuthenticated, token, user:auth_user}, cache: { data: dataCache}, communication: {messaging}, api, app,clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, fetchInbox, updateMessage, appendMessage, sendUnsentMessages, fetchContacts, children } = props;
+
 	const dispatch = useDispatch();
-	let notificationAudio = new Audio(notificationSound)
+	
 	let [value, setValue] = useState(defaultValue);	
 	let [valueInitialized, setValueInitialized] = useState(false);	
 	let [settingsChangeCallBacks, setSettingsChangeCallBacks] = useState([]);
 	let [preferencesChangeCallBacks, setPreferencesChangeCallBacks] = useState([]);	
 
-	let { auth, cache: { data: dataCache}, communication: {messaging}, api, app, clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache, setActiveConversation } = props;
 	
-	const {isAuthenticated} = auth;
+	
 
 	const handleOnInternetAvailabilityChange = () => {
 		const condition = navigator.onLine ? 'online' : 'offline';
@@ -134,9 +141,7 @@ const GlobalsProvider = props => {
 	}
 
 	const handleOnNewConversation = (conversation) => {
-		console.log("handleOnNewConversation conversation", conversation)
-
-		setMessagingCache("conversations", currentConversations => {
+        setMessagingCache("conversations", currentConversations => {
 			try {
 				let newConversations = JSON.parse(JSON.stringify(currentConversations));
 				if (Array.isArray(newConversations)) {
@@ -147,20 +152,18 @@ const GlobalsProvider = props => {
 				}
 				return newConversations;
 			} catch(err) {
-				console.error(err);
-				if (!Array.isArray(currentConversations)) {
+                if (!Array.isArray(currentConversations)) {
 					return [conversation];
 				}
 				else{
 					return currentConversations;
 				}
-			}
+            }
 		});
-	}
+    }
 
 	const handleOnConversationCreated = (conversation) => {
-		console.log("handleOnConversationCreated conversation", conversation)
-		setMessagingCache("conversations", currentConversations => {
+        setMessagingCache("conversations", currentConversations => {
 			try {
 				let newConversations = JSON.parse(JSON.stringify(currentConversations));
 				if (Array.isArray(newConversations)) {
@@ -171,240 +174,29 @@ const GlobalsProvider = props => {
 				}
 				return newConversations;
 			} catch(err) {
-				console.error(err);
-				if (!Array.isArray(currentConversations)) {
+                if (!Array.isArray(currentConversations)) {
 					return [conversation];
 				}
 				else{
 					return currentConversations;
 				}
-			}
+            }
 		});
-		setMessagingCache("active_conversation", conversation);
-	}
+        setMessagingCache("active_conversation", conversation);
+    }
 
 	const handleOnCreatingConversationExists = (conversation) => {		
 		setMessagingCache("active_conversation", conversation);
 	}
 
 	
-	const handleOnNewMessage = (message) => {
-		const {conversation, sender} = message;
-		let sender_id = false;
-		if (JSON.isJSON(message.sender)) {
-			sender_id = message.sender._id;
-		}
-		else {
-			sender_id = message.sender;
-		}
+	
 
-		if (sender_id) {
-			if (sender_id !== auth.user._id) {
-				//notificationAudio.play();
-			}
-			let currentConversation = messaging.active_conversation;
-				if (currentConversation) {
-					let conversation_id = message.conversation;
-					if (JSON.isJSON(conversation_id)) {
-						conversation_id = conversation_id._id;
-					}
-					if (conversation_id) {
-						conversation_id = conversation_id.toString();
-					}
-					if (conversation_id === currentConversation._id.toString()) {
-						dispatch(setMessagingCache("active_conversation_messages", current_messages => {
-							if (Array.isArray(current_messages)) {
-								current_messages.push(message);
-							}
-							else {
-								current_messages = [message];
-							}
-							return current_messages;
-						}));
-					}
-				}
-				
-			if (sender_id !== auth.user._id) {
-				setMessagingCache("unread_ids", currentUnreadIds => {
-						
-					if (sender_id.toString() !== auth.user._id.toString()) {
-						try {
-							let newUnreadIds = JSON.parse(JSON.stringify(currentUnreadIds));
-							if (Array.isArray(newUnreadIds)) {
-								newUnreadIds.unshift(message._id.toString());
-							}
-							else{
-								newUnreadIds = [message._id.toString()];
-							}
-							return newUnreadIds;
-						} catch(err) {
-							console.error(err);
-							if (!Array.isArray(currentUnreadIds)) {
-								return [message._id.toString];
-							}
-							else{
-								return currentUnreadIds;
-							}
-						}
-					}
-				});
-				if (value.sockets.default) {
-					value.sockets.default.emit("mark-message-as-received", {message: message._id, user: auth.user});
-				}
-				
-				setMessagingCache("conversations", currentConversations => {
-					
-						try {
-							let newConversations = JSON.parse(JSON.stringify(currentConversations));
-							if (Array.isArray(newConversations)) {
-									let message_conversation = message.conversation;
-									if (JSON.isJSON(message_conversation)) {
-										message_conversation = message_conversation._id;
-									}
-									let conversation_position = -1;
-									newConversations.map((conversationEntry, index) => {
-										if (conversation_position === -1 && conversationEntry._id === message_conversation) {
-											conversation_position = index;
-											if (JSON.isJSON(conversationEntry.state)) {
-												conversationEntry.state.total = conversationEntry.state.total > 0? (conversationEntry.state.total + 1) : 1;
-												conversationEntry.state.unread = conversationEntry.state.unread > 0? (conversationEntry.state.unread + 1) : 1;
-												conversationEntry.state.last_message = message;
-											}
-											else {
-												conversationEntry.state = {
-													total: 1,
-													unread: 1,
-													last_message: message,
-												}
-											}
-											if (JSON.isJSON(conversationEntry.state.last_message.sender)) {
-												conversationEntry.state.last_message.sender = conversationEntry.state.last_message.sender._id;
-											}
-										}
-									});
-									/*newConversations.map((conversationEntry, index) => {
-										if (conversation_position === -1 && conversationEntry._id === message_conversation) {
-											conversation_position = index;
-										}
-									});
-
-									if (!conversation_position !== -1) {
-										newConversations[conversation_position].state.last_message = message;
-										newConversations[conversation_position].state.unread = newConversations[conversation_position].state.unread+1;
-
-									}*/
-								
-							}
-							else{
-								//newConversations = [conversation];
-							}
-							return newConversations;
-						} catch(err) {
-							console.error(err);
-							return currentConversations;
-						}
-					
-								
-				});
-			}	
-		}
-				
-						
-						
-
-	}
-
-	const handleOnMessageSent = (message) => {
-
-		const {conversation, sender} = message;
-
-		let sender_id = false;
-		if (JSON.isJSON(message.sender)) {
-			sender_id = message.sender._id;
-		}
-		else {
-			sender_id = message.sender;
-		}
-
-
-		if (sender_id) {
-					let currentConversation = messaging.active_conversation;
-					if (currentConversation) {
-						let conversation_id = message.conversation;
-						if (JSON.isJSON(conversation_id)) {
-							conversation_id = conversation_id._id;
-						}
-						if (conversation_id) {
-							conversation_id = conversation_id.toString();
-						}
-						if (conversation_id === currentConversation._id.toString()) {
-							dispatch(setMessagingCache("active_conversation_messages", current_messages => {
-								if (Array.isArray(current_messages)) {
-									current_messages.push(message);
-								}
-								else {
-									current_messages = [message];
-								}
-								return current_messages;
-							}));
-						}
-					}
-			if (sender_id === auth.user._id) {
-				setMessagingCache("conversations", currentConversations => {
-					
-						try {
-							let newConversations = JSON.parse(JSON.stringify(currentConversations));
-							if (Array.isArray(newConversations)) {
-									let message_conversation = message.conversation;
-									if (JSON.isJSON(message_conversation)) {
-										message_conversation = message_conversation._id;
-									}
-									let conversation_position = -1;
-									newConversations.forEach((conversationEntry, index) => {
-										if (conversation_position === -1 && conversationEntry._id === message_conversation) {
-											conversation_position = index;
-											if (JSON.isJSON(conversationEntry.state)) {
-												conversationEntry.state.total = conversationEntry.state.total > 0? (conversationEntry.state.total + 1) : 1;
-												conversationEntry.state.last_message = message;
-											
-												
-											}
-											else {
-												conversationEntry.state = {
-													total: 1,
-													incoming_unread: 1,
-													last_message: message,
-												}
-
-											}
-											if (JSON.isJSON(conversationEntry.state.last_message.sender)) {
-												conversationEntry.state.last_message.sender = conversationEntry.state.last_message.sender._id;
-											}
-										}
-									});
-									console.log("\n\n newConversations", newConversations);
-
-									/*if (!conversation_position !== -1) {
-										newConversations[conversation_position].state.last_message = message;
-									}*/
-								
-							}
-							
-							return newConversations;
-						} catch(err) {
-							console.error(err);
-							return currentConversations;
-						}
-					
-								
-				});
-			}	
-		}
-	}
+	
 
 	const handleOnInbox = (inbox) => {
-		let total_unread = 0;
-		if (Array.isArray(inbox)) {
+        let total_unread = 0;
+        if (Array.isArray(inbox)) {
 			inbox.map(convo => {
 				if (convo.state.incoming_unread > 0) {
 					total_unread = total_unread+convo.state.incoming_unread;
@@ -412,13 +204,9 @@ const GlobalsProvider = props => {
 			});
 
 		}
-		console.log("\n\n total_unread", total_unread);
-		setMessagingCache("unread_count", total_unread);
-		setMessagingCache("conversations", inbox);
-	}
-
-
-	
+        setMessagingCache("unread_count", total_unread);
+        setMessagingCache("conversations", inbox);
+    }
 
 	
 	
@@ -428,7 +216,7 @@ const GlobalsProvider = props => {
 					
 					if (defination && isAuthenticated ) {
 						let cacheData = defination.cache;
-						if (!["preferences", "settings"].includes(defination.name) && cacheData && defination.access.view.single(auth.user, action.result)) {
+						if (!["preferences", "settings"].includes(defination.name) && cacheData && defination.access.view.single(auth_user, action.result)) {
 							let newDataCache = Array.isArray(dataCache[defination.name])? dataCache[defination.name] : [];
 							newDataCache.unshift(action.result);
 							setDataCache(defination.name, newDataCache);
@@ -448,7 +236,7 @@ const GlobalsProvider = props => {
 						let cacheData = defination.cache;
 						if (["users", "preferences", "settings"].includes(defination.name)) {
 							if (defination.name === "users") {
-								if (action.result._id === auth.user._id) {
+								if (action.result._id === auth_user._id) {
 									setCurrentUser(action.result);
 								}
 							}
@@ -468,7 +256,7 @@ const GlobalsProvider = props => {
 									}
 								});
 								if (!cacheEntryFound) {
-									if ( defination.access.view.single(auth.user, action.result)) {
+									if ( defination.access.view.single(auth_user, action.result)) {
 										newDataCache.unshift(action.result);
 									}
 								}
@@ -484,7 +272,7 @@ const GlobalsProvider = props => {
 
 				defaultSocket.on("delete", async ({ context, action }) => {
 					let defination = definations[JSON.keyOf(models, context)];
-					if (defination && auth.isAuthenticated) {
+					if (defination && isAuthenticated) {
 						if (defination.cache) {
 							let newDataCache = Array.isArray( dataCache[defination.name] )? dataCache[defination.name] : [];
 							if (newDataCache.length > 0) {
@@ -538,41 +326,36 @@ const GlobalsProvider = props => {
 				
 
 				defaultSocket.on("connect", () => {
-					console.info("connection to server established");	
-					if (auth.isAuthenticated) {
-
-						defaultSocket.emit("set-identity", auth.user._id);
-						defaultSocket.emit("get-settings", auth.user._id);
-						defaultSocket.emit("get-inbox", auth.user);
-						defaultSocket.emit("get-clients-positions", { user: auth.user, type: 'all' });
+                    if (isAuthenticated) {
+						defaultSocket.emit("set-identity", auth_user._id);
+						defaultSocket.emit("get-settings", auth_user._id);
+						defaultSocket.emit("get-inbox", auth_user);
+						defaultSocket.emit("get-clients-positions", { user: auth_user, type: 'all' });
 					}
+                });
 
-				});
-
-				defaultSocket.on("disconnect", () => {
-					console.error("connection to server lost");					
-				});
+				defaultSocket.on("disconnect", () => {});
 
 
 				// Socket Emitions
-				defaultSocket.emit("get-settings", {user: auth.user});
-				if (auth.isAuthenticated) {
+				defaultSocket.emit("get-settings", {user: auth_user});
+				if (isAuthenticated) {
 					/*defaultSocket.on("reconnect", () => {						
-						defaultSocket.emit("set-identity", auth.user._id);
-						defaultSocket.emit("get-settings", auth.user._id);
-						defaultSocket.emit("get-inbox", auth.user);
-						defaultSocket.emit("get-clients-positions", { user: auth.user, type: 'all' });
+						defaultSocket.emit("set-identity", auth_user._id);
+						defaultSocket.emit("get-settings", auth_user._id);
+						defaultSocket.emit("get-inbox", auth_user);
+						defaultSocket.emit("get-clients-positions", { user: auth_user, type: 'all' });
 					});*/
 					
-					defaultSocket.on("new-message", handleOnNewMessage);
-					defaultSocket.on("message-sent", handleOnMessageSent);
+					defaultSocket.on("new-message", appendMessage);
+					//defaultSocket.on("message-sent", updateMessage);
 					defaultSocket.on("new-conversation", handleOnNewConversation);
 					defaultSocket.on("conversation-created", handleOnConversationCreated);
 					defaultSocket.on("creating-conversation-exists", handleOnCreatingConversationExists);
 					defaultSocket.on("inbox", handleOnInbox);
-					defaultSocket.emit("set-identity", auth.user._id);
-					defaultSocket.emit("get-preferences", auth.user._id);
-					defaultSocket.emit("get-inbox", auth.user);
+					defaultSocket.emit("set-identity", auth_user._id);
+					defaultSocket.emit("get-preferences", auth_user._id);
+					defaultSocket.emit("get-inbox", auth_user);
 				}
 					
 
@@ -602,9 +385,8 @@ const GlobalsProvider = props => {
 							console.error("newSettings", newSettings);*/
 							return newSettings;
 						}).catch(e => {
-							console.error(" JSON.deepMerge(app.settings, {[slug]: new_value })", e);
-							return false;
-						});
+                            return false;
+                        });
 							
 					}).catch(e => {
 						return false;
@@ -629,7 +411,7 @@ const GlobalsProvider = props => {
 						name: name,
 						slug: slug,
 						value: new_value,
-						user: auth.user._id,
+						user: auth_user._id,
 					};
 					return await services.preferences.update(slug, postData, { create: 1, placement: "slug" }).then(res => {
 							let deepMergePreferences = JSON.deepMerge(app.preferences, {[slug]: new_value });
@@ -641,9 +423,8 @@ const GlobalsProvider = props => {
 								setPreferences(newPreferences);
 								return newPreferences;
 							}).catch(e => {
-								console.error(" JSON.deepMerge(app.settings, {[slug]: new_value })", e);
-								return false;
-							});
+                                return false;
+                            });
 						}).catch(e => {
 							return false;
 						});
@@ -698,12 +479,11 @@ const GlobalsProvider = props => {
 			    observer.observe(bodyList, config);
 
 			};
-
 		}
-
 		
-		
-			
+		//Invoke initial methods
+		fetchContacts({});
+		sendUnsentMessages();
 			
 		setInitialized(true);
 		setValueInitialized(true);	
@@ -718,17 +498,55 @@ const GlobalsProvider = props => {
 	},[]);
 
 
+	
+	const onFirebaseMessageHandler = async (payload) => {
+		//console.log('A new FCM message arrived!', JSON.stringify(payload));
+	    	const {data} = payload;
+		    	if (data.event_name === "new-message" || data.event_name === "message-sent") {
+		    		if (data.event_name === "new-message") {
+		    			appendMessage(data._id);
+		    		}
+		    		else {
+		    			//updateMessage(data._id);
+		    			appendMessage(data._id);
+		    		}
+		    	}
+			
+	
+	}
+
+	const onFirebaseBackgroundMessageHandler = async (payload) => {
+	    	
+			//console.log('Message handled in the background!', JSON.stringify(payload));
+			const {data} = payload;
+		    	if (data.event_name === "new-message" || data.event_name === "message-sent") {
+		    		if (data.event_name === "new-message") {
+		    			appendMessage(data._id);
+		    		}
+		    		else {
+		    			//updateMessage(data._id);
+		    			appendMessage(data._id);
+		    		}
+		    	}
+	
+	}
+
+	
+
+
 
 	useEffect(()=>{
-		if (auth.isAuthenticated && Object.size(auth.user) > 0) {
+		if (isAuthenticated && Object.size(auth_user) > 0) {
+
 			fcMessaging.requestPermission().then(async function() {
 				const token = await fcMessaging.getToken();
 				//console.log("fcMessaging.requestPermission token", token);
-				let tokens = await getFirestoreDoc("users", auth.user._id).then(async (querySnapshotDoc) => {
+				let tokens = await getFirestoreDoc("users", auth_user._id).then(async (querySnapshotDoc) => {
 					let tokens = [token];
 					let saveToken = !querySnapshotDoc;
 					if (querySnapshotDoc) {
 						if (Array.isArray(querySnapshotDoc.tokens)) {
+
 							if (!querySnapshotDoc.tokens.includes(token)) {
 								tokens = tokens.concat(querySnapshotDoc.tokens);
 								saveToken = true;
@@ -738,59 +556,49 @@ const GlobalsProvider = props => {
 					//console.log("querySnapshotDoc", querySnapshotDoc);
 
 					if (saveToken) {
-						console.log("saveToken tokens", tokens);
-
-						createUpdateFirestoreDoc("users", auth.user._id, {...auth.user, tokens: tokens});
-						//fcFirestore.collection("users").doc(auth.user._id).set({...auth.user, tokens: tokens});
-					}
+                        //createUpdateFirestoreDoc("users", auth_user._id, {...auth_user, tokens: tokens});
+                        //fcFirestore.collection("users").doc(auth_user._id).set({...auth_user, tokens: tokens});
+                    }
 					return tokens;
 				});		
 				
-			}).catch(function(err) {
-				console.log("Unable to get permission to notify.", err);
-			});
-			let unsubscribeFcMessagingOnMessage =  fcMessaging.onMessage((payload) => {
-				const {data} = payload;
-		    	if (data.event_name === "new-message" || data.event_name === "message-sent") {
-		    		if (data.event_name === "new-message") {
-			    		if (messaging.active_conversation._id === data.conversation) {
-			    			setActiveConversation(messaging.active_conversation);
-			    		}
-		    		}
-		    	}
-				//console.log("fcMessaging.onMessage payload", payload);
-			});
+			}).catch(function(err) {});
 
-			let unsubscribeFcFirestoreUserOnSnapshot =  fcFirestore.collection("users").doc(auth.user._id).onSnapshot(function(docSnapshot) {
-				let docSnapshotData = docSnapshot.data();
-				if (docSnapshotData) {
-					setCurrentUser({...auth.user, ...docSnapshotData});
+			let unsubscribeFcMessagingOnMessage =  fcMessaging.onMessage(onFirebaseMessageHandler);
+			//fcMessaging.setBackgroundMessageHandler(onFirebaseBackgroundMessageHandler);
+
+			/*let unsubscribeFcFirestoreUserOnSnapshot =  fcFirestore.collection("users").doc(auth_user._id).onSnapshot(function(docSnapshot) {
+				if (docSnapshot) {
+					let docSnapshotData = docSnapshot.data();
+					if (docSnapshotData) {
+						setCurrentUser({...auth_user, ...docSnapshotData});
+					}
 				}
-			});
+					
+			});*/
 
 			if (window) {
 				window.navigator.geolocation.getCurrentPosition((position) => {
-						let deviceLocation = { 
-							longitude: position.coords.latitude, 
-							longitude: position.coords.longitude,
-							altitude: position.coords.altitude? position.coords.altitude : 0,
-							accuracy: position.coords.accuracy? position.coords.accuracy : 0,
-							altitudeAccuracy: position.coords.altitudeAccuracy? position.coords.altitudeAccuracy : 0,
-							heading: position.coords.heading? position.coords.heading : 0,
-							speed: position.coords.speed? position.coords.speed : 0,
-							timestamp: new Date().toString(),
-							provider: +osName+" "+osVersion+", "+browserName+" "+fullBrowserVersion,
-						};
+                    let deviceLocation = { 
+                        longitude: position.coords.latitude, 
+                        longitude: position.coords.longitude,
+                        altitude: position.coords.altitude? position.coords.altitude : 0,
+                        accuracy: position.coords.accuracy? position.coords.accuracy : 0,
+                        altitudeAccuracy: position.coords.altitudeAccuracy? position.coords.altitudeAccuracy : 0,
+                        heading: position.coords.heading? position.coords.heading : 0,
+                        speed: position.coords.speed? position.coords.speed : 0,
+                        timestamp: new Date().toString(),
+                        provider: +osName+" "+osVersion+", "+browserName+" "+fullBrowserVersion,
+                    };
 
-						createUpdateFirestoreDoc("users", auth.user._id, {...auth.user, last_known_position: deviceLocation});
-						console.log("deviceLocation", deviceLocation);
-				});
+                    //createUpdateFirestoreDoc("users", auth_user._id, {...auth_user, last_known_position: deviceLocation});
+                });
 
 			}
 
 			return () => {
 				unsubscribeFcMessagingOnMessage();
-				unsubscribeFcFirestoreUserOnSnapshot();
+				//unsubscribeFcFirestoreUserOnSnapshot();
 			}
 			
 		}
@@ -800,11 +608,16 @@ const GlobalsProvider = props => {
 	}, [isAuthenticated]);
 
 
+	useEffect(() => {
+		fetchInbox({}, true);
+	}, [])
+
+
 	
 
 	return (
 		<GlobalsContext.Provider value={value} >
-			{valueInitialized && props.children}
+			{valueInitialized && children}
 		</GlobalsContext.Provider>
 	);
 };
@@ -817,7 +630,7 @@ const mapStateToProps = state => ({
 	communication: state.communication,
 });
 
-export default connect(mapStateToProps, { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, clearMessagingCache, setActiveConversation })(GlobalsProvider);
+export default connect(mapStateToProps, { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation, setMessagingCache, sendUnsentMessages, fetchInbox, updateMessage, appendMessage, fetchContacts })(GlobalsProvider);
 
 
 

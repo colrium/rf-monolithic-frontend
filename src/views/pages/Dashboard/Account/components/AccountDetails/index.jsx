@@ -72,9 +72,7 @@ class Account extends Component {
 					this.setState(state => ({ formValues: formValues }));
 				}
 			})
-			.catch(e => {
-				console.log(e);
-			});
+			.catch(e => {});
 	}
 
 	handleProfileFormSubmit(data, event) {

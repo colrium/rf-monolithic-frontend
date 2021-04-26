@@ -60,11 +60,11 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {
+			/*listview: {
 				avatar: false,
 				primary: ["ref_no"],
 				secondary: ["order", "due_date", "status"],
-			},
+			},*/
 			tableview: {
 				avatar: false,
 				title: ["ref_no"],
@@ -155,7 +155,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { role: "customer" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "customer" },
 					resolves: {
 						value: "_id",
 						display: {

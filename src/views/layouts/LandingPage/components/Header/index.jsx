@@ -152,7 +152,7 @@ function Header(props) {
 							}
 						/>
 					</ListItem>
-					<ListItem button>
+					{/*<ListItem button>
 						<ListItemText
 							primary={
 								<NavLink
@@ -166,7 +166,7 @@ function Header(props) {
 								</NavLink>
 							}
 						/>
-					</ListItem>
+					</ListItem>*/}
 					<ListItem button>
 						<ListItemText
 							primary={
@@ -283,7 +283,7 @@ function Header(props) {
 											Why Realfield?
 										</Button>
 									</NavLink>
-									<NavLink
+									{/*<NavLink
 										to={"/products".toUriWithLandingPagePrefix()}
 										color="inherit"
 										className="mx-2"
@@ -300,7 +300,7 @@ function Header(props) {
 										>
 											Products
 										</Button>
-									</NavLink>
+									</NavLink>*/}
 									<NavLink
 										to={"/about-us".toUriWithLandingPagePrefix()}
 										color="inherit"
@@ -421,7 +421,7 @@ function Header(props) {
 											Why Realfield?
 										</Button>
 									</NavLink>
-									<NavLink
+									{/*<NavLink
 										to={"/home#products".toUriWithLandingPagePrefix()}
 										color="inherit"
 										className="mr-4"
@@ -439,7 +439,7 @@ function Header(props) {
 										>
 											Products
 										</Button>
-									</NavLink>
+									</NavLink>*/}
 									<NavLink
 										to={"/about-us".toUriWithLandingPagePrefix()}
 										color="inherit"

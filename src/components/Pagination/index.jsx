@@ -12,7 +12,7 @@ import withRoot from "hoc/withRoot";
 function Pagination({ ...props }) {
 	const { classes, pages, color } = props;
 	return (
-		<ul className={classes.pagination}>
+        <ul className={classes.pagination}>
 			{pages.map((prop, key) => {
 				const paginationLink = classNames({
 					[classes.paginationLink]: true,
@@ -20,7 +20,7 @@ function Pagination({ ...props }) {
 					[classes.disabled]: prop.disabled,
 				});
 				return (
-					<li className={classes.paginationItem} key={key}>
+                    <li className={classes.paginationItem} key={key}>
 						{prop.onClick !== undefined ? (
 							<Button
 								onClick={prop.onClick}
@@ -30,19 +30,19 @@ function Pagination({ ...props }) {
 							</Button>
 						) : (
 							<Button
-								onClick={() =>
-									console.log("you've clicked " + prop.text)
-								}
+								onClick={() => {
+									
+								}}
 								className={paginationLink}
 							>
 								{prop.text}
 							</Button>
 						)}
 					</li>
-				);
+                );
 			})}
 		</ul>
-	);
+    );
 }
 
 Pagination.defaultProps = {

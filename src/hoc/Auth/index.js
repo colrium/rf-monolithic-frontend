@@ -42,10 +42,9 @@ export default class Auth {
 	}
 
 	static destroyInstance() {
-		console.log("destroyInstance() Auth.instance", Auth.instance);
-		Auth.instance = undefined;
-		return Auth.instance;
-	}
+        Auth.instance = undefined;
+        return Auth.instance;
+    }
 
 	static getInstance() {
 		if (!Auth.instance) {
@@ -138,9 +137,7 @@ export default class Auth {
 				if (decodedToken != null) {
 					isValid = true;
 				}
-			} catch (e) {
-				console.log(e);
-			}
+			} catch (e) {}
 		}
 
 		return isValid;

@@ -107,9 +107,8 @@ function LocationSearchInput(props) {
 				try {
 					validationError = await validator(input_value);
 				} catch(err) {
-					console.error(label+" validator error ", err);					
-					validationError = " validity cannot be determined.";
-				};
+                    validationError = " validity cannot be determined.";
+                };
 				valid = !String.isString(validationError);
 			}
 		}
@@ -150,9 +149,8 @@ function LocationSearchInput(props) {
 			Promise.all([changed]).then(()=>{
 				setInputDisabled(false);
 			}).catch(e => {
-				console.error(label+" onChange error", e);
-				setInputDisabled(false);
-			});
+                setInputDisabled(false);
+            });
 			
 		}
 		else{
@@ -176,9 +174,9 @@ function LocationSearchInput(props) {
 			}
 			autocompleteGeocoder.current.geocode( {...options, [targetType]: targetValue}, function(results, status) {				
 				if (status == 'OK') {
-					let resultValue = undefined;
+                    let resultValue = undefined;
 
-					if (Array.isArray(targetValue)) {
+                    if (Array.isArray(targetValue)) {
 						resultValue = [];
 						if (Array.isArray(results)) {
 							results.map(result => {
@@ -242,10 +240,8 @@ function LocationSearchInput(props) {
 							resultValue = results[0].formatted_address;
 						}
 					}
-					console.log("parseValueToType resultValue", resultValue, "\n results", results);
-					resolve(resultValue);
-					
-				} else {
+                    resolve(resultValue);
+                } else {
 					reject(Error("Geocode was not successful." + status));
 				}
 			});
@@ -312,9 +308,7 @@ function LocationSearchInput(props) {
 				if (validity[0]) {
 					triggerOnChange(inputValue);
 				}
-			}).catch(e => {
-				console.error(label+" validity check error", e);
-			});			
+			}).catch(e => {});			
 		}
 		else {
 
@@ -340,12 +334,10 @@ function LocationSearchInput(props) {
 				}
 				if (targetValue) {
 					parseValueToType(targetValue, targetTypes[type], "address").then(parsedTypeValue => {
-						setTextFieldValue(parsedTypeValue? parsedTypeValue : "");
-						console.log("useEffect value, type parsedTypeValue \n", parsedTypeValue);
-					}).catch(parseErr => {
-						console.log("parseValueToType parseErr", parseErr);
-						setTextFieldValue("");
-					});
+                        setTextFieldValue(parsedTypeValue? parsedTypeValue : "");
+                    }).catch(parseErr => {
+                        setTextFieldValue("");
+                    });
 				}
 					
 			}
@@ -356,23 +348,20 @@ function LocationSearchInput(props) {
 		}
 	}, [value, type]);
 
-	const handleOnChange = async (event, newValue) => {		
-		let newAutocompleteOptions = newValue ? [newValue, ...autocompleteOptions] : autocompleteOptions;
-		setAutocompleteOptions(newAutocompleteOptions);
-		setAutocompleteValue(newValue);
-		console.log("handleOnChange newValue\n", newValue);
-		if (!inputTouched) {
+	const handleOnChange = async (event, newValue) => {
+        let newAutocompleteOptions = newValue ? [newValue, ...autocompleteOptions] : autocompleteOptions;
+        setAutocompleteOptions(newAutocompleteOptions);
+        setAutocompleteValue(newValue);
+        if (!inputTouched) {
 			setInputTouched(true);
 		}
-		if (newValue) {
+        if (newValue) {
 			parseValueToType(newValue.description, "address", type).then(parsedTypeValue => {
-				setInputValue(parsedTypeValue);
-				setInputError(false);
-				console.log("handleOnChange newValue\n", newValue, "\n parsedTypeValue \n", parsedTypeValue);
-			}).catch(parseErr => {
-				console.log("parseValueToType parseErr", parseErr);
-				setInputError(parseErr);
-			});
+                setInputValue(parsedTypeValue);
+                setInputError(false);
+            }).catch(parseErr => {
+                setInputError(parseErr);
+            });
 		}
 		else {
 			if (isMulti) {
@@ -383,27 +372,22 @@ function LocationSearchInput(props) {
 			}
 			setInputError(false);
 		}
-			
-	};
+    };
 
 	const handleOnClickMyLocationBtn = event => {
-		const {device} = props;
-		console.log("device.location", device.location);
-		if (device.location) {
+        const {device} = props;
+        if (device.location) {
 			parseValueToType({lat: device.location.lat, lng: device.location.lng}, "location", placeholderType).then(parsedTypeValue => {
-					setTextFieldValue(parsedTypeValue);
-					setInputError(false);
-					console.log("handleOnClickMyLocationBtn parsedTypeValue \n", parsedTypeValue);
-			}).catch(parseErr => {
-				console.log("parseValueToType parseErr", parseErr);
-				setInputError(parseErr);
-			});
+                setTextFieldValue(parsedTypeValue);
+                setInputError(false);
+            }).catch(parseErr => {
+                setInputError(parseErr);
+            });
 			if (Function.isFunction(onClickMyLocationBtn)) {
 				onClickMyLocationBtn(device.location);
 			}
 		}
-			
-	};
+    };
 
 	return (
 

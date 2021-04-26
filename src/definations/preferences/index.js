@@ -27,7 +27,7 @@ export default {
 		},
 		listing: {
 			default: "tableview",
-			listview: {},
+			/*listview: {},*/
 			tableview: {},
 		},
 	},
@@ -95,7 +95,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: {},
+					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar", },
 					resolves: {
 						value: "_id",
 						display: {

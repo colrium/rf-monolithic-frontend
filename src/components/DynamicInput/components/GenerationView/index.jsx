@@ -132,14 +132,13 @@ class GenerationView extends React.Component {
 	}
 
 	handleChange = name => value => {
-		let newValue = JSON.isJSON(this.state.value)
+        let newValue = JSON.isJSON(this.state.value)
 			? JSON.parse(JSON.stringify(this.state.value))
 			: {};
-		newValue[name] = value;
-		console.log("handleChange ", name, value);
-		this.setState({ value: newValue });
-		this.triggerOnChange(newValue);
-	};
+        newValue[name] = value;
+        this.setState({ value: newValue });
+        this.triggerOnChange(newValue);
+    };
 
 	renderInputField(properties) {
 		const { textfield_variant, readOnly, disabled } = this.props;

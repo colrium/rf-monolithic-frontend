@@ -250,17 +250,16 @@ const api = ({ dispatch, getState }) => next => action => {
 					dispatch(removeResponseCache(key));
 				}
 				return await ApiServiceInstance.delete(id).then(res => {
-						if (cache) {
-							let {data, ...rest} = res.body;
-							dispatch(setResponseCache(key, rest));
-							//dispatch(setDataCache(key, res.body.data));
-						}
-						if (!silent) {
-							dispatch(removeApiTask(apiTask));
-						}
-						console.log("ApiServiceInstance.update res", res);
-						return res.body.data;
-					}).catch(e => {
+                    if (cache) {
+                        let {data, ...rest} = res.body;
+                        dispatch(setResponseCache(key, rest));
+                        //dispatch(setDataCache(key, res.body.data));
+                    }
+                    if (!silent) {
+                        dispatch(removeApiTask(apiTask));
+                    }
+                    return res.body.data;
+                }).catch(e => {
 						if (!silent) {
 							dispatch(removeApiTask(apiTask));
 						}
@@ -281,13 +280,12 @@ const api = ({ dispatch, getState }) => next => action => {
 				
 				if (searchKeyword !== "") {
 					if (cache) {
-						let search_history = Array.isArray(state.cache.data.search_history)? state.cache.data.search_history : [];
-						search_history.unshift(searchKeyword);
-						
-						let unique_search_history = search_history.unique();
-						console.log("unique_search_history", unique_search_history);
-						dispatch(setDataCache("search_history", unique_search_history));
-					}
+                        let search_history = Array.isArray(state.cache.data.search_history)? state.cache.data.search_history : [];
+                        search_history.unshift(searchKeyword);
+
+                        let unique_search_history = search_history.unique();
+                        dispatch(setDataCache("search_history", unique_search_history));
+                    }
 					return await ApiServiceInstance.searchGlobally(searchKeyword).then(res => {
 						if (cache) {
 							let {data, ...rest} = res.body;

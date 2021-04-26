@@ -135,9 +135,8 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 				try {
 					validationError = await validator(input_value);
 				} catch(err) {
-					console.error(label+" validator error ", err);					
-					validationError = " validity cannot be determined.";
-				};
+                    validationError = " validity cannot be determined.";
+                };
 				valid = !String.isString(validationError);
 			}
 		}
@@ -177,9 +176,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 							let changed = onChange(new_value);
 							Promise.all([changed]).then(()=>{
 								
-							}).catch(e => {
-								console.error(label+" onChange error", e);
-							});
+							}).catch(e => {});
 							
 		}
 		
@@ -292,16 +289,14 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 				if (validity[0]) {
 					triggerOnChange(inputValue);
 				}
-			}).catch(e => {
-				console.error(label+" validity check error", e);
-			});			
+			}).catch(e => {});			
 		}
 	}, [inputTouched, inputValue]);
 
 	
 
 	return (
-		<Autocomplete
+        <Autocomplete
 			className={"flex-1 my-0"+(className? (" "+className) : "")}
 			multiple={isMulti}
 			margin={margin}
@@ -333,7 +328,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 			}}
 			renderInput={(params) => {							
 				return (
-					<TextField					
+                    <TextField					
 						label={label}
 						variant={variant? variant : "filled"}
 						margin={margin}
@@ -352,9 +347,8 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 								if (freeSolo) {									
 									if (!debouncedFreeSoloOnChange) {
 										debouncedFreeSoloOnChange =  debounce(() => {
-											let new_value = event.target.value;
-											console.log("Autocomplete Autocomplete new_value", new_value);
-											try {
+                                            let new_value = event.target.value;
+                                            try {
 												let inputOptionsStr = JSON.stringify(inputOptions);	
 
 												setInputValue(new_value);										
@@ -375,9 +369,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 											} catch(err) {
 
 											}
-												
-											
-										}, 300);
+                                        }, 300);
 									}
 						
 									debouncedFreeSoloOnChange();
@@ -415,7 +407,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 						required={required}
 						disabled={inputDisabled}
 					/>
-				)
+                );
 			}}
 
 			{...rest}
@@ -439,7 +431,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 			freeSolo={freeSolo}
 			fullWidth
 		/>
-	);
+    );
 }
 
 

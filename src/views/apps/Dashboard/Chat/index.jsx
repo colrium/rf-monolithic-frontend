@@ -17,6 +17,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
@@ -32,6 +33,7 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import BlockIcon from '@material-ui/icons/Block';
 import DoneIcon from '@material-ui/icons/Done';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -60,7 +62,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
 import compose from "recompose/compose";
-import { apiCallRequest, setMessagingCache, setActiveConversation, sendMessage } from "state/actions";
+import { apiCallRequest, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation } from "state/actions";
 
 import { attachments as AttachmentsService } from "services";
 
@@ -84,37 +86,35 @@ const AlwaysScrollToBottom = React.forwardRef((props, ref) => {
 	}, [ref.current]);
 	
 	useEffect(() => {
-		sockets.default.on("message-sent", scrollIntoView);
-		sockets.default.on("new-message", scrollIntoView);
-		scrollIntoView();
+		/*sockets.default.on("message-sent", scrollIntoView);
+		sockets.default.on("new-message", scrollIntoView);*/
+		//scrollIntoView();
 		return () => {
-			sockets.default.off("message-sent", scrollIntoView);
-			sockets.default.off("new-message", scrollIntoView);
+			/*sockets.default.off("message-sent", scrollIntoView);
+			sockets.default.off("new-message", scrollIntoView);*/
 		}
 	}, []);
 	return <div ref={ref} />;
 });
 
 function Chat(props) {
-	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, setActiveConversation, sendMessage, ...rest } = props;
+	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation, ...rest } = props;
 	let textInputRef = React.createRef();
 	let messagesWrapperRef = React.createRef();
 	let conversationBottomRef = useRef();
 	let location = useLocation();
 	let history = useHistory();
 
+
+
 	
 	
 
 	const { definations, services, sockets } = useGlobals();
-	const { unread_count, unread_ids, conversations, contacts: cacheContacts, drafts, active_conversation, active_conversation_messages } = messaging;
+	const { unread_count, unread_ids, conversations, fetching_inbox, contacts: cacheContacts, drafts, active_conversation, active_conversation_messages, contactactable_contacts_ids } = messaging;
 
-	const [chats, setChats] = useState(Array.isArray(conversations)? conversations : []);
-	const [activeChat, setActiveChat] = useState(active_conversation);
-	const [activeChatMessages, setActiveChatMessages] = useState(active_conversation_messages);
 	const [query, setQuery] = useState({desc: "created_on"});
 	const [contactsQuery, setContactsQuery] = useState({desc: "created_on"});
-	const [loadingConversations, setLoadingConversations] = useState(true);
 	const [loadingContacts, setLoadingContacts] = useState(true);
 	const [draft, setDraft] = useState({});
 	const [individualConversationsRecipients, setIndividualConversationsRecipients] = useState([]);
@@ -140,89 +140,15 @@ function Chat(props) {
 	];
 	
 
-	const gotoLastMessage = () => {
-	   let element = document.getElementById("chatLastChild");
-	   if (element) {
-
-			//element.scrollIntoView({behavior: "smooth"});
-	   }
-	   
-	}
-
-
-	const loadConversations = () => {
-		if (definations) {
-			setLoadingConversations(true);
-			apiCallRequest( definations.conversations.name,
-					{
-						uri: "/inbox",
-						type: "records",
-						params: {...query, p: "1"},
-						data: {},
-						cache: false,
-					}
-			).then(data => {
-				if (Array.isArray(data)) {
-					setMessagingCache("conversations", data);
-				}
-				
-				setError(false);
-				setLoadingConversations(false);					
-			}).catch(e => {
-				console.log("conversations e", e);
-				let errorMsg = e;
-				if (JSON.isJSON(e)) {
-					if ("msg" in e) {
-						errorMsg = e.msg;
-					}
-					else {
-						errorMsg = JSON.stringify(e);
-					}
-				}
-				
-				setError(errorMsg);
-				setLoadingConversations(false);
-			});
-		}
-	}
-
-	const loadContacts = () => {
-		if (definations) {
-			setLoadingContacts(true);
-			apiCallRequest( "contacts",
-					{
-						uri: "/contacts",
-						type: "records",
-						params: {p: "1"},
-						data: {},
-						cache: false,
-					}
-			).then(data => {
-				if (Array.isArray(data)) {
-					setMessagingCache("contacts", data);
-					setContacts(data);
-				}
-				setError(false);
-				setLoadingContacts(false);					
-			}).catch(e => {
-				console.log("contacts e", e);
-				let errorMsg = e;
-				if (JSON.isJSON(e)) {
-					if ("msg" in e) {
-						errorMsg = e.msg;
-					}
-					else {
-						errorMsg = JSON.stringify(e);
-					}
-				}
-				
-				setError(errorMsg);
-				setLoadingContacts(false);
-			});
-		}
-	}
-
 	
+	const scrollToBottomOfConversation = useCallback(() => {
+		if (conversationBottomRef.current) {
+			conversationBottomRef.current.scrollIntoView();
+		}
+	}, [conversationBottomRef]);
+
+
+
 
 	const handleContextOpen = (type, entry) => event => {
 		event.preventDefault();
@@ -255,9 +181,8 @@ function Chat(props) {
 
 				return newChats;
 			} catch(err) {
-				console.error(err);
-				return currentChats;
-			}
+                return currentChats;
+            }
 		});
 		sockets.default.emit("archive-conversation", {conversation: conversation, user: auth.user});
 
@@ -280,9 +205,8 @@ function Chat(props) {
 
 				return newChats;
 			} catch(err) {
-				console.error(err);
-				return currentChats;
-			}
+                return currentChats;
+            }
 		});
 
 		sockets.default.emit("delete-conversation-for-user", {conversation: conversation, user: auth.user});	
@@ -305,84 +229,27 @@ function Chat(props) {
 				}
 			});
 
-
-			setContactsDrawerOpen(false);
-			let existsAtIndex = -1;
-			conversations.map((chat, index) => {
-				if (existsAtIndex === -1 && chat.type === "individual") {
-					let owner_id = chat.owner;
-					let recipient_id = chat.recipients[0];
-					if (JSON.isJSON(chat.owner) && "_id" in chat.owner) {
-						owner_id = chat.owner._id;
-					}
-					owner_id = owner_id;
-					if (JSON.isJSON(chat.recipients[0]) && "_id" in chat.recipients[0]) {
-						recipient_id = chat.recipients[0]._id;
-					}
-					else {
-						recipient_id = chat.recipients[0];
-					}
-					if ((owner_id == auth.user._id && recipients_ids.includes(recipient_id)) || (recipient_id === auth.user._id && recipients_ids.includes(owner_id))) {
-						existsAtIndex = index;
-					}
-				}
+			createConversation({recipients: recipients}).then(new_conversation => {
+				setDraft({
+					is_reply: false,
+					sender: auth.user,
+					reply_for: null,
+					type: "text",
+					content: "",
+					conversation: new_conversation._id,
+				});
+			}).catch(err => {
+				console.log("handleNewChat err", err);
 			});
 
 
-			if (existsAtIndex !== -1) {
-				let updatedChats = conversations;
-				let existingChat = JSON.parse(JSON.stringify(updatedChats[existsAtIndex]));
-				updatedChats.remove(existsAtIndex);
-				updatedChats.unshift(existingChat);
-				getConversationMessages(existingChat);
-				setMessagingCache("conversations", updatedChats);
-				//setMessagingCache("active_conversation_messages", []);	
-				//setMessagingCache("active_conversation", existingChat);	
-				setActiveConversation(existingChat);
-
-
-				setDraft({
-						is_reply: false,
-						sender: auth.user,
-						reply_for: null,
-						type: "text",
-						content: "",
-						conversation: existingChat._id,
-					});
-					
-				
-				
-			}
-			else {
-				let newChat = {
-					recipients: recipients_ids,
-					participants: recipients,
-					state: {
-						"total": 0,
-						"unread": 0,
-						"read": 0,
-						"last_message" : {
-
-						}
-					},
-					owner: auth.user._id,
-					started_by: auth.user,
-					type: Array.isArray(recipients)? (recipients.length > 1? "group" : "individual") : "individual",
-				};
-
-				setMessagingCache("active_conversation_messages", []);
-
-				if (sockets.default) {
-					sockets.default.emit("create-conversation", newChat);
-				}
-				
-			}
+			setContactsDrawerOpen(false);
+			
 		}
 	}
 
 	const handleRefresh = () => {
-		loadConversations();
-		loadContacts();	
+		fetchInbox();
 	}
 
 	const handlePresenceChanged = ({user, presence}) => {		
@@ -400,9 +267,8 @@ function Chat(props) {
 				});
 				return newContacts;
 			} catch(err) {
-				console.error(err);
-				return currentContacts;
-			}
+                return currentContacts;
+            }
 				
 		});
 		setMessagingCache("conversations", currentChats => {
@@ -435,15 +301,14 @@ function Chat(props) {
 				});
 				return newChats;
 			} catch(err) {
-				console.error(err);
-				return currentChats;
-			}
+                return currentChats;
+            }
 				
 			
 		});
 	}
 
-	const handleOnUserStartedTypingMessage = ({conversation, user}) => {
+	/*const handleOnUserStartedTypingMessage = ({conversation, user}) => {
 		setMessagingCache("conversations", currentChats => {
 			try {
 				let newChats = JSON.parse(JSON.stringify(currentChats));
@@ -473,9 +338,8 @@ function Chat(props) {
 				});
 				return newChats;
 			} catch(err) {
-				console.error(err);
-				return currentChats;
-			}
+                return currentChats;
+            }
 				
 			
 		});
@@ -507,9 +371,8 @@ function Chat(props) {
 					
 					return newCurrentActiveChat;
 				} catch(err) {
-					console.error(err);
-					return currentActiveChat;
-				}
+                    return currentActiveChat;
+                }
 			}
 			else{
 				return false;
@@ -544,9 +407,8 @@ function Chat(props) {
 				});
 				return newChats;
 			} catch(err) {
-				console.error(err);
-				return currentChats;
-			}
+                return currentChats;
+            }
 				
 			
 		});
@@ -574,9 +436,8 @@ function Chat(props) {
 						
 						return newCurrentActiveChat;
 					} catch(err) {
-						console.error(err);
-						return currentActiveChat;
-					}
+                        return currentActiveChat;
+                    }
 						
 				}
 				else {
@@ -590,76 +451,14 @@ function Chat(props) {
 			}
 			
 		});
-	}
-
-	
-
-	
-	
-
-
-
-
-	/*const handleOnNewMessage = ({conversation, message, user}) => {	
-		console.log("handleOnNewMessage", message)	
-		setActiveChatMessages(currentChatMessages => {
-						try {
-							let newChatMessages = JSON.parse(JSON.stringify(currentChatMessages));
-
-							newChatMessages.push(message);
-							return newChatMessages;
-						} catch(err) {
-							console.error(err);
-							return currentChatMessages;
-						}
-		});
-		setMessagingCache("active_conversation", currentActiveChat => {
-			if (currentActiveChat) {
-				let conversation_id = conversation;
-				if (JSON.isJSON(conversation)) {
-					conversation_id = conversation._id;
-				}
-				if (conversation_id === currentActiveChat._id) {
-					
-				}
-			}
-			return currentActiveChat;
-		});	
-				
-	}
-
-	const handleOnMessageSent = ({conversation, message, user}) => {	
-		console.log("handleOnMessageSent", message)	
-		setMessagingCache("active_conversation", currentActiveChat => {
-			if (currentActiveChat) {
-				let conversation_id = conversation;
-				if (JSON.isJSON(conversation)) {
-					conversation_id = conversation._id;
-				}
-				let message_id = message;
-				if (JSON.isJSON(message)) {
-					message_id = message._id;
-				}
-				if (conversation_id === currentActiveChat._id) {
-					setActiveChatMessages(currentChatMessages => {
-						try {
-							let newChatMessages = JSON.parse(JSON.stringify(currentChatMessages));
-
-							newChatMessages.push(message);
-							return newChatMessages;
-						} catch(err) {
-							console.error(err);
-							return currentChatMessages;
-						}
-					});
-					
-					
-				}
-			}
-			return currentActiveChat;
-		});
-		
 	}*/
+
+	
+
+	
+	
+
+
 
 	const handleOnChangeDraftType= (type) => {
 		setDraft(currentDraft => {
@@ -668,9 +467,8 @@ function Chat(props) {
 				newDraft.type = type;					
 				return newDraft;
 			} catch(err) {
-				console.error(err);
-				return currentDraft;
-			}
+                return currentDraft;
+            }
 		});
 	}
 
@@ -701,19 +499,18 @@ function Chat(props) {
 						//console.log("handleOnSendMessage data", data);
 						setError(false);				
 			}).catch(e => {
-						console.log("handleOnSendMessage e", e);
-						let errorMsg = e;
-						if (JSON.isJSON(e)) {
-							if ("msg" in e) {
-								errorMsg = e.msg;
-							}
-							else {
-								errorMsg = JSON.stringify(e);
-							}
-						}
-						
-						setError(errorMsg);
-			});
+                let errorMsg = e;
+                if (JSON.isJSON(e)) {
+                    if ("msg" in e) {
+                        errorMsg = e.msg;
+                    }
+                    else {
+                        errorMsg = JSON.stringify(e);
+                    }
+                }
+
+                setError(errorMsg);
+            });
 			if (sockets.default) {
 				//sockets.default.emit("get-conversation-messages", {conversation: conversation._id, user: auth.user});
 			}
@@ -723,9 +520,10 @@ function Chat(props) {
 		}				
 	}
 
-	const handleOnSendMessage = (messageToSend) => {
-		if (active_conversation) {
-			let newMessage = { ...draft, sender: auth.user._id, conversation: active_conversation._id, created_on: new Date()};
+	const handleOnSendMessage = (messageToSend, conversation) => {
+		if (conversation) {
+			let conversation_id = conversation._id? conversation._id : conversation; 
+			let newMessage = { ...draft, sender: auth.user._id, conversation: conversation_id, created_on: new Date()};
 			if (messageToSend) {			
 				if (JSON.isJSON(messageToSend)) {
 					newMessage = JSON.merge(messageToSend, newMessage);
@@ -745,7 +543,7 @@ function Chat(props) {
 					}
 
 
-
+					scrollToBottomOfConversation();
 									
 				setDraft({
 					is_reply: false,
@@ -753,16 +551,17 @@ function Chat(props) {
 					reply_for: null,
 					type: "text",
 					content: "",
-					conversation: active_conversation._id,
+					conversation: conversation_id,
 				});
 				
 			}
 		}
 	}
 
-	const handleMessageInputKeyDown = (event) => {
-		if (event.key === 'Enter') {
+	const handleMessageInputKeyDown = (conversation) => (event) => {
+		if (event.key === 'Enter' && conversation) {
 			event.preventDefault();
+			let conversation_id = conversation._id? conversation._id : conversation;
 			let newMessageValue = event.target.value;
 			if (String.isString(newMessageValue)) {
 				newMessageValue = newMessageValue.trim();
@@ -770,89 +569,39 @@ function Chat(props) {
 			else {
 				newMessageValue = "";
 			}
-			if (!String.isEmpty(newMessageValue)) {
-				sockets.default.emit("stopped-typing-message", {conversation: active_conversation._id, user: auth.user});
-				handleOnSendMessage(newMessageValue);
+			if (!String.isEmpty(newMessageValue) || (["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments)? (draft.attachments.length > 0) : false))) {
+				sockets.default.emit("stopped-typing-message", {conversation: conversation_id, user: auth.user});
+				handleOnSendMessage(newMessageValue, conversation);
 			}
 				
 		}
 	}
 
 	const handleSocketActionError = (error) => {
-		setError(error);
-	}
+        setError("Something went wrong!. "+ error);
+    }
 
 	const handleOnMessageDeletedForUser = ({ message, user }) => {
-		setMessagingCache("active_conversation_messages", currentActiveChatMessages =>{
-			try {
-				let newActiveChatMessages = JSON.parse(JSON.stringify(currentActiveChatMessages));
-				if (Array.isArray(newActiveChatMessages)) {
-					newActiveChatMessages.forEach(activeChatMessage => {
-						if (activeChatMessage._id === message._id) {
-							activeChatMessage.state = message.state;
-						}
-					});
-				}
-									
-				return newActiveChatMessages;
-			} catch(err) {
-				console.error(err);
-				return currentActiveChatMessages;
-			}
-		});
+		updateMessage(message);
 	}
 
 	const handleOnMessageDeletedForAll = ({ message, user }) => {
-		setMessagingCache("active_conversation_messages", currentActiveChatMessages =>{
-			try {
-				let newActiveChatMessages = JSON.parse(JSON.stringify(currentActiveChatMessages));
-				if (Array.isArray(newActiveChatMessages)) {
-					newActiveChatMessages.forEach(activeChatMessage => {
-						if (activeChatMessage._id === message._id) {
-							activeChatMessage.state = message.state;
-						}
-					});
-				}
-									
-				return newActiveChatMessages;
-			} catch(err) {
-				console.error(err);
-				return currentActiveChatMessages;
-			}
-		});
+		updateMessage(message);
 	}
 
 	const handleOnMessageStateChangedBySocketAction = ({ message, user }) => {
-		setMessagingCache("active_conversation_messages", currentActiveChatMessages =>{
-			try {
-				let newActiveChatMessages = JSON.parse(JSON.stringify(currentActiveChatMessages));
-				if (Array.isArray(newActiveChatMessages)) {
-					newActiveChatMessages.forEach(activeChatMessage => {
-						if (activeChatMessage._id === message._id) {
-							activeChatMessage.state = message.state;
-						}
-					});
-				}				
-				return newActiveChatMessages;
-			} catch(err) {
-				console.error(err);
-				return currentActiveChatMessages;
-			}
-		});
+		updateMessage(message);
 	}
 	
 
 
 	useEffect(() => {
-		if (conversationBottomRef.current) {
-			conversationBottomRef.current.scrollIntoView()
-		}
-	}, [active_conversation_messages]);
+		scrollToBottomOfConversation();
+	}, []);
 
 	useEffect(() => {
 		if (active_conversation && firstLoad) {
-			setActiveConversation(active_conversation);
-			//getConversationMessages(active_conversation);
+			fetchMessages(active_conversation);
 			setFirstLoad(false);			
 		}
 
@@ -880,8 +629,8 @@ function Chat(props) {
 		}
 	}, [location, locationHasWith]);
 
-	useEffect(() => {			
-		console.log("contactsQuery", contactsQuery);
+	useEffect(() => {
+
 	}, [contactsQuery]);
 
 	useEffect(() => {
@@ -912,10 +661,14 @@ function Chat(props) {
 		}			
 	}, [conversations]);
 
+	/*useEffect(() => {
+		console.log("Chat conversations", conversations)
+		//fetchInbox();
+	}, [query]);*/
+
 	useEffect(() => {
-		//loadContacts();
-		loadConversations();
-	}, [definations, query]);
+		fetchInbox();
+	}, []);
 
 
 
@@ -923,9 +676,9 @@ function Chat(props) {
 		if (sockets.default) {
 			sockets.default.on("presence-changed", handlePresenceChanged);
 			sockets.default.on("user-changed-presence", handlePresenceChanged);
-			sockets.default.on("message-typing-started", handleOnUserStartedTypingMessage);
-			sockets.default.on("message-typing-stopped", handleOnUserStoppedTypingMessage);
-			sockets.default.on("conversation-messages", handleOnConversationMessages);
+			//sockets.default.on("message-typing-started", handleOnUserStartedTypingMessage);
+			//sockets.default.on("message-typing-stopped", handleOnUserStoppedTypingMessage);
+			//sockets.default.on("conversation-messages", handleOnConversationMessages);
 			/*sockets.default.on("new-message", handleOnNewMessage);
 			sockets.default.on("message-sent", handleOnMessageSent);*/
 			sockets.default.on("messages-deleted-for-user", handleOnMessageDeletedForUser);
@@ -944,10 +697,8 @@ function Chat(props) {
 
 			return ()=>{
 				sockets.default.off("presence-changed", handlePresenceChanged);
-				sockets.default.off("user-changed-presence", handlePresenceChanged);
-				sockets.default.off("message-typing-started", handleOnUserStartedTypingMessage);
-				sockets.default.off("message-typing-stopped", handleOnUserStoppedTypingMessage);
-				sockets.default.off("conversation-messages", handleOnConversationMessages);
+				sockets.default.off("user-changed-presence", handlePresenceChanged);				
+				//sockets.default.off("conversation-messages", handleOnConversationMessages);
 				/*sockets.default.off("new-message", handleOnNewMessage);
 				sockets.default.off("message-sent", handleOnMessageSent);*/
 				sockets.default.off("messages-deleted-for-user", handleOnMessageDeletedForUser);
@@ -967,7 +718,7 @@ function Chat(props) {
 
 	
 	return (
-		<Paper className={classNames({"p-0 m-0 relative": true, [classes.root] : true, [className]: true})} >
+        <Paper className={classNames({"p-0 m-0 relative": true, [classes.root] : true, [className]: true})} >
 			<AppBar position="absolute" color="transparent" className={classes.mainAppBar}>
 				<Toolbar>
 					{active_conversation && <IconButton 
@@ -985,9 +736,9 @@ function Chat(props) {
 					>
 						<ArrowBackIcon />
 					</IconButton>}
-					{active_conversation && (active_conversation.type == "individual"? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && active_conversation.participants[0].avatar? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.participants[0].avatar)} />) : (active_conversation.started_by.avatar? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.started_by.avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>))) : (active_conversation.group_avatar? (<Avatar className={"mr-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {active_conversation.type === "group"? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
+					{active_conversation && (active_conversation.type == "individual"? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && (Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0 && active_conversation.participants[0].avatar)? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.participants[0].avatar)} />) : (active_conversation.started_by && active_conversation.started_by.avatar? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.started_by.avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>))) : (active_conversation.group_avatar? (<Avatar className={"mr-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {active_conversation.type === "group"? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
 					{active_conversation && <Typography variant="h6" className={"capitalize flex-grow"}>
-						{active_conversation.type == "individual"? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner)? (active_conversation.participants[0].first_name +" "+active_conversation.participants[0].last_name) : (active_conversation.started_by.first_name +" "+active_conversation.started_by.last_name)) : (active_conversation.type == "group"? active_conversation.group_name : "Realfield")}
+						{active_conversation.type == "individual"? (((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner )&& Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0)? (active_conversation.participants[0].first_name +" "+active_conversation.participants[0].last_name) : (active_conversation.started_by? (active_conversation.started_by.first_name +" "+active_conversation.started_by.last_name) : "")) : (active_conversation.type == "group"? active_conversation.group_name : "Realfield")}
 					</Typography>}
 
 					{!active_conversation && <Typography variant="h6" className={"capitalize flex-grow"}>
@@ -1065,9 +816,8 @@ function Chat(props) {
 									if (locationHasWith && Array.isArray(loadedData)) {
 										loadedData.map(entry => {
 											if (entry._id === loadedQuery._id || entry.email_address === loadedQuery.email_address) {
-												handleNewChat(entry);
-												console.log("onLoadData", loadedData, loadedQuery);
-											}
+                                                handleNewChat(entry);
+                                            }
 										})
 									}
 									
@@ -1079,8 +829,13 @@ function Chat(props) {
 			</SwipeableDrawer>
 			{!active_conversation && <GridItem md={12} className={"flex flex-col relative min-h-full p-0"}>					
 						<Paper square className={classes.paper}>
-							<ScrollBars className={classes.bodyWrapper} >
-							{(loadingConversations && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
+							<ScrollBars 
+								className={classes.bodyWrapper} 
+								onYReachStart={(event) => {
+									//console.log("onYReachStart event", event);
+								}}
+							>
+							{(fetching_inbox && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
 								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 									<Skeleton variant="circle" width={40} height={40} />
 									<div className="flex-grow mx-2 flex flex-col">
@@ -1154,7 +909,7 @@ function Chat(props) {
 								</GridItem>
 							</GridContainer>}
 
-							{(!loadingConversations && (!Array.isArray(conversations) || (Array.isArray(conversations) && chats.length === 0))) && <GridContainer>
+							{!fetching_inbox, (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0)) && <GridContainer>
 								<GridItem md={12} className={"flex flex-col items-center relative p-0 px-4 my-4"}>
 									<Typography variant="subtitle1" color="textSecondary" className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center" style={{color: theme.palette.text.disabled, background: theme.palette.background.default}}>
 										<ForumOutlinedIcon fontSize="inherit"/>
@@ -1165,7 +920,7 @@ function Chat(props) {
 								</GridItem>
 							</GridContainer>}
 
-							{(Array.isArray(conversations) && !loadingConversations) && <List className={classes.list}>
+							{Array.isArray(conversations) && <List className={classes.list}>
 							{conversations.map((chat, index)=> {
 
 								if (index === 0 || (index > 0 && conversations[index-1]._id !== conversations[index]._id )) {
@@ -1175,9 +930,9 @@ function Chat(props) {
 									let last_message_content = false;
 									let last_message_deleted = false;
 									let last_message_sender_name = false;
-									if (chat.state.total > 0 && chat.state.last_message) {
+									if (chat.state && chat.state.total > 0 && chat.state.last_message) {
 										last_message_content = chat.state.last_message.content;
-										if (chat.state.last_message.sender === auth.user._id) {
+										if (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) {
 											last_message_sender_name = "You";
 										}
 										else if (chat.owner === chat.state.last_message.sender) {
@@ -1229,8 +984,7 @@ function Chat(props) {
 											onClick={(event)=> {
 												//setMessagingCache("active_conversation_messages", []);	
 												//setMessagingCache("active_conversation", chat);	
-												setActiveConversation(chat);
-												//getConversationMessages(chat);			
+												setActiveConversation(chat);			
 											}}										
 											onContextMenu={handleContextOpen("conversation", chat)}
 											key={"chat-"+index}
@@ -1273,24 +1027,25 @@ function Chat(props) {
 														{Array.isArray(chat.typing) && <Typography variant="body2" color="primary" className="mx-0">
 															{chat.typing.length > 1? (chat.typing.length+" people are typing...") : (chat.typing.length === 1? (chat.typing[0].first_name+" is typing...") : "")}
 														</Typography>}
-														{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <div className="flex flex-row items-center flex-grow">
+														{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <div className="w-full flex flex-row items-center">
 															<Typography variant="body2" color="textPrimary" className="font-bold mr-2">
 																{last_message_sender_name? last_message_sender_name: ""}
 															</Typography>
-															<Typography variant="body2" color="textSecondary" className="flex-grow truncate mr-2 font-normal">
+															{!last_message_deleted && <Typography variant="body2" color="textSecondary" className="flex-initial truncate mr-2 font-normal" style={last_message_content? {} : {color:  theme.palette.disabled}}>
 																{last_message_content? last_message_content : "No messages yet"}
-															</Typography>
-															{last_message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.divider}}>
+															</Typography>}
+															{last_message_deleted && <div className={"flex flex-row items-center flex-initial"} style={{color: theme.palette.divider}}>
 																<Typography variant="body1" color="inherit" className={"flex-grow"}>
 																	Message deleted
 																</Typography>
-																<BlockIcon className={"mx-2 text-xs"} fontSize="small"/>
+																<BlockIcon className={"mx-1 text-xs"} fontSize="small"/>
 															</div>}
 
-															{!last_message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.text.disabled}}>
+															{(!last_message_deleted && chat.state && chat.state.last_message ) && <div className={"flex flex-row items-center "} style={{color: theme.palette.text.disabled}}>
+																{(chat.state.last_message.state === "pending" && (chat.state.last_message.sender? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <ScheduleIcon className={"mx-1 text-xs"} fontSize="small"/>}
 																{(chat.state.last_message.state === "sent" && chat.state.last_message.sender === auth.user._id) && <DoneIcon className={"mx-1 text-xs"} fontSize="small"/>}
-																{((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && chat.state.last_message.sender === auth.user._id) && <DoneAllIcon className={"mx-1 text-xs"} fontSize="small"/>}
-																{((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && chat.state.last_message.sender === auth.user._id) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small"/>}
+																{((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && (chat.state.last_message.sender? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={"mx-1 text-xs"} fontSize="small"/>}
+																{((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && (chat.state.last_message.sender? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small"/>}
 															</div>}
 														</div>}
 														{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <Typography variant="body2" color="secondary" className="mx-2">
@@ -1299,7 +1054,7 @@ function Chat(props) {
 													</div>
 												)}
 											/>
-											{chat.state.incoming_unread > 0 && <ListItemSecondaryAction>
+											{(chat.state && chat.state.incoming_unread > 0) && <ListItemSecondaryAction>
 												<Avatar className={"bg-transparent primary-text h-4 w-4 text-xs"}>
 													{chat.state.incoming_unread}
 												</Avatar>
@@ -1358,27 +1113,74 @@ function Chat(props) {
 						className={"flex-grow "+classes.chatScrollWrapper} 
 						style={{flex: 10, backgroundColor: theme.palette.background.default}}
 						scrollToBottomOnChildChange={false}
+						onYReachStart={(element) => {
+							if (element) {
+								if (active_conversation.state) {
+									if (!active_conversation.state.loading_messages && active_conversation.state.pages > 0 && active_conversation.state.page > 0 && active_conversation.state.page < active_conversation.state.pages) {
+                                        let pagination = active_conversation.state.pagination > 0? active_conversation.state.pagination : 20;
+                                        let nextPage = active_conversation.state.page+1;
+                                        let nextQuery = JSON.isJSON(active_conversation.state.query)? active_conversation.state.query : {} ;
+                                        fetchMessages(active_conversation, pagination, nextPage, nextQuery);
+                                    }
+								}
+							}								
+						}}
+						onYReachEnd={(element) => {
+							if (element) {
+								if (active_conversation.state) {
+									if (!active_conversation.state.loading_messages && active_conversation.state.pages > 0 && active_conversation.state.page > 1 ) {
+                                        let pagination = active_conversation.state.pagination > 0? active_conversation.state.pagination : 20;
+                                        let nextPage = active_conversation.state.page-1;
+                                        let nextQuery = JSON.isJSON(active_conversation.state.query)? active_conversation.state.query : {} ;
+                                        fetchMessages(active_conversation, pagination, nextPage, nextQuery);
+                                    }
+								}
+								//console.log("messagesWrapperRef onYReachEnd element", element);
+							}
+							
+						}}
 						ref={messagesWrapperRef}
 					>
-						<GridContainer className="px-4">
+						<GridContainer className="px-4 relative">
+							{active_conversation.state && active_conversation.state.loading_messages && <div 
+								style={{
+									position: "absolute", 
+									left: "50%",
+									WebkitTransform: "translateX(-50%)",
+									MsTransform: "translateX(-50%)",
+									transform: "translateX(-50%)",
+									padding: theme.spacing(),
+									background: theme.palette.surface,
+									width: theme.spacing(3),
+									height: theme.spacing(3),
+									borderRadius: theme.spacing(1.5)
+								}}
+							>
+								
+							</div>}
 							{active_conversation_messages.map((activeChatMessage, cursor) =>{
 								let message_deleted = false;
 								let show_message = true;
-
-								if (cursor > 0) {
-									if (active_conversation_messages[cursor]._id === active_conversation_messages[(cursor - 1)]._id || (activeChatMessage.conversation._id !== active_conversation._id && activeChatMessage.conversation !== active_conversation._id)) {
-										show_message = false;
+								if (active_conversation_messages[cursor]._id) {
+									if (cursor > 0) {
+										if (active_conversation_messages[cursor]._id === active_conversation_messages[(cursor - 1)]._id || (activeChatMessage.conversation._id !== active_conversation._id && activeChatMessage.conversation !== active_conversation._id)) {
+											show_message = false;
+										}
+									}
+									else {
+										show_message = (activeChatMessage.conversation._id === active_conversation._id || activeChatMessage.conversation === active_conversation._id);
 									}
 								}
 								else {
 									show_message = (activeChatMessage.conversation._id === active_conversation._id || activeChatMessage.conversation === active_conversation._id);
 								}
+									
 								/*if (cursor === (active_conversation_messages.length - 1)) {
 									console.log("activeChatMessage", activeChatMessage);
 								}*/
 								
 								if (activeChatMessage && show_message) {
-									if ((activeChatMessage.state === "deleted-for-sender" && activeChatMessage.sender._id === auth.user._id) || activeChatMessage.state === "deleted-for-all") {
+									if ((activeChatMessage.state === "deleted-for-sender" && (activeChatMessage.sender === auth.user._id || activeChatMessage.sender._id === auth.user._id)) || activeChatMessage.state === "deleted-for-all") {
 										message_deleted = true;
 									}
 									return (
@@ -1418,8 +1220,8 @@ function Chat(props) {
 													</IconButton>
 												</div>}
 												{(!message_deleted && ["audio", "file", "video", "image"].includes(activeChatMessage.type) && Array.isArray(activeChatMessage.attachments)) && <div className={"flex flex-col items-center cursor-pointer mb-2"}>
-													{activeChatMessage.attachments.map(attachment => (
-														<div className={"p-2 w-11/12 border border-gray-400 rounded"}>
+													{activeChatMessage.attachments.map((attachment, cursor) => (
+														<div className={"p-2 w-11/12 border border-gray-400 rounded"} key={"attachment-"+cursor}>
 															{activeChatMessage.type === "image" && <LazyImage 
 																className={"w-full h-auto"} 
 																src={AttachmentsService.getAttachmentFileUrl(attachment)} 
@@ -1484,13 +1286,14 @@ function Chat(props) {
 													<BlockIcon className={"mx-2"} fontSize="small"/>
 												</div>}
 
-												{!message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.text.disabled}}>
-													{activeChatMessage.created_on && <Typography variant="body2" className={"text-xs flex-grow"}>
+												{!message_deleted && <div className={"flex flex-row items-center text-sm w-full"} style={{color: theme.palette.text.disabled}}>
+													{activeChatMessage.created_on && <Typography className={"text-xs flex-grow"}>
 														{activeChatMessage.created_on instanceof Date? activeChatMessage.created_on.toLocaleString() : new Date(activeChatMessage.created_on).toLocaleString()}
 													</Typography>}
-													{(activeChatMessage.state === "sent" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneIcon className={"mx-2"} fontSize="small"/>}
-													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2"} fontSize="small"/>}
-													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2"} color={"secondary"} fontSize="small"/>}
+													{(activeChatMessage.state === "pending" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <ScheduleIcon className={"mx-2 text-xs"} fontSize="small"/>}
+													{(activeChatMessage.state === "sent" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneIcon className={"mx-2 text-xs"} fontSize="small"/>}
+													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2 text-xs"} fontSize="small"/>}
+													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2 text-xs"} color={"secondary"} fontSize="small"/>}
 												</div>}
 											</ViewPortSensor>
 										</GridItem>
@@ -1505,13 +1308,13 @@ function Chat(props) {
 										<div  className={classes.typing_loader}></div>
 									</div>
 							</GridItem>}
-							<AlwaysScrollToBottom ref={conversationBottomRef}/>
+							<div ref={conversationBottomRef}/>
 						</GridContainer>
 					</ScrollBars>}
 
 					
 
-					<GridContainer 
+					{(auth.user.isAdmin || (contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.owner._id) || contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.recipients[0])) || active_conversation.type !== "individual") && <GridContainer 
 						className={["audio", "file", "video", "image"].includes(draft.type)? "flex-grow flex flex-col" : classes.chatInputsWrapper} 
 						style={{ backgroundColor: theme.palette.background.paper, top: ["audio", "file", "video", "image"].includes(draft.type)? 0 : "auto"}}
 					>
@@ -1531,7 +1334,7 @@ function Chat(props) {
 								variant="outlined"
 								value={(["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments)? (draft.attachments > 0) : false))? draft.attachments[0] : undefined}
 								onChange={(newValue)=>{
-									setDraft(currentDraft => {
+                                    setDraft(currentDraft => {
 										try {
 											let newDraft = JSON.parse(JSON.stringify(currentDraft));
 											if (newValue) {
@@ -1542,12 +1345,10 @@ function Chat(props) {
 											}				
 											return newDraft;
 										} catch(err) {
-											console.error(err);
-											return currentDraft;
-										}
+                                            return currentDraft;
+                                        }
 									})
-									console.log("FileInput newValue ", newValue);
-								}}
+                                }}
 								filesLimit={1}
 								acceptedFiles={draft.type === "file"? ["image/*", "video/*", "audio/*", "application/*"] : [(draft.type+"/*")]}
 							/>							
@@ -1603,9 +1404,8 @@ function Chat(props) {
 												return newDraft;												
 												
 											} catch(err) {
-												console.error(err);
-												return currentDraft;
-											}
+                                                return currentDraft;
+                                            }
 										});
 										
 									}
@@ -1625,7 +1425,7 @@ function Chat(props) {
 								placeholder="Type your message here..."
 								inputRef={textInputRef}
 								inputProps={{
-									onKeyDown: handleMessageInputKeyDown,
+									onKeyDown: handleMessageInputKeyDown(active_conversation),
 								}}
 							/>
 							</div>
@@ -1633,7 +1433,7 @@ function Chat(props) {
 															<SendIcon color="inherit" />
 														</IconButton>*/}
 						</GridItem>
-					</GridContainer>
+					</GridContainer>}
 
 				</GridItem>
 			</Paper>}
@@ -1695,6 +1495,7 @@ function Chat(props) {
 					{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem 
 						onClick={(event)=>{
 							handleContextClose(event);
+							updateMessage({...contextMenu.entry, state: "deleted-for-sender", deletions: (Array.isArray(contextMenu.entry.deletions)? contextMenu.entry.deletions.concat([auth.user._id]): [auth.user._id])});
 							if (sockets.default) {
 								sockets.default.emit("delete-message-for-user", {message: contextMenu.entry, user: auth.user});
 							}
@@ -1706,6 +1507,8 @@ function Chat(props) {
 					{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem 
 						onClick={(event)=>{
 							handleContextClose(event);
+
+							updateMessage({...contextMenu.entry, state: "deleted-for-all", deletions: active_conversation.recipients.concat([active_conversation.owner])});
 							if (sockets.default) {
 								sockets.default.emit("delete-message-for-all", {message: contextMenu.entry, user: auth.user});
 							}
@@ -1722,7 +1525,7 @@ function Chat(props) {
 		</Snackbar>}
 
 		</Paper>
-	);
+    );
 }
 
 
@@ -1741,6 +1544,6 @@ Chat.defaultProps = {
 
 export default compose(
 	withStyles(styles),
-	connect(mapStateToProps, {apiCallRequest, setMessagingCache, setActiveConversation, sendMessage}),
+	connect(mapStateToProps, {apiCallRequest, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation}),
 	withTheme,
 )((Chat));

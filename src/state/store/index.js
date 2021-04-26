@@ -4,6 +4,7 @@ import { app } from "assets/jss/app-theme";
 import { compose, createStore } from "redux";
 import middleware from "state/middleware";
 import reducers from "state/reducers";
+import {environment} from "config";
 
 function saveStateToLocalStorage(state) {
 	try {
@@ -12,9 +13,7 @@ function saveStateToLocalStorage(state) {
 			app.name.replace(/\s+/g, "").toLowerCase() + "-state",
 			serializedState
 		);
-	} catch (e) {
-		console.log("saveStateToLocalStorage error ", e);
-	}
+	} catch (e) {}
 }
 function loadStateFromLocalStorage() {
 	try {
@@ -28,9 +27,8 @@ function loadStateFromLocalStorage() {
 		}
 		return JSON.parse(serializedState);
 	} catch (e) {
-		console.log("loadStateFromLocalStorage error ", e);
-		return undefined;
-	}
+        return undefined;
+    }
 }
 
 let volatile_state = {};
@@ -53,18 +51,15 @@ const persistedState = loadStateFromLocalStorage();
 
 let storeState = { ...persistedState, ...volatile_state };
 
-//
-//Create Store with persistested save
-//const store = createStore(reducers, storeState, compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f ));
-//Subscribe store for peristent states
-//store.subscribe(() => applyPermanence(store.getState()));
+
 
 
 
 const StoreSingleton = (function () {
 	var instance;
 	function createInstance(state=false) {
-        var newInstance =  createStore(reducers, (state? state : storeState), compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f ));
+        var newInstance =  createStore(reducers, (state? state : storeState), compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ && environment === "development"? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f ));
+        
         //Subscribe store for peristent states
 		newInstance.subscribe(() => applyPermanence(newInstance.getState()));
         return newInstance;

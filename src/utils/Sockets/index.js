@@ -1,6 +1,6 @@
 /** @format */
 import io from "socket.io-client";
-import { appName, baseUrls, environment } from "config";
+import { appName, apiBaseUrl, environment } from "config";
 import { store } from "state/store";
 
 const SocketsSingleton = (function () {
@@ -8,7 +8,7 @@ const SocketsSingleton = (function () {
 
     function createInstance() {
     	const { auth } = store.getState();
-		let socket_url = baseUrls[environment].endpoints.default;
+		let socket_url = apiBaseUrl;
 		let options = {
 			secure: false,
 			agent: appName+' fontend',

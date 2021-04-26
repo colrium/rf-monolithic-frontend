@@ -8,9 +8,7 @@ lodash.mixin(lodash_inflection);
 
 //Type Extensions
 // Warn if overriding existing method
-if (String.isString) {
-	console.warn("Overriding existing String.isString.");
-}
+if (String.isString) {}
 
 String.isString = function(input) {
 	return input !== undefined && input !== null
@@ -28,9 +26,8 @@ String.toDate = function(input) {
 		let ms = Date.parse(input);
 		return new Date(ms);
 	} catch (e) {
-		console.error("String.toDate", e);
-		return null;
-	}
+        return null;
+    }
 };
 
 String.uid = function(len, numeric, all_caps) {
@@ -166,45 +163,35 @@ String.isEmpty = function(target) {
 
 
 
-if (Boolean.isBoolean) {
-	console.warn("Overriding existing Boolean.isBoolean.");
-}
+if (Boolean.isBoolean) {}
 Boolean.isBoolean = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === Boolean
 		: false;
 };
 
-if (Function.isFunction) {
-	console.warn("Overriding existing Function.isFunction.");
-}
+if (Function.isFunction) {}
 Function.isFunction = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === Function || typeof input === "function"
 		: false;
 };
 
-if (Number.isNumber) {
-	console.warn("Overriding existing Number.isNumber.");
-}
+if (Number.isNumber) {}
 Number.isNumber = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === Number && input !== NaN
 		: false;
 };
 
-if (Error.isError) {
-	console.warn("Overriding existing Error.isError.");
-}
+if (Error.isError) {}
 Error.isError = function(input) {
 	return input !== undefined && input !== null
 		? input instanceof Error
 		: false;
 };
 
-if (RegExp.isRegExp) {
-	console.warn("Overriding existing RegExp.isRegExp.");
-}
+if (RegExp.isRegExp) {}
 RegExp.isRegExp = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === RegExp
@@ -212,27 +199,21 @@ RegExp.isRegExp = function(input) {
 };
 
 //Number Extensions
-if (Number.isFloat) {
-	console.warn("Overriding existing Number.isFloat.");
-}
+if (Number.isFloat) {}
 Number.isFloat = function(input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /[-+]?(?:\d*\.\d+\.?\d*)(?:[eE][-+]?\d+)?/gim.test(input)
 		: false;
 };
 
-if (Number.isInt) {
-	console.warn("Overriding existing Number.isInt.");
-}
+if (Number.isInt) {}
 Number.isInt = function(input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /^[-+]?(\d*)?\d+$/gim.test(input)
 		: false;
 };
 
-if (Number.parseNumber) {
-	console.warn("Overriding existing Number.parseNumber.");
-}
+if (Number.parseNumber) {}
 Number.parseNumber = function(input, fallback = null) {
 	if (Number.isFloat(input)) {
 		return parseFloat(input);
@@ -375,12 +356,7 @@ Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 	}
 };
 
-// Warn if overriding existing method
-if (Array.prototype.equals)
-	console.warn(
-		"Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code."
-	);
-// attach the .equals method to Array's prototype to call it on any array
+
 Array.prototype.equals = function(array) {
 	// if the other array is a falsy value, return
 	if (!array) return false;
@@ -563,9 +539,7 @@ Object.isReactComponent = Component => {
 };
 
 
-if (JSON.isJSON) {
-	console.warn("Overriding existing JSON.isJSON.");
-}
+if (JSON.isJSON) {}
 JSON.isJSON = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === {}.constructor
@@ -659,9 +633,7 @@ JSON.readable = function(
 	return str;
 };
 
-if (JSON.indexOf) {
-	console.warn("Overriding existing JSON.indexOf.");
-}
+if (JSON.indexOf) {}
 
 JSON.positionOfKey = function(object, key) {
 	let position = -1;
@@ -682,9 +654,7 @@ JSON.keyOf = function(object, value) {
 	return key;
 };
 
-if (JSON.moveKey) {
-	console.warn("Overriding existing JSON.moveKey.");
-}
+if (JSON.moveKey) {}
 JSON.moveKey = function(object, key, position = 0) {
 	let newObject = {};
 	if (JSON.isJSON(object)) {
@@ -1253,16 +1223,12 @@ Date.difference = function(date1, date2 = new Date()) {
 	if (Number.isNumber(date1)) {
 		try {
 			date1 = new Date(date1);
-		} catch (e) {
-			console.log("difference date1 error", e);
-		}
+		} catch (e) {}
 	}
 	if (Number.isNumber(date2)) {
 		try {
 			date2 = new Date(date2);
-		} catch (e) {
-			console.log("difference date2 error", e);
-		}
+		} catch (e) {}
 	}
 	
 	var intervals = {
@@ -1279,37 +1245,31 @@ Date.difference = function(date1, date2 = new Date()) {
 	}
 
 	if ((date1 instanceof Date) && (date2 instanceof Date)) {
-		var date2Millis = date2.getTime();
-		var targetMillis = date1.getTime();
+        var date2Millis = date2.getTime();
+        var targetMillis = date1.getTime();
 
-		var duration = targetMillis - date2Millis;
-		var years = Math.floor(duration / 3.154e+10);
-		var durationMinusYears = duration - (years * 3.154e+10);
-		var months = Math.floor(duration / 2.628e+9) % 12;
-		var durationMinusMonths = durationMinusYears - (months * 2.628e+9);
-		var days = Math.floor(durationMinusMonths / 8.64e+7);
-		var hours = Math.floor(duration / 3.6e+6 ) % 24;
-		var minutes = Math.floor(duration / 60000 ) % 60;
-		var seconds = Math.floor(duration / 1000 ) % 60;
-
-		
-			
+        var duration = targetMillis - date2Millis;
+        var years = Math.floor(duration / 3.154e+10);
+        var durationMinusYears = duration - (years * 3.154e+10);
+        var months = Math.floor(duration / 2.628e+9) % 12;
+        var durationMinusMonths = durationMinusYears - (months * 2.628e+9);
+        var days = Math.floor(durationMinusMonths / 8.64e+7);
+        var hours = Math.floor(duration / 3.6e+6 ) % 24;
+        var minutes = Math.floor(duration / 60000 ) % 60;
+        var seconds = Math.floor(duration / 1000 ) % 60;
 
 
-		intervals.years = Math.abs(years);
-		intervals.months =  Math.abs(months);
-		//intervals.weeks = weeks;
-		intervals.days =  Math.abs(days);
-		intervals.hours =  Math.abs(hours);
-		intervals.minutes =  Math.abs(minutes);
-		intervals.seconds =  Math.abs(seconds);
-		/*intervals.milliseconds = milliseconds;
-		intervals.direction = direction;
-		intervals.description = description;*/
 
-		console.log("date1", date1.toLocaleString());
-		console.log("date2", date2.toLocaleString());
-	}
+
+
+        intervals.years = Math.abs(years);
+        intervals.months =  Math.abs(months);
+        //intervals.weeks = weeks;
+        intervals.days =  Math.abs(days);
+        intervals.hours =  Math.abs(hours);
+        intervals.minutes =  Math.abs(minutes);
+        intervals.seconds =  Math.abs(seconds);
+    }
 		
 
 	return intervals;
