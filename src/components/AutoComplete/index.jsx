@@ -1,7 +1,6 @@
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import React, { useState, useEffect } from "react";
 import debounce from 'lodash/debounce';
 
@@ -19,9 +18,7 @@ const AutocompleteTextField = (props) => {
 			}
 
 
-const CustomAutocomplete = (props) => {
-	const { className, disabled, isMulti, loading, onChange, label, required, variant, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, onOpen, onClose, touched, invalid, isClearable, error, value, options, freeSolo, popupIcon, ...rest } = props
-	const uniqueAutocompleteValue = String.uid(20);
+function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, label, required, variant, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, onOpen, onClose, touched, invalid, isClearable, error, value, options, freeSolo, ...rest }) {
 	let formattedData = { options: [], value: [] }
 	
 	let debouncedFreeSoloOnChange;
@@ -60,7 +57,9 @@ const CustomAutocomplete = (props) => {
 					if (Array.isArray(value)) {
 						let position = value.indexOf(entry_key);
 						if (isMulti) {
-							if (position !== -1 && !formatedValue.includes({
+							if (
+								position !== -1 &&
+								!formatedValue.includes({
 									value: entry_key,
 									label: entry_value,
 								})
@@ -195,8 +194,6 @@ const CustomAutocomplete = (props) => {
 	useEffect(() => {
 		if (loading) {
 			setInputOptions([]);
-			setInputTouched(false);
-			setInputValue(null);
 		}
 		else{
 			let formatedValue = null;
@@ -261,10 +258,10 @@ const CustomAutocomplete = (props) => {
 					}
 				});
 			}	
-			setInputOptions(formatedOptions);
-			/*if (!formatedOptions.equals(inputOptions)) {
+			
+			if (!formatedOptions.equals(inputOptions)) {
 				setInputOptions(formatedOptions);
-			}*/
+			}
 			if ((Array.isArray(formatedValue) && Array.isArray(inputValue) && formatedValue.equals(inputValue)) || (JSON.isJSON(formatedValue) && JSON.isJSON(inputValue) && Object.areEqual(formatedValue, inputValue))) {
 				//console.log(label, "formatedValue equal", formatedValue, "inputValue", inputValue)
 
@@ -343,36 +340,36 @@ const CustomAutocomplete = (props) => {
 						}}
 						inputProps={{
 							...params.inputProps,
-							autoComplete: uniqueAutocompleteValue,
+							autoComplete: String.uid(11),
 							value: freeSolo && String.isString(inputValue)? inputValue: (params.inputProps.value),
 							onBlur: (event)=>{
 								event.persist();
 								if (freeSolo) {									
 									if (!debouncedFreeSoloOnChange) {
 										debouncedFreeSoloOnChange =  debounce(() => {
-											let new_value = event.target.value;
-											try {
+                                            let new_value = event.target.value;
+                                            try {
 												let inputOptionsStr = JSON.stringify(inputOptions);	
 
 												setInputValue(new_value);										
-												let valueValid = inputValueValid(new_value);
+												/*let valueValid = inputValueValid(new_value);
 												Promise.all([valueValid]).then(validity => {
 													if (validity[0]) {
 														
 														triggerOnChange(new_value);
 													}
-												}).catch(e => {});
+												}).catch(e => {
+													console.error(label+" validity check error", e);
+												});*/
 												
-												/*if (!inputTouched) {
+												if (!inputTouched) {
 													setInputTouched(true);
-												}*/
+												}
 												params.inputProps.onBlur(event);
 											} catch(err) {
 
 											}
-												
-											
-										}, 300);
+                                        }, 300);
 									}
 						
 									debouncedFreeSoloOnChange();
@@ -380,14 +377,17 @@ const CustomAutocomplete = (props) => {
 								else{
 									params.inputProps.onBlur(event);
 								}
-								if (open) {
-									setOpen(false);							
-								}
+								
 							}
 						}}
 						InputProps={{
 							...params.InputProps,
-							autoComplete: 'none',
+							autocomplete: 'none',
+							endAdornment: (
+								<React.Fragment>
+									{loading ? <CircularProgress color="inherit" size={"1.2rem"} /> : params.InputProps.endAdornment}
+								</React.Fragment>
+							),
 						}}
 						error={inputError ? true : isInvalid}
 						helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
@@ -396,14 +396,20 @@ const CustomAutocomplete = (props) => {
 								setOpen(true);							
 							}
 						}}
-						
+						onBlur={() => {
+							if (open) {
+								setOpen(false);							
+							}
+							if (!inputTouched) {
+								setInputTouched(true);
+							}
+						}}
 						required={required}
 						disabled={inputDisabled}
 					/>
                 );
 			}}
-			forcePopupIcon={true}
-			popupIcon={loading ? <CircularProgress size={"1.2rem"}  color="inherit" /> : (popupIcon? popupIcon : <ArrowDropDownIcon  fontSize="inherit" />)}
+
 			{...rest}
 			onChange={handleOnChange}
 			open={open}

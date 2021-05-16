@@ -52,7 +52,7 @@ export default {
 					if (Array.isArray(entries)) {
 						resolved_data = entries.map((entry, index) => {
 							return {
-								id: entry._id,
+								id: entry?._id,
 								icon: false,
 								avatar: ( 
 										<Avatar className="accent_text ">
@@ -107,7 +107,7 @@ export default {
 				resolveData: async (entries, isPopulated = true) => {
 					let resolvedData = entries.map((entry, index) => {
 						return {
-							_id: entry._id,
+							_id: entry?._id,
 							context: (
 								<Status
 									color={
@@ -213,7 +213,7 @@ export default {
 					let resolved_data = [];
 					for (let entry of entries) {
 						resolved_data.push({
-							id: entry._id,
+							id: entry?._id,
 							calendarId: "tracks",
 							title: entry.user
 								? entry.user.first_name +
@@ -239,7 +239,7 @@ export default {
 					let resolved_data = [];
 					for (let entry of entries) {
 						resolved_data.push({
-							id: entry._id,
+							id: entry?._id,
 							path: entry.positions.map((position, index) => {
 								return {
 									lat: position.latitude,
@@ -752,7 +752,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "tracks/view/" + entry._id;
+					return "tracks/view/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -760,7 +760,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"tracks/view/" + entry._id}
+									to={"tracks/view/" + entry?._id}
 									className={className}
 								>
 									<IconButton
@@ -810,7 +810,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "tracks/edit/" + entry._id;
+					return "tracks/edit/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -818,7 +818,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"tracks/edit/" + entry._id}
+									to={"tracks/edit/" + entry?._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -841,7 +841,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "tracks/delete/" + entry._id;
+					return "tracks/delete/" + entry?._id;
 				},
 				link: {
 					inline: {

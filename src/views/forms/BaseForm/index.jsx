@@ -19,7 +19,7 @@ import {
     FileInput,
     MapInput,
     DynamicInput,
-    LocationInput,
+    GooglePlacesAutocomplete,
 } from "components/FormInputs";
 import { colors } from "assets/jss/app-theme";
 // Externals
@@ -129,6 +129,8 @@ class BaseForm extends React.Component {
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		this.mounted = true;
+		//console.log("this.state.onChangeEffectsFields", this.state.onChangeEffectsFields);
+
 		if (snapshot.preparationRequired) {
 			//this.prepareForForm();
 			this.loadFieldValuePosibilities();
@@ -243,15 +245,28 @@ class BaseForm extends React.Component {
 		let onChangeEffectsFields = {};
 		let fields = JSON.parse(JSON.stringify(this.state.fields));
 		let field_values = this.state.field_values;
+		let value_possibilities = this.state.value_possibilities;
 		let fieldValuesChanged = false;
 		for (const [name, onChangeEffect] of Object.entries(this.state.onChangeEffects)) {
 			if (Function.isFunction(onChangeEffect)) {
 				const field = await onChangeEffect(instance);
 				if (JSON.isJSON(field)) {
 					fields[name] = field;
-					if (field.input.value && field_values[name] !== field.input.value) {
+					/*if (field.input.value && field_values[name] !== field.input.value) {
 						field_values[name] = field.input.value;
 						fieldValuesChanged = true;
+					}*/
+					if (field.possibilities && !Object.areEqual(field.possibilities, value_possibilities)) {						
+						if (field_values[name] && !(field_values[name] in field.possibilities)) {
+							field_values[name] = field.input.value;
+						}
+						value_possibilities[name] = field.possibilities;
+						//fieldValuesChanged = true;
+					}
+					else if (field.input.value && field_values[name] !== field.input.value) {
+						field_values[name] = field.input.value;
+						fieldValuesChanged = true;
+						
 					}
 					onChangeEffectsFields[name] = field;
 				}
@@ -262,13 +277,16 @@ class BaseForm extends React.Component {
 			initialize(field_values);
 		}
 
+		
+
 		if (Object.size(onChangeEffectsFields) > 0) {
 			if (mounted) {
-				this.setState({ fields: fields, field_values: field_values, onChangeEffectsFields: onChangeEffectsFields, evaluating: false });
+				this.setState({ fields: fields, field_values: field_values, value_possibilities: value_possibilities, onChangeEffectsFields: onChangeEffectsFields, evaluating: false });
 			}
 			else{
 				this.state.fields = fields;
 				this.state.field_values = field_values;
+				this.state.value_possibilities = value_possibilities;
 				this.state.onChangeEffectsFields = onChangeEffectsFields;
 				this.state.evaluating = false;
 			}
@@ -576,6 +594,7 @@ class BaseForm extends React.Component {
 				if (Function.isFunction(properties.input.props)) {
 					field_with_effects.input.props = await instance.callDefinationMethod(properties.input.props);
 				}
+
 				if (properties.restricted) {
 					if (Function.isFunction(properties.restricted.input)) {
 						field_with_effects.restricted.input = await instance.callDefinationMethod(properties.restricted.input);
@@ -634,8 +653,10 @@ class BaseForm extends React.Component {
 						field_with_effects.possibilities = await instance.callDefinationMethod(properties.possibilities);
 					}					
 				}
+
 				
 				if (!Object.areEqual(instance.state.fields[name], field_with_effects) ) {
+
 					return field_with_effects;
 				}
 				else {
@@ -1119,13 +1140,13 @@ class BaseForm extends React.Component {
 				/>
 			);
 		}
-		else if (["street_number", "place_id", "coordinates", "formatted_address", "address_components", "route", "neighborhood", "political", "locality", "administrative_area_level_2", "administrative_area_level_1", "country", "postal_code"].includes(field.input.type)) {
+		else if (["street_number", "route", "neighborhood", "political", "locality", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "administrative_area_level_4", "sublocality_level_1", "country", "postal_code"].includes(field.input.type)) {
 			return (
 				<LightInputField
 					name={name}
 					type={field.input.type}
 					label={field.label}
-					component={LocationInput}
+					component={GooglePlacesAutocomplete}
 					value={value}
 					onChange={this.handleChange(name)}
 					required={field.input.required}
@@ -1196,6 +1217,7 @@ class BaseForm extends React.Component {
 				<GridItem					
 					className={"p-0 m-0 px-1 py-1"}
 					md={field.input.size ? (inputColumnSize < 12 && field.input.size < inputColumnSize? inputColumnSize : field.input.size) : inputColumnSize}
+					style={field.input?.type === "hidden"? {display: "none"} : {}}
 					key={"field_" + name}
 				>
 					{this.renderFieldInput(name, field, restricted)}

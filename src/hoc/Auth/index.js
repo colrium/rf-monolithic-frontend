@@ -1,9 +1,7 @@
-/** @format */
-
 import Cookies from "universal-cookie";
 import axios from "axios";
 import decode from "jwt-decode";
-import { authTokenLocation, authTokenName } from "../../config";
+import { authTokenLocation, authTokenName } from "config";
 
 export default class Auth {
 	static instance;
@@ -29,8 +27,10 @@ export default class Auth {
 						refresh_token: refresh_token,
 					};
 				}
+				
 			}
 			this.access_token_valid = this.isAccessTokenValid();
+			
 			Auth.instance = this;
 			return this;
 		}

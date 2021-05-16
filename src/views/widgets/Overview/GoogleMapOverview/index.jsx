@@ -362,7 +362,7 @@ class GoogleMapOverview extends React.Component {
 		if (process.env.NODE_ENV === "development") {
 			computed_icon = icon_names[Math.floor(Math.random() * icon_names.length)];
 		}
-		return `${process.env.PUBLIC_URL}/img/${computed_icon}.png`;		
+		return `${process.env.PUBLIC_URL}/img/avatars/${computed_icon}.png`;		
 	}
 
 	render() {

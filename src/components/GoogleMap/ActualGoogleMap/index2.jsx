@@ -18,7 +18,7 @@ import { DrawingManager } from "react-google-maps/lib/components/drawing/Drawing
 import Avatar from '@material-ui/core/Avatar';
 import Typography from 'components/Typography';
 import mapStyles, {mapDarkStyles} from "./mapStyles";
-import {LocationInput as LocationSearchInput } from "components/FormInputs";
+import {GooglePlacesAutocomplete  } from "components/FormInputs";
 import { compose } from "recompose";
 import { useHistory } from "react-router-dom";
 
@@ -1132,7 +1132,7 @@ export default compose(
 							component="div"
 							className={"flex items-center w-full relative py-1 px-2"}
 						>
-							<LocationSearchInput
+							<GooglePlacesAutocomplete
 								variant="plain"
 								margin="none"
 								controlPosition={google.maps.ControlPosition.BOTTOM_CENTER}

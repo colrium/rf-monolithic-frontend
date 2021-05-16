@@ -38,7 +38,9 @@ import { FixedSizeList } from 'react-window';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
-
+import CircularProgress from '@material-ui/core/CircularProgress';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import { DataGrid } from '@material-ui/data-grid';
 import ReactJsonView from 'react-json-view'
 
 
@@ -87,29 +89,63 @@ const renderResponseSummaryRow = (data) => (props) => {
 	);
 }
 
+const TextResponseSummaryDataGrid = React.memo((props) => {
+	const {data, label} = props;
+	const [columns, setColumns] = useState([
+		{ field: 'value', headerName: label, width: 400 },
+  		{ field: 'count', headerName: 'Total', width: 150 },
+	]);
+	const [rows, setRows] = useState([]);
+	useEffect(()=> {
+		let newRows = [];
+		if (JSON.isJSON(data)) {
+			Object.entries(data).map(([key, value], index) => {
+				newRows.push({id: index, value: key, count: value});
+			});
+		}
+		setRows(newRows);
+	}, [data]);
 
-const CardViewBody = (props) => {
+	return (
+		<div style={{ height: 300, width: '100%' }}>
+			<DataGrid rows={rows} columns={columns} />
+		</div>
+	);
+
+});
+
+
+const CardViewBody = React.memo((props) => {
 	const {entry, user, isPopulated } = props;
 
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(false);
+	const [loadingSummary, setLoadingSummary] = useState(true);
+	const [summaryError, setSummaryError] = useState(false);
+	const [commissionFormSummaryLabels, setCommissionFormSummaryLabels] = useState(false);
+	const [commissionFormSummaryTypes, setCommissionFormSummaryTypes] = useState(false);
 	const [commissionFormSummary, setCommissionFormSummary] = useState(false);
 
-	useEffect(() => {
+	const loadResponsesSummary = () => {
 		const ApiServiceInstance = new ApiService();
 		ApiServiceInstance.refresh();
-		ApiServiceInstance.setServiceUri("/responses/form-responses-summary/"+entry._id);
-		
+		ApiServiceInstance.setServiceUri("/responses/form-responses-summary/"+entry?._id);
+		setSummaryError(false);
+		setLoadingSummary(true);
 		ApiServiceInstance.get().then(res => {
-			const {body: {data}} = res;
-			setCommissionFormSummary(data);
-			setLoading(false);
-			setError(false);
+			const {body: {data: {labels, types, counts}}} = res;
+			setCommissionFormSummaryLabels(labels);
+			setCommissionFormSummaryTypes(types);
+			setCommissionFormSummary(counts);
+			setLoadingSummary(false);
+			
 		}).catch(err => {
-			setLoading(false);
+			setLoadingSummary(false);
 			setCommissionFormSummary(false);
-			setError(err);
+			setSummaryError(err);
 		});
+	}
+
+	useEffect(() => {
+		loadResponsesSummary();
 
 	}, [])
 	return (
@@ -118,7 +154,7 @@ const CardViewBody = (props) => {
 									<GoogleMap
 										circles={[
 											{
-												id: entry._id,
+												id: entry?._id,
 												center: entry.focus_center,
 												//title: entry.survey? entry.survey.title+' Survey Commission' : 'Commission',
 												infoWindow: (
@@ -474,24 +510,68 @@ const CardViewBody = (props) => {
 										{entry.focus_radius +" " +entry.focus_radius_metric}
 									</Typography>
 								</GridItem>
-								{commissionFormSummary && <GridContainer className={"mb-8"}>
+								<GridContainer className={"mt-8"}>
 									<GridItem xs={12}>
 										<Typography variant="subtitle1"> Responses Summary</Typography>
 									</GridItem>
+								</GridContainer>
+
+								{loadingSummary && <GridContainer className={"mt-8"}>
+									<GridItem className={"flex flex-col justify-center items-center"} xs={12}>
+										<CircularProgress className={"mb-4"} color="secondary" />
+										<Typography variant="caption"> Loading Responses Summary...</Typography>
+									</GridItem>
+								</GridContainer>}
+								{summaryError && <GridContainer className={"mt-8"}>
+									<GridItem className={"flex flex-col justify-center items-center"} xs={12}>
+										<ErrorOutlineIcon fontSize="large" className={"mb-4"} color="error" />
+										<Typography variant="caption"> Something went wrong. {JSON.stringify(summaryError)}</Typography>
+									</GridItem>
+								</GridContainer>}
+								{(commissionFormSummary && !loadingSummary) && <GridContainer className={"mb-8"}>
+									
 									<GridItem xs={12}>
 										<Alert severity="warning">This is an automated report based on raw data submitted to this project. Please conduct proper data cleaning prior to using the graphs and figures used on this page.</Alert>
 									</GridItem>
 									<GridContainer className={"mb-8"}>
 										
 										{ Object.entries(commissionFormSummary).map(([key, value]) => (
-											!JSON.isEmpty(value) && <GridItem xs={12}>
+											(!JSON.isEmpty(value) && commissionFormSummaryLabels[key] && commissionFormSummaryTypes[key]) && <GridItem xs={12}>
 												<GridContainer className={"mb-8"}>
 													<GridItem xs={12}>
-														<Typography  variant="subtitle2" className={"w-full text-center"}> {key}</Typography>
+														<Typography  variant="subtitle2" className={"w-full text-center"}> {commissionFormSummaryLabels[key]}</Typography>
 													</GridItem>
 
 													<GridItem xs={12}>
-														{Object.size(value) <= 5? <Pie data={{labels: Object.keys(value), datasets: [{data:  Object.values(value), backgroundColor: UtilitiesHelper.monochromeColorScheme("#00AF41", Object.size(value)), hoverBackgroundColor: "#76C4D5"}]}} /> : (Object.size(value) <= 10? <Bar data={{labels: Object.keys(value), datasets: [{label: key, data:  Object.values(value), backgroundColor: UtilitiesHelper.monochromeColorScheme("#00AF41", Object.size(value)), hoverBackgroundColor: "#76C4D5",}]}} /> : <HorizontalBar data={{labels: Object.keys(value), datasets: [{label: key, data:  Object.values(value), backgroundColor: UtilitiesHelper.monochromeColorScheme("#00AF41", Object.size(value)), hoverBackgroundColor: "#76C4D5",}]}} />)}
+														{commissionFormSummaryTypes[key] === "select_one" && <Bar 
+																data={{
+																	labels: Object.keys(value), 
+																	datasets: [{
+																		label: commissionFormSummaryLabels[key], 
+																		data:  Object.values(value), 
+																		backgroundColor: "#00AF41", 
+																		hoverBackgroundColor: "#76C4D5",
+																	}]
+																}} 
+														/>}
+														
+
+														{commissionFormSummaryTypes[key] === "text" && <TextResponseSummaryDataGrid data={value} label={commissionFormSummaryLabels[key]} />}
+
+														{/*Object.size(value) <= 20? (
+															
+															) : (
+															<HorizontalBar 
+																data={{
+																	labels: Object.keys(value), 
+																	datasets: [{
+																		label: key, 
+																		data:  Object.values(value), 
+																		backgroundColor: "#00AF41", 
+																		hoverBackgroundColor: "#76C4D5",
+																	}]
+																}} 
+															/>)*/}
 														
 													</GridItem>
 												</GridContainer>
@@ -502,7 +582,7 @@ const CardViewBody = (props) => {
 								
 							</GridContainer>
 	)
-}
+});
 
 
 export default {
@@ -597,7 +677,7 @@ export default {
 					if (Array.isArray(entries)) {
 						resolved_data = entries.map((entry, index) => {
 							return {
-								id: entry._id,
+								id: entry?._id,
 								icon:
 									entry.involvement === "team" &&
 									entry.team ? (
@@ -774,7 +854,7 @@ export default {
 					if (Array.isArray(entries)) {
 						resolved_data = entries.map((entry, index) => {
 							return {
-								id: entry._id,
+								id: entry?._id,
 								calendarId: "commissions",
 								title: entry.survey
 									? entry.survey.title
@@ -816,7 +896,7 @@ export default {
 					let resolved_data = [];
 					resolved_data = entries.map((entry, index) => {
 						return {
-							id: entry._id,
+							id: entry?._id,
 							center: entry.focus_center,
 							//title: entry.survey? entry.survey.title+' Survey Commission' : 'Commission',
 							infoWindow: (
@@ -1655,7 +1735,7 @@ export default {
 					return JSON.isEmpty(user);
 				},
 				uri: entry => {
-					return ("commissions/view/" + entry._id).toUriWithDashboardPrefix();
+					return ("commissions/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -1665,7 +1745,7 @@ export default {
 								return (
 									<Link
 										to={(
-											"commissions/view/" + entry._id
+											"commissions/view/" + entry?._id
 										).toUriWithDashboardPrefix()}
 										className={className}
 									>
@@ -1726,7 +1806,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"commissions/edit/" + entry._id
+						"commissions/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -1737,7 +1817,7 @@ export default {
 								return (
 									<Link
 										to={(
-											"commissions/edit/" + entry._id
+											"commissions/edit/" + entry?._id
 										).toUriWithDashboardPrefix()}
 										className={className ? className : ""}
 									>
@@ -1764,7 +1844,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"commissions/delete/" + entry._id
+						"commissions/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

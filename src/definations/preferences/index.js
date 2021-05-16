@@ -170,7 +170,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"preferences/view/" + entry._id
+						"preferences/view/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -180,7 +180,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"preferences/view/" + entry._id
+										"preferences/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -238,7 +238,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"preferences/edit/" + entry._id
+						"preferences/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -248,7 +248,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"preferences/edit/" + entry._id
+										"preferences/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -273,7 +273,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"preferences/delete/" + entry._id
+						"preferences/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

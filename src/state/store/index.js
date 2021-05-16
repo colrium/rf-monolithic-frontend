@@ -53,8 +53,6 @@ let storeState = { ...persistedState, ...volatile_state };
 
 
 
-
-
 const StoreSingleton = (function () {
 	var instance;
 	function createInstance(state=false) {

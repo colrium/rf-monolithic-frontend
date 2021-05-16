@@ -235,7 +235,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"demorequests/view/" + entry._id
+						"demorequests/view/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -245,7 +245,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"demorequests/view/" + entry._id
+										"demorequests/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -303,7 +303,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"demorequests/edit/" + entry._id
+						"demorequests/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -313,7 +313,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"demorequests/edit/" + entry._id
+										"demorequests/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -338,7 +338,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"demorequests/delete/" + entry._id
+						"demorequests/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

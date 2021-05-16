@@ -220,7 +220,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("results/view/" + entry._id).toUriWithDashboardPrefix();
+					return ("results/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -228,7 +228,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"results/view/" + entry._id
+										"results/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -245,7 +245,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"results/view/" + entry._id
+										"results/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -300,7 +300,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("results/edit/" + entry._id).toUriWithDashboardPrefix();
+					return ("results/edit/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -308,7 +308,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"results/edit/" + entry._id
+										"results/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -324,7 +324,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={("results/edit/" + entry._id).toUriWithDashboardPrefix()}
+									to={("results/edit/" + entry?._id).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -347,7 +347,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("results/delete/" + entry._id).toUriWithDashboardPrefix();
+					return ("results/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

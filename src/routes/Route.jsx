@@ -4,15 +4,9 @@ import React, { useEffect } from "react";
 
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import Auth from "hoc/Auth";
+import ApiService from "services/backend";
 import { Route } from "react-router-dom";
-import {
-	setAuthenticated,
-	setCurrentUser,
-	setAccessToken,
-	clearDataCache,
-	clearBlobCache,
-} from "state/actions";
+import { clearDataCache, clearBlobCache, } from "state/actions";
 
 const CustomRoute = props => {
 	/*const [state, setState] = useState(props);
@@ -26,69 +20,20 @@ const CustomRoute = props => {
 		authRestrict,
 		auth,
 		entry,
-		setAuthenticated,
-		setCurrentUser,
-		setAccessToken,
 		clearDataCache,
 		clearBlobCache,
 		entryPaths,
 		...rest
 	} = props;
 
-	useEffect(()=>{
-		/*function myFunction() { 
-     if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) 
-    {
-        alert('Opera');
-    }
-    else if(navigator.userAgent.indexOf("Chrome") != -1 )
-    {
-        alert('Chrome');
-    }
-    else if(navigator.userAgent.indexOf("Safari") != -1)
-    {
-        alert('Safari');
-    }
-    else if(navigator.userAgent.indexOf("Firefox") != -1 ) 
-    {
-         alert('Firefox');
-    }
-    else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) //IF IE > 10
-    {
-      alert('IE'); 
-    }  
-    else 
-    {
-       alert('unknown');
-    }
-    }
-
-    myFunction();*/
-
-		/*if (window) {
-			if (window.chrome) {
-				window.chrome.identity.getProfileUserInfo(function(userInfo) {
-					console.log("window.chrome.identity", window.chrome.identity);
-				});
-				
-			}
-		}*/
-
-		
-
-	}, [auth]);
+	
 
 	
 
 	if (entry) {
         let {location} = rest;
         let current_path = location? location.pathname : false;
-        if (
-				Auth.getInstance().authTokenSet() &&
-				auth.isAuthenticated &&
-				JSON.isJSON(auth.user) &&
-				Object.keys(auth.user).length > 0
-			) {
+        if (ApiService.isUserAuthenticated(true)) {
 				if (current_path != entryPaths.authenticated) {
 					return (
 						<Redirect
@@ -112,12 +57,7 @@ const CustomRoute = props => {
 				return;
 		}
     } else if (authRestrict) {
-		if (
-			Auth.getInstance().authTokenSet() &&
-			auth.isAuthenticated &&
-			JSON.isJSON(auth.user) &&
-			Object.keys(auth.user).length > 0
-		) {
+		if (ApiService.isUserAuthenticated(true)) {
 			return (
 				<Route
 					{...rest}
@@ -133,9 +73,6 @@ const CustomRoute = props => {
 			);
 		} else {
 			const { path } = rest;
-			setAuthenticated(false);
-			setCurrentUser({});
-			setAccessToken(null);
 			clearDataCache();
 			clearBlobCache();
 			if (path !== "login") {
@@ -162,10 +99,4 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default React.memo(connect(mapStateToProps, {
-	setAuthenticated,
-	setCurrentUser,
-	setAccessToken,
-	clearDataCache,
-	clearBlobCache,
-})(CustomRoute));
+export default React.memo(connect(mapStateToProps, { clearDataCache, clearBlobCache })(CustomRoute));

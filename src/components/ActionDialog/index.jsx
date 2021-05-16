@@ -10,7 +10,7 @@ import Button from "components/Button";
 import { useDispatch, useSelector } from "react-redux";
 import * as Actions from "state/actions";
 
-function ActionDialog(props) {
+const ActionDialog = React.memo((props) => {
 	const dispatch = useDispatch();
 	const state = useSelector(state => state.dialog.state);
 	const options = useSelector(state => state.dialog.options);
@@ -75,6 +75,6 @@ function ActionDialog(props) {
 			)}
 		</Dialog>
 	);
-}
+});
 
 export default ActionDialog;

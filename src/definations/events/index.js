@@ -70,7 +70,7 @@ export default {
 				resolveData: async (entries, isPopulated = true) => {
 					return entries.map((entry, index) => {
 						return {
-							id: entry._id,
+							id: entry?._id,
 							calendarId: "events",
 							title: entry.title,
 							body: ReactDOMServer.renderToStaticMarkup(
@@ -440,7 +440,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("events/view/" + entry._id).toUriWithDashboardPrefix();
+					return ("events/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -449,7 +449,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"events/view/" + entry._id
+										"events/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -503,7 +503,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("events/edit/" + entry._id).toUriWithDashboardPrefix();
+					return ("events/edit/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -512,7 +512,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"events/edit/" + entry._id
+										"events/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -536,7 +536,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("events/delete/" + entry._id).toUriWithDashboardPrefix();
+					return ("events/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

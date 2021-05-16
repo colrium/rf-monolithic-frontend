@@ -18,7 +18,7 @@ import ApiService from "services/api";
 import compose from "recompose/compose";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
-import { HorizontalBar } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { UtilitiesHelper } from "hoc/Helpers";
 
 const getRegions = ()=>{
@@ -55,7 +55,7 @@ const CountSummaryGraph = (props) => {
 				let entries = [];
 				if (Array.isArray(data)) {
 					data.map(entry => {
-						labels.push(entry._id.submission_date);
+						labels.push(entry?._id.submission_date);
 						entries.push(entry.count);
 					})
 				}
@@ -74,7 +74,7 @@ const CountSummaryGraph = (props) => {
 	return (
 		<GridContainer>
 			<GridItem>
-				{report && <HorizontalBar data={{labels: report.labels, datasets: [{label: "Responses count by date", data:  report.data, backgroundColor: "#00AF41", hoverBackgroundColor: "#76C4D5",}]}} />}
+				{report && <Bar data={{labels: report.labels, datasets: [{label: "Responses count by date", data:  report.data, backgroundColor: "#00AF41", hoverBackgroundColor: "#76C4D5",}]}} />}
 			</GridItem>
 		</GridContainer>
 	)
@@ -128,7 +128,7 @@ export default {
 					let resolved_data = [];
 					for (let entry of entries) {
 						resolved_data.push({
-							id: entry._id,
+							id: entry?._id,
 							calendarId: "responses",
 							title: entry.response_type,
 							body:
@@ -759,7 +759,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "responses/view/" + entry._id;
+					return "responses/view/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -767,7 +767,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"responses/view/" + entry._id}
+									to={"responses/view/" + entry?._id}
 									className={className}
 								>
 									<IconButton
@@ -814,7 +814,7 @@ export default {
 					return (user && user.role !== "admin");
 				},
 				uri: entry => {
-					return "responses/edit/" + entry._id;
+					return "responses/edit/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -822,7 +822,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"responses/edit/" + entry._id}
+									to={"responses/edit/" + entry?._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -842,7 +842,7 @@ export default {
 					return (user && user.role !== "admin");
 				},
 				uri: entry => {
-					return "responses/delete/" + entry._id;
+					return "responses/delete/" + entry?._id;
 				},
 				link: {
 					inline: {

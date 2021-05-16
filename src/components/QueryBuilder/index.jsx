@@ -8,6 +8,7 @@ import lodash from "lodash";
 import {Query, Builder, BasicConfig, Utils as QbUtils} from 'react-awesome-query-builder';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
+import NestedMenuItem from "components/NestedMenuItem";
 import MaterialConfig from 'react-awesome-query-builder/lib/config/material';
 import { TextInput, SelectInput } from "components/FormInputs";
 import IconButton from '@material-ui/core/IconButton';
@@ -15,10 +16,15 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TuneIcon from '@material-ui/icons/Tune';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
+import SortIcon from '@material-ui/icons/Sort';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import Tooltip from '@material-ui/core/Tooltip';
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { theme, theme_dark } from "assets/jss/app-theme";
@@ -41,9 +47,7 @@ const SelectWidgetComponent = memo((props) => {
 
 	const throttledOnChange = useRef(debounce(newValue => {
 		if ( Function.isFunction(setValue)) {			
-			Promise.all([setValue(newValue)]).catch(err => {
-	    		console.error("SelectWidgetComponent throttledOnChange err", err);
-	    	});				
+			Promise.all([setValue(newValue)]).catch(err => {});				
 		}		
 		
 			
@@ -83,9 +87,7 @@ const FieldsSelectComponent = memo((props) => {
 
 	const throttledOnChange = useRef(debounce(newValue => {
 		if ( Function.isFunction(setField)) {			
-			Promise.all([setField(newValue)]).catch(err => {
-	    		console.error("FieldsSelectComponent throttledOnChange err", err);
-	    	});			
+			Promise.all([setField(newValue)]).catch(err => {});			
 		}		
 		
 			
@@ -126,19 +128,14 @@ const InitialConfig = {
 		select: {
 			...MaterialConfig.widgets.select,
 			factory: (props)=> {
-
-				console.log("factory props", props);
-				return (
+                return (
 					<SelectWidgetComponent {...props} />
 				)
-			}
+            }
 		}
 	}
 };
 
-
-
-console.log("InitialConfig", InitialConfig);
 
 
 // You can load query value from your backend storage (for saving see `Query.onChange()`)
@@ -162,27 +159,30 @@ const BuilderResult = (props) => {
 }
 
 const QueryBuilder = memo((props) => {
-	const {value, onChange, format, title, className, search, builder, ...rest} = props;
+	const {value, onChange, format, title, className, search, sort, builder, ...rest} = props;
 	
 	const [internalValue, setInternalValue] = useState(JSON.isJSON(value)? (
 														{
 															...value,
 															search: value.search,
+															sort: value.sort,
 															populate: value.populate,
 															builder: {"id": QbUtils.uuid(), "type": "group", ...value.builder}, 
 															config: {...InitialConfig, ...value.config},
 															tree: QbUtils.checkTree(QbUtils.loadTree(({"id": QbUtils.uuid(), "type": "group", ...value.builder})), {...InitialConfig, ...value.config})
 														}
-													) : (
+												) : (
 														{
 															search: undefined, 
+															sort: undefined, 
 															populate: false,
 															builder: {"id": QbUtils.uuid(), "type": "group"}, 
 															config: InitialConfig,
 															tree: QbUtils.checkTree(QbUtils.loadTree(({"id": QbUtils.uuid(), "type": "group"})), InitialConfig)
 														}
-													));
+												));
 	const [showBuilder, setShowBuilder] = useState(false);
+	const [sortMenuAnchorEl, setSortMenuAnchorEl] = useState(null);
 	
 
 	const getExpectedValue = useCallback((newTree, newConfig) => {
@@ -195,12 +195,14 @@ const QueryBuilder = memo((props) => {
 			setInternalValue(JSON.isJSON(value)? ({
 															...value,
 															search: value.search,
+															sort: value.sort,
 															populate: value.populate,
 															builder: {"id": QbUtils.uuid(), "type": "group", ...value.builder}, 
 															config: {...InitialConfig, ...value.config},
 															tree: QbUtils.checkTree(QbUtils.loadTree(({"id": QbUtils.uuid(), "type": "group", ...value.builder})), {...InitialConfig, ...value.config})
 														}) : ({
-															search: undefined, 
+															search: undefined,
+															sort: undefined,
 															populate: false,
 															builder: {"id": QbUtils.uuid(), "type": "group"}, 
 															config: InitialConfig,
@@ -209,9 +211,7 @@ const QueryBuilder = memo((props) => {
 		}
 	}, [value]);
 
-	useLayoutEffect(() => {
-		console.log("Rendered: QueryBuilder");
-	});
+
 
 	
 
@@ -222,7 +222,7 @@ const QueryBuilder = memo((props) => {
 		const {tree: newTree, config: newConfig, ...rest} = newValue;
 
 		if ( Function.isFunction(onChange)) {
-			let changeValue = {
+            let changeValue = {
 				...rest,
 				builder: QbUtils.getTree(newTree),
 				querystring: QbUtils.queryString(newTree, newConfig),
@@ -230,11 +230,8 @@ const QueryBuilder = memo((props) => {
 				tree: newTree,
 				config: newConfig,				
 			};
-			Promise.all([onChange(changeValue)]).catch(err => {
-	    		console.err("QueryBuilder throttledOnQueryBuilderChange err", err);
-	    	});
-			console.log("throttledOnChange changeValue", changeValue);				
-		}
+            Promise.all([onChange(changeValue)]).catch(err => {});
+        }
 		onChangeFired = true;			
 		
 			
@@ -287,6 +284,33 @@ const QueryBuilder = memo((props) => {
 		throttledOnChange(new_internal_value);
 	}
 
+	const handleOnSortBtnClick = (event) => {
+		event.preventDefault();
+		setSortMenuAnchorEl(event.currentTarget);
+	}
+
+	const handleOnSortByClick = (field_name, type="asc") => (event) => {
+		event.preventDefault()
+		let new_internal_value = internalValue;
+		setInternalValue((currentInternalValue) => {
+			let newSort = (String.isString(currentInternalValue.sort)? currentInternalValue.sort : "");
+			let appendSort = (!newSort.includes(("-"+field_name)) && type==="desc") || (!newSort.includes(("-"+field_name)) && !newSort.includes(field_name) && type === "asc");
+			newSort = newSort.replaceAll(" ", "").replaceAll(("-"+field_name+","), "").replaceAll((",-"+field_name), "").replaceAll(("-"+field_name), "").replaceAll((field_name+","), "").replaceAll((","+field_name), "").replaceAll(field_name, "");
+			newSort = newSort+ (appendSort? ((newSort.length > 0? "," : "") +(type==="desc"? "-" : "")+field_name) : "");
+			console.log("newSort", newSort);
+			new_internal_value =  {
+				...currentInternalValue,
+				sort: newSort,
+			};
+			return new_internal_value;
+		});
+
+		//console.log("new_internal_value", new_internal_value);
+		throttledOnChange(new_internal_value);
+	}
+
+
+
 
 	return (
 			<form  className={"p-0 flex focus:bg-transparent focus-within:bg-transparent "+(className? (" "+className): "")} onSubmit={handleOnSubmit(internalValue)}>
@@ -297,27 +321,93 @@ const QueryBuilder = memo((props) => {
 								<TuneIcon fontSize="small" /> 
 							</IconButton>
 						</Tooltip>}
-						aria-controls="panel1bh-content"
-						id="panel1bh-header"
+						aria-controls="panelqb-content"
+						id="panelqb-header"
+						className={"focus:bg-current"}
 					>
-						{search && <TextInput 
-								variant="outlined" 
-								placeholder="Search..."
-								InputProps={{
-									endAdornment: (<InputAdornment position="end">
-										<Tooltip title="Search">										
-											<IconButton type="submit" size="small"><SearchIcon fontSize="small" /> </IconButton>
-										</Tooltip>
-										<Tooltip title="Populate and Resolve IDs">
-											<IconButton className={internalValue.populate? "ml-2 accent-text" : "ml-2"} size="small" onClick={handleOnPopulateChange}><AccountTreeIcon fontSize="small" /> </IconButton>
-										</Tooltip>
-									</InputAdornment>)					        
-								}}		
-								value={internalValue.search}
-								onChange={handleOnSearchInputChange}					 
-								margin="dense"
-								size="small"
-						/>}
+						<GridContainer className={"flex flex-row justify-center items-center"}>
+							{search && <Tooltip title="Enter Search Query">
+								<TextInput 
+									variant="outlined" 
+									placeholder="Search..."
+									InputProps={{
+										endAdornment: (<InputAdornment position="end">
+											<Tooltip title="Search">										
+												<IconButton type="submit" size="small"><SearchIcon fontSize="small" /> </IconButton>
+											</Tooltip>
+											
+										</InputAdornment>)					        
+									}}		
+									value={internalValue.search}
+									onChange={handleOnSearchInputChange}					 
+									margin="dense"
+									size="small"
+								/>
+							</Tooltip>}
+							<Tooltip title="Populate and Resolve IDs">
+								<IconButton className={internalValue.populate? "accent-text mx-1" : "mx-1"} onClick={handleOnPopulateChange}>				
+									<AccountTreeIcon fontSize="small" />								
+								</IconButton>
+							</Tooltip>
+							{sort && <Tooltip title="Sort">
+								<IconButton disabled={JSON.isEmpty(internalValue?.config?.fields?? {})} className={Boolean(internalValue.sort)? "accent-text" : ""} onClick={handleOnSortBtnClick}>
+									<SortIcon fontSize="small" /> 
+								</IconButton>
+							</Tooltip>}
+
+							<Menu
+								id="sort-by-field-menu"
+								anchorEl={sortMenuAnchorEl}
+								keepMounted
+								open={Boolean(sortMenuAnchorEl)}
+								onClose={() => setSortMenuAnchorEl(null)}
+							>
+								
+									{Object.entries(internalValue?.config?.fields?? {}).map(([field_name, field_props]) => (
+										<NestedMenuItem
+											label={field_props.label}
+											parentMenuOpen={Boolean(sortMenuAnchorEl)}
+											selected={(internalValue.sort?? "").includes(field_name)}
+											MenuProps={{
+												/*anchorOrigin: {
+													vertical: 'center',
+													horizontal: 'center'
+												},
+												transformOrigin: {
+													vertical: 'center',
+													horizontal: 'center'
+												},*/
+											}}
+											leftIcon={null}
+											rightIcon={(internalValue.sort?? "").includes(("-"+field_name))? (<ArrowDownwardIcon fontSize="small" className="ml-1" />) : ((internalValue.sort?? "").includes((field_name))? (<ArrowUpwardIcon fontSize="small" className="ml-1" />) : null )}
+											key={"sort-field-"+field_name}
+											button
+										> 
+											<MenuItem 
+												disabled
+											>
+												{field_props.label}
+											</MenuItem>
+											<MenuItem 
+												onClick={handleOnSortByClick(field_name, "asc")}
+												selected={!(internalValue.sort?? "").includes(("-"+field_name)) && (internalValue.sort?? "").includes(field_name)}
+												button
+											>
+												Ascending
+											</MenuItem>
+											<MenuItem 
+												onClick={handleOnSortByClick(field_name, "desc")}
+												selected={(internalValue.sort?? "").includes(("-"+field_name))}
+												button
+											>
+												Descending
+											</MenuItem>
+										</NestedMenuItem>
+
+									))} 
+
+							</Menu>
+						</GridContainer>
 						
 					</AccordionSummary>
 					<AccordionDetails>
@@ -340,6 +430,7 @@ QueryBuilder.defaultProps = {
 	title: false,
 	search: true,
 	builder: true,
+	sort: true,
 	value: {search: undefined, populate: true, builder: {"id": QbUtils.uuid(), "type": "group"}, config: {fields: {}}},
 	format: "mongodb",
 	fields: {}

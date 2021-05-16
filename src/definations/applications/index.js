@@ -18,6 +18,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { Link } from "react-router-dom";
 import { CountriesHelper, UtilitiesHelper } from "hoc/Helpers";
 import { useGlobals } from "contexts/Globals";
+import {useGooglePlaces, useGeolocation} from "hooks";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
 import compose from "recompose/compose";
@@ -25,7 +26,7 @@ import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, open
 
 let currentDate = new Date();
 
-const ke_regions = CountriesHelper.regions("KE");
+const ke_regions = CountriesHelper.administrative_features_options("KE", 2, "Nairobi");
 
 
 const Alert = (props) => {
@@ -485,7 +486,7 @@ export default {
 				icon: "folder",
 				input: {
 					type: "select",
-					default: "KE",
+					//default: "KE",
 					required: true,
 					props: {
 						margin: "dense",
@@ -497,26 +498,116 @@ export default {
 				possibilities: CountriesHelper.names(),
 			},
 
-			region: {
+			
+
+			administrative_level_1: {
 				type: "string",
-				label: "Region/ County",
+				label: "Region/County/Province",
 				input: {
 					type: "select",
-					default: "Nairobi",
 					required: true,
-					/*props: {
+					props: {
 						freeSolo: true,
-					}	*/					
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						},
+					},			
 				},
-				possibilities: CountriesHelper.regions("KE"),
-				/*possibilities: (values, user) => {
-						if (JSON.isJSON(values)) {
-							console.log("values.country", values.country)
-							return CountriesHelper.regions(values.country);
+				possibilities: async (values, user) => {
+					//console.log("values.country", values);
+						if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
+							return await CountriesHelper.administrative_features_options(values.country, 1).then(data => {return data}).catch(err => {return {}});
 						}
 						return {};
 						
-					}*/
+				}			
+			
+			},
+
+			
+
+			administrative_level_2: {
+				type: "string",
+				label: "Sub County/Sub Region/District",
+				input: {
+					type: "select",
+					default: "",
+					required: false,
+					props: {
+						freeSolo: true,
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						},
+					}
+				},
+				possibilities: async (values, user) => {					
+						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_1)) {
+							return await CountriesHelper.administrative_features_options(values.country, 2, values.administrative_level_1).then(data => {
+								console.log("data", data);
+								return data;
+							}).catch(err => {
+								console.log("data error", err);
+								return {};
+							});
+						}
+						return {};
+						
+				}
+			},
+
+			administrative_level_3: {
+				type: "string",
+				label: "Ward/Locality/Municipality",
+				input: {
+					type: "select",
+					default: "",
+					required: false,
+					props: {						
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						},
+					}
+					
+				},
+				possibilities: async (values, user) => {					
+						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_2)) {
+							return await CountriesHelper.administrative_features_options(values.country, 3, values.administrative_level_2).then(data => {
+								console.log("data", data);
+								return data;
+							}).catch(err => {
+								console.log("data error", err);
+								return {};
+							});
+						}
+						return {};
+						
+				}
+			},
+			region: {
+				type: "string",
+				label: "Region/County/Province",
+				input: {
+					type: "hidden",
+					required: true,
+					props: {
+						freeSolo: true,
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						},
+					},			
+				},
+				possibilities: async (values, user) => {
+					//console.log("values.country", values);
+						if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
+							return await CountriesHelper.administrative_features_options(values.country, 1).then(data => {return data}).catch(err => {return {}});
+						}
+						return {};
+						
+				}			
 			
 			},
 
@@ -524,33 +615,62 @@ export default {
 
 			subcounty: {
 				type: "string",
-				label: "Sub County",
+				label: "Sub County/Sub Region/District",
 				input: {
-					type: "text",
+					type: "hidden",
 					default: "",
 					required: false,
-					/*props: {
+					props: {
 						freeSolo: true,
-					}*/
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						},
+					}
 				},
-				/*possibilities: (values, user) => {
-						if (JSON.isJSON(values)) {
-							return CountriesHelper.subregions(values.region);
+				possibilities: async (values, user) => {					
+						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.region)) {
+							return await CountriesHelper.administrative_features_options(values.country, 2, values.region).then(data => {
+								console.log("data", data);
+								return data;
+							}).catch(err => {
+								console.log("data error", err);
+								return {};
+							});
 						}
 						return {};
 						
-				}*/
+				}
 			},
 
 			ward: {
 				type: "string",
-				label: "Ward",
+				label: "Ward/Locality",
 				input: {
-					type: "text",
+					type: "hidden",
 					default: "",
 					required: false,
+					props: {						
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						},
+					}
 					
 				},
+				possibilities: async (values, user) => {					
+						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.subcounty)) {
+							return await CountriesHelper.administrative_features_options(values.country, 3, values.subcounty).then(data => {
+								console.log("data", data);
+								return data;
+							}).catch(err => {
+								console.log("data error", err);
+								return {};
+							});
+						}
+						return {};
+						
+				}
 			},
 
 			locale: {
@@ -664,7 +784,7 @@ export default {
 					props: {
 						acceptedFiles: ["image/*"],
 						dropzoneText:
-							"Click to select or Drag & drop your selfie here",
+							"Click to select file \n OR \n Drag & drop your selfie here",
 						filesLimit: 1,
 						dropzoneIcon: "portrait",
 						containerStyle: {
@@ -688,7 +808,7 @@ export default {
 
 			documents: {
 				type: ["string"],
-				label: "Documents",
+				label: "Resume",
 				input: {
 					type: "file",
 					props: {
@@ -698,7 +818,7 @@ export default {
 							"audio/*",
 							"application/*",
 						],
-						dropzoneText: "Click to select or Drag & drop your resume/ CV here",
+						dropzoneText: "Click to select file \n OR \n Drag & drop your Resume here",
 						filesLimit: 1,
 						dropzoneIcon: "insert_drive_file",
 						containerStyle: {
@@ -728,7 +848,7 @@ export default {
 					props: {
 						acceptedFiles: ["image/*"],
 						dropzoneText:
-							"Click to select or Drag & drop your Copy of Government ID here",
+							"Click to select file \n OR \n Drag & drop your Copy of Government ID here",
 						filesLimit: 1,
 						dropzoneIcon: "credit_card",
 						containerStyle: {
@@ -763,13 +883,22 @@ export default {
 						},
 					},
 				},
-				possibilities: {
-					"Facebook": "Facebook",
-					"Instagram": "Instagram",
-					"Twitter": "Twitter",
-					"LinkedIn": "LinkedIn",
-					"WhatsApp": "WhatsApp",
-					"Word of mouth": "Word of mouth",
+				possibilities: (values, user) => {
+					let sources = { 
+						"Twitter": "Twitter",	
+						"Facebook": "Facebook",
+						"Instagram": "Instagram",
+						"LinkedIn": "LinkedIn",
+						"WhatsApp": "WhatsApp",
+						"University Career department": "University Career department",
+						"Job Websites": "Job Websites",
+						"Word of mouth": "Word of mouth",
+					}
+					if (JSON.isJSON(values) && values.country === "KE") {
+						sources["Ajira"] = "Ajira";
+					}
+
+					return sources;
 				},
 			},
 		},
@@ -827,7 +956,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "applications/view/" + entry._id;
+					return "applications/view/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -836,7 +965,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"applications/view/" + entry._id
+										"applications/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -891,7 +1020,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"applications/edit/" + entry._id
+						"applications/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -901,7 +1030,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"applications/edit/" + entry._id
+										"applications/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -926,7 +1055,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"applications/" + entry._id + "/user/create"
+						"applications/" + entry?._id + "/user/create"
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -949,7 +1078,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"applications/delete/" + entry._id
+						"applications/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

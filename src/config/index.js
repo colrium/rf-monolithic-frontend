@@ -33,6 +33,8 @@ export const authTokenLocation = "cookie"; // "cookie" or "redux";
 
 export const authTokenName = "rf_auth";
 
+export const surpressed_logs =['Warning:', 'Deprecation', 'Material-UI:', './src/', '[Deprecation]', 'There were more warnings in other files', '@material-ui/styles',  'WebSocket'];
+
 export const environment = process.env.NODE_ENV;
 export const client_id = process.env.REACT_APP_CLIENT_ID;
 export const client_secret = process.env.REACT_APP_CLIENT_SECRET;
@@ -52,17 +54,12 @@ export const firebaseWebPushCertificate = "BCRs2cCvL59gp6AyJybuna4N7migtv4c6O6Tw
 
 
 export const baseUrls = {
-	development: {
-		domain: "localhost",
-		endpoint: process.env.REACT_APP_API_DEV_ENDPOINT,
-	},
-	production: {
-		domain: "realfield.io",
-		endpoint: process.env.REACT_APP_API_ENDPOINT,
-	},
+	domain: environment == "development"? process.env.REACT_APP_DEV_DOMAIN : process.env.REACT_APP_DOMAIN,
+	host: environment == "development"? process.env.REACT_APP_API_DEV_HOST : process.env.REACT_APP_API_HOST, // This is for development and experimentation purposes only to cater for docker loadbalancer/proxy scenarios. Its considered unsecure to set or accept requests with a HOST header/parameter.
+	backend: environment == "development"? process.env.REACT_APP_API_DEV_ENDPOINT : process.env.REACT_APP_API_ENDPOINT,
 };
 
-export const apiBaseUrl = baseUrls[environment].endpoint.endsWith("/")? baseUrls[environment].endpoint : (baseUrls[environment].endpoint + "/");
+
 
 export const google_maps_url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_MAPS_KEY + "&v=3.exp&libraries=geometry,drawing,places";
 	

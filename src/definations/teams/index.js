@@ -389,7 +389,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "teams/view/" + entry._id;
+					return "teams/view/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -397,7 +397,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"teams/view/" + entry._id}
+									to={"teams/view/" + entry?._id}
 									className={className}
 								>
 									<IconButton
@@ -447,7 +447,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "teams/edit/" + entry._id;
+					return "teams/edit/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -455,7 +455,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"teams/edit/" + entry._id}
+									to={"teams/edit/" + entry?._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -478,7 +478,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "teams/delete/" + entry._id;
+					return "teams/delete/" + entry?._id;
 				},
 				link: {
 					inline: {

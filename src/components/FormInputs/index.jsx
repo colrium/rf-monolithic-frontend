@@ -27,7 +27,7 @@ import WysiwygEditor from "components/WysiwygEditor";
 
 export { default as TextInput } from "./TextInput";
 export { default as RadioInput } from "./RadioInput";
-export { default as LocationInput } from "./LocationInput";
+export { default as GooglePlacesAutocomplete } from "./GooglePlacesAutocomplete";
 
 
 

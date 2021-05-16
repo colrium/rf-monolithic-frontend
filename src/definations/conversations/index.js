@@ -301,7 +301,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("coupons/view/" + entry._id).toUriWithDashboardPrefix();
+					return ("coupons/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -310,7 +310,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"coupons/view/" + entry._id
+										"coupons/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -367,7 +367,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("coupons/edit/" + entry._id).toUriWithDashboardPrefix();
+					return ("coupons/edit/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -376,7 +376,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"coupons/edit/" + entry._id
+										"coupons/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -400,7 +400,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("coupons/delete/" + entry._id).toUriWithDashboardPrefix();
+					return ("coupons/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

@@ -187,7 +187,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("questions/view/" + entry._id).toUriWithDashboardPrefix();
+					return ("questions/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -195,7 +195,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"questions/view/" + entry._id
+										"questions/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -211,7 +211,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={("questions/view/" + entry._id).toUriWithDashboardPrefix()}
+									to={("questions/view/" + entry?._id).toUriWithDashboardPrefix()}
 									className={className}
 								>
 									<IconButton
@@ -266,14 +266,14 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("questions/edit/" + entry._id).toUriWithDashboardPrefix();
+					return ("questions/edit/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
 						default: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={("questions/edit/" + entry._id).toUriWithDashboardPrefix()}
+									to={("questions/edit/" + entry?._id).toUriWithDashboardPrefix()}
 									className={className}
 								>
 									<IconButton
@@ -288,7 +288,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={("questions/edit/" + entry._id).toUriWithDashboardPrefix()}
+									to={("questions/edit/" + entry?._id).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -311,7 +311,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("questions/delete/" + entry._id).toUriWithDashboardPrefix();
+					return ("questions/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

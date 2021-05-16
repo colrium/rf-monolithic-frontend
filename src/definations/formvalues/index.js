@@ -302,7 +302,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("formvalues/view/" + entry._id).toUriWithDashboardPrefix();
+					return ("formvalues/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -310,7 +310,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"formvalues/view/" + entry._id}
+									to={"formvalues/view/" + entry?._id}
 									className={className}
 								>
 									<IconButton
@@ -363,7 +363,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("formvalues/edit/" + entry._id).toUriWithDashboardPrefix();
+					return ("formvalues/edit/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -372,7 +372,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"formvalues/edit/" + entry._id
+										"formvalues/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -397,7 +397,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"formvalues/delete/" + entry._id
+						"formvalues/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

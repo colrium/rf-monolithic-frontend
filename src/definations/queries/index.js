@@ -186,7 +186,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "queries/view/" + entry._id;
+					return "queries/view/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -194,7 +194,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"queries/view/" + entry._id}
+									to={"queries/view/" + entry?._id}
 									className={className}
 								>
 									<IconButton
@@ -244,7 +244,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "queries/edit/" + entry._id;
+					return "queries/edit/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -252,7 +252,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"queries/edit/" + entry._id}
+									to={"queries/edit/" + entry?._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -275,7 +275,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "queries/delete/" + entry._id;
+					return "queries/delete/" + entry?._id;
 				},
 				link: {
 					inline: {

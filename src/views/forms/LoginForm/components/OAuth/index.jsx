@@ -6,16 +6,16 @@ import GridContainer from "components/Grid/GridContainer";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import GoogleIcon from 'mdi-react/GooglePlusIcon';
-import { apiBaseUrl } from "config";
+import {api} from "services/backend";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import {withGlobals} from "contexts/Globals";
 import styles from "./styles";
 
 
-class OAuth extends Component {
+class OAuth extends React.Component {
 	state = {
 		provider: "facebook",
 		disabled: false,
@@ -61,7 +61,7 @@ class OAuth extends Component {
 			height = 600;
 		const left = window.innerWidth / 2 - width / 2;
 		const top = window.innerHeight / 2 - height / 2;
-		const url = `${apiBaseUrl}${this.state.provider}?socketId=${this.state.socketId}`;
+		const url = api.endpoint(`${this.state.provider}?socketId=${this.state.socketId}`);
 
 		return window.open(
 			url,

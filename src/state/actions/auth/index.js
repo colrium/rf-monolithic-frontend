@@ -1,15 +1,10 @@
-/** @format */
-
-import Auth from "hoc/Auth";
-import AuthService from "services/auth";
+import ApiService from "services/backend";
 import {
 	SET_AUTHENTICATED,
-	SET_ACCESS_TOKEN,
+	SET_TOKEN,
 	SET_USER,
 	clearAppState,
 } from "state/actions";
-
-import ApiService from "services/api";
 
 export function setAuthenticated(authenticated) {
 	return {
@@ -18,9 +13,9 @@ export function setAuthenticated(authenticated) {
 	};
 }
 
-export function setAccessToken(token) {
+export function setToken(token) {
 	return {
-		type: SET_ACCESS_TOKEN,
+		type: SET_TOKEN,
 		token,
 	};
 }
@@ -37,10 +32,8 @@ export function updateCurrentUser(user) {
 		const {auth} = getState();
 		if (auth.isAuthenticated) {
 			dispatch(setCurrentUser(user));
-			const ApiServiceInstance = new ApiService();
-		    ApiServiceInstance.refresh();
-		    ApiServiceInstance.setServiceUri("/profile");
-		    let persistedServerUser = await  ApiServiceInstance.put(user).then(res => {
+			const ApiAuthService = ApiService.getAuthContextRequests();
+		    let persistedServerUser = await  ApiAuthService.update_profile(user).then(res => {
 				return res.body.data
 			}).catch(err => {
 				return false;
@@ -52,37 +45,20 @@ export function updateCurrentUser(user) {
 
 export function logout() {
 	return dispatch => {
-		Auth.getInstance().setAccessToken(null);
-		dispatch(clearAppState());
-		AuthService.reset();
-		//Do not call this on logout because views will update too
-		//dispatch(setCurrentUser({}));
-	};
+		return ApiService.logout().then(res => {
+			console.log("redux logout action res", res);
+		}).catch(err => {
+            throw err;
+        });
+	}
+	
 }
 
 export function login(data) {
 	return dispatch => {
-		return AuthService.login(data)
-			.then(async res => {
-				let dataObj = {
-					access_token: res.body.data,
-					user: false,
-				};
-				Auth.getInstance().setAccessToken(res.body.data);
-				AuthService.reset();
-				let user = await AuthService.profile()
-					.then(prof_res => {
-						return prof_res.body.data;
-					})
-					.catch(err => {
-                    throw err;
-                });
-				if (JSON.isJSON(user)) {
-					dataObj.user = user;
-				}
-				return dataObj;
-			})
-			.catch(err => {
+		return ApiService.login(data).then(res => {			
+			return res;
+		}).catch(err => {
             throw err;
         });
 	};

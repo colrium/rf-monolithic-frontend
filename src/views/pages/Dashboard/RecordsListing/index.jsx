@@ -8,13 +8,14 @@ import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
-import * as definations from "definations";
+
 import PropTypes from "prop-types";
 import React from "react";
 //Redux imports
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import compose from "recompose/compose";
+import * as definations from "definations";
 import * as services from "services";
 //
 //

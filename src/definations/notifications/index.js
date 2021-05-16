@@ -366,7 +366,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "notifications/view/" + entry._id;
+					return "notifications/view/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -374,7 +374,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"notifications/view/" + entry._id}
+									to={"notifications/view/" + entry?._id}
 									className={className}
 								>
 									<IconButton
@@ -428,7 +428,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "notifications/edit/" + entry._id;
+					return "notifications/edit/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -436,7 +436,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"notifications/edit/" + entry._id}
+									to={"notifications/edit/" + entry?._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -459,7 +459,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "notifications/delete/" + entry._id;
+					return "notifications/delete/" + entry?._id;
 				},
 				link: {
 					inline: {

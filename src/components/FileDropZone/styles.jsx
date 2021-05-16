@@ -1,5 +1,3 @@
-/** @format */
-
 export default theme => ({
 	"@keyframes progress": {
 		"0%": {

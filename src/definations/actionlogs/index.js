@@ -293,7 +293,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("actionlogs/view/" + entry._id).toUriWithDashboardPrefix();
+					return ("actionlogs/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -301,7 +301,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"actionlogs/view/" + entry._id
+										"actionlogs/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -318,7 +318,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"actionlogs/view/" + entry._id
+										"actionlogs/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -374,7 +374,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("actionlogs/edit/" + entry._id).toUriWithDashboardPrefix();
+					return ("actionlogs/edit/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -382,7 +382,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"actionlogs/edit/" + entry._id
+										"actionlogs/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -399,7 +399,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"actionlogs/edit/" + entry._id
+										"actionlogs/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -424,7 +424,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"actionlogs/delete/" + entry._id
+						"actionlogs/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

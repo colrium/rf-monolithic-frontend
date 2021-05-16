@@ -103,7 +103,6 @@ export function fetchContacts(params={}) {
                 const {data} = res.body;
                 return data;
             }).catch(err => {
-            	console.error("Error fetching contacts. Something went wrong!", err);
                 return false;
             });
 
@@ -521,7 +520,6 @@ export function sendMessage(message) {
 					const { data } = res.body;
 					return data;			
 				}).catch(e => {
-					console.log("sendMessage e", e);			
                     return false;
                 });
                 

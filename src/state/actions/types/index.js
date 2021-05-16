@@ -6,7 +6,7 @@ export const SET_SETTINGS = "[APP]SET_SETTINGS";
 export const SET_PREFERENCES = "[APP]SET_PREFERENCES";
 
 export const SET_AUTHENTICATED = "[AUTH]SET_AUTHENTICATED";
-export const SET_ACCESS_TOKEN = "[AUTH]SET_ACCESS_TOKEN";
+export const SET_TOKEN = "[AUTH]SET_TOKEN";
 export const SET_USER = "[AUTH]SET_USER";
 
 /*

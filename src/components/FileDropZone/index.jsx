@@ -17,7 +17,6 @@ import React, { Component } from "react";
 import Dropzone from "react-dropzone";
 import { attachments as AttachmentsService } from "services";
 import { UtilitiesHelper } from "hoc/Helpers";
-import withRoot from "hoc/withRoot";
 import styles from "./styles";
 
 function setNativeValue(element, value) {
@@ -612,18 +611,16 @@ class FileDropZone extends Component {
 																	: this.state
 																			.defaultColor
 															}
-															className={classNames(
-																classes.dropzoneParagraph,
-																this.props
-																	.dropzoneParagraphClass
-															)}
+															className={classNames({[classes.dropzoneParagraph] : true, [this.props.dropzoneParagraphClass]: true })}
 															fullWidth
 															center
 															paragraph
+															style={{
+																fontSize: "0.6rem"
+															}}
 														>
 															{
-																this.props
-																	.dropzoneText
+																this.props.dropzoneText
 															}
 														</Typography>
 													</GridContainer>
@@ -752,4 +749,4 @@ FileDropZone.propTypes = {
 	onDropRejected: PropTypes.func,
 	onDelete: PropTypes.func,
 };
-export default withRoot(withStyles(styles)(FileDropZone));
+export default withStyles(styles)(FileDropZone);

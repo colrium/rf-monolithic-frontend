@@ -7,12 +7,12 @@ import { osName, osVersion, browserName, fullBrowserVersion } from 'react-device
 import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation } from "state/actions";
 import { setMessagingCache, sendUnsentMessages, fetchInbox, updateMessage, appendMessage, fetchContacts } from "state/actions/communication";
 
-import {default_location} from "config";
-import {socket as defaultSocket} from "utils/Sockets";
+import {default_location, environment} from "config";
+import {socket as defaultSocket} from "services/Sockets";
 import * as definations from "definations";
 import * as services from "services";
 
-import {firestore as fcFirestore, messaging as fcMessaging, getFirestoreDoc, createUpdateFirestoreDoc} from "utils/Firebase";
+import {firestore as fcFirestore, messaging as fcMessaging, getFirestoreDoc, createUpdateFirestoreDoc} from "services/Firebase";
 
 
 
@@ -536,7 +536,7 @@ const GlobalsProvider = props => {
 
 
 	useEffect(()=>{
-		if (isAuthenticated && Object.size(auth_user) > 0) {
+		if (isAuthenticated && Object.size(auth_user) > 0 && environment !== "development") {
 
 			fcMessaging.requestPermission().then(async function() {
 				const token = await fcMessaging.getToken();
@@ -600,9 +600,6 @@ const GlobalsProvider = props => {
 				unsubscribeFcMessagingOnMessage();
 				//unsubscribeFcFirestoreUserOnSnapshot();
 			}
-			
-		}
-		else {
 			
 		}
 	}, [isAuthenticated]);

@@ -19,12 +19,14 @@ import { DrawingManager } from "react-google-maps/lib/components/drawing/Drawing
 import Avatar from '@material-ui/core/Avatar';
 import Typography from 'components/Typography';
 import mapStyles, {mapDarkStyles} from "./mapStyles";
-import {LocationInput as LocationSearchInput } from "components/FormInputs";
+import {GooglePlacesAutocomplete} from "components/FormInputs";
 import { compose } from "recompose";
 import { useHistory } from "react-router-dom";
 
 import {useGlobals} from "contexts/Globals";
 import { colors } from "assets/jss/app-theme";
+
+
 import client_position_female_heading_135_icon from "assets/img/maps/heading/female-135.png";
 import client_position_female_heading_180_icon from "assets/img/maps/heading/female-180.png";
 import client_position_female_heading_225_icon from "assets/img/maps/heading/female-225.png";
@@ -418,7 +420,7 @@ export default compose(
 		}
 		
 		
-		return `${process.env.PUBLIC_URL}/img/${computed_icon}.png`
+		return `${process.env.PUBLIC_URL}/img/avatars/${computed_icon}.png`
 		
 	}
 
@@ -1023,81 +1025,85 @@ export default compose(
 
 
 		return (
-			<GoogleMap
-				className="relative"
-				defaultZoom={mapZoom}
-				zoom={zoom}
-				defaultCenter={mapCenter}
-				defaultOptions={{
-					styles: props.mapStyles ? props.mapStyles : (props.theme === "dark"? mapDarkStyles : mapStyles),
-				}}
-				ref={mapRef => {
-					_map = mapRef;	
-				}}
-				onBoundsChanged={handleOnBoundsChanged}
-			>
-				{props.draw && (
-					<DrawingManager
-						defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
-						defaultOptions={{
-							drawingControl: true,
-							drawingControlOptions: {
-								position: google.maps.ControlPosition.TOP_CENTER,
-								drawingModes: [
-									google.maps.drawing.OverlayType.CIRCLE,
-									google.maps.drawing.OverlayType.POLYGON,
-									google.maps.drawing.OverlayType.POLYLINE,
-									google.maps.drawing.OverlayType.RECTANGLE,
-								],
-							},
-							circleOptions: {
-								fillColor: colors.hex.accent,
-								fillOpacity: 0.6,
-								strokeColor: colors.hex.accent,
-								strokeWeight: 2,
-								clickable: false,
-								editable: true,
-								zIndex: 1,
-							},
-						}}
-					/>
-				)}
-				
-				
-
-				{JSON.isJSON(props.currentDevicePosition) &&
-					props.showCurrentPosition && (
-						<Marker
-							position={props.currentDevicePosition.coordinates}
-							title={props.currentDevicePosition.title}
-							icon={current_position_marker_icon}
+			<GridContainer className="relative ">
+				<GoogleMap
+					
+					defaultZoom={mapZoom}
+					zoom={zoom}
+					defaultCenter={mapCenter}
+					defaultOptions={{
+						styles: props.mapStyles ? props.mapStyles : (props.theme === "dark"? mapDarkStyles : mapStyles),
+					}}
+					ref={mapRef => {
+						_map = mapRef;	
+					}}
+					onBoundsChanged={handleOnBoundsChanged}
+				>
+					{props.draw && (
+						<DrawingManager
+							defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
+							defaultOptions={{
+								drawingControl: true,
+								drawingControlOptions: {
+									position: google.maps.ControlPosition.TOP_CENTER,
+									drawingModes: [
+										google.maps.drawing.OverlayType.CIRCLE,
+										google.maps.drawing.OverlayType.POLYGON,
+										google.maps.drawing.OverlayType.POLYLINE,
+										google.maps.drawing.OverlayType.RECTANGLE,
+									],
+								},
+								circleOptions: {
+									fillColor: colors.hex.accent,
+									fillOpacity: 0.6,
+									strokeColor: colors.hex.accent,
+									strokeWeight: 2,
+									clickable: false,
+									editable: true,
+									zIndex: 1,
+								},
+							}}
 						/>
 					)}
+					
+					
 
-				{JSON.isJSON(props.marker) && <Marker {...props.marker} />}
-				{JSON.isJSON(props.circle) && <Marker {...props.circle} />}
+					{JSON.isJSON(props.currentDevicePosition) &&
+						props.showCurrentPosition && (
+							<Marker
+								position={props.currentDevicePosition.coordinates}
+								title={props.currentDevicePosition.title}
+								icon={current_position_marker_icon}
+							/>
+						)}
 
-				{(infoWindowOpen && infoWindowPosition && infoWindowContent) && <InfoWindow position={infoWindowPosition} onCloseClick={() => setInfoWindowOpen(false) }>
-					{infoWindowContent}
-				</InfoWindow>}
+					{JSON.isJSON(props.marker) && <Marker {...props.marker} />}
+					{JSON.isJSON(props.circle) && <Marker {...props.circle} />}
+
+					{(infoWindowOpen && infoWindowPosition && infoWindowContent) && <InfoWindow position={infoWindowPosition} onCloseClick={() => setInfoWindowOpen(false) }>
+						{infoWindowContent}
+					</InfoWindow>}
+
+					
+				</GoogleMap>
 
 				{props.showSearchBar && (
-					<div className={"absolute bottom-0 mb-4 py-1 px-2 sm:w-full md:w-5/6 lg:w-4/6 "} >
+					<div className={"absolute top-1/3 right-8 -mb-16 py-1 px-2 sm:w-full md:w-5/6 lg:w-4/6 "} >
 						<Paper
 							component="div"
 							className={"flex items-center w-full relative py-1 px-2"}
 						>
-							<LocationSearchInput
-								variant="plain"
-								margin="none"
-								controlPosition={google.maps.ControlPosition.BOTTOM_CENTER}
+							<GooglePlacesAutocomplete
+								variant="outlined"
+								margin="dense"
+								
 								{...props.searchBarProps}
 							/>
 						</Paper>
 					</div>
 					
 				)}
-			</GoogleMap>
+			</GridContainer>
 		);
 
 

@@ -208,20 +208,19 @@ class ListingView extends React.Component {
 	}
 
 	getSnapshotBeforeUpdate(prevProps, prevState) {
-		this.mounted = false;
-		console.log("prevState.fields", prevState.fields);
-		return {
+        this.mounted = false;
+        return {
 			prepareForRenderRequired: !lodash.isEqual(prevProps.query, this.props.query),
 			loadQueryBuilderPropsRequired: !lodash.isEqual(prevState.fields, this.state.fields) || !lodash.isEqual(prevState.value_possibilities, this.state.value_possibilities),
+			paramsChangeApplicationRequired: !lodash.isEqual(prevState.query, this.state.query),
 		};
-	}
+    }
 
 
 	shouldComponentUpdate(nextProps, nextState) {
-		let shouldUpdate = !lodash.isEqual(this.props, nextProps) || !lodash.isEqual(this.state, nextState);
-		console.log("shouldComponentUpdate", shouldUpdate);
-    	return shouldUpdate;
-	}
+        let shouldUpdate = !lodash.isEqual(this.props, nextProps) || !lodash.isEqual(this.state, nextState);
+        return shouldUpdate;
+    }
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		this.mounted = true;
@@ -358,9 +357,7 @@ class ListingView extends React.Component {
 				}
 				
 
-			}).catch(err => {
-				console.error(err)
-			});
+			}).catch(err => {});
             
 	            
         }
@@ -762,13 +759,14 @@ class ListingView extends React.Component {
 
 
 	async setQueryBuilderProps() {
-		const {auth, query, defination} = this.props; 
-		const {fields, value_possibilities} = this.state;
-		let query_builder_fields = {
+        const {auth, query, defination} = this.props;
+        const {fields, value_possibilities} = this.state;
+        let query_builder_fields = {
 				_id: {
 					label: "ID",
 					type: "text",
-					valueSources: ['value', 'field'],
+					//valueSources: ['value', 'field'],
+					valueSources: ['value'],
 					fieldSettings: {
 						//allowCustomValues: true,
 					}
@@ -776,61 +774,63 @@ class ListingView extends React.Component {
 				
 			};
 
-			if (fields) {
-				Object.entries(fields).map(([column_name, column_props]) => {				
-					
-					let input_type = column_props.input.type;
-					input_type = input_type === "checkbox"? "boolean" : input_type;
-					input_type = input_type === "textarea" || input_type === "file"? "text" : input_type;
-					input_type = input_type === "radio"? "select" : input_type;
-					input_type = input_type === "slider"? (column_props.type === "integer"? "slider" : "select") : input_type;
-					query_builder_fields[column_name] = {
-						label: column_props.label,
-						type: input_type,
-						valueSources: ['value', 'field'],
-						fieldSettings: {
-							min: column_props.input.min,
-							max: column_props.input.max,
-						},
-					}
-					if (input_type === "slider") {
-						query_builder_fields[column_name].type = 'number';
-						query_builder_fields[column_name].fieldSettings.preferWidgets = ['slider'];
-					}
+        if (fields) {
+            Object.entries(fields).map(([column_name, column_props]) => {				
+                
+                let input_type = column_props.input.type;
+                input_type = input_type === "checkbox"? "boolean" : input_type;
+                input_type = input_type === "textarea" || input_type === "file"? "text" : input_type;
+                input_type = input_type === "radio"? "select" : input_type;
+                input_type = input_type === "slider"? (column_props.type === "integer"? "slider" : "select") : input_type;
+                query_builder_fields[column_name] = {
+                    label: column_props.label,
+                    type: input_type,
+                    valueSources: ['value'],
+                    fieldSettings: {
+                        min: column_props.input.min,
+                        max: column_props.input.max,
+                    },
+                }
+                if (input_type === "slider") {
+                    query_builder_fields[column_name].type = 'number';
+                    query_builder_fields[column_name].fieldSettings.preferWidgets = ['slider'];
+                }
 
-					if (!JSON.isEmpty(value_possibilities[column_name])) {
-						let listValues = [];
-						Object.entries(value_possibilities[column_name]).map(([key, value]) => {
-							listValues.push({ value: key, title: value })
-						});
-						query_builder_fields[column_name].fieldSettings.listValues = listValues;
-					}
-				});
-			}
-			console.log("query_builder_fields", query_builder_fields);
-			if (this.mounted) {
-				this.setState(prevState => ({queryBuilderProps: {format: "mongodb", value: { populate: (prevState.query.p || prevState.query.populate), config: {fields: query_builder_fields}}}}));
-			}
-			else {
-				this.state.queryBuilderProps = {format: "mongodb", value:{ populate: (this.state.query.p || this.state.query.populate), config: {fields: query_builder_fields}}};
-			}
-		
-			
-	}
+                if (!JSON.isEmpty(value_possibilities[column_name])) {
+                    let listValues = [];
+                    Object.entries(value_possibilities[column_name]).map(([key, value]) => {
+                        listValues.push({ value: key, title: value })
+                    });
+                    query_builder_fields[column_name].fieldSettings.listValues = listValues;
+                }
+            });
+        }
+        query_builder_fields["created_on"] = query_builder_fields.created_on? query_builder_fields.created_on : {
+        	label: "Created On",
+			type: "date",
+			valueSources: ['value'],
+        }
+        if (this.mounted) {
+            this.setState(prevState => ({queryBuilderProps: {format: "mongodb", value: { populate: (prevState.query.p || prevState.query.populate), sort: (this.state.query.s || this.state.query.sort|| "-created_on"), config: {fields: query_builder_fields}}}}));
+        }
+        else {
+            this.state.queryBuilderProps = {format: "mongodb", value:{ populate: (this.state.query.p || this.state.query.populate), sort: (this.state.query.s || this.state.query.sort || "-created_on"), config: {fields: query_builder_fields}}};
+        }
+    }
 
 	handleOnQueryBuilderChange(new_value) {
-		console.log("handleOnQueryBuilderChange new_value", new_value);
-		this.setState(prevState => {
+        this.setState(prevState => {
 			return {
 				query: {
 					...prevState.query,
 					q: new_value.search,
 					filter: new_value.mongodb,
+					sort: new_value.sort,
 					p: new_value.populate? 1 : 0,
 				},
 			};
 		});
-	}
+    }
 
 	render() {
 		const { classes, auth, query, defination, service, cache, api, showPagination, showSorter, cache_data, onLoadData, load_data, onClickEntry, sorterFormLayoutType } = this.props;

@@ -456,7 +456,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"attachments/view/" + entry._id
+						"attachments/view/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -465,7 +465,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"attachments/view/" + entry._id
+										"attachments/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -482,7 +482,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"attachments/view/" + entry._id
+										"attachments/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -537,7 +537,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"attachments/edit/" + entry._id
+						"attachments/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -546,7 +546,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"attachments/edit/" + entry._id
+										"attachments/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -563,7 +563,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"attachments/edit/" + entry._id
+										"attachments/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -588,7 +588,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"attachments/delete/" + entry._id
+						"attachments/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

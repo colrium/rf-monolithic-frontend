@@ -57,7 +57,7 @@ export default {
 					let resolved_data = [];
 					for (let entry of entries) {
 						resolved_data.push({
-							id: entry._id,
+							id: entry?._id,
 							calendarId: "surveys",
 							title: entry.title,
 							body:
@@ -835,7 +835,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "surveys/view/" + entry._id;
+					return "surveys/view/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -843,7 +843,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"surveys/view/" + entry._id}
+									to={"surveys/view/" + entry?._id}
 									className={className}
 								>
 									<IconButton
@@ -890,7 +890,7 @@ export default {
 					return user && user.role !== "admin";
 				},
 				uri: entry => {
-					return "surveys/edit/" + entry._id;
+					return "surveys/edit/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -898,7 +898,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"surveys/edit/" + entry._id}
+									to={"surveys/edit/" + entry?._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -918,7 +918,7 @@ export default {
 					return user && user.role !== "admin";
 				},
 				uri: entry => {
-					return "surveys/delete/" + entry._id;
+					return "surveys/delete/" + entry?._id;
 				},
 				link: {
 					inline: {

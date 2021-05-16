@@ -17,7 +17,8 @@ import { baseUrls, environment } from "config";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import { CountriesHelper } from "hoc/Helpers";
 import {withGlobals} from "contexts/Globals";
-import {LocationInput } from "components/FormInputs";
+import ApiService from "services/backend";
+import {GooglePlacesAutocomplete } from "components/FormInputs";
 
 
 import { TextInput, RadioInput, SelectInput } from "components/FormInputs";
@@ -142,7 +143,7 @@ class SignupForm extends React.Component {
 			region: "",
 			role: "customer",
 			user_id: "",
-			cb: baseUrls[environment].base_url + "signup",
+			cb: ApiService.endpoint("/signup"),
 			account_verifacation_code: "",
 			interest: "quote",
 		},
@@ -599,7 +600,7 @@ class SignupForm extends React.Component {
 								{role==="collector" &&<GridContainer className="p-0">
 									
 									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
-										<LocationInput
+										<GooglePlacesAutocomplete
 											type="administrative_area_level_1"
 											defaultValue={ this.state.form_values.region }
 											onChange={this.handleChange("region")}
@@ -621,7 +622,7 @@ class SignupForm extends React.Component {
 									</GridItem>
 
 									<GridItem xs={12} sm={12} md={6} className="flex flex-col justify-center px-1 py-1">
-										<LocationInput
+										<GooglePlacesAutocomplete
 											type={"country"}
 											label="Country"
 											classes={{

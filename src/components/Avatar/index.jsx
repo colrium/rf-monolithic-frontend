@@ -4,9 +4,8 @@ import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
-import withRoot from "hoc/withRoot";
 
-function CustomAvatar(props) {
+const CustomAvatar = (props) => {
 	const {
 	classes,
 	className,
@@ -37,4 +36,4 @@ CustomAvatar.defaultProps = {
 	textColor: colors.hex.inverse,
 };
 
-export default withRoot(CustomAvatar);
+export default React.memo(CustomAvatar);

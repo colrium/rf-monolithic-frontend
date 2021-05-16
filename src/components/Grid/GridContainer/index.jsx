@@ -8,7 +8,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 
-function GridContainer(props) {
+const GridContainer = React.memo((props) => {
 	/*let [state, setState] = useState(props);
 	useEffect(() => {
 		setState(props);
@@ -34,7 +34,7 @@ function GridContainer(props) {
 			{children}
 		</Grid>
 	);
-}
+});
 
 GridContainer.defaultProps = {
 	className: "",

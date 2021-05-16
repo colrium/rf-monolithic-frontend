@@ -285,7 +285,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"fulfilments/view/" + entry._id
+						"fulfilments/view/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -295,7 +295,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"fulfilments/view/" + entry._id
+										"fulfilments/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -350,7 +350,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"fulfilments/edit/" + entry._id
+						"fulfilments/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -360,7 +360,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"fulfilments/edit/" + entry._id
+										"fulfilments/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -385,7 +385,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"fulfilments/delete/" + entry._id
+						"fulfilments/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

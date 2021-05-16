@@ -8,7 +8,7 @@ import {
 	TextField,
 	InputBase,
 } from "@material-ui/core";
-import debounce from 'lodash/debounce';
+import {debounce, throttle} from 'lodash';
 //
 import {
 	VisibilityOffOutlined as HidePasswordIcon,
@@ -17,18 +17,15 @@ import {
 
 
 
+
 const Input = React.forwardRef((props, ref) => {
-	let debouncedOnChange;
-	/*let [state, setState] = useState(props);
-	useEffect(() => {
-		setState(props);
-	}, [props]);*/
-	let {
+	const {
 		label,
 		touched,
 		invalid,
 		error,
 		onChange,
+		onFocus,
 		onBlur,
 		variant,
 		validate,
@@ -45,6 +42,7 @@ const Input = React.forwardRef((props, ref) => {
 		inputProps,
 		InputProps,
 		InputLabelProps,
+		onChangeYield,
 		...rest
 	} = props;
 
@@ -135,122 +133,122 @@ const Input = React.forwardRef((props, ref) => {
 		return valid;
 	};
 
-	const triggerOnChange = async (new_value) => {
-		//setInputDisabled(true);
-		if ( Function.isFunction(onChange)) {
-			let changed = onChange(new_value);
-			Promise.all([changed]).then(()=>{
-				//setInputDisabled(false);
-			}).catch(e => {});
-			
-		}
-		else{
-			//setInputDisabled(false);
-		}
-		
-	}
-	const throttledOnChange = useRef(debounce(new_value => {		
-		if (type == "number") {
-			new_value = Number.parseNumber(new_value, undefined);
-		}	
-		let valueValid = inputValueValid(new_value);
-		Promise.all([valueValid]).then(validity => {
-			if (validity[0]) {
-				if ( Function.isFunction(onChange)) {
-					let changed = onChange(new_value);
-					Promise.all([changed]).then(()=>{
-						//setInputDisabled(false);
-					}).catch(e => {
+	
 
-					});
-					
-				}
-				else{
-					//setInputDisabled(false);
-				}
-			}
-		}).catch(e => {});
-		console.log("throttledOnChange new_value", new_value);					
-		
-			
-	}, 500)).current;
-
-
-	const handleOnChange = (event) => {
-		let new_value = event.target.value;		
-		setInputValue(new_value);
-		if (!inputTouched) {
+    useEffect(() => {
+    	if (!inputTouched) {
 			setInputTouched(true);
 		}
-		throttledOnChange(event.target.value);
+    }, [inputValue, inputTouched]);
+
+    useEffect(() => {
+    	if (!inputTouched) {
+			setInputTouched(true);
+		}
+		setInputValue(value);
+    }, [value]);
+
+    const throttledEventHandler = useRef(Function.createThrottle(5)).current;
+	const debouncedOnChange = useRef(Function.debounce((event) => {
+		if (!inputTouched) {
+			setInputTouched(true);
+			let valueValid = inputValueValid(inputValue);
+		}
+		
+		if (event?.target) {
+			
+			let new_value = event.target.value;
+			
+			if (type == "number") {
+				new_value = Number.parseNumber(new_value, undefined);
+			}	
+			inputValueValid(new_value);
+			if ( Function.isFunction(onChange)) {						
+				let changed = onChange(onChangeYield === "value"? new_value : event );
+				//Promise.all([changed]).catch(e => console.error("Caught onChange error", e));					
+			}				
+			setInputValue(new_value);
+		}
+			
+			
+    }, 250)).current;
+  
+
+
+	const handleOnChange = async (event) => {
+		event.persist();
+		debouncedOnChange(event);
+	};
+
+	const handleOnFocus = async (event) => {
+		event.persist();
+		if (Function.isFunction(onFocus)) {
+			let focused = onFocus(event);
+			Promise.all([focused]).catch(e => console.error("Caught onFocus error", e));					
+		}
 	}
 
-
-	useEffect(() => {
-		if (!inputFocused) {
-			setInputValue(value ? value : (defaultValue? defaultValue : undefined));
+	const handleOnBlur = async (event) => {
+		event.persist();
+        let new_value = event.target.value;
+    	if (type == "number") {
+			new_value = Number.parseNumber(new_value, undefined);
 		}
-	}, [value, defaultValue, inputFocused]);
+        
+        
+        if (Function.isFunction(onBlur)) {
+			let blurred = onBlur(event);
+			Promise.all([blurred]).catch(e => console.error("Caught onBlur error", e));					
+		}
+	}
+
+	useEffect(()=> {
+		/*let startTime = new Date();
+		let throttledCalls = 0;
+		let debouncedCallsTotal = 0;
+		let throttledCallsTotal = 0;
+		const throttleExample = Function.throttle(() => {
+			throttledCalls = throttledCalls + 1;
+			console.log("throttledCalls", throttledCalls);
+			console.log("throttledCallsTotal", throttledCallsTotal);
+
+		}, 5000);
+		let debouncedCalls = 0;
+		const debounceExample = Function.debounce(() => {
+			debouncedCalls = debouncedCalls + 1;
+			console.log("debouncedCalls", debouncedCalls);
+			console.log("debouncedCallsTotal", debouncedCallsTotal);	
+		}, 5000);
+		
+		let throttledCallInterval = setInterval(()=> {			
+			throttledCallsTotal = throttledCallsTotal + 1;			
+			throttleExample();
+		}, 1000);
+		
+		let debouncedCallInterval = setInterval(()=> {			
+			debouncedCallsTotal = debouncedCallsTotal + 1;
+			debounceExample();
+					
+		}, 1000);
+		
+
+		return () => {
+			clearInterval(debouncedCallInterval);
+			clearInterval(throttledCallInterval);
+		}*/
+
+	}, []);
+
+
 
 	if (variant === "base" || variant === "plain") {
 		return (
             <InputBase
 				className={"flex-1"+(className? (" "+className) : "")}
 				label={label}
-				onChange={(event) => {
-					event.persist();
-					
-					throttledOnChange(event);
-					/*if (!debouncedOnChange) {
-						debouncedOnChange =  debounce(() => {
-							let new_value = event.target.value;				
-							if (type == "number") {
-								new_value = Number.parseNumber(new_value, undefined);
-							}	
-							
-							let valueValid = inputValueValid(new_value);
-							Promise.all([valueValid]).then(validity => {
-								if (validity[0]) {
-									triggerOnChange(new_value);
-								}
-							}).catch(e => {});
-							
-							if (!inputTouched) {
-								setInputTouched(true);
-							}
-							
-						}, 300);
-					}
-		
-					debouncedOnChange();*/	
-					
-				}}
-				onFocus={event => {
-					setInputFocused(true);
-				}}
-				onBlur={event => {
-                    /*if (!inputTouched) {
-						setInputTouched(true);
-					}*/
-                    event.persist();
-                    let new_value = event.target.value;
-                    setInputFocused(false);
-                    let valueValid = inputValueValid(new_value);
-                    Promise.all([valueValid]).then(validity => {
-						if (validity[0]) {
-							if (Function.isFunction(onBlur)) {
-								if (onBlur.length === 0) {
-									onBlur();
-								} else if (onBlur.length === 1) {
-									onBlur(event);
-								} else {
-									onBlur(new_value, event);
-								}
-							}
-						}
-					}).catch(e => {});
-                }}
-				
+				onChange={handleOnChange}
+				onFocus={handleOnFocus}
+				onBlur={handleOnBlur}				
 				defaultValue={inputValue}
 				disabled={inputDisabled}
 				error={inputError ? true : isInvalid}
@@ -265,58 +263,35 @@ const Input = React.forwardRef((props, ref) => {
 	else{
 		return (
             <TextField
-				className={"flex-1"+(className? (" "+className) : "")}
+				className={"flex-1 "+(className? (" "+className) : "")}
 				label={label}
 				onChange={handleOnChange}
-				onFocus={event => {
-					setInputFocused(true);
-				}}
-				onBlur={event => {
-					/*if (!inputTouched) {
-						setInputTouched(true);
-					}*/
-					event.persist();
-					let new_value = event.target.value;	
-					setInputFocused(false);
-					let valueValid = inputValueValid(new_value);
-					Promise.all([valueValid]).then(validity => {
-						if (validity[0]) {
-							if (Function.isFunction(onBlur)) {
-								if (onBlur.length === 0) {
-									onBlur();
-								} else if (onBlur.length === 1) {
-									onBlur(event);
-								} else {
-									onBlur(new_value, event);
-								}
-							}
-						}
-					}).catch(e => {});
-					
-				}}
+				onFocus={handleOnFocus}
+				onBlur={handleOnBlur}
+				inputProps={inputProps}
 				InputProps={{
-					...inputProps,
 					...InputProps,
-					endAdornment: (type === "password" || loading || (InputProps && InputProps.endAdornment) || (inputProps && inputProps.endAdornment)) && (
-						!((InputProps && InputProps.endAdornment) || (inputProps && inputProps.endAdornment))? (<InputAdornment position="end">
-							{loading && <CircularProgress size={"1rem"} color="inherit" />}
-							{type === "password" && <IconButton
-								aria-label="Toggle password visibility"
-								color="inherit"
-								onClick={e => {
-									setShowPassword(inputType === "password");
-									setInputType(inputType === "password"? "text" : "password");
-									
-								}}
-							>
-								{showPassword ? (
-									<HidePasswordIcon fontSize="small" />
-								) : (
-									<ShowPasswordIcon fontSize="small" />
-								)}
-							</IconButton>}
-						</InputAdornment>) : (
-							<div class="flex flex-row">
+					endAdornment: (type === "password" || loading || (InputProps && InputProps.endAdornment)) && (
+							!(InputProps && InputProps.endAdornment)? (<InputAdornment position="end">
+								{loading && <CircularProgress size={"1rem"} color="inherit" />}
+								{type === "password" && <IconButton
+									aria-label="Toggle password visibility"
+									color="inherit"
+									onClick={e => {
+										setShowPassword(inputType === "password");
+										setInputType(inputType === "password"? "text" : "password");
+										
+									}}
+								>
+									{showPassword ? (
+										<HidePasswordIcon fontSize="small" />
+									) : (
+										<ShowPasswordIcon fontSize="small" />
+									)}
+								</IconButton>}
+							</InputAdornment>
+						) : (
+							<div className="flex flex-row">
 								<InputAdornment position="end">
 									{loading && <CircularProgress size={"1rem"} color="inherit" />}
 									{type === "password" && <IconButton
@@ -324,8 +299,7 @@ const Input = React.forwardRef((props, ref) => {
 										color="inherit"
 										onClick={e => {
 											setShowPassword(inputType === "password");
-											setInputType(inputType === "password"? "text" : "password");
-											
+											setInputType(inputType === "password"? "text" : "password");											
 										}}
 									>
 										{showPassword ? (
@@ -336,7 +310,6 @@ const Input = React.forwardRef((props, ref) => {
 									</IconButton>}
 								</InputAdornment>
 								{InputProps && InputProps.endAdornment}
-								{inputProps && inputProps.endAdornment}
 							</div>
 						)
 					),
@@ -363,6 +336,7 @@ Input.defaultProps = {
 	type: "text",
 	variant: "outlined",
 	validate: true,
+	onChangeYield: "value"
 }
 
 export default React.memo(Input);

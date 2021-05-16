@@ -121,7 +121,7 @@ export default {
 					if (Array.isArray(entries)) {
 						resolved_data = entries.map((entry, index) => {
 							return {
-								id: entry._id,
+								id: entry?._id,
 								icon: isPopulated && entry.avatar? null : (<EntryIcon />),
 								avatar: (isPopulated && entry.avatar ? (
 											<Avatar
@@ -741,7 +741,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "users/view/" + entry._id;
+					return "users/view/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -749,7 +749,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"users/view/" + entry._id}
+									to={"users/view/" + entry?._id}
 									className={className}
 								>
 									<IconButton
@@ -799,7 +799,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "users/edit/" + entry._id;
+					return "users/edit/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -807,7 +807,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"users/edit/" + entry._id}
+									to={"users/edit/" + entry?._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -851,7 +851,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "users/delete/" + entry._id;
+					return "users/delete/" + entry?._id;
 				},
 				link: {
 					inline: {

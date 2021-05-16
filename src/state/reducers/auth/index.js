@@ -1,6 +1,6 @@
 import {
 	SET_AUTHENTICATED,
-	SET_ACCESS_TOKEN,
+	SET_TOKEN,
 	SET_USER,
 } from "state/actions/types";
 
@@ -87,7 +87,7 @@ export default (state = initialState(), action = {}) => {
 				...state,
 				isAuthenticated: action.authenticated ? true : false,
 			};
-		case SET_ACCESS_TOKEN:
+		case SET_TOKEN:
 			return {
 				...state,
 				token: JSON.isJSON(action.token) ? action.token : {},

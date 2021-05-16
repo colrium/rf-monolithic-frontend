@@ -8,7 +8,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 
-function GridItem(props) {
+const GridItem = React.memo((props) => {
 	let {
 		classes,
 		children,
@@ -30,7 +30,7 @@ function GridItem(props) {
 			{children}
 		</Grid>
 	);
-}
+})
 
 GridItem.propTypes = {
 	classes: PropTypes.object.isRequired,
@@ -41,4 +41,4 @@ GridItem.propTypes = {
 	fullheight: PropTypes.bool,
 };
 
-export default withStyles(gridStyle)(React.memo(GridItem));
+export default withStyles(gridStyle)(GridItem);

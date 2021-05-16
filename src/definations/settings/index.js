@@ -156,7 +156,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("settings/view/" + entry._id).toUriWithDashboardPrefix();
+					return ("settings/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -165,7 +165,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"settings/view/" + entry._id
+										"settings/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -222,7 +222,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("settings/edit/" + entry._id).toUriWithDashboardPrefix();
+					return ("settings/edit/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -231,7 +231,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"settings/edit/" + entry._id
+										"settings/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -255,7 +255,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("settings/delete/" + entry._id).toUriWithDashboardPrefix();
+					return ("settings/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

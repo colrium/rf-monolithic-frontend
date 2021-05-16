@@ -30,15 +30,20 @@ const CookiesConsentDialog = (props) => {
 	}
 
 	return (
-		<Backdrop open={visible} className={classes.backdrop}>
+		<Backdrop open={Boolean(!app.onboarded)} className={classes.backdrop}>
 		<div className={classes.root}>
 			<SnackbarContent
 				message={app.settings.legal["cookies-consent"]}
+				classes={{
+					root: classes.snackbarContent,
+				}}
 				action={(
-					<Button color="secondary" size="small" onClick={handleOnAcceptClick}>
-						OK
+					<Button color="primary" size="small" onClick={() => setOnboarded(true)}>
+						Accept
 					</Button>
 				)}
+				elevation={0}
+				square
 			/>
 		</div>
 		</Backdrop>

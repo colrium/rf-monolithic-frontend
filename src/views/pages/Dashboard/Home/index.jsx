@@ -47,10 +47,9 @@ class Page extends React.Component {
 	};
 
 	constructor(props){
-		super(props);
-		const {auth} = props;
-		console.log("Home auth.user", auth.user)
-		if (auth.user.isAdmin) {
+        super(props);
+        const {auth} = props;
+        if (auth.user.isAdmin) {
 			this.state.counts_overview_contexts = {
 				surveys: {
 					type: "count",
@@ -120,9 +119,7 @@ class Page extends React.Component {
 				}
 			};
 		}
-
-		console.log("this.state", this.state)
-	}
+    }
 
 	componentDidMount() {
 		const { location, appendNavHistory } = this.props;

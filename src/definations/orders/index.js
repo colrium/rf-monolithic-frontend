@@ -71,7 +71,7 @@ export default {
 				resolveData: async entries => {
 					return entries.map(entry => {
 						return {
-							id: entry._id,
+							id: entry?._id,
 							calendarId: "orders",
 							title: entry.reference,
 							body: ReactDOMServer.renderToStaticMarkup(
@@ -404,7 +404,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "orders/view/" + entry._id;
+					return "orders/view/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -412,7 +412,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"orders/view/" + entry._id}
+									to={"orders/view/" + entry?._id}
 									className={className}
 								>
 									<IconButton
@@ -462,7 +462,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "orders/edit/" + entry._id;
+					return "orders/edit/" + entry?._id;
 				},
 				link: {
 					inline: {
@@ -470,7 +470,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={"orders/edit/" + entry._id}
+									to={"orders/edit/" + entry?._id}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -493,7 +493,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return "orders/delete/" + entry._id;
+					return "orders/delete/" + entry?._id;
 				},
 				link: {
 					inline: {

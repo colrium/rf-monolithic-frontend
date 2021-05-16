@@ -6,10 +6,9 @@ import { colors } from "assets/jss/app-theme.jsx";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import withRoot from "hoc/withRoot";
 import styles from "./styles";
 
-function CustomButton({ ...props }) {
+const CustomButton = React.memo((props) => {
 	const {
 		classes,
 		color,
@@ -55,7 +54,7 @@ function CustomButton({ ...props }) {
 			{children}
 		</Button>
 	);
-}
+});
 
 CustomButton.propTypes = {
 	classes: PropTypes.object.isRequired,
@@ -84,4 +83,4 @@ CustomButton.defaultProps = {
 	gradient: false,
 };
 
-export default withRoot(withStyles(styles)(CustomButton));
+export default withStyles(styles)(CustomButton);

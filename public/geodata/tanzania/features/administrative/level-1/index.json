@@ -1,0 +1,122 @@
+[
+  {
+    "code": "1",
+    "name": "Arusha"
+  },
+  {
+    "code": "2",
+    "name": "Dar es Salaam"
+  },
+  {
+    "code": "3",
+    "name": "Dodoma"
+  },
+  {
+    "code": "4",
+    "name": "Geita"
+  },
+  {
+    "code": "5",
+    "name": "Iringa"
+  },
+  {
+    "code": "6",
+    "name": "Kagera"
+  },
+  {
+    "code": "7",
+    "name": "Katavi"
+  },
+  {
+    "code": "8",
+    "name": "Kigoma"
+  },
+  {
+    "code": "9",
+    "name": "Kilimanjaro"
+  },
+  {
+    "code": "10",
+    "name": "Lindi"
+  },
+  {
+    "code": "11",
+    "name": "Manyara"
+  },
+  {
+    "code": "12",
+    "name": "Mara"
+  },
+  {
+    "code": "13",
+    "name": "Mbeya"
+  },
+  {
+    "code": "14",
+    "name": "Morogoro"
+  },
+  {
+    "code": "15",
+    "name": "Mtwara"
+  },
+  {
+    "code": "16",
+    "name": "Mwanza"
+  },
+  {
+    "code": "17",
+    "name": "Njombe"
+  },
+  {
+    "code": "18",
+    "name": "Pemba North"
+  },
+  {
+    "code": "19",
+    "name": "Pemba South"
+  },
+  {
+    "code": "20",
+    "name": "Pwani"
+  },
+  {
+    "code": "21",
+    "name": "Rukwa"
+  },
+  {
+    "code": "22",
+    "name": "Ruvuma"
+  },
+  {
+    "code": "23",
+    "name": "Shinyanga"
+  },
+  {
+    "code": "24",
+    "name": "Simiyu"
+  },
+  {
+    "code": "25",
+    "name": "Singida"
+  },
+  {
+    "code": "26",
+    "name": "Tabora"
+  },
+  {
+    "code": "27",
+    "name": "Tanga"
+  },
+  {
+    "code": "28",
+    "name": "Zanzibar North"
+  },
+  {
+    "code": "29",
+    "name": "Zanzibar South and Central"
+  },
+  {
+    "code": "30",
+    "name": "Zanzibar West"
+  }
+]

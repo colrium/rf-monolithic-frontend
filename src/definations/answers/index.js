@@ -229,7 +229,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("answers/view/" + entry._id).toUriWithDashboardPrefix();
+					return ("answers/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -237,7 +237,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"answers/view/" + entry._id
+										"answers/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -254,7 +254,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"answers/view/" + entry._id
+										"answers/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -309,7 +309,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("answers/edit/" + entry._id).toUriWithDashboardPrefix();
+					return ("answers/edit/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
@@ -317,7 +317,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"answers/edit/" + entry._id
+										"answers/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -333,7 +333,7 @@ export default {
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
-									to={("answers/edit/" + entry._id).toUriWithDashboardPrefix()}
+									to={("answers/edit/" + entry?._id).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
 									<IconButton
@@ -356,7 +356,7 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ("answers/delete/" + entry._id).toUriWithDashboardPrefix();
+					return ("answers/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {

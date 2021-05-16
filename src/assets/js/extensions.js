@@ -1,10 +1,36 @@
 /** @format */
 
-import lodash from "lodash";
+import lodash, {debounce, throttle, isEqual} from "lodash";
 import lodash_inflection from "lodash-inflection";
-import { dashboardBaseUri, landingPageBaseUri, orderFormBaseUri } from "config";
+import { dashboardBaseUri, landingPageBaseUri, orderFormBaseUri, surpressed_logs } from "config";
 
 lodash.mixin(lodash_inflection);
+
+
+const console_warn = console.warn;
+console.warn = function surpressWarnings(msg) {
+	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
+
+	if (!supressedLogs.some(entry => msg.includes(entry))) {
+		console_warn.apply(console, arguments);
+	}
+};
+const console_error = console.error;
+console.error = function surpressErrors(msg) {
+	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
+
+	if (!supressedLogs.some(entry => msg.includes(entry))) {
+		console_error.apply(console, arguments);
+	}
+};
+const console_log = console.log;
+console.log = function surpressLogs(msg) {
+	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
+
+	if (!supressedLogs.some(entry => msg.includes(entry))) {
+		console_log.apply(console, arguments);
+	}
+};
 
 //Type Extensions
 // Warn if overriding existing method
@@ -50,13 +76,18 @@ String.uid = function(len, numeric, all_caps) {
 	return buf.join("");
 };
 
-String.prototype.shorten = function(size, ellipsis = "...") {
+
+
+String.prototype.truncate = function(size, ellipsis = "...") {
 	let target = this;
 	if (target.length > size) {
 		return target.substring(0, size) + ellipsis;
 	}
 	return target;
 };
+
+String.prototype.shorten = String.prototype.truncate;
+
 
 String.prototype.toUriWithDashboardPrefix = function() {
 	let target = this;
@@ -170,28 +201,179 @@ Boolean.isBoolean = function(input) {
 		: false;
 };
 
-if (Function.isFunction) {}
+if (Function.isFunction) {
+	console.warn("Overriding existing Function.isFunction.");
+}
 Function.isFunction = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === Function || typeof input === "function"
 		: false;
 };
 
-if (Number.isNumber) {}
+if (Function.sleep) {
+	console.warn("Overriding existing Function.sleep.");
+}
+Function.sleep = function(milliseconds) {
+	const date = Date.now();
+	let currentDate = null;
+	do {
+		currentDate = Date.now();
+	} while (currentDate - date < milliseconds);
+};
+// Returns a function, that, when invoked, will only be triggered at most once
+// during a given window of time. Normally, the throttled function will run
+// as much as it can, without ever going more than once per `wait` duration;
+// but if you'd like to disable the execution on the leading edge, pass
+// `{leading: false}`. To disable execution on the trailing edge, ditto.
+
+if (Function.throttle) {
+	console.warn("Overriding existing Function.throttle");
+}
+//Function.throttle = throttle;
+Function.throttle = (func, wait, options) => {
+	var context, args, result;
+	var timeout = null;
+	var previous = 0;
+	if (!options) options = {leading: false, trailing: true};
+	var later = function() {
+		previous = options.leading === false ? 0 : Date.now();
+		timeout = null;
+		result = func.apply(context, args);
+		if (!timeout) context = args = null;
+	};
+	return function() {
+		var now = Date.now();
+		if (!previous && options.leading === false) previous = now;
+		var remaining = wait - (now - previous);
+		context = this;
+		args = arguments;
+		if (remaining <= 0 || remaining > wait) {
+			if (timeout) {
+				clearTimeout(timeout);
+				timeout = null;
+			}
+			previous = now;
+			result = func.apply(context, args);
+			if (!timeout) context = args = null;
+		} else if (!timeout && options.trailing !== false) {
+			timeout = setTimeout(later, remaining);
+		}
+		return result;
+	};
+};
+
+if (Function.debounce) {
+	console.warn("Overriding existing Function.debounce");
+}
+Function.debounce = debounce;
+Function.debounce = (func, wait, options= {leading: false, trailing: true}) => {
+	return debounce(func, wait, options);
+	/*// 'private' variable for instance
+	// The returned function will be able to reference this due to closure.
+	// Each call to the returned function will share this common timer.
+	var timeout;
+	if (!options) options = {leading: false, trailing: true};
+	// Calling debounce returns a new anonymous function
+	return function() {
+		// reference the context and args for the setTimeout function
+		var context = this,
+			args = arguments;
+
+		// Should the function be called now? If immediate is true
+		//   and not already in a timeout then the answer is: Yes
+		var callNow = options.leading && !timeout;
+
+		// This is the basic debounce behaviour where you can call this 
+		//   function several times, but it will only execute once 
+		//   [before or after imposing a delay]. 
+		//   Each time the returned function is called, the timer starts over.
+		clearTimeout(timeout);
+
+		// Set the new timeout
+		timeout = setTimeout(function() {
+
+			// Inside the timeout function, clear the timeout variable
+			// which will let the next execution run when in 'immediate' mode
+			timeout = null;
+
+			// Check if the function already ran with the immediate flag
+			if (!options.leading) {
+				// Call the original function with apply
+				// apply lets you define the 'this' object as well as the arguments 
+				//    (both captured before setTimeout)
+				func.apply(context, args);
+			}
+		}, wait);
+
+		// Immediate mode and no wait timer? Execute the function..
+		if (callNow) func.apply(context, args);
+	}*/
+};
+if (Function.createThrottle) {
+	console.warn("Overriding existing Function.createThrottle");
+}
+Function.createThrottle = function (max) {
+	if (typeof max !== 'number') {
+		throw new TypeError('`createThrottle` expects a valid Number')
+	}
+
+	let cur = 0
+	const queue = []
+	function throttle(fn) {
+		return new Promise((resolve, reject) => {
+			function handleFn() {
+				if (cur < max) {
+					throttle.current = ++cur
+					let resolveFn = Function.isFunction(fn)? fn() : fn;
+					Promise.all([resolveFn]).then(resolveArr =>{
+						resolve(resolveArr[0]);
+					}).catch(err => {
+						reject(err)
+					}).finally(() => {
+						//console.log("createThrottle queue", queue);
+						throttle.current = --cur
+						if (queue.length > 0) {
+							queue.shift()()
+						}
+					});
+				} else {
+					queue.push(handleFn)
+				}
+			}
+
+			handleFn()
+		})
+	}
+
+	// keep copies of the "state" for retrospection
+	throttle.current = cur
+	throttle.queue = queue
+
+	return throttle
+}
+
+
+if (Number.isNumber) {
+	console.warn("Overriding existing Number.isNumber.");
+}
 Number.isNumber = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === Number && input !== NaN
 		: false;
 };
 
-if (Error.isError) {}
+if (Error.isError) {
+	console.warn("Overriding existing Error.isError.");
+}
 Error.isError = function(input) {
 	return input !== undefined && input !== null
 		? input instanceof Error
 		: false;
 };
 
-if (RegExp.isRegExp) {}
+if (RegExp.isRegExp) {
+	console.warn("Overriding existing RegExp.isRegExp.");
+}
 RegExp.isRegExp = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === RegExp
@@ -199,21 +381,27 @@ RegExp.isRegExp = function(input) {
 };
 
 //Number Extensions
-if (Number.isFloat) {}
+if (Number.isFloat) {
+	console.warn("Overriding existing Number.isFloat.");
+}
 Number.isFloat = function(input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /[-+]?(?:\d*\.\d+\.?\d*)(?:[eE][-+]?\d+)?/gim.test(input)
 		: false;
 };
 
-if (Number.isInt) {}
+if (Number.isInt) {
+	console.warn("Overriding existing Number.isInt.");
+}
 Number.isInt = function(input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /^[-+]?(\d*)?\d+$/gim.test(input)
 		: false;
 };
 
-if (Number.parseNumber) {}
+if (Number.parseNumber) {
+	console.warn("Overriding existing Number.parseNumber.");
+}
 Number.parseNumber = function(input, fallback = null) {
 	if (Number.isFloat(input)) {
 		return parseFloat(input);
@@ -225,11 +413,15 @@ Number.parseNumber = function(input, fallback = null) {
 };
 
 //String Extensions
-
+if (Number.parseNumber) {
+	console.warn("Overriding existing Number.parseNumber.");
+}
 Number.getRandomInt = function(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-
+if (Array.prototype.remove) {
+	console.warn("Overriding existing Array.prototype.remove.");
+}
 Array.prototype.remove = function(from, to) {
 	var rest = this.slice((to || from) + 1 || this.length);
 	this.length = from < 0 ? this.length + from : from;
@@ -284,6 +476,15 @@ Array.prototype.unique = function() {
         }
     });
 };
+//Most frequent element
+Array.prototype.mode = function() {
+	var target = this;
+    return target.sort((a,b) =>
+          target.filter(v => v===a).length
+        - target.filter(v => v===b).length
+    ).pop();
+};
+
 
 Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 	var target = this;
@@ -498,34 +699,8 @@ Object.difference = function(a, b, comprehensive = true) {
 		}
 	}
 };
+Object.areEqual = isEqual;
 
-Object.areEqual = function() {
-	let no_of_args = arguments.length;
-	let last_index = no_of_args > 0 ? no_of_args - 1 : no_of_args;
-	let equal = true;
-	for (var i = 0; i < no_of_args; i++) {
-		if (i < last_index) {
-			if (JSON.isJSON(arguments[i]) && JSON.isJSON(arguments[i + 1])) {
-				const difference = Object.difference(
-					arguments[i],
-					arguments[i + 1],
-					true
-				);
-
-				if (
-					difference.different.length > 0 ||
-					difference.missing_from_first.length > 0 ||
-					difference.missing_from_second.length > 0
-				) {
-					equal = false;
-					break;
-				}
-			}
-		}
-	}
-
-	return equal;
-};
 
 Object.isFunctionalComponent = Component => {
 	return (
@@ -538,13 +713,31 @@ Object.isReactComponent = Component => {
 	return Component.prototype && Component.prototype.render;
 };
 
+//This is to ensure equating objects doesnt change original
+function parseToJSON(input) {
+	let newObject = {};
+	try {
+		newObject = JSON.parse(JSON.stringify(input));
+	} catch(err) {
+		newObject = {};
+	}
+	return newObject;
+};
 
-if (JSON.isJSON) {}
+Object.toJSON = parseToJSON;
+JSON.fromJSON = parseToJSON;
+JSON.parseJSON = parseToJSON;
+
 JSON.isJSON = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === {}.constructor
 		: false;
 };
+
+
+JSON.areEqual = isEqual;
+JSON.isEqual = isEqual;
+
 JSON.prettyStringify = function(input, spaces = 4) {
 	let spacing = "";
 	for (var i = 0; i < spaces; i++) {
@@ -681,31 +874,10 @@ JSON.moveKey = function(object, key, position = 0) {
 	return newObject;
 };
 
-//This is to ensure equating objects doesnt change original
-JSON.fromJSON = function(input) {
-	let newObject = {};
-	try {
-		newObject = JSON.parse(JSON.stringify(input));
-	} catch(err) {
-		newObject = {};
-	}
-	return newObject;
-};
 
-/*JSON.merge = function(a, b) {	
-	let merged = {};
-	if (JSON.isJSON(a) && JSON.isJSON(b)) {
-		merged = Object.assign(a, b);
-	}
-	if (JSON.isJSON(a) && !JSON.isJSON(b)) {
-		merged = a;
-	}
-	else if (!JSON.isJSON(a) && JSON.isJSON(b)) {
-		merged = b;
-	}
-	return merged;
-};
-*/
+
+
+
 /**
  * Deep merge two objects.
  * @param target

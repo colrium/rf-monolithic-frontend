@@ -1,25 +1,16 @@
-/** @format */
-
-import axios from "axios";
-import { DEFAULT } from "config/api";
-import Auth from "hoc/Auth";
+import api from "services/backend";
+//import Auth from "hoc/Auth";
 
 class AuthApiService {
-	base_url = DEFAULT;
-	service_uri = "";
+	
 	constructor() {
-		this.apiInstance = this.endpoint();
+		this.base_url = api.endpoint("");
+		this.service_uri = "";
+		this.apiInstance = api();
 	}
 
 	endpoint() {
-		let base_url = this.base_url;
-		let axios_instance = axios.create({
-			baseURL: base_url,
-			//withCredentials: true,
-			headers: {
-				...Auth.getInstance().authorization_header(),
-			},
-		});
+		let axios_instance = api;
 		return axios_instance;
 	}
 
@@ -83,18 +74,18 @@ class AuthApiService {
 					headers: response.headers,
 				};
 
-				this.apiInstance = axios.create({
+				/*this.apiInstance = axios.create({
 					baseURL: that.base_url,
 					withCredentials: true,
 					headers: {
 						...Auth.getInstance().authorization_header(),
 					},
-				});
+				});*/
 				return resobj;
 			})
 			.catch(function(error) {
-            Auth.getInstance().removeAuthToken();
-            Auth.getInstance().setAuthorizationHeader(false);
+           /* Auth.getInstance().removeAuthToken();
+            Auth.getInstance().setAuthorizationHeader(false);*/
             that.apiInstance = that.endpoint();
             that.handleRequestError(error);
         });
@@ -158,7 +149,7 @@ class AuthApiService {
 		return await this.endpoint()
 			.get("logout")
 			.then(function(response) {
-				Auth.getInstance().removeAuthToken();
+				//Auth.getInstance().removeAuthToken();
 				let resobj = {
 					err: false,
 					body: response.data,
@@ -186,7 +177,7 @@ class AuthApiService {
 				return resobj;
 			})
 			.catch(function(error) {
-				Auth.getInstance().removeAuthToken();
+				//Auth.getInstance().removeAuthToken();
 				that.handleRequestError(error);
 			});
 	}

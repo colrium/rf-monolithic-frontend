@@ -18,26 +18,15 @@ import { connect } from "react-redux";
 import { withRouter } from 'react-router'
 import compose from "recompose/compose";
 //
-import AuthService from "services/auth";
-import {
-	login,
-	setAuthenticated,
-	setCurrentUser,
-	setAccessToken
-} from "state/actions/auth";
+import { login } from "state/actions/auth";
 
 import { authTokenLocation, authTokenName, baseUrls, environment } from "config";
-import { AppHelper } from "hoc/Helpers";
+import ApiService from "services/backend";
 import {withErrorHandler} from "hoc/ErrorHandler";
-import Auth from "hoc/Auth";
-import {
-	TextInput,
-	CheckboxInput,
-} from "components/FormInputs";
+import { TextInput, CheckboxInput } from "components/FormInputs";
 import OAuth from "./components/OAuth";
 
 
-const AuthHelper = Auth.getInstance();
 
 const styles = theme => ({
 	root: {
@@ -160,10 +149,12 @@ const styles = theme => ({
 	}
 });
 
+
+
 class LoginForm extends React.Component {
 	state = {
-		email: AppHelper.inDevelopment() ? "colrium@gmail.com" : "",
-		password: AppHelper.inDevelopment() ? "WI5HINd8" : "",
+		email: environment==="development" ? "colrium@gmail.com" : "",
+		password: environment==="development" ? "WI5HINd8" : "",
 		reset_code: "",
 		"repeat-password": "",
 		forgotPassword: false,
@@ -180,7 +171,7 @@ class LoginForm extends React.Component {
 	};
 	constructor(props) {
 		super(props);
-		const { setCurrentUser, setAuthenticated, auth, history } = props;
+		const { auth, history } = props;
 		this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
 		this.handleOnOAuthSuccess = this.handleOnOAuthSuccess.bind(this);
 		this.onClickForgotPassword = this.onClickForgotPassword.bind(this);
@@ -194,8 +185,9 @@ class LoginForm extends React.Component {
 	}
 
 	componentDidMount() {
-		const { setCurrentUser, setAuthenticated, auth } = this.props;
-		if (Auth.getInstance().authTokenSet() && auth.isAuthenticated && "_id" in auth.user) {
+		const { auth } = this.props;
+		
+		if (ApiService.isUserAuthenticated(true)) {
 			this.handleOnUserLogin({user: auth.user});
 		}
 		else {
@@ -233,91 +225,27 @@ class LoginForm extends React.Component {
 		this.setState({ [name]: value });
 	};
 
-	getCookiesAccessToken(){
-		let cookies = new Cookies();
-		let access_token = cookies.get(authTokenName);
-		let token_type = cookies.get(authTokenName+"_type");
-		let refresh_token = cookies.get(authTokenName+"_refresh_token");
-		if (access_token && token_type) {
-			return {
-				access_token: access_token,
-				token_type: token_type,
-				refresh_token: refresh_token
-			}
-		}
-		return null;		
-	}
+	
 
-	setAuthCookies(access_token){
-		const cookies = new Cookies();
-				let expires_date = new Date().addDays(365);
-				let maxAge = 60 * 60 * 24 * 365;
-
-				let options = {
-						path: '/',
-						expires: expires_date.addMilliSeconds(maxAge).toUTCString(),
-						domain: baseUrls[environment].domain,
-						secure: AppHelper.inProduction(),
-						httpOnly: false
-				};
-
-				const payload = Auth.getInstance().decode_auth_token(access_token.access_token);
-				options.expires = expires_date;
-				cookies.set(authTokenName, access_token.access_token, options);
-				cookies.set(authTokenName+"_type", access_token.token_type, options);
-				cookies.set(authTokenName+"_refresh_token", access_token.refresh_token, options);
-	}
-
-	setAccessToken(access_token){
-		const { setAccessToken } = this.props;
-		if (authTokenLocation === "redux") {
-			setAccessToken(access_token);
-		}
-		else if (authTokenLocation === "cookie") {
-			this.setAuthCookies(access_token);
-		}
-		Auth.getInstance().setAccessToken(access_token);
-	}
+	
 
 	handleOnUserLogin(data) {
-		const { setCurrentUser, setAuthenticated, setAccessToken, onLogin } = this.props;
-		const {user, access_token} = data;
-		if (user) {
-			if (typeof setCurrentUser === "function") {
-				setCurrentUser(user);
-			}
-			if (typeof setAuthenticated === "function") {
-				setAuthenticated(true);
-			}
-		}
-			
-		if (access_token) {
-			this.setAccessToken(access_token);			
-		}
+		const { onLogin } = this.props;
+		const {profile, access_token} = data;
+					
+		
 		
 		if (typeof onLogin === "function") {
-			onLogin(user);
+			onLogin(profile);
 		}
 	}
 	handleOnOAuthSuccess(data) {
-		const { setCurrentUser, setAuthenticated, setAccessToken, onLogin } = this.props;		
-		const {user, access_token} = data;
+		const { onLogin } = this.props;		
+		const {profile, access_token} = data;
 		//dispatch mapped action
-		if (user) {
-			if (typeof setCurrentUser === "function") {
-				setCurrentUser(user);
-			}
-			if (typeof setAuthenticated === "function") {
-				setAuthenticated(true);
-			}
-		}
-			
-		if (access_token) {
-			this.setAccessToken(access_token);			
-		}
-
+				
 		if (typeof onLogin === "function") {
-			onLogin(user);
+			onLogin(profile);
 		}		
 	}
 
@@ -376,7 +304,7 @@ class LoginForm extends React.Component {
 				email: this.state.email,
 				cb: window.location.href,
 			};
-			await AuthService.forgotPassword(formData).then((res) => {
+			await ApiService.forgotPassword(formData).then((res) => {
 					this.setState(state => ({
 						submitting: false,
 						loginerror: false,
@@ -402,7 +330,7 @@ class LoginForm extends React.Component {
 				"password": this.state.password,
 				"repeat-password": this.state["repeat-password"]
 			};
-			AuthService.resetPassword(formData).then((res) => {
+			ApiService.resetPassword(formData).then((res) => {
 					this.setState(state => ({
 						submitting: false,
 						loginerror: false,
@@ -430,17 +358,15 @@ class LoginForm extends React.Component {
 				username: this.state.email,
 				password: this.state.password
 			};
-			login(formData)
-				.then(({access_token, user}) => {
-					this.setState(state => ({
-						submitting: false,
-						loginerror: false,
-						loginsuccess: true,
-						alert: "Login successful. Redirecting"
-					}));
-					this.handleOnUserLogin({access_token: access_token, user: user});
-				})
-				.catch(err => {
+			login(formData).then(({access_token, user}) => {
+				this.setState(state => ({
+					submitting: false,
+					loginerror: false,
+					loginsuccess: true,
+					alert: "Login successful. Redirecting"
+				}));
+				this.handleOnUserLogin({access_token: access_token, user: user});
+			}).catch(err => {
                 this.setState(state => ({
                     submitting: false,
                     loginerror: true,
@@ -459,6 +385,7 @@ class LoginForm extends React.Component {
 			[classes.loginSuccess]: this.state.loginsuccess,
 			[classes.loginError]: this.state.loginerror
 		});
+		console.log("ApiService.isUserAuthenticated(true)", ApiService.isUserAuthenticated(true));
 		return (
 			<div className={classes.root}>
 				<GridContainer className="p-0">
@@ -731,4 +658,4 @@ const mapStateToProps = state => ({
 	device: state.device
 });
 
-export default compose(withStyles(styles), connect( mapStateToProps, { login, setCurrentUser, setAuthenticated, setAccessToken }), withRouter)(withErrorHandler(LoginForm));
+export default compose(withStyles(styles), connect( mapStateToProps, { login }), withRouter)(withErrorHandler(LoginForm));

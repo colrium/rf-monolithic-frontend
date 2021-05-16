@@ -30,7 +30,7 @@ import {withErrorHandler} from "hoc/ErrorHandler";
 // Custom components
 import { NotificationList } from "./components";
 import { app } from "assets/jss/app-theme";
-import { createUpdateFirestoreDoc } from "utils/Firebase";
+import { createUpdateFirestoreDoc } from "services/Firebase";
 // Component styles
 import styles from "./styles";
 

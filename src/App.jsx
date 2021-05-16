@@ -228,7 +228,7 @@ class App extends React.Component {
 					return (
 						<FirebaseAppProvider firebaseConfig={firebaseConfig}>
 							<GlobalsProvider >
-								<ThemeProvider theme={preferences.theme==="dark"? theme_dark :  theme}>
+								
 									<MuiThemeProvider theme={preferences.theme==="dark"? theme_dark :  theme}>
 										<CssBaseline />
 										<JssProvider jss={jss} generateClassName={generateClassName} registry={sheets} >
@@ -241,7 +241,7 @@ class App extends React.Component {
 										<CookiesConsentDialog/>
 										<ProgressDialog open={!initialized} hideBackdrop={false}/>
 									</MuiThemeProvider>
-								</ThemeProvider>			
+											
 							</GlobalsProvider>
 						</FirebaseAppProvider>
 					);

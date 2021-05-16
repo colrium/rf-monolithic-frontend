@@ -12,10 +12,10 @@ import {
 	addApiTask,
 	removeApiTask,
 } from "state/actions";
-import ApiService from "services/api";
+import ApiService from "services/backend";
 
 
-const ApiServiceInstance = new ApiService();
+
 
 const api = ({ dispatch, getState }) => next => action => {
 	function onApiCallStart(action) {
@@ -40,7 +40,7 @@ const api = ({ dispatch, getState }) => next => action => {
 				dispatch(setApiCallError(key, null));
 				dispatch(setApiCallResponse(key, res));
 				if (cache) {
-					dispatch(setDataCache(key, res.body.data));
+					dispatch(setDataCache(key, res.body));
 				}
 			} else {
 				dispatch(setApiCallLoading(key, false));
@@ -57,11 +57,7 @@ const api = ({ dispatch, getState }) => next => action => {
 		if (key && options) {
 			const { uri, type, params, data, cache, silent, id } = options;
 			//onApiCallStart(action);
-			if (String.isString(uri)) {
-				ApiServiceInstance.refresh();
-				ApiServiceInstance.setServiceUri(uri);
-			}
-			
+			const ApiServiceInstance = ApiService.getContextRequests(String.isString(uri)? uri : "/");
 			if (type === "records") {
 				//console.log("cached", key, cache[key]);
 				if (!silent) {
@@ -72,6 +68,7 @@ const api = ({ dispatch, getState }) => next => action => {
 				}
 				
 				return await ApiServiceInstance.getRecords(params).then(res => {
+					//console.log("ApiServiceInstance.getRecords res.body", res.body)
 						if (cache) {
 							let {data, ...rest} = res.body;
 							dispatch(setResponseCache(key, rest));
@@ -92,12 +89,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							dispatch(removeApiTask(apiTask));
 						}
 						
-						if (res.err) {
-							throw res.err;
-						}
-						else {
-							return res.body.data;
-						}
+						return res.body;
 					}).catch(e => {
 						if (!silent) {
 							dispatch(removeApiTask(apiTask));
@@ -124,7 +116,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							throw res.err;
 						}
 						else {
-							return res.body.data;
+							return res.body;
 						}
 					}).catch(e => {
 						if (!silent) {
@@ -153,7 +145,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							throw res.err;
 						}
 						else {
-							return res.body.data;
+							return res.body;
 						}
 					}).catch(e => {
 						if (!silent) {
@@ -174,7 +166,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							let {data, ...rest} = res.body;
 							dispatch(setResponseCache(key, rest));
 							/*let newCache = Array.isArray(cache[key])? cache[key] : [];
-							//newCache.push(res.body.data);
+							//newCache.push(res.body);
 							dispatch(setDataCache(key, newCache));*/
 						}
 						if (!silent) {
@@ -184,7 +176,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							throw res.err;
 						}
 						else {
-							return res.body.data;
+							return res.body;
 						}
 					}).catch(e => {
 						if (!silent) {
@@ -210,17 +202,17 @@ const api = ({ dispatch, getState }) => next => action => {
 								newCache = newCache.map((entry, index) => {
 									if (entry._id === id) {
 										exists = true;
-										return res.body.data;
+										return res.body;
 									}
 									return entry;
 								});
 								if (!exists) {
-									newCache.push(res.body.data);
+									newCache.push(res.body);
 								}
 								
 							}
 							else{
-								newCache.push(res.body.data);
+								newCache.push(res.body);
 							}
 							
 							dispatch(setDataCache(key, newCache));
@@ -233,7 +225,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							throw res.err;
 						}
 						else {
-							return res.body.data;
+							return res.body;
 						}
 						
 					}).catch(e => {
@@ -253,12 +245,12 @@ const api = ({ dispatch, getState }) => next => action => {
                     if (cache) {
                         let {data, ...rest} = res.body;
                         dispatch(setResponseCache(key, rest));
-                        //dispatch(setDataCache(key, res.body.data));
+                        //dispatch(setDataCache(key, res.body));
                     }
                     if (!silent) {
                         dispatch(removeApiTask(apiTask));
                     }
-                    return res.body.data;
+                    return res.body;
                 }).catch(e => {
 						if (!silent) {
 							dispatch(removeApiTask(apiTask));
@@ -288,13 +280,13 @@ const api = ({ dispatch, getState }) => next => action => {
                     }
 					return await ApiServiceInstance.searchGlobally(searchKeyword).then(res => {
 						if (cache) {
-							let {data, ...rest} = res.body;
+							let {data, ...rest} = res;
 							dispatch(setResponseCache(key, rest));
 						}
 						if (!silent) {
 							dispatch(removeApiTask(apiTask));
 						}
-						return res.body.data;
+						return res.data;
 					}).catch(e => {
 						if (!silent) {
 							dispatch(removeApiTask(apiTask));

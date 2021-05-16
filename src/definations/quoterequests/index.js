@@ -272,7 +272,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"quoterequests/view/" + entry._id
+						"quoterequests/view/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -282,7 +282,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"quoterequests/view/" + entry._id
+										"quoterequests/view/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className}
 								>
@@ -340,7 +340,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"quoterequests/edit/" + entry._id
+						"quoterequests/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {
@@ -350,7 +350,7 @@ export default {
 							return (
 								<Link
 									to={(
-										"quoterequests/edit/" + entry._id
+										"quoterequests/edit/" + entry?._id
 									).toUriWithDashboardPrefix()}
 									className={className ? className : ""}
 								>
@@ -375,7 +375,7 @@ export default {
 				},
 				uri: entry => {
 					return (
-						"quoterequests/delete/" + entry._id
+						"quoterequests/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
 				link: {

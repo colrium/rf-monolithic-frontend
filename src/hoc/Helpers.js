@@ -8,13 +8,13 @@ import React from "react";
 import Color from "color";
 import lodash from "lodash";
 import lodash_inflection from "lodash-inflection";
-import kenya_geodata from "assets/geodata/kenya.json";
 import {
 	AudiotrackOutlined as AudioIcon,
 	InsertDriveFileOutlined as FileIcon,
 	MovieOutlined as VideoIcon,
 } from "@material-ui/icons";
 import { environment } from "config";
+import api, { endpoint } from "services/backend";
 
 lodash.mixin(lodash_inflection);
 
@@ -1122,36 +1122,51 @@ class CountriesData {
 		return names;
 	}
 
-	static regions(country) {
-		let names = {};
-
-		if (String.isString(country)) {
-			if (["ke", "kenya", "254", "+254"].includes(country.toLowerCase())) {
-				kenya_geodata.regions.map(region=> {
-					names[region.name] = region.name;
-				});
-
-			}
-		}
-
-		return names;
-	}
-
-	static subregions(region) {
-		let names = {};
-
-		if (String.isString(region)) {
-            kenya_geodata.regions.map(regionentry=> {
-				if (regionentry.name.toLowerCase() === region.toLowerCase()) {
-					regionentry.sub_counties.map(sub_county=> {
-						names[sub_county] = sub_county;
-					});
+	static administrative_features_options(country, level=1, value=false) {
+		return new Promise((resolve, reject) => {
+			let features = {};
+			if (String.isString(country)) {
+				country = country.trim();
+				let country_name = false;
+				if (["ke", "kenya", "254", "+254"].includes(country.toLowerCase())) {
+					country_name = "kenya";
+				}
+				else if (["ug", "uganda", "253", "+253"].includes(country.toLowerCase())) {
+					country_name = "uganda";
+				}
+				else if (["tz", "tanzania", "255", "+255"].includes(country.toLowerCase())) {
+					country_name = "tanzania";
+				}
+				if (country_name && (level == 1 || (level > 1 && level < 4 && value))) {
+					api.isolated({cache: true, headers : { 'Content-Type': 'application/json', 'Accept': 'application/json'}}).get(`/public/geodata/${country_name}/features/administrative/level-${level}/index.json`).then(response => response.data).then(data => {
+						let lower_level = level - 1
+				        if (Array.isArray(data)) {
+				        	data.map(entry => {				        		
+				        		if (((level > 1 && level < 4 && value) && String.isString(value) && String.isString(entry[("level-"+lower_level)]) && entry[("level-"+lower_level)].toLowerCase() === value.toLowerCase()) || level == 1) {
+				        			features[entry.name] = entry.name;
+				        		}				        		
+				        	})
+				        }
+				        resolve(features);
+					}).catch(err => {
+				    	console.trace(err);
+				    	console.log("administrative_features_options err", err);
+				    	reject(err);
+				    });
+					
+				}
+				else{
+					reject("Invalid parameters country: "+country+", level:"+level+", value:"+value);
 				}
 				
-			});
-        }
+			}
+			else {
+				reject("Invalid country: "+country);
+			}	
 
-		return names;
+			
+		})
+			
 	}
 }
 

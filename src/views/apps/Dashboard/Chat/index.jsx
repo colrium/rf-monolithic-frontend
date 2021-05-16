@@ -238,9 +238,7 @@ function Chat(props) {
 					content: "",
 					conversation: new_conversation._id,
 				});
-			}).catch(err => {
-				console.log("handleNewChat err", err);
-			});
+			}).catch(err => {});
 
 
 			setContactsDrawerOpen(false);
@@ -909,7 +907,7 @@ function Chat(props) {
 								</GridItem>
 							</GridContainer>}
 
-							{!fetching_inbox, (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0)) && <GridContainer>
+							{(!fetching_inbox, (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0)) && <GridContainer>
 								<GridItem md={12} className={"flex flex-col items-center relative p-0 px-4 my-4"}>
 									<Typography variant="subtitle1" color="textSecondary" className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center" style={{color: theme.palette.text.disabled, background: theme.palette.background.default}}>
 										<ForumOutlinedIcon fontSize="inherit"/>
@@ -918,7 +916,7 @@ function Chat(props) {
 										You don't have any active conversations yet
 									</Typography>
 								</GridItem>
-							</GridContainer>}
+							</GridContainer>)}
 
 							{Array.isArray(conversations) && <List className={classes.list}>
 							{conversations.map((chat, index)=> {
