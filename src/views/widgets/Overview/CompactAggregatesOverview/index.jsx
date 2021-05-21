@@ -23,6 +23,7 @@ import { connect } from "react-redux";
 import compose from "recompose/compose";
 import AggregatesPieChart from "views/widgets/Charts/AggregatesPieChart";
 import AggregatesBarChart from "views/widgets/Charts/AggregatesBarChart";
+import ApiService from "services/Api";
 import { withErrorHandler } from "hoc/ErrorHandler";
 
 const styles = theme => ({
@@ -41,10 +42,10 @@ class CompactAggregatesOverview extends React.Component {
 	};
 	constructor(props) {
 		super(props);
-		const { auth, definations, services, contexts } = props;
+		const { auth, definations, contexts } = props;
 		let possible_definations = {};
 		for (let [name, defination] of Object.entries(definations)) {
-			if ( name in services && !defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) && contexts.includes(name)) {
+			if ( !defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) && contexts.includes(name)) {
 				possible_definations[name] = defination;
 				if (!this.state.defination) {
 					this.state.defination = defination;
@@ -79,7 +80,7 @@ class CompactAggregatesOverview extends React.Component {
 	}
 
 	render() {
-		const { classes, auth, definations, services, contexts,  gridSize, theme, chartType } = this.props;
+		const { classes, auth, definations, contexts,  gridSize, theme, chartType } = this.props;
 
 		return (
 			<Card outlineColor="#cfd8dc">
@@ -114,7 +115,7 @@ class CompactAggregatesOverview extends React.Component {
 							>
 								{Object.entries(this.state.definations).map(
 									([name, defination], index) => (
-										!defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) && name in services && contexts.includes(name) && <MenuItem
+										!defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) &&  contexts.includes(name) && <MenuItem
 											onClick={this.handleDefinationChange(
 												name
 											)}
@@ -146,9 +147,7 @@ class CompactAggregatesOverview extends React.Component {
 								>
 									{chartType === "pie" && <AggregatesPieChart
 										defination={this.state.defination}
-										service={
-											services[this.state.defination.name]
-										}
+										service={ApiService.getContextRequests(this.state.defination.endpoint)}
 										color={
 											this.state.defination.color
 												? this.state.defination.color
@@ -164,9 +163,7 @@ class CompactAggregatesOverview extends React.Component {
 									/>}
 									{chartType === "bar" && <AggregatesBarChart
 										defination={this.state.defination}
-										service={
-											services[this.state.defination.name]
-										}
+										service={ApiService.getContextRequests(this.state.defination.endpoint)}
 										color={
 											this.state.defination.color
 												? this.state.defination.color

@@ -310,11 +310,11 @@ const QueryBuilder = memo((props) => {
 	}
 
 
-
+	
 
 	return (
-			<form  className={"p-0 flex focus:bg-transparent focus-within:bg-transparent "+(className? (" "+className): "")} onSubmit={handleOnSubmit(internalValue)}>
-				<Accordion expanded={showBuilder} className={"flex-grow bg-transparent focus-within:bg-transparent"} elevation={0}>
+			<form  className={"p-0 flex "+(className? (" "+className): "")} onSubmit={handleOnSubmit(internalValue)}>
+				<Accordion expanded={showBuilder} className={"flex-grow"} elevation={0}>
 					<AccordionSummary
 						expandIcon={<Tooltip title="Toggle Query Builder">
 							<IconButton disabled={!builder} onClick={() => setShowBuilder(!showBuilder)} color={showBuilder? "secondary" : "default"}>
@@ -323,7 +323,7 @@ const QueryBuilder = memo((props) => {
 						</Tooltip>}
 						aria-controls="panelqb-content"
 						id="panelqb-header"
-						className={"focus:bg-current"}
+						className={"bg-transparent"}
 					>
 						<GridContainer className={"flex flex-row justify-center items-center"}>
 							{search && <Tooltip title="Enter Search Query">
@@ -350,7 +350,7 @@ const QueryBuilder = memo((props) => {
 								</IconButton>
 							</Tooltip>
 							{sort && <Tooltip title="Sort">
-								<IconButton disabled={JSON.isEmpty(internalValue?.config?.fields?? {})} className={Boolean(internalValue.sort)? "accent-text" : ""} onClick={handleOnSortBtnClick}>
+								<IconButton disabled={false/*JSON.isEmpty(internalValue?.config?.fields?? {})*/} className={Boolean(internalValue.sort)? "accent-text" : ""} onClick={handleOnSortBtnClick}>
 									<SortIcon fontSize="small" /> 
 								</IconButton>
 							</Tooltip>}

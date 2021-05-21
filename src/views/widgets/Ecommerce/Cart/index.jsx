@@ -17,11 +17,10 @@ import React, { useEffect, useState } from "react";
 
 import { connect } from "react-redux";
 import {withGlobals} from "contexts/Globals";
-import { attachments as AttachmentsService, orders as OrdersService, payments as PaymentsService } from "services";
 import { closeDialog, emptyCart, openDialog, removeFromCart, setCartNote, setCheckoutData, setOrder } from "state/actions";
 import { withErrorHandler } from "hoc/ErrorHandler";
 import LoginDialog from "views/widgets/Auth/LoginDialog";
-
+import ApiService from "services/Api";
 
 
 function Widget(props) {
@@ -143,7 +142,7 @@ function Widget(props) {
 					p1: sockets.default ? sockets.default.socketId : "",
 				};
 
-				PaymentsService.gatewayData(gateway_params_data)
+				ApiService.get("/payments/gateway", gateway_params_data)
 					.then(res => {
 						setLoading(false);
 						let gateway_params = res.body.data;
@@ -156,7 +155,7 @@ function Widget(props) {
 						setLoading(false);
 					});
 			} else {
-				OrdersService.makeOrder(make_order_data)
+				ApiService.post("retail/orders/make", make_order_data)
 					.then(res => {
 						let made_order = res.body.data;
 						setOrder(made_order);
@@ -179,8 +178,7 @@ function Widget(props) {
 							p1: sockets.default ? sockets.default.socketId : "",
 						};
 
-						PaymentsService.gatewayData(gateway_params_data)
-							.then(res => {
+						ApiService.get("/payments/gateway", gateway_params_data).then(res => {
 								setLoading(false);
 								let gateway_params = res.body.data;
 								setCheckoutData(gateway_params);
@@ -191,8 +189,7 @@ function Widget(props) {
 							.catch(e => {
 								setLoading(false);
 							});
-					})
-					.catch(e => {
+					}).catch(e => {
 						setLoading(false);
 					});
 			}
@@ -204,7 +201,7 @@ function Widget(props) {
 	function setOrderNote(note) {
 		if (order) {
 			let updatedOrder = JSON.updateJSON(order, { notes: note });
-			OrdersService.update(order._id, updatedOrder)
+			ApiService.put(("retail/orders/"+order._id), updatedOrder)
 				.then(res => {
 					setOrder(updatedOrder);
 					setCartNote(note);
@@ -252,7 +249,7 @@ function Widget(props) {
 												alt={item.name}
 												src={
 													item.featured_image
-														? AttachmentsService.getAttachmentFileUrl(
+														? ApiService.getAttachmentFileUrl(
 																item.featured_image
 														  )
 														: LogoChevron

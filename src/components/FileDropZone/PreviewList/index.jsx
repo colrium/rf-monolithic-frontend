@@ -14,7 +14,7 @@ import { colors } from "assets/jss/app-theme";
 import Avatar from "components/Avatar";
 import Typography from "components/Typography";
 import React from "react";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import { FilesHelper, UtilitiesHelper } from "hoc/Helpers";
 import withRoot from "hoc/withRoot";
 
@@ -122,7 +122,7 @@ function PreviewList(props) {
 										}
 										src={
 											fileObject.attachment
-												? AttachmentsService.getAttachmentFileUrl(
+												? ApiService.getAttachmentFileUrl(
 														fileObject.attachment
 												  )
 												: fileObject.data
@@ -195,7 +195,7 @@ function PreviewList(props) {
 											onClick={e => {
 												e.preventDefault();
 												let win = window.open(
-													AttachmentsService.getAttachmentFileUrl(
+													ApiService.getAttachmentFileUrl(
 														fileObject.attachment
 													),
 													"_blank"

@@ -9,7 +9,7 @@ import GridItem from "components/Grid/GridItem";
 import LazyImage from "components/LazyImage";
 import Typography from "components/Typography";
 import React from "react";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import withRoot from "hoc/withRoot";
 
 class ItemView extends React.Component {
@@ -30,7 +30,7 @@ class ItemView extends React.Component {
 		this.state.item = item;
 		this.state.options = JSON.isJSON(options) ? options : {};
 		this.state.selected_image = item.featured_image
-			? AttachmentsService.getAttachmentFileUrl(item.featured_image)
+			? ApiService.getAttachmentFileUrl(item.featured_image)
 			: null;
 		this.handleOnItemAdd = this.handleOnItemAdd.bind(this);
 		this.handleOnImageSelect = this.handleOnImageSelect.bind(this);
@@ -268,11 +268,11 @@ class ItemView extends React.Component {
 									{item.images.map((image, index) => (
 										<LazyImage
 											className="sm:w-1/4 md:w-16 mx-1 cursor-pointer hover:opacity-50"
-											src={AttachmentsService.getAttachmentFileUrl(
+											src={ApiService.getAttachmentFileUrl(
 												image
 											)}
 											onClick={this.handleOnImageSelect(
-												AttachmentsService.getAttachmentFileUrl(
+												ApiService.getAttachmentFileUrl(
 													image
 												)
 											)}

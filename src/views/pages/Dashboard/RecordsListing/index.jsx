@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import * as definations from "definations";
-import * as services from "services";
+import ApiService from "services/Api";
 //
 //
 import { appendNavHistory } from "state/actions/ui/nav";
@@ -41,7 +41,7 @@ class Page extends React.Component {
 		const { componentProps } = props;
 		this.context = componentProps.context;
 		this.defination = definations[componentProps.context];
-		this.service = services[componentProps.context];
+		this.service = ApiService.getContextRequests(this.defination?.endpoint);
 		let urlQuery = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function(result, each, n, every) {
 			let [key, value] = decodeURI(each).split("=");
 			result[key] = value;

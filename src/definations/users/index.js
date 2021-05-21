@@ -19,7 +19,7 @@ import { useGlobals } from "contexts/Globals";
 import { connect } from "react-redux";
 import Typography from "components/Typography";
 import Avatar from "components/Avatar";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 
 const presences = {
 	online: { label: "Online", color: "#4caf50" },
@@ -126,7 +126,7 @@ export default {
 								avatar: (isPopulated && entry.avatar ? (
 											<Avatar
 												alt={entry.first_name}
-												src={AttachmentsService.getAttachmentFileUrl(entry.avatar)}
+												src={ApiService.getAttachmentFileUrl(entry.avatar)}
 											/>
 										) : null),
 								title:(<Typography

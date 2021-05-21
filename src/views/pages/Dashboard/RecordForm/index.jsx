@@ -23,6 +23,7 @@ import { UtilitiesHelper } from "hoc/Helpers";
 import { withErrorHandler } from "hoc/ErrorHandler";
 //Widgets
 import ContextDataForm from "views/forms/BaseForm";
+import ApiService from "services/Api";
 //
 import styles from "views/pages/styles";
 
@@ -45,11 +46,10 @@ class Page extends React.Component {
 			componentProps,
 			match: { params },
 			definations, 
-			services,
 		} = props;
 		this.context = componentProps.context;
 		this.defination = definations[componentProps.context];
-		this.service = services[componentProps.context];
+		this.service = ApiService.getContextRequests(this.defination?.endpoint);
 
 		if ("id" in params) {
 			this.record_id = params.id;

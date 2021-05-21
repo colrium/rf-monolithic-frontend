@@ -22,7 +22,7 @@ import { formats } from "config/data";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { Link } from "react-router-dom";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 
 export default {
 	name: "orders",
@@ -105,7 +105,7 @@ export default {
 																		.customer
 																		.first_name
 																}
-																src={AttachmentsService.getAttachmentFileUrl(
+																src={ApiService.getAttachmentFileUrl(
 																	entry
 																		.customer
 																		.avatar

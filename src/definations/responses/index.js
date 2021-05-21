@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import {context_country_data} from "config/data";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import ApiService from "services/api";
+import ApiService from "services/Api";
 import compose from "recompose/compose";
 import { connect } from "react-redux";
 import { withTheme } from '@material-ui/core/styles';
@@ -45,11 +45,8 @@ const CountSummaryGraph = (props) => {
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			const ApiServiceInstance = new ApiService();
-			ApiServiceInstance.refresh();
-			ApiServiceInstance.setServiceUri("/responses/reports/date-count-summary");
 			
-			ApiServiceInstance.get().then(res => {
+			ApiService.get("/responses/reports/date-count-summary").then(res => {
 				const {body: {data}} = res;
 				let labels = [];
 				let entries = [];

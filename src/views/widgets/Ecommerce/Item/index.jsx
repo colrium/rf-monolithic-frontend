@@ -11,7 +11,7 @@ import LazyImage from "components/LazyImage";
 import Typography from "components/Typography";
 import React from "react";
 import { connect } from "react-redux";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import { addToCart } from "state/actions";
 import { withErrorHandler } from "hoc/ErrorHandler";
 
@@ -34,7 +34,7 @@ class Widget extends React.Component {
 		this.state.options = JSON.isJSON(options) ? options : {};
 		this.state.selected_image = JSON.isJSON(item)
 			? item.featured_image
-				? AttachmentsService.getAttachmentFileUrl(item.featured_image)
+				? ApiService.getAttachmentFileUrl(item.featured_image)
 				: null
 			: null;
 		this.handleOnItemAdd = this.handleOnItemAdd.bind(this);
@@ -396,11 +396,11 @@ class Widget extends React.Component {
 								{item.featured_image && (
 									<LazyImage
 										className="sm:w-1/4 md:w-16 mx-1 cursor-pointer hover:opacity-50"
-										src={AttachmentsService.getAttachmentFileUrl(
+										src={ApiService.getAttachmentFileUrl(
 											item.featured_image
 										)}
 										onClick={this.handleOnImageSelect(
-											AttachmentsService.getAttachmentFileUrl(
+											ApiService.getAttachmentFileUrl(
 												item.featured_image
 											)
 										)}
@@ -410,11 +410,11 @@ class Widget extends React.Component {
 								{item.images.map((image, index) => (
 									<LazyImage
 										className="sm:w-1/4 md:w-16 mx-1 cursor-pointer hover:opacity-50"
-										src={AttachmentsService.getAttachmentFileUrl(
+										src={ApiService.getAttachmentFileUrl(
 											image
 										)}
 										onClick={this.handleOnImageSelect(
-											AttachmentsService.getAttachmentFileUrl(
+											ApiService.getAttachmentFileUrl(
 												image
 											)
 										)}

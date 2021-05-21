@@ -51,7 +51,7 @@ import client_position_male_heading_80_icon from "assets/img/maps/heading/male-9
 import client_user_female_icon from "assets/img/maps/marker-person-female.png";
 import client_user_male_icon from "assets/img/maps/marker-person-male.png";
 import Paper from "@material-ui/core/Paper";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import {
 	PersonOutlined as UserIcon,
 } from "@material-ui/icons";
@@ -156,7 +156,7 @@ const ClientInfoWindow = ({user, track, position, history, app, ...rest}) => {
 														<Avatar
 															className="bg-transparent mr-4"
 															alt={user.first_name}
-															src={AttachmentsService.getAttachmentFileUrl(user.avatar)}
+															src={ApiService.getAttachmentFileUrl(user.avatar)}
 														/>
 													) : (
 														<Avatar className="bg-transparent  mr-4">

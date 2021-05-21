@@ -56,7 +56,7 @@ export const firebaseWebPushCertificate = "BCRs2cCvL59gp6AyJybuna4N7migtv4c6O6Tw
 export const baseUrls = {
 	domain: environment == "development"? process.env.REACT_APP_DEV_DOMAIN : process.env.REACT_APP_DOMAIN,
 	host: environment == "development"? process.env.REACT_APP_API_DEV_HOST : process.env.REACT_APP_API_HOST, // This is for development and experimentation purposes only to cater for docker loadbalancer/proxy scenarios. Its considered unsecure to set or accept requests with a HOST header/parameter.
-	backend: environment == "development"? process.env.REACT_APP_API_DEV_ENDPOINT : process.env.REACT_APP_API_ENDPOINT,
+	api: environment == "development"? process.env.REACT_APP_API_DEV_ENDPOINT : process.env.REACT_APP_API_ENDPOINT,
 };
 
 

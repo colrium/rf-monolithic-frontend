@@ -15,7 +15,7 @@ import Typography from "components/Typography";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Dropzone from "react-dropzone";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import { UtilitiesHelper } from "hoc/Helpers";
 import styles from "./styles";
 
@@ -139,7 +139,7 @@ class FileDropZone extends Component {
 				for (var i = 0; i < attachments.length; i++) {
 					const attachment = attachments[i];
 					if (String.isString(attachments[i])) {
-						AttachmentsService.getRecordById(attachments[i], { p: 1, }).then(res => {
+						ApiService.get(("/attachments/"+attachments[i]), { p: 1, }).then(res => {
 								newFileObjects = newFileObjects.concat([
 									{ attachment: res.body.data },
 								]);
@@ -250,7 +250,7 @@ class FileDropZone extends Component {
 
 									upload_data.append("attachment_file", file);
 
-									AttachmentsService.upload(upload_data, {})
+									ApiService.upload(upload_data, {})
 										.then(upload_res => {
 											let fileObjects =
 												_this.state.fileObjects;
@@ -388,7 +388,7 @@ class FileDropZone extends Component {
 		if (fileObject.attachment) {
 			fileObjects[fileIndex].progress = true;
 			this.setState({ fileObjects: fileObjects });
-			AttachmentsService.delete(fileObject.attachment._id)
+			ApiService.delete(("/attachments/"+fileObject.attachment._id))
 				.then(res => {
 					let newfileObjects = [];
 					let newValue = [];

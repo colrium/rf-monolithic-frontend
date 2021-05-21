@@ -8,7 +8,7 @@ import GridItem from "components/Grid/GridItem";
 import LazyImage from "components/LazyImage";
 import ScrollBars from "components/ScrollBars";
 import React from "react";
-import { attachments as AttachmentsService, retailitems as retailItemsService } from "services";
+import ApiService from "services/Api";
 import withRoot from "hoc/withRoot";
 
 class GridView extends React.Component {
@@ -47,8 +47,7 @@ class GridView extends React.Component {
 	loadItems() {
 		const params = this.state.params;
 		this.setState(prevState => ({ loading: true, load_err: null }));
-		retailItemsService
-			.getRecords(params)
+		ApiService.get("retail/items", params)
 			.then(res => {
 				this.setState(prevState => ({
 					retailitems: res.body.data,
@@ -207,7 +206,7 @@ class GridView extends React.Component {
 														className="w-full h-full"
 														src={
 															retailitem.featured_image
-																? AttachmentsService.getAttachmentFileUrl(
+																? ApiService.getAttachmentFileUrl(
 																		retailitem.featured_image
 																  )
 																: LogoChevron

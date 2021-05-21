@@ -13,7 +13,7 @@ import PropTypes from "prop-types";
 
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 import { useGlobals } from "contexts/Globals";
 import { FilesHelper, ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";

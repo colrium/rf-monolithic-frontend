@@ -6,7 +6,7 @@ import GridContainer from "components/Grid/GridContainer";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import GoogleIcon from 'mdi-react/GooglePlusIcon';
-import {api} from "services/backend";
+import ApiService from "services/Api";
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
@@ -61,7 +61,7 @@ class OAuth extends React.Component {
 			height = 600;
 		const left = window.innerWidth / 2 - width / 2;
 		const top = window.innerHeight / 2 - height / 2;
-		const url = api.endpoint(`${this.state.provider}?socketId=${this.state.socketId}`);
+		const url = ApiService.endpoint(`${this.state.provider}?socketId=${this.state.socketId}`);
 
 		return window.open(
 			url,

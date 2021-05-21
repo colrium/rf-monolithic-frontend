@@ -17,7 +17,7 @@ import GridItem from "components/Grid/GridItem";
 import SnackbarContent from "components/Snackbar/SnackbarContent";
 import {withErrorHandler} from "hoc/ErrorHandler";
 
-import { demorequests as service } from "services";
+import ApiService from "services/Api";
 
 import { colors } from "assets/jss/app-theme.jsx";
 
@@ -169,9 +169,7 @@ class RequestDemoForm extends React.Component {
 			requesting_email: this.state.email,
 		};
 		let that = this;
-		service
-			.create(formData)
-			.then(response => {
+		ApiService.post("/demo-requests", formData).then(response => {
 				that.setState(state => ({
 					submitting: false,
 					submiterror: false,

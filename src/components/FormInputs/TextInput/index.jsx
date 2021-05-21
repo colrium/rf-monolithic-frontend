@@ -46,6 +46,8 @@ const Input = React.forwardRef((props, ref) => {
 		...rest
 	} = props;
 
+	
+
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
 	const [inputDisabled, setInputDisabled] = useState(disabled);
 	const [inputLoading, setInputLoading] = useState(loading);

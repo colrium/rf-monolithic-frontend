@@ -33,7 +33,7 @@ import ListView from "./ListView";
 import Chip from '@material-ui/core/Chip';
 import { withErrorHandler } from "hoc/ErrorHandler";
 import { ServiceDataHelper } from "hoc/Helpers";
-import * as services from "services";
+import ApiService from "services/Api";
 import * as definations from "definations";
 //
 import styles from "./styles";
@@ -134,9 +134,9 @@ class ListingView extends React.Component {
 	constructor(props) {
 		super(props);
 
-		const { defination, service, query, cache, app } = props;
+		const { defination, query, cache, app } = props;
 		this.state.defination = defination;
-		this.state.service = service;
+		this.state.service = ApiService.getContextRequests(defination.endpoint);
 		this.state.query = query ? { 
 			...query, 
 			p: 1, 
@@ -210,15 +210,15 @@ class ListingView extends React.Component {
 	getSnapshotBeforeUpdate(prevProps, prevState) {
         this.mounted = false;
         return {
-			prepareForRenderRequired: !lodash.isEqual(prevProps.query, this.props.query),
-			loadQueryBuilderPropsRequired: !lodash.isEqual(prevState.fields, this.state.fields) || !lodash.isEqual(prevState.value_possibilities, this.state.value_possibilities),
-			paramsChangeApplicationRequired: !lodash.isEqual(prevState.query, this.state.query),
+			prepareForRenderRequired: !Object.areEqual(prevProps.query, this.props.query),
+			loadQueryBuilderPropsRequired: !Object.areEqual(prevState.fields, this.state.fields) || !Object.areEqual(prevState.value_possibilities, this.state.value_possibilities),
+			paramsChangeApplicationRequired: !Object.areEqual(prevState.query, this.state.query),
 		};
     }
 
 
 	shouldComponentUpdate(nextProps, nextState) {
-        let shouldUpdate = !lodash.isEqual(this.props, nextProps) || !lodash.isEqual(this.state, nextState);
+        let shouldUpdate = !Object.areEqual(this.props, nextProps) || !Object.areEqual(this.state, nextState);
         return shouldUpdate;
     }
 
@@ -283,8 +283,8 @@ class ListingView extends React.Component {
 
 
 	async prepareForRender() {
-		const { defination, service, query, view, showViewOptions, showAddBtn, app } = this.props;
-		if (defination && service) {
+		const { defination, query, view, showViewOptions, showAddBtn, app } = this.props;
+		if (defination) {
             let all_views = {
 				tableview: "Table View",
 				listview: "List View",
@@ -309,7 +309,7 @@ class ListingView extends React.Component {
 				if (this.mounted) {
 					this.setState({
 						defination: defination,						
-						service: service,
+						service: ApiService.getContextRequests(defination.endpoint),
 						fields: evaluatedFields, 
 						onChangeEffects: onChangeEffects,
 						query: query ? { 
@@ -335,7 +335,7 @@ class ListingView extends React.Component {
 					this.state = {
 						...this.state,
 						defination: defination,
-						service: service,
+						service: ApiService.getContextRequests(defination.endpoint),
 						fields: evaluatedFields, 
 						onChangeEffects: onChangeEffects,
 						query: query ? { 
@@ -591,7 +591,7 @@ class ListingView extends React.Component {
 	}
 
 	loadFieldValuePosibilities() {
-		const { auth, fields, exclude } = this.props;
+		const { auth, fields, exclude, defination } = this.props;
 		let fields_to_load = {};
 		let loading_fields = {};
 		let value_possibilities = {};
@@ -654,14 +654,10 @@ class ListingView extends React.Component {
 				if (JSON.isJSON(field.reference)) {
 					//Reference field Service Calls
 					if (String.isString(field.reference.name) && JSON.isJSON(field.reference.service_query)) {
-						let service = false;
+						let service = ApiService.getContextRequests(defination.endpoint);
 						let service_key = field.reference.name;
 						let service_query = field.reference.service_query;
 						
-						if (service_key in services) {
-							service_key = field.reference.name;
-							service = services[service_key];
-						}
 
 						let execute_service_call = service_query && this.state.last_field_changed !== name;
 
@@ -833,8 +829,8 @@ class ListingView extends React.Component {
     }
 
 	render() {
-		const { classes, auth, query, defination, service, cache, api, showPagination, showSorter, cache_data, onLoadData, load_data, onClickEntry, sorterFormLayoutType } = this.props;
-		const { view, queryBuilderProps } = this.state;
+		const { classes, auth, query, defination, cache, api, showPagination, showSorter, cache_data, onLoadData, load_data, onClickEntry, sorterFormLayoutType } = this.props;
+		const { view, queryBuilderProps, service } = this.state;
 		return (
             <GridContainer className="p-0 m-0">
 				<GridContainer className="p-0 m-0">

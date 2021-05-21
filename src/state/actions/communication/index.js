@@ -8,7 +8,7 @@ import {
     CLEAR_COMMUNICATION_CACHE,
 } from "state/actions";
 import {messages as messagesDefination} from "definations";
-import ApiService from "services/api";
+import ApiService from "services/Api";
 import notificationSound from "assets/audio/notification.mp3";
 
 
@@ -48,10 +48,7 @@ export function fetchInbox(params={}, preserve=true) {
 		
 		if (auth.isAuthenticated) {
 			dispatch(setMessagingCache("fetching_inbox", true));
-			const ApiServiceInstance = new ApiService();
-			ApiServiceInstance.refresh();
-			ApiServiceInstance.setServiceUri("/inbox");
-			const inbox_conversations = await ApiServiceInstance.getRecords(params).then(res => {
+			const inbox_conversations = await ApiService.get("/inbox", params).then(res => {
                 const {data} = res.body;
                 return data;
             }).catch(err => {
@@ -96,10 +93,7 @@ export function fetchContacts(params={}) {
 		let new_contactactable_contacts_ids = [];
 		let new_contacts = [];
 		if (auth.isAuthenticated) {
-			const ApiServiceInstance = new ApiService();
-			ApiServiceInstance.refresh();
-			ApiServiceInstance.setServiceUri("/contacts");
-			const fetchedContacts = await ApiServiceInstance.getRecords({fields: "_id", ...params}).then(res => {
+			const fetchedContacts = await ApiService.get("/contacts", {fields: "_id", ...params}).then(res => {
                 const {data} = res.body;
                 return data;
             }).catch(err => {
@@ -144,10 +138,7 @@ export function fetchContacts(params={}) {
 		let message_id = message?(message._id? message._id : message) : false;
 		if (auth.isAuthenticated) {
 			if (message_id) {
-				const ApiServiceInstance = new ApiService();
-				ApiServiceInstance.refresh();
-				ApiServiceInstance.setServiceUri("/messages");
-				return ApiServiceInstance.getRecordById(message_id, params).then(res => res.body).then(body => body.data);
+				return ApiService.get("/messages/"+message_id, params).then(res => res.body).then(body => body.data);
 			}
 			else {
 				throw "Message Id missing";
@@ -182,13 +173,10 @@ export function fetchMessages(conversation, rpp=20, pg=1, query={}, preserve=tru
 					}
 
                     if (!loading_messages) {
-						const ApiServiceInstance = new ApiService();
-						ApiServiceInstance.refresh();
-						ApiServiceInstance.setServiceUri("/messages");
 						if (conversation_id === active_conversation_id) {
 							dispatch(setMessagingCache("active_conversation", {...active_conversation, state: {...active_conversation.state, query: query, loading_messages: true}}));
 						}
-						const { count, page, pages, data:messages } = await ApiServiceInstance.getRecords({...query, conversation: conversation_id, /*asc: "created_on",*/ page:pg, pagination:rpp }).then(res => {
+						const { count, page, pages, data:messages } = await ApiService.get("/messages", {...query, conversation: conversation_id, /*asc: "created_on",*/ page:pg, pagination:rpp }).then(res => {
                             return res.body
                         }).catch(err => {
                             return {};
@@ -278,11 +266,8 @@ export function updateMessage(message, persist=true) {
 			}
 			let message_id = message? (JSON.isJSON(message)? message._id : message) : false;
 			let fetchMessageFromServer = String.isString(message);
-			if (fetchMessageFromServer) {				
-				const ApiServiceInstance = new ApiService();
-				ApiServiceInstance.refresh();
-				ApiServiceInstance.setServiceUri("/messages");
-				let fetchedMessage = await  ApiServiceInstance.getRecordById(message_id, {}).then(res => {
+			if (fetchMessageFromServer) {
+				let fetchedMessage = await  ApiService.getRecordById("/messages/"+message_id, {}).then(res => {
 					return res.body.data
 				}).catch(err => {
 					return false;
@@ -345,10 +330,7 @@ export function updateMessage(message, persist=true) {
 				dispatch(setMessagingCache("conversations", conversations));
 
 				/*if (persist && message_id && !fetchMessageFromServer) {
-					const ApiServiceInstance = new ApiService();
-	                ApiServiceInstance.refresh();
-	                ApiServiceInstance.setServiceUri("/messages");
-	                let persistedServerMessage = await  ApiServiceInstance.update(message_id, message).then(res => {
+	                let persistedServerMessage = await  ApiService.put("/messages/"+message_id, message).then(res => {
 						return res.body.data
 					}).catch(err => {
 						return false;
@@ -377,10 +359,7 @@ export function appendMessage(message) {
 			let message_id = message? (JSON.isJSON(message)? message._id : message) : false;
 			
 			if (String.isString(message)) {
-				const ApiServiceInstance = new ApiService();
-				ApiServiceInstance.refresh();
-				ApiServiceInstance.setServiceUri("/messages");
-				let fetchedMessage = await  ApiServiceInstance.getRecordById(message_id, {}).then(res => {
+				let fetchedMessage = await  ApiService.get("/messages/"+message_id, {}).then(res => {
 					return res.body.data
 				}).catch(err => {
 					return false;
@@ -512,11 +491,8 @@ export function sendMessage(message) {
 
 				await dispatch(appendMessage({...message_to_send, state: "pending"}));
 
-				const ApiServiceInstance = new ApiService();
-				ApiServiceInstance.refresh();
-				ApiServiceInstance.setServiceUri("/messages");
 				
-				let sent_message = await ApiServiceInstance.create(message_to_send).then(res => {
+				let sent_message = await ApiService.post("/messages", message_to_send).then(res => {
 					const { data } = res.body;
 					return data;			
 				}).catch(e => {
@@ -547,13 +523,10 @@ export function sendUnsentMessages() {
 			if (unsent_messages.length > 0) {
 				const prev_unsent_messages = JSON.parse(JSON.stringify(unsent_messages));
 				dispatch(setMessagingCache("unsent_messages", []));
-				const ApiServiceInstance = new ApiService();
-				ApiServiceInstance.refresh();
-				ApiServiceInstance.setServiceUri("/messages");
 				let unsent_messages_requests = [];
 				let sent_messages = [];
 				prev_unsent_messages.map((unsent_message, index) => {
-					ApiServiceInstance.create(unsent_message).then(sent_message => {
+					ApiService.post("/messages", unsent_message).then(sent_message => {
 						//Remove from current unsent messages
 						const {communication: { messaging : {unsent_messages:current_unsent_messages}}} = getState();
 						let new_unsent_messages = JSON.parse(JSON.stringify(unsent_messages));
@@ -585,10 +558,7 @@ export function createConversation(conversation, activate=true) {
 			
 
 
-			const ApiServiceInstance = new ApiService();
-			ApiServiceInstance.refresh();
-			ApiServiceInstance.setServiceUri("/conversations");
-			const created_conversation = await ApiServiceInstance.post(conversation).then(async res => {
+			const created_conversation = await ApiService.post("/conversations", conversation).then(async res => {
                 const { data } = res.body;
                 let new_conversation = data;
                 let new_conversations = conversations;

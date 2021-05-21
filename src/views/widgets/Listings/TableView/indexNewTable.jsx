@@ -38,7 +38,7 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import MaterialTable from "material-table";
 
 import { withRouter } from "react-router";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
 import { FilesHelper, ServiceDataHelper } from "hoc/Helpers";
@@ -350,7 +350,7 @@ class TableView extends React.Component {
 																		<Avatar color="#cfd8dc" textColor="#000000"
 																			src={
 																				FilesHelper.fileType(entry.resolve) ==="image"
-																					? AttachmentsService.getAttachmentFileUrl(entry.value): undefined
+																					? ApiService.getAttachmentFileUrl(entry.value): undefined
 																			}
 																		>
 																			{FilesHelper.fileIcon(entry.resolve)}
@@ -362,7 +362,7 @@ class TableView extends React.Component {
 																	onClick={e => {
 																		e.preventDefault();
 																		let win = window.open(
-																			AttachmentsService.getAttachmentFileUrl(
+																			ApiService.getAttachmentFileUrl(
 																				entry.value
 																			),
 																			"_blank"
@@ -387,7 +387,7 @@ class TableView extends React.Component {
 																color="#cfd8dc"
 																textColor="#000000"
 																src={
-																	FilesHelper.fileType(rowData[name].resolve) ==="image"? AttachmentsService.getAttachmentFileUrl(rowData[name].value): undefined
+																	FilesHelper.fileType(rowData[name].resolve) ==="image"? ApiService.getAttachmentFileUrl(rowData[name].value): undefined
 																}
 															>
 																{FilesHelper.fileIcon(rowData[name].resolve)}
@@ -396,7 +396,7 @@ class TableView extends React.Component {
 														onClick={e => {
 															e.preventDefault();
 															let win = window.open(
-																AttachmentsService.getAttachmentFileUrl(
+																ApiService.getAttachmentFileUrl(
 																	rowData[name].value
 																),
 																"_blank"

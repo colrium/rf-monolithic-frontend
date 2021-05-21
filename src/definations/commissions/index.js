@@ -20,15 +20,13 @@ import Typography from "components/Typography";
 import { formats } from "config/data";
 import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import LazyModule from "components/LazyModule";
 import { withTheme } from '@material-ui/core/styles';
 import compose from "recompose/compose";
 import { connect } from "react-redux";
 import * as definations from "definations";
-import * as services from "services";
 import { apiCallRequest } from "state/actions";
-import ApiService from "services/api";
 import { defaults, Pie, Bar, HorizontalBar } from "react-chartjs-2";
 import { UtilitiesHelper } from "hoc/Helpers";
 import MuiAlert from '@material-ui/lab/Alert';
@@ -125,12 +123,9 @@ const CardViewBody = React.memo((props) => {
 	const [commissionFormSummary, setCommissionFormSummary] = useState(false);
 
 	const loadResponsesSummary = () => {
-		const ApiServiceInstance = new ApiService();
-		ApiServiceInstance.refresh();
-		ApiServiceInstance.setServiceUri("/responses/form-responses-summary/"+entry?._id);
 		setSummaryError(false);
 		setLoadingSummary(true);
-		ApiServiceInstance.get().then(res => {
+		ApiService.get("/responses/form-responses-summary/"+entry?._id).then(res => {
 			const {body: {data: {labels, types, counts}}} = res;
 			setCommissionFormSummaryLabels(labels);
 			setCommissionFormSummaryTypes(types);
@@ -255,7 +250,7 @@ const CardViewBody = React.memo((props) => {
 																						entry.team
 																							.name
 																					}
-																					src={AttachmentsService.getAttachmentFileUrl(
+																					src={ApiService.getAttachmentFileUrl(
 																						entry.team
 																							.avatar
 																					)}
@@ -284,7 +279,7 @@ const CardViewBody = React.memo((props) => {
 																							.individual
 																							.first_name
 																					}
-																					src={AttachmentsService.getAttachmentFileUrl(
+																					src={ApiService.getAttachmentFileUrl(
 																						entry
 																							.individual
 																							.avatar
@@ -427,7 +422,7 @@ const CardViewBody = React.memo((props) => {
 																	entry.team
 																		.name
 																}
-																src={AttachmentsService.getAttachmentFileUrl(
+																src={ApiService.getAttachmentFileUrl(
 																	entry.team
 																		.avatar
 																)}
@@ -456,7 +451,7 @@ const CardViewBody = React.memo((props) => {
 																		.individual
 																		.first_name
 																}
-																src={AttachmentsService.getAttachmentFileUrl(
+																src={ApiService.getAttachmentFileUrl(
 																	entry
 																		.individual
 																		.avatar
@@ -605,7 +600,7 @@ export default {
 								entry.team.avatar ? (
 									<Avatar
 										alt={entry.team.name}
-										src={AttachmentsService.getAttachmentFileUrl(
+										src={ApiService.getAttachmentFileUrl(
 											entry.team.avatar
 										)}
 									/>
@@ -615,7 +610,7 @@ export default {
 								entry.individual.avatar && (
 									<Avatar
 										alt={entry.individual.first_name}
-										src={AttachmentsService.getAttachmentFileUrl(
+										src={ApiService.getAttachmentFileUrl(
 											entry.individual.avatar
 										)}
 									/>
@@ -696,7 +691,7 @@ export default {
 										entry.team.avatar ? (
 											<Avatar
 												alt={entry.team.name}
-												src={AttachmentsService.getAttachmentFileUrl(
+												src={ApiService.getAttachmentFileUrl(
 													entry.team.avatar
 												)}
 											/>
@@ -708,7 +703,7 @@ export default {
 												alt={
 													entry.individual.first_name
 												}
-												src={AttachmentsService.getAttachmentFileUrl(
+												src={ApiService.getAttachmentFileUrl(
 													entry.individual.avatar
 												)}
 											/>
@@ -769,7 +764,7 @@ export default {
 																			.team
 																			.name
 																	}
-																	src={AttachmentsService.getAttachmentFileUrl(
+																	src={ApiService.getAttachmentFileUrl(
 																		entry
 																			.team
 																			.avatar
@@ -802,7 +797,7 @@ export default {
 																			.individual
 																			.first_name
 																	}
-																	src={AttachmentsService.getAttachmentFileUrl(
+																	src={ApiService.getAttachmentFileUrl(
 																		entry
 																			.individual
 																			.avatar
@@ -995,7 +990,7 @@ export default {
 																	entry.team
 																		.name
 																}
-																src={AttachmentsService.getAttachmentFileUrl(
+																src={ApiService.getAttachmentFileUrl(
 																	entry.team
 																		.avatar
 																)}
@@ -1024,7 +1019,7 @@ export default {
 																		.individual
 																		.first_name
 																}
-																src={AttachmentsService.getAttachmentFileUrl(
+																src={ApiService.getAttachmentFileUrl(
 																	entry
 																		.individual
 																		.avatar

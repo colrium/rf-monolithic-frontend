@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Snackbar from "@material-ui/core/Snackbar";
 import { withStyles } from "@material-ui/core/styles";
-import authService from "services/auth";
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import Button from "components/Button";
@@ -17,7 +16,7 @@ import { baseUrls, environment } from "config";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import { CountriesHelper } from "hoc/Helpers";
 import {withGlobals} from "contexts/Globals";
-import ApiService from "services/backend";
+import ApiService from "services/Api";
 import {GooglePlacesAutocomplete } from "components/FormInputs";
 
 
@@ -230,7 +229,7 @@ class SignupForm extends React.Component {
 				code: this.state.form_values.account_verifacation_code,
 				email: this.state.form_values.email_address,
 			};
-			let response = await authService.verifyAccount(formData);
+			let response = await ApiService.verifyAccount(formData);
 			if (response.err) {
 				that.setState(state => ({
 					submitting: false,
@@ -254,7 +253,7 @@ class SignupForm extends React.Component {
 			}
 		} else {
 			let formData = this.state.form_values;
-			authService.signup(formData).then(response => {
+			ApiService.signup(formData).then(response => {
 				that.setState(state => ({
 					verifingAccount: true,
 					submitting: false,

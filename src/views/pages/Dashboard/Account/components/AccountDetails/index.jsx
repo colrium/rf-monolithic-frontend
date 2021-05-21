@@ -15,7 +15,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 // Externals
 import compose from "recompose/compose";
-import AuthService from "services/auth";
+import ApiService from "services/Api";
 import { updateCurrentUser } from "state/actions/auth";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import BaseForm from "views/forms/BaseForm";
@@ -61,8 +61,7 @@ class Account extends Component {
 	}
 
 	componentDidMount() {
-		AuthService.profile({})
-			.then(res => {
+		ApiService.profile({}).then(res => {
 				if (!res.err) {
 					let formValues = res.body.data;
 
@@ -77,8 +76,7 @@ class Account extends Component {
 
 	handleProfileFormSubmit(data, event) {
 		const { updateCurrentUser } = this.props;
-		return AuthService.update_profile(data)
-			.then(res => {
+		return ApiService.update_profile(data).then(res => {
 				updateCurrentUser(res.body.data);
 				return true;
 			})

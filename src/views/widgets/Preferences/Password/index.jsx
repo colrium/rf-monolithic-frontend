@@ -9,7 +9,7 @@ import CardHeader from "components/Card/CardHeader";
 import UsersDefination from "definations/users";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import AuthService from "services/auth";
+import ApiService from "services/Api";
 import BaseForm from "views/forms/BaseForm";
 import { withErrorHandler } from "hoc/ErrorHandler";
 
@@ -79,7 +79,7 @@ class Password extends Component {
 	}
 
 	handlePasswordFormSubmit(data, event) {
-		return AuthService.resetPassword(data)
+		return ApiService.resetPassword(data)
 			.then(res => {
 				return true;
 			})

@@ -1,4 +1,4 @@
-import ApiService from "services/backend";
+import ApiService from "services/Api";
 import {
 	SET_AUTHENTICATED,
 	SET_TOKEN,

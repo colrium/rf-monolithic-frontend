@@ -19,10 +19,9 @@ import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import { withTheme } from '@material-ui/core/styles';
 import Avatar from "components/Avatar";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import { PersonOutlined as UserIcon } from "@material-ui/icons";
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
-import AuthService from "services/auth";
 import { logout, setCurrentUser } from "state/actions";
 import { ServiceDataHelper } from "hoc/Helpers";
 import {withGlobals} from "contexts/Globals";
@@ -257,11 +256,11 @@ class Topbar extends Component {
 	}
 
 	getNotifications() {
-		const { auth, definations, services } = this.props;
+		const { auth, definations } = this.props;
 
 		const { notificationsLimit } = this.state;
 
-		services.notifications.getRecordsCount({ read: "0" }).then(res => {
+		ApiService.getContextRequests("/notifications").getRecordsCount({ read: "0" }).then(res => {
 				if (this.mounted) {
 					this.setState(state => ({
 						notificationsCount: res.body.data.count,
@@ -286,8 +285,7 @@ class Topbar extends Component {
 			});
 				
 
-		services.notifications
-			.getRecords({
+		ApiService.getContextRequests("/notifications").getRecords({
 				p: 1,
 				pagination: notificationsLimit,
 				desc: "date_created",
@@ -332,16 +330,14 @@ class Topbar extends Component {
 	handleSignOut() {
 		const { logout } = this.props;
 		logout();
-		AuthService.logout();
+		ApiService.logout();
 	}
 
 	handleShowNotifications = event => {
-		const { auth, definations, services } = this.props;
+		const { auth, definations } = this.props;
 		this.setState({ notificationsEl: event.currentTarget }, () => {
 			if (this.state.notificationsCount > 0) {
-				services.notifications
-					.markAllAsRead()
-					.then(res => {
+				ApiService.get("/notifications/mark/all/read").then(res => {
 						this.setState({ notificationsCount: 0 });
 					})
 					.catch(e => {
@@ -495,7 +491,7 @@ class Topbar extends Component {
 									avatar={auth.user.avatar ? (
 										<Avatar alt="Avatar" className={classes.avatar}>
 											<LazyImage
-												src={AttachmentsService.getAttachmentFileUrl(
+												src={ApiService.getAttachmentFileUrl(
 													auth.user.avatar
 												)}
 											/>
@@ -542,7 +538,7 @@ class Topbar extends Component {
 										<Avatar 
 											alt="Avatar" 
 											className={classes.userAvatar+" cursor-pointer"} 
-											src={AttachmentsService.getAttachmentFileUrl(auth.user.avatar)} 
+											src={ApiService.getAttachmentFileUrl(auth.user.avatar)} 
 											onClick={this.onOpenUserPresenceMenu} 
 										/>
 									) : (

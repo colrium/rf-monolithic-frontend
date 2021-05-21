@@ -21,7 +21,7 @@ import compose from "recompose/compose";
 import { login } from "state/actions/auth";
 
 import { authTokenLocation, authTokenName, baseUrls, environment } from "config";
-import ApiService from "services/backend";
+import ApiService from "services/Api";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import { TextInput, CheckboxInput } from "components/FormInputs";
 import OAuth from "./components/OAuth";

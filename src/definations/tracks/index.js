@@ -16,7 +16,7 @@ import Status from "components/Status";
 import Typography from "components/Typography";
 import React from "react";
 import { Link } from "react-router-dom";
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 
 export default {
@@ -161,7 +161,7 @@ export default {
 										entry.user.avatar ? (
 											<Avatar
 												alt={entry.user.first_name}
-												src={AttachmentsService.getAttachmentFileUrl(
+												src={ApiService.getAttachmentFileUrl(
 													entry.user.avatar
 												)}
 											/>
@@ -311,7 +311,7 @@ export default {
 																entry.user
 																	.first_name
 															}
-															src={AttachmentsService.getAttachmentFileUrl(
+															src={ApiService.getAttachmentFileUrl(
 																entry.user
 																	.avatar
 															)}

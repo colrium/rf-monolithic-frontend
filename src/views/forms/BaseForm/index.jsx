@@ -39,7 +39,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import SnackbarContent from "components/Snackbar/SnackbarContent";
 import PropTypes from "prop-types";
-
+import ApiService from "services/Api";
 //
 //Redux imports
 import { change, reduxForm, reset } from "redux-form";
@@ -294,7 +294,7 @@ class BaseForm extends React.Component {
 	}
 
 	loadFieldValuePosibilities() {
-		const { auth, fields, exclude, definations, services } = this.props;
+		const { auth, fields, exclude, definations, defination } = this.props;
 		let fields_to_load = {};
 		let loading_fields = {};
 		let value_possibilities = {};
@@ -361,14 +361,10 @@ class BaseForm extends React.Component {
 				if (JSON.isJSON(field.reference)) {
 					//Reference field Service Calls
 					if (String.isString(field.reference.name) && JSON.isJSON(field.reference.service_query)) {
-						let service = false;
+						let service = ApiService.getContextRequests(defination.endpoint);
 						let service_key = field.reference.name;
 						let service_query = field.reference.service_query;
 						
-						if (service_key in services) {
-							service_key = field.reference.name;
-							service = services[service_key];
-						}
 
 						let execute_service_call = service_query && this.state.last_field_changed !== name && this.ref_input_types.includes(field.input.type);
 

@@ -14,7 +14,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 // Externals
 import compose from "recompose/compose";
-import AuthService from "services/auth";
+import ApiService from "services/Api";
 import { updateCurrentUser } from "state/actions/auth";
 import {withErrorHandler} from "hoc/ErrorHandler";
 //
@@ -44,7 +44,7 @@ class AccountProfile extends Component {
 		this.handleProfileFormSubmit = this.handleProfileFormSubmit.bind(this);
 	}
 	componentDidMount() {
-		AuthService.profile({})
+		ApiService.profile({})
 			.then(res => {
 				if (!res.err) {
 					let formValues = res.body.data;
@@ -63,7 +63,7 @@ class AccountProfile extends Component {
 
 	handleProfileFormSubmit(data, event) {
 		const { updateCurrentUser } = this.props;
-		return AuthService.update_profile(data)
+		return ApiService.update_profile(data)
 			.then(res => {
 				updateCurrentUser(res.body.data);
 				return true;

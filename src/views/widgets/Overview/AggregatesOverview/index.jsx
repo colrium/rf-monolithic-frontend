@@ -18,7 +18,7 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-
+import ApiService from "services/Api";
 import { withErrorHandler } from "hoc/ErrorHandler";
 
 //
@@ -35,7 +35,7 @@ class Overview extends Component {
 
 	constructor(props) {
 		super(props);
-		const { definations, services } = this.props;
+		const { definations } = this.props;
 		this.handleShowOptionsMenu = this.handleShowOptionsMenu.bind(this);
 		this.handleCloseOptionsMenu = this.handleCloseOptionsMenu.bind(this);
 		this.handleOnResolveAggregates = this.handleOnResolveAggregates.bind(
@@ -53,12 +53,12 @@ class Overview extends Component {
 	}
 
 	async componentDidMount() {
-		const { auth, definations, services } = this.props;
+		const { auth, definations, } = this.props;
 
 		for (let [name, defination] of Object.entries(definations)) {
-			if (!defination.access.restricted(auth.user) && name in services) {
+			if (!defination.access.restricted(auth.user)) {
 				let that = this;
-				services[name].getRecordsCount().then(response => {
+				ApiService.getContextRequests(defination?.endpoint).getRecordsCount().then(response => {
 					that.setState(state => ({
 						counts: {
 							...state.counts,
@@ -92,8 +92,7 @@ class Overview extends Component {
 				{Object.entries(definations).map(
 					([name, defination], index) =>
 						!defination.access.restricted(auth.user) &&
-						defination.access.view.summary(auth.user) &&
-						name in services && contexts.includes(name) && (
+						defination.access.view.summary(auth.user) && contexts.includes(name) && (
 							<GridItem xs={12} md={gridSize} key={name + "-aggregates"}>
 								<Card
 									className="rounded p-0"
@@ -133,7 +132,7 @@ class Overview extends Component {
 												},
 											]}
 											defination={defination}
-											service={services[name]}
+											service={ApiService.getContextRequests(defination.endpoint)}
 											color={
 												defination.color
 													? defination.color
@@ -171,7 +170,7 @@ class Overview extends Component {
 												},
 											]}
 											defination={defination}
-											service={services[name]}
+											service={ApiService.getContextRequests(defination.endpoint)}
 											color={
 												defination.color
 													? defination.color

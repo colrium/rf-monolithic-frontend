@@ -4,10 +4,10 @@ import { app } from "assets/jss/app-theme";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import React from "react";
-import { retailitems as service } from "services";
 import { withErrorHandler } from "hoc/ErrorHandler";
 import RequestError from "views/widgets/Catch/RequestError";
 import CatalogItem from "views/widgets/Ecommerce/Item";
+import ApiService from "services/Api";
 
 class Page extends React.Component {
 	state = {
@@ -38,8 +38,7 @@ class Page extends React.Component {
 
 	async getRecord() {
 		const { history } = this.props;
-		service
-			.getRecordById(this.state.item_id)
+		ApiService.get(("retail/items/"+this.state.item_id))
 			.then(response => {
 				let item = response.body.data;
 				this.setState(state => ({ item: item, loading: false }));

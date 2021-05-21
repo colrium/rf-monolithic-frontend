@@ -8,7 +8,7 @@ import decode from "jwt-decode";
 import { authTokenLocation, authTokenName } from "config";
 import { setAuthenticated, setCurrentUser, setToken, clearAppState } from "state/actions";
 
-const DEFAULT = baseUrls.backend.endsWith("/")? baseUrls.backend : (baseUrls.backend + "/");
+const DEFAULT = baseUrls.api.endsWith("/")? baseUrls.api : (baseUrls.api + "/");
 const HOST = baseUrls.host;
 
 
@@ -380,6 +380,29 @@ const ApiSingleton = (function () {
         return isolatedInstance;
     }
 
+    function getAttachmentFileUrl(attachment) {
+		return endpoint("/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment));
+	}
+
+	async function upload(data, params = {}, apiInstance) {
+		let endpoint_uri = "attachments/upload";
+		let that = this;
+		return await apiInstance
+			.post(endpoint_uri, data, params)
+			.then(function(response) {
+				let resobj = {
+					err: false,
+					body: response.data,
+					code: response.status,
+					headers: response.headers,
+				};
+				return resobj;
+			})
+			.catch(function(error) {
+				that.handleRequestError(error);
+			});
+	}
+
     function createInstance(config = {}) {
 		if (!instance_initialized) {
 			const {auth: {isAuthenticated, user}} = store.getState();
@@ -446,7 +469,9 @@ const ApiSingleton = (function () {
         }, function(error) {
         	return onErrorHandler(error)
         });
-
+        newInstance.getAttachmentFileUrl = getAttachmentFileUrl;
+        
+        newInstance.upload = (data, params = {}) => upload(data, params = {}, newInstance);
         newInstance.isolated = (config = {}) => createIsolatedInstance(config);
         newInstance.endpoint = (uri="/") => endpoint(uri);
         newInstance.isAccessTokenValid = (token) => isAccessTokenValid(token);

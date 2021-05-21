@@ -7,7 +7,7 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import { quoterequests as defination } from "definations";
 import React from "react";
-import { quoterequests as service } from "services";
+import ApiService from "services/Api";
 import withRoot from "hoc/withRoot";
 import BaseForm from "views/forms/BaseForm";
 
@@ -24,7 +24,6 @@ class Step extends React.Component {
 				<GridItem xs={12}>
 					<BaseForm
 						defination={defination}
-						service={service}
 						form="landingpage_proposal_request"
 						show_title={false}
 						fields={[

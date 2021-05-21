@@ -6,15 +6,17 @@ import { osName, osVersion, browserName, fullBrowserVersion } from 'react-device
 
 import { clearApiTasks, clearResponseCache, setDataCache, setSettings, setPreferences, setInitialized, setCurrentUser, apiCallRequest, setDeviceLocation } from "state/actions";
 import { setMessagingCache, sendUnsentMessages, fetchInbox, updateMessage, appendMessage, fetchContacts } from "state/actions/communication";
-
+import ApiService from "services/Api";
 import {default_location, environment} from "config";
-import {socket as defaultSocket} from "services/Sockets";
+import defaultSocket from "services/Sockets";
 import * as definations from "definations";
-import * as services from "services";
 
 import {firestore as fcFirestore, messaging as fcMessaging, getFirestoreDoc, createUpdateFirestoreDoc} from "services/Firebase";
 
-
+let services = {};
+for (let defination of Object.values(definations)) {
+	services[defination.name] = ApiService.getContextRequests(defination.endpoint);
+}
 
 
 

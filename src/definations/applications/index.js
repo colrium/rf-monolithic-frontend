@@ -371,7 +371,21 @@ export default {
 				},
 			},
 
-			
+			submission_date: {
+				type: "date",
+				label: "Submission Date",
+				input: {
+					type: "date",
+					required: true,
+					props: {
+						margin: "dense",
+						classes : {
+							inputRoot: "inverse",
+						},
+					},
+				},
+				
+			},
 
 			/*honorific: {
 				type: "string",
@@ -901,6 +915,7 @@ export default {
 					return sources;
 				},
 			},
+			
 		},
 		identity: {
 			primary: ["title"],

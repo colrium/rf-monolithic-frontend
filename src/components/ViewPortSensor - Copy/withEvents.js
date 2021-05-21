@@ -1,7 +1,7 @@
 'use strict'
 
 import PropTypes from 'prop-types'
-import {appName} from '@app/config'
+import {appName} from 'config'
 
 const listeners = '@@'+appName.variablelize()+'.internal/listeners'
 const lastEvent = '@@'+appName.variablelize()+'.internal/lastEvent'

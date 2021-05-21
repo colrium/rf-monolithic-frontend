@@ -6,7 +6,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
-import paymentsService from "services/payments";
+import ApiService from "services/Api";
 import withRoot from "hoc/withRoot";
 
 class Step extends React.Component {
@@ -31,8 +31,7 @@ class Step extends React.Component {
 			phone: "+254724146857",
 			email: "colrium@gmail.com",
 		};
-		paymentsService
-			.gatewayData(data)
+		ApiService.post("/payments/gateway", data)
 			.then(res => {
 				this.setState(state => ({
 					gatewayData: res.body.data,

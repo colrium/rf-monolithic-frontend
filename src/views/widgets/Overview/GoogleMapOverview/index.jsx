@@ -35,6 +35,7 @@ import {withErrorHandler} from "hoc/ErrorHandler";
 import client_user_female_icon from "assets/img/maps/marker-person-female.png";
 import client_user_male_icon from "assets/img/maps/marker-person-male.png";
 import PropTypes from "prop-types";
+import ApiService from "services/Api";
 import styles from "./styles";
 
 
@@ -128,7 +129,7 @@ class GoogleMapOverview extends React.Component {
 	}
 
 	prepareForView() {
-		const { auth, definations, services, app } = this.props;
+		const { auth, definations, app } = this.props;
 		let current_defination = null;
 		let current_service = null;
 		let possible_definations = {};
@@ -138,7 +139,7 @@ class GoogleMapOverview extends React.Component {
 			if (!defination.access.restricted(auth.user)) {
 				if (defination.views.listing.googlemapview && Function.isFunction( defination.views.listing.googlemapview.resolveData )) {
 					possible_definations[name] = defination;
-					possible_services[name] = services[name];
+					possible_services[name] = ApiService.getContextRequests(defination.endpoint);
 					contexts_props[name] = {
 						query: {page: 1, pagination: app.preferences.data.pagination, populate: 1},
 						element: defination.views.listing.googlemapview.type,
@@ -147,7 +148,7 @@ class GoogleMapOverview extends React.Component {
 					}
 					if (current_defination === null) {
 						current_defination = defination;
-						current_service = services[name];
+						current_service = ApiService.getContextRequests(defination.endpoint);
 					}
 				}
 			}
@@ -222,7 +223,7 @@ class GoogleMapOverview extends React.Component {
 				context_entry: null,
 				context_entries: ["commissions", "tracks"].includes(newValue)? (Array.isArray(cache.data[newValue])? cache.data[newValue] : []) : [],
 				defination: ["commissions", "tracks"].includes(newValue)? definations[newValue] : prevState.defination,
-				service: ["commissions", "tracks"].includes(newValue)? services[newValue] : prevState.service,
+				service: ["commissions", "tracks"].includes(newValue)? ApiService.getContextRequests(definations[newValue]) : prevState.service,
 				rendered_contexts: rendered_contexts,
 				context_entry_type : ["commissions", "tracks"].includes(newValue)? definations[newValue].views.listing.googlemapview.type : "clients_positions",
 			}
@@ -366,7 +367,7 @@ class GoogleMapOverview extends React.Component {
 	}
 
 	render() {
-		const { theme, classes, showAll, device, sockets, definations, services, contexts, actions } = this.props;
+		const { theme, classes, showAll, device, sockets, definations,  contexts, actions } = this.props;
 		const { context, clients_positions, show_client_positions, rendered_contexts, contexts_props } = this.state;
 		let circles = [];
 		let markers = [];
@@ -560,7 +561,7 @@ class GoogleMapOverview extends React.Component {
 
 									{context === "commissions" && <Listings 
 										defination={definations.commissions} 
-										service={services.commissions}
+										service={ApiService.getContextRequests(definations[context].endpoint)}
 										query={{}}
 										showViewOptions={false}
 										showAddBtn={false}
@@ -592,7 +593,7 @@ class GoogleMapOverview extends React.Component {
 															records: loadedData,
 															rendered_contexts: rendered_contexts,
 															defination: definations[context],
-															service: services[context],
+															service: ApiService.getContextRequests(definations[context].endpoint),
 														}
 													});
 														
@@ -617,7 +618,7 @@ class GoogleMapOverview extends React.Component {
 
 									{context === "tracks" && <Listings 
 										defination={definations.tracks} 
-										service={services.tracks}										
+										service={ApiService.getContextRequests(definations[context].endpoint)}										
 										showViewOptions={false}
 										showAddBtn={false}
 										showSorter={true}
@@ -649,7 +650,7 @@ class GoogleMapOverview extends React.Component {
 															records: loadedData,
 															rendered_contexts: rendered_contexts,
 															defination: definations[context],
-															service: services[context],
+															service: ApiService.getContextRequests(definations[context].endpoint),
 														}
 													});
 														

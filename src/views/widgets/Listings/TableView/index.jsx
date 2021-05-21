@@ -19,7 +19,7 @@ import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import ReactJson from 'react-json-view'
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
 import { FilesHelper, ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";
@@ -433,7 +433,7 @@ class TableView extends React.Component {
 																					entry.resolve
 																				) ===
 																				"image"
-																					? AttachmentsService.getAttachmentFileUrl(
+																					? ApiService.getAttachmentFileUrl(
 																							entry.value
 																					  )
 																					: undefined
@@ -450,7 +450,7 @@ class TableView extends React.Component {
 																	onClick={e => {
 																		e.preventDefault();
 																		let win = window.open(
-																			AttachmentsService.getAttachmentFileUrl(
+																			ApiService.getAttachmentFileUrl(
 																				entry.value
 																			),
 																			"_blank"
@@ -481,7 +481,7 @@ class TableView extends React.Component {
 																		value.resolve
 																	) ===
 																	"image"
-																		? AttachmentsService.getAttachmentFileUrl(
+																		? ApiService.getAttachmentFileUrl(
 																				value.value
 																		  )
 																		: undefined
@@ -495,7 +495,7 @@ class TableView extends React.Component {
 														onClick={e => {
 															e.preventDefault();
 															let win = window.open(
-																AttachmentsService.getAttachmentFileUrl(
+																ApiService.getAttachmentFileUrl(
 																	value.value
 																),
 																"_blank"

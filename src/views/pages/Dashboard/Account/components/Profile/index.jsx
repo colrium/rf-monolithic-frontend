@@ -16,7 +16,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import Badge from '@material-ui/core/Badge';
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 import { updateCurrentUser } from "state/actions/auth";
 import {withErrorHandler} from "hoc/ErrorHandler";
 import { useLazyImage } from "hooks";
@@ -26,7 +26,7 @@ const icon_names = ["female", "female_1", "female_2", "female_3", "female_4", "f
 
 const Profile = (props) => {
 		const { auth, updateCurrentUser } = props;
-		const avatarSrc = useLazyImage(AttachmentsService.getAttachmentFileUrl(auth.user.avatar), null, `${process.env.PUBLIC_URL}/img/avatars/${auth.user.icon}.png`);
+		const avatarSrc = useLazyImage(ApiService.getAttachmentFileUrl(auth.user.avatar), null, `${process.env.PUBLIC_URL}/img/avatars/${auth.user.icon}.png`);
 
 		
 

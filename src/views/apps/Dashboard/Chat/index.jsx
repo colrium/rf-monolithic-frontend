@@ -64,7 +64,7 @@ import { withTheme } from '@material-ui/core/styles';
 import compose from "recompose/compose";
 import { apiCallRequest, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation } from "state/actions";
 
-import { attachments as AttachmentsService } from "services";
+import ApiService from "services/Api";
 
 import styles from "./styles";
 
@@ -734,7 +734,7 @@ function Chat(props) {
 					>
 						<ArrowBackIcon />
 					</IconButton>}
-					{active_conversation && (active_conversation.type == "individual"? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && (Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0 && active_conversation.participants[0].avatar)? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.participants[0].avatar)} />) : (active_conversation.started_by && active_conversation.started_by.avatar? (<Avatar className={"mr-6 w-6 h-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.started_by.avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>))) : (active_conversation.group_avatar? (<Avatar className={"mr-6"} src={AttachmentsService.getAttachmentFileUrl(active_conversation.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {active_conversation.type === "group"? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
+					{active_conversation && (active_conversation.type == "individual"? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && (Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0 && active_conversation.participants[0].avatar)? (<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(active_conversation.participants[0].avatar)} />) : (active_conversation.started_by && active_conversation.started_by.avatar? (<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(active_conversation.started_by.avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>))) : (active_conversation.group_avatar? (<Avatar className={"mr-6"} src={ApiService.getAttachmentFileUrl(active_conversation.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {active_conversation.type === "group"? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
 					{active_conversation && <Typography variant="h6" className={"capitalize flex-grow"}>
 						{active_conversation.type == "individual"? (((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner )&& Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0)? (active_conversation.participants[0].first_name +" "+active_conversation.participants[0].last_name) : (active_conversation.started_by? (active_conversation.started_by.first_name +" "+active_conversation.started_by.last_name) : "")) : (active_conversation.type == "group"? active_conversation.group_name : "Realfield")}
 					</Typography>}
@@ -1001,14 +1001,14 @@ function Chat(props) {
 														dot: chatUser.presence === "online"? "bg-green-600" : (chatUser.presence == "away"? "bg-orange-500" : "bg-gray-500")
 													}}
 												>
-													{ chatUser.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(chatUser.avatar)} />}
+													{ chatUser.avatar && <Avatar className={classes.contactAvatar} src={ApiService.getAttachmentFileUrl(chatUser.avatar)} />}
 													{!chatUser.avatar && <Avatar className={classes.contactAvatar}>
 														<PersonIcon />
 													</Avatar>}
 												</Badge>
 											</ListItemAvatar>}
 											{!chatUser && <ListItemAvatar>
-												{ avatar && <Avatar src={AttachmentsService.getAttachmentFileUrl(avatar)} />}
+												{ avatar && <Avatar src={ApiService.getAttachmentFileUrl(avatar)} />}
 												{!avatar && <Avatar className={classes.iconAvatar}>
 													{chat.type === "group"? <PeopleIcon /> : <PersonIcon />}
 												</Avatar>}
@@ -1188,7 +1188,7 @@ function Chat(props) {
 											id={"message-"+activeChatMessage._id}
 											key={"conversation-"+active_conversation._id+"-message-"+cursor}
 										>
-											{/* activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar} src={AttachmentsService.getAttachmentFileUrl(activeChatMessage.sender.avatar)} />}
+											{/* activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar} src={ApiService.getAttachmentFileUrl(activeChatMessage.sender.avatar)} />}
 											{!activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar}>
 												<PersonIcon />
 											</Avatar> */}
@@ -1222,11 +1222,11 @@ function Chat(props) {
 														<div className={"p-2 w-11/12 border border-gray-400 rounded"} key={"attachment-"+cursor}>
 															{activeChatMessage.type === "image" && <LazyImage 
 																className={"w-full h-auto"} 
-																src={AttachmentsService.getAttachmentFileUrl(attachment)} 
+																src={ApiService.getAttachmentFileUrl(attachment)} 
 																alt={attachment.name}
 																onClick={e => {
 																		e.preventDefault();
-																		let win = window.open(AttachmentsService.getAttachmentFileUrl(attachment), "_blank");
+																		let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
 																		win.focus();
 																}}
 															/>}
@@ -1234,7 +1234,7 @@ function Chat(props) {
 																className={"w-full h-auto flex flex-row items-center"} 
 																onClick={e => {
 																		e.preventDefault();
-																		let win = window.open(AttachmentsService.getAttachmentFileUrl(attachment), "_blank");
+																		let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
 																		win.focus();
 																}}
 															>
@@ -1247,7 +1247,7 @@ function Chat(props) {
 																className={"w-full h-auto flex flex-row items-center"} 
 																onClick={e => {
 																		e.preventDefault();
-																		let win = window.open(AttachmentsService.getAttachmentFileUrl(attachment), "_blank");
+																		let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
 																		win.focus();
 																}}
 															>
@@ -1260,7 +1260,7 @@ function Chat(props) {
 																className={"w-full h-auto flex flex-row items-center"} 
 																onClick={e => {
 																		e.preventDefault();
-																		let win = window.open(AttachmentsService.getAttachmentFileUrl(attachment), "_blank");
+																		let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
 																		win.focus();
 																}}
 															>

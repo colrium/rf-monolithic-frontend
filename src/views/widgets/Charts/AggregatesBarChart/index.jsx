@@ -87,7 +87,7 @@ class AggregatesBarChart extends React.Component {
 			onResolveAggregates,
 		} = this.props;
 
-		if (dynamic) {
+		if (dynamic && !JSON.isEmpty(defination)) {
 			this.aggregatables = [];
 			for (let [column, properties] of Object.entries(
 				defination.scope.columns
@@ -302,8 +302,10 @@ class AggregatesBarChart extends React.Component {
 			api,
 			cache,
 		} = this.props;
+
+		console.log("defination", defination)
 		return (
-			<GridContainer className={className + " p-0 m-0"}>
+			!JSON.isEmpty(defination) && <GridContainer className={className + " p-0 m-0"}>
 				<GridItem xs={12} className="p-0 m-0">
 					<GridContainer className="p-0 m-0">
 						<GridContainer className="p-0 m-0">
@@ -350,7 +352,7 @@ class AggregatesBarChart extends React.Component {
 													aria-label="Aggregate Menu"
 													simple
 												>
-													{defination.scope.columns[
+													{defination.scope?.columns[
 														this.state.aggregate
 													]
 														? defination.scope

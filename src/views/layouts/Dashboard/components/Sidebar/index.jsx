@@ -157,7 +157,7 @@ class Sidebar extends Component {
 						{auth.user.avatar ? (
 							<Avatar alt="Avatar" className={classes.avatar}>
 								<LazyImage
-									src={AttachmentsService.getAttachmentFileUrl(
+									src={ApiService.getAttachmentFileUrl(
 										auth.user.avatar
 									)}
 								/>

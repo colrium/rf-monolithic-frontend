@@ -17,7 +17,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import compose from "recompose/compose";
-import * as services from "services";
+import ApiService from "services/Api";
 //
 import { withErrorHandler } from "hoc/ErrorHandler";
 import { appendNavHistory } from "state/actions/ui/nav";
@@ -42,7 +42,7 @@ class Page extends React.Component {
 		} = props;
 		this.context = componentProps.context;
 		this.defination = definations[componentProps.context];
-		this.service = services[componentProps.context];
+		this.service = ApiService.getContextRequests(this.defination?.endpoint);
 		this.id = params.id;
 	}
 

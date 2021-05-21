@@ -18,7 +18,8 @@ import { formats } from "config/data";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { Link } from "react-router-dom";
-import { attachments as AttachmentsService } from "services";
+
+import ApiService from "services/Api";
 
 export default {
 	name: "events",
@@ -79,7 +80,7 @@ export default {
 										{entry.image && (
 											<Avatar
 												alt={entry.title}
-												src={AttachmentsService.getAttachmentFileUrl(
+												src={ApiService.getAttachmentFileUrl(
 													entry.image
 												)}
 											/>
@@ -134,7 +135,7 @@ export default {
 																entry.user
 																	.first_name
 															}
-															src={AttachmentsService.getAttachmentFileUrl(
+															src={ApiService.getAttachmentFileUrl(
 																entry.user
 																	.avatar
 															)}
