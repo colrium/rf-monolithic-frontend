@@ -364,7 +364,6 @@ export const FileInput = ({
 	touched,
 	invalid,
 	error,
-	onChange,
 	validate,
 	validator,
 	onValidityChange,
@@ -378,20 +377,8 @@ export const FileInput = ({
 			label={label}
 			error={touched && invalid}
 			helperText={touched && error ? "Invalid" : null}
-			onChange={async value => {
-				setInputValue(value);
-
-				if (Function.isFunction(onChange)) {
-					if (onChange.length === 0) {
-						onChange();
-					} else if (onChange.length === 1) {
-						onChange(value);
-					} else {
-						onChange(value, null);
-					}
-				}
-			}}
-			value={inputValue}
+			
+			value={value ? value : defaultValue}
 			{...rest}
 		/>
 	);

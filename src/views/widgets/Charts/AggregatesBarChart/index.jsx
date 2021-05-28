@@ -290,7 +290,7 @@ class AggregatesBarChart extends React.Component {
 	};
 
 	render() {
-		const {
+        const {
 			classes,
 			className,
 			aggregate,
@@ -303,8 +303,7 @@ class AggregatesBarChart extends React.Component {
 			cache,
 		} = this.props;
 
-		console.log("defination", defination)
-		return (
+        return (
 			!JSON.isEmpty(defination) && <GridContainer className={className + " p-0 m-0"}>
 				<GridItem xs={12} className="p-0 m-0">
 					<GridContainer className="p-0 m-0">
@@ -474,7 +473,7 @@ class AggregatesBarChart extends React.Component {
 				</GridItem>
 			</GridContainer>
 		);
-	}
+    }
 }
 
 AggregatesBarChart.propTypes = {

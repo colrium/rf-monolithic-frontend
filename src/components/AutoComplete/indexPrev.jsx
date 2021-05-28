@@ -104,7 +104,7 @@ const CustomAutocomplete = (props) => {
 		}
 		if ( Function.isFunction(onChange)) {
 			let changed = onChange(new_value);
-			Promise.all([changed]).catch(err => console.error("CustomAutocomplete onChange error", err));
+			Promise.all([changed]).catch(err => );
 							
 		}
 		

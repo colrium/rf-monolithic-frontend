@@ -14,24 +14,20 @@ const useAsync = (asyncFunction, immediate = false) => {
 	// on every render, but only if asyncFunction changes.
 	 
 	const execute = useCallback((...args) => {
-			setStatus("pending");
-			setValue(null);
-			setError(null);
-			let context = this;
+        setStatus("pending");
+        setValue(null);
+        setError(null);
+        let context = this;
 
-			console.log("args", args);
-			console.log("asyncFunction", asyncFunction);
-			let result = asyncFunction.apply(null, args);
-			console.log("result", result);
-			Promise.all([result]).then((response) => {
-				setValue(response[0]);
-				setStatus("success");
-			}).catch((error) => {
-				setError(error);
-				setStatus("error");
-			});
-		
-	}, [asyncFunction]);
+        let result = asyncFunction.apply(null, args);
+        Promise.all([result]).then((response) => {
+            setValue(response[0]);
+            setStatus("success");
+        }).catch((error) => {
+            setError(error);
+            setStatus("error");
+        });
+    }, [asyncFunction]);
 	// Call execute if we want to fire it right away.
 	// Otherwise execute can be called later, such as
 	// in an onClick handler.

@@ -110,7 +110,7 @@ function Chat(props) {
 	
 	
 
-	const { definations, services, sockets } = useGlobals();
+	const { definations, sockets } = useGlobals();
 	const { unread_count, unread_ids, conversations, fetching_inbox, contacts: cacheContacts, drafts, active_conversation, active_conversation_messages, contactactable_contacts_ids } = messaging;
 
 	const [query, setQuery] = useState({desc: "created_on"});
@@ -806,7 +806,7 @@ function Chat(props) {
 								showPagination
 								showSorter
 								defination={definations.users}
-								service={services.users}
+								service={ApiService.getContextRequests(definations.users.endpoint)}
 								query={contactsQuery}
 								view={"listview"}
 								onClickEntry={(contact) => handleNewChat(contact)}

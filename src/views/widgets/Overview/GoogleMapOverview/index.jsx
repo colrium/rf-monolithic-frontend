@@ -253,7 +253,8 @@ class GoogleMapOverview extends React.Component {
 					params: JSON.isJSON(this.state.contexts_props[context])? this.state.contexts_props[context].query : {page: 1, pagination: app.preferences.data.pagination, populate: 1},
 					data: {},
 					cache: true,
-				}).then(data => {
+				}).then(res => {
+					const {data} = res.body;
 					if (definations[context] && Function.isFunction( definations[context].views.listing.googlemapview.resolveData ) && Array.isArray(data)) {
 						definations[context].views.listing.googlemapview.resolveData(data, true).then(resolve => {
 							if (this.isMounted()) {

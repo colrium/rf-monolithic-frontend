@@ -89,7 +89,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							dispatch(removeApiTask(apiTask));
 						}
 						
-						return res.body;
+						return res;
 					}).catch(e => {
 						if (!silent) {
 							dispatch(removeApiTask(apiTask));
@@ -116,7 +116,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							throw res.err;
 						}
 						else {
-							return res.body;
+							return res;
 						}
 					}).catch(e => {
 						if (!silent) {
@@ -145,7 +145,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							throw res.err;
 						}
 						else {
-							return res.body;
+							return res;
 						}
 					}).catch(e => {
 						if (!silent) {
@@ -176,7 +176,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							throw res.err;
 						}
 						else {
-							return res.body;
+							return res;
 						}
 					}).catch(e => {
 						if (!silent) {
@@ -202,7 +202,7 @@ const api = ({ dispatch, getState }) => next => action => {
 								newCache = newCache.map((entry, index) => {
 									if (entry._id === id) {
 										exists = true;
-										return res.body;
+										return res;
 									}
 									return entry;
 								});
@@ -225,7 +225,7 @@ const api = ({ dispatch, getState }) => next => action => {
 							throw res.err;
 						}
 						else {
-							return res.body;
+							return res;
 						}
 						
 					}).catch(e => {
@@ -241,7 +241,7 @@ const api = ({ dispatch, getState }) => next => action => {
 				if (cache) {
 					dispatch(removeResponseCache(key));
 				}
-				return await ApiServiceInstance.delete(id).then(res => {
+				return await ApiServiceInstance.deleteRecordById(id).then(res => {
                     if (cache) {
                         let {data, ...rest} = res.body;
                         dispatch(setResponseCache(key, rest));
@@ -250,7 +250,7 @@ const api = ({ dispatch, getState }) => next => action => {
                     if (!silent) {
                         dispatch(removeApiTask(apiTask));
                     }
-                    return res.body;
+                    return res;
                 }).catch(e => {
 						if (!silent) {
 							dispatch(removeApiTask(apiTask));

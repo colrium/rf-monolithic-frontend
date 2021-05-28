@@ -121,7 +121,7 @@ class TimelineView extends React.Component {
 		});
 
 		this.state.service
-			.delete(item_id)
+			.deleteRecordById(item_id)
 			.then(res => {
 				closeDialog();
 				this.loadData();

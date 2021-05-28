@@ -67,8 +67,8 @@ const SectionComponent = (props) => {
 						data: {},
 						cache: true,
 					}
-				).then(data => {
-					if (data) {}
+				).then(res => {
+					const {data} = res.body;
 					if (Array.isArray(data)) {
 						setRecords(data);
 					}

@@ -155,7 +155,7 @@ class TableView extends React.Component {
 			item_id = item_id._id;
 		}
 		this.state.service
-			.delete(item_id)
+			.deleteRecordById(item_id)
 			.then(res => {
 				this.setState(prevState => {
 					let new_records = prevState.records;
@@ -655,7 +655,8 @@ class TableView extends React.Component {
 						data: {},
 						cache: cache_data,
 					}
-				).then(data => {
+				).then(res => {
+					const {data} = res.body;
 					//console.log("loadData data", data);
 					if (Function.isFunction(onLoadData)) {
 						onLoadData(data, this.state.query);

@@ -56,8 +56,7 @@ const useGooglePlaces = () => {
 				let evaluated_results = [];
 				if (status == 'OK') {
                     if (Array.isArray(results) && results.length > 0){
-                    	console.log("results", results);
-                    	results.map(result => {
+                        results.map(result => {
 							if (type==="address_components") {
 								result.value = result.address_components;
 							}
@@ -97,8 +96,7 @@ const useGooglePlaces = () => {
 							}
 								
                     	});
-							
-					}
+                    }
 					evaluated_results = evaluated_results.unique();
 					if (evaluation === "modeValueOnly") {
 						evaluated_results = evaluated_results.mode();

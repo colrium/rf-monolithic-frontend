@@ -49,9 +49,8 @@ const useGeolocation = (geoLocationOptions = defaultGeoLocationOptions) => {
 				});
 				setGeoObject(value);
 			} catch (error) {
-				console.error(error)
-				setGeoObject(null);
-			}
+                setGeoObject(null);
+            }
 		}
 		if (when) {
 			getGeoCode();

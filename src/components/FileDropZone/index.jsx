@@ -41,21 +41,25 @@ class FileDropZone extends Component {
 			fileObjects: [],
 		};
 		this.handleRemove = this.handleRemove.bind(this);
+		this.handleFileUploadSuccess = this.handleFileUploadSuccess.bind(this);
+		this.handleFileUploadError = this.handleFileUploadError.bind(this);
+		this.loadInputState = this.loadInputState.bind(this);
+		this.onDrop = this.onDrop.bind(this);
+		
+		
 	}
 
-	getSnapshotBeforeUpdate(prevProps) {
+	getSnapshotBeforeUpdate(prevProps, prevState) {
 		return {
 			reloadRequired: !Object.areEqual(prevProps, this.props),
-			reloadValueRequired: !Object.areEqual(
-				prevProps.value,
-				this.props.value
-			),
+			reloadValueRequired: !Object.areEqual(prevProps.value, this.state.value),
 		};
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
+		//console.log("snapshot.reloadValueRequired", snapshot.reloadValueRequired)
 		if (snapshot.reloadValueRequired) {
-			this.loadInputState();
+			//this.loadInputState();
 		}
 	}
 
@@ -169,105 +173,29 @@ class FileDropZone extends Component {
 
 	triggerOnChange(value) {
 		const { onChange } = this.props;
-		if (onChange) {
-			onChange(value);
+		if (Function.isFunction(onChange)) {
+			console.log("FileDropZone onChange", onChange.toString());
+			Promise.all([onChange(value)]).then(result=> {
+				//console.log("FileDropZone onChange result", result);
+			}).catch(error=> {
+				console.log("FileDropZone onChange error", error);
+			});
 		}
 	}
 
-	onDrop(files) {
-		const _this = this;
-		if (
-			this.state.fileObjects.length + files.length >
-			this.props.filesLimit
-		) {
-			this.setState({
-				openSnackBar: true,
-				snackbarMessage: `Maximum allowed number of files exceeded. Only ${this.props.filesLimit} allowed`,
-				snackbarColor: "error",
-			});
-		} else {
-			var count = 0;
-			var message = "";
-			files.forEach(file => {
-				const reader = new FileReader();
-				reader.onload = event => {
-					let prevFileObjects = _this.state.fileObjects;
-					prevFileObjects = Array.isArray(prevFileObjects)
-						? prevFileObjects
-						: [];
-					let should_act = true;
-					for (let i = 0; i < prevFileObjects.length; i++) {
-						if (Object.is(file, prevFileObjects[i].file)) {
-							should_act = false;
-
-							break;
-						}
-					}
-
-					if (should_act) {
-						let fileObject = {
-							file: file,
-							data: event.target.result,
-							progress: _this.props.upload ? true : false,
-						};
-						_this.setState(
-							{
-								fileObjects: prevFileObjects.concat([
-									fileObject,
-								]),
-							},
-							() => {
-								if (this.props.onDrop) {
-									this.props.onDrop(file);
-								}
-
-								if (
-									this.props.upload &&
-									typeof fileObject.attachment !== "object"
-								) {
-									const upload_data = new FormData();
-
-									if (_this.props.uploadData) {
-										if (
-											UtilitiesHelper.isOfType(
-												_this.props.uploadData,
-												"object"
-											)
-										) {
-											for (let [
-												upload_data_key,
-												upload_data_value,
-											] of Object.entries(
-												_this.props.uploadData
-											)) {
-												upload_data.append(
-													upload_data_key,
-													upload_data_value
-												);
-											}
-										}
-									}
-
-									upload_data.append("attachment_file", file);
-
-									ApiService.upload(upload_data, {})
-										.then(upload_res => {
-											let fileObjects =
-												_this.state.fileObjects;
-											let fileObjectIndex = fileObjects.indexOf(
-												fileObject
-											);
+	handleFileUploadSuccess(fileObject, files, file, upload_res){
+		var count = 0;
+		var message = "";
+		console.log("upload_res", upload_res);
+		let fileObjects = this.state.fileObjects;
+											let fileObjectIndex = fileObjects.indexOf(fileObject);
 											if (fileObjectIndex !== -1) {
-												fileObjects[
-													fileObjectIndex
-												].progress = false;
-												fileObjects[
-													fileObjectIndex
-												].attachment =
+												fileObjects[fileObjectIndex].progress = false;
+												fileObjects[fileObjectIndex].attachment =
 													upload_res.body.data;
 												fileObjects = fileObjects;
 
-												_this.setState(state => ({
+												this.setState(state => ({
 													fileObjects: fileObjects,
 												}));
 
@@ -297,26 +225,18 @@ class FileDropZone extends Component {
 															}
 														}
 													}
-													_this.setState({
+													this.setState({
 														value: value_arr,
 													});
-													if (this.props.onChange) {
-														this.props.onChange(
-															value_arr
-														);
-													}
+													
+													this.triggerOnChange(value_arr);
 												} else {
-													_this.setState({
-														value:
-															upload_res.body.data
-																._id,
+													this.setState({
+														value: upload_res.body.data._id,
 													});
-													if (this.props.onChange) {
-														this.props.onChange(
-															upload_res.body.data
-																._id
-														);
-													}
+													
+													this.triggerOnChange(upload_res.body.data._id);
+													
 												}
 
 												message +=
@@ -335,11 +255,16 @@ class FileDropZone extends Component {
 													});
 												}
 											}
-										})
-										.catch(e => {
-											let fileObjectIndex = _this.state.fileObjects.indexOf(
+	}
+
+	handleFileUploadError = (fileObject, file) => (e) => {
+		var count = 0;
+			var message = "";
+		let fileObjectIndex = this.state.fileObjects.indexOf(
 												fileObject
 											);
+
+											console.log("upload e", e);
 
 											this.setState(prevState => ({
 												fileObjects: prevState.fileObjects.remove(
@@ -349,11 +274,77 @@ class FileDropZone extends Component {
 												snackbarMessage: `File ${file.name} upload failed. `,
 												snackbarColor: "error",
 											}));
-										});
-								} else {
+	}
+
+	onDrop(files) {
+		//const _this = this;
+		if (this.state.fileObjects.length + files.length > this.props.filesLimit) {
+			this.setState({
+				openSnackBar: true,
+				snackbarMessage: `Maximum allowed number of files exceeded. Only ${this.props.filesLimit} allowed`,
+				snackbarColor: "error",
+			});
+		} else {
+			var count = 0;
+			var message = "";
+			files.forEach(file => {
+				const reader = new FileReader();
+				reader.onload = event => {
+					let prevFileObjects = this.state.fileObjects;
+					prevFileObjects = Array.isArray(prevFileObjects)
+						? prevFileObjects
+						: [];
+					let should_act = true;
+					for (let i = 0; i < prevFileObjects.length; i++) {
+						if (Object.is(file, prevFileObjects[i].file)) {
+							should_act = false;
+
+							break;
+						}
+					}
+
+					if (should_act) {
+						let fileObject = {
+							file: file,
+							data: event.target.result,
+							progress: this.props.upload ? true : false,
+						};
+						this.setState({fileObjects: prevFileObjects.concat([fileObject])});
+							if (this.props.onDrop) {
+								this.props.onDrop(file);
+							}
+
+							if ( this.props.upload && typeof fileObject.attachment !== "object" ) {
+									const upload_data = new FormData();
+
+									if (this.props.uploadData) {
+										if (
+											UtilitiesHelper.isOfType(
+												this.props.uploadData,
+												"object"
+											)
+										) {
+											for (let [
+												upload_data_key,
+												upload_data_value,
+											] of Object.entries(
+												this.props.uploadData
+											)) {
+												upload_data.append(
+													upload_data_key,
+													upload_data_value
+												);
+											}
+										}
+									}
+
+									upload_data.append("attachment_file", file);
+									ApiService.post("/attachments/upload", upload_data, {}).then(upload_res => this.handleFileUploadSuccess(fileObject, files, file, upload_res)).catch(this.handleFileUploadError(fileObject, file));
+							} 
+							else {
 									if (this.props.onChange) {
 										this.props.onChange(
-											_this.state.fileObjects.map(
+											this.state.fileObjects.map(
 												fileObject => fileObject.file
 											)
 										);
@@ -368,9 +359,7 @@ class FileDropZone extends Component {
 											snackbarColor: "inverse",
 										});
 									}
-								}
 							}
-						);
 					}
 				};
 				reader.readAsDataURL(file);

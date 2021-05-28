@@ -70,7 +70,8 @@ function ComposeEmailDialog(props) {
 						cache: false,
 						silent: true,
 					}
-		).then(data => {
+		).then(res => {
+			const {data} = res.body;
 			clearEmailingCache();
 			setEmailingCache("popup_open", false);
 			setSubmitting(false);

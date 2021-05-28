@@ -293,17 +293,16 @@ const QueryBuilder = memo((props) => {
 		event.preventDefault()
 		let new_internal_value = internalValue;
 		setInternalValue((currentInternalValue) => {
-			let newSort = (String.isString(currentInternalValue.sort)? currentInternalValue.sort : "");
-			let appendSort = (!newSort.includes(("-"+field_name)) && type==="desc") || (!newSort.includes(("-"+field_name)) && !newSort.includes(field_name) && type === "asc");
-			newSort = newSort.replaceAll(" ", "").replaceAll(("-"+field_name+","), "").replaceAll((",-"+field_name), "").replaceAll(("-"+field_name), "").replaceAll((field_name+","), "").replaceAll((","+field_name), "").replaceAll(field_name, "");
-			newSort = newSort+ (appendSort? ((newSort.length > 0? "," : "") +(type==="desc"? "-" : "")+field_name) : "");
-			console.log("newSort", newSort);
-			new_internal_value =  {
+            let newSort = (String.isString(currentInternalValue.sort)? currentInternalValue.sort : "");
+            let appendSort = (!newSort.includes(("-"+field_name)) && type==="desc") || (!newSort.includes(("-"+field_name)) && !newSort.includes(field_name) && type === "asc");
+            newSort = newSort.replaceAll(" ", "").replaceAll(("-"+field_name+","), "").replaceAll((",-"+field_name), "").replaceAll(("-"+field_name), "").replaceAll((field_name+","), "").replaceAll((","+field_name), "").replaceAll(field_name, "");
+            newSort = newSort+ (appendSort? ((newSort.length > 0? "," : "") +(type==="desc"? "-" : "")+field_name) : "");
+            new_internal_value =  {
 				...currentInternalValue,
 				sort: newSort,
 			};
-			return new_internal_value;
-		});
+            return new_internal_value;
+        });
 
 		//console.log("new_internal_value", new_internal_value);
 		throttledOnChange(new_internal_value);

@@ -654,8 +654,10 @@ class ListingView extends React.Component {
 				if (JSON.isJSON(field.reference)) {
 					//Reference field Service Calls
 					if (String.isString(field.reference.name) && JSON.isJSON(field.reference.service_query)) {
-						let service = ApiService.getContextRequests(defination.endpoint);
+						
+						
 						let service_key = field.reference.name;
+						let service = ApiService.getContextRequests(definations[service_key]?.endpoint);
 						let service_query = field.reference.service_query;
 						
 
@@ -807,7 +809,7 @@ class ListingView extends React.Component {
 			valueSources: ['value'],
         }
         if (this.mounted) {
-            this.setState(prevState => ({queryBuilderProps: {format: "mongodb", value: { populate: (prevState.query.p || prevState.query.populate), sort: (this.state.query.s || this.state.query.sort|| "-created_on"), config: {fields: query_builder_fields}}}}));
+            this.setState(prevState => ({queryBuilderProps: {format: "mongodb", value: { populate: (prevState.query.p || prevState.query.populate), sort: (this.state.query.s || this.state.query.sort|| undefined), config: {fields: query_builder_fields}}}}));
         }
         else {
             this.state.queryBuilderProps = {format: "mongodb", value:{ populate: (this.state.query.p || this.state.query.populate), sort: (this.state.query.s || this.state.query.sort || "-created_on"), config: {fields: query_builder_fields}}};

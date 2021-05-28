@@ -116,8 +116,7 @@ const ApiSingleton = (function () {
 	}
 
 	function setAccessToken(access_token){
-		console.log("setAccessToken access_token", access_token)
-		if (authTokenLocation === "cookie") {
+        if (authTokenLocation === "cookie") {
 			const cookies = new Cookies();
 			if (JSON.isJSON(access_token) && !JSON.isEmpty(access_token)) {
 				
@@ -160,8 +159,7 @@ const ApiSingleton = (function () {
 				store.dispatch(setAuthenticated(false));
 			}
 		}
-			
-	}
+    }
 
 	function accessTokenSetAndValid() {
 		let access_token = getAccessToken();
@@ -169,15 +167,14 @@ const ApiSingleton = (function () {
 	}
 
 	function onErrorHandler(error) {
-		console.warn("error", error);
-		let errobj = {
+        let errobj = {
 			...error,
 			msg: "Request Failed",
 			message: "Request Failed",
 			body: null,
 			code: 400,
 		};
-		if (error.response) {
+        if (error.response) {
 			errobj = {
 				headers: error.response.headers,
 				...error.response,
@@ -204,9 +201,9 @@ const ApiSingleton = (function () {
 			};
 		}
 
-		//console.warn("onErrorHandler errobj", errobj);
-		return Promise.reject(errobj);
-	}
+        //console.warn("onErrorHandler errobj", errobj);
+        return Promise.reject(errobj);
+    }
 
 	function onSuccessHandler(response) {
 		const {data:{message, msg, ...body}, status, headers, ...rest} = response;
@@ -294,11 +291,10 @@ const ApiSingleton = (function () {
 
     function logout() {
     	return new Promise((resolve, reject) => {
-    		let current_access_token = getAccessToken();
-    		console.log("logout current_access_token", current_access_token);
-    		setAccessToken(null);
-	    	store.dispatch(clearAppState());
-    		if (instance && current_access_token) {
+            let current_access_token = getAccessToken();
+            setAccessToken(null);
+            store.dispatch(clearAppState());
+            if (instance && current_access_token) {
     			instance.get("logout", { params: {access_token: current_access_token} }).then(res => {
     				resolve(res)
     			}).catch(err => {
@@ -309,18 +305,17 @@ const ApiSingleton = (function () {
     		else{
     			resolve({});
     		}
-    	})
+        });
 	    	
     }
 
     function logoutAll() {
     	return new Promise((resolve, reject) => {
-    		let current_access_token = getAccessToken();
-    		console.log("logout current_access_token", current_access_token);
-    		setAccessToken(null);
-	    	store.dispatch(clearAppState());
+            let current_access_token = getAccessToken();
+            setAccessToken(null);
+            store.dispatch(clearAppState());
 
-    		if (instance && current_access_token) {
+            if (instance && current_access_token) {
     			instance.get("logout/all", { params: {access_token: current_access_token} }).then(res => {
     				resolve(res);
     			}).catch(err => {
@@ -328,20 +323,19 @@ const ApiSingleton = (function () {
     				resolve({...err, error: true});
     			})
     		}
-    		
-	    	resolve({});
-    	})
+
+            resolve({});
+        });
 	    	
     }
 
     function logoutOthers() {
     	return new Promise((resolve, reject) => {
-    		let current_access_token = getAccessToken();
-    		console.log("logout current_access_token", current_access_token);
-    		setAccessToken(null);
-	    	store.dispatch(clearAppState());
+            let current_access_token = getAccessToken();
+            setAccessToken(null);
+            store.dispatch(clearAppState());
 
-    		if (instance && current_access_token) {
+            if (instance && current_access_token) {
     			instance.get("logout/others", { params: {access_token: current_access_token} }).then(res => {
     				resolve(res);
     			}).catch(err => {
@@ -349,9 +343,9 @@ const ApiSingleton = (function () {
     				resolve({...err, error: true});
     			})
     		}
-    		
-	    	resolve({});
-    	})
+
+            resolve({});
+        });
 	    	
     }
 
@@ -360,13 +354,13 @@ const ApiSingleton = (function () {
     	let context_uri = String.isString(service_uri)? (service_uri.trim().endsWith("/")? service_uri.trim().substring(0, service_uri.trim().length) : service_uri.trim()) : undefined;
     	if (scope_instance && !String.isEmpty(context_uri)) {
     		return {
-    			getRecords: (params)=> scope_instance.get(context_uri, { params: params }),
-    			getRecordsCount: (params)=> scope_instance.get((context_uri+"/count"), { params: params }),
-    			getAggregatesCount: (params)=> scope_instance.get((context_uri+"/count/aggregates"), { params: params }),
-    			getRecordById: (id, { params: params })=> scope_instance.get((context_uri+"/"+id), { params: params }),
-    			create: (data, { params: params })=> scope_instance.post((context_uri), data, { params: params }),
-    			update: (id, data, { params: params } = {})=> scope_instance.post((context_uri+ "/" + id), data, { params: params }),
-    			//delete: (id, { params: params })=> scope_instance.delete((context_uri+ "/" + id), { params: params }),
+    			getRecords: (params={})=> scope_instance.get(context_uri, { params: params }),
+    			getRecordsCount: (params={})=> scope_instance.get((context_uri+"/count"), { params: params }),
+    			getAggregatesCount: (params={})=> scope_instance.get((context_uri+"/count/aggregates"), { params: params }),
+    			getRecordById: (id, params={})=> scope_instance.get((context_uri+"/"+id), { params: params }),
+    			create: (data, params={})=> scope_instance.post((context_uri), data, { params: params }),
+    			update: (id, data, params={})=> scope_instance.post((context_uri+ "/" + id), data, { params: params }),
+    			deleteRecordById: (id, params={})=> scope_instance.delete((context_uri+ "/" + id), { params: params }),
     		}
     	}
     	return {};
@@ -384,24 +378,7 @@ const ApiSingleton = (function () {
 		return endpoint("/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment));
 	}
 
-	async function upload(data, params = {}, apiInstance) {
-		let endpoint_uri = "attachments/upload";
-		let that = this;
-		return await apiInstance
-			.post(endpoint_uri, data, params)
-			.then(function(response) {
-				let resobj = {
-					err: false,
-					body: response.data,
-					code: response.status,
-					headers: response.headers,
-				};
-				return resobj;
-			})
-			.catch(function(error) {
-				that.handleRequestError(error);
-			});
-	}
+	
 
     function createInstance(config = {}) {
 		if (!instance_initialized) {
@@ -471,7 +448,7 @@ const ApiSingleton = (function () {
         });
         newInstance.getAttachmentFileUrl = getAttachmentFileUrl;
         
-        newInstance.upload = (data, params = {}) => upload(data, params = {}, newInstance);
+        newInstance.upload = (data, params = {}) => newInstance.post("/attachments/upload", data, params);
         newInstance.isolated = (config = {}) => createIsolatedInstance(config);
         newInstance.endpoint = (uri="/") => endpoint(uri);
         newInstance.isAccessTokenValid = (token) => isAccessTokenValid(token);
@@ -513,9 +490,7 @@ const ApiSingleton = (function () {
         getInstance: function (options={}) {
             if (!instance || !instance_initialized) {
                 instance = createInstance(options);
-                instance.login({email: "colrium@gmail.com", password: "WI5HINd8"}).then(data => {
-                	console.log(" instance.login data", data)
-                });
+                instance.login({email: "colrium@gmail.com", password: "WI5HINd8"}).then(data => {});
 
 				instance_initialized = true;
             }

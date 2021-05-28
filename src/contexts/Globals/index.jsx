@@ -14,9 +14,9 @@ import * as definations from "definations";
 import {firestore as fcFirestore, messaging as fcMessaging, getFirestoreDoc, createUpdateFirestoreDoc} from "services/Firebase";
 
 let services = {};
-for (let defination of Object.values(definations)) {
+/*for (let defination of Object.values(definations)) {
 	services[defination.name] = ApiService.getContextRequests(defination.endpoint);
-}
+}*/
 
 
 
@@ -538,7 +538,7 @@ const GlobalsProvider = props => {
 
 
 	useEffect(()=>{
-		if (isAuthenticated && Object.size(auth_user) > 0 && environment !== "development") {
+		if (isAuthenticated && Object.size(auth_user) > 0 /*&& environment !== "development"*/) {
 
 			fcMessaging.requestPermission().then(async function() {
 				const token = await fcMessaging.getToken();

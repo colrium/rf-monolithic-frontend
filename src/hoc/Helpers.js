@@ -1149,10 +1149,8 @@ class CountriesData {
 				        }
 				        resolve(features);
 					}).catch(err => {
-				    	console.trace(err);
-				    	console.log("administrative_features_options err", err);
-				    	reject(err);
-				    });
+                        reject(err);
+                    });
 					
 				}
 				else{
@@ -1165,7 +1163,7 @@ class CountriesData {
 			}	
 
 			
-		})
+		});
 			
 	}
 }

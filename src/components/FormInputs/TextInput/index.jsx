@@ -186,7 +186,9 @@ const Input = React.forwardRef((props, ref) => {
 		event.persist();
 		if (Function.isFunction(onFocus)) {
 			let focused = onFocus(event);
-			Promise.all([focused]).catch(e => console.error("Caught onFocus error", e));					
+			Promise.all([focused]).catch(e => {
+				console.error(e)
+			});					
 		}
 	}
 
@@ -200,7 +202,9 @@ const Input = React.forwardRef((props, ref) => {
         
         if (Function.isFunction(onBlur)) {
 			let blurred = onBlur(event);
-			Promise.all([blurred]).catch(e => console.error("Caught onBlur error", e));					
+			Promise.all([blurred]).catch(e => {
+				console.error(e);
+			});					
 		}
 	}
 

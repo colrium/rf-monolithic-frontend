@@ -4,7 +4,7 @@
   "private": true,
   "description": "Realfield Web",
   "main": "index.js",
-  "homepage": "https://preview.realfield.io/",
+  "homepage": "https://realfield.io/",
   "author": "Mutugi Riungu",
   "scripts": {
     "start": "npm run generate-build-version && npm-run-all --parallel watch:css start:react",

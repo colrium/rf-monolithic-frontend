@@ -40,6 +40,7 @@ import GridItem from "components/Grid/GridItem";
 import SnackbarContent from "components/Snackbar/SnackbarContent";
 import PropTypes from "prop-types";
 import ApiService from "services/Api";
+import * as definations from "definations";
 //
 //Redux imports
 import { change, reduxForm, reset } from "redux-form";
@@ -97,7 +98,12 @@ class BaseForm extends React.Component {
 		];
 
 		this.handleChange = this.handleChange.bind(this);
+		this.setFieldValue = this.setFieldValue.bind(this);
+		this.unSetFieldValue = this.unSetFieldValue.bind(this);
 		this.onCloseSnackbar = this.onCloseSnackbar.bind(this);
+		this.applyChangeEffects = this.applyChangeEffects.bind(this);
+		this.callDefinationMethod = this.callDefinationMethod.bind(this);
+		
 		
 		this.handleResetForm = this.handleResetForm.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -129,10 +135,9 @@ class BaseForm extends React.Component {
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		this.mounted = true;
-		//console.log("this.state.onChangeEffectsFields", this.state.onChangeEffectsFields);
 
 		if (snapshot.preparationRequired) {
-			//this.prepareForForm();
+			this.prepareForForm();
 			this.loadFieldValuePosibilities();
 		}
 		if (snapshot.applyChangeEffectsRequired) {
@@ -294,7 +299,7 @@ class BaseForm extends React.Component {
 	}
 
 	loadFieldValuePosibilities() {
-		const { auth, fields, exclude, definations, defination } = this.props;
+		const { auth, fields, exclude, defination } = this.props;
 		let fields_to_load = {};
 		let loading_fields = {};
 		let value_possibilities = {};
@@ -361,12 +366,13 @@ class BaseForm extends React.Component {
 				if (JSON.isJSON(field.reference)) {
 					//Reference field Service Calls
 					if (String.isString(field.reference.name) && JSON.isJSON(field.reference.service_query)) {
-						let service = ApiService.getContextRequests(defination.endpoint);
 						let service_key = field.reference.name;
 						let service_query = field.reference.service_query;
-						
+						let service = definations[service_key]? ApiService.getContextRequests(definations[service_key]?.endpoint) : false;
+						console.log("service_key", service_key);
+						console.log("service", service);
 
-						let execute_service_call = service_query && this.state.last_field_changed !== name && this.ref_input_types.includes(field.input.type);
+						let execute_service_call = service && service_query && this.state.last_field_changed !== name && this.ref_input_types.includes(field.input.type);
 
 						if (execute_service_call) {							
 							this.setState(prevState => ({ loading: { ...prevState.loading, [name]: true } }));
@@ -1227,7 +1233,7 @@ class BaseForm extends React.Component {
 		event.preventDefault();
 		const submit_event = event;
 		const {
-			service,
+			defination,
 			record,
 			fields,
 			exclude,
@@ -1240,10 +1246,10 @@ class BaseForm extends React.Component {
 			this.state.field_values && typeof this.state.field_values === "object"
 				? this.state.field_values
 				: {};
-		if (onSubmit || service) {
+		if (onSubmit) {
 			this.setState(state => ({ submitting: true }));
 		}
-
+		let service = defination? ApiService.getContextRequests(defination?.endpoint) : false;
 		if (onSubmit) {
 			let submit_callback = onSubmit(form_data, submit_event);
 			Promise.all([submit_callback]).then(res => {

@@ -288,30 +288,20 @@ const GooglePlacesAutocomplete = (props) => {
 
    
 
-	const throttledOnChange = useRef(Function.throttle(async (event) => {   
-        console.log("throttledOnChange")
-    }, 250)).current;
+	const throttledOnChange = useRef(Function.throttle(async (event) => {}, 250)).current;
 
-    const throttledOnTextChange = useRef(Function.throttle((keyword) => {
-    	//placesPrediction.execute(keyword);
-        console.log("throttledOnTextChange", keyword);
-    }, 1500)).current;
+    const throttledOnTextChange = useRef(Function.throttle((keyword) => {}, 1500)).current;
 
-    const throttledOnClickMyLocationBtn = useRef(Function.throttle(async (event) => {  
-    	//placesPrediction.execute("meru"); 
-        console.log("throttledOnClickMyLocationBtn")
-    }, 250)).current;
+    const throttledOnClickMyLocationBtn = useRef(Function.throttle(async (event) => {}, 250)).current;
 
     
 
 	const handleOnChange = (value) => {
-		if (String.isString(value)) {
+        if (String.isString(value)) {
 			setTextFieldValue(value);
 		}
-		setAutocompleteValue(value);
-		console.log("handleOnChange value", value);
-		
-	}
+        setAutocompleteValue(value);
+    }
 
 	
 
@@ -330,14 +320,12 @@ const GooglePlacesAutocomplete = (props) => {
 	//console.log("autocompleteOptions", autocompleteOptions);
 
 	return (
-
-		<AutoComplete
+        <AutoComplete
 			className={"flex-1"+(className? (" "+className) : "")}
 			getOptionLabel={(option) => (typeof option === 'string' ? option : (placeholderType in option? JSON.stringify(option[placeholderType])  :option.label ))}
 			filterOptions={(options, state) => {
-				console.log("options", options);
-				return options;
-			}}
+                return options;
+            }}
 			options={autocompleteOptions}
 			autoComplete={googlePlaces.regions.includes(type)}
 			value={autocompleteValue}
@@ -404,8 +392,7 @@ const GooglePlacesAutocomplete = (props) => {
 
 			
 			renderOption={(option) => {
-				console.log("option", option);
-				if (option.formatted_address) {
+                if (option.formatted_address) {
 					//if (Array.isArray(option.types) && option.types.includes(type)) {
 						return (
 							<Grid container alignItems="center">
@@ -464,15 +451,15 @@ const GooglePlacesAutocomplete = (props) => {
 							</Grid>
 						);
 				}
-				return;	
-			}}
+                return;
+            }}
 			multiple={isMulti}
 			disableClearable
 			fullWidth
 			autoSelect
 			{...rest}
 		/>
-	);
+    );
 }
 
 GooglePlacesAutocomplete.defaultProps = {	

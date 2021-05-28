@@ -79,27 +79,25 @@ const targetTypes = {
 			};
 
 const GooglePlacesAutocomplete = (props) => {
-	const [open, setOpen] = useState(false);
-	const loaded = useRef(false);
-	const { className, device, placeholder, placeholderType, label, value, type, variant, isMulti, required, touched, disabled, error, invalid, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, loading, query, onOpen, onClose, onChange, isClearable, onClickMyLocationBtn, result_type, short_name, showMyLocationBtn, controlPosition, ...rest} = props;
-	const [autocompleteValue, setAutocompleteValue] = useState(value? value : null);
-	const [typeValue, setTypeValue] = useState(value? value : null);
-	const [textFieldValue, setTextFieldValue] = useState('wert');
-	const [inputValue, setInputValue] = useState(value? value : undefined);
-	const [inputType, setInputType] = useState(type? (targetTypes[type]? targetTypes[type]  : "formatted_address") : "formatted_address");
-	const [autocompleteOptions, setAutocompleteOptions] = useState([]);
-	const [inputError, setInputError] = useState(error);
-	const [isInvalid, setIsInvalid] = useState(invalid);
-	const [inputTouched, setInputTouched] = useState(touched);
-	const [inputDisabled, setInputDisabled] = useState(disabled);
-	const [inputLoading, setInputLoading] = useState(loading);
+    const [open, setOpen] = useState(false);
+    const loaded = useRef(false);
+    const { className, device, placeholder, placeholderType, label, value, type, variant, isMulti, required, touched, disabled, error, invalid, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, loading, query, onOpen, onClose, onChange, isClearable, onClickMyLocationBtn, result_type, short_name, showMyLocationBtn, controlPosition, ...rest} = props;
+    const [autocompleteValue, setAutocompleteValue] = useState(value? value : null);
+    const [typeValue, setTypeValue] = useState(value? value : null);
+    const [textFieldValue, setTextFieldValue] = useState('wert');
+    const [inputValue, setInputValue] = useState(value? value : undefined);
+    const [inputType, setInputType] = useState(type? (targetTypes[type]? targetTypes[type]  : "formatted_address") : "formatted_address");
+    const [autocompleteOptions, setAutocompleteOptions] = useState([]);
+    const [inputError, setInputError] = useState(error);
+    const [isInvalid, setIsInvalid] = useState(invalid);
+    const [inputTouched, setInputTouched] = useState(touched);
+    const [inputDisabled, setInputDisabled] = useState(disabled);
+    const [inputLoading, setInputLoading] = useState(loading);
 
-	const googleScriptLoaded = useScript(google_maps_url);
-	useWhyDidYouUpdate("GooglePlacesAutocomplete", props);
+    const googleScriptLoaded = useScript(google_maps_url);
+    useWhyDidYouUpdate("GooglePlacesAutocomplete", props);
 
-	console.log("googleScriptLoaded", googleScriptLoaded)
-
-	if (typeof window !== 'undefined' && !loaded.current) {
+    if (typeof window !== 'undefined' && !loaded.current) {
 		if (!document.querySelector('[src*="https://maps.googleapis.com/maps/api/js"]')) {
 			loadScript(google_maps_url, document.querySelector('head'), 'google-maps-from-googleplacesautocomplete-input' );
 		}
@@ -108,9 +106,9 @@ const GooglePlacesAutocomplete = (props) => {
 	}
 
 
-	const throttledEventHandler = useRef(Function.createThrottle(1)).current;
+    const throttledEventHandler = useRef(Function.createThrottle(1)).current;
 
-	const { execute:predictPlaces, status:PlacesPredictionStatus, value:placePredictions, error:placesPredictionError } =  useAsync((keyword, query={}) => { 
+    const { execute:predictPlaces, status:PlacesPredictionStatus, value:placePredictions, error:placesPredictionError } =  useAsync((keyword, query={}) => { 
         return new Promise((resolve, reject) => {
         	Function.sleep(5000);
         	resolve({[keyword]: "Yaaaaaay"})
@@ -119,36 +117,26 @@ const GooglePlacesAutocomplete = (props) => {
 
     const getPlacePredictions = useRef(Function.throttle((keyword, query) => predictPlaces((keyword, query)), 1000)).current;
 
-	const throttledOnChange = useRef(Function.throttle(async (event) => {   
-        console.log("throttledOnChange")
+    const throttledOnChange = useRef(Function.throttle(async (event) => {}, 250)).current;
+
+    const throttledOnTextChange = useRef(Function.throttle((keyword) => {}, 250)).current;
+
+    const throttledOnClickMyLocationBtn = useRef(Function.throttle(async (event) => {
+        getPlacePredictions("meru");
     }, 250)).current;
 
-    const throttledOnTextChange = useRef(Function.throttle((keyword) => {
-    	
-        console.log("throttledOnTextChange", keyword);
-    }, 250)).current;
 
-    const throttledOnClickMyLocationBtn = useRef(Function.throttle(async (event) => {  
-    	getPlacePredictions("meru"); 
-        console.log("throttledOnClickMyLocationBtn")
-    }, 250)).current;
 
-    
+    const handleOnChange = (event) => {}
 
-	const handleOnChange = (event) => {
-		console.log("handleOnChange", event);
-	}
 
-	
 
-	const handleOnClickMyLocationBtn = (event) => {
+    const handleOnClickMyLocationBtn = (event) => {
 		event.persist();
 		throttledOnClickMyLocationBtn(event);
 	}
 
-	console.log("placePredictions", placePredictions);
-
-	return (
+    return (
 
 		<AutoComplete
 			className={"flex-1"+(className? (" "+className) : "")}

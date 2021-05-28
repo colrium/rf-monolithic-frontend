@@ -345,6 +345,10 @@ export default {
 			},
 		},
 	},
+	".group" : {
+	    background: `rgba(${colors.rgb.grey}, 0.1) !important`,
+	    border: `1px solid rgba(${colors.rgb.grey}, 0.1) !important`,
+	},
 	
 	/*".rule--body": {
 		display: "flex",

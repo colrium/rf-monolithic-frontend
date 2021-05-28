@@ -27,11 +27,10 @@ const useLazyImage = (imgUrl, lazyTargetRef=null, fallbackUrl=`${process.env.PUB
 		    }
 		    imageToLoad.onerror = (event) => {
 		    	if (!String.isEmpty(imageToLoad.src)) {
-		    		console.log("imageToLoad.onerror imageToLoad.src", imageToLoad.src);
-					setLoading(false);
-					setError(event);
-					setErrSrc(fallbackUrl || placeholderUrl);
-		    	}					
+                    setLoading(false);
+                    setError(event);
+                    setErrSrc(fallbackUrl || placeholderUrl);
+                }					
 		    }
 			imageToLoad.src = src;
 	}
@@ -46,14 +45,13 @@ const useLazyImage = (imgUrl, lazyTargetRef=null, fallbackUrl=`${process.env.PUB
 				
 					observer = new IntersectionObserver(entries => {
 						entries.forEach(entry => {
-							console.log("entry", entry);
-							if (entry.isIntersecting) {
+                            if (entry.isIntersecting) {
 								// change state
 								loadImage(imgUrl);
 								// don't need to observe anymore
 								observer.unobserve(entry.target)
 							}
-						})
+                        })
 					}, intersectionObserverOptions)
 					// start to observe element
 					observer.observe(lazyTargetRef.current)

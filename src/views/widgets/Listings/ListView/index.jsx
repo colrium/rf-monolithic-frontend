@@ -142,7 +142,8 @@ class ListView extends React.Component {
 						data: {},
 						cache: cache_data,
 					}
-				).then(data => {
+				).then(res => {
+					const {data} = res.body;
 					if (Function.isFunction(onLoadData)) {
 						onLoadData(data, this.state.query);
 					}

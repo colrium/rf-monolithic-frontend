@@ -27,7 +27,7 @@ const styles = theme => ({
 const SectionComponent = (props) => {
 	const { closeDialog, openDialog, auth } = props;
 
-	const { definations, services } = useGlobals();
+	const { definations } = useGlobals();
 	
 	let [popupMessage, setPopupMessage] = useState(false);
 	

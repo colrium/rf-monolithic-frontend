@@ -45,7 +45,8 @@ const SearchBar = (props) => {
 			params: { query: keyword },
 			data: {},
 			cache: true,
-		}).then(results => {
+		}).then(res => {
+			const {data} = res.body;
 			setSearching(false);
 		}).catch(e=>{
 			setSearching(false);

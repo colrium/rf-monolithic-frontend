@@ -9,13 +9,15 @@ import { withTheme } from '@material-ui/core/styles';
 import { useGlobals } from "contexts/Globals";
 import compose from "recompose/compose";
 import { withErrorHandler } from "hoc/ErrorHandler";
-
+import ApiService from "services/Api";
 import BaseForm from "views/forms/BaseForm";
 
 const SectionComponent = (props) => {
 		const { classes, auth, theme, device,  ...rest } = props;
 
-		const {definations: { applications:defination}, services: { applications: service}} = useGlobals();
+		const {definations: { applications:defination}} = useGlobals();
+
+		const service = ApiService.getContextRequests(defination?.endpoint)
 
 		const [content, setContent] = useState("form");
 		

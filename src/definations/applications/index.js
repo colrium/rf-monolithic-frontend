@@ -61,12 +61,13 @@ const ConvertToUserIconAction = (props) => {
 						cache: true,
 						silent: true,
 					}
-			).then(data => {
+			).then(res => {
+				const {data} = res.body;
                 if (sendEmail) {
 					setEmailingCache("recipient_address", data.email_address);
 					setEmailingCache("recipient_name", data.first_name);
 					setEmailingCache("subject", "Your Realfield user account");
-					setEmailingCache("content", "Hey "+data.first_name+", \n\nTuko tayari!\nHere are your unique login details.\n\n\nUsername: "+application.email_address+" \nPassword: "+staffID+"\n\n\n When you get inside the app things are pretty self-explanatory and under the ‘Reading’ tab, you’ll find a stack of materials we’d like you to review over the next few days. You’ll see a Realfield Training Manual and a number of other great resources for you to review.\nThe training will consist of a number elements starting with a short quiz. Don’t worry, the purpose of the quiz is to give us an idea of where we need to provide additional support, it’s not designed to catch you out.\nFollowing the quiz, we’ll be scheduling a number of live sessions. These sessions are really important and designed to help us test our platform.  They will also help us test things like responsiveness and accuracy, and each of the live sessions will be time sensitive. For example, you may be given a number of hours or a couple of days to complete the training assignment.\nMany of you have been writing in with encouragement and questions, and we love it! If you have questions, want to offer feedback or need support, please continue to use the jobs@realfield.io address.\nAsante sana and have an amazing weekend!!\n\n\nRealfield People Ops");
+					setEmailingCache("content", "Hey "+data.first_name+", \n\n\nHere are your unique login details.\n\n\nUsername: "+application.email_address+" \nPassword: "+(!String.isEmpty(data.staffID)? data.staffID : staffID)+"\n\n\n When you get inside the app things are pretty self-explanatory and under the ‘Reading’ tab, you’ll find a stack of materials we’d like you to review over the next few days. You’ll see a Realfield Training Manual and a number of other great resources for you to review.\nThe training will consist of a number elements starting with a short quiz. Don’t worry, the purpose of the quiz is to give us an idea of where we need to provide additional support, it’s not designed to catch you out.\nFollowing the quiz, we’ll be scheduling a number of live sessions. These sessions are really important and designed to help us test our platform.  They will also help us test things like responsiveness and accuracy, and each of the live sessions will be time sensitive. For example, you may be given a number of hours or a couple of days to complete the training assignment.\nMany of you have been writing in with encouragement and questions, and we love it! If you have questions, want to offer feedback or need support, please continue to use the jobs@realfield.io address.\nAsante sana and have an amazing weekend!!\n\n\nRealfield People Ops");
 					setEmailingCache("context", "Application");
 					setEmailingCache("record", application._id);
 					setEmailingCache("popup_open", true);
@@ -77,6 +78,8 @@ const ConvertToUserIconAction = (props) => {
                 setError(false);
                 setLoading(false);
             }).catch(e => {
+
+            	
 				let errMsg = e;
 				if (JSON.isJSON(e)) {
 					if (String.isString(e.error)) {
@@ -129,7 +132,12 @@ const ConvertToUserIconAction = (props) => {
 					color: "primary",
 					onClick: () => {
 						closeDialog();
-						handleCreateApplicantUserAccount(true);
+						try{
+							handleCreateApplicantUserAccount(true);
+						} catch(err){
+							console.error("try handleCreateApplicantUserAccount err", err)
+						}
+						
 					},
 				},
 			},
@@ -219,7 +227,8 @@ const ConvertToUserIconAction = (props) => {
 						cache: false,
 						silent: true,
 					}
-			).then(data => {
+			).then(res => {
+				const {data} = res.body;
                 if (Array.isArray(data)) {
 					if (data.length > 0) {
 						let staff_id = String.uid(8, false, true);
@@ -253,6 +262,8 @@ const ConvertToUserIconAction = (props) => {
 			});
 		
 	}
+
+
 
 	
 
@@ -375,7 +386,7 @@ export default {
 				type: "date",
 				label: "Submission Date",
 				input: {
-					type: "date",
+					type: "hidden",
 					required: true,
 					props: {
 						margin: "dense",
@@ -559,12 +570,10 @@ export default {
 				possibilities: async (values, user) => {					
 						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_1)) {
 							return await CountriesHelper.administrative_features_options(values.country, 2, values.administrative_level_1).then(data => {
-								console.log("data", data);
-								return data;
-							}).catch(err => {
-								console.log("data error", err);
-								return {};
-							});
+                                return data;
+                            }).catch(err => {
+                                return {};
+                            });
 						}
 						return {};
 						
@@ -589,12 +598,10 @@ export default {
 				possibilities: async (values, user) => {					
 						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_2)) {
 							return await CountriesHelper.administrative_features_options(values.country, 3, values.administrative_level_2).then(data => {
-								console.log("data", data);
-								return data;
-							}).catch(err => {
-								console.log("data error", err);
-								return {};
-							});
+                                return data;
+                            }).catch(err => {
+                                return {};
+                            });
 						}
 						return {};
 						
@@ -645,12 +652,10 @@ export default {
 				possibilities: async (values, user) => {					
 						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.region)) {
 							return await CountriesHelper.administrative_features_options(values.country, 2, values.region).then(data => {
-								console.log("data", data);
-								return data;
-							}).catch(err => {
-								console.log("data error", err);
-								return {};
-							});
+                                return data;
+                            }).catch(err => {
+                                return {};
+                            });
 						}
 						return {};
 						
@@ -675,12 +680,10 @@ export default {
 				possibilities: async (values, user) => {					
 						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.subcounty)) {
 							return await CountriesHelper.administrative_features_options(values.country, 3, values.subcounty).then(data => {
-								console.log("data", data);
-								return data;
-							}).catch(err => {
-								console.log("data error", err);
-								return {};
-							});
+                                return data;
+                            }).catch(err => {
+                                return {};
+                            });
 						}
 						return {};
 						

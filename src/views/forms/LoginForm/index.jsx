@@ -378,15 +378,14 @@ class LoginForm extends React.Component {
 	}
 
 	render() {
-		const { classes, app:{settings: { auth: OAuth2_enabled }} } = this.props;
-		const loginBtnClassname = classNames({
+        const { classes, app:{settings: { auth: OAuth2_enabled }} } = this.props;
+        const loginBtnClassname = classNames({
 			[classes.loginSubmitBtn]: true,
 			[classes.loginSubmitting]: this.state.loginSubmitting,
 			[classes.loginSuccess]: this.state.loginsuccess,
 			[classes.loginError]: this.state.loginerror
 		});
-		console.log("ApiService.isUserAuthenticated(true)", ApiService.isUserAuthenticated(true));
-		return (
+        return (
 			<div className={classes.root}>
 				<GridContainer className="p-0">
 					<form
@@ -643,7 +642,7 @@ class LoginForm extends React.Component {
 				</Snackbar>
 			</div>
 		);
-	}
+    }
 }
 
 LoginForm.propTypes = {

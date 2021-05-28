@@ -45,12 +45,10 @@ export function updateCurrentUser(user) {
 
 export function logout() {
 	return dispatch => {
-		return ApiService.logout().then(res => {
-			console.log("redux logout action res", res);
-		}).catch(err => {
+		return ApiService.logout().then(res => {}).catch(err => {
             throw err;
         });
-	}
+	};
 	
 }
 

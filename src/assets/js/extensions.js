@@ -7,7 +7,7 @@ import { dashboardBaseUri, landingPageBaseUri, orderFormBaseUri, surpressed_logs
 lodash.mixin(lodash_inflection);
 
 
-const console_warn = console.warn;
+/*const console_warn = console.warn;
 console.warn = function surpressWarnings(msg) {
 	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
 
@@ -30,7 +30,7 @@ console.log = function surpressLogs(msg) {
 	if (!supressedLogs.some(entry => msg.includes(entry))) {
 		console_log.apply(console, arguments);
 	}
-};
+};*/
 
 //Type Extensions
 // Warn if overriding existing method
@@ -201,18 +201,14 @@ Boolean.isBoolean = function(input) {
 		: false;
 };
 
-if (Function.isFunction) {
-	console.warn("Overriding existing Function.isFunction.");
-}
+if (Function.isFunction) {}
 Function.isFunction = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === Function || typeof input === "function"
 		: false;
 };
 
-if (Function.sleep) {
-	console.warn("Overriding existing Function.sleep.");
-}
+if (Function.sleep) {}
 Function.sleep = function(milliseconds) {
 	const date = Date.now();
 	let currentDate = null;
@@ -226,9 +222,7 @@ Function.sleep = function(milliseconds) {
 // but if you'd like to disable the execution on the leading edge, pass
 // `{leading: false}`. To disable execution on the trailing edge, ditto.
 
-if (Function.throttle) {
-	console.warn("Overriding existing Function.throttle");
-}
+if (Function.throttle) {}
 //Function.throttle = throttle;
 Function.throttle = (func, wait, options) => {
 	var context, args, result;
@@ -262,14 +256,10 @@ Function.throttle = (func, wait, options) => {
 	};
 };
 
-if (Function.debounce) {
-	console.warn("Overriding existing Function.debounce");
-}
+if (Function.debounce) {}
 Function.debounce = debounce;
 
-if (Function.createThrottle) {
-	console.warn("Overriding existing Function.createThrottle");
-}
+if (Function.createThrottle) {}
 Function.createThrottle = function (max) {
 	if (typeof max !== 'number') {
 		throw new TypeError('`createThrottle` expects a valid Number')
@@ -311,27 +301,21 @@ Function.createThrottle = function (max) {
 }
 
 
-if (Number.isNumber) {
-	console.warn("Overriding existing Number.isNumber.");
-}
+if (Number.isNumber) {}
 Number.isNumber = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === Number && input !== NaN
 		: false;
 };
 
-if (Error.isError) {
-	console.warn("Overriding existing Error.isError.");
-}
+if (Error.isError) {}
 Error.isError = function(input) {
 	return input !== undefined && input !== null
 		? input instanceof Error
 		: false;
 };
 
-if (RegExp.isRegExp) {
-	console.warn("Overriding existing RegExp.isRegExp.");
-}
+if (RegExp.isRegExp) {}
 RegExp.isRegExp = function(input) {
 	return input !== undefined && input !== null
 		? input.constructor === RegExp
@@ -339,27 +323,21 @@ RegExp.isRegExp = function(input) {
 };
 
 //Number Extensions
-if (Number.isFloat) {
-	console.warn("Overriding existing Number.isFloat.");
-}
+if (Number.isFloat) {}
 Number.isFloat = function(input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /[-+]?(?:\d*\.\d+\.?\d*)(?:[eE][-+]?\d+)?/gim.test(input)
 		: false;
 };
 
-if (Number.isInt) {
-	console.warn("Overriding existing Number.isInt.");
-}
+if (Number.isInt) {}
 Number.isInt = function(input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /^[-+]?(\d*)?\d+$/gim.test(input)
 		: false;
 };
 
-if (Number.parseNumber) {
-	console.warn("Overriding existing Number.parseNumber.");
-}
+if (Number.parseNumber) {}
 Number.parseNumber = function(input, fallback = null) {
 	if (Number.isFloat(input)) {
 		return parseFloat(input);
@@ -371,15 +349,11 @@ Number.parseNumber = function(input, fallback = null) {
 };
 
 //String Extensions
-if (Number.parseNumber) {
-	console.warn("Overriding existing Number.parseNumber.");
-}
+if (Number.parseNumber) {}
 Number.getRandomInt = function(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-if (Array.prototype.remove) {
-	console.warn("Overriding existing Array.prototype.remove.");
-}
+if (Array.prototype.remove) {}
 Array.prototype.remove = function(from, to) {
 	var rest = this.slice((to || from) + 1 || this.length);
 	this.length = from < 0 ? this.length + from : from;
