@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import Button from "components/Button";
 import {
 	AssignmentTurnedInOutlined as DefinationContextIcon,
@@ -8,7 +8,7 @@ import {
 	Add as AddIcon,
 	EditOutlined as EditIcon,
 	DeleteOutlined as DeleteIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 export default {
 	name: "results",
@@ -22,10 +22,10 @@ export default {
 		single: {
 			default: "cardview",
 			cardview: {
-				
+
 				resolveData: entry => {
 					let view_data = {};
-					
+
 
 					return view_data;
 				},
@@ -65,7 +65,7 @@ export default {
 						if (user && user.role !== "admin") {
 							return { sort: "first_name", fields: "first_name,last_name,email_address,avatar", _id: user._id };
 						}
-						return {sort: "first_name", fields: "first_name,last_name,email_address,avatar", };
+						return { sort: "first_name", fields: "first_name,last_name,email_address,avatar", };
 					},
 					resolves: {
 						value: "_id",
@@ -132,7 +132,7 @@ export default {
 					default: 0,
 					required: false,
 				},
-				
+
 				restricted: {
 					display: () => {
 						return false;
@@ -149,7 +149,7 @@ export default {
 				input: {
 					type: "checkbox",
 				},
-				
+
 				restricted: {
 					display: () => {
 						return false;
@@ -166,7 +166,7 @@ export default {
 				input: {
 					type: "checkbox",
 				},
-				
+
 				restricted: {
 					display: () => {
 						return false;
@@ -177,7 +177,7 @@ export default {
 				},
 			},
 
-			
+
 		},
 		identity: {
 			primary: ["user"],
@@ -276,7 +276,7 @@ export default {
 								>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New Result
@@ -351,7 +351,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

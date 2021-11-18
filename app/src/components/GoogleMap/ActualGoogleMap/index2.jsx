@@ -6,51 +6,31 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { connect } from "react-redux";
 import {
-    GoogleMap,
-    InfoWindow,
-    Circle,
-    Marker,
-    Polyline,
-    withGoogleMap,
-    withScriptjs,
+	GoogleMap,
+	InfoWindow,
+	Circle,
+	Marker,
+	Polyline,
+	withGoogleMap,
+	withScriptjs,
 } from "react-google-maps";
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
-import Avatar from '@material-ui/core/Avatar';
+import Avatar from '@mui/material/Avatar';
 import Typography from 'components/Typography';
-import mapStyles, {mapDarkStyles} from "./mapStyles";
-import {GooglePlacesAutocomplete  } from "components/FormInputs";
+import mapStyles, { mapDarkStyles } from "./mapStyles";
+import { GooglePlacesAutocomplete } from "components/FormInputs";
 import { compose } from "recompose";
 import { useHistory } from "react-router-dom";
 
-import {useGlobals} from "contexts/Globals";
+import { useGlobals } from "contexts/Globals";
 import { colors } from "assets/jss/app-theme";
-import client_position_female_heading_135_icon from "assets/img/maps/heading/female-135.png";
-import client_position_female_heading_180_icon from "assets/img/maps/heading/female-180.png";
-import client_position_female_heading_225_icon from "assets/img/maps/heading/female-225.png";
-import client_position_female_heading_270_icon from "assets/img/maps/heading/female-270.png";
-import client_position_female_heading_315_icon from "assets/img/maps/heading/female-315.png";
-import client_position_female_heading_360_icon from "assets/img/maps/heading/female-360.png";
-import client_position_female_heading_45_icon from "assets/img/maps/heading/female-45.png";
-import client_position_female_heading_80_icon from "assets/img/maps/heading/female-90.png";
-
-import client_position_male_heading_135_icon from "assets/img/maps/heading/male-135.png";
-import client_position_male_heading_180_icon from "assets/img/maps/heading/male-180.png";
-import client_position_male_heading_225_icon from "assets/img/maps/heading/male-225.png";
-import client_position_male_heading_270_icon from "assets/img/maps/heading/male-270.png";
-import client_position_male_heading_315_icon from "assets/img/maps/heading/male-315.png";
-import client_position_male_heading_360_icon from "assets/img/maps/heading/male-360.png";
-import client_position_male_heading_45_icon from "assets/img/maps/heading/male-45.png";
-import client_position_male_heading_80_icon from "assets/img/maps/heading/male-90.png";
-
-import client_user_female_icon from "assets/img/maps/marker-person-female.png";
-import client_user_male_icon from "assets/img/maps/marker-person-male.png";
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
 import ApiService from "services/Api";
 import {
 	PersonOutlined as UserIcon,
-} from "@material-ui/icons";
-import Button from '@material-ui/core/Button';
-import Rating from '@material-ui/lab/Rating';
+} from "@mui/icons-material";
+import Button from '@mui/material/Button';
+import Rating from '@mui/material/Rating';
 
 import { google_maps } from "config";
 
@@ -83,25 +63,8 @@ const current_position_marker_icon = {
 */
 
 let rounded_headings = [360, 315, 270, 225, 180, 135, 90, 45];
-rounded_headings.sort((a, b) => {return a-b});
-const heading_aware_client_position_marker_icons = {
-	male_heading_135: client_position_male_heading_135_icon,
-	male_heading_180: client_position_male_heading_180_icon,
-	male_heading_225: client_position_male_heading_225_icon,
-	male_heading_270: client_position_male_heading_270_icon,
-	male_heading_315: client_position_male_heading_315_icon,
-	male_heading_360: client_position_male_heading_360_icon,
-	male_heading_45: client_position_male_heading_45_icon,
-	male_heading_80: client_position_male_heading_80_icon,
-	female_heading_135: client_position_female_heading_135_icon,
-	female_heading_180: client_position_female_heading_180_icon,
-	female_heading_225: client_position_female_heading_225_icon,
-	female_heading_270: client_position_female_heading_270_icon,
-	female_heading_315: client_position_female_heading_315_icon,
-	female_heading_360: client_position_female_heading_360_icon,
-	female_heading_45: client_position_female_heading_45_icon,
-	female_heading_80: client_position_female_heading_80_icon,
-};
+rounded_headings.sort((a, b) => { return a - b });
+
 const labelSize = 200;
 const labelPadding = 8;
 
@@ -115,9 +78,9 @@ let crowFleightDistanceinKm = (lat1, lon1, lat2, lon2) => {
 	var a =
 		Math.sin(dLat / 2) * Math.sin(dLat / 2) +
 		Math.sin(dLon / 2) *
-			Math.sin(dLon / 2) *
-			Math.cos(lat1) *
-			Math.cos(lat2);
+		Math.sin(dLon / 2) *
+		Math.cos(lat1) *
+		Math.cos(lat2);
 	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	var d = R * c;
 	return d;
@@ -132,24 +95,24 @@ let showInfoWindow = (content, position) => {
 	return <InfoWindow position={position}>{content}</InfoWindow>;
 };
 
-const ClientInfoWindow = ({user, track, position, history, ...rest}) => {
-	
+const ClientInfoWindow = ({ user, track, position, history, ...rest }) => {
+
 
 	return (
-		<GridContainer style={{maxWidth: 300}}>
+		<GridContainer style={{ maxWidth: 300 }}>
 			<GridItem xs={12} className={"flex flex-row items-center"}>
 				{
-													user.avatar ? (
-														<Avatar
-															className="bg-transparent mr-4"
-															alt={user.first_name}
-															src={ApiService.getAttachmentFileUrl(user.avatar)}
-														/>
-													) : (
-														<Avatar className="bg-transparent  mr-4">
-															<UserIcon />{" "}
-														</Avatar>
-													)
+					user.avatar ? (
+						<Avatar
+							className="bg-transparent mr-4"
+							alt={user.first_name}
+							src={ApiService.getAttachmentFileUrl(user.avatar)}
+						/>
+					) : (
+						<Avatar className="bg-transparent  mr-4">
+							<UserIcon />{" "}
+						</Avatar>
+					)
 				}
 				<Typography variant="h5" >
 					{user.first_name}
@@ -159,106 +122,106 @@ const ClientInfoWindow = ({user, track, position, history, ...rest}) => {
 			<GridItem xs={12} className={"flex flex-row items-center"}>
 				<Typography
 					className="mx-2 font-bold"
-										variant="body1"
-										
-									>
-					Gender: 
+					variant="body1"
+
+				>
+					Gender:
 				</Typography>
 				<Typography
-										variant="body1"
-										
-									>
-					{user.gender? user.gender : "Unspecified"}
+					variant="body1"
+
+				>
+					{user.gender ? user.gender : "Unspecified"}
 				</Typography>
 			</GridItem>
 
 			<GridItem xs={12} className={"flex flex-row items-center"}>
 				<Typography
 					className="mx-2 font-bold"
-										variant="body1"
-										
-									>
-					Course of Study: 
+					variant="body1"
+
+				>
+					Course of Study:
 				</Typography>
 				<Typography
-										variant="body1"
-										
-									>
-					{user.course? user.course : "Unspecified"}
+					variant="body1"
+
+				>
+					{user.course ? user.course : "Unspecified"}
 				</Typography>
 			</GridItem>
 
 			<GridItem xs={12} className={"flex flex-row items-center"}>
 				<Typography
 					className="mx-2 font-bold"
-										variant="body1"
-										
-									>
-					Tasks Completed: 
+					variant="body1"
+
+				>
+					Tasks Completed:
 				</Typography>
 				<Typography
-										variant="body1"
-										
-									>
-					{user.noof_completed_tasks? user.noof_completed_tasks : "0"}
+					variant="body1"
+
+				>
+					{user.noof_completed_tasks ? user.noof_completed_tasks : "0"}
 				</Typography>
 			</GridItem>
 
 			<GridItem xs={12} className={"flex flex-row items-center"}>
 				<Typography
 					className="mx-2 font-bold"
-										variant="body1"
-										
-									>
-					Uncompleted Tasks: 
+					variant="body1"
+
+				>
+					Uncompleted Tasks:
 				</Typography>
 				<Typography
-										variant="body1"
-										
-									>
-					{user.noof_uncompleted_tasks? user.noof_uncompleted_tasks : "0"}
+					variant="body1"
+
+				>
+					{user.noof_uncompleted_tasks ? user.noof_uncompleted_tasks : "0"}
 				</Typography>
 			</GridItem>
 			<GridItem xs={12} className={"flex flex-col"}>
 				<Typography
 					className="mx-2 font-bold"
-										variant="body1"
-										
-									>
+					variant="body1"
+
+				>
 					Rating
 				</Typography>
-				<Rating name="read-only" value={user.rating? user.rating : 4} readOnly />
+				<Rating name="read-only" value={user.rating ? user.rating : 4} readOnly />
 			</GridItem>
-			
 
-				<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
-					<Button href={("/messages?with="+user.email_address).toUriWithDashboardPrefix()} style={{background: "#8C189B", color: "#FFFFFF"}}>Message Me</Button>				
-				</GridItem>
-			</GridContainer>
+
+			<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
+				<Button href={("/messages?with=" + user.email_address).toUriWithDashboardPrefix()} style={{ background: "#8C189B", color: "#FFFFFF" }}>Message Me</Button>
+			</GridItem>
+		</GridContainer>
 	)
 };
 
 let _clientsPositionsOpenPopups = [];
 
-let showClientInfoWindow = ({socketId, ...data}, google_map, marker, history) => {
+let showClientInfoWindow = ({ socketId, ...data }, google_map, marker, history) => {
 	if (google_map, marker && !_clientsPositionsOpenPopups.includes(socketId)) {
-		var infoWindow = new google.maps.InfoWindow({content: ReactDOMServer.renderToStaticMarkup(<ClientInfoWindow history={history} {...data} />)});
+		var infoWindow = new google.maps.InfoWindow({ content: ReactDOMServer.renderToStaticMarkup(<ClientInfoWindow history={history} {...data} />) });
 		infoWindow.open(google_map, marker);
 		_clientsPositionsOpenPopups.push(socketId);
-		google.maps.event.addListener(infoWindow,'closeclick',function(){
-            let position = _clientsPositionsOpenPopups.indexOf(socketId);
-            _clientsPositionsOpenPopups = _clientsPositionsOpenPopups.remove(position);
-            if (!Array.isArray(_clientsPositionsOpenPopups)) {
-		   		_clientsPositionsOpenPopups = [];
-		   	}
-        });
+		google.maps.event.addListener(infoWindow, 'closeclick', function () {
+			let position = _clientsPositionsOpenPopups.indexOf(socketId);
+			_clientsPositionsOpenPopups = _clientsPositionsOpenPopups.remove(position);
+			if (!Array.isArray(_clientsPositionsOpenPopups)) {
+				_clientsPositionsOpenPopups = [];
+			}
+		});
 	}
 };
 
 let _map = null;
 let _defaultCenter = google_maps.default_center;
-let	_defaultZoom = 12;
-let	_zoom = 12;
+let _defaultZoom = 12;
+let _zoom = 12;
 let firstLoad = true;
 let _clientsPositions = {};
 let regionBoundsClients = {};
@@ -301,26 +264,26 @@ export default compose(
 	withScriptjs,
 	withGoogleMap,
 	connect(mapStateToProps, {}),
-)( React.memo(props => {
+)(React.memo(props => {
 	let [map, setMap] = useState(null);
 	let history = useHistory();
-	
+
 
 	let clientMarkers = {};
 
 
-	const { onMapLoad, device, auth, markers, polylines, circles, showDeviceLocation, showClientsPositions, selectedEntry, selectedEntryType, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition, defaultCenter, onBoundsChanged, zoom, defaultZoom} = props;
+	const { onMapLoad, device, auth, markers, polylines, circles, showDeviceLocation, showClientsPositions, selectedEntry, selectedEntryType, onLoadClientsPositions, onClientPositionAvailable, onClientPositionChanged, onClientPositionUnavailable, onSelectClientPosition, defaultCenter, onBoundsChanged, zoom, defaultZoom } = props;
 
 	let globals = useGlobals();
-	let sockets = globals? globals.sockets : {};
-	let services = globals? globals.services : {};
+	let sockets = globals ? globals.sockets : {};
+	let services = globals ? globals.services : {};
 
 	/*let mapMarkers = [];
 	let mapPolylines = [];
 	let mapCircles = [];*/
 
-	
-	const [ socketsInitialized, setSocketsInitialized ] = useState(false);
+
+	const [socketsInitialized, setSocketsInitialized] = useState(false);
 
 	useEffect(() => {
 		if (firstLoad) {
@@ -329,22 +292,22 @@ export default compose(
 			_zoom = zoom;
 			firstLoad = false;
 		}
-		
+
 
 	}, [firstLoad, defaultCenter, defaultZoom, zoom]);
-	
 
-	
-	const [ selectedItem, setSelectedItem ] = useState({id: selectedEntry, type: selectedEntryType});
-	const [ infoWindowContent, setInfoWindowContent ] = useState(null);
-	const [ infoWindowPosition, setInfoWindowPosition ] = useState(null);	
-	const [ infoWindowOpen, setInfoWindowOpen ] = useState(false);
-	const [ mapMarkers, setMapMarkers ] = useState(Array.isArray(markers)? markers : []);
-	const [ mapPolylines, setMapPolylines ] = useState(Array.isArray(polylines)? polylines : []);
-	const [ mapCircles, setMapCircles ] = useState(Array.isArray(circles)? circles : []);
-	const [ mapCenter, setMapCenter ] = useState(defaultCenter);
-	
-	
+
+
+	const [selectedItem, setSelectedItem] = useState({ id: selectedEntry, type: selectedEntryType });
+	const [infoWindowContent, setInfoWindowContent] = useState(null);
+	const [infoWindowPosition, setInfoWindowPosition] = useState(null);
+	const [infoWindowOpen, setInfoWindowOpen] = useState(false);
+	const [mapMarkers, setMapMarkers] = useState(Array.isArray(markers) ? markers : []);
+	const [mapPolylines, setMapPolylines] = useState(Array.isArray(polylines) ? polylines : []);
+	const [mapCircles, setMapCircles] = useState(Array.isArray(circles) ? circles : []);
+	const [mapCenter, setMapCenter] = useState(defaultCenter);
+
+
 
 
 
@@ -365,7 +328,7 @@ export default compose(
 		return _map;
 	}, [_map]);
 
-	
+
 	/*const applyMapMarkers = (newMarkers) => {
 		if (Array.isArray(mapMarkers)) {
 			mapMarkers.map(mapMarker => {
@@ -433,9 +396,9 @@ export default compose(
 				newMapCircle.setMap(getCurrentMap());
 
 				google.maps.event.addListener(newMapCircle, 'click', function (event) {
-					console.log("newMapCircle click event", event);
+					
 				});
-				console.log("newMapCircle", newMapCircle);
+				
 				return newMapCircle;
 			});
 		}
@@ -463,34 +426,34 @@ export default compose(
 
 
 	useEffect(() => {
-		setMapMarkers((Array.isArray(markers)? markers : []));
-		setMapPolylines((Array.isArray(polylines)? polylines : []));
-		setMapCircles((Array.isArray(circles)? circles : []));
+		setMapMarkers((Array.isArray(markers) ? markers : []));
+		setMapPolylines((Array.isArray(polylines) ? polylines : []));
+		setMapCircles((Array.isArray(circles) ? circles : []));
 	}, [polylines, circles, markers]);
-	
-	
-
-	
 
 
-	
-	let {user} = auth;
+
+
+
+
+
+	let { user } = auth;
 
 	if (!JSON.isJSON(user) || (JSON.isJSON(user) && !user._id)) {
 		user = { _id: null };
 	}
 
-	
 
-	
-	const getclientPositionHeadingMarkerIcon = (user, position) => {		
-		let computed_gender = (JSON.isJSON(user)? (String.isString(user.gender)? user.gender.trim().toLowerCase() : "male") : "male");
-		let computed_heading = JSON.isJSON(position)? Number.parseNumber(position.heading, 360) : 360;
+
+
+	const getclientPositionHeadingMarkerIcon = (user, position) => {
+		let computed_gender = (JSON.isJSON(user) ? (String.isString(user.gender) ? user.gender.trim().toLowerCase() : "male") : "male");
+		let computed_heading = JSON.isJSON(position) ? Number.parseNumber(position.heading, 360) : 360;
 
 
 		let heading_approach_index = 0;
 		if (!rounded_headings.includes(computed_heading)) {
-			heading_approach_index = Math.round(((rounded_headings.length * (computed_heading / 360))-1));			
+			heading_approach_index = Math.round(((rounded_headings.length * (computed_heading / 360)) - 1));
 			computed_heading = rounded_headings[heading_approach_index];
 		}
 
@@ -501,18 +464,18 @@ export default compose(
 			computed_heading = 360;
 		}*/
 
-		//console.log("computed_gender+\"_heading_\"+computed_heading", computed_gender+"_heading_"+computed_heading);
+		//
 
-		if (heading_aware_client_position_marker_icons[computed_gender+"_heading_"+computed_heading]) {
-			return heading_aware_client_position_marker_icons[computed_gender+"_heading_"+computed_heading];
+		if (heading_aware_client_position_marker_icons[computed_gender + "_heading_" + computed_heading]) {
+			return heading_aware_client_position_marker_icons[computed_gender + "_heading_" + computed_heading];
 		}
 
 		else if (computed_gender === "female") {
 			return client_user_female_icon;
 		}
-		
+
 		return client_user_male_icon;
-		
+
 	}
 
 	/*const getRegionWidth = (target_region = null) => {
@@ -528,22 +491,22 @@ export default compose(
 	}*/
 
 	const handleOnPressMarker = (socketId, data) => async event => {
-		setSelectedItem({type: "clients_positions", id: socketId});
+		setSelectedItem({ type: "clients_positions", id: socketId });
 		if (Function.isFunction(onSelectClientPosition)) {
 			onSelectClientPosition(socketId, data)
 		}
 	};
 
-	const animateClientMarkerToPosition = (marker, {socketId, user,  position}) => {
+	const animateClientMarkerToPosition = (marker, { socketId, user, position }) => {
 		var options = {
 			duration: 1000,
 			easing: function (x, t, b, c, d) { // jquery animation: swing (easeOutQuad)
-				return -c *(t/=d)*(t-2) + b;
+				return -c * (t /= d) * (t - 2) + b;
 			}
 		};
 
 		let newPosition = new google.maps.LatLng(position.latitude, position.longitude);
-		let kmph = position.speed? position.speed : 10;
+		let kmph = position.speed ? position.speed : 10;
 
 
 
@@ -565,7 +528,7 @@ export default compose(
 			}
 		}
 
-		var animateStep = function(marker, startTime) {
+		var animateStep = function (marker, startTime) {
 			var ellapsedTime = (new Date()).getTime() - startTime;
 			var durationRatio = ellapsedTime / options.duration; // 0 - 1
 			var easingDurationRatio = options.easing(durationRatio, ellapsedTime, 0, 1, options.duration);
@@ -575,19 +538,19 @@ export default compose(
 				marker.setPosition({
 					lat: (
 						marker.AT_startPosition_lat +
-						(newPosition_lat - marker.AT_startPosition_lat)*easingDurationRatio
+						(newPosition_lat - marker.AT_startPosition_lat) * easingDurationRatio
 					),
 					lng: (
 						marker.AT_startPosition_lng +
-						(newPosition_lng - marker.AT_startPosition_lng)*easingDurationRatio
+						(newPosition_lng - marker.AT_startPosition_lng) * easingDurationRatio
 					)
 				});
 
 				// use requestAnimationFrame if it exists on this browser. If not, use setTimeout with ~60 fps
 				if (window.requestAnimationFrame) {
-					marker.AT_animationHandler = window.requestAnimationFrame(function() {animateStep(marker, startTime)});
+					marker.AT_animationHandler = window.requestAnimationFrame(function () { animateStep(marker, startTime) });
 				} else {
-					marker.AT_animationHandler = setTimeout(function() {animateStep(marker, startTime)}, 17);
+					marker.AT_animationHandler = setTimeout(function () { animateStep(marker, startTime) }, 17);
 				}
 
 			} else {
@@ -607,80 +570,80 @@ export default compose(
 		animateStep(marker, (new Date()).getTime());
 	}
 
-	
 
-	const handleOnClientPositionChange = useCallback(({socketId, ...data}) => {	
-		let {user, position, track} = data;
+
+	const handleOnClientPositionChange = useCallback(({ socketId, ...data }) => {
+		let { user, position, track } = data;
 		if (!JSON.isEmpty(user) && !JSON.isEmpty(position)) {
 			let currentMap = getCurrentMap();
 
 			if (!regionBoundsClients[socketId]) {
 				regionBoundsClients[socketId] = {};
-					
+
 
 				if (currentMap) {
 					let mapBounds = currentMap.getBounds();
 					if (mapBounds) {
-						if (mapBounds.contains({lat: data.position.latitude, lng: position.longitude})) {
+						if (mapBounds.contains({ lat: data.position.latitude, lng: position.longitude })) {
 							regionBoundsClients[socketId].user = user;
 							regionBoundsClients[socketId].position = position;
 							regionBoundsClients[socketId].marker = new google.maps.Marker({
-											position: {lat: position.latitude, lng: position.longitude },
-											title: user.first_name+" "+user.last_name,
-											icon: {url: getclientPositionHeadingMarkerIcon(user, position), scaledSize:  new google.maps.Size(30,30)},
-											onClick: handleOnPressMarker(socketId, data),
-											duration: 250,
-											map: currentMap,
+								position: { lat: position.latitude, lng: position.longitude },
+								title: user.first_name + " " + user.last_name,
+								icon: { url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) },
+								onClick: handleOnPressMarker(socketId, data),
+								duration: 250,
+								map: currentMap,
 							});
 						}
 					}
 				}
-				
+
 			}
 			else {
 				regionBoundsClients[socketId].user = user;
 				regionBoundsClients[socketId].position = position;
 				if (!regionBoundsClients[socketId].marker) {
 					regionBoundsClients[socketId].marker = new google.maps.Marker({
-										position: {lat: position.latitude, lng: position.longitude },
-										title: user.first_name+" "+user.last_name,
-										icon: {url: getclientPositionHeadingMarkerIcon(user, position), scaledSize:  new google.maps.Size(30,30)},
-										onClick: handleOnPressMarker(socketId, data),
-										duration: 250,
-										map: currentMap,
-						});
+						position: { lat: position.latitude, lng: position.longitude },
+						title: user.first_name + " " + user.last_name,
+						icon: { url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) },
+						onClick: handleOnPressMarker(socketId, data),
+						duration: 250,
+						map: currentMap,
+					});
 				}
-				regionBoundsClients[socketId].marker.setIcon({url: getclientPositionHeadingMarkerIcon(user, position), scaledSize:  new google.maps.Size(30,30)});
-				animateClientMarkerToPosition(regionBoundsClients[socketId].marker, {socketId, ...data});
-			}		
-			
+				regionBoundsClients[socketId].marker.setIcon({ url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) });
+				animateClientMarkerToPosition(regionBoundsClients[socketId].marker, { socketId, ...data });
+			}
+
 		}
 	}, [regionBoundsClients]);
 
 	const handleOnSocketConnect = () => {
-        sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
-    };
+		sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
+	};
 
-	
+
 
 	const applyMapOnAll = (google_map) => {
-		mapMarkers.map(mapMarker =>{			
-			mapMarker.setMap(google_map);			
+		mapMarkers.map(mapMarker => {
+			mapMarker.setMap(google_map);
 		});
 		if (JSON.isJSON(regionBoundsClients)) {
 			Object.entries(regionBoundsClients).map(([socketId, regionBoundsClient]) => {
 				if (regionBoundsClient.marker) {
 					regionBoundsClient.marker.setMap(google_map);
 				}
-			});			
+			});
 		}
 
-		//console.log("mapCircles", mapCircles)
-		mapCircles.map(mapCircle =>{			
-			mapCircle.setMap(google_map);			
+		//
+		mapCircles.map(mapCircle => {
+			mapCircle.setMap(google_map);
 		});
-		mapPolylines.map(mapPolyline =>{			
-			mapPolyline.setMap(google_map);			
+		mapPolylines.map(mapPolyline => {
+			mapPolyline.setMap(google_map);
 		});
 
 	};
@@ -691,23 +654,23 @@ export default compose(
 
 
 
-	
 
-	
+
+
 
 	const handleOnSocketDisconnect = useCallback(() => {
 		setMapOnAll(null);
-		_clientsPositions = {}; 
+		_clientsPositions = {};
 		regionBoundsClients = {};
 		if (Function.isFunction(onLoadClientsPositions)) {
 			onLoadClientsPositions(_clientsPositions);
 		}
 	}, [_map, _clientsPositions, regionBoundsClients, onLoadClientsPositions]);
 
-	
 
-	const handleOnNewClientPosition = useCallback(async ({socketId, ...data}) => {
-		const  {user, position} = data;		
+
+	const handleOnNewClientPosition = useCallback(async ({ socketId, ...data }) => {
+		const { user, position } = data;
 		if (!JSON.isEmpty(user) && !JSON.isEmpty(user)) {
 
 			_clientsPositions = Object.entries(_clientsPositions).reduce((accumulator, [socketId, clientData], index) => {
@@ -716,7 +679,7 @@ export default compose(
 						accumulator[socketId] = clientData;
 					}
 				}
-				return accumulator;						
+				return accumulator;
 			}, {});
 
 			/*regionBoundsClients = Object.entries(regionBoundsClients).reduce((accumulator, [socketId, clientData], index) => {
@@ -734,11 +697,11 @@ export default compose(
 			}
 
 		}
-				
+
 	}, [_map, _clientsPositions, regionBoundsClients, onClientPositionAvailable]);
 
-	
-	const handleOnClientsPositions = useCallback(async (clients_positions) => {	
+
+	const handleOnClientsPositions = useCallback(async (clients_positions) => {
 		let clients_positions_user_ids = []
 		_clientsPositions = Object.entries(clients_positions).reduce((accumulator, [socketId, clientData], index) => {
 			if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
@@ -746,9 +709,9 @@ export default compose(
 					accumulator[socketId] = clientData;
 				}
 			}
-			return accumulator;						
+			return accumulator;
 		}, {});
-		
+
 
 		if (Function.isFunction(onLoadClientsPositions)) {
 			onLoadClientsPositions(_clientsPositions);
@@ -756,31 +719,31 @@ export default compose(
 
 
 	}, [_clientsPositions, regionBoundsClients, onLoadClientsPositions]);
-	
 
-	const handleOnClientPositionUnavailable = useCallback(({socketId, ...data}) => {
-			if (_clientsPositions[socketId]) {
-				if (_clientsPositions[socketId].marker) {
-					_clientsPositions[socketId].marker.setMap(null);
-				}
+
+	const handleOnClientPositionUnavailable = useCallback(({ socketId, ...data }) => {
+		if (_clientsPositions[socketId]) {
+			if (_clientsPositions[socketId].marker) {
+				_clientsPositions[socketId].marker.setMap(null);
 			}
+		}
 
-			if (regionBoundsClients[socketId]) {
-				if (regionBoundsClients[socketId].marker) {
-					regionBoundsClients[socketId].marker.setMap(null);
-				}
+		if (regionBoundsClients[socketId]) {
+			if (regionBoundsClients[socketId].marker) {
+				regionBoundsClients[socketId].marker.setMap(null);
 			}
-				
-			delete regionBoundsClients[socketId];
-			delete _clientsPositions[socketId];
+		}
 
-			if (Function.isFunction(onClientPositionUnavailable)) {
-				onClientPositionUnavailable(socketId, data);
-			}		
-		
+		delete regionBoundsClients[socketId];
+		delete _clientsPositions[socketId];
+
+		if (Function.isFunction(onClientPositionUnavailable)) {
+			onClientPositionUnavailable(socketId, data);
+		}
+
 	}, [_clientsPositions, regionBoundsClients, onClientPositionUnavailable]);
 
-	
+
 
 	const initSockets = () => {
 		if (sockets.default) {
@@ -793,62 +756,62 @@ export default compose(
 			if (sockets.default.connected) {
 				sockets.default.emit("get-clients-positions", { user: user, type: 'all' });
 			}
-			else{
+			else {
 				sockets.default.on("connect", handleOnSocketConnect);
 			}
-			setSocketsInitialized(true);				
+			setSocketsInitialized(true);
 		}
-			
+
 	}
 
-	
+
 
 
 	const prepareMapBoundsClientsMarkers = useCallback((mapBounds) => {
 		if (mapBounds) {
-					regionBoundsClients = Object.entries(regionBoundsClients).reduce((accumulator, [socketId, clientData], index) => {
-							if (clientData.marker instanceof google.maps.Marker) {
-								clientData.marker.setMap(null);
-							}	
-							return accumulator;						
-					}, {});
-					regionBoundsClients = Object.entries(_clientsPositions).reduce((accumulator, [socketId, clientData], index) => {		
-						if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-							if (mapBounds.contains({lat: clientData.position.latitude, lng: clientData.position.longitude})) {
-								let {user, position} = clientData;
-								let marker = clientData.marker;
-								if (!marker) {
-									marker = new google.maps.Marker({
-										position: {lat: position.latitude, lng: position.longitude },
-										title: user.first_name+" "+user.last_name,
-										icon: {url: getclientPositionHeadingMarkerIcon(user, position), scaledSize:  new google.maps.Size(30,30)},
-										onClick: handleOnPressMarker(socketId, clientData),
-										duration: 250,
-									});
-								}
-								marker.setPosition({lat: position.latitude, lng: position.longitude });
-								marker.setMap(getGoogleMapContextElement());
-								google.maps.event.addListener(marker, 'click', function () {
-									showClientInfoWindow({socketId: socketId, ...clientData}, getGoogleMapContextElement(), marker, history);
-					            });
-					            clientData.marker= marker;
-								accumulator[socketId] = clientData;
-							}
-						}			
-						return accumulator;						
-					}, {});
-		}						
+			regionBoundsClients = Object.entries(regionBoundsClients).reduce((accumulator, [socketId, clientData], index) => {
+				if (clientData.marker instanceof google.maps.Marker) {
+					clientData.marker.setMap(null);
+				}
+				return accumulator;
+			}, {});
+			regionBoundsClients = Object.entries(_clientsPositions).reduce((accumulator, [socketId, clientData], index) => {
+				if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
+					if (mapBounds.contains({ lat: clientData.position.latitude, lng: clientData.position.longitude })) {
+						let { user, position } = clientData;
+						let marker = clientData.marker;
+						if (!marker) {
+							marker = new google.maps.Marker({
+								position: { lat: position.latitude, lng: position.longitude },
+								title: user.first_name + " " + user.last_name,
+								icon: { url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) },
+								onClick: handleOnPressMarker(socketId, clientData),
+								duration: 250,
+							});
+						}
+						marker.setPosition({ lat: position.latitude, lng: position.longitude });
+						marker.setMap(getGoogleMapContextElement());
+						google.maps.event.addListener(marker, 'click', function () {
+							showClientInfoWindow({ socketId: socketId, ...clientData }, getGoogleMapContextElement(), marker, history);
+						});
+						clientData.marker = marker;
+						accumulator[socketId] = clientData;
+					}
+				}
+				return accumulator;
+			}, {});
+		}
 	}, [_clientsPositions]);
 
 
-	
+
 
 	const handleOnBoundsChanged = useCallback(() => {
 		//const { center, zoom, bounds, marginBounds } = event;
-		//console.log("handleOnBoundsChanged event", event);
+		//
 		if (_map) {
 			mapBounds = _map.getBounds();
-			
+
 			prepareMapBoundsClientsMarkers(mapBounds);
 			if (Function.isFunction(onBoundsChanged)) {
 				onBoundsChanged(mapBounds);
@@ -858,12 +821,12 @@ export default compose(
 
 
 
-	
-	
 
-	
+
+
+
 	/*useEffect(() => {		
-		//console.log({type: selectedEntryType, id: selectedEntry});
+		//
 		if (selectedEntryType && (Number.isNumber(selectedEntry) || String.isString(selectedEntry))) {
 			let googlemap = false;
 			if (_map) {
@@ -904,11 +867,11 @@ export default compose(
 		setSelectedItem({type: selectedEntryType, id: selectedEntry});
 		
 	}, [selectedEntry, selectedEntryType, _map, polylines, circles, markers]);*/
-	
+
 
 
 	useLayoutEffect(() => {
-        if (_map) {
+		if (_map) {
 			if (Function.isFunction(onMapLoad)) {
 				onMapLoad(_map, google);
 			}
@@ -917,10 +880,10 @@ export default compose(
 		else {
 			setMapOnAll(null);
 		}
-    }, [_map]);
+	}, [_map]);
 
 
-	useEffect(() => {	
+	useEffect(() => {
 		if (!socketsInitialized) {
 			initSockets();
 		}
@@ -934,15 +897,15 @@ export default compose(
 		}
 	}, [sockets]);
 
-	
-
-	
 
 
-	useEffect(() => {	
+
+
+
+	useEffect(() => {
 		if (infoWindowOpen && selectedItem.type === "clients_position" && selectedItem.id in regionBoundsClients) {
 			if (infoWindowPosition.lat !== regionBoundsClients[selectedItem.id].position.latitude || infoWindowPosition.lng !== regionBoundsClients[selectedItem.id].position.longitude) {
-				setInfoWindowPosition({lat: regionBoundsClients[selectedItem.id].position.latitude, lng: regionBoundsClients[selectedItem.id].position.longitude })
+				setInfoWindowPosition({ lat: regionBoundsClients[selectedItem.id].position.latitude, lng: regionBoundsClients[selectedItem.id].position.longitude })
 			}
 		}
 		else if (infoWindowOpen && selectedItem.type === "clients_position" && !(selectedItem.id in regionBoundsClients)) {
@@ -950,149 +913,150 @@ export default compose(
 			setInfoWindowPosition(null);
 			setInfoWindowOpen(false);
 		}
-		
+
 	}, [infoWindowOpen, selectedItem, infoWindowPosition]);
 
 
 
 
 
-		return (
-			<GoogleMap
-				className="relative"
-				defaultZoom={defaultZoom}
-				zoom={zoom}
-				defaultCenter={defaultCenter}
-				defaultOptions={{
-					styles: props.mapStyles ? props.mapStyles : (props.theme === "dark"? mapDarkStyles : mapStyles),
-				}}
-				ref={mapRef => {
-					_map = mapRef;	
-				}}
-				onBoundsChanged={handleOnBoundsChanged}
-			>
-				{props.draw && (
-					<DrawingManager
-						defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
-						defaultOptions={{
-							drawingControl: true,
-							drawingControlOptions: {
-								position: google.maps.ControlPosition.TOP_CENTER,
-								drawingModes: [
-									google.maps.drawing.OverlayType.CIRCLE,
-									google.maps.drawing.OverlayType.POLYGON,
-									google.maps.drawing.OverlayType.POLYLINE,
-									google.maps.drawing.OverlayType.RECTANGLE,
-								],
-							},
-							circleOptions: {
-								fillColor: colors.hex.accent,
-								fillOpacity: 0.6,
-								strokeColor: colors.hex.accent,
-								strokeWeight: 2,
-								clickable: false,
-								editable: true,
-								zIndex: 1,
-							},
+	return (
+		<GoogleMap
+			className="relative"
+			defaultZoom={defaultZoom}
+			zoom={zoom}
+			defaultCenter={defaultCenter}
+			defaultOptions={{
+				styles: props.mapStyles ? props.mapStyles : (props.theme === "dark" ? mapDarkStyles : mapStyles),
+			}}
+			ref={mapRef => {
+				_map = mapRef;
+			}}
+			onBoundsChanged={handleOnBoundsChanged}
+		>
+			{props.draw && (
+				<DrawingManager
+					defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
+					defaultOptions={{
+						drawingControl: true,
+						drawingControlOptions: {
+							position: google.maps.ControlPosition.TOP_CENTER,
+							drawingModes: [
+								google.maps.drawing.OverlayType.CIRCLE,
+								google.maps.drawing.OverlayType.POLYGON,
+								google.maps.drawing.OverlayType.POLYLINE,
+								google.maps.drawing.OverlayType.RECTANGLE,
+							],
+						},
+						circleOptions: {
+							fillColor: colors.hex.accent,
+							fillOpacity: 0.6,
+							strokeColor: colors.hex.accent,
+							strokeWeight: 2,
+							clickable: false,
+							editable: true,
+							zIndex: 1,
+						},
+					}}
+				/>
+			)}
+			{Array.isArray(mapPolylines) &&
+				mapPolylines.map((polyline, index) => (
+					<Polyline
+						path={polyline.path}
+						geodesic={true}
+						options={{
+							strokeColor: selectedItem.type == "polyline" && selectedItem.id === index ? colors.hex.accent : (polyline.color ? polyline.color : colors.hex.accent),
+							strokeOpacity: selectedItem.type == "polyline" && selectedItem.id === index ? 1 : (selectedItem.type != "polyline" ? polyline.opacity : 0.2),
+							strokeWeight: selectedItem.type == "polyline" && selectedItem.id === index ? 4 : (selectedItem.type != "polyline" ? polyline.strokeWeight : 3),
 						}}
+						onClick={event => {
+							setSelectedItem({ type: "polyline", id: index });
+
+							var infowindow = new google.maps.InfoWindow({
+								content:
+									(polyline.infoWindow ? ReactDOMServer.renderToStaticMarkup(polyline.infoWindow) : polyline.title ? polyline.title : "") +
+									("<br/> Crow fleight distance from Start: " +
+										crowFleightDistanceinKm(
+											event.latLng.lat(),
+											event.latLng.lng(),
+											polyline.path[0].lat,
+											polyline.path[0].lng
+										).toFixed(2) +
+										" Km"),
+								position: event.latLng,
+							});
+
+							infowindow.open(
+								_map.context
+									.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+							);
+						}}
+						key={"polyline-" + index}
 					/>
-				)}
-				{Array.isArray(mapPolylines) &&
-					mapPolylines.map((polyline, index) => (
-						<Polyline
-							path={polyline.path}
-							geodesic={true}
-							options={{
-								strokeColor: selectedItem.type == "polyline" && selectedItem.id === index? colors.hex.accent : (polyline.color ? polyline.color : colors.hex.accent),
-								strokeOpacity: selectedItem.type == "polyline" && selectedItem.id === index?  1 : (selectedItem.type != "polyline" ? polyline.opacity : 0.2),
-								strokeWeight:selectedItem.type == "polyline" && selectedItem.id === index?  4 : (selectedItem.type != "polyline" ? polyline.strokeWeight : 3),
-							}}
-							onClick={event => {
-								setSelectedItem({type: "polyline", id: index });
+				))}
 
-								var infowindow = new google.maps.InfoWindow({
-									content:
-										(polyline.infoWindow? ReactDOMServer.renderToStaticMarkup(polyline.infoWindow): polyline.title ? polyline.title: "") +
-										("<br/> Crow fleight distance from Start: " +
-											crowFleightDistanceinKm(
-												event.latLng.lat(),
-												event.latLng.lng(),
-												polyline.path[0].lat,
-												polyline.path[0].lng
-											).toFixed(2) +
-											" Km"),
+			{Array.isArray(mapCircles) &&
+				mapCircles.map(({ infoWindow, ...rest }, index) => (
+					<Circle
+						{...rest}
+						options={{
+							fillColor: selectedItem.type == "circle" && selectedItem.id === index ? colors.hex.accent : (rest.fillColor ? rest.fillColor : colors.hex.accent),
+							strokeColor: rest.color ? rest.color : colors.hex.accent,
+							strokeOpacity: selectedItem.type == "circle" && selectedItem.id === index ? 1 : (selectedItem.type != "circle" ? rest.opacity : 0.2),
+							fillOpacity: selectedItem.type == "circle" && selectedItem.id === index ? 0.5 : (selectedItem.type != "circle" ? rest.opacity : 0.2),
+							strokeWeight: selectedItem.type == "circle" && selectedItem.id === index ? 4 : (selectedItem.type != "circle" ? rest.strokeWeight : 1),
+						}}
+						onClick={event => {
+							setSelectedItem({ type: "polyline", id: index });
+							if (infoWindow) {
+								new google.maps.InfoWindow({
+									content: ReactDOMServer.renderToStaticMarkup(
+										infoWindow
+									),
 									position: event.latLng,
-								});
-
-								infowindow.open(
+								}).open(
 									_map.context
 										.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
-								);							}}
-							key={"polyline-" + index}
-						/>
-					))}
+								);
+							}
+						}}
+						key={"circle-" + index}
+					/>
+				))}
 
-				{Array.isArray(mapCircles) &&
-					mapCircles.map(({ infoWindow, ...rest }, index) => (
-						<Circle
-							{...rest}
-							options={{
-								fillColor: selectedItem.type == "circle" && selectedItem.id === index? colors.hex.accent : (rest.fillColor ? rest.fillColor : colors.hex.accent),
-								strokeColor: rest.color ? rest.color : colors.hex.accent,
-								strokeOpacity: selectedItem.type == "circle" && selectedItem.id === index?  1 : (selectedItem.type != "circle" ? rest.opacity : 0.2),
-								fillOpacity: selectedItem.type == "circle" && selectedItem.id === index?  0.5 : (selectedItem.type != "circle"? rest.opacity : 0.2),
-								strokeWeight: selectedItem.type == "circle" && selectedItem.id === index?  4 : (selectedItem.type != "circle" ? rest.strokeWeight : 1),
-							}}
-							onClick={event => {
-								setSelectedItem({type: "polyline", id: index });
-								if (infoWindow) {
-									new google.maps.InfoWindow({
-										content: ReactDOMServer.renderToStaticMarkup(
-											infoWindow
-										),
-										position: event.latLng,
-									}).open(
-										_map.context
-											.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
-									);
-								}
-							}}
-							key={"circle-" + index}
-						/>
-					))}
-
-				{Array.isArray(mapMarkers) &&
-					mapMarkers.map(
-						({ position, title, infoWindow, ...rest }, index) =>
-							typeof google !== undefined && (
-								<Marker
-									animation={google.maps.Animation.DROP}
-									position={position}
-									title={title}
-									key={"marker-" + index}
-									onClick={event => {
-										setSelectedItem({type: "circles", id: index });
-										var infowindow = new google.maps.InfoWindow(
-											{
-												content: infoWindow
-													? ReactDOMServer.renderToStaticMarkup(
-															infoWindow
-													  )
-													: title
+			{Array.isArray(mapMarkers) &&
+				mapMarkers.map(
+					({ position, title, infoWindow, ...rest }, index) =>
+						typeof google !== undefined && (
+							<Marker
+								animation={google.maps.Animation.DROP}
+								position={position}
+								title={title}
+								key={"marker-" + index}
+								onClick={event => {
+									setSelectedItem({ type: "circles", id: index });
+									var infowindow = new google.maps.InfoWindow(
+										{
+											content: infoWindow
+												? ReactDOMServer.renderToStaticMarkup(
+													infoWindow
+												)
+												: title
 													? title
 													: "",
-												position: event.latLng,
-											}
-										);
+											position: event.latLng,
+										}
+									);
 
-										infowindow.open(_map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
-									}}
-									{...rest}
-								/>
-							)
-					)}
+									infowindow.open(_map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
+								}}
+								{...rest}
+							/>
+						)
+				)}
 
-				{/*(JSON.isJSON(regionBoundsClients) && showClientsPositions) && Object.entries(regionBoundsClients).map(([socketId, { position, user, ...rest }], index) =>
+			{/*(JSON.isJSON(regionBoundsClients) && showClientsPositions) && Object.entries(regionBoundsClients).map(([socketId, { position, user, ...rest }], index) =>
 						(typeof google !== undefined && JSON.isJSON(position) && JSON.isJSON(user)) && (
 								<Marker
 									position={{lat: position.latitude, lng: position.longitude }}
@@ -1103,51 +1067,51 @@ export default compose(
 									style={{transform: "rotate(" + 100 + "deg)"}}
 									shape={[16, 16, 8]}
 									ref={ _marker => {
-										//console.log("_marker", _marker)
+										//
 									}}
 									{...rest}
 								/>
 						)
 					)*/}
 
-				{JSON.isJSON(props.currentDevicePosition) &&
-					props.showCurrentPosition && (
-						<Marker
-							position={props.currentDevicePosition.coordinates}
-							title={props.currentDevicePosition.title}
-							icon={current_position_marker_icon}
-						/>
-					)}
-
-				{JSON.isJSON(props.marker) && <Marker {...props.marker} />}
-				{JSON.isJSON(props.circle) && <Marker {...props.circle} />}
-
-				{(infoWindowOpen && infoWindowPosition && infoWindowContent) && <InfoWindow position={infoWindowPosition} onCloseClick={() => setInfoWindowOpen(false) }>
-					{infoWindowContent}
-				</InfoWindow>}
-
-				{props.showSearchBar && (
-					<div className={"absolute bottom-0 mb-4 py-1 px-2 sm:w-full md:w-5/6 lg:w-4/6 "} >
-						<Paper
-							component="div"
-							className={"flex items-center w-full relative py-1 px-2"}
-						>
-							<GooglePlacesAutocomplete
-								variant="plain"
-								margin="none"
-								controlPosition={google.maps.ControlPosition.BOTTOM_CENTER}
-								{...props.searchBarProps}
-							/>
-						</Paper>
-					</div>
-					
+			{JSON.isJSON(props.currentDevicePosition) &&
+				props.showCurrentPosition && (
+					<Marker
+						position={props.currentDevicePosition.coordinates}
+						title={props.currentDevicePosition.title}
+						icon={current_position_marker_icon}
+					/>
 				)}
-			</GoogleMap>
-		);
+
+			{JSON.isJSON(props.marker) && <Marker {...props.marker} />}
+			{JSON.isJSON(props.circle) && <Marker {...props.circle} />}
+
+			{(infoWindowOpen && infoWindowPosition && infoWindowContent) && <InfoWindow position={infoWindowPosition} onCloseClick={() => setInfoWindowOpen(false)}>
+				{infoWindowContent}
+			</InfoWindow>}
+
+			{props.showSearchBar && (
+				<div className={"absolute bottom-0 mb-4 py-1 px-2 sm:w-full md:w-5/6 lg:w-4/6 "} >
+					<Paper
+						component="div"
+						className={"flex items-center w-full relative py-1 px-2"}
+					>
+						<GooglePlacesAutocomplete
+							variant="plain"
+							margin="none"
+							controlPosition={google.maps.ControlPosition.BOTTOM_CENTER}
+							{...props.searchBarProps}
+						/>
+					</Paper>
+				</div>
+
+			)}
+		</GoogleMap>
+	);
 
 
-		
-	
+
+
 }));
 
 /*export default compose(

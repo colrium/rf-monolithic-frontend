@@ -1,62 +1,43 @@
-import React, { useState, useEffect, useRef } from "react";
-
+import React, { useEffect, useRef } from "react";
+import Box from '@mui/material/Box';
+import { useDidUpdate, useVisibility } from "hooks"
 import PropTypes from "prop-types";
+import Placeholder from "components/Placeholder";
 
-function ViewPortSensor(props) {
-
-	let {
+const ViewPortSensor = React.forwardRef((props, ref) => {
+	const {
 		className,
 		children,
 		offset,
 		onViewportVisibilityChange,
 		placeholder,
-		placeholderType
+		placeholderType,
+		...rest
 	} = props;
 	// Ref for the element that we want to detect whether on screen
-	const ref = useRef();
-	// Call the hook passing in ref and root margin
-	// In this case it would only be considered onScreen if more ...
-	// ... than 300px of element is visible.
+	const elemRef = ref || useRef(null);
+	const isMounted = useRef(false);
 	let rootMargin = 0 - Number.parseNumber(offset, 0) + "px";
-	const onScreen = useOnScreen(ref, rootMargin);
-	// Hook
-	function useOnScreen(
-		ref,
-		rootMargin = "0px",
-		onEnterViewPort,
-		onExitViewPort
-	) {
-		// State and setter for storing whether element is visible
-		const [isIntersecting, setIntersecting] = useState(false);
+	const visible = useVisibility(elemRef, { rootMargin });
 
-		useEffect(() => {
-			const observer = new IntersectionObserver(
-				([entry]) => {
-					// Update our state when observer callback fires
-					setIntersecting(entry.isIntersecting);
-					if (Function.isFunction(onViewportVisibilityChange)) {
-						onViewportVisibilityChange(entry.isIntersecting);
-					}
-				},
-				{ rootMargin }
-			);
-			if (ref.current) {
-				observer.observe(ref.current);
-			}
-			return () => {
-				observer.unobserve(ref.current);
-			};
-		}, []); // Empty array ensures that effect is only run on mount and unmount
-
-		return isIntersecting;
-	}
+	useEffect(() => {
+		isMounted.current = true
+		return () => {
+			isMounted.current = false
+		}
+	}, [])
+	useDidUpdate(() => {
+		if (isMounted.current && Function.isFunction(onViewportVisibilityChange)) {
+			onViewportVisibilityChange(visible);
+		}
+	}, [visible])
 
 	return (
-		<div className={className ? className : "w-full "} ref={ref}>
+		<Box className={className ? className : "w-full "} {...rest} ref={elemRef}>
 			{children}
-		</div>
+		</Box>
 	);
-}
+});
 
 ViewPortSensor.propTypes = {
 	placeholderType: PropTypes.string,

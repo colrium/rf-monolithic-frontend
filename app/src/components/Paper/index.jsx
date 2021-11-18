@@ -1,7 +1,8 @@
 /** @format */
 
 // Material helpers
-import { Paper, withStyles } from "@material-ui/core";
+import { Paper } from "@mui/material";
+
 import classNames from "classnames";
 // Externals
 import PropTypes from "prop-types";
@@ -27,9 +28,9 @@ const CustomPaper = props => {
 
 	const rootClassName = classNames(
 		{
-			[classes.root]: true,
-			[classes.squared]: squared,
-			[classes.outlined]: outlined,
+			[classes?.root]: true,
+			[classes?.squared]: squared,
+			[classes?.outlined]: outlined,
 		},
 		className
 	);
@@ -44,7 +45,7 @@ const CustomPaper = props => {
 CustomPaper.propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	elevation: PropTypes.number,
 	outlined: PropTypes.bool,
 	squared: PropTypes.bool,
@@ -56,4 +57,4 @@ CustomPaper.defaultProps = {
 	elevation: 0,
 };
 
-export default withStyles(styles)(CustomPaper);
+export default (CustomPaper);

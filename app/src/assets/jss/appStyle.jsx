@@ -351,8 +351,20 @@ export default {
 	},
 
 	".bottom-to-top-fading-dark-bg": {
-		background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%) !important',
+		background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%) !important',
 	},
+	".bottom-to-top-fading-bg": {
+		background: 'linear-gradient(to top, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 90%, rgba(255,255,255,0) 100%) !important',
+	},
+	".blur-bg-sm": {
+		backdropFilter: "blur(7px) !important",
+		backgroundColor: "rgba(" + colors.rgb.inverse + ", 0.72) !important",
+	},
+	".blur-bg-lg": {
+		backdropFilter: "blur(7px) !important",
+		backgroundColor: "rgba(" + colors.rgb.inverse + ", 0.32) !important",
+	},
+
 
 	/*".rule--body": {
 		display: "flex",

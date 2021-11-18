@@ -1,11 +1,10 @@
 /** @format */
 
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemText from "@material-ui/core/ListItemText";
-import CartIcon from "@material-ui/icons/ShoppingCartOutlined";
-import LogoChevron from "assets/img/realfield/logo-chevron.svg";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemText from "@mui/material/ListItemText";
+import CartIcon from "@mui/icons-material/ShoppingCartOutlined";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import { TextInput } from "components/FormInputs";
@@ -16,9 +15,9 @@ import Typography from "components/Typography";
 import React, { useEffect, useState } from "react";
 
 import { connect } from "react-redux";
-import {withGlobals} from "contexts/Globals";
+import { withGlobals } from "contexts/Globals";
 import { closeDialog, emptyCart, openDialog, removeFromCart, setCartNote, setCheckoutData, setOrder } from "state/actions";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 import LoginDialog from "views/widgets/Auth/LoginDialog";
 import ApiService from "services/Api";
 
@@ -179,13 +178,13 @@ function Widget(props) {
 						};
 
 						ApiService.get("/payments/gateway", gateway_params_data).then(res => {
-								setLoading(false);
-								let gateway_params = res.body.data;
-								setCheckoutData(gateway_params);
-								if (Function.isFunction(onProceedToCheckout)) {
-									onProceedToCheckout();
-								}
-							})
+							setLoading(false);
+							let gateway_params = res.body.data;
+							setCheckoutData(gateway_params);
+							if (Function.isFunction(onProceedToCheckout)) {
+								onProceedToCheckout();
+							}
+						})
 							.catch(e => {
 								setLoading(false);
 							});
@@ -201,7 +200,7 @@ function Widget(props) {
 	function setOrderNote(note) {
 		if (order) {
 			let updatedOrder = JSON.updateJSON(order, { notes: note });
-			ApiService.put(("retail/orders/"+order._id), updatedOrder)
+			ApiService.put(("retail/orders/" + order._id), updatedOrder)
 				.then(res => {
 					setOrder(updatedOrder);
 					setCartNote(note);
@@ -223,8 +222,8 @@ function Widget(props) {
 						color="warning"
 						className="mt-2 w-auto"
 						onClick={confirmEmptyCart}
-						right
-						simple
+
+
 					>
 						{" "}
 						Remove all{" "}
@@ -250,9 +249,9 @@ function Widget(props) {
 												src={
 													item.featured_image
 														? ApiService.getAttachmentFileUrl(
-																item.featured_image
-														  )
-														: LogoChevron
+															item.featured_image
+														)
+														: ApiService.endpoint("/public/img/realfield/logo-chevron.svg")
 												}
 											/>
 										</Avatar>
@@ -283,7 +282,7 @@ function Widget(props) {
 														component="span"
 														variant="body2"
 														className="inline"
-														color="default"
+
 													>
 														{" "}
 														Cost: {item.cost}{" "}
@@ -297,7 +296,7 @@ function Widget(props) {
 														component="span"
 														variant="body2"
 														className="inline"
-														color="default"
+
 													>
 														{" "}
 														Options:{" "}
@@ -312,7 +311,7 @@ function Widget(props) {
 												>
 													<Button
 														color="warning"
-														simple
+
 														onClick={event =>
 															confirmRemoveFromCart(
 																entry
@@ -358,7 +357,7 @@ function Widget(props) {
 								component="span"
 								variant="h2"
 								className="text-right"
-								color="default"
+
 							>
 								<span className="text-gray-500 mr-2 text-base">
 									{cart.currency}
@@ -370,7 +369,7 @@ function Widget(props) {
 								component="span"
 								variant="h4"
 								className="text-right"
-								color="default"
+
 							>
 								<span className="text-gray-400 mr-4 text-xs">
 									Options:{" "}
@@ -457,5 +456,5 @@ export default withGlobals(
 		setCheckoutData,
 		closeDialog,
 		openDialog,
-	})(withErrorHandler(Widget))
+	})((Widget))
 );

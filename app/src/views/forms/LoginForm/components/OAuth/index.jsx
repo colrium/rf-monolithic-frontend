@@ -1,18 +1,18 @@
 /** @format */
 
-import withStyles from "@material-ui/core/styles/withStyles";
-import Button from "components/Button";
+
+import Button from "@mui/material/Button";
 import GridContainer from "components/Grid/GridContainer";
-import FacebookIcon from "@material-ui/icons/Facebook";
-import LinkedInIcon from "@material-ui/icons/LinkedIn";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GoogleIcon from 'mdi-react/GooglePlusIcon';
 import ApiService from "services/Api";
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import {withGlobals} from "contexts/Globals";
-import styles from "./styles";
+import { withGlobals } from "contexts/Globals";
+
 
 
 class OAuth extends React.Component {
@@ -105,68 +105,52 @@ class OAuth extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
 		const { provider, disabled } = this.state;
 		const atSymbol = provider === "twitter" ? "@" : "";
 
 		return (
-			<GridContainer>
-				<GridContainer
-					className="m-0 p-0"
-					direction="row"
-					justify="center"
-					alignItems="center"
-				>
-					<Button
-						color="google"
-						className={classes.oauthBtn}
-						onClick={this.handleOAuthBtnClick("google")}
-						textCase="wordcase"
-					>
-						<GoogleIcon
-							className={classes.oauthBtnIcon}
-						/>
-						Proceed with Google
-					</Button>
-				</GridContainer>
+			<GridContainer className="m-0 p-0 flex-col items-center justify-center">
 
-				<GridContainer
-					className="m-0 p-0"
-					direction="row"
-					justify="center"
-					alignItems="center"
-				>
-					<Button
-						color="facebook"
-						className={classes.oauthBtn}
-						onClick={this.handleOAuthBtnClick("facebook")}
-						textCase="wordcase"
-					>
-						<FacebookIcon
-							className={classes.oauthBtnIcon}
-						/>
-						Proceed with Facebook
-					</Button>
-				</GridContainer>
+				<Button
+					color="google"
+					className={"rounded-full m-2 capitalize"}
+					onClick={this.handleOAuthBtnClick("google")}
+					sx={{
+						// backgroundColor: theme => theme.palette.background.paper
+					}}
 
-				<GridContainer
-					className="m-0 p-0"
-					direction="row"
-					justify="center"
-					alignItems="center"
 				>
-					<Button
-						color="linkedin"
-						className={classes.oauthBtn}
-						onClick={this.handleOAuthBtnClick("linkedin")}
-						textCase="wordcase"
-					>
-						<LinkedInIcon
-							className={classes.oauthBtnIcon}
-						/>
-						Proceed with LinkedIn
-					</Button>
-				</GridContainer>
+					<GoogleIcon
+						className={"mr-4"}
+					/>
+					Proceed with Google
+				</Button>
+				<Button
+					color="facebook"
+					className={"rounded-full m-2 capitalize"}
+					onClick={this.handleOAuthBtnClick("facebook")}
+					sx={{
+						// backgroundColor: theme => theme.palette.background.paper
+					}}
+				>
+					<FacebookIcon
+						className={"mr-4"}
+					/>
+					Proceed with Facebook
+				</Button>
+				<Button
+					color="linkedin"
+					className={"rounded-full m-2 capitalize"}
+					onClick={this.handleOAuthBtnClick("linkedin")}
+					sx={{
+						// backgroundColor: theme => theme.palette.background.paper
+					}}
+				>
+					<LinkedInIcon
+						className={"mr-4"}
+					/>
+					Proceed with LinkedIn
+				</Button>
 			</GridContainer>
 		);
 	}
@@ -180,4 +164,4 @@ OAuth.propTypes = {
 const mapStateToProps = state => ({
 	auth: state.auth,
 });
-export default withGlobals(compose(withStyles(styles), connect(mapStateToProps, {}))(OAuth));
+export default withGlobals(compose(connect(mapStateToProps, {}))(OAuth));

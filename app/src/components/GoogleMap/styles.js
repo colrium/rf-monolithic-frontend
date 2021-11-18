@@ -1,17 +1,3 @@
-export default theme => ({
-    root: {
-        margin: "0",
-    },
-    googleMap: {
-        position: "relative",
-        top: 0,
-    },
-    locationSearchInput: {
-        position: "absolute",
-        bottom: theme.spacing(4),
-        zIndex: "2",
-    },
-})
 export const light = [
     {
         "elementType": "geometry",

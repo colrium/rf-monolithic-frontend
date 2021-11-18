@@ -1,14 +1,14 @@
 /** @format */
 
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import classNames from "classnames";
-import withStyles from "@material-ui/core/styles/withStyles";
 
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Icon from '@mdi/react'
 import { mdiForwardburger, mdiAccountCircleOutline, mdiFolderOutline } from '@mdi/js';
 import Avatar from "components/Avatar";
@@ -19,24 +19,22 @@ import CardHeader from "components/Card/CardHeader";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import { withTheme } from '@material-ui/core/styles';
-import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import { withTheme } from '@mui/styles';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import React from "react";
 import { connect } from "react-redux";
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
-import {withGlobals} from "contexts/Globals";
+import { withGlobals } from "contexts/Globals";
 import compose from "recompose/compose";
 import GoogleMap from "components/GoogleMap";
 import Listings from "views/widgets/Listings";
 import { SwitchInput } from "components/FormInputs";
-import {withErrorHandler} from "hoc/ErrorHandler";
-import client_user_female_icon from "assets/img/maps/marker-person-female.png";
-import client_user_male_icon from "assets/img/maps/marker-person-male.png";
+
 import PropTypes from "prop-types";
 import ApiService from "services/Api";
-import styles from "./styles";
+
 
 
 let googleMap = false;
@@ -54,7 +52,7 @@ let track_timetype_colors = {
 };
 
 
-const icon_names = ["female", "female_1", "female_2", "female_3", "female_4", "female_5", "female_6", "male", "male_1", "male_2", "male_3", "male_4", "male_5", "male_6", "them_1", "them_2", "them_3" ];
+const icon_names = ["female", "female_1", "female_2", "female_3", "female_4", "female_5", "female_6", "male", "male_1", "male_2", "male_3", "male_4", "male_5", "male_6", "them_1", "them_2", "them_3"];
 
 class GoogleMapOverview extends React.Component {
 	state = {
@@ -85,7 +83,7 @@ class GoogleMapOverview extends React.Component {
 		this.elementRef = React.createRef();
 		this.prepareForView();
 		this.toggleDrawer = this.toggleDrawer.bind(this);
-		
+
 		this.handleOnLoadMap = this.handleOnLoadMap.bind(this);
 		this.handleClientListItemClick = this.handleClientListItemClick.bind(this);
 		this.handleOnToggleShowClients = this.handleOnToggleShowClients.bind(this);
@@ -96,22 +94,22 @@ class GoogleMapOverview extends React.Component {
 		this.handleOnDrawerNavigationValueChange = this.handleOnDrawerNavigationValueChange.bind(this);
 		this.handleContextEntryClick = this.handleContextEntryClick.bind(this);
 		this.handleToggleContextRender = this.handleToggleContextRender.bind(this);
-		
-		this.state = { 
-			...this.state, 
+
+		this.state = {
+			...this.state,
 			//context: Object.keys(this.state.definations)[0],
-			context: context? context: this.state.context,
+			context: context ? context : this.state.context,
 			defaultZoom: app.preferences.data.defaultMapZoom,
-			multicontexts: Array.isArray(contexts)? contexts.length > 1 : false,
-			rendered_contexts: context? [context]: [],
-			contexts_props: context? {
+			multicontexts: Array.isArray(contexts) ? contexts.length > 1 : false,
+			rendered_contexts: context ? [context] : [],
+			contexts_props: context ? {
 				[context]: {
-					query: {page: 1, pagination: app.preferences.data.pagination, populate: 1},
+					query: { page: 1, pagination: app.preferences.data.pagination, populate: 1 },
 					element: "marker",
 					records: [],
 				}
-			}: {},
-			context_entries: Array.isArray(cache.data[this.state.defination.name])? cache.data[this.state.defination.name] : [],
+			} : {},
+			context_entries: Array.isArray(cache.data[this.state.defination.name]) ? cache.data[this.state.defination.name] : [],
 			//drawerOpen: device.window_size.width >= 1280,
 			drawerOpen: false,
 		};
@@ -122,10 +120,10 @@ class GoogleMapOverview extends React.Component {
 	}
 
 	componentDidMount() {
-		//throw new Error('This is a withErrorHandler test.');
+		//
 
 
-		
+
 	}
 
 	prepareForView() {
@@ -137,11 +135,11 @@ class GoogleMapOverview extends React.Component {
 		let contexts_props = this.state.contexts_props;
 		for (let [name, defination] of Object.entries(definations)) {
 			if (!defination.access.restricted(auth.user)) {
-				if (defination.views.listing.googlemapview && Function.isFunction( defination.views.listing.googlemapview.resolveData )) {
+				if (defination.views.listing.googlemapview && Function.isFunction(defination.views.listing.googlemapview.resolveData)) {
 					possible_definations[name] = defination;
 					possible_services[name] = ApiService.getContextRequests(defination.endpoint);
 					contexts_props[name] = {
-						query: {page: 1, pagination: app.preferences.data.pagination, populate: 1},
+						query: { page: 1, pagination: app.preferences.data.pagination, populate: 1 },
 						element: defination.views.listing.googlemapview.type,
 						elements: [],
 						loaded: false,
@@ -158,20 +156,20 @@ class GoogleMapOverview extends React.Component {
 		this.state.services = possible_services;
 		this.state.defination = current_defination;
 		this.state.service = current_service;
-		
-		
+
+
 	}
 
-	
 
-	toggleDrawer= (open) => (event) => {
+
+	toggleDrawer = (open) => (event) => {
 		if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
 			return;
 		}
 		if (open !== this.state.drawerOpen) {
 			this.setState(state => ({ drawerOpen: open }));
 		}
-		
+
 	}
 
 	handleOnToggleShowClients(event) {
@@ -180,7 +178,7 @@ class GoogleMapOverview extends React.Component {
 
 	handleOnLoadMap(map, google) {
 		googleMap = map;
-		
+
 	}
 
 
@@ -189,14 +187,14 @@ class GoogleMapOverview extends React.Component {
 	}
 
 	handleOnClientPositionAvailable(clientId, client) {
-		this.setState(prevState => ({ clients_positions: {...prevState.clients_positions, [clientId]: client } }));
-		
+		this.setState(prevState => ({ clients_positions: { ...prevState.clients_positions, [clientId]: client } }));
+
 	}
 
-	handleOnClientPositionUnavailable(socketId, client) {		
+	handleOnClientPositionUnavailable(socketId, client) {
 		this.setState(prevState => {
 			let newclientspositions = prevState.clients_positions;
-			
+
 			delete newclientspositions[socketId];
 
 			return { clients_positions: newclientspositions }
@@ -204,67 +202,67 @@ class GoogleMapOverview extends React.Component {
 	}
 
 	handleOnClientPositionChanged(socketId, client) {
-			this.setState(state => {
-				return { clients_positions: state.drawerOpen? {...state.clients_positions, [socketId]: client } : state.clients_positions }
-			});
-				
+		this.setState(state => {
+			return { clients_positions: state.drawerOpen ? { ...state.clients_positions, [socketId]: client } : state.clients_positions }
+		});
+
 	}
 
 
-	
+
 
 	handleOnDrawerNavigationValueChange = (event, newValue) => {
-		const { definations, services, cache } = this.props;	
+		const { definations, services, cache } = this.props;
 		this.setState(prevState => {
 			let renderedContextIndex = prevState.rendered_contexts.indexOf(newValue);
-			let rendered_contexts = renderedContextIndex !== -1? prevState.rendered_contexts : prevState.rendered_contexts.concat([newValue]);
+			let rendered_contexts = renderedContextIndex !== -1 ? prevState.rendered_contexts : prevState.rendered_contexts.concat([newValue]);
 			return {
-				context : newValue,
+				context: newValue,
 				context_entry: null,
-				context_entries: ["commissions", "tracks"].includes(newValue)? (Array.isArray(cache.data[newValue])? cache.data[newValue] : []) : [],
-				defination: ["commissions", "tracks"].includes(newValue)? definations[newValue] : prevState.defination,
-				service: ["commissions", "tracks"].includes(newValue)? ApiService.getContextRequests(definations[newValue]) : prevState.service,
+				context_entries: ["commissions", "tracks"].includes(newValue) ? (Array.isArray(cache.data[newValue]) ? cache.data[newValue] : []) : [],
+				defination: ["commissions", "tracks"].includes(newValue) ? definations[newValue] : prevState.defination,
+				service: ["commissions", "tracks"].includes(newValue) ? ApiService.getContextRequests(definations[newValue]) : prevState.service,
 				rendered_contexts: rendered_contexts,
-				context_entry_type : ["commissions", "tracks"].includes(newValue)? definations[newValue].views.listing.googlemapview.type : "clients_positions",
+				context_entry_type: ["commissions", "tracks"].includes(newValue) ? definations[newValue].views.listing.googlemapview.type : "clients_positions",
 			}
 		});
 	};
 
 	handleClientListItemClick = (socketId, client) => event => {
-        if (googleMap) {		
+		if (googleMap) {
 			googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
 			//googleMap.context.setZoom(15);
 		}
-    };
+	};
 
 	handleToggleContextRender = (context, renderContext) => {
 		const { definations, cache, apiCallRequest, app } = this.props;
-		this.setState((prevState)=>{
+		this.setState((prevState) => {
 			let renderedContextIndex = prevState.rendered_contexts.indexOf(context);
 			return {
-				rendered_contexts: prevState.rendered_contexts.includes(context)? prevState.rendered_contexts.removeAtIndex(renderedContextIndex) : prevState.rendered_contexts.concat([context]),
+				rendered_contexts: prevState.rendered_contexts.includes(context) ? prevState.rendered_contexts.removeAtIndex(renderedContextIndex) : prevState.rendered_contexts.concat([context]),
 			}
-		}, async ()=>{
+		}, async () => {
 			if (definations[context] && renderContext) {
-				
-				apiCallRequest( definations[context].name, {
+
+				apiCallRequest(definations[context].name, {
 					uri: definations[context].endpoint,
 					type: "records",
-					params: JSON.isJSON(this.state.contexts_props[context])? this.state.contexts_props[context].query : {page: 1, pagination: app.preferences.data.pagination, populate: 1},
+					params: JSON.isJSON(this.state.contexts_props[context]) ? this.state.contexts_props[context].query : { page: 1, pagination: app.preferences.data.pagination, populate: 1 },
 					data: {},
 					cache: true,
 				}).then(res => {
-					const {data} = res.body;
-					if (definations[context] && Function.isFunction( definations[context].views.listing.googlemapview.resolveData ) && Array.isArray(data)) {
+					const { data } = res.body;
+					if (definations[context] && Function.isFunction(definations[context].views.listing.googlemapview.resolveData) && Array.isArray(data)) {
 						definations[context].views.listing.googlemapview.resolveData(data, true).then(resolve => {
 							if (this.isMounted()) {
 								this.setState(prevState => ({
-									context_entry_type : definations[context].views.listing.googlemapview.type,
-									context_entry: data.length> 0? 0 : undefined,
+									context_entry_type: definations[context].views.listing.googlemapview.type,
+									context_entry: data.length > 0 ? 0 : undefined,
 									contexts_props: {
-									...prevState.contexts_props, 
-										[context]: { 
-											...prevState.contexts_props[context], 
+										...prevState.contexts_props,
+										[context]: {
+											...prevState.contexts_props[context],
 											elements: resolve,
 											element: definations[context].views.listing.googlemapview.type,
 											loaded: true,
@@ -274,65 +272,65 @@ class GoogleMapOverview extends React.Component {
 							}
 							else {
 								this.state.context_entry_type = definations[context].views.listing.googlemapview.type;
-								this.state.context_entry = data.length> 0? 0 : undefined;
+								this.state.context_entry = data.length > 0 ? 0 : undefined;
 								this.state.contexts_props = {
-									...this.state.contexts_props, 
-										[context]: { 
-											...this.state.contexts_props[context], 
-											elements: resolve,
-											element: definations[context].views.listing.googlemapview.type,
-											loaded: true,
-										}
+									...this.state.contexts_props,
+									[context]: {
+										...this.state.contexts_props[context],
+										elements: resolve,
+										element: definations[context].views.listing.googlemapview.type,
+										loaded: true,
+									}
 								}
 							}
 						});
 					}
-						
+
 				}).catch(e => {
 
 				});
 			}
 			else if (definations[context]) {
 				if (this.isMounted()) {
-								this.setState(prevState => ({ 
-									context_entry_type : undefined,
-									context_entry: undefined,
-									contexts_props: {
-									...prevState.contexts_props, 
-										[context]: { 
-											...prevState.contexts_props[context], 
-											elements: [],
-											element: definations[context].views.listing.googlemapview.type,
-											loaded: false,
-										}
-									}
-								}))
+					this.setState(prevState => ({
+						context_entry_type: undefined,
+						context_entry: undefined,
+						contexts_props: {
+							...prevState.contexts_props,
+							[context]: {
+								...prevState.contexts_props[context],
+								elements: [],
+								element: definations[context].views.listing.googlemapview.type,
+								loaded: false,
 							}
-							else {
-								this.state.context_entry_type = undefined;
-								this.state.context_entry = undefined;
-								this.state.contexts_props = {
-									...this.state.contexts_props, 
-										[context]: { 
-											...this.state.contexts_props[context], 
-											elements: [],
-											element: definations[context].views.listing.googlemapview.type,
-											loaded: false,
-										}
-								}
-							}
+						}
+					}))
+				}
+				else {
+					this.state.context_entry_type = undefined;
+					this.state.context_entry = undefined;
+					this.state.contexts_props = {
+						...this.state.contexts_props,
+						[context]: {
+							...this.state.contexts_props[context],
+							elements: [],
+							element: definations[context].views.listing.googlemapview.type,
+							loaded: false,
+						}
+					}
+				}
 			}
-				
-			
-			
+
+
+
 		});
-						
-			
-		
+
+
+
 	};
 
 	handleContextEntryClick = (entry, index) => {
-		//console.log("handleContextEntryClick index", index);
+		//
 
 		this.setState({ context_entry: index });
 		if (googleMap) {
@@ -346,15 +344,15 @@ class GoogleMapOverview extends React.Component {
 							googleMap.panTo({ lat: entry.positions[0].latitude, lng: entry.positions[0].longitude });
 						}
 					}
-				}							
-			}				
+				}
+			}
 		}
 	};
 
 
-	getclientPositionMarkerIcon = (user) => {		
-		let computed_icon = JSON.isJSON(user)? (String.isString(user.icon)? (user.icon.startsWith(user.gender)? user.icon : user.gender) : ((String.isString(user.gender)? user.gender.trim().toLowerCase() : "male")) : "male") : "male";
-		
+	getclientPositionMarkerIcon = (user) => {
+		let computed_icon = JSON.isJSON(user) ? (String.isString(user.icon) ? (user.icon.startsWith(user.gender) ? user.icon : user.gender) : ((String.isString(user.gender) ? user.gender.trim().toLowerCase() : "male")) : "male") : "male";
+
 		if (!computed_icon) {
 			computed_icon = "male";
 		}
@@ -364,18 +362,18 @@ class GoogleMapOverview extends React.Component {
 		if (process.env.NODE_ENV === "development") {
 			computed_icon = icon_names[Math.floor(Math.random() * icon_names.length)];
 		}
-		return `${process.env.PUBLIC_URL}/img/avatars/${computed_icon}.png`;		
+		return `${process.env.PUBLIC_URL}/img/avatars/${computed_icon}.png`;
 	}
 
 	render() {
-		const { theme, classes, showAll, device, sockets, definations,  contexts, actions } = this.props;
+		const { theme, showAll, device, sockets, definations, contexts, actions } = this.props;
 		const { context, clients_positions, show_client_positions, rendered_contexts, contexts_props } = this.state;
 		let circles = [];
 		let markers = [];
 		let polylines = [];
-		//console.log("rendered_contexts", rendered_contexts);
+		//
 		rendered_contexts.map(rendered_context => {
-			if (definations[rendered_context] && rendered_context in contexts_props ) {
+			if (definations[rendered_context] && rendered_context in contexts_props) {
 
 				if (contexts_props[rendered_context].element === "marker" && Array.isArray(contexts_props[rendered_context].elements)) {
 					markers = markers.concat(contexts_props[rendered_context].elements);
@@ -388,18 +386,18 @@ class GoogleMapOverview extends React.Component {
 				}
 			}
 		});
-		//console.log("circles", circles);
-		
+		//
+
 
 		return (
-			<Card elevation={0} outlineColor={theme.palette.text.primary} style={{backgroundColor: theme.palette.background.paper }}  >
+			<Card elevation={0} outlineColor={theme.palette.text.primary} style={{ backgroundColor: theme.palette.background.paper }}  >
 				<CardHeader
 					avatar={
-						<Avatar style={{backgroundColor: "rgba(0,0,0,0.05)", color:theme.palette.text.primary}}>
+						<Avatar style={{ backgroundColor: "rgba(0,0,0,0.05)", color: theme.palette.text.primary }}>
 							<MapOutlinedIcon />
 						</Avatar>
 					}
-					title={this.props.context? (definations[this.props.context]? (definations[this.props.context].label+" Map"): "Map") : "Map Overview"}
+					title={this.props.context ? (definations[this.props.context] ? (definations[this.props.context].label + " Map") : "Map") : "Map Overview"}
 					subheader="Click on any context marker, route or polyline in the map for more infomation on the context "
 					action={
 						<div>
@@ -417,16 +415,16 @@ class GoogleMapOverview extends React.Component {
 								/>
 							</IconButton>*/}
 
-							{Array.isArray(actions) && actions.map(({onClick, icon, ...rest}, cursor)=> (
+							{Array.isArray(actions) && actions.map(({ onClick, icon, ...rest }, cursor) => (
 								<IconButton
 									aria-label="Action"
 									className={"mx-1 inverse-text translucent "}
 									onClick={onClick}
-									style={{backgroundColor: "rgba(0,0,0,0.05)"}}
-									key={"action-button-"+cursor}
+									style={{ backgroundColor: "rgba(0,0,0,0.05)" }}
+									key={"action-button-" + cursor}
 									{...rest}
 								>
-									{icon}									
+									{icon}
 								</IconButton>
 							))}
 
@@ -435,12 +433,12 @@ class GoogleMapOverview extends React.Component {
 								color={"inherit"}
 								className={"mx-1 inverse-text "}
 								onClick={this.toggleDrawer(!this.state.drawerOpen)}
-								style={{backgroundColor: "rgba(0,0,0,0.05)"}}
+								style={{ backgroundColor: "rgba(0,0,0,0.05)" }}
 							>
-								<Icon 
+								<Icon
 									path={mdiForwardburger}
 									title="Map Overview Drawer Menu"
-									rotate={this.state.drawerOpen? 0 : 180}	    
+									rotate={this.state.drawerOpen ? 0 : 180}
 									size={0.8}
 									color={theme.palette.text.primary}
 								/>
@@ -451,11 +449,11 @@ class GoogleMapOverview extends React.Component {
 				/>
 				<CardContent className="p-0 m-0 overflow-x-hidden">
 					<GridContainer className="p-0 m-0">
-						<GridItem xs={12} className={classes.wrapper}>
-							<div className={classNames(classes.content, { [classes.contentDrawerMargin]: device.window_size.width >= 1280,  [classes.contentShift]: this.state.drawerOpen && device.window_size.width >= 1280})} style={{minHeight: device.window_size.height, backgroundColor: theme.palette.background.paper }} ref={this.elementRef}>
-								
+						<GridItem xs={12} className={`m-0 p-0 flex`}>
+							<div className={`flex-grow p-0 transition-all`} style={{ minHeight: device.window_size.height, backgroundColor: theme.palette.background.paper }} ref={this.elementRef}>
 
-								<GoogleMap									
+
+								<GoogleMap
 									mapHeight={device.window_size.height}
 									showClientsPositions={rendered_contexts.includes("clients_positions")}
 									showCurrentPosition={true}
@@ -463,28 +461,25 @@ class GoogleMapOverview extends React.Component {
 									onClientPositionAvailable={this.handleOnClientPositionAvailable}
 									onClientPositionUnavailable={this.handleOnClientPositionUnavailable}
 									onClientPositionChanged={this.handleOnClientPositionChanged}
-									selectedEntry={this.state.context_entry} 
-									selectedEntryType={this.state.context_entry_type? this.state.context_entry_type : "clients_position"}
+									selectedEntry={this.state.context_entry}
+									selectedEntryType={this.state.context_entry_type ? this.state.context_entry_type : "clients_position"}
 									defaultZoom={this.state.defaultZoom}
 									zoom={this.state.zoom}
 									onMapLoad={this.handleOnLoadMap}
 									polylines={polylines}
 									markers={markers}
-									circles={circles}									  
+									circles={circles}
 								/>
 
 							</div>
-								
+
 							<SwipeableDrawer
-								className={classes.drawer}
-								variant={device.window_size.width >= 1280? "persistent" : "temporary" }
+								className={`flex-shrink`}
+								variant={device.window_size.width >= 1280 ? "persistent" : "temporary"}
 								anchor="right"
 								open={this.state.drawerOpen}
 								onClose={this.toggleDrawer(false)}
-            					onOpen={this.toggleDrawer(true)}
-								classes={{
-									paper: device.window_size.width >= 1280? classes.drawerPaper : classes.temporaryDrawerPaper,
-								}}
+								onOpen={this.toggleDrawer(true)}
 							>
 								{this.state.multicontexts && <BottomNavigation
 									value={context}
@@ -492,30 +487,30 @@ class GoogleMapOverview extends React.Component {
 									showLabels
 									className={"w-full"}
 								>
-									<BottomNavigationAction 
+									<BottomNavigationAction
 										value="clients_positions"
-										label="Users" 
+										label="Users"
 										icon={
-											<Icon 
+											<Icon
 												path={mdiAccountCircleOutline}
 												title="Clients Postions Users"
 												size={1}
 											/>
-										} 
+										}
 									/>
 									{Object.entries(this.state.definations).map(([name, defination], index) => (
-										<BottomNavigationAction 
+										<BottomNavigationAction
 											value={name}
-											label={defination.label} 
-											icon={defination.icon} 
-											key={"googlemapview-btn-"+name+"-option"}
+											label={defination.label}
+											icon={defination.icon}
+											key={"googlemapview-btn-" + name + "-option"}
 										/>
 									))}
 								</BottomNavigation>}
 
 								{(context === "clients_positions" && Object.size(clients_positions) === 0) && <GridContainer>
 									<GridItem xs={12} className="flex items-center justify-center p-2">
-										<Icon 
+										<Icon
 											path={mdiFolderOutline}
 											title="No Records available yet."
 											color="#CCCCCC"
@@ -525,153 +520,153 @@ class GoogleMapOverview extends React.Component {
 
 									<GridItem xs={12} className="flex items-center justify-center p-2">
 										<Typography>
-										No Records available yet.
+											No Records available yet.
 										</Typography>
 									</GridItem>
 								</GridContainer>}
 
-								
-									{context === "clients_positions" && <List className={classes.root}>
-										{Object.entries(clients_positions).map(([socketId, client], index) => {
-											let show_entry = true;
-											if (index > 0) {
 
-												if (client.user._id === clients_positions[(Object.keys(clients_positions)[(index-1)])].user._id) {
-													show_entry = false;
-												}
-											}
-											else{
-												/*if (googleMap) {		
-													googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
-													googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(15);
-												}*/
-											}
-											if (client.user && show_entry) {
-												return (
-													<ListItem className={"cursor-pointer hover:bg-gray-400"} onClick={this.handleClientListItemClick(socketId, client)} key={"client-"+socketId}>
-														<ListItemAvatar>
-															<Avatar src={this.getclientPositionMarkerIcon(client.user)} />
-														</ListItemAvatar>
-														<ListItemText primary={ client.user.first_name+" "+client.user.last_name } secondary={String.isString(client.user.role)? client.user.role.humanize() : ""} />
-													</ListItem>
-												);
-											}
-												
-										})}
-									</List>}
+								{context === "clients_positions" && <List className={`p-0`}>
+									{Object.entries(clients_positions).map(([socketId, client], index) => {
+										let show_entry = true;
+										if (index > 0) {
 
-									{context === "commissions" && <Listings 
-										defination={definations.commissions} 
-										service={ApiService.getContextRequests(definations[context].endpoint)}
-										query={{}}
-										showViewOptions={false}
-										showAddBtn={false}
-										showSorter={true}
-										sorterFormLayoutType={"normal"}
-										view={"listview"}
-										onLoadData={(loadedData, query)=>{
-											if (definations[context] && Function.isFunction( definations[context].views.listing.googlemapview.resolveData ) && Array.isArray(loadedData)) {
-												definations[context].views.listing.googlemapview.resolveData(loadedData, true).then(resolve => {
+											if (client.user._id === clients_positions[(Object.keys(clients_positions)[(index - 1)])].user._id) {
+												show_entry = false;
+											}
+										}
+										else {
+											/*if (googleMap) {		
+												googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
+												googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(15);
+											}*/
+										}
+										if (client.user && show_entry) {
+											return (
+												<ListItem className={"cursor-pointer hover:bg-gray-400"} onClick={this.handleClientListItemClick(socketId, client)} key={"client-" + socketId}>
+													<ListItemAvatar>
+														<Avatar src={this.getclientPositionMarkerIcon(client.user)} />
+													</ListItemAvatar>
+													<ListItemText primary={client.user.first_name + " " + client.user.last_name} secondary={String.isString(client.user.role) ? client.user.role.humanize() : ""} />
+												</ListItem>
+											);
+										}
 
-													this.setState(prevState => {
-														let renderedContextIndex = prevState.rendered_contexts.indexOf(context);
-														let rendered_contexts = renderedContextIndex !== -1? prevState.rendered_contexts : prevState.rendered_contexts.concat([context]);
-														console.log("onLoadData rendered_contexts", rendered_contexts);
-														return {
-															context_entries: Array.isArray(loadedData)? loadedData : [],
-															rendered_contexts: rendered_contexts,
-															context_entry_type : definations[context].views.listing.googlemapview.type,
-															context_entry: Array.isArray(loadedData) && loadedData.length> 0? 0 : undefined,
-															contexts_props: {
-															...prevState.contexts_props, 
-																[context]: { 
-																	...prevState.contexts_props[context], 
-																	elements: resolve,
-																	element: definations[context].views.listing.googlemapview.type,
-																	loaded: true,
-																},
-															},
-															records: loadedData,
-															rendered_contexts: rendered_contexts,
-															defination: definations[context],
-															service: ApiService.getContextRequests(definations[context].endpoint),
-														}
-													});
-														
-												}).catch(err => {
-													this.setState(prevState => ({
+									})}
+								</List>}
+
+								{context === "commissions" && <Listings
+									defination={definations.commissions}
+									service={ApiService.getContextRequests(definations[context].endpoint)}
+									query={{}}
+									showViewOptions={false}
+									showAddBtn={false}
+									showSorter={true}
+									sorterFormLayoutType={"normal"}
+									view={"listview"}
+									onLoadData={(loadedData, query) => {
+										if (definations[context] && Function.isFunction(definations[context].views.listing.googlemapview.resolveData) && Array.isArray(loadedData)) {
+											definations[context].views.listing.googlemapview.resolveData(loadedData, true).then(resolve => {
+
+												this.setState(prevState => {
+													let renderedContextIndex = prevState.rendered_contexts.indexOf(context);
+													let rendered_contexts = renderedContextIndex !== -1 ? prevState.rendered_contexts : prevState.rendered_contexts.concat([context]);
+													
+													return {
+														context_entries: Array.isArray(loadedData) ? loadedData : [],
+														rendered_contexts: rendered_contexts,
+														context_entry_type: definations[context].views.listing.googlemapview.type,
+														context_entry: Array.isArray(loadedData) && loadedData.length > 0 ? 0 : undefined,
 														contexts_props: {
-																...prevState.contexts_props,
-																[context]: {
-																	...prevState.contexts_props[context],
-																	elements: [],
-																	loaded: true,
-																}
+															...prevState.contexts_props,
+															[context]: {
+																...prevState.contexts_props[context],
+																elements: resolve,
+																element: definations[context].views.listing.googlemapview.type,
+																loaded: true,
+															},
 														},
 														records: loadedData,
-													}));
+														rendered_contexts: rendered_contexts,
+														defination: definations[context],
+														service: ApiService.getContextRequests(definations[context].endpoint),
+													}
 												});
-											}
-											
-										}}
-										onClickEntry={this.handleContextEntryClick}
-									/>}
 
-									{context === "tracks" && <Listings 
-										defination={definations.tracks} 
-										service={ApiService.getContextRequests(definations[context].endpoint)}										
-										showViewOptions={false}
-										showAddBtn={false}
-										showSorter={true}
-										showPagination={true}
-										sorterFormLayoutType={"normal"}
-										view={"listview"}
-										onLoadData={(loadedData, query)=>{
-											if (definations[context] && Function.isFunction( definations[context].views.listing.googlemapview.resolveData ) && Array.isArray(loadedData)) {
-												definations[context].views.listing.googlemapview.resolveData(loadedData, true).then(resolve => {
-
-													this.setState(prevState => {
-														let renderedContextIndex = prevState.rendered_contexts.indexOf(context);
-														let rendered_contexts = renderedContextIndex !== -1? prevState.rendered_contexts : prevState.rendered_contexts.concat([context]);
-														console.log("onLoadData rendered_contexts", rendered_contexts);
-														return {
-															context_entries: Array.isArray(loadedData)? loadedData : [],
-															rendered_contexts: rendered_contexts,
-															context_entry_type : definations[context].views.listing.googlemapview.type,
-															context_entry: Array.isArray(loadedData) && loadedData.length> 0? 0 : undefined,
-															contexts_props: {
-															...prevState.contexts_props, 
-																[context]: { 
-																	...prevState.contexts_props[context], 
-																	elements: resolve,
-																	element: definations[context].views.listing.googlemapview.type,
-																	loaded: true,
-																},
-															},
-															records: loadedData,
-															rendered_contexts: rendered_contexts,
-															defination: definations[context],
-															service: ApiService.getContextRequests(definations[context].endpoint),
+											}).catch(err => {
+												this.setState(prevState => ({
+													contexts_props: {
+														...prevState.contexts_props,
+														[context]: {
+															...prevState.contexts_props[context],
+															elements: [],
+															loaded: true,
 														}
-													});
-														
-												}).catch(err => {
-													this.setState(prevState => ({
+													},
+													records: loadedData,
+												}));
+											});
+										}
+
+									}}
+									onClickEntry={this.handleContextEntryClick}
+								/>}
+
+								{context === "tracks" && <Listings
+									defination={definations.tracks}
+									service={ApiService.getContextRequests(definations[context].endpoint)}
+									showViewOptions={false}
+									showAddBtn={false}
+									showSorter={true}
+									showPagination={true}
+									sorterFormLayoutType={"normal"}
+									view={"listview"}
+									onLoadData={(loadedData, query) => {
+										if (definations[context] && Function.isFunction(definations[context].views.listing.googlemapview.resolveData) && Array.isArray(loadedData)) {
+											definations[context].views.listing.googlemapview.resolveData(loadedData, true).then(resolve => {
+
+												this.setState(prevState => {
+													let renderedContextIndex = prevState.rendered_contexts.indexOf(context);
+													let rendered_contexts = renderedContextIndex !== -1 ? prevState.rendered_contexts : prevState.rendered_contexts.concat([context]);
+													
+													return {
+														context_entries: Array.isArray(loadedData) ? loadedData : [],
+														rendered_contexts: rendered_contexts,
+														context_entry_type: definations[context].views.listing.googlemapview.type,
+														context_entry: Array.isArray(loadedData) && loadedData.length > 0 ? 0 : undefined,
 														contexts_props: {
-																...prevState.contexts_props,
-																[context]: {
-																	...prevState.contexts_props[context],
-																	elements: [],
-																	loaded: true,
-																}
+															...prevState.contexts_props,
+															[context]: {
+																...prevState.contexts_props[context],
+																elements: resolve,
+																element: definations[context].views.listing.googlemapview.type,
+																loaded: true,
+															},
 														},
 														records: loadedData,
-													}));
+														rendered_contexts: rendered_contexts,
+														defination: definations[context],
+														service: ApiService.getContextRequests(definations[context].endpoint),
+													}
 												});
-											}
-										}}
-										onClickEntry={this.handleContextEntryClick}
-									/>}
+
+											}).catch(err => {
+												this.setState(prevState => ({
+													contexts_props: {
+														...prevState.contexts_props,
+														[context]: {
+															...prevState.contexts_props[context],
+															elements: [],
+															loaded: true,
+														}
+													},
+													records: loadedData,
+												}));
+											});
+										}
+									}}
+									onClickEntry={this.handleContextEntryClick}
+								/>}
 
 							</SwipeableDrawer>
 						</GridItem>
@@ -680,21 +675,21 @@ class GoogleMapOverview extends React.Component {
 				<CardActions>
 					<GridContainer className="p-0 m-0">
 						{Array.isArray(contexts) && contexts.map((context_entry_name, cursor) => (
-							<GridItem xs={12} md={Math.round((12 / contexts.length))} className={"flex items-center justify-center"} key={"context_entry_switch-"+cursor}>
-									<SwitchInput 
-										label={context_entry_name === "clients_positions"? "Users" : (definations[context_entry_name]? definations[context_entry_name].label : context_entry_name) }
-										value={this.state.rendered_contexts.includes(context_entry_name)}
-										onChange={(new_value)=>{
-											console.log("SwitchInput context_entry_name", context_entry_name)	
-											this.handleToggleContextRender(context_entry_name, new_value);											
-										}}
-									/>
+							<GridItem xs={12} md={Math.round((12 / contexts.length))} className={"flex items-center justify-center"} key={"context_entry_switch-" + cursor}>
+								<SwitchInput
+									label={context_entry_name === "clients_positions" ? "Users" : (definations[context_entry_name] ? definations[context_entry_name].label : context_entry_name)}
+									value={this.state.rendered_contexts.includes(context_entry_name)}
+									onChange={(new_value) => {
 										
+										this.handleToggleContextRender(context_entry_name, new_value);
+									}}
+								/>
+
 							</GridItem>
 						))}
 						<GridItem xs={12}>
 							<Typography variant="body2">
-								{this.props.context? (definations[this.props.context]? (definations[this.props.context].label+" Map from a glance"): "Map from a glance") : "Map from a glance"}
+								{this.props.context ? (definations[this.props.context] ? (definations[this.props.context].label + " Map from a glance") : "Map from a glance") : "Map from a glance"}
 							</Typography>
 						</GridItem>
 					</GridContainer>
@@ -706,7 +701,6 @@ class GoogleMapOverview extends React.Component {
 
 GoogleMapOverview.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object,
 	contexts: PropTypes.array,
 	context: PropTypes.string.isRequired,
 	actions: PropTypes.array,
@@ -726,8 +720,7 @@ const mapStateToProps = state => ({
 });
 
 export default withGlobals(compose(
-	withStyles(styles),
-	connect(mapStateToProps, {apiCallRequest, closeDialog, openDialog}),
-	withTheme,
-	withErrorHandler
+
+	connect(mapStateToProps, { apiCallRequest, closeDialog, openDialog }),
+	withTheme
 )(GoogleMapOverview));

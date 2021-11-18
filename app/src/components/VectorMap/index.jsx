@@ -1,39 +1,19 @@
 /** @format */
 
-import { withStyles } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
+
+import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 //
 import { colors } from "assets/jss/app-theme";
 import Color from "color";
 // Externals
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import withRoot from "hoc/withRoot";
+
 // Component styles
-import styles from "./styles";
 
-/*
-function LayerTooltip(props) {
-	return withStyles(theme => ({
-		tooltip: {
-			backgroundColor: props.color,
-			color: 'rgba(0, 0, 0, 0.87)',
-			maxWidth: 220,
-			fontSize: theme.typography.pxToRem(12),
-			border: '1px solid '+props.color,
-		},
-	}))(Tooltip)
-}
 
-LayerTooltip.propTypes = {
-	color: PropTypes.string,
-};
-
-LayerTooltip.defaultProps = {
-	color:'#f5f5f9',
-};*/
 
 class VectorMap extends Component {
 	state = {
@@ -257,8 +237,8 @@ class VectorMap extends Component {
 							enableSelect && !disabled && !selected
 								? this.handleSelect(layer)
 								: !disabled
-								? this.handleUnselect(layer)
-								: event => event.preventDefault
+									? this.handleUnselect(layer)
+									: event => event.preventDefault
 						}
 						onMouseEnter={
 							enableSelect && !disabled && !highlighted
@@ -293,8 +273,8 @@ class VectorMap extends Component {
 						!disabled && !selected
 							? this.handleSelect(layer)
 							: !disabled
-							? this.handleUnselect(layer)
-							: event => event.preventDefault
+								? this.handleUnselect(layer)
+								: event => event.preventDefault
 					}
 					onMouseEnter={
 						!disabled && !highlighted
@@ -347,7 +327,7 @@ class VectorMap extends Component {
 }
 
 VectorMap.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	id: PropTypes.string.isRequired,
 	name: PropTypes.string,
 	viewBox: PropTypes.string.isRequired,
@@ -394,4 +374,4 @@ VectorMap.defaultProps = {
 	showLabels: true,
 	enableSelect: true,
 };
-export default withRoot(withStyles(styles)(VectorMap));
+export default (VectorMap);

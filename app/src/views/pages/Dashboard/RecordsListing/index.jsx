@@ -1,7 +1,7 @@
 /** @format */
 
-import withStyles from "@material-ui/core/styles/withStyles";
-import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
+
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { colors } from "assets/jss/app-theme";
 import Button from "components/Button";
 //
@@ -20,9 +20,8 @@ import ApiService from "services/Api";
 //
 //
 import { appendNavHistory } from "state/actions/ui/nav";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 //
-import styles from "views/pages/styles";
 //Context Views Imports
 import Listings from "views/widgets/Listings";
 import AccessDenied from "views/widgets/Catch/AccessDenied";
@@ -42,19 +41,19 @@ class Page extends React.Component {
 		this.context = componentProps.context;
 		this.defination = definations[componentProps.context];
 		this.service = ApiService.getContextRequests(this.defination?.endpoint);
-		let urlQuery = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function(result, each, n, every) {
+		let urlQuery = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function (result, each, n, every) {
 			let [key, value] = decodeURI(each).split("=");
 			result[key] = value;
 			return result;
 		}, {});
 
-		/*console.log("window.location.search", decodeURI(window.location.search));
-		console.log("urlQuery", urlQuery);*/
+		/*);
+		*/
 
-		this.state.query = {...this.state.query, ...urlQuery}
+		this.state.query = { ...this.state.query, ...urlQuery }
 	}
 
-	
+
 
 	componentDidMount() {
 		const { auth, location, appendNavHistory } = this.props;
@@ -77,13 +76,12 @@ class Page extends React.Component {
 	}
 
 	render() {
-		const { classes, auth } = this.props;
+		const { auth } = this.props;
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer>
 				<GridItem xs={12}>
 					{/*this.defination.access.restricted(auth.user) && (
 						<GridContainer
-							className={classes.fullPageHeight}
 							direction="column"
 							justify="center"
 							alignItems="center"
@@ -94,7 +92,6 @@ class Page extends React.Component {
 									variant="h1"
 								>
 									<WarningRoundedIcon
-										className={classes.errorIcon}
 									/>
 								</Typography>
 							</GridItem>
@@ -109,7 +106,7 @@ class Page extends React.Component {
 
 							<GridItem xs={12} className={"flex items-center"}>
 								<Typography
-									color="default"
+									
 									variant="body1"
 								>
 									Sorry! Access to this resource has been
@@ -125,9 +122,8 @@ class Page extends React.Component {
 									>
 										<Button
 											variant="text"
-											color="default"
-											simple
-										>
+											
+																					>
 											Home
 										</Button>
 									</Link>
@@ -151,16 +147,14 @@ class Page extends React.Component {
 }
 
 Page.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 };
 
 const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(
-	compose(
-		withStyles(styles),
-		connect(mapStateToProps, { appendNavHistory })
-	)(Page)
-);
+export default compose(
+
+	connect(mapStateToProps, { appendNavHistory })
+)(Page);

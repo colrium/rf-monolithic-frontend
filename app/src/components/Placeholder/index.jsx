@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import ProgressIndicator from "components/ProgressIndicator";
-import Skeleton from "@material-ui/lab/Skeleton";
+import Skeleton from '@mui/material/Skeleton';
 
 function Placeholder(props) {
 	let [state, setState] = useState(props);
@@ -105,13 +105,13 @@ function Placeholder(props) {
 		} else {
 			return <Skeleton variant="rect" width={"100%"} height={120} />;
 		}
-	} 
+	}
 	else if (type === "progress") {
 		return <ProgressIndicator type="circular" size={24} />;
 	}
 	else if (type === "logo") {
 		return <ProgressIndicator type="logo" size={24} thickness={5} className="absolute center" />;
-	}  
+	}
 	else {
 		return <Skeleton variant="rect" width={"100%"} height={"100%"} />;
 	}

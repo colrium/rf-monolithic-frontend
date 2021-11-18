@@ -7,40 +7,40 @@ import { Editor } from "react-draft-wysiwyg";
 import { EditorState, convertFromHTML, ContentState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import {
-    FormatBold as BoldIcon,
-    FormatItalic as ItalicIcon,
-    FormatUnderlined as UnderlinedIcon,
-    FormatStrikethrough as StrikethroughIcon,
-    VerticalAlignTop as SuperscriptIcon,
-    VerticalAlignBottom as SubscriptIcon,
-    FormatListBulleted as UnorderedListIcon,
-    FormatListNumbered as OrderedListIcon,
-    FormatIndentIncrease as IndentIcon,
-    FormatIndentDecrease as OutdentIcon,
-    FormatAlignLeft as LeftAlignIcon,
-    FormatAlignRight as RightAlignIcon,
-    FormatAlignCenter as CenterAlignIcon,
-    FormatAlignJustify as JustifyAlignIcon,
-    InsertLink as InsertLinkIcon,
-    LinkOff as RemoveLinkIcon,
-    InsertPhoto as InsertPhotoIcon,
-    Delete as EraseIcon,
-    Undo as UndoIcon,
-    Redo as RedoIcon,
-    ExpandMore,
-    ExpandLess,
-} from "@material-ui/icons";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import IconButton from "@material-ui/core/IconButton";
+	FormatBold as BoldIcon,
+	FormatItalic as ItalicIcon,
+	FormatUnderlined as UnderlinedIcon,
+	FormatStrikethrough as StrikethroughIcon,
+	VerticalAlignTop as SuperscriptIcon,
+	VerticalAlignBottom as SubscriptIcon,
+	FormatListBulleted as UnorderedListIcon,
+	FormatListNumbered as OrderedListIcon,
+	FormatIndentIncrease as IndentIcon,
+	FormatIndentDecrease as OutdentIcon,
+	FormatAlignLeft as LeftAlignIcon,
+	FormatAlignRight as RightAlignIcon,
+	FormatAlignCenter as CenterAlignIcon,
+	FormatAlignJustify as JustifyAlignIcon,
+	InsertLink as InsertLinkIcon,
+	LinkOff as RemoveLinkIcon,
+	InsertPhoto as InsertPhotoIcon,
+	Delete as EraseIcon,
+	Undo as UndoIcon,
+	Redo as RedoIcon,
+	ExpandMore,
+	ExpandLess,
+} from "@mui/icons-material";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
 import Button from "components/Button";
 import Typography from "components/Typography";
-import withRoot from "hoc/withRoot";
+
 
 class IconsOnlyComponent extends Component {
 	render() {
 		const { config } = this.props;
-		//console.log("IconsOnlyComponent this.props", this.props);
+		//
 		return (
 			<div className="inline-block">
 				{Array.isArray(config.options) &&
@@ -79,7 +79,7 @@ class IconAndPopoverComponent extends Component {
 			: String.uid(8);
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		//console.log("IconPopoverComponent this.props", props);
+		//
 	}
 
 	handleOnPopoverOpen(event) {
@@ -142,7 +142,7 @@ class BlockTypeComponent extends Component {
 		this.state.id = "block-type-options";
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		//console.log("BlockTypeComponent this.props", props);
+		//
 	}
 
 	handleOnPopoverOpen(event) {
@@ -185,7 +185,6 @@ class BlockTypeComponent extends Component {
 					aria-haspopup="true"
 					className="text-gray-700 hover:text-gray-900 focus:text-gray-900"
 					onClick={this.handleOnPopoverOpen}
-					simple
 				>
 					{blockTypes[blockType]}
 					{this.state.open ? (
@@ -231,7 +230,7 @@ class FontFamilyComponent extends Component {
 		this.state.id = "font-family-option";
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		//console.log("FontFamilyComponent this.props", props);
+		//
 	}
 
 	handleOnPopoverOpen(event) {
@@ -260,7 +259,6 @@ class FontFamilyComponent extends Component {
 					aria-haspopup="true"
 					className="text-gray-700 hover:text-gray-900 focus:text-gray-900"
 					onClick={this.handleOnPopoverOpen}
-					simple
 				>
 					{fontFamilies[fontFamily]}
 					{this.state.open ? (
@@ -302,7 +300,7 @@ class FontSizeComponent extends Component {
 		this.state.id = "font-size-option";
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		//console.log("FontSizeComponent this.props", props);
+		//
 	}
 
 	handleOnPopoverOpen(event) {
@@ -321,7 +319,6 @@ class FontSizeComponent extends Component {
 					aria-haspopup="true"
 					className="text-gray-700 hover:text-gray-900 focus:text-gray-900"
 					onClick={this.handleOnPopoverOpen}
-					simple
 				>
 					{fontSize}
 					{this.state.open ? (
@@ -363,7 +360,7 @@ class LinkAddComponent extends Component {
 		this.state.id = "link-option";
 		this.handleOnPopoverOpen = this.handleOnPopoverOpen.bind(this);
 		this.handleOnPopoverClose = this.handleOnPopoverClose.bind(this);
-		//console.log("LinkAddComponent this.props", props);
+		//
 	}
 
 	handleOnPopoverOpen(event) {
@@ -673,4 +670,4 @@ WysiwygEditor.defaultProps = {
 	type: "html",
 };
 
-export default withRoot(WysiwygEditor);
+export default WysiwygEditor;

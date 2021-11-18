@@ -1,52 +1,52 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import classNames from "classnames";
-import withStyles from "@material-ui/core/styles/withStyles";
-import Badge from "@material-ui/core/Badge";
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Typography from '@material-ui/core/Typography';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import PersonIcon from '@material-ui/icons/Person';
-import PeopleIcon from '@material-ui/icons/People';
-import ContactsIcon from '@material-ui/icons/Contacts';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Divider from '@material-ui/core/Divider';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Badge from "@mui/material/Badge";
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PersonIcon from '@mui/icons-material/Person';
+import PeopleIcon from '@mui/icons-material/People';
+import ContactsIcon from '@mui/icons-material/Contacts';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Divider from '@mui/material/Divider';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import CloseIcon from '@material-ui/icons/Close';
-import AttachFileIcon from '@material-ui/icons/AttachFile';
-import ImageOutlinedIcon from '@material-ui/icons/ImageOutlined';
-import MovieOutlinedIcon from '@material-ui/icons/MovieOutlined';
-import AudiotrackOutlinedIcon from '@material-ui/icons/AudiotrackOutlined';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import BlockIcon from '@material-ui/icons/Block';
-import DoneIcon from '@material-ui/icons/Done';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
-import ScheduleIcon from '@material-ui/icons/Schedule';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import Fab from '@material-ui/core/Fab';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import CloseIcon from '@mui/icons-material/Close';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
+import MovieOutlinedIcon from '@mui/icons-material/MovieOutlined';
+import AudiotrackOutlinedIcon from '@mui/icons-material/AudiotrackOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import BlockIcon from '@mui/icons-material/Block';
+import DoneIcon from '@mui/icons-material/Done';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import Fab from '@mui/material/Fab';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import Skeleton from '@material-ui/lab/Skeleton';
-import Paper from '@material-ui/core/Paper';
-import IconButton from "@material-ui/core/IconButton";
+import Skeleton from '@mui/material/Skeleton';
+import Paper from '@mui/material/Paper';
+import IconButton from "@mui/material/IconButton";
 import ScrollBars from "components/ScrollBars";
 import LazyImage from "components/LazyImage";
 import ViewPortSensor from "components/ViewPortSensor";
@@ -60,13 +60,13 @@ import {
 import { useGlobals } from "contexts/Globals";
 import { useLocation, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@mui/styles';
 import compose from "recompose/compose";
 import { apiCallRequest, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation } from "state/actions";
 
 import ApiService from "services/Api";
 
-import styles from "./styles";
+
 
 const contactsDrawerWidth = 240;
 
@@ -76,15 +76,15 @@ function Alert(props) {
 
 
 const AlwaysScrollToBottom = React.forwardRef((props, ref) => {
-	
+
 	const { sockets } = useGlobals();
 
-	const scrollIntoView = useCallback(()=> {
+	const scrollIntoView = useCallback(() => {
 		if (ref.current) {
 			ref.current.scrollIntoView({ behavior: 'smooth' })
 		}
 	}, [ref.current]);
-	
+
 	useEffect(() => {
 		/*sockets.default.on("message-sent", scrollIntoView);
 		sockets.default.on("new-message", scrollIntoView);*/
@@ -98,7 +98,7 @@ const AlwaysScrollToBottom = React.forwardRef((props, ref) => {
 });
 
 function Chat(props) {
-	const { classes, className, layout, communication:{ messaging }, activeConversation, auth, device: {window_size}, apiCallRequest, theme, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation, ...rest } = props;
+	const { classes, className, layout, communication: { messaging }, activeConversation, auth, device: { window_size }, apiCallRequest, theme, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation, ...rest } = props;
 	let textInputRef = React.createRef();
 	let messagesWrapperRef = React.createRef();
 	let conversationBottomRef = useRef();
@@ -107,14 +107,14 @@ function Chat(props) {
 
 
 
-	
-	
+
+
 
 	const { definations, sockets } = useGlobals();
 	const { unread_count, unread_ids, conversations, fetching_inbox, contacts: cacheContacts, drafts, active_conversation, active_conversation_messages, contactactable_contacts_ids } = messaging;
 
-	const [query, setQuery] = useState({desc: "created_on"});
-	const [contactsQuery, setContactsQuery] = useState({desc: "created_on"});
+	const [query, setQuery] = useState({ desc: "created_on" });
+	const [contactsQuery, setContactsQuery] = useState({ desc: "created_on" });
 	const [loadingContacts, setLoadingContacts] = useState(true);
 	const [draft, setDraft] = useState({});
 	const [individualConversationsRecipients, setIndividualConversationsRecipients] = useState([]);
@@ -123,24 +123,24 @@ function Chat(props) {
 	const [contacts, setContacts] = useState([]);
 	const [contactsDrawerOpen, setContactsDrawerOpen] = useState(false);
 	const [attachmentDialOpen, setAttachmentDialOpen] = useState(false);
-	const [contextMenu, setContextMenu] = useState({ mouseX: null, mouseY: null,});
+	const [contextMenu, setContextMenu] = useState({ mouseX: null, mouseY: null, });
 	const [loadingActiveChatMessages, setLoadingActiveChatMessages] = useState(false);
 	const [locationHasWith, setLocationHasWith] = useState(false);
 	const [firstLoad, setFirstLoad] = useState(true);
 	const [searchKeyword, setSearchKeyword] = useState(false);
 
-	
+
 
 
 	const attachmentActions = [
 		{ icon: <ImageOutlinedIcon />, name: 'image', label: 'Image', color: theme.palette.error.main },
-		{ icon: <AudiotrackOutlinedIcon />, name: 'audio', label: 'Audio', color: theme.palette.accent.main },			
+		{ icon: <AudiotrackOutlinedIcon />, name: 'audio', label: 'Audio', color: theme.palette.accent.main },
 		{ icon: <MovieOutlinedIcon />, name: 'video', label: 'Video', color: theme.palette.warning.main },
-		{ icon: <AttachFileIcon />, name: 'file', label: 'File', color: theme.palette.info.main },		
+		{ icon: <AttachFileIcon />, name: 'file', label: 'File', color: theme.palette.info.main },
 	];
-	
 
-	
+
+
 	const scrollToBottomOfConversation = useCallback(() => {
 		if (conversationBottomRef.current) {
 			conversationBottomRef.current.scrollIntoView();
@@ -153,15 +153,15 @@ function Chat(props) {
 	const handleContextOpen = (type, entry) => event => {
 		event.preventDefault();
 		setContextMenu({
-		  type : type, 
-		  entry: entry,
-		  mouseX: event.clientX - 2,
-		  mouseY: event.clientY - 4,
+			type: type,
+			entry: entry,
+			mouseX: event.clientX - 2,
+			mouseY: event.clientY - 4,
 		});
 	};
 
 	const handleContextClose = () => {
-		setContextMenu({ mouseX: null, mouseY: null,});
+		setContextMenu({ mouseX: null, mouseY: null, });
 	};
 
 	const handleArchiveConversation = (conversation) => {
@@ -169,22 +169,22 @@ function Chat(props) {
 			try {
 				let newChats = JSON.parse(JSON.stringify(currentChats));
 
-				newChats = newChats.filter(chat =>{
+				newChats = newChats.filter(chat => {
 					if (conversation) {
 						if (JSON.isJSON(conversation)) {
 							return chat._id !== conversation._id;
 						}
 						return chat._id !== conversation;
 					}
-					return true;	 
+					return true;
 				});
 
 				return newChats;
-			} catch(err) {
-                return currentChats;
-            }
+			} catch (err) {
+				return currentChats;
+			}
 		});
-		sockets.default.emit("archive-conversation", {conversation: conversation, user: auth.user});
+		sockets.default.emit("archive-conversation", { conversation: conversation, user: auth.user });
 
 	};
 
@@ -193,23 +193,23 @@ function Chat(props) {
 			try {
 				let newChats = JSON.parse(JSON.stringify(currentChats));
 
-				newChats = newChats.filter(chat =>{
+				newChats = newChats.filter(chat => {
 					if (conversation) {
 						if (JSON.isJSON(conversation)) {
 							return chat._id !== conversation._id;
 						}
 						return chat._id !== conversation;
 					}
-					return true;	 
+					return true;
 				});
 
 				return newChats;
-			} catch(err) {
-                return currentChats;
-            }
+			} catch (err) {
+				return currentChats;
+			}
 		});
 
-		sockets.default.emit("delete-conversation-for-user", {conversation: conversation, user: auth.user});	
+		sockets.default.emit("delete-conversation-for-user", { conversation: conversation, user: auth.user });
 
 	};
 
@@ -218,7 +218,7 @@ function Chat(props) {
 	const handleNewChat = (recipients) => {
 		if (recipients) {
 			let recipients_ids = [];
-			recipients = Array.isArray(recipients)? recipients : [recipients];
+			recipients = Array.isArray(recipients) ? recipients : [recipients];
 
 			recipients.map(recipient => {
 				if (JSON.isJSON(recipient) && "_id" in recipient) {
@@ -229,7 +229,7 @@ function Chat(props) {
 				}
 			});
 
-			createConversation({recipients: recipients}).then(new_conversation => {
+			createConversation({ recipients: recipients }).then(new_conversation => {
 				setDraft({
 					is_reply: false,
 					sender: auth.user,
@@ -238,11 +238,11 @@ function Chat(props) {
 					content: "",
 					conversation: new_conversation._id,
 				});
-			}).catch(err => {});
+			}).catch(err => { });
 
 
 			setContactsDrawerOpen(false);
-			
+
 		}
 	}
 
@@ -250,7 +250,7 @@ function Chat(props) {
 		fetchInbox();
 	}
 
-	const handlePresenceChanged = ({user, presence}) => {		
+	const handlePresenceChanged = ({ user, presence }) => {
 		setContacts(currentContacts => {
 			try {
 				let newContacts = JSON.parse(JSON.stringify(currentContacts));
@@ -258,16 +258,16 @@ function Chat(props) {
 				if (JSON.isJSON(user)) {
 					user_id = user._id;
 				}
-				newContacts.forEach(function(contact) {
+				newContacts.forEach(function (contact) {
 					if (user_id === contact._id) {
 						contact.presence = presence;
 					}
 				});
 				return newContacts;
-			} catch(err) {
-                return currentContacts;
-            }
-				
+			} catch (err) {
+				return currentContacts;
+			}
+
 		});
 		setMessagingCache("conversations", currentChats => {
 			try {
@@ -276,7 +276,7 @@ function Chat(props) {
 				if (JSON.isJSON(user)) {
 					user_id = user._id;
 				}
-				newChats.forEach(function(chat) {
+				newChats.forEach(function (chat) {
 					if (chat.type === "individual") {
 						let chat_owner_id = chat.owner;
 						if (JSON.isJSON(chat.owner)) {
@@ -298,251 +298,104 @@ function Chat(props) {
 					}
 				});
 				return newChats;
-			} catch(err) {
-                return currentChats;
-            }
-				
-			
+			} catch (err) {
+				return currentChats;
+			}
+
+
 		});
 	}
 
-	/*const handleOnUserStartedTypingMessage = ({conversation, user}) => {
-		setMessagingCache("conversations", currentChats => {
-			try {
-				let newChats = JSON.parse(JSON.stringify(currentChats));
-				let user_id = user; 
-				if (JSON.isJSON(user)) {
-					user_id = user._id;
-				}
-				let chat_id = conversation;
-				if (JSON.isJSON(conversation)) {
-					chat_id = conversation._id;
-				}
-				newChats.forEach(function(chat) {
-
-					if (chat._id === chat_id) {
-						let typing_users_arr = Array.isArray(chat.typing)? chat.typing : [];
-						let exists = false;
-						typing_users_arr.map(chat_typing_user => {
-							if (!exists && chat_typing_user._id === user_id) {
-								exists = true;
-							}
-							
-						});
-						if (!exists  && user_id !== auth.user._id) {
-							chat.typing = typing_users_arr.concat([user]);
-						}
-					}
-				});
-				return newChats;
-			} catch(err) {
-                return currentChats;
-            }
-				
-			
-		});
-
-		setMessagingCache("active_conversation", currentActiveChat => {
-			if (currentActiveChat) {
-				try {
-					let newCurrentActiveChat = JSON.parse(JSON.stringify(currentActiveChat));
-					let user_id = user; 
-					if (JSON.isJSON(user)) {
-						user_id = user._id;
-					}
-					if (Array.isArray(newCurrentActiveChat.typing)) {
-						let typing_users_arr = Array.isArray(newCurrentActiveChat.typing)? newCurrentActiveChat.typing : [];
-						let exists = false;
-						typing_users_arr.map(chat_typing_user => {
-							if (!exists && chat_typing_user._id === user_id) {
-								exists = true;
-							}
-							
-						});
-						if (!exists && user_id !== auth.user._id) {
-							newCurrentActiveChat.typing = typing_users_arr.concat([user]);
-						}
-					}
-					else if (user_id !== auth.user._id) {
-						newCurrentActiveChat.typing = [user];
-					}
-					
-					return newCurrentActiveChat;
-				} catch(err) {
-                    return currentActiveChat;
-                }
-			}
-			else{
-				return false;
-			}
-			
-		});
-	}
-	
-
-	const handleOnUserStoppedTypingMessage = ({conversation, user}) => {
-		setMessagingCache("conversations", currentChats => {
-			try {
-				let newChats = JSON.parse(JSON.stringify(currentChats));
-				let user_id = user; 
-				if (JSON.isJSON(user)) {
-					user_id = user._id;
-				}
-				let chat_id = conversation;
-				if (JSON.isJSON(conversation)) {
-					chat_id = conversation._id;
-				}
-				newChats.forEach(function(chat) {
-					if (chat._id === chat_id) {
-						let typing_users_arr = Array.isArray(chat.typing)? chat.typing : [];
-						chat.typing = typing_users_arr.filter(chat_typing_user => {
-							return chat_typing_user._id !== user_id
-						});
-						if (!Array.isArray(chat.typing)) {
-							chat.typing = []
-						}
-					}
-				});
-				return newChats;
-			} catch(err) {
-                return currentChats;
-            }
-				
-			
-		});
-		setMessagingCache("active_conversation", currentActiveChat => {
-			if (currentActiveChat) {
-				let user_id = user; 
-				if (JSON.isJSON(user)) {
-					user_id = user._id;
-				}
-				let chat_id = conversation;
-				if (JSON.isJSON(conversation)) {
-					chat_id = conversation._id;
-				}
-				if (chat_id === currentActiveChat._id) {
-					try {
-						let newCurrentActiveChat = JSON.parse(JSON.stringify(currentActiveChat));
-
-						let typing_users_arr = Array.isArray(newCurrentActiveChat.typing)? newCurrentActiveChat.typing : [];
-						newCurrentActiveChat.typing = typing_users_arr.filter(chat_typing_user => {
-							return chat_typing_user._id !== user_id
-						});
-						if (!Array.isArray(newCurrentActiveChat.typing)) {
-							newCurrentActiveChat.typing = []
-						}
-						
-						return newCurrentActiveChat;
-					} catch(err) {
-                        return currentActiveChat;
-                    }
-						
-				}
-				else {
-					return currentActiveChat;
-				}
-
-					
-			}
-			else{
-				return false;
-			}
-			
-		});
-	}*/
-
-	
-
-	
-	
 
 
 
-	const handleOnChangeDraftType= (type) => {
+
+
+	const handleOnChangeDraftType = (type) => {
 		setDraft(currentDraft => {
 			try {
 				let newDraft = JSON.parse(JSON.stringify(currentDraft));
-				newDraft.type = type;					
+				newDraft.type = type;
 				return newDraft;
-			} catch(err) {
-                return currentDraft;
-            }
+			} catch (err) {
+				return currentDraft;
+			}
 		});
 	}
 
-	const handleOnConversationMessages = ({conversation, messages}) => {
+	const handleOnConversationMessages = ({ conversation, messages }) => {
 		setLoadingActiveChatMessages(false);
 		setMessagingCache("active_conversation_messages", messages);
 	}
 
 	const handleOnConversationCreated = (conversation) => {
-		
+
 	}
 
-	
 
-	const getConversationMessages = (conversation, query={desc: "created_on", p: "1", page: 1, pagination: 10}) => {
+
+	const getConversationMessages = (conversation, query = { desc: "created_on", p: "1", page: 1, pagination: 10 }) => {
 		if (conversation) {
-			let conversation_id = conversation._id? conversation._id : conversation;
+			let conversation_id = conversation._id ? conversation._id : conversation;
 			setLoadingActiveChatMessages(true);
-			setMessagingCache("active_conversation_messages", []);	
+			setMessagingCache("active_conversation_messages", []);
 			setError(false);
-			apiCallRequest( definations.messages.name, {
-						uri: definations.messages.endpoint,
-						type: "records",
-						params: {conversation: conversation_id, ...query},
-						data: {},
-						cache: false,
+			apiCallRequest(definations.messages.name, {
+				uri: definations.messages.endpoint,
+				type: "records",
+				params: { conversation: conversation_id, ...query },
+				data: {},
+				cache: false,
 			}).then(data => {
-						//console.log("handleOnSendMessage data", data);
-						setError(false);				
+				//
+				setError(false);
 			}).catch(e => {
-                let errorMsg = e;
-                if (JSON.isJSON(e)) {
-                    if ("msg" in e) {
-                        errorMsg = e.msg;
-                    }
-                    else {
-                        errorMsg = JSON.stringify(e);
-                    }
-                }
+				let errorMsg = e;
+				if (JSON.isJSON(e)) {
+					if ("msg" in e) {
+						errorMsg = e.msg;
+					}
+					else {
+						errorMsg = JSON.stringify(e);
+					}
+				}
 
-                setError(errorMsg);
-            });
+				setError(errorMsg);
+			});
 			if (sockets.default) {
 				//sockets.default.emit("get-conversation-messages", {conversation: conversation._id, user: auth.user});
 			}
 		}
 		else {
 			setLoadingActiveChatMessages(false);
-		}				
+		}
 	}
 
 	const handleOnSendMessage = (messageToSend, conversation) => {
 		if (conversation) {
-			let conversation_id = conversation._id? conversation._id : conversation; 
-			let newMessage = { ...draft, sender: auth.user._id, conversation: conversation_id, created_on: new Date()};
-			if (messageToSend) {			
+			let conversation_id = conversation._id ? conversation._id : conversation;
+			let newMessage = { ...draft, sender: auth.user._id, conversation: conversation_id, created_on: new Date() };
+			if (messageToSend) {
 				if (JSON.isJSON(messageToSend)) {
 					newMessage = JSON.merge(messageToSend, newMessage);
 				}
 				else if (String.isString(messageToSend)) {
-					newMessage.content = messageToSend.trim();				
+					newMessage.content = messageToSend.trim();
 				}
 			}
 
-			if (!String.isEmpty(newMessage.content) || (["audio", "file", "video", "image"].includes(newMessage.type) && (Array.isArray(newMessage.attachments)? (newMessage.attachments.length > 0) : false))) {
-					
-					sendMessage(newMessage);
-					
-					if (textInputRef.current) {
-						textInputRef.current.value = "";
-						textInputRef.current.focus();
-					}
+			if (!String.isEmpty(newMessage.content) || (["audio", "file", "video", "image"].includes(newMessage.type) && (Array.isArray(newMessage.attachments) ? (newMessage.attachments.length > 0) : false))) {
+
+				sendMessage(newMessage);
+
+				if (textInputRef.current) {
+					textInputRef.current.value = "";
+					textInputRef.current.focus();
+				}
 
 
-					scrollToBottomOfConversation();
-									
+				scrollToBottomOfConversation();
+
 				setDraft({
 					is_reply: false,
 					sender: auth.user,
@@ -551,7 +404,7 @@ function Chat(props) {
 					content: "",
 					conversation: conversation_id,
 				});
-				
+
 			}
 		}
 	}
@@ -559,7 +412,7 @@ function Chat(props) {
 	const handleMessageInputKeyDown = (conversation) => (event) => {
 		if (event.key === 'Enter' && conversation) {
 			event.preventDefault();
-			let conversation_id = conversation._id? conversation._id : conversation;
+			let conversation_id = conversation._id ? conversation._id : conversation;
 			let newMessageValue = event.target.value;
 			if (String.isString(newMessageValue)) {
 				newMessageValue = newMessageValue.trim();
@@ -567,17 +420,17 @@ function Chat(props) {
 			else {
 				newMessageValue = "";
 			}
-			if (!String.isEmpty(newMessageValue) || (["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments)? (draft.attachments.length > 0) : false))) {
-				sockets.default.emit("stopped-typing-message", {conversation: conversation_id, user: auth.user});
+			if (!String.isEmpty(newMessageValue) || (["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments.length > 0) : false))) {
+				sockets.default.emit("stopped-typing-message", { conversation: conversation_id, user: auth.user });
 				handleOnSendMessage(newMessageValue, conversation);
 			}
-				
+
 		}
 	}
 
 	const handleSocketActionError = (error) => {
-        setError("Something went wrong!. "+ error);
-    }
+		setError("Something went wrong!. " + error);
+	}
 
 	const handleOnMessageDeletedForUser = ({ message, user }) => {
 		updateMessage(message);
@@ -590,7 +443,7 @@ function Chat(props) {
 	const handleOnMessageStateChangedBySocketAction = ({ message, user }) => {
 		updateMessage(message);
 	}
-	
+
 
 
 	useEffect(() => {
@@ -600,29 +453,29 @@ function Chat(props) {
 	useEffect(() => {
 		if (active_conversation && firstLoad) {
 			fetchMessages(active_conversation);
-			setFirstLoad(false);			
+			setFirstLoad(false);
 		}
 
-			
+
 	}, [active_conversation, firstLoad]);
 
-	
 
 
 
-	useEffect(()=>{
+
+	useEffect(() => {
 		if (location && !locationHasWith) {
 			let params = new URLSearchParams(location.search);
 			const withRecipient = params.get('with');
 			if (!String.isEmpty(withRecipient)) {
 				if (withRecipient.indexOf("@") !== -1) {
-					setContactsQuery({email_address: withRecipient.trim()});
+					setContactsQuery({ email_address: withRecipient.trim() });
 				}
 				else {
-					setContactsQuery({_id: withRecipient.trim()});
-				}				
+					setContactsQuery({ _id: withRecipient.trim() });
+				}
 				setLocationHasWith(true);
-				
+
 			}
 		}
 	}, [location, locationHasWith]);
@@ -648,7 +501,7 @@ function Chat(props) {
 							if (JSON.isJSON(chat.recipients[0])) {
 								newIndividualConversationsRecipients.push(chat.recipients[0]._id);
 							}
-							else{
+							else {
 								newIndividualConversationsRecipients.push(chat.recipients[0]);
 							}
 						}
@@ -656,11 +509,11 @@ function Chat(props) {
 				}
 			});
 			setIndividualConversationsRecipients(newIndividualConversationsRecipients);
-		}			
+		}
 	}, [conversations]);
 
 	/*useEffect(() => {
-		console.log("Chat conversations", conversations)
+		
 		//fetchInbox();
 	}, [query]);*/
 
@@ -688,14 +541,14 @@ function Chat(props) {
 			sockets.default.on("delete-conversation-for-user-error", handleSocketActionError);
 			sockets.default.on("delete-message-for-user-error", handleSocketActionError);
 			sockets.default.on("delete-message-for-all-error", handleSocketActionError);
-			
-			
-			
-			
 
-			return ()=>{
+
+
+
+
+			return () => {
 				sockets.default.off("presence-changed", handlePresenceChanged);
-				sockets.default.off("user-changed-presence", handlePresenceChanged);				
+				sockets.default.off("user-changed-presence", handlePresenceChanged);
 				//sockets.default.off("conversation-messages", handleOnConversationMessages);
 				/*sockets.default.off("new-message", handleOnNewMessage);
 				sockets.default.off("message-sent", handleOnMessageSent);*/
@@ -714,29 +567,29 @@ function Chat(props) {
 	}, [sockets]);
 
 
-	
+
 	return (
-        <Paper className={classNames({"p-0 m-0 relative": true, [classes.root] : true, [className]: true})} >
-			<AppBar position="absolute" color="transparent" className={classes.mainAppBar}>
+		<Paper className={classNames({ "p-0 m-0 relative": true, [classes?.root]: true, [className]: true })} >
+			<AppBar position="absolute" color="transparent" className={classes?.mainAppBar}>
 				<Toolbar>
-					{active_conversation && <IconButton 
-						onClick={()=>{
+					{active_conversation && <IconButton
+						onClick={() => {
 							if (history && locationHasWith) {
 								history.push(history.location.pathname);
 							}
 							setActiveConversation(false);
-							
+
 						}}
 						className={"mr-2"}
-						edge="start" 
-						color="inherit" 
+						edge="start"
+						color="inherit"
 						aria-label="back-to-conversations"
 					>
 						<ArrowBackIcon />
 					</IconButton>}
-					{active_conversation && (active_conversation.type == "individual"? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && (Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0 && active_conversation.participants[0].avatar)? (<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(active_conversation.participants[0].avatar)} />) : (active_conversation.started_by && active_conversation.started_by.avatar? (<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(active_conversation.started_by.avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>))) : (active_conversation.group_avatar? (<Avatar className={"mr-6"} src={ApiService.getAttachmentFileUrl(active_conversation.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {active_conversation.type === "group"? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
+					{active_conversation && (active_conversation.type == "individual" ? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && (Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0 && active_conversation.participants[0].avatar) ? (<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(active_conversation.participants[0].avatar)} />) : (active_conversation.started_by && active_conversation.started_by.avatar ? (<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(active_conversation.started_by.avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>))) : (active_conversation.group_avatar ? (<Avatar className={"mr-6"} src={ApiService.getAttachmentFileUrl(active_conversation.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {active_conversation.type === "group" ? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
 					{active_conversation && <Typography variant="h6" className={"capitalize flex-grow"}>
-						{active_conversation.type == "individual"? (((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner )&& Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0)? (active_conversation.participants[0].first_name +" "+active_conversation.participants[0].last_name) : (active_conversation.started_by? (active_conversation.started_by.first_name +" "+active_conversation.started_by.last_name) : "")) : (active_conversation.type == "group"? active_conversation.group_name : "Realfield")}
+						{active_conversation.type == "individual" ? (((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0) ? (active_conversation.participants[0].first_name + " " + active_conversation.participants[0].last_name) : (active_conversation.started_by ? (active_conversation.started_by.first_name + " " + active_conversation.started_by.last_name) : "")) : (active_conversation.type == "group" ? active_conversation.group_name : "Realfield")}
 					</Typography>}
 
 					{!active_conversation && <Typography variant="h6" className={"capitalize flex-grow"}>
@@ -744,11 +597,11 @@ function Chat(props) {
 					</Typography>}
 
 
-					{(!active_conversation && !contactsDrawerOpen) && <IconButton 
-						onClick={()=>setContactsDrawerOpen(true)}
+					{(!active_conversation && !contactsDrawerOpen) && <IconButton
+						onClick={() => setContactsDrawerOpen(true)}
 						className={"mr-2"}
-						edge="end" 
-						color="inherit" 
+						edge="end"
+						color="inherit"
 						aria-label="Contacts"
 					>
 						<ContactsIcon />
@@ -756,14 +609,14 @@ function Chat(props) {
 				</Toolbar>
 			</AppBar>
 			<SwipeableDrawer
-				className={classNames({[classes.drawer]: true/*, "hidden": !contactsDrawerOpen*/})}
-				variant={window_size.width >= 768? "persistent" : "temporary" }
+				className={classNames({ [classes?.drawer]: true/*, "hidden": !contactsDrawerOpen*/ })}
+				variant={window_size.width >= 768 ? "persistent" : "temporary"}
 				anchor="right"
 				open={contactsDrawerOpen}
-				onClose={()=>setContactsDrawerOpen(false)}
-				onOpen={()=>setContactsDrawerOpen(true)}
+				onClose={() => setContactsDrawerOpen(false)}
+				onOpen={() => setContactsDrawerOpen(true)}
 				classes={{
-					paper: window_size.width >= 768? classes.drawerPaper : classes.temporaryDrawerPaper,
+					paper: window_size.width >= 768 ? classes?.drawerPaper : classes?.temporaryDrawerPaper,
 				}}
 			>
 				<div className={"w-full flex flex-row items-center h-16 secondary"}>
@@ -788,140 +641,140 @@ function Chat(props) {
 								label="Search"
 							/>*/}
 
-					<IconButton className={"mx-2"} color="inherit" onClick={()=>setContactsDrawerOpen(false)}>
-						{theme.direction === 'ltr' ?  <ChevronRightIcon /> : <ChevronLeftIcon />}
+					<IconButton className={"mx-2"} color="inherit" onClick={() => setContactsDrawerOpen(false)}>
+						{theme.direction === 'ltr' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
 					</IconButton>
 				</div>
 				<Divider />
 
-				<ScrollBars className={classes.bodyWrapper}>
-					
+				<ScrollBars className={classes?.bodyWrapper}>
 
-							{definations && <Listings
-								show_actions={false}
-								show_links={false}
-								showViewOptions={false}
-								showAddBtn={false}
-								cache_data={false}
-								showPagination
-								showSorter
-								defination={definations.users}
-								service={ApiService.getContextRequests(definations.users.endpoint)}
-								query={contactsQuery}
-								view={"listview"}
-								onClickEntry={(contact) => handleNewChat(contact)}
-								onLoadData={(loadedData, loadedQuery) => {
-									if (locationHasWith && Array.isArray(loadedData)) {
-										loadedData.map(entry => {
-											if (entry._id === loadedQuery._id || entry.email_address === loadedQuery.email_address) {
-                                                handleNewChat(entry);
-                                            }
-										})
+
+					{definations && <Listings
+						show_actions={false}
+						show_links={false}
+						showViewOptions={false}
+						showAddBtn={false}
+						cache_data={false}
+						showPagination
+						showSorter
+						defination={definations.users}
+						service={ApiService.getContextRequests(definations.users.endpoint)}
+						query={contactsQuery}
+						view={"listview"}
+						onClickEntry={(contact) => handleNewChat(contact)}
+						onLoadData={(loadedData, loadedQuery) => {
+							if (locationHasWith && Array.isArray(loadedData)) {
+								loadedData.map(entry => {
+									if (entry._id === loadedQuery._id || entry.email_address === loadedQuery.email_address) {
+										handleNewChat(entry);
 									}
-									
-								}}
-							/>}
+								})
+							}
+
+						}}
+					/>}
 
 
 				</ScrollBars>
 			</SwipeableDrawer>
-			{!active_conversation && <GridItem md={12} className={"flex flex-col relative min-h-full p-0"}>					
-						<Paper square className={classes.paper}>
-							<ScrollBars 
-								className={classes.bodyWrapper} 
-								onYReachStart={(event) => {
-									//console.log("onYReachStart event", event);
-								}}
-							>
-							{(fetching_inbox && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" width={80} className="mb-1"/>
-										<Skeleton variant="text" className="w-3/6"/>
-									</div>
-								</GridItem>
+			{!active_conversation && <GridItem md={12} className={"flex flex-col relative min-h-full p-0"}>
+				<Paper square className={classes?.paper}>
+					<ScrollBars
+						className={classes?.bodyWrapper}
+						onYReachStart={(event) => {
+							//
+						}}
+					>
+						{(fetching_inbox && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
+							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+								<Skeleton variant="circle" width={40} height={40} />
+								<div className="flex-grow mx-2 flex flex-col">
+									<Skeleton variant="text" width={80} className="mb-1" />
+									<Skeleton variant="text" className="w-3/6" />
+								</div>
+							</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" width={110} className="mb-1"/>
-										<Skeleton variant="text" className="w-8/12"/>
-									</div>
-								</GridItem>
+							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+								<Skeleton variant="circle" width={40} height={40} />
+								<div className="flex-grow mx-2 flex flex-col">
+									<Skeleton variant="text" width={110} className="mb-1" />
+									<Skeleton variant="text" className="w-8/12" />
+								</div>
+							</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" width={80} className="mb-1"/>
-										<Skeleton variant="text" className="w-4/12"/>
-									</div>
-								</GridItem>
+							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+								<Skeleton variant="circle" width={40} height={40} />
+								<div className="flex-grow mx-2 flex flex-col">
+									<Skeleton variant="text" width={80} className="mb-1" />
+									<Skeleton variant="text" className="w-4/12" />
+								</div>
+							</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" width={90} className="mb-1"/>
-										<Skeleton variant="text" className="w-3/6"/>
-									</div>
-								</GridItem>
+							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+								<Skeleton variant="circle" width={40} height={40} />
+								<div className="flex-grow mx-2 flex flex-col">
+									<Skeleton variant="text" width={90} className="mb-1" />
+									<Skeleton variant="text" className="w-3/6" />
+								</div>
+							</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" width={70} className="mb-1"/>
-										<Skeleton variant="text" className="w-10/12"/>
-									</div>
-								</GridItem>
+							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+								<Skeleton variant="circle" width={40} height={40} />
+								<div className="flex-grow mx-2 flex flex-col">
+									<Skeleton variant="text" width={70} className="mb-1" />
+									<Skeleton variant="text" className="w-10/12" />
+								</div>
+							</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" width={80} className="mb-1"/>
-										<Skeleton variant="text" className="w-9/12"/>
-									</div>
-								</GridItem>
+							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+								<Skeleton variant="circle" width={40} height={40} />
+								<div className="flex-grow mx-2 flex flex-col">
+									<Skeleton variant="text" width={80} className="mb-1" />
+									<Skeleton variant="text" className="w-9/12" />
+								</div>
+							</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" width={120} className="mb-1"/>
-										<Skeleton variant="text" className="w-4/5"/>
-									</div>
-								</GridItem>
+							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+								<Skeleton variant="circle" width={40} height={40} />
+								<div className="flex-grow mx-2 flex flex-col">
+									<Skeleton variant="text" width={120} className="mb-1" />
+									<Skeleton variant="text" className="w-4/5" />
+								</div>
+							</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" width={100} className="mb-1"/>
-										<Skeleton variant="text" className="w-3/6"/>
-									</div>
-								</GridItem>
+							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+								<Skeleton variant="circle" width={40} height={40} />
+								<div className="flex-grow mx-2 flex flex-col">
+									<Skeleton variant="text" width={100} className="mb-1" />
+									<Skeleton variant="text" className="w-3/6" />
+								</div>
+							</GridItem>
 
-								<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-									<Skeleton variant="circle" width={40} height={40} />
-									<div className="flex-grow mx-2 flex flex-col">
-										<Skeleton variant="text" width={80} className="mb-1"/>
-										<Skeleton variant="text" className="w-11/12"/>
-									</div>
-								</GridItem>
-							</GridContainer>}
+							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+								<Skeleton variant="circle" width={40} height={40} />
+								<div className="flex-grow mx-2 flex flex-col">
+									<Skeleton variant="text" width={80} className="mb-1" />
+									<Skeleton variant="text" className="w-11/12" />
+								</div>
+							</GridItem>
+						</GridContainer>}
 
-							{(!fetching_inbox, (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0)) && <GridContainer>
-								<GridItem md={12} className={"flex flex-col items-center relative p-0 px-4 my-4"}>
-									<Typography variant="subtitle1" color="textSecondary" className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center" style={{color: theme.palette.text.disabled, background: theme.palette.background.default}}>
-										<ForumOutlinedIcon fontSize="inherit"/>
-									</Typography>
-									<Typography variant="body2" color="textSecondary" className="mx-0" style={{color: theme.palette.text.disabled}}>
-										You don't have any active conversations yet
-									</Typography>
-								</GridItem>
-							</GridContainer>)}
+						{(!fetching_inbox, (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0)) && <GridContainer>
+							<GridItem md={12} className={"flex flex-col items-center relative p-0 px-4 my-4"}>
+								<Typography variant="subtitle1" color="textSecondary" className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center" style={{ color: theme.palette.text.disabled, background: theme.palette.background.default }}>
+									<ForumOutlinedIcon fontSize="inherit" />
+								</Typography>
+								<Typography variant="body2" color="textSecondary" className="mx-0" style={{ color: theme.palette.text.disabled }}>
+									You don't have any active conversations yet
+								</Typography>
+							</GridItem>
+						</GridContainer>)}
 
-							{Array.isArray(conversations) && <List className={classes.list}>
-							{conversations.map((chat, index)=> {
+						{Array.isArray(conversations) && <List className={classes?.list}>
+							{conversations.map((chat, index) => {
 
-								if (index === 0 || (index > 0 && conversations[index-1]._id !== conversations[index]._id )) {
+								if (index === 0 || (index > 0 && conversations[index - 1]._id !== conversations[index]._id)) {
 									let primaryText = "";
 									let chatUser = false;
 									let avatar = false;
@@ -936,14 +789,14 @@ function Chat(props) {
 										else if (chat.owner === chat.state.last_message.sender) {
 											last_message_sender_name = chat.started_by.first_name;
 										}
-										else{
+										else {
 											if (Array.isArray(chat.participants)) {
 												chat.participants.map(participant => {
 													if (participant._id === chat.state.last_message.sender) {
 														last_message_sender_name = participant.first_name;
 													}
 												});
-											}											
+											}
 										}
 										if ((chat.state.last_message.state === "deleted-for-sender" && (chat.state.last_message.sender._id === auth.user._id || chat.state.last_message.sender === auth.user._id)) || chat.state.last_message.state === "deleted-for-all") {
 											last_message_deleted = true;
@@ -958,95 +811,95 @@ function Chat(props) {
 											if (Array.isArray(chat.participants)) {
 												if (chat.participants.length > 0) {
 													chatUser = chat.participants[0];
-													primaryText = chat.participants[0].first_name +" "+chat.participants[0].last_name
+													primaryText = chat.participants[0].first_name + " " + chat.participants[0].last_name
 													avatar = chat.participants[0].avatar;
 												}
 											}
-													
+
 										}
-										else{
+										else {
 
 											chatUser = chat.started_by;
-											primaryText = chat.started_by.first_name +" "+chat.started_by.last_name;
+											primaryText = chat.started_by.first_name + " " + chat.started_by.last_name;
 											avatar = chat.started_by.avatar;
 										}
-									} 
+									}
 									else if (chat.type == "group") {
 										primaryText = chat.group_name;
 										avatar = chat.group_avatar;
 									}
 
 									return (
-										<ListItem 
-											className={"px-8 content-between"} 
-											onClick={(event)=> {
+										<ListItem
+											className={"px-8 content-between"}
+											onClick={(event) => {
 												//setMessagingCache("active_conversation_messages", []);	
 												//setMessagingCache("active_conversation", chat);	
-												setActiveConversation(chat);			
-											}}										
+												setActiveConversation(chat);
+											}}
 											onContextMenu={handleContextOpen("conversation", chat)}
-											key={"chat-"+index}
-											style={{background: (contextMenu.type==="conversation"? (contextMenu.entry._id===chat._id? theme.palette.background.default : "transparent") : "transparent")}}
+											key={"chat-" + index}
+											style={{ background: (contextMenu.type === "conversation" ? (contextMenu.entry._id === chat._id ? theme.palette.background.default : "transparent") : "transparent") }}
 											button
 										>
 											{chatUser && <ListItemAvatar>
-												<Badge 
-													variant="dot" 
+												<Badge
+													variant="dot"
 													badgeContent=" "
 													anchorOrigin={{
 														vertical: 'bottom',
 														horizontal: 'right',
 													}}
 													classes={{
-														dot: chatUser.presence === "online"? "bg-green-600" : (chatUser.presence == "away"? "bg-orange-500" : "bg-gray-500")
+														dot: chatUser.presence === "online" ? "bg-green-600" : (chatUser.presence == "away" ? "bg-orange-500" : "bg-gray-500")
 													}}
 												>
-													{ chatUser.avatar && <Avatar className={classes.contactAvatar} src={ApiService.getAttachmentFileUrl(chatUser.avatar)} />}
-													{!chatUser.avatar && <Avatar className={classes.contactAvatar}>
+													{chatUser.avatar && <Avatar className={classes?.contactAvatar} src={ApiService.getAttachmentFileUrl(chatUser.avatar)} />}
+													{!chatUser.avatar && <Avatar className={classes?.contactAvatar}>
 														<PersonIcon />
 													</Avatar>}
 												</Badge>
 											</ListItemAvatar>}
 											{!chatUser && <ListItemAvatar>
-												{ avatar && <Avatar src={ApiService.getAttachmentFileUrl(avatar)} />}
-												{!avatar && <Avatar className={classes.iconAvatar}>
-													{chat.type === "group"? <PeopleIcon /> : <PersonIcon />}
+												{avatar && <Avatar src={ApiService.getAttachmentFileUrl(avatar)} />}
+												{!avatar && <Avatar className={classes?.iconAvatar}>
+													{chat.type === "group" ? <PeopleIcon /> : <PersonIcon />}
 												</Avatar>}
 											</ListItemAvatar>}
-											<ListItemText 
+											<ListItemText
 												className="flex flex-col justify-center"
 												primary={(
 													<Typography variant="body1" color="textPrimary" className={"capitalize font-bold"}>
 														{primaryText}
 													</Typography>
-												)} 
+												)}
 												secondary={(
 													<div className="w-full flex flex-row">
 														{Array.isArray(chat.typing) && <Typography variant="body2" color="primary" className="mx-0">
-															{chat.typing.length > 1? (chat.typing.length+" people are typing...") : (chat.typing.length === 1? (chat.typing[0].first_name+" is typing...") : "")}
+															{chat.typing.length > 1 ? (chat.typing.length + " people are typing...") : (chat.typing.length === 1 ? (chat.typing[0].first_name + " is typing...") : "")}
 														</Typography>}
-														{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <div className="w-full flex flex-row items-center">
+														{(!Array.isArray(chat.typing) || chat.typing.length === 0) && <div className="w-full flex flex-row items-center">
 															<Typography variant="body2" color="textPrimary" className="font-bold mr-2">
-																{last_message_sender_name? last_message_sender_name: ""}
+																{last_message_sender_name ? last_message_sender_name : ""}
 															</Typography>
-															{!last_message_deleted && <Typography variant="body2" color="textSecondary" className="flex-initial truncate mr-2 font-normal" style={last_message_content? {} : {color:  theme.palette.disabled}}>
-																{last_message_content? last_message_content : "No messages yet"}
+															{!last_message_deleted && <Typography variant="body2" color="textSecondary" className="flex-initial truncate mr-2 font-normal" style={last_message_content ? {} : { color: theme.palette.disabled }}>
+																{last_message_content ? last_message_content : "No messages yet"}
 															</Typography>}
-															{last_message_deleted && <div className={"flex flex-row items-center flex-initial"} style={{color: theme.palette.divider}}>
+															{last_message_deleted && <div className={"flex flex-row items-center flex-initial"} style={{ color: theme.palette.divider }}>
 																<Typography variant="body1" color="inherit" className={"flex-grow"}>
 																	Message deleted
 																</Typography>
-																<BlockIcon className={"mx-1 text-xs"} fontSize="small"/>
+																<BlockIcon className={"mx-1 text-xs"} fontSize="small" />
 															</div>}
 
-															{(!last_message_deleted && chat.state && chat.state.last_message ) && <div className={"flex flex-row items-center "} style={{color: theme.palette.text.disabled}}>
-																{(chat.state.last_message.state === "pending" && (chat.state.last_message.sender? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <ScheduleIcon className={"mx-1 text-xs"} fontSize="small"/>}
-																{(chat.state.last_message.state === "sent" && chat.state.last_message.sender === auth.user._id) && <DoneIcon className={"mx-1 text-xs"} fontSize="small"/>}
-																{((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && (chat.state.last_message.sender? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={"mx-1 text-xs"} fontSize="small"/>}
-																{((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && (chat.state.last_message.sender? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small"/>}
+															{(!last_message_deleted && chat.state && chat.state.last_message) && <div className={"flex flex-row items-center "} style={{ color: theme.palette.text.disabled }}>
+																{(chat.state.last_message.state === "pending" && (chat.state.last_message.sender ? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <ScheduleIcon className={"mx-1 text-xs"} fontSize="small" />}
+																{(chat.state.last_message.state === "sent" && chat.state.last_message.sender === auth.user._id) && <DoneIcon className={"mx-1 text-xs"} fontSize="small" />}
+																{((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && (chat.state.last_message.sender ? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={"mx-1 text-xs"} fontSize="small" />}
+																{((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && (chat.state.last_message.sender ? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small" />}
 															</div>}
 														</div>}
-														{(!Array.isArray(chat.typing) || chat.typing.length ===0) && <Typography variant="body2" color="secondary" className="mx-2">
+														{(!Array.isArray(chat.typing) || chat.typing.length === 0) && <Typography variant="body2" color="secondary" className="mx-2">
 															{/*<DoneAllIcon fontSize="inherit" />*/}
 														</Typography>}
 													</div>
@@ -1060,40 +913,40 @@ function Chat(props) {
 										</ListItem>
 									);
 								}
-									
+
 							})}
-								
-							</List>}
-							</ScrollBars>
-						</Paper>
-						<AppBar position="absolute" color="secondary" className={classes.chatsAppBar}>
-							<Toolbar>
-								<IconButton 
-									edge="start" 
-									color="inherit" 
-									aria-label="Refresh"
-									onClick={handleRefresh}
-								>
-									<RefreshIcon />									
-								</IconButton>
 
-								<Fab 
-									color="primary" 
-									aria-label="add" 
-									className={classes.fabButton}
-									onClick={()=>setContactsDrawerOpen(!contactsDrawerOpen)}
-								>
-									{!contactsDrawerOpen && <ChatBubbleOutlineIcon />}
-									{contactsDrawerOpen && <CloseIcon />}
-								</Fab>
+						</List>}
+					</ScrollBars>
+				</Paper>
+				<AppBar position="absolute" color="secondary" className={classes?.chatsAppBar}>
+					<Toolbar>
+						<IconButton
+							edge="start"
+							color="inherit"
+							aria-label="Refresh"
+							onClick={handleRefresh}
+						>
+							<RefreshIcon />
+						</IconButton>
 
-								<div className={classes.grow} />
+						<Fab
+							color="primary"
+							aria-label="add"
+							className={classes?.fabButton}
+							onClick={() => setContactsDrawerOpen(!contactsDrawerOpen)}
+						>
+							{!contactsDrawerOpen && <ChatBubbleOutlineIcon />}
+							{contactsDrawerOpen && <CloseIcon />}
+						</Fab>
 
-								{/*<IconButton edge="end" color="inherit">
+						<div className={classes?.grow} />
+
+						{/*<IconButton edge="end" color="inherit">
 									<MoreIcon />
 								</IconButton>*/}
 
-								{/*<IconButton 
+						{/*<IconButton 
 									color="inherit" 
 									aria-label="Search"
 									edge="end"
@@ -1101,48 +954,48 @@ function Chat(props) {
 								>
 									<SearchIcon />
 								</IconButton>*/}
-							</Toolbar>
-						</AppBar>
+					</Toolbar>
+				</AppBar>
 			</GridItem>}
 
-			{active_conversation && <Paper square elevation={0} className={classes.chatPaperWrapper}>
+			{active_conversation && <Paper square elevation={0} className={classes?.chatPaperWrapper}>
 				<GridItem md={12} className="h-full p-0 flex flex-col relative">
-					{!["audio", "file", "video", "image"].includes(draft.type) && <ScrollBars 
-						className={"flex-grow "+classes.chatScrollWrapper} 
-						style={{flex: 10, backgroundColor: theme.palette.background.default}}
+					{!["audio", "file", "video", "image"].includes(draft.type) && <ScrollBars
+						className={"flex-grow " + classes?.chatScrollWrapper}
+						style={{ flex: 10, backgroundColor: theme.palette.background.default }}
 						scrollToBottomOnChildChange={false}
 						onYReachStart={(element) => {
 							if (element) {
 								if (active_conversation.state) {
 									if (!active_conversation.state.loading_messages && active_conversation.state.pages > 0 && active_conversation.state.page > 0 && active_conversation.state.page < active_conversation.state.pages) {
-                                        let pagination = active_conversation.state.pagination > 0? active_conversation.state.pagination : 20;
-                                        let nextPage = active_conversation.state.page+1;
-                                        let nextQuery = JSON.isJSON(active_conversation.state.query)? active_conversation.state.query : {} ;
-                                        fetchMessages(active_conversation, pagination, nextPage, nextQuery);
-                                    }
+										let pagination = active_conversation.state.pagination > 0 ? active_conversation.state.pagination : 20;
+										let nextPage = active_conversation.state.page + 1;
+										let nextQuery = JSON.isJSON(active_conversation.state.query) ? active_conversation.state.query : {};
+										fetchMessages(active_conversation, pagination, nextPage, nextQuery);
+									}
 								}
-							}								
+							}
 						}}
 						onYReachEnd={(element) => {
 							if (element) {
 								if (active_conversation.state) {
-									if (!active_conversation.state.loading_messages && active_conversation.state.pages > 0 && active_conversation.state.page > 1 ) {
-                                        let pagination = active_conversation.state.pagination > 0? active_conversation.state.pagination : 20;
-                                        let nextPage = active_conversation.state.page-1;
-                                        let nextQuery = JSON.isJSON(active_conversation.state.query)? active_conversation.state.query : {} ;
-                                        fetchMessages(active_conversation, pagination, nextPage, nextQuery);
-                                    }
+									if (!active_conversation.state.loading_messages && active_conversation.state.pages > 0 && active_conversation.state.page > 1) {
+										let pagination = active_conversation.state.pagination > 0 ? active_conversation.state.pagination : 20;
+										let nextPage = active_conversation.state.page - 1;
+										let nextQuery = JSON.isJSON(active_conversation.state.query) ? active_conversation.state.query : {};
+										fetchMessages(active_conversation, pagination, nextPage, nextQuery);
+									}
 								}
-								//console.log("messagesWrapperRef onYReachEnd element", element);
+								//
 							}
-							
+
 						}}
 						ref={messagesWrapperRef}
 					>
 						<GridContainer className="px-4 relative">
-							{active_conversation.state && active_conversation.state.loading_messages && <div 
+							{active_conversation.state && active_conversation.state.loading_messages && <div
 								style={{
-									position: "absolute", 
+									position: "absolute",
 									left: "50%",
 									WebkitTransform: "translateX(-50%)",
 									MsTransform: "translateX(-50%)",
@@ -1154,9 +1007,9 @@ function Chat(props) {
 									borderRadius: theme.spacing(1.5)
 								}}
 							>
-								
+
 							</div>}
-							{active_conversation_messages.map((activeChatMessage, cursor) =>{
+							{active_conversation_messages.map((activeChatMessage, cursor) => {
 								let message_deleted = false;
 								let show_message = true;
 								if (active_conversation_messages[cursor]._id) {
@@ -1172,46 +1025,46 @@ function Chat(props) {
 								else {
 									show_message = (activeChatMessage.conversation._id === active_conversation._id || activeChatMessage.conversation === active_conversation._id);
 								}
-									
+
 								/*if (cursor === (active_conversation_messages.length - 1)) {
-									console.log("activeChatMessage", activeChatMessage);
+									
 								}*/
-								
+
 								if (activeChatMessage && show_message) {
 									if ((activeChatMessage.state === "deleted-for-sender" && (activeChatMessage.sender === auth.user._id || activeChatMessage.sender._id === auth.user._id)) || activeChatMessage.state === "deleted-for-all") {
 										message_deleted = true;
 									}
 									return (
-										<GridItem 
-											xs={12} 
-											className={"flex p-0 py-1 "+(activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id? "flex-row-reverse" : "flex-row")}
-											id={"message-"+activeChatMessage._id}
-											key={"conversation-"+active_conversation._id+"-message-"+cursor}
+										<GridItem
+											xs={12}
+											className={"flex p-0 py-1 " + (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id ? "flex-row-reverse" : "flex-row")}
+											id={"message-" + activeChatMessage._id}
+											key={"conversation-" + active_conversation._id + "-message-" + cursor}
 										>
-											{/* activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar} src={ApiService.getAttachmentFileUrl(activeChatMessage.sender.avatar)} />}
-											{!activeChatMessage.sender.avatar && <Avatar className={classes.contactAvatar}>
+											{/* activeChatMessage.sender.avatar && <Avatar className={classes?.contactAvatar} src={ApiService.getAttachmentFileUrl(activeChatMessage.sender.avatar)} />}
+											{!activeChatMessage.sender.avatar && <Avatar className={classes?.contactAvatar}>
 												<PersonIcon />
 											</Avatar> */}
 
-											<ViewPortSensor  
-												className={"p-2 mx-4  flex flex-col px-4 "+(activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id? ("bg-green-200 "+classes.chatBubbleLocal) : ("bg-white "+classes.chatBubbleExternal))}
+											<ViewPortSensor
+												className={"p-2 mx-4  flex flex-col px-4 " + (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id ? ("bg-green-200 " + classes?.chatBubbleLocal) : ("bg-white " + classes?.chatBubbleExternal))}
 												onViewportVisibilityChange={(inViewport) => {
 													if (inViewport && sockets.default) {
 														if (activeChatMessage.sender._id !== auth.user._id && activeChatMessage.sender !== auth.user._id) {
 															if (activeChatMessage.state === "sent") {
-																sockets.default.emit("mark-message-as-received", {message: activeChatMessage, user: auth.user});
+																sockets.default.emit("mark-message-as-received", { message: activeChatMessage, user: auth.user });
 															}
 															else if ((activeChatMessage.state === "received" || activeChatMessage.state === "partially-received")) {
-																sockets.default.emit("mark-message-as-read", {message: activeChatMessage, user: auth.user});
+																sockets.default.emit("mark-message-as-read", { message: activeChatMessage, user: auth.user });
 															}
-														}															
+														}
 													}
-													
+
 												}}
 											>
-												{!message_deleted && <div className={active_conversation.type !== "individual"? "flex flex-row w-full items-center" : "flex flex-row-reverse w-full items-center"}>
-													{ (active_conversation.type !== "individual" && JSON.isJSON(activeChatMessage.sender)) && <Typography variant="body1" className={"flex-grow text-gray-500 font-bold"}>
-														{activeChatMessage.sender.first_name+" "+activeChatMessage.sender.last_name}
+												{!message_deleted && <div className={active_conversation.type !== "individual" ? "flex flex-row w-full items-center" : "flex flex-row-reverse w-full items-center"}>
+													{(active_conversation.type !== "individual" && JSON.isJSON(activeChatMessage.sender)) && <Typography variant="body1" className={"flex-grow text-gray-500 font-bold"}>
+														{activeChatMessage.sender.first_name + " " + activeChatMessage.sender.last_name}
 													</Typography>}
 													<IconButton aria-label="Toggle Menu" onClick={handleContextOpen("message", activeChatMessage)} className={""} size="small">
 														<ExpandMoreIcon fontSize="inherit" />
@@ -1219,52 +1072,52 @@ function Chat(props) {
 												</div>}
 												{(!message_deleted && ["audio", "file", "video", "image"].includes(activeChatMessage.type) && Array.isArray(activeChatMessage.attachments)) && <div className={"flex flex-col items-center cursor-pointer mb-2"}>
 													{activeChatMessage.attachments.map((attachment, cursor) => (
-														<div className={"p-2 w-11/12 border border-gray-400 rounded"} key={"attachment-"+cursor}>
-															{activeChatMessage.type === "image" && <LazyImage 
-																className={"w-full h-auto"} 
-																src={ApiService.getAttachmentFileUrl(attachment)} 
+														<div className={"p-2 w-11/12 border border-gray-400 rounded"} key={"attachment-" + cursor}>
+															{activeChatMessage.type === "image" && <LazyImage
+																className={"w-full h-auto"}
+																src={ApiService.getAttachmentFileUrl(attachment)}
 																alt={attachment.name}
 																onClick={e => {
-																		e.preventDefault();
-																		let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
-																		win.focus();
+																	e.preventDefault();
+																	let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
+																	win.focus();
 																}}
 															/>}
-															{activeChatMessage.type === "audio" && <div 
-																className={"w-full h-auto flex flex-row items-center"} 
+															{activeChatMessage.type === "audio" && <div
+																className={"w-full h-auto flex flex-row items-center"}
 																onClick={e => {
-																		e.preventDefault();
-																		let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
-																		win.focus();
+																	e.preventDefault();
+																	let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
+																	win.focus();
 																}}
 															>
-																<AudiotrackOutlinedIcon className={"text-2xl"}/>
+																<AudiotrackOutlinedIcon className={"text-2xl"} />
 																<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"}>
 																	{attachment.name}
 																</Typography>
 															</div>}
-															{activeChatMessage.type === "video" && <div 
-																className={"w-full h-auto flex flex-row items-center"} 
+															{activeChatMessage.type === "video" && <div
+																className={"w-full h-auto flex flex-row items-center"}
 																onClick={e => {
-																		e.preventDefault();
-																		let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
-																		win.focus();
+																	e.preventDefault();
+																	let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
+																	win.focus();
 																}}
 															>
-																<MovieOutlinedIcon className={"text-2xl"}/>
+																<MovieOutlinedIcon className={"text-2xl"} />
 																<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"} >
 																	{attachment.name}
 																</Typography>
 															</div>}
-															{activeChatMessage.type === "file" && <div 
-																className={"w-full h-auto flex flex-row items-center"} 
+															{activeChatMessage.type === "file" && <div
+																className={"w-full h-auto flex flex-row items-center"}
 																onClick={e => {
-																		e.preventDefault();
-																		let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
-																		win.focus();
+																	e.preventDefault();
+																	let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
+																	win.focus();
 																}}
 															>
-																<AttachFileIcon className={"text-2xl"}/>
+																<AttachFileIcon className={"text-2xl"} />
 																<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"} >
 																	{attachment.name}
 																</Typography>
@@ -1274,158 +1127,158 @@ function Chat(props) {
 													))}
 												</div>}
 												{!message_deleted && <Typography variant="body1" color="textPrimary" className={"flex-grow"} paragraph>
-														{activeChatMessage.content}
+													{activeChatMessage.content}
 												</Typography>}
 
-												{message_deleted && <div className={"flex flex-row items-center w-full"} style={{color: theme.palette.divider}}>
+												{message_deleted && <div className={"flex flex-row items-center w-full"} style={{ color: theme.palette.divider }}>
 													<Typography variant="body1" color="inherit" className={"flex-grow"}>
 														Message deleted
 													</Typography>
-													<BlockIcon className={"mx-2"} fontSize="small"/>
+													<BlockIcon className={"mx-2"} fontSize="small" />
 												</div>}
 
-												{!message_deleted && <div className={"flex flex-row items-center text-sm w-full"} style={{color: theme.palette.text.disabled}}>
+												{!message_deleted && <div className={"flex flex-row items-center text-sm w-full"} style={{ color: theme.palette.text.disabled }}>
 													{activeChatMessage.created_on && <Typography className={"text-xs flex-grow"}>
-														{activeChatMessage.created_on instanceof Date? activeChatMessage.created_on.toLocaleString() : new Date(activeChatMessage.created_on).toLocaleString()}
+														{activeChatMessage.created_on instanceof Date ? activeChatMessage.created_on.toLocaleString() : new Date(activeChatMessage.created_on).toLocaleString()}
 													</Typography>}
-													{(activeChatMessage.state === "pending" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <ScheduleIcon className={"mx-2 text-xs"} fontSize="small"/>}
-													{(activeChatMessage.state === "sent" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneIcon className={"mx-2 text-xs"} fontSize="small"/>}
-													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2 text-xs"} fontSize="small"/>}
-													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2 text-xs"} color={"secondary"} fontSize="small"/>}
+													{(activeChatMessage.state === "pending" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <ScheduleIcon className={"mx-2 text-xs"} fontSize="small" />}
+													{(activeChatMessage.state === "sent" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneIcon className={"mx-2 text-xs"} fontSize="small" />}
+													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2 text-xs"} fontSize="small" />}
+													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2 text-xs"} color={"secondary"} fontSize="small" />}
 												</div>}
 											</ViewPortSensor>
 										</GridItem>
 									);
 								}
-									
+
 							})}
 
-							{(Array.isArray(active_conversation.typing)? (active_conversation.typing.length > 0) : false) && <GridItem xs={12} className={"flex p-0 py-1 flex-row"} >
-									<div  className={classes.avatar}> </div>
-									<div  className={"p-2 mx-4  flex flex-col px-4  rounded-full"}>
-										<div  className={classes.typing_loader}></div>
-									</div>
+							{(Array.isArray(active_conversation.typing) ? (active_conversation.typing.length > 0) : false) && <GridItem xs={12} className={"flex p-0 py-1 flex-row"} >
+								<div className={classes?.avatar}> </div>
+								<div className={"p-2 mx-4  flex flex-col px-4  rounded-full"}>
+									<div className={classes?.typing_loader}></div>
+								</div>
 							</GridItem>}
-							<div ref={conversationBottomRef}/>
+							<div ref={conversationBottomRef} />
 						</GridContainer>
 					</ScrollBars>}
 
-					
 
-					{(auth.user.isAdmin || (contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.owner._id) || contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.recipients[0])) || active_conversation.type !== "individual") && <GridContainer 
-						className={["audio", "file", "video", "image"].includes(draft.type)? "flex-grow flex flex-col" : classes.chatInputsWrapper} 
-						style={{ backgroundColor: theme.palette.background.paper, top: ["audio", "file", "video", "image"].includes(draft.type)? 0 : "auto"}}
+
+					{(auth.user.isAdmin || (contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.owner._id) || contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.recipients[0])) || active_conversation.type !== "individual") && <GridContainer
+						className={["audio", "file", "video", "image"].includes(draft.type) ? "flex-grow flex flex-col" : classes?.chatInputsWrapper}
+						style={{ backgroundColor: theme.palette.background.paper, top: ["audio", "file", "video", "image"].includes(draft.type) ? 0 : "auto" }}
 					>
 						{draft.reply_for && <GridItem xs={12} className={"flex flex-row items-center bg-green-200"}>
 							<div className={"p-2 mx-4"}>
-										<Typography variant="body1" color="textPrimary" className={"font-bold"}>
-											{draft.reply_for.sender.first_name+" "+draft.reply_for.sender.last_name}
-										</Typography>
-										<Typography variant="body1" color="textPrimary" className={""} >
-											{draft.reply_for.content}
-										</Typography>
-									</div>
+								<Typography variant="body1" color="textPrimary" className={"font-bold"}>
+									{draft.reply_for.sender.first_name + " " + draft.reply_for.sender.last_name}
+								</Typography>
+								<Typography variant="body1" color="textPrimary" className={""} >
+									{draft.reply_for.content}
+								</Typography>
+							</div>
 						</GridItem>}
 
 						{["audio", "file", "video", "image"].includes(draft.type) && <GridItem xs={12} className={"flex flex-grow flex-row items-center bg-grey-200"}>
 							<FileInput
 								variant="outlined"
-								value={(["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments)? (draft.attachments > 0) : false))? draft.attachments[0] : undefined}
-								onChange={(newValue)=>{
-                                    setDraft(currentDraft => {
+								value={(["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments > 0) : false)) ? draft.attachments[0] : undefined}
+								onChange={(newValue) => {
+									setDraft(currentDraft => {
 										try {
 											let newDraft = JSON.parse(JSON.stringify(currentDraft));
 											if (newValue) {
 												newDraft.attachments = [newValue];
-											}	
-											else{
+											}
+											else {
 												delete newDraft.attachments;
-											}				
+											}
 											return newDraft;
-										} catch(err) {
-                                            return currentDraft;
-                                        }
+										} catch (err) {
+											return currentDraft;
+										}
 									})
-                                }}
+								}}
 								filesLimit={1}
-								acceptedFiles={draft.type === "file"? ["image/*", "video/*", "audio/*", "application/*"] : [(draft.type+"/*")]}
-							/>							
+								acceptedFiles={draft.type === "file" ? ["image/*", "video/*", "audio/*", "application/*"] : [(draft.type + "/*")]}
+							/>
 						</GridItem>}
 
 						{attachmentDialOpen && <GridItem xs={12} className={"flex flex-row items-center justify-evenly bg-grey-200"}>
 							{attachmentActions.map((action) => (
-									<Fab
-										key={action.name}
-										color={action.color}
-										aria-label={"Attach "+action.label}										
-										onClick={()=>{
-											setAttachmentDialOpen(false);
-											handleOnChangeDraftType(action.name);
-										}}
-										style={{background: action.color, color: theme.palette.background.paper}}
-										className={"mx-2"}
-									>
-										{action.icon}
-									</Fab>
-							))}							
+								<Fab
+									key={action.name}
+									color={action.color}
+									aria-label={"Attach " + action.label}
+									onClick={() => {
+										setAttachmentDialOpen(false);
+										handleOnChangeDraftType(action.name);
+									}}
+									style={{ background: action.color, color: theme.palette.background.paper }}
+									className={"mx-2"}
+								>
+									{action.icon}
+								</Fab>
+							))}
 						</GridItem>}
 
 						<GridItem xs={12} className={"flex flex-row items-center"}>
-							
-							<IconButton 
-								onClick={(event)=>{
+
+							<IconButton
+								onClick={(event) => {
 									setAttachmentDialOpen(!attachmentDialOpen)
-								}} 
-								aria-label={attachmentDialOpen? ((["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments)? (draft.attachments > 0) : false))? "Remove Attachments" : "Dismiss File Attachment") : "Close File Attachment"} 
-								className={"mx-2"} 
+								}}
+								aria-label={attachmentDialOpen ? ((["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments > 0) : false)) ? "Remove Attachments" : "Dismiss File Attachment") : "Close File Attachment"}
+								className={"mx-2"}
 							>
-								{!attachmentDialOpen? <AttachFileIcon color="inherit" /> : ((["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments)? (draft.attachments > 0) : false))? <DeleteOutlinedIcon color="inherit" /> : <CloseIcon  color="inherit" />)}
+								{!attachmentDialOpen ? <AttachFileIcon color="inherit" /> : ((["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments > 0) : false)) ? <DeleteOutlinedIcon color="inherit" /> : <CloseIcon color="inherit" />)}
 							</IconButton>
 							<div className={"flex-grow rounded-full mx-8"}>
-							<TextInput
-								variant={["audio", "file", "video", "image"].includes(draft.type)? "standard" : "outlined"}
-								multiline
-								rows={2}
-								onBlur={(new_value, event)=>{
-									if (active_conversation._id && !String.isEmpty(new_value)) {										
-										setDraft(currentDraft => {
-											try {
-												let newDraft = {
+								<TextInput
+									variant={["audio", "file", "video", "image"].includes(draft.type) ? "standard" : "outlined"}
+									multiline
+									rows={2}
+									onBlur={(new_value, event) => {
+										if (active_conversation._id && !String.isEmpty(new_value)) {
+											setDraft(currentDraft => {
+												try {
+													let newDraft = {
 														content: new_value,
 														conversation: active_conversation._id,
 													}
-												if (JSON.isJSON(currentDraft)) {
-													newDraft = JSON.parse(JSON.stringify(currentDraft));
-													newDraft.content = new_value;
-													newDraft.conversation = active_conversation._id;
+													if (JSON.isJSON(currentDraft)) {
+														newDraft = JSON.parse(JSON.stringify(currentDraft));
+														newDraft.content = new_value;
+														newDraft.conversation = active_conversation._id;
+													}
+													return newDraft;
+
+												} catch (err) {
+													return currentDraft;
 												}
-												return newDraft;												
-												
-											} catch(err) {
-                                                return currentDraft;
-                                            }
-										});
-										
-									}
-									if (active_conversation._id && sockets.default) {
-										sockets.default.emit("stopped-typing-message", {conversation: active_conversation._id, user: auth.user});
-									}
-								}}
-								onFocus={()=>{
-									if (active_conversation._id && sockets.default) {
-										sockets.default.emit("started-typing-message", {conversation: active_conversation._id, user: auth.user});										
-									}
-								}}
-								defaultValue={active_conversation._id === draft.conversation? draft.content : undefined}
-								onChange={(new_value)=>{
-									
-								}}
-								placeholder="Type your message here..."
-								inputRef={textInputRef}
-								inputProps={{
-									onKeyDown: handleMessageInputKeyDown(active_conversation),
-								}}
-							/>
+											});
+
+										}
+										if (active_conversation._id && sockets.default) {
+											sockets.default.emit("stopped-typing-message", { conversation: active_conversation._id, user: auth.user });
+										}
+									}}
+									onFocus={() => {
+										if (active_conversation._id && sockets.default) {
+											sockets.default.emit("started-typing-message", { conversation: active_conversation._id, user: auth.user });
+										}
+									}}
+									defaultValue={active_conversation._id === draft.conversation ? draft.content : undefined}
+									onChange={(new_value) => {
+
+									}}
+									placeholder="Type your message here..."
+									inputRef={textInputRef}
+									inputProps={{
+										onKeyDown: handleMessageInputKeyDown(active_conversation),
+									}}
+								/>
 							</div>
 							{/*<IconButton onClick={(event)=>handleOnSendMessage()} aria-label="send" className={"primary-text"} >
 															<SendIcon color="inherit" />
@@ -1437,93 +1290,93 @@ function Chat(props) {
 			</Paper>}
 
 
-				<Menu
-					keepMounted
-					open={contextMenu.mouseY !== null}
-					onClose={handleContextClose}
-					anchorReference="anchorPosition"
-					anchorPosition={
-					  contextMenu.mouseY !== null && contextMenu.mouseX !== null
+			<Menu
+				keepMounted
+				open={contextMenu.mouseY !== null}
+				onClose={handleContextClose}
+				anchorReference="anchorPosition"
+				anchorPosition={
+					contextMenu.mouseY !== null && contextMenu.mouseX !== null
 						? { top: contextMenu.mouseY, left: contextMenu.mouseX }
 						: undefined
-					}
-				  >
-					{contextMenu.type === "conversation" && <MenuItem onClick={(event)=>{
-						//setMessagingCache("active_conversation", contextMenu.entry);
-						setActiveConversation(contextMenu.entry);
+				}
+			>
+				{contextMenu.type === "conversation" && <MenuItem onClick={(event) => {
+					//setMessagingCache("active_conversation", contextMenu.entry);
+					setActiveConversation(contextMenu.entry);
+					handleContextClose(event);
+				}}>Open Conversation</MenuItem>}
+				{contextMenu.type === "conversation" && <MenuItem
+					onClick={(event) => {
+						handleArchiveConversation(contextMenu.entry);
 						handleContextClose(event);
-					}}>Open Conversation</MenuItem>}
-					{contextMenu.type === "conversation" && <MenuItem 
-						onClick={(event)=>{
-							handleArchiveConversation(contextMenu.entry);
-							handleContextClose(event);
-						}}
-					>
-						Archive Conversation
-					</MenuItem>}
-					{contextMenu.type === "conversation" && <MenuItem 
-						onClick={(event)=>{
-							handleDeleteConversation(contextMenu.entry);
-							handleContextClose(event);
-						}}
-					>
-						Delete Conversation
-					</MenuItem>}
+					}}
+				>
+					Archive Conversation
+				</MenuItem>}
+				{contextMenu.type === "conversation" && <MenuItem
+					onClick={(event) => {
+						handleDeleteConversation(contextMenu.entry);
+						handleContextClose(event);
+					}}
+				>
+					Delete Conversation
+				</MenuItem>}
 
-					{(contextMenu.type === "message" && (contextMenu.entry.sender._id !== auth.user._id && contextMenu.entry.sender !== auth.user._id)) && <MenuItem 
-						onClick={(event)=>{
-							handleContextClose(event);
-							setDraft({
-								is_reply: true,
-								sender: auth.user,
-								reply_for: contextMenu.entry,
-								content: "",
-								conversation: active_conversation._id,
-							});
-							if (textInputRef.current) {
-								textInputRef.current.value = "";
-								textInputRef.current.focus();
-							}
-								
-							
-						}}
-					>
-						Reply Message
-					</MenuItem>}
-					{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem 
-						onClick={(event)=>{
-							handleContextClose(event);
-							updateMessage({...contextMenu.entry, state: "deleted-for-sender", deletions: (Array.isArray(contextMenu.entry.deletions)? contextMenu.entry.deletions.concat([auth.user._id]): [auth.user._id])});
-							if (sockets.default) {
-								sockets.default.emit("delete-message-for-user", {message: contextMenu.entry, user: auth.user});
-							}
-						}}
-					>
-						Delete For Me
-					</MenuItem>}
+				{(contextMenu.type === "message" && (contextMenu.entry.sender._id !== auth.user._id && contextMenu.entry.sender !== auth.user._id)) && <MenuItem
+					onClick={(event) => {
+						handleContextClose(event);
+						setDraft({
+							is_reply: true,
+							sender: auth.user,
+							reply_for: contextMenu.entry,
+							content: "",
+							conversation: active_conversation._id,
+						});
+						if (textInputRef.current) {
+							textInputRef.current.value = "";
+							textInputRef.current.focus();
+						}
 
-					{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem 
-						onClick={(event)=>{
-							handleContextClose(event);
 
-							updateMessage({...contextMenu.entry, state: "deleted-for-all", deletions: active_conversation.recipients.concat([active_conversation.owner])});
-							if (sockets.default) {
-								sockets.default.emit("delete-message-for-all", {message: contextMenu.entry, user: auth.user});
-							}
-						}}
-					>
-						Delete For All
-					</MenuItem>}
-				</Menu>
+					}}
+				>
+					Reply Message
+				</MenuItem>}
+				{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem
+					onClick={(event) => {
+						handleContextClose(event);
+						updateMessage({ ...contextMenu.entry, state: "deleted-for-sender", deletions: (Array.isArray(contextMenu.entry.deletions) ? contextMenu.entry.deletions.concat([auth.user._id]) : [auth.user._id]) });
+						if (sockets.default) {
+							sockets.default.emit("delete-message-for-user", { message: contextMenu.entry, user: auth.user });
+						}
+					}}
+				>
+					Delete For Me
+				</MenuItem>}
 
-		{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
-	        <Alert onClose={() => setError(false)} severity="error">
-				{error}
-	        </Alert>
-		</Snackbar>}
+				{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem
+					onClick={(event) => {
+						handleContextClose(event);
+
+						updateMessage({ ...contextMenu.entry, state: "deleted-for-all", deletions: active_conversation.recipients.concat([active_conversation.owner]) });
+						if (sockets.default) {
+							sockets.default.emit("delete-message-for-all", { message: contextMenu.entry, user: auth.user });
+						}
+					}}
+				>
+					Delete For All
+				</MenuItem>}
+			</Menu>
+
+			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
+				<Alert onClose={() => setError(false)} severity="error">
+					{error}
+				</Alert>
+			</Snackbar>}
 
 		</Paper>
-    );
+	);
 }
 
 
@@ -1541,7 +1394,7 @@ Chat.defaultProps = {
 };
 
 export default compose(
-	withStyles(styles),
-	connect(mapStateToProps, {apiCallRequest, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation}),
+
+	connect(mapStateToProps, { apiCallRequest, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation }),
 	withTheme,
 )((Chat));

@@ -1,11 +1,10 @@
 /** @format */
 
 import React, { useState, useEffect } from "react";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
-import ErrorImage from "assets/img/icons/file-error.svg";
-
+import Modal from "@mui/material/Modal";
+import Backdrop from "@mui/material/Backdrop";
+import Fade from "@mui/material/Fade";
+import { Api as ApiService } from "services";
 const placeHolder =
 	"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII=";
 
@@ -18,7 +17,7 @@ const LightBox = ({ src, alt, open, onClose, className, ...rest }) => {
 	};
 
 	const onError = event => {
-		event.target.src = ErrorImage;
+		event.target.src = ApiService.endpoint("/public/img/icons/file-error.svg");
 	};
 
 	useEffect(() => {

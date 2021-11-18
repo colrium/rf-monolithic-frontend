@@ -6,15 +6,15 @@
 
 // Material helpers
 import {
-    Divider,
-    Icon,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    ListSubheader,
-    withStyles,
-} from "@material-ui/core";
+	Divider,
+	Icon,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	ListSubheader,
+} from "@mui/material";
+
 // Externals
 import classNames from "classnames";
 import ScrollBars from "components/ScrollBars";
@@ -24,12 +24,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
 import compose from "recompose/compose";
-import {withErrorHandler} from "hoc/ErrorHandler";
+
 import { logout } from "state/actions/auth";
 import { UtilitiesHelper } from "hoc/Helpers";
-import {withGlobals} from "contexts/Globals";
+import { withGlobals } from "contexts/Globals";
 // Component styles
-import styles from "./styles";
+
 
 
 const AdapterLink = React.forwardRef((props, ref) => (
@@ -127,35 +127,34 @@ class Sidebar extends Component {
 		return items_with_restrictions;
 	}
 	render() {
-		const { classes, className, items, auth, onClickNavLink } = this.props;
-		const rootClassName = classNames(classes.root, className);
+		const { className, items, auth, onClickNavLink } = this.props;
 
 		return (
-			<nav className={rootClassName}>
-				{/*<Toolbar className={classes.toolbar}>
-					<div className={classes.logoWrapper}>
-						<Link className={classes.logoLink} to="/">
+			<nav className={className}>
+				{/*<Toolbar className={""}>
+					<div className={""}>
+						<Link className={""} to="/">
 							<LazyImage
 								alt={app.name + " logo"}
-								className={classes.logoImage}
+								className={""}
 								src={app.logo}
 							/>
 						</Link>
 					</div>
 				</Toolbar>*/}
-				{/*<div className={classes.headerWrapper}>
-					<div className={classes.logoWrapper}>
-						<Link className={classes.logoLink} to="/">
+				{/*<div className={""}>
+					<div className={""}>
+						<Link className={""} to="/">
 							<LazyImage
 								alt={app.name + " logo"}
-								className={classes.logoImage}
+								className={""}
 								src={app.logo}
 							/>
 						</Link>
 					</div>
-					<div className={classes.profile}>
+					<div className={""}>
 						{auth.user.avatar ? (
-							<Avatar alt="Avatar" className={classes.avatar}>
+							<Avatar alt="Avatar" className={""}>
 								<LazyImage
 									src={ApiService.getAttachmentFileUrl(
 										auth.user.avatar
@@ -163,18 +162,17 @@ class Sidebar extends Component {
 								/>
 							</Avatar>
 						) : (
-							<Avatar className={classes.iconAvatar}>
+							<Avatar className={""}>
 								<UserIcon />
 							</Avatar>
 						)}
 
 						{auth.isAuthenticated && (
 							<Button
-								className={classes.userMenuBtn}
+								className={""}
 								variant="text"
 								onClick={this.onOpenUserPresenceMenu}
 								textCase="wordcase"
-								simple
 							>
 								{Object.size(auth.user) > 0 && (
 									<Status
@@ -231,7 +229,7 @@ class Sidebar extends Component {
 							<MenuItem>
 								<Link
 									to={"/account".toUriWithDashboardPrefix()}
-									color="default"
+									
 								>
 									{" "}
 									My account{" "}
@@ -241,7 +239,7 @@ class Sidebar extends Component {
 						</Menu>
 						{auth.isAuthenticated && (
 							<Typography
-								className={classes.nameText}
+								className={""}
 								variant="body2"
 							>
 								{auth.user ? auth.user.email_address : ""}
@@ -249,7 +247,7 @@ class Sidebar extends Component {
 						)}
 						{auth.isAuthenticated && (
 							<Typography
-								className={classes.bioText}
+								className={""}
 								variant="caption"
 							>
 								{auth.user ? auth.user.role : ""}
@@ -257,7 +255,7 @@ class Sidebar extends Component {
 						)}
 					</div>
 				</div>*/}
-				<ScrollBars className={classes.bodyWrapper}>
+				<ScrollBars className={""}>
 					<List component="div" disablePadding className="px-0">
 						{this.applyItemsRestrictions().map((item_link, index) =>
 							item_link.section ? (
@@ -267,9 +265,7 @@ class Sidebar extends Component {
 										disablePadding
 										subheader={
 											<ListSubheader
-												className={
-													classes.listSubheader
-												}
+												className={""}
 												disableSticky
 											>
 												{item_link.text}
@@ -279,8 +275,8 @@ class Sidebar extends Component {
 										{item_link.links.map(
 											(link_obj, link_index) => (
 												<ListItem
-													activeClassName={classNames({[classes.activeListItem]: true, "activeListItemCSS": true})}
-													className={classes.listItem}
+													activeClassName={"activeListItemCSS"}
+													className={""}
 													component={AdapterLink}
 													to={link_obj.route}
 													onClick={(event) => {
@@ -299,16 +295,15 @@ class Sidebar extends Component {
 														<ListItemIcon
 															className={classNames(
 																{
-																	[classes.listItemIcon]: true,
 																	[link_obj.color
 																		? link_obj.color +
-																		  "_text"
+																		"_text"
 																		: ""]: true,
 																}
 															)}
 														>
 															{typeof link_obj.icon ===
-															"string" ? (
+																"string" ? (
 																<Icon>
 																	{
 																		link_obj.icon
@@ -326,10 +321,9 @@ class Sidebar extends Component {
 															primaryTypographyProps={{
 																className: classNames(
 																	{
-																		[classes.listItemText]: true,
 																		[link_obj.color
 																			? link_obj.color +
-																			  "_text"
+																			"_text"
 																			: ""]: true,
 																	}
 																),
@@ -345,12 +339,12 @@ class Sidebar extends Component {
 											)
 										)}
 									</List>
-									<Divider className={classes.listDivider} />
+									<Divider />
 								</div>
 							) : (
 								<ListItem
-									activeClassName={classNames({[classes.activeListItem]: true, "activeListItemCSS": true})}
-									className={classes.listItem}
+									activeClassName={classNames({ "activeListItemCSS": true })}
+									className={""}
 									component={AdapterLink}
 									onClick={(event) => {
 										if (Function.isFunction(onClickNavLink)) {
@@ -363,14 +357,13 @@ class Sidebar extends Component {
 									{item_link.icon ? (
 										<ListItemIcon
 											className={classNames({
-												[classes.listItemIcon]: true,
 												[item_link.color
 													? item_link.color + "_text"
 													: ""]: true,
 											})}
 										>
 											{typeof item_link.icon ===
-											"string" ? (
+												"string" ? (
 												<Icon>{item_link.icon}</Icon>
 											) : (
 												item_link.icon
@@ -383,10 +376,9 @@ class Sidebar extends Component {
 										<ListItemText
 											primaryTypographyProps={{
 												className: classNames({
-													[classes.listItemText]: true,
 													[item_link.color
 														? item_link.color +
-														  "_text"
+														"_text"
 														: ""]: true,
 												}),
 											}}
@@ -407,7 +399,7 @@ class Sidebar extends Component {
 
 Sidebar.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	items: PropTypes.array,
 };
 
@@ -416,5 +408,5 @@ const mapStateToProps = state => ({
 });
 
 export default withGlobals(
-	compose(withStyles(styles), connect(mapStateToProps, { logout }), withErrorHandler)(Sidebar)
+	compose(connect(mapStateToProps, { logout }))(Sidebar)
 );

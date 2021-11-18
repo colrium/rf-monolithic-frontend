@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import ActualGoogleMap from "./ActualGoogleMap";
 
 import { compose } from "recompose";
-import { withStyles } from "@material-ui/core";
+
 
 //
 import { default_location, google_maps_url } from "config";
@@ -181,7 +181,7 @@ class CustomGoogleMap extends Component {
 		//this.setState(updatedPropsState);
 		if (!Object.areEqual(prevProps, this.props)) {
 			let updatedPropsState = JSON.updateJSON(this.state, this.props);
-			//console.log("updatedPropsState", updatedPropsState);
+			//
 			this.setState({
 				...updatedPropsState,
 			});
@@ -518,7 +518,7 @@ class CustomGoogleMap extends Component {
 		} else {
 			return (
 				<ActualGoogleMap
-						className={classes.googleMap}
+						className={classes?.googleMap}
 						defaultCenter={this.getDefaultCenter()}
 						currentDevicePosition={current_device_position}
 						loadingElement={<div style={{ height: "100%", minHeight: "100%", }} />}
@@ -551,7 +551,7 @@ class CustomGoogleMap extends Component {
 		}*/
 		return (
 			<ActualGoogleMap
-				className={classes.googleMap}
+				className={classes?.googleMap}
 				defaultCenter={this.getDefaultCenter()}
 				currentDevicePosition={current_device_position}
 				loadingElement={<div style={{ height: "100%", minHeight: "100%", }} />}
@@ -644,7 +644,7 @@ const mapStateToProps = state => ({
 
 export default compose(
 	connect(mapStateToProps, {}),
-	withStyles(styles),
+
 )(CustomGoogleMap);
 
-//export default connect(mapStateToProps, {})(withStyles(styles)(withGlobals(CustomGoogleMap)));
+//export default connect(mapStateToProps, {})((withGlobals(CustomGoogleMap)));

@@ -8,22 +8,24 @@ const config = {
 const { forms, useFieldValue, destroy, reset, submit } = useReduxForm(config);
 const [firstName, setFirstName] = useFieldValue("first_name")
 */
-import { useReducer, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import useDidMount from "./useDidMount";
 import useWillUnmount from "./useWillUnmount";
 import useSetState from "./useSetState";
 import useDidUpdate from "./useDidUpdate";
 import * as ReduxForm from "redux-form";
 import { useSelector, useDispatch } from 'react-redux';
+import { useUpdate } from 'react-use';
 
 const DEFAULT_CONFIG = {
     form: "defaultForm",
     initialValues: {},
     onSubmit: values => alert(JSON.stringify(values, null, 2)),
     volatile: false,
+    keepDirty: true,
 }
 const useReduxForm = (config = DEFAULT_CONFIG) => {
-    const { form, initialValues, onSubmit, volatile, ...otherMeta } = config;
+    const { form, initialValues, onSubmit, volatile, keepDirty, ...otherMeta } = { ...DEFAULT_CONFIG, ...config };
     const {
         Field,
         reducer,
@@ -72,9 +74,11 @@ const useReduxForm = (config = DEFAULT_CONFIG) => {
         isValid,
         isInvalid,
         isSubmitting,
+        isAsyncValidating,
         hasSubmitSucceeded,
         hasSubmitFailed,
-        submit
+        submit,
+        ...rest
     } = ReduxForm;
 
     const dispatch = useDispatch();
@@ -87,12 +91,11 @@ const useReduxForm = (config = DEFAULT_CONFIG) => {
     const formValues = useMemo(() => (forms[form] && forms[form].values), [forms]);
 
     useDidMount(() => {
-        if (JSON.isJSON(initialValues)) {
-            dispatch(initialize(form, initialValues, true, otherMeta))
+        // 
+        if (JSON.isJSON(initialValues) && JSON.isEmpty(formValues)) {
+            // 
+            dispatch(initialize(form, initialValues, keepDirty, otherMeta))
         }
-
-        //console.log("useReduxForm", "submit", submit);
-
     });
 
 
@@ -210,14 +213,14 @@ const useReduxForm = (config = DEFAULT_CONFIG) => {
         },
         //Selectors
         getFormValues: (...args) => getFormValues(form)(storeState, ...args),
-        getFormInitialValues: (...args) => getFormValues(form)(storeState, ...args),
-        getFormSyncErrors: (...args) => getFormValues(form)(storeState, ...args),
-        getFormMeta: (...args) => getFormValues(form)(storeState, ...args),
-        getFormAsyncErrors: (...args) => getFormValues(form)(storeState, ...args),
-        getFormSyncWarnings: (...args) => getFormValues(form)(storeState, ...args),
-        getFormSubmitErrors: (...args) => getFormValues(form)(storeState, ...args),
-        getFormError: (...args) => getFormValues(form)(storeState, ...args),
-        getFormNames: (...args) => getFormValues(form)(storeState, ...args),
+        getFormInitialValues: (...args) => getFormInitialValues(form)(storeState, ...args),
+        getFormSyncErrors: (...args) => getFormSyncErrors(form)(storeState, ...args),
+        getFormMeta: (...args) => getFormMeta(form)(storeState, ...args),
+        getFormAsyncErrors: (...args) => getFormAsyncErrors(form)(storeState, ...args),
+        getFormSyncWarnings: (...args) => getFormSyncWarnings(form)(storeState, ...args),
+        getFormSubmitErrors: (...args) => getFormSubmitErrors(form)(storeState, ...args),
+        getFormError: (...args) => getFormError(form)(storeState, ...args),
+        getFormNames: (...args) => getFormNames(storeState, ...args),
         isDirty: isDirty(form)(storeState),
         isPristine: isPristine(form)(storeState),
         isValid: isValid(form)(storeState),
@@ -225,12 +228,21 @@ const useReduxForm = (config = DEFAULT_CONFIG) => {
         isSubmitting: () => isSubmitting(form)(forms),
         hasSubmitSucceeded: hasSubmitSucceeded(form)(storeState),
         hasSubmitFailed: hasSubmitFailed(form)(storeState),
+        isAsyncValidating: isAsyncValidating(form)(storeState),
         useFieldValue: (name, initialValue = undefined, isVolatile = false) => {
+            const value = ((formValues && formValues[name]) || undefined);
+            const valueRef = useRef(((formValues && formValues[name]) || undefined));
+            const update = useUpdate();
+            const [fieldValue, setFieldValue, getFieldValue] = useSetState({ value: valueRef.current });
             useEffect(() => {
                 dispatch(registerField(form, name, Field));
-                if (JSON.isJSON(formValues) && !(name in formValues)) {
-                    dispatch(change(name, initialValue));
+                //
+                if (JSON.isJSON(formValues)) {
+                    if (!(name in formValues)) {
+                        dispatch(change(form, name, initialValue));
+                    }
                 }
+
                 if (isVolatile) {
                     return () => {
                         dispatch(unregisterField(form, name));
@@ -242,30 +254,48 @@ const useReduxForm = (config = DEFAULT_CONFIG) => {
             }, []);
 
 
-            return [((formValues && formValues[name]) || null), value => dispatch(change(form, name, value))];
+            useDidUpdate(() => {
+                valueRef.current = value
+
+            }, [value])
+
+            const setValue = useCallback((patch) => {
+                if (Function.isFunction(patch)) {
+                    Promise.all([patch(valueRef.current)]).then(patches => {
+                        if (Array.isArray(patches)) {
+                            valueRef.current = patches[0];
+                            dispatch(blur(form, name, patches[0]));
+                        }
+                    }).catch(error => console.error("useFieldValue error", error))
+                }
+                else {
+                    valueRef.current = patch;
+                    //setFieldValue(patch);
+                    dispatch(blur(form, name, patch));
+                }
+            }, []);
+
+
+
+
+
+            return [value, setValue];
         },
         useFieldValues: (initial = {}) => {
-            const [fieldValues, setFieldValues] = useSetState((formValues ?? {}));
+            const [fieldValues, setFieldValues, getFieldValues] = useSetState((formValues ?? {}));
             const setValues = async (values, callback = null) => {
-                setFieldValues(values, async (changes) => {
-                    //console.log("setFieldValues changes", changes, "formValues", formValues)
-                    for (const [name, values] of Object.entries(changes)) {
-                        if (JSON.isJSON(formValues) && !(name in formValues)) {
-                            dispatch(registerField(form, name, Field));
-                        }
-                        dispatch(change(form, name, values[1]));
+                setFieldValues(values);
+                for (const [name, value] of Object.entries(values)) {
+                    if (JSON.isJSON(formValues) && !(name in formValues)) {
+                        dispatch(registerField(form, name, Field));
                     }
-                    if (Function.isFunction(callback)) {
-                        try {
-                            callback(changes);
-                        } catch (error) {
-                            //console.log("useFieldValues set callback error", error)
-                        }
-                    }
-                });
+                    dispatch(change(form, name, value));
+                }
+
             };
             return [fieldValues, setValues];
-        }
+        },
+        ...rest
     };
 }
 

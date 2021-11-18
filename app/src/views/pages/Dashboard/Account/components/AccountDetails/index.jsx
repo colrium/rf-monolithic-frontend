@@ -1,7 +1,8 @@
 /** @format */
 
 // Material helpers
-import { CircularProgress, withStyles } from "@material-ui/core";
+import { CircularProgress } from "@mui/material";
+
 import GridContainer from "components/Grid/GridContainer";
 // Shared components
 import Portlet from "components/Portlet";
@@ -17,11 +18,11 @@ import { connect } from "react-redux";
 import compose from "recompose/compose";
 import ApiService from "services/Api";
 import { updateCurrentUser } from "state/actions/auth";
-import {withErrorHandler} from "hoc/ErrorHandler";
+
 import BaseForm from "views/forms/BaseForm";
 //
 // Component styles
-import styles from "./styles";
+
 
 class Account extends Component {
 	state = {
@@ -62,24 +63,24 @@ class Account extends Component {
 
 	componentDidMount() {
 		ApiService.profile({}).then(res => {
-				if (!res.err) {
-					let formValues = res.body.data;
+			if (!res.err) {
+				let formValues = res.body.data;
 
-					for (var i = 0; i < this.state.excludedFields.length; i++) {
-						delete formValues[this.state.excludedFields[i]];
-					}
-					this.setState(state => ({ formValues: formValues }));
+				for (var i = 0; i < this.state.excludedFields.length; i++) {
+					delete formValues[this.state.excludedFields[i]];
 				}
-			})
-			.catch(e => {});
+				this.setState(state => ({ formValues: formValues }));
+			}
+		})
+			.catch(e => { });
 	}
 
 	handleProfileFormSubmit(data, event) {
 		const { updateCurrentUser } = this.props;
 		return ApiService.update_profile(data).then(res => {
-				updateCurrentUser(res.body.data);
-				return true;
-			})
+			updateCurrentUser(res.body.data);
+			return true;
+		})
 			.catch(err => {
 				throw err;
 				return err;
@@ -87,9 +88,8 @@ class Account extends Component {
 	}
 
 	render() {
-		const { classes } = this.props;
 		return (
-			<Portlet className={classes.root}>
+			<Portlet>
 				<PortletHeader>
 					<PortletLabel
 						subtitle="The information can be edited"
@@ -128,9 +128,7 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(
-	compose(
-		withStyles(styles),
-		connect(mapStateToProps, { updateCurrentUser })
-	)(Account)
-);
+export default compose(
+
+	connect(mapStateToProps, { updateCurrentUser })
+)(Account);

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import Button from "components/Button";
 import {
 	SchoolOutlined as DefinationContextIcon,
@@ -8,7 +8,7 @@ import {
 	Add as AddIcon,
 	EditOutlined as EditIcon,
 	DeleteOutlined as DeleteIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 const currentDate = new Date();
 
@@ -23,10 +23,10 @@ export default {
 	views: {
 		single: {
 			default: "cardview",
-			cardview: {				
+			cardview: {
 				resolveData: entry => {
 					let view_data = {};
-					
+
 					return view_data;
 				},
 			},
@@ -60,7 +60,7 @@ export default {
 						return true;
 					},
 				},
-				
+
 			},
 
 			description: {
@@ -81,7 +81,7 @@ export default {
 						return true;
 					},
 				},
-				
+
 			},
 
 			instructions: {
@@ -102,10 +102,10 @@ export default {
 						return true;
 					},
 				},
-				
+
 			},
 
-			
+
 
 			banner: {
 				type: "string",
@@ -136,8 +136,8 @@ export default {
 					default: new Date(),
 					size: 6,
 					props: {
-						maxDate: new Date().setFullYear(currentDate.getFullYear()+5),
-						format:"DD/MM/YYYY",
+						maxDate: new Date().setFullYear(currentDate.getFullYear() + 5),
+						format: "DD/MM/YYYY",
 						margin: "dense",
 						/*InputProps: { 
 							classes : {
@@ -164,11 +164,11 @@ export default {
 				label: "To",
 				input: {
 					type: "date",
-					default: new Date().setFullYear(currentDate.getFullYear()+1),
+					default: new Date().setFullYear(currentDate.getFullYear() + 1),
 					size: 6,
 					props: {
-						maxDate: new Date().setFullYear(currentDate.getFullYear()+10),
-						format:"DD/MM/YYYY",
+						maxDate: new Date().setFullYear(currentDate.getFullYear() + 10),
+						format: "DD/MM/YYYY",
 						margin: "dense",
 						/*InputProps: { 
 							classes : {
@@ -221,17 +221,17 @@ export default {
 					required: true,
 				},
 				possibilities: {
-					'open' : "Open to public", 
-					'authorized_users': "Authorized users only", 
-					'author': "Author", 
-					'trainers': "Trainers only", 
-					'trainees': "Trainees only", 
-					'trainers_and_trainees': "Trainers and Trainees only", 
-					'administrators': "Administrators only", 
-					'user_role': "Specific User role", 
+					'open': "Open to public",
+					'authorized_users': "Authorized users only",
+					'author': "Author",
+					'trainers': "Trainers only",
+					'trainees': "Trainees only",
+					'trainers_and_trainees': "Trainers and Trainees only",
+					'administrators': "Administrators only",
+					'user_role': "Specific User role",
 					'user_roles': "Specific User roles",
-					'non_adminitrators': "Non administrators only", 
-					'authenticated_users': "Authenticated users only", 
+					'non_adminitrators': "Non administrators only",
+					'authenticated_users': "Authenticated users only",
 					'password': "Password"
 				},
 				restricted: {
@@ -255,7 +255,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "admin"},
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "admin" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -275,7 +275,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector"},
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -295,7 +295,7 @@ export default {
 					default: true,
 					required: false,
 				},
-				
+
 				restricted: {
 					display: () => {
 						return false;
@@ -306,7 +306,7 @@ export default {
 				},
 			},
 
-			
+
 		},
 		identity: {
 			primary: ["title"],
@@ -406,7 +406,7 @@ export default {
 								>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New Course
@@ -479,7 +479,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

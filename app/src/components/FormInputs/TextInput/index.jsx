@@ -5,15 +5,15 @@ import {
 	CircularProgress,
 	IconButton,
 	InputAdornment,
-	TextField,
+	// TextField,
 	InputBase,
-} from "@material-ui/core";
-import {debounce, throttle} from 'lodash';
+} from "@mui/material";
+import TextField from '@mui/material/TextField';
 //
 import {
 	VisibilityOffOutlined as HidePasswordIcon,
 	VisibilityOutlined as ShowPasswordIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 
 
@@ -35,7 +35,7 @@ const Input = React.forwardRef((props, ref) => {
 		value,
 		defaultValue,
 		helperText,
-		disabled,		
+		disabled,
 		type,
 		loading,
 		className,
@@ -46,7 +46,7 @@ const Input = React.forwardRef((props, ref) => {
 		...rest
 	} = props;
 
-	
+
 
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
 	const [inputDisabled, setInputDisabled] = useState(disabled);
@@ -56,8 +56,8 @@ const Input = React.forwardRef((props, ref) => {
 	const [inputTouched, setInputTouched] = useState(touched);
 	const [inputFocused, setInputFocused] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
-	const [inputType, setInputType] = useState((String.isString(type)? type.toLowerCase() : "text"));
-	
+	const [inputType, setInputType] = useState((String.isString(type) ? type.toLowerCase() : "text"));
+
 
 	const inputValueValid = async input_value => {
 		const { required, max, maxlength, min, minlength } = rest;
@@ -65,7 +65,7 @@ const Input = React.forwardRef((props, ref) => {
 			setInputError(undefined);
 			setIsInvalid(false);
 		}
-		let excludedValidators = Array.isArray(excludeValidation)? excludeValidation : (String.isString(excludeValidation)? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
+		let excludedValidators = Array.isArray(excludeValidation) ? excludeValidation : (String.isString(excludeValidation) ? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
 		let valid = true;
 		let validationError = "";
 		if (validate) {
@@ -95,17 +95,17 @@ const Input = React.forwardRef((props, ref) => {
 					valid = false;
 					validationError = "Invalid Number";
 				}
-				else if(max && !excludedValidators.includes("max")) {
+				else if (max && !excludedValidators.includes("max")) {
 					if (validNumber > max) {
 						valid = false;
-						validationError = label + " value cannot exceed "+max;
-					}					
+						validationError = label + " value cannot exceed " + max;
+					}
 				}
-				else if(min && !excludedValidators.includes("min")) {
+				else if (min && !excludedValidators.includes("min")) {
 					if (validNumber < min) {
 						valid = false;
-						validationError = label + " value should be atleast "+max;
-					}					
+						validationError = label + " value should be atleast " + max;
+					}
 				}
 			}
 
@@ -113,16 +113,16 @@ const Input = React.forwardRef((props, ref) => {
 				var mediumStrengthPasswordRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
 				if (!mediumStrengthPasswordRegex.test(input_value)) {
 					valid = false;
-					validationError = input_value+" is not strong enough to use as a password";
+					validationError = input_value + " is not strong enough to use as a password";
 				}
 			}
 
 			if (valid && Function.isFunction(validator) && !excludedValidators.includes("validator")) {
 				try {
 					validationError = await validator(input_value);
-				} catch(err) {
-                    validationError = " validity cannot be determined.";
-                };
+				} catch (err) {
+					validationError = " validity cannot be determined.";
+				};
 				valid = !String.isString(validationError);
 			}
 		}
@@ -131,50 +131,50 @@ const Input = React.forwardRef((props, ref) => {
 		}
 		setInputError(valid ? undefined : validationError);
 		setIsInvalid(!valid);
-		
+
 		return valid;
 	};
 
-	
 
-    useEffect(() => {
-    	if (!inputTouched) {
+
+	useEffect(() => {
+		if (!inputTouched) {
 			setInputTouched(true);
 		}
-    }, [inputValue, inputTouched]);
+	}, [inputValue, inputTouched]);
 
-    useEffect(() => {
-    	if (!inputTouched) {
+	useEffect(() => {
+		if (!inputTouched) {
 			setInputTouched(true);
 		}
 		setInputValue(value);
-    }, [value]);
+	}, [value]);
 
-    const throttledEventHandler = useRef(Function.createThrottle(5)).current;
+	const throttledEventHandler = useRef(Function.createThrottle(5)).current;
 	const debouncedOnChange = useRef(Function.debounce((event) => {
 		if (!inputTouched) {
 			setInputTouched(true);
 			let valueValid = inputValueValid(inputValue);
 		}
-		
+
 		if (event?.target) {
-			
+
 			let new_value = event.target.value;
-			
+
 			if (type == "number") {
 				new_value = Number.parseNumber(new_value, undefined);
-			}	
+			}
 			inputValueValid(new_value);
-			if ( Function.isFunction(onChange)) {						
-				let changed = onChange(onChangeYield === "value"? new_value : event );
+			if (Function.isFunction(onChange)) {
+				let changed = onChange(onChangeYield === "value" ? new_value : event);
 				//Promise.all([changed]).catch(e => console.error("Caught onChange error", e));					
-			}				
+			}
 			setInputValue(new_value);
 		}
-			
-			
-    }, 250)).current;
-  
+
+
+	}, 250)).current;
+
 
 
 	const handleOnChange = async (event) => {
@@ -188,42 +188,42 @@ const Input = React.forwardRef((props, ref) => {
 			let focused = onFocus(event);
 			Promise.all([focused]).catch(e => {
 				console.error(e)
-			});					
+			});
 		}
 	}
 
 	const handleOnBlur = async (event) => {
 		event.persist();
-        let new_value = event.target.value;
-    	if (type == "number") {
+		let new_value = event.target.value;
+		if (type == "number") {
 			new_value = Number.parseNumber(new_value, undefined);
 		}
-        
-        
-        if (Function.isFunction(onBlur)) {
+
+
+		if (Function.isFunction(onBlur)) {
 			let blurred = onBlur(event);
 			Promise.all([blurred]).catch(e => {
 				console.error(e);
-			});					
+			});
 		}
 	}
 
-	useEffect(()=> {
+	useEffect(() => {
 		/*let startTime = new Date();
 		let throttledCalls = 0;
 		let debouncedCallsTotal = 0;
 		let throttledCallsTotal = 0;
 		const throttleExample = Function.throttle(() => {
 			throttledCalls = throttledCalls + 1;
-			console.log("throttledCalls", throttledCalls);
-			console.log("throttledCallsTotal", throttledCallsTotal);
+			
+			
 
 		}, 5000);
 		let debouncedCalls = 0;
 		const debounceExample = Function.debounce(() => {
 			debouncedCalls = debouncedCalls + 1;
-			console.log("debouncedCalls", debouncedCalls);
-			console.log("debouncedCallsTotal", debouncedCallsTotal);	
+			
+				
 		}, 5000);
 		
 		let throttledCallInterval = setInterval(()=> {			
@@ -249,12 +249,12 @@ const Input = React.forwardRef((props, ref) => {
 
 	if (variant === "base" || variant === "plain") {
 		return (
-            <InputBase
-				className={"flex-1"+(className? (" "+className) : "")}
+			<InputBase
+				className={"flex-1" + (className ? (" " + className) : "")}
 				label={label}
 				onChange={handleOnChange}
 				onFocus={handleOnFocus}
-				onBlur={handleOnBlur}				
+				onBlur={handleOnBlur}
 				defaultValue={inputValue}
 				disabled={inputDisabled}
 				error={inputError ? true : isInvalid}
@@ -264,12 +264,12 @@ const Input = React.forwardRef((props, ref) => {
 				{...inputProps}
 				{...rest}
 			/>
-        );
+		);
 	}
-	else{
+	else {
 		return (
-            <TextField
-				className={"flex-1 "+(className? (" "+className) : "")}
+			<TextField
+				className={"flex-1 " + (className ? (" " + className) : "")}
 				label={label}
 				onChange={handleOnChange}
 				onFocus={handleOnFocus}
@@ -278,24 +278,24 @@ const Input = React.forwardRef((props, ref) => {
 				InputProps={{
 					...InputProps,
 					endAdornment: (type === "password" || loading || (InputProps && InputProps.endAdornment)) && (
-							!(InputProps && InputProps.endAdornment)? (<InputAdornment position="end">
-								{loading && <CircularProgress size={"1rem"} color="inherit" />}
-								{type === "password" && <IconButton
-									aria-label="Toggle password visibility"
-									color="inherit"
-									onClick={e => {
-										setShowPassword(inputType === "password");
-										setInputType(inputType === "password"? "text" : "password");
-										
-									}}
-								>
-									{showPassword ? (
-										<HidePasswordIcon fontSize="small" />
-									) : (
-										<ShowPasswordIcon fontSize="small" />
-									)}
-								</IconButton>}
-							</InputAdornment>
+						!(InputProps && InputProps.endAdornment) ? (<InputAdornment position="end">
+							{loading && <CircularProgress size={"1rem"} color="inherit" />}
+							{type === "password" && <IconButton
+								aria-label="Toggle password visibility"
+								color="inherit"
+								onClick={e => {
+									setShowPassword(inputType === "password");
+									setInputType(inputType === "password" ? "text" : "password");
+
+								}}
+							>
+								{showPassword ? (
+									<HidePasswordIcon fontSize="small" />
+								) : (
+									<ShowPasswordIcon fontSize="small" />
+								)}
+							</IconButton>}
+						</InputAdornment>
 						) : (
 							<div className="flex flex-row">
 								<InputAdornment position="end">
@@ -305,7 +305,7 @@ const Input = React.forwardRef((props, ref) => {
 										color="inherit"
 										onClick={e => {
 											setShowPassword(inputType === "password");
-											setInputType(inputType === "password"? "text" : "password");											
+											setInputType(inputType === "password" ? "text" : "password");
 										}}
 									>
 										{showPassword ? (
@@ -325,15 +325,15 @@ const Input = React.forwardRef((props, ref) => {
 				defaultValue={inputValue}
 				disabled={inputDisabled}
 				error={inputError ? true : isInvalid}
-				helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
+				helperText={inputError ? inputError : (isInvalid ? "Invalid" : helperText)}
 				type={inputType}
 				ref={ref}
 				{...rest}
 			/>
-        );
+		);
 	}
 
-		
+
 });
 
 Input.defaultProps = {

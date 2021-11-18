@@ -26,7 +26,7 @@ const Page = (props) => {
 	useEffect(() => {
 		if (geolocation && googlePlaces.geocode) {
 			googlePlaces.geocode({location: geolocation}, "administrative_area_level_2", {short_name: true, evaluation: "modeValueOnly"}).then(res => {
-				console.log("googlePlaces.geocode res", res)
+				
 			})
 		}
 		

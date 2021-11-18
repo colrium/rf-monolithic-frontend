@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+    rf_frontend:
+        build:
+            context: ./app
+            dockerfile: Dockerfile
+            target: production
+        volumes:
+            - ./app/src:/app/src
+            - rf_fe_test_dependencies:/app/node_modules
+        container_name: rf_frontend_dev
+        restart: unless-stopped
+        networks:
+            - proxy-manager
+
+networks:
+    proxy-manager:
+        external: true
+        name: proxy-manager
+volumes:
+    rf_fe_test_dependencies:

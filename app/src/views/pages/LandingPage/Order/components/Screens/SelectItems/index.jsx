@@ -1,13 +1,13 @@
 /** @format */
 
-import IconButton from "@material-ui/core/IconButton";
-import BackIcon from "@material-ui/icons/ArrowBack";
-import Check from "@material-ui/icons/Check";
+import IconButton from "@mui/material/IconButton";
+import BackIcon from "@mui/icons-material/ArrowBack";
+import Check from "@mui/icons-material/Check";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import React from "react";
-import withRoot from "hoc/withRoot";
+
 import GridView from "./GridView";
 import ItemView from "./ItemView";
 
@@ -34,7 +34,7 @@ class Step extends React.Component {
 		this.handleOnBackClick = this.handleOnBackClick.bind(this);
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		const { context, view } = this.props;
@@ -47,16 +47,16 @@ class Step extends React.Component {
 	}
 
 	handleOnItemSelect = (item, event) => {
-        const { onContextChange } = this.props;
-        this.setState(prevState => ({
+		const { onContextChange } = this.props;
+		this.setState(prevState => ({
 			view: "itemview",
 			context: item,
 			prev_view: prevState.view,
 		}));
-        if (Function.isFunction(onContextChange)) {
+		if (Function.isFunction(onContextChange)) {
 			onContextChange(item, "itemview");
 		}
-    };
+	};
 
 	handleOnItemAdd = selection => {
 		const { onAddToCart, onContextChange } = this.props;
@@ -146,4 +146,4 @@ class Step extends React.Component {
 	}
 }
 
-export default withRoot(Step);
+export default Step;

@@ -4,15 +4,15 @@
  * @format
  */
 
-import { IconButton } from "@material-ui/core";
-import Chip from "@material-ui/core/Chip";
+import { IconButton } from "@mui/material";
+import Chip from "@mui/material/Chip";
 import {
 	Add as AddIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
 	ReceiptOutlined as DefinationContextIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
@@ -408,7 +408,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -439,7 +439,7 @@ export default {
 								<Link to={"orders/add/"} {...props}>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -466,7 +466,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -497,7 +497,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

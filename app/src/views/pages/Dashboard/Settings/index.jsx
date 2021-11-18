@@ -1,13 +1,13 @@
 /** @format */
 
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { appendNavHistory } from "state/actions/ui/nav";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 import ContactSettingsWidget from "views/widgets/Settings/Contact";
 import GeneralSettingsWidget from "views/widgets/Settings/General";
@@ -48,7 +48,7 @@ class Page extends React.Component {
 	state = {
 		active_tab: "general",
 		tabs: {
-			general: "General",			
+			general: "General",
 			legal: "Legal",
 			reading: "Reading",
 			social: "Social",
@@ -188,4 +188,4 @@ const mapStateToProps = state => ({
 	device: state.device,
 });
 
-export default withErrorHandler(connect(mapStateToProps, { appendNavHistory })(Page));
+export default (connect(mapStateToProps, { appendNavHistory })(Page));

@@ -1,9 +1,9 @@
 /** @format */
 
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -11,7 +11,7 @@ import ScrollBars from "components/ScrollBars";
 import Typography from "components/Typography";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 import LoginForm from "views/forms/LoginForm";
 
 function Widget(props) {
@@ -55,7 +55,7 @@ function Widget(props) {
 			</ScrollBars>
 
 			<DialogActions>
-				<Button color="error" simple onClick={onLoginCancel}>
+				<Button color="error" onClick={onLoginCancel}>
 					Cancel
 				</Button>
 			</DialogActions>
@@ -67,4 +67,4 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(connect(mapStateToProps, {})(Widget));
+export default (connect(mapStateToProps, {})(Widget));

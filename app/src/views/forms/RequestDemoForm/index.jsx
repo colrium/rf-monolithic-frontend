@@ -4,18 +4,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 
-import { withStyles } from "@material-ui/core/styles";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TextField from "@material-ui/core/TextField";
-import Icon from "@material-ui/core/Icon";
-import IconButton from "@material-ui/core/IconButton";
-import Snackbar from "@material-ui/core/Snackbar";
-import CircularProgress from "@material-ui/core/CircularProgress";
+
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+import Icon from "@mui/material/Icon";
+import IconButton from "@mui/material/IconButton";
+import Snackbar from "@mui/material/Snackbar";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import SnackbarContent from "components/Snackbar/SnackbarContent";
-import {withErrorHandler} from "hoc/ErrorHandler";
+
 
 import ApiService from "services/Api";
 
@@ -170,14 +170,14 @@ class RequestDemoForm extends React.Component {
 		};
 		let that = this;
 		ApiService.post("/demo-requests", formData).then(response => {
-				that.setState(state => ({
-					submitting: false,
-					submiterror: false,
-					submitsuccess: true,
-					alert:
-						"Thankyou for your interest in working with us. We will get back to you as soon as possible.",
-				}));
-			})
+			that.setState(state => ({
+				submitting: false,
+				submiterror: false,
+				submitsuccess: true,
+				alert:
+					"Thankyou for your interest in working with us. We will get back to you as soon as possible.",
+			}));
+		})
 			.catch(e => {
 				that.setState(state => ({
 					submitting: false,
@@ -190,7 +190,6 @@ class RequestDemoForm extends React.Component {
 
 	render() {
 		const {
-			classes,
 			color,
 			inputVariant,
 			fullWidth,
@@ -199,23 +198,8 @@ class RequestDemoForm extends React.Component {
 			...rest
 		} = this.props;
 
-		const formClasses = classNames({
-			[classes.root]: true,
-			[className]: className,
-		});
-
-		const inputClasses = classNames({
-			[classes.emailInput]: true,
-			[classes[color]]: color,
-		});
-
-		const submitBtnClasses = classNames({
-			[classes.submitBtn]: true,
-			[classes[color]]: color,
-		});
-
 		return (
-			<div className={classes.root}>
+			<div>
 				<Snackbar
 					anchorOrigin={{
 						vertical: "bottom",
@@ -231,8 +215,8 @@ class RequestDemoForm extends React.Component {
 							this.state.submiterror
 								? "error"
 								: this.state.submitsuccess
-								? "success"
-								: "inverse"
+									? "success"
+									: "inverse"
 						}
 						message={
 							<span>
@@ -240,8 +224,8 @@ class RequestDemoForm extends React.Component {
 									{this.state.submiterror
 										? ""
 										: this.state.submitsuccess
-										? ""
-										: ""}
+											? ""
+											: ""}
 								</b>{" "}
 								{this.state.alert}
 							</span>
@@ -251,45 +235,29 @@ class RequestDemoForm extends React.Component {
 				<form
 					noValidate
 					ref="demoRequestForm"
-					className={formClasses}
-					onSubmit={this.handleDemoRequestSubmit}
 					{...rest}
 				>
-					<GridContainer className={classes.paddless}>
+					<GridContainer className={"p-0"}>
 						<GridItem
 							xs={12}
 							sm={12}
 							md={12}
-							className={classes.paddless}
+							className={"p-0"}
 						>
 							<TextField
 								id="request-demo-email"
 								type="email"
 								value={this.state.email}
 								onChange={this.handleChange("email")}
-								className={inputClasses}
 								variant={inputVariant}
 								label="Your email"
-								InputLabelProps={{
-									classes: {
-										root: classes[color],
-										focused: classes[color],
-									},
-								}}
 								InputProps={{
-									classes: {
-										root: classes[color],
-										focused: classes[color],
-									},
 									endAdornment: (
 										<InputAdornment position="end">
 											{" "}
 											{this.state.submitting ? (
 												<CircularProgress
 													size={32}
-													className={
-														classes.submitProgress
-													}
 													color="inherit"
 												/>
 											) : (
@@ -297,14 +265,13 @@ class RequestDemoForm extends React.Component {
 													aria-label="Submit"
 													color="inherit"
 													type="submit"
-													className={submitBtnClasses}
 												>
 													{" "}
 													{this.state
 														.submitsuccess ? (
 														<Icon>error</Icon>
 													) : this.state
-															.submiterror ? (
+														.submiterror ? (
 														<Icon>error</Icon>
 													) : (
 														<Icon>
@@ -339,7 +306,7 @@ RequestDemoForm.defaultProps = {
 	fullWidth: true,
 };
 RequestDemoForm.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	className: PropTypes.string,
 	color: PropTypes.oneOf([
 		"default",
@@ -358,4 +325,4 @@ RequestDemoForm.propTypes = {
 	disabled: PropTypes.bool,
 };
 
-export default withErrorHandler(withStyles(styles)(RequestDemoForm));
+export default (RequestDemoForm);

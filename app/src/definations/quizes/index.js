@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import Button from "components/Button";
 import {
 	AssignmentOutlined as DefinationContextIcon,
@@ -8,7 +8,7 @@ import {
 	Add as AddIcon,
 	EditOutlined as EditIcon,
 	DeleteOutlined as DeleteIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 const currentDate = new Date();
 
@@ -23,7 +23,7 @@ export default {
 	views: {
 		single: {
 			default: "cardview",
-			cardview: {	},
+			cardview: {},
 		},
 		listing: {
 			default: "tableview",
@@ -44,7 +44,7 @@ export default {
 				},
 				reference: {
 					name: "courses",
-					service_query: {active: 1},
+					service_query: { active: 1 },
 					resolves: {
 						value: "_id",
 						display: {
@@ -86,7 +86,7 @@ export default {
 						return true;
 					},
 				},
-				
+
 			},
 
 
@@ -109,21 +109,21 @@ export default {
 						return true;
 					},
 				},
-				
+
 			},
 
-			
+
 
 			answers_submission_deadline: {
 				type: "string",
 				label: "Answers submission deadline",
 				input: {
 					type: "date",
-					default: new Date().setFullYear(currentDate.getFullYear()+1),
+					default: new Date().setFullYear(currentDate.getFullYear() + 1),
 					required: true,
 					props: {
-						maxDate: new Date().setFullYear(currentDate.getFullYear()+1),
-						format:"DD/MM/YYYY",
+						maxDate: new Date().setFullYear(currentDate.getFullYear() + 1),
+						format: "DD/MM/YYYY",
 						margin: "dense",
 						/*InputProps: { 
 							classes : {
@@ -145,7 +145,7 @@ export default {
 				},
 			},
 
-			
+
 		},
 		identity: {
 			primary: ["title"],
@@ -251,7 +251,7 @@ export default {
 								>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -325,7 +325,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

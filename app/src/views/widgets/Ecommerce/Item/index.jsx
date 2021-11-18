@@ -1,8 +1,7 @@
 /** @format */
 
-import Chip from "@material-ui/core/Chip";
-import Skeleton from "@material-ui/lab/Skeleton";
-import LogoChevron from "assets/img/realfield/logo-chevron.svg";
+import Chip from "@mui/material/Chip";
+import Skeleton from '@mui/material/Skeleton';
 import Button from "components/Button";
 import { DynamicInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
@@ -13,7 +12,7 @@ import React from "react";
 import { connect } from "react-redux";
 import ApiService from "services/Api";
 import { addToCart } from "state/actions";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 class Widget extends React.Component {
 	state = {
@@ -64,11 +63,11 @@ class Widget extends React.Component {
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		if (snapshot.applyChanges) {
-            let newState = JSON.updateJSON(this.state, this.props);
-            this.setState(newState);
-            this.calculateOptionsPrice();
-            this.canAddToCart();
-        }
+			let newState = JSON.updateJSON(this.state, this.props);
+			this.setState(newState);
+			this.calculateOptionsPrice();
+			this.canAddToCart();
+		}
 	}
 
 	handleOnItemAdd = event => {
@@ -388,7 +387,7 @@ class Widget extends React.Component {
 									src={
 										this.state.selected_image
 											? this.state.selected_image
-											: LogoChevron
+											: ApiService.endpoint("/public/img/realfield/logo-chevron.svg")
 									}
 								/>
 							</div>
@@ -467,4 +466,4 @@ const mapStateToProps = state => ({
 	cart: state.ecommerce.cart,
 });
 
-export default withErrorHandler(connect(mapStateToProps, { addToCart })(Widget));
+export default (connect(mapStateToProps, { addToCart })(Widget));

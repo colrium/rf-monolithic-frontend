@@ -12,7 +12,7 @@ import {
 	AudiotrackOutlined as AudioIcon,
 	InsertDriveFileOutlined as FileIcon,
 	MovieOutlined as VideoIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { environment } from "config";
 import ApiService from "services/Api";
 
@@ -94,15 +94,15 @@ class Utilities {
 		for (let i = 0; i < no_of_colors; i++) {
 			let variant_color = color.isLight()
 				? color
-						.saturate(i * variant)
-						.mix(color.grayscale().mix(color.saturate(i * variant)))
-						.hex()
+					.saturate(i * variant)
+					.mix(color.grayscale().mix(color.saturate(i * variant)))
+					.hex()
 				: color
-						.desaturate(i * variant)
-						.mix(
-							color.grayscale().mix(color.desaturate(i * variant))
-						)
-						.hex();
+					.desaturate(i * variant)
+					.mix(
+						color.grayscale().mix(color.desaturate(i * variant))
+					)
+					.hex();
 			color_scheme.push(variant_color);
 		}
 		return color_scheme;
@@ -315,17 +315,17 @@ class ServiceData {
 										) {
 											if (
 												primary_value[n] in
-													entry[column][
-														primary_key
-													] &&
+												entry[column][
+												primary_key
+												] &&
 												entry[column][primary_key][
-													primary_value[n]
+												primary_value[n]
 												]
 											) {
 												primary_resolve_value +=
 													" " +
 													entry[column][primary_key][
-														primary_value[n]
+													primary_value[n]
 													];
 											}
 										}
@@ -335,12 +335,12 @@ class ServiceData {
 											"string"
 										) &&
 										primary_value in
-											entry[column][primary_key]
+										entry[column][primary_key]
 									) {
 										primary_resolve_value +=
 											" " +
 											entry[column][primary_key][
-												primary_value
+											primary_value
 											];
 									}
 								}
@@ -370,8 +370,8 @@ class ServiceData {
 					column_resolve +=
 						secondary_resolve_value.trim().length > 0
 							? (secondary_prefix ? secondary_prefix : " (") +
-							  secondary_resolve_value +
-							  (secondary_suffix ? secondary_suffix : ")")
+							secondary_resolve_value +
+							(secondary_suffix ? secondary_suffix : ")")
 							: "";
 				}
 				resolve = {
@@ -418,17 +418,17 @@ class ServiceData {
 											) {
 												if (
 													primary_value[n] in
-														entry[column][x][
-															primary_key
-														] &&
 													entry[column][x][
-														primary_key
+													primary_key
+													] &&
+													entry[column][x][
+													primary_key
 													][primary_value[n]]
 												) {
 													primary_resolve_value +=
 														" " +
 														entry[column][x][
-															primary_key
+														primary_key
 														][primary_value[n]];
 												}
 											}
@@ -438,12 +438,12 @@ class ServiceData {
 												"string"
 											) &&
 											primary_value in
-												entry[column][x][primary_key]
+											entry[column][x][primary_key]
 										) {
 											primary_resolve_value +=
 												" " +
 												entry[column][x][primary_key][
-													primary_value
+												primary_value
 												];
 										}
 									}
@@ -477,8 +477,8 @@ class ServiceData {
 						item_resolve +=
 							secondary_resolve_value.trim().length > 0
 								? (secondary_prefix ? secondary_prefix : " (") +
-								  secondary_resolve_value +
-								  (secondary_suffix ? secondary_suffix : ")")
+								secondary_resolve_value +
+								(secondary_suffix ? secondary_suffix : ")")
 								: "";
 					}
 					resolve.push({
@@ -554,7 +554,7 @@ class ServiceData {
 					if (column in entries[i]) {
 						if (entries[i][column]) {
 							entries[i][column] = { value: entries[i][column][resolves.value], display_value: this.resolveReferenceColumnDisplay(column, entries[i], resolves, user, secondary_prefix, secondary_suffix) };
-							console.log(column, "entries[i][column]", entries[i][column]);
+							
 						}
 						else{
 							entries[i][column] = {value: null, display_value: "" };
@@ -1122,7 +1122,7 @@ class CountriesData {
 		return names;
 	}
 
-	static administrative_features_options(country, level=1, value=false) {
+	static administrative_features_options(country, level = 1, value = false) {
 		return new Promise((resolve, reject) => {
 			let features = {};
 			if (String.isString(country)) {
@@ -1138,33 +1138,33 @@ class CountriesData {
 					country_name = "tanzania";
 				}
 				if (country_name && (level == 1 || (level > 1 && level < 4 && value))) {
-					ApiService.isolated({cache: true, headers : { 'Content-Type': 'application/json', 'Accept': 'application/json'}}).get(`/public/geodata/${country_name}/features/administrative/level-${level}/index.json`).then(response => response.data).then(data => {
+					ApiService.isolated({ cache: true, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }).get(`/public/geodata/${country_name}/features/administrative/level-${level}/index.json`).then(response => response.data).then(data => {
 						let lower_level = level - 1
-				        if (Array.isArray(data)) {
-				        	data.map(entry => {				        		
-				        		if (((level > 1 && level < 4 && value) && String.isString(value) && String.isString(entry[("level-"+lower_level)]) && entry[("level-"+lower_level)].toLowerCase() === value.toLowerCase()) || level == 1) {
-				        			features[entry.name] = entry.name;
-				        		}				        		
-				        	})
-				        }
-				        resolve(features);
+						if (Array.isArray(data)) {
+							data.map(entry => {
+								if (((level > 1 && level < 4 && value) && String.isString(value) && String.isString(entry[("level-" + lower_level)]) && entry[("level-" + lower_level)].toLowerCase() === value.toLowerCase()) || level == 1) {
+									features[entry.name] = entry.name;
+								}
+							})
+						}
+						resolve(features);
 					}).catch(err => {
-                        reject(err);
-                    });
-					
+						reject(err);
+					});
+
 				}
-				else{
-					reject("Invalid parameters country: "+country+", level:"+level+", value:"+value);
+				else {
+					reject("Invalid parameters country: " + country + ", level:" + level + ", value:" + value);
 				}
-				
+
 			}
 			else {
-				reject("Invalid country: "+country);
-			}	
+				reject("Invalid country: " + country);
+			}
 
-			
+
 		});
-			
+
 	}
 }
 

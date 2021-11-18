@@ -1,14 +1,14 @@
 /** @format */
 
-import Hidden from "@material-ui/core/Hidden";
-import withStyles from "@material-ui/core/styles/withStyles";
+import Hidden from "@mui/material/Hidden";
+
 import { app, colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 import SignupForm from "views/forms/SignupForm";
 import AnimatedChevronMap from "views/widgets/AnimatedChevronMap";
 import { intercom } from "config";
@@ -64,28 +64,28 @@ class SignUp extends React.Component {
 		return (
 			<div className={"relative h-screen w-screen p-0"}>
 				<GridContainer className={"absolute inset-0 h-screen w-screen overflow-hidden p-0"}>
-					<GridContainer className={classes.login_container}>
+					<GridContainer className={classes?.login_container}>
 						<Hidden smDown>
 							<GridItem
 								xs={12}
 								sm={12}
 								md={7}
 								lg={8}
-								className={classes.info_wrapper}
+								className={classes?.info_wrapper}
 							>
 								<GridContainer
-									className={classes.info_container}
+									className={classes?.info_container}
 									direction="row"
 									justify="center"
 									alignItems="center"
 								>
 									<GridContainer
-										className={classes.info_content}
+										className={classes?.info_content}
 									>
 										<GridItem
 											xs={12}
 											className={
-												classes.info_map_container
+												classes?.info_map_container
 											}
 										>
 											<AnimatedChevronMap
@@ -98,8 +98,7 @@ class SignUp extends React.Component {
 
 										<GridItem xs={12}>
 											<Typography
-												center
-												variant="h5"
+																								variant="h5"
 											>
 												realfield.io
 											</Typography>
@@ -115,7 +114,7 @@ class SignUp extends React.Component {
 							sm={12}
 							md={5}
 							lg={4}
-							className={classes.form_wrapper}
+							className={classes?.form_wrapper}
 						>
 							<GridContainer
 								justify="center"
@@ -125,13 +124,13 @@ class SignUp extends React.Component {
 									<img
 										alt={app.name + " logo"}
 										className={classNames(
-											classes.login_logo,
+											classes?.login_logo,
 											"center",
 										)}
 										src={app.logo}
 									/>
 
-									
+
 								</GridItem>
 								<GridItem xs={12} className={"flex-grow "}>
 									<SignupForm onSignupSuccess={this.onSignupSuccess} />
@@ -146,4 +145,4 @@ class SignUp extends React.Component {
 	}
 }
 
-export default withErrorHandler(withStyles(styles)(SignUp));
+export default ((SignUp));

@@ -1,6 +1,6 @@
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
 import React, { useState, useEffect } from "react";
 import debounce from 'lodash/debounce';
 
@@ -98,7 +98,7 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 	}
 
 
-	//console.log("formattedData.options", formattedData.options);
+	//
 
 	const [open, setOpen] = useState(false);
 	const [inputOptions, setInputOptions] = useState([]);
@@ -114,7 +114,6 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 		let excludedValidators = Array.isArray(excludeValidation) ? excludeValidation : (String.isString(excludeValidation) ? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
 		let valid = true;
 		let validationError = "";
-		//console.log(label, "input_value", input_value, "required", required, "validate", validate)
 		if (validate) {
 			if (valid && required && !excludedValidators.includes("required")) {
 				if (!input_value) {
@@ -266,11 +265,11 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 				setInputOptions(formatedOptions);
 			}
 			if ((Array.isArray(formatedValue) && Array.isArray(inputValue) && formatedValue.equals(inputValue)) || (JSON.isJSON(formatedValue) && JSON.isJSON(inputValue) && Object.areEqual(formatedValue, inputValue))) {
-				//console.log(label, "formatedValue equal", formatedValue, "inputValue", inputValue)
+				//
 
 			}
 			else {
-				//console.log(label, "formatedValue not equal", formatedValue)			
+				//			
 				setInputValue(formatedValue);
 				//let valueValid = inputValueValid(newformattedData.value);
 
@@ -278,8 +277,8 @@ function CustomAutocomplete({ className, disabled, isMulti, loading, onChange, l
 			/*setInputOptions(formatedOptions);
 			setInputValue(formatedValue);*/
 
-			//console.log("Autocomplete formatedOptions", formatedOptions);
-			//console.log("Autocomplete value", value);
+			//
+			//
 		}
 
 

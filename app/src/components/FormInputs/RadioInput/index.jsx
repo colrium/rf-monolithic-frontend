@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import FormHelperText from '@mui/material/FormHelperText';
 
 const Input = props => {
 	let [state, setState] = useState(props);
@@ -27,7 +27,7 @@ const Input = props => {
 		value,
 		defaultValue,
 		helperText,
-		disabled,		
+		disabled,
 		options,
 		color,
 		formControlProps,
@@ -36,16 +36,16 @@ const Input = props => {
 	} = state;
 
 	let options_keys = Object.keys(options);
-	options_keys = Array.isArray(options_keys)? options_keys : [];
-	const [inputValue, setInputValue] = useState(value ? value : (defaultValue? defaultValue : (options_keys.length > 0? options_keys[0] : undefined)));
+	options_keys = Array.isArray(options_keys) ? options_keys : [];
+	const [inputValue, setInputValue] = useState(value ? value : (defaultValue ? defaultValue : (options_keys.length > 0 ? options_keys[0] : undefined)));
 	const [inputDisabled, setInputDisabled] = useState(disabled);
 	const [inputError, setInputError] = useState(error);
 	const [isInvalid, setIsInvalid] = useState(invalid);
 	const [inputTouched, setInputTouched] = useState(touched);
-	
+
 
 	const inputValueValid = async input_value => {
-		let excludedValidators = Array.isArray(excludeValidation)? excludeValidation : (String.isString(excludeValidation)? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
+		let excludedValidators = Array.isArray(excludeValidation) ? excludeValidation : (String.isString(excludeValidation) ? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
 		let valid = true;
 		let validationError = "";
 		if (validate) {
@@ -60,14 +60,14 @@ const Input = props => {
 					validationError = label + " required";
 				}
 			}
-			
+
 
 			if (valid && Function.isFunction(validator) && !excludedValidators.includes("validator")) {
 				try {
 					validationError = await validator(input_value);
-				} catch(err) {
-                    validationError = " validity cannot be determined.";
-                };
+				} catch (err) {
+					validationError = " validity cannot be determined.";
+				};
 				valid = !String.isString(validationError);
 			}
 		}
@@ -76,25 +76,25 @@ const Input = props => {
 		}
 		setInputError(valid ? undefined : validationError);
 		setIsInvalid(!valid);
-		
+
 		return valid;
 	};
 
 	const triggerOnChange = async (new_value) => {
 		setInputDisabled(true);
-		if ( Function.isFunction(onChange)) {
+		if (Function.isFunction(onChange)) {
 			let changed = onChange(new_value);
-			Promise.all([changed]).then(()=>{
+			Promise.all([changed]).then(() => {
 				setInputDisabled(false);
 			}).catch(e => {
-                setInputDisabled(false);
-            });
-			
+				setInputDisabled(false);
+			});
+
 		}
-		else{
+		else {
 			setInputDisabled(false);
 		}
-		
+
 	}
 
 	useEffect(() => {
@@ -104,27 +104,27 @@ const Input = props => {
 				if (validity[0]) {
 					triggerOnChange(inputValue);
 				}
-			}).catch(e => {});
-							
+			}).catch(e => { });
+
 		}
 	}, [inputTouched, inputValue]);
 
 	useEffect(() => {
-		setInputValue(value ? value : (defaultValue? defaultValue : (options_keys.length > 0? options_keys[0] : undefined)))
+		setInputValue(value ? value : (defaultValue ? defaultValue : (options_keys.length > 0 ? options_keys[0] : undefined)))
 	}, [value, defaultValue]);
 
 	return (
-		<FormControl 
-			className={"flex-1"+(className? (" "+className) : "")}
-			component="div" 
-			required={required} 
-			error={inputError? true : false} 
+		<FormControl
+			className={"flex-1" + (className ? (" " + className) : "")}
+			component="div"
+			required={required}
+			error={inputError ? true : false}
 		>
 			<FormLabel component="legend">{label}</FormLabel>
 			{JSON.isJSON(options) && (
 				<RadioGroup
 					aria-label={label.variablelize()}
-					name={name? name : label.variablelize() }
+					name={name ? name : label.variablelize()}
 					onChange={async event => {
 						let new_value = event.target.value;
 
@@ -137,7 +137,7 @@ const Input = props => {
 							setInputTouched(true);
 						}
 						setInputValue(new_value);
-						
+
 					}}
 					value={inputValue}
 					{...rest}
@@ -146,7 +146,7 @@ const Input = props => {
 						([option_name, option_label], cursor) => (
 							<FormControlLabel
 								value={option_name}
-								control={<Radio color={color? color : "primary"} />}
+								control={<Radio color={color ? color : "primary"} />}
 								label={option_label}
 								key={name + "-option-" + cursor}
 							/>
@@ -154,12 +154,12 @@ const Input = props => {
 					)}
 				</RadioGroup>
 			)}
-			<FormHelperText>{inputError? inputError : helperText}</FormHelperText>
+			<FormHelperText>{inputError ? inputError : helperText}</FormHelperText>
 		</FormControl>
 	);
 };
 
-Input.defaultProps = {	
+Input.defaultProps = {
 	options: {},
 	formControlProps: {
 		margin: "dense",

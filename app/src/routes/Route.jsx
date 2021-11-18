@@ -26,38 +26,38 @@ const CustomRoute = props => {
 		...rest
 	} = props;
 
-	
 
-	
+
+
 
 	if (entry) {
-        let {location} = rest;
-        let current_path = location? location.pathname : false;
-        if (ApiService.isUserAuthenticated(true)) {
-				if (current_path != entryPaths.authenticated) {
-					return (
-						<Redirect
-							exact
-							to={{ pathname: entryPaths.authenticated }}
-						/>
-					);
-				}
-				return;
-					
-		} 
-		else {
-				if (current_path != entryPaths.unauthenticated) {
-					return (
-						<Redirect
-							exact
-							to={{ pathname: entryPaths.unauthenticated }}
-						/>
-					);
-				}
-				return;
-		}
-    } else if (authRestrict) {
+		let { location } = rest;
+		let current_path = location ? location.pathname : false;
 		if (ApiService.isUserAuthenticated(true)) {
+			if (current_path != entryPaths.authenticated) {
+				return (
+					<Redirect
+						exact
+						to={{ pathname: entryPaths.authenticated }}
+					/>
+				);
+			}
+			return;
+
+		}
+		else {
+			if (current_path != entryPaths.unauthenticated) {
+				return (
+					<Redirect
+						exact
+						to={{ pathname: entryPaths.unauthenticated }}
+					/>
+				);
+			}
+			return;
+		}
+	} else if (authRestrict) {
+		if (auth.isAuthenticated && auth.user?._id) {
 			return (
 				<Route
 					{...rest}

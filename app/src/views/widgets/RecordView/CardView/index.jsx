@@ -15,8 +15,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 import { ServiceDataHelper } from "hoc/Helpers";
-import { withErrorHandler } from "hoc/ErrorHandler";
-import { Typography } from "@material-ui/core";
+
+import { Typography } from "@mui/material";
 
 
 
@@ -73,7 +73,7 @@ function CardView({ ...props }) {
 			for (var i = 0; i < primaries.length; i++) {
 				title +=
 					defination.scope.columns[primaries[i]].reference &&
-					resolvedRefRecord[primaries[i]]
+						resolvedRefRecord[primaries[i]]
 						? resolvedRefRecord[primaries[i]].resolve
 						: resolvedRefRecord[primaries[i]];
 			}
@@ -91,8 +91,8 @@ function CardView({ ...props }) {
 			for (var i = 0; i < secondaries.length; i++) {
 				subtitle += defination.scope.columns[secondaries[i]].reference &&
 					resolvedRefRecord[secondaries[i]]
-						? resolvedRefRecord[secondaries[i]].resolve
-						: resolvedRefRecord[secondaries[i]];
+					? resolvedRefRecord[secondaries[i]].resolve
+					: resolvedRefRecord[secondaries[i]];
 			}
 		}
 
@@ -109,8 +109,8 @@ function CardView({ ...props }) {
 					<React.Fragment>
 						{resolvedRefRecord[name].map((entry, index) => (
 							<Typography
-								color="default"
-								
+
+
 								key={name + "-" + index}
 							>
 								{entry.resolve}
@@ -120,7 +120,7 @@ function CardView({ ...props }) {
 				);
 			} else {
 				return (
-					<Typography color="default" >
+					<Typography  >
 						{resolvedRefRecord[name].resolve}
 					</Typography>
 				);
@@ -131,7 +131,7 @@ function CardView({ ...props }) {
 					<React.Fragment>
 						{resolvedRefRecord[name].map((entry, index) => (
 							<Typography
-								color="default"
+
 								key={name + "-" + index}
 							>
 								{entry}
@@ -149,31 +149,31 @@ function CardView({ ...props }) {
 							<Typography className="pl-4">
 								{resolvedRefRecord[name]
 									? new Date(resolvedRefRecord[name]).format(
-											formats.dateformats.date
-									  )
+										formats.dateformats.date
+									)
 									: ""}
 							</Typography>
 						);
 					} else {
 						return (
-							<Typography color="default">
+							<Typography >
 								{resolvedRefRecord[name]
 									? new Date(resolvedRefRecord[name]).format(
-											formats.dateformats.datetime
-									  )
+										formats.dateformats.datetime
+									)
 									: ""}
 							</Typography>
 						);
 					}
 				} else if (defination.scope.columns[name].type === "boolean") {
 					return (
-						<Typography color="default">
+						<Typography >
 							{resolvedRefRecord[name] ? "Yes" : "No"}
 						</Typography>
 					);
 				} else {
 					return (
-						<Typography color="default">
+						<Typography >
 							{resolvedRefRecord[name]
 								? resolvedRefRecord[name]
 								: ""}
@@ -182,7 +182,7 @@ function CardView({ ...props }) {
 				}
 			} else {
 				return (
-					<Typography color="default" >
+					<Typography  >
 						{JSON.stringify(resolvedRefRecord[name])}
 					</Typography>
 				);
@@ -249,10 +249,6 @@ function CardView({ ...props }) {
 			/>
 
 			<CardContent className="p-0 m-0">{resolveValue()}</CardContent>
-			{/*<CardActions>
-				<Button variant="outlined" color="primary" onClick={event => { console.log("Edit clicked")}} className="mx-2">Edit</Button> 
-				<Button variant="outlined" color="secondary" onClick={event => { console.log("Delete clicked")}} className="mx-2">Delete</Button>
-			</CardActions>*/}
 		</Card>
 	) : (
 		<GridContainer />
@@ -269,4 +265,4 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default connect(mapStateToProps, {})(withErrorHandler(CardView));
+export default connect(mapStateToProps, {})(CardView);

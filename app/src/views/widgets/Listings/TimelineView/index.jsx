@@ -1,8 +1,7 @@
 /** @format */
 
-import { CircularProgress, Icon } from "@material-ui/core";
-import withStyles from "@material-ui/core/styles/withStyles";
-import EmptyStateImage from "assets/img/empty-state-table.svg";
+import { CircularProgress, Icon } from "@mui/material";
+
 //
 import Calendar from "components/Calendar";
 import GridContainer from "components/Grid/GridContainer";
@@ -15,8 +14,8 @@ import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { closeDialog, openDialog } from "state/actions";
 //
-import { withErrorHandler } from "hoc/ErrorHandler";
-import styles from "./styles";
+import ApiService from "services/Api";
+
 
 class TimelineView extends React.Component {
 	calendarRef = React.createRef();
@@ -127,8 +126,8 @@ class TimelineView extends React.Component {
 				this.loadData();
 			})
 			.catch(e => {
-            closeDialog();
-        });
+				closeDialog();
+			});
 	};
 
 	loadContext() {
@@ -173,20 +172,20 @@ class TimelineView extends React.Component {
 							}));
 						})
 						.catch(err => {
-                        this.setState(state => ({
-                            records: [],
-                            load_error: { msg: err },
-                            loading: false,
-                        }));
-                    });
+							this.setState(state => ({
+								records: [],
+								load_error: { msg: err },
+								loading: false,
+							}));
+						});
 				})
 				.catch(err => {
-                this.setState(state => ({
-                    records: [],
-                    load_error: { msg: err },
-                    loading: false,
-                }));
-            });
+					this.setState(state => ({
+						records: [],
+						load_error: { msg: err },
+						loading: false,
+					}));
+				});
 		} else {
 			this.setState(state => ({
 				records: [],
@@ -197,15 +196,13 @@ class TimelineView extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
 
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer className={`p-0`}>
 				{this.state.defination && (
 					<GridItem className="p-0 m-0" xs={12}>
 						{this.state.loading ? (
 							<GridContainer
-								className={classes.full_height}
 								justify="center"
 								alignItems="center"
 							>
@@ -213,7 +210,6 @@ class TimelineView extends React.Component {
 									<CircularProgress
 										size={24}
 										thickness={4}
-										className={classes.progress}
 										color="secondary"
 										disableShrink
 									/>
@@ -227,8 +223,7 @@ class TimelineView extends React.Component {
 											<Typography
 												color="error"
 												variant="h1"
-												center
-												fullWidth
+																								fullWidth
 											>
 												<Icon fontSize="large">
 													error
@@ -239,8 +234,7 @@ class TimelineView extends React.Component {
 											<Typography
 												color="error"
 												variant="body1"
-												center
-												fullWidth
+																								fullWidth
 											>
 												An error occured.
 												<br />
@@ -257,7 +251,7 @@ class TimelineView extends React.Component {
 											{Array.isArray(
 												this.state.records
 											) &&
-											this.state.records.length > 0 ? (
+												this.state.records.length > 0 ? (
 												<GridContainer className="p-0 m-0">
 													<GridItem xs={12}>
 														<Calendar
@@ -291,9 +285,6 @@ class TimelineView extends React.Component {
 																this.state
 																	.records
 															}
-															className={
-																classes.calendar
-															}
 															onClickEdit={
 																this
 																	.handleEditItem
@@ -313,26 +304,19 @@ class TimelineView extends React.Component {
 												>
 													<img
 														alt="Empty list"
-														className={
-															classes.emptyImage
-														}
-														src={EmptyStateImage}
+														src={ApiService.endpoint("/public/img/empty-state-table.svg")}
 													/>
 													<Typography
-														className={
-															classes.emptyText
-														}
 														color="grey"
 														variant="body2"
-														center
-														fullWidth
+																												fullWidth
 													>
 														No{" "}
 														{this.state.defination
 															.label
 															? this.state
-																	.defination
-																	.label
+																.defination
+																.label
 															: "Records"}{" "}
 														found
 													</Typography>
@@ -351,7 +335,7 @@ class TimelineView extends React.Component {
 }
 TimelineView.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	defination: PropTypes.object.isRequired,
 	service: PropTypes.any.isRequired,
 	calendarProps: PropTypes.object,
@@ -377,9 +361,9 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(
+export default (
 	compose(
-		withStyles(styles),
+
 		connect(mapStateToProps, { openDialog, closeDialog })
 	)(TimelineView)
 );

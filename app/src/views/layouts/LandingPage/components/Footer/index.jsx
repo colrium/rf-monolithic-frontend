@@ -1,21 +1,20 @@
 import React from "react";
 import { connect } from "react-redux";
-import { withStyles } from "@material-ui/core";
-import Fab from "@material-ui/core/Fab";
-import IconButton from "@material-ui/core/IconButton";
-import useScrollTrigger from "@material-ui/core/useScrollTrigger";
-import Zoom from "@material-ui/core/Zoom";
-import FacebookIcon from "@material-ui/icons/Facebook";
-import InstagramIcon from "@material-ui/icons/Instagram";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import LinkedInIcon from "@material-ui/icons/LinkedIn";
-import TwitterIcon from "@material-ui/icons/Twitter";
-import WhatsAppIcon from "@material-ui/icons/WhatsApp";
-import YouTubeIcon from "@material-ui/icons/YouTube";
+
+import Fab from "@mui/material/Fab";
+import IconButton from "@mui/material/IconButton";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
+import Zoom from "@mui/material/Zoom";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import YouTubeIcon from "@mui/icons-material/YouTube";
 import GooglePlusIcon from 'mdi-react/GooglePlusIcon';
-import logo from "assets/img/realfield/logo.svg";
 import { colors } from "assets/jss/app-theme";
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
@@ -24,8 +23,9 @@ import PropTypes from "prop-types";
 import Intercom from "react-intercom";
 import { Link } from "react-router-dom";
 import RequestDemoForm from "views/forms/RequestDemoForm";
-import {withErrorHandler} from "hoc/ErrorHandler";
-import styles from "./styles";
+
+import { Api as ApiService } from "services";
+
 
 function ScrollTop(props) {
 	const { children, window } = props;
@@ -67,11 +67,10 @@ ScrollTop.propTypes = {
 };
 
 function Footer(props) {
-	
+
 
 	let {
 		app: { settings },
-		classes,
 		className,
 		color,
 		columnWidgets,
@@ -79,17 +78,15 @@ function Footer(props) {
 	} = props;
 
 
-	const inverseColor = ["inverse", "transparent"].includes(color)? "default" : "inverse";
+	const inverseColor = ["inverse", "transparent"].includes(color) ? "default" : "inverse";
 
 
 	return (
 		<footer
-			className={"w-full "+ color}
+			className={"w-full " + color}
 			style={{
 				backgroundImage:
-					"url(" +
-					require("assets/img/realfield/logo-rotated.png") +
-					")",
+					"url(" + ApiService.endpoint("/public/img/realfield/logo-rotated.png") + ")",
 				backgroundRepeat: "no-repeat",
 				backgroundAttachment: "scroll",
 				backgroundPosition: "right center",
@@ -107,7 +104,7 @@ function Footer(props) {
 						<KeyboardArrowUpIcon />
 					</Fab>
 				</ScrollTop>
-				
+
 			</div>
 			<Intercom appID={intercom.app.id} {...intercom.app.user} />
 			<GridContainer className={className}>
@@ -117,27 +114,27 @@ function Footer(props) {
 							<GridContainer className="p-0 m-0">
 								<GridItem sm={12} className="p-0 m-0">
 									<GridItem xs={12} className={"mb-6 p-0"}>
-											<Typography className={classes.title+" mb-2 font-extrabold"} variant="h2" paragraph>
-												<span>Ethical Data</span><span className="avenir">.</span>
-											</Typography>
-											<Typography className={classes.title+" mb-4 font-extrabold"} variant="h2" paragraph>
-												<span>Real Time</span><span className="avenir">.</span>
-											</Typography>
+										<Typography className={"mb-2 font-extrabold"} variant="h2" paragraph>
+											<span>Ethical Data</span><span className="avenir">.</span>
+										</Typography>
+										<Typography className={"mb-4 font-extrabold"} variant="h2" paragraph>
+											<span>Real Time</span><span className="avenir">.</span>
+										</Typography>
 
-											<Typography className="inverse-text" variant="body2" paragraph>
-												For data you can’t find online
-											</Typography>
+										<Typography className="inverse-text" variant="body2" paragraph>
+											For data you can’t find online
+										</Typography>
 
 									</GridItem>
-									
-									
+
+
 								</GridItem>
 							</GridContainer>
 						</GridItem>
 
 						<GridItem sm={12} lg={7} className="p-0 m-0 mb-8">
 							<GridContainer className="p-0 m-0">
-								
+
 								<GridItem className="pl-4" sm={12} md={4}>
 
 									<Typography
@@ -149,90 +146,78 @@ function Footer(props) {
 									</Typography>
 
 									<Link
-											to={"/why-us".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/why-us".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												Why Realfield?
-											</Button>
+											Why Realfield?
+										</Button>
 									</Link>
 
 									<Link
-											to={"/why-us#realfield-advantage".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/why-us#realfield-advantage".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												Realfield Advantage
-											</Button>
+											Realfield Advantage
+										</Button>
 									</Link>
 
 									<Link
-											to={"/about-us#data".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/about-us#data".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text px-0"}
-												classes={{
-													label: "capitalize inverse-text justify-start"
-												}}
-											>
-												Data
-											</Button>
+											Data
+										</Button>
 									</Link>
 
 									<Link
-											to={"/about-us#data-quality".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/about-us#data-quality".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												Data Quality
-											</Button>
+											Data Quality
+										</Button>
 									</Link>
 
 									<Link
-											to={"/about-us#data-ethics".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/about-us#data-ethics".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												Data Ethics
-											</Button>
+											Data Ethics
+										</Button>
 									</Link>
 
 									<Link
-											to={"/ethical-principles".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/ethical-principles".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												Ethical Principles
-											</Button>
+											Ethical Principles
+										</Button>
 									</Link>
 
-									
+
 								</GridItem>
 
 								<GridItem className="pl-4" sm={12} md={4}>
@@ -245,32 +230,29 @@ function Footer(props) {
 									</Typography>
 
 									<Link
-											to={"/home#products".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/home#products".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize text-current"
-												}}
-											>
-												Surveys
-											</Button>
+											Surveys
+										</Button>
 									</Link>
 
 									<Link
-											to={"/home#products".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/home#products".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className={"inverse-text justify-start px-0"}
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												Queries
-											</Button>
-									</Link>									
+											Queries
+										</Button>
+									</Link>
 								</GridItem>
 
 								<GridItem className="pl-4" sm={12} md={4}>
@@ -279,66 +261,58 @@ function Footer(props) {
 										color={inverseColor}
 										variant="h5"
 									>
-										About Us									
+										About Us
 									</Typography>
 
 									<Link
-											to={"/about-us".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/about-us".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												Who we are
-											</Button>
+											Who we are
+										</Button>
 									</Link>
 
 									<Link
-											to={"/about-us#being-a-fielder".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/about-us#being-a-fielder".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												Being a Fielder
-											</Button>
+											Being a Fielder
+										</Button>
 									</Link>
 
 									<Link
-											to={"/about-us#faqs".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/about-us#faqs".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												FAQs
-											</Button>
+											FAQs
+										</Button>
 									</Link>
 
 									<Link
-											to={"/jobs".toUriWithLandingPagePrefix()}
-											className="block"
+										to={"/jobs".toUriWithLandingPagePrefix()}
+										className="block"
+									>
+										<Button
+											className="capitalize justify-start px-0"
+											color={"inverse"}
 										>
-											<Button
-												className={"inverse-text justify-start px-0"}
-												classes={{
-													label: "capitalize inverse-text"
-												}}
-											>
-												Jobs
-											</Button>
+											Jobs
+										</Button>
 									</Link>
 
-									
+
 								</GridItem>
 							</GridContainer>
 						</GridItem>
@@ -350,7 +324,7 @@ function Footer(props) {
 										className="w-full pl-0 block pb-4"
 										variant="body2"
 									>
-										For more information, or to schedule a demo, drop us a line 
+										For more information, or to schedule a demo, drop us a line
 									</Typography>
 									<RequestDemoForm
 										className="w-full block pb-4"
@@ -391,32 +365,32 @@ function Footer(props) {
 														>
 															{name ===
 																"twitter" && (
-																<TwitterIcon />
-															)}
+																	<TwitterIcon />
+																)}
 															{name ===
 																"linkedin" && (
-																<LinkedInIcon />
-															)}
+																	<LinkedInIcon />
+																)}
 															{name ===
 																"instagram" && (
-																<InstagramIcon />
-															)}
+																	<InstagramIcon />
+																)}
 															{name ===
 																"whatsapp" && (
-																<WhatsAppIcon />
-															)}
+																	<WhatsAppIcon />
+																)}
 															{name ===
 																"facebook" && (
-																<FacebookIcon />
-															)}
+																	<FacebookIcon />
+																)}
 															{name ===
 																"youtube" && (
-																<YouTubeIcon />
-															)}
+																	<YouTubeIcon />
+																)}
 															{name ===
 																"google_plus" && (
-																<GooglePlusIcon />
-															)}
+																	<GooglePlusIcon />
+																)}
 														</IconButton>
 													)
 											)}
@@ -458,29 +432,38 @@ function Footer(props) {
 				)}
 			</GridContainer>
 			{absoluteFooter && (
-				<GridContainer className={classes.absoluteFooter}>
+				<GridContainer
+					sx={{
+						background: "rgba(0,0,0, 0.3)",
+					}}
+				>
 					{absoluteFooter}
 				</GridContainer>
 			)}
 
 			{!absoluteFooter && (
-				<GridContainer className={classes.absoluteFooter+" md:px-20"}>
+				<GridContainer
+					className={" md:px-20"}
+					sx={{
+						background: "rgba(0,0,0, 0.3)",
+					}}
+				>
 					<GridItem className="p-0 pl-0 flex sm:flex-col lg:flex-row items-center" sm={12} md={6}>
 						<Link
-										className="pl-0 block"
-										to={"/home".toUriWithLandingPagePrefix()}
-										color="inherit"
-									>
-										<Button color="inherit" simple>
-											{
-												<img
-													src={logo}
-													className="h-8"
-													alt="logo"
-												/>
-											}
-										</Button>
-									</Link>
+							className="pl-0 block"
+							to={"/home".toUriWithLandingPagePrefix()}
+							color="inherit"
+						>
+							<Button color="inherit" >
+								{
+									<img
+										src={ApiService.endpoint("/public/img/realfield/logo.svg")}
+										className="h-8"
+										alt="logo"
+									/>
+								}
+							</Button>
+						</Link>
 						{/*<Typography
 							className="mt-2 mb-1 pl-2 pr-2"
 							variant="body1"
@@ -501,13 +484,13 @@ function Footer(props) {
 					>
 
 						<Link
-										className="pl-0 block"
-										to={"/privacy-policy".toUriWithLandingPagePrefix()}
-										color="inherit"
-									>
-										<Button color="inherit" classes={{label: "capitalize"}} simple>
-											Terms.
-										</Button>
+							className="pl-0 block"
+							to={"/privacy-policy".toUriWithLandingPagePrefix()}
+							color="inherit"
+						>
+							<Button color="inherit" className="capitalize" >
+								Terms.
+							</Button>
 						</Link>
 					</GridItem>
 
@@ -517,13 +500,13 @@ function Footer(props) {
 						md={3}
 					>
 						<Link
-										className="pl-0 block"
-										to={"/privacy-policy".toUriWithLandingPagePrefix()}
-										color="inherit"
-									>
-										<Button color="inherit" classes={{label: "capitalize"}} simple>
-											Privacy.
-										</Button>
+							className="pl-0 block"
+							to={"/privacy-policy".toUriWithLandingPagePrefix()}
+							color="inherit"
+						>
+							<Button color="inherit" className=" capitalize" >
+								Privacy.
+							</Button>
 						</Link>
 					</GridItem>
 				</GridContainer>
@@ -548,4 +531,4 @@ const mapStateToProps = state => ({
 	app: state.app,
 });
 
-export default withErrorHandler(connect(mapStateToProps, {})(withStyles(styles)(React.memo(Footer))));
+export default (connect(mapStateToProps, {})((React.memo(Footer))));

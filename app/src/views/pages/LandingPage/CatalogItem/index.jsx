@@ -4,7 +4,7 @@ import { app } from "assets/jss/app-theme";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import React from "react";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 import RequestError from "views/widgets/Catch/RequestError";
 import CatalogItem from "views/widgets/Ecommerce/Item";
 import ApiService from "services/Api";
@@ -38,18 +38,18 @@ class Page extends React.Component {
 
 	async getRecord() {
 		const { history } = this.props;
-		ApiService.get(("retail/items/"+this.state.item_id))
+		ApiService.get(("retail/items/" + this.state.item_id))
 			.then(response => {
 				let item = response.body.data;
 				this.setState(state => ({ item: item, loading: false }));
 			})
 			.catch(err => {
-            if (err.code === 404) {
-                history.push("/not-found");
-            } else {
-                this.setState(state => ({ error: err, loading: false }));
-            }
-        });
+				if (err.code === 404) {
+					history.push("/not-found");
+				} else {
+					this.setState(state => ({ error: err, loading: false }));
+				}
+			});
 	}
 
 	render() {
@@ -87,4 +87,4 @@ class Page extends React.Component {
 	}
 }
 
-export default withErrorHandler(Page);
+export default (Page);

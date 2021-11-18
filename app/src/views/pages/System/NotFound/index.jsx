@@ -1,7 +1,6 @@
 /** @format */
 
-import withStyles from "@material-ui/core/styles/withStyles";
-import NotFoundImage from "assets/img/not_found.svg";
+
 import { app } from "assets/jss/app-theme";
 //
 import GridContainer from "components/Grid/GridContainer";
@@ -10,9 +9,10 @@ import Typography from "components/Typography";
 import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
+import ApiService from "services/Api";
+
 //
-import styles from "views/pages/styles";
 
 class Page extends React.Component {
 	componentDidMount() {
@@ -20,7 +20,6 @@ class Page extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
 
 		return (
 			<GridContainer
@@ -38,9 +37,8 @@ class Page extends React.Component {
 					>
 						<img
 							alt="Under development"
-							className={classes.image}
 							style={{ width: "50%" }}
-							src={NotFoundImage}
+							src={ApiService.endpoint("/public/img/not_found.svg")}
 						/>
 					</GridContainer>
 
@@ -51,7 +49,6 @@ class Page extends React.Component {
 					>
 						<Typography
 							variant="h1"
-							className={classes.main_title}
 							color="grey"
 						>
 							404
@@ -65,7 +62,6 @@ class Page extends React.Component {
 					>
 						<Typography
 							variant="body1"
-							className={classes.main_title}
 							color="grey"
 						>
 							Page Not Found
@@ -80,4 +76,4 @@ const mapStateToProps = state => ({
 	user: state.user,
 });
 
-export default compose(withStyles(styles), connect(mapStateToProps, {}), withErrorHandler)(Page);
+export default compose(connect(mapStateToProps, {}))(Page);

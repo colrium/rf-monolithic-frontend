@@ -170,7 +170,7 @@ const usePlacesAutocomplete = ({
 
     const filterPredictions = useCallback((entries) => {
         let filteredData = [];
-        console.log("filterPredictions entries", entries)
+
         if (["street_number", "route", "neighborhood", "political", "locality", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "country", "postal_code"].includes(type)) {
             entries = entries.filter(entry => entry?.types?.includes(type));
         }
@@ -368,7 +368,7 @@ const usePlacesAutocomplete = ({
                     setState({ value: targetValue, loading: true });
                     parseValueToType(type, targetValue, label ? label : "formatted_address").then(parsedTypeValue => {
                         if (String.isString(parsedTypeValue)) {
-                            console.log("parseValueToType parsedTypeValue", parsedTypeValue);
+
                             setState({ keyword: parsedTypeValue, loading: false });
                             setKeyword(parsedTypeValue)
                         }

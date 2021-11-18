@@ -1,6 +1,6 @@
 /** @format */
 
-import { VpnKeyOutlined as PasswordIcon } from "@material-ui/icons";
+import { VpnKeyOutlined as PasswordIcon } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
 import Avatar from "components/Avatar";
 import Card from "components/Card";
@@ -11,7 +11,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import ApiService from "services/Api";
 import BaseForm from "views/forms/BaseForm";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 class Password extends Component {
 	state = {};
@@ -126,4 +126,4 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default connect(mapStateToProps, {})(withErrorHandler(Password));
+export default connect(mapStateToProps, {})((Password));

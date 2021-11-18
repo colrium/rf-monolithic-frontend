@@ -1,11 +1,11 @@
 /** @format */
 
-import IconButton from "@material-ui/core/IconButton";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import withStyles from "@material-ui/core/styles/withStyles";
-import FolderIcon from "@material-ui/icons/FolderOutlined";
-import MenuIcon from "@material-ui/icons/MoreVert";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+
+import FolderIcon from "@mui/icons-material/FolderOutlined";
+import MenuIcon from "@mui/icons-material/MoreVert";
 import { colors } from "assets/jss/app-theme";
 import Avatar from "components/Avatar";
 import Badge from "components/Badge";
@@ -16,7 +16,7 @@ import CardHeader from "components/Card/CardHeader";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
-import {withGlobals} from "contexts/Globals";
+import { withGlobals } from "contexts/Globals";
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
@@ -24,7 +24,7 @@ import compose from "recompose/compose";
 import AggregatesPieChart from "views/widgets/Charts/AggregatesPieChart";
 import AggregatesBarChart from "views/widgets/Charts/AggregatesBarChart";
 import ApiService from "services/Api";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 const styles = theme => ({
 	fullHeight: {
@@ -45,7 +45,7 @@ class CompactAggregatesOverview extends React.Component {
 		const { auth, definations, contexts } = props;
 		let possible_definations = {};
 		for (let [name, defination] of Object.entries(definations)) {
-			if ( !defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) && contexts.includes(name)) {
+			if (!defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) && contexts.includes(name)) {
 				possible_definations[name] = defination;
 				if (!this.state.defination) {
 					this.state.defination = defination;
@@ -80,7 +80,7 @@ class CompactAggregatesOverview extends React.Component {
 	}
 
 	render() {
-		const { classes, auth, definations, contexts,  gridSize, theme, chartType } = this.props;
+		const { classes, auth, definations, contexts, gridSize, theme, chartType } = this.props;
 
 		return (
 			<Card outlineColor="#cfd8dc">
@@ -100,7 +100,7 @@ class CompactAggregatesOverview extends React.Component {
 							<IconButton
 								aria-label="menuicon"
 								color="primary"
-								className={classes.margin}
+								className={classes?.margin}
 								onClick={this.handleMenuOpen}
 							>
 								{" "}
@@ -115,7 +115,7 @@ class CompactAggregatesOverview extends React.Component {
 							>
 								{Object.entries(this.state.definations).map(
 									([name, defination], index) => (
-										!defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) &&  contexts.includes(name) && <MenuItem
+										!defination.access.restricted(auth.user) && defination.access.view.summary(auth.user) && contexts.includes(name) && <MenuItem
 											onClick={this.handleDefinationChange(
 												name
 											)}
@@ -132,7 +132,7 @@ class CompactAggregatesOverview extends React.Component {
 				></CardHeader>
 				<CardContent className="p-0 m-0">
 					<GridContainer
-						className={classes.fullHeight}
+						className={classes?.fullHeight}
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -212,7 +212,7 @@ class CompactAggregatesOverview extends React.Component {
 												}
 											>
 												<Typography
-													color="default"
+
 													variant="subtitle1"
 													component="h3"
 													gutterBottom
@@ -242,10 +242,10 @@ class CompactAggregatesOverview extends React.Component {
 }
 
 CompactAggregatesOverview.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	gridSize: PropTypes.number,
 	chartType: PropTypes.string,
-	contexts:  PropTypes.array,
+	contexts: PropTypes.array,
 	aggregates: PropTypes.array,
 };
 
@@ -261,7 +261,6 @@ const mapStateToProps = state => ({
 });
 
 export default withGlobals(compose(
-	withStyles(styles),
-	connect(mapStateToProps, {}),
-	withErrorHandler
+
+	connect(mapStateToProps, {})
 )(CompactAggregatesOverview));

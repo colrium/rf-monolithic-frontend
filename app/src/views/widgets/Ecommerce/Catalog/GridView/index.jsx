@@ -1,7 +1,6 @@
 /** @format */
 
-import Skeleton from "@material-ui/lab/Skeleton";
-import LogoChevron from "assets/img/realfield/logo-chevron.svg";
+import Skeleton from '@mui/material/Skeleton';
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -9,7 +8,7 @@ import LazyImage from "components/LazyImage";
 import React from "react";
 import ApiService from "services/Api";
 
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 class GridView extends React.Component {
 	state = {
@@ -207,9 +206,9 @@ class GridView extends React.Component {
 													src={
 														retailitem.featured_image
 															? ApiService.getAttachmentFileUrl(
-																	retailitem.featured_image
-															  )
-															: LogoChevron
+																retailitem.featured_image
+															)
+															: ApiService.endpoint("/public/img/realfield/logo-chevron.svg")
 													}
 												/>
 											</div>
@@ -268,4 +267,4 @@ class GridView extends React.Component {
 	}
 }
 
-export default withErrorHandler(GridView);
+export default (GridView);

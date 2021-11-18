@@ -1,23 +1,24 @@
 /** @format */
 
 // Material helpers
-import { Button, List, ListItem, ListItemIcon, ListItemText, withStyles } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
+import { Button, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+
+import Box from "@mui/material/Box";
 // Material icons
-import { LabelOutlined as ContextlessNotificationIcon, NotificationsOutlined as EmptyIcon } from "@material-ui/icons";
+import { LabelOutlined as ContextlessNotificationIcon, NotificationsOutlined as EmptyIcon } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import Status from "components/Status";
 import Typography from "components/Typography";
-import {withGlobals} from "contexts/Globals";
+import { withGlobals } from "contexts/Globals";
 // Externals
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { UtilitiesHelper } from "hoc/Helpers";
-import {withErrorHandler} from "hoc/ErrorHandler";
+
 // Component styles
-import styles from "./styles";
+
 
 class NotificationList extends Component {
 	constructor(props) {
@@ -42,33 +43,32 @@ class NotificationList extends Component {
 		}
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 
 	render() {
-		const { className, classes, notifications, onSelect, definations } = this.props;
+		const { className, notifications, onSelect, definations } = this.props;
 		const priority_colors = {
 			low: "#03a9f4",
 			medium: "#ff9800",
 			high: "#ff0000",
 		};
-		const rootClassName = classNames(classes.root, className);
 
 		return (
-			<div className={rootClassName}>
+			<div className={className}>
 				{notifications.length > 0 ? (
 					<Box>
-						<div className={classes.header}>
+						<div className={""}>
 							<Typography variant="h6">
 								User Notifications
 							</Typography>
 							<Typography
-								className={classes.subtitle}
+								className={""}
 								variant="body2"
 							>
 								{notifications.length} new notifications
 							</Typography>
 						</div>
-						<div className={classes.content}>
+						<div className={""}>
 							<List component="div">
 								{notifications.map(notification => (
 									<Link
@@ -78,56 +78,50 @@ class NotificationList extends Component {
 										)}
 									>
 										<ListItem
-											className={classes.listItem}
+											className={""}
 											component="div"
 											onClick={onSelect}
 										>
 											<ListItemIcon
-												className={classes.listItemIcon}
+												className={""}
 												style={{
 													color: notification.context
 														? notification.context.toLowerCase() in
-														  this.contexts
+															this.contexts
 															? this.contexts[
-																	notification.context.toLowerCase()
-															  ].color
+																notification.context.toLowerCase()
+															].color
 															: this.contexts
-																	.contextless
-																	.color
-														: this.contexts
 																.contextless
-																.color,
+																.color
+														: this.contexts
+															.contextless
+															.color,
 												}}
 											>
 												{notification.context
 													? notification.context.toLowerCase() in
-													  this.contexts
+														this.contexts
 														? this.contexts[
-																notification.context.toLowerCase()
-														  ].icon
+															notification.context.toLowerCase()
+														].icon
 														: this.contexts
-																.contextless
-																.icon
+															.contextless
+															.icon
 													: this.contexts.contextless
-															.icon}
+														.icon}
 											</ListItemIcon>
 											<ListItemText
-												classes={{
-													primary:
-														classes.listItemTextPrimary,
-													secondary:
-														classes.listItemTextSecondary,
-												}}
 												primary={
 													<React.Fragment>
 														<Status
 															variant="dot"
 															color={
 																notification.priority.toLowerCase() in
-																priority_colors
+																	priority_colors
 																	? priority_colors[
-																			notification.priority.toLowerCase()
-																	  ]
+																	notification.priority.toLowerCase()
+																	]
 																	: "#9e9e9e"
 															}
 															text={
@@ -136,9 +130,9 @@ class NotificationList extends Component {
 															text_color={
 																notification.read
 																	? colors.hex
-																			.grey
+																		.grey
 																	: colors.hex
-																			.default
+																		.default
 															}
 														></Status>
 													</React.Fragment>
@@ -162,7 +156,7 @@ class NotificationList extends Component {
 									</Link>
 								))}
 							</List>
-							<div className={classes.footer}>
+							<div className={""}>
 								<Button
 									component={Link}
 									to="/notifications"
@@ -175,9 +169,9 @@ class NotificationList extends Component {
 						</div>
 					</Box>
 				) : (
-					<div className={classes.empty}>
-						<div className={classes.emptyImageWrapper}>
-							<EmptyIcon className={classes.emptyIcon} />
+					<div className={""}>
+						<div className={""}>
+							<EmptyIcon className={""} />
 						</div>
 						<Typography color="grey" variant="body2">
 							No new notifications yet
@@ -191,14 +185,14 @@ class NotificationList extends Component {
 
 NotificationList.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	notifications: PropTypes.array.isRequired,
 	onSelect: PropTypes.func,
 };
 
 NotificationList.defaultProps = {
 	notifications: [],
-	onSelect: () => {},
+	onSelect: () => { },
 };
 
-export default withGlobals(withStyles(styles)(withErrorHandler(NotificationList)));
+export default withGlobals(((NotificationList)));

@@ -10,3 +10,4 @@ export * from "./cache";
 export * from "./api";
 export * from "./app";
 export * from "./communication";
+export * from "./forms";

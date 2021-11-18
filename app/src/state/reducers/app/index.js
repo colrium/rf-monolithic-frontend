@@ -6,9 +6,9 @@ import {
 	SET_PREFERENCES,
 } from "state/actions";
 
-import { appName } from "config";
+import {appName} from "config";
 
-const initialState = {
+const initialState={
 	version: "0.0.0",
 	onboarded: false,
 	initialized: false,
@@ -19,8 +19,8 @@ const initialState = {
 			"copyright": "Copyright YYYY",
 			"trademark": "Registered in Eng & wales Co No.",
 			"landing-page-routing": "sections",
-		},		
-		
+		},
+
 		"reading": {
 			"enable-blog": true,
 			"enable-press": true,
@@ -50,8 +50,8 @@ const initialState = {
 			"new-logins": true,
 			"oath2-logins": true,
 			"show-message": false,
-			"access-availability": "administrators-only", 
-			"message": "",	
+			"access-availability": "administrators-only",
+			"message": "",
 		},
 		"tracking": {
 			"contexts": ["roam", "commission"],
@@ -118,7 +118,7 @@ const initialState = {
 		"locale": "en",
 		"data": {
 			pagination: 10,
-			defaultMapZoom: 15,			
+			defaultMapZoom: 15,
 		},
 		"presentation": {
 			"formats": {
@@ -140,7 +140,7 @@ const initialState = {
 				"push": true,
 				"sms": true,
 				"email": true,
-			},			
+			},
 			"subscriptions": {
 				"push": true,
 				"sms": true,
@@ -218,13 +218,13 @@ const initialState = {
 				"defaultView": "calendar", // Or list or table or map
 			},
 		}*/
-			
+
 	},//user settings	
 };
 
 
-const app = function(state = initialState, action) {
-	switch (action.type) {
+const app=function (state=initialState, action) {
+	switch(action.type) {
 		case SET_VERSION: {
 			return {
 				...state,
@@ -243,20 +243,17 @@ const app = function(state = initialState, action) {
 				initialized: action.initialized,
 			};
 		}
-		case SET_SETTINGS: {/*
-			console.log("action.settings", action.settings);
-			console.log("initialState.settings", initialState.settings);
-			console.log("JSON.merge(initialState.settings, action.settings)", JSON.merge(initialState.settings, action.settings));*/
+		case SET_SETTINGS: {
 
 			return {
 				...state,
-				settings: JSON.isJSON(action.settings)? JSON.merge(initialState.settings, action.settings) : initialState.settings,
+				settings: JSON.isJSON(action.settings)? JSON.merge(initialState.settings, action.settings):initialState.settings,
 			};
 		}
 		case SET_PREFERENCES: {
 			return {
 				...state,
-				preferences: JSON.isJSON(action.preferences)? JSON.merge(initialState.preferences, action.preferences)  : initialState.preferences,
+				preferences: JSON.isJSON(action.preferences)? JSON.merge(initialState.preferences, action.preferences):initialState.preferences,
 			};
 		}
 		default: {

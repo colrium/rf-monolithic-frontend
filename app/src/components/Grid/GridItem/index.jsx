@@ -1,44 +1,20 @@
 /** @format */
 
-import Grid from "@material-ui/core/Grid";
-import withStyles from "@material-ui/core/styles/withStyles";
-import { colors } from "assets/jss/app-theme";
-import gridStyle from "assets/jss/components/gridStyle.jsx";
-import classNames from "classnames";
-import PropTypes from "prop-types";
+import Grid from "@mui/material/Grid";
 import React from "react";
 
-const GridItem = React.memo((props) => {
-	let {
-		classes,
+const GridItem = React.forwardRef((props, ref) => {
+	const {
 		children,
-		color,
-		fullwidth,
-		fullheight,
 		className,
 		...rest
 	} = props;
-	let gridClasses = classNames({
-		[color]: color,
-		[classes.fullwidth]: fullwidth,
-		[classes.fullheight]: fullheight,
-		[classes.griditem]: true,
-		[className]: className,
-	});
 	return (
-		<Grid item className={gridClasses} {...rest}>
+		<Grid xs={12} className={`p-2 ${className ? className : ""}`} ref={ref} {...rest} item>
 			{children}
 		</Grid>
 	);
 })
 
-GridItem.propTypes = {
-	classes: PropTypes.object.isRequired,
-	children: PropTypes.node,
-	className: PropTypes.string,
-	color: PropTypes.oneOf(colors.names),
-	fullwidth: PropTypes.bool,
-	fullheight: PropTypes.bool,
-};
 
-export default withStyles(gridStyle)(GridItem);
+export default React.memo(GridItem);

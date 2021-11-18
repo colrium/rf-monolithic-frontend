@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from "recompose";
-import { withStyles } from "@material-ui/core";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
+
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import Oath2Settings from './Oath2';
 
 function TabPanel(props) {
@@ -59,18 +59,18 @@ function Widget(props) {
 	};
 
 	return (
-		<div className={classes.root}>
+		<div className={classes?.root}>
 			<Tabs
-					value={value}
-					onChange={handleChange}
-					indicatorColor="primary"
-					textColor="primary"
-					variant="scrollable"
-					scrollButtons="auto"
-					aria-label="authorization settings tabs"
-				>
-					<Tab label="Authorization " {...a11yProps(0)} />
-					<Tab label="OAth 2.0" {...a11yProps(1)} />
+				value={value}
+				onChange={handleChange}
+				indicatorColor="primary"
+				textColor="primary"
+				variant="scrollable"
+				scrollButtons="auto"
+				aria-label="authorization settings tabs"
+			>
+				<Tab label="Authorization " {...a11yProps(0)} />
+				<Tab label="OAth 2.0" {...a11yProps(1)} />
 			</Tabs>
 			<TabPanel value={value} index={0}>
 				<Oath2Settings />
@@ -78,9 +78,9 @@ function Widget(props) {
 			<TabPanel value={value} index={1}>
 				Templates
 			</TabPanel>
-			
+
 		</div>
 	);
 }
 
-export default compose(withStyles(styles))(React.memo(Widget));
+export default compose()(React.memo(Widget));

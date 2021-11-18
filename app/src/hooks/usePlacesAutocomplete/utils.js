@@ -69,7 +69,7 @@ export const getDetails = (args) => {
 //         }
 
 //         autocompleteGeocoder.current.geocode({ ...options, [targetType]: targetValue }, function (results, status) {
-//             //console.log("results", results);	
+//             //	
 //             if (status == 'OK') {
 //                 let resultValue = undefined;
 //                 let resultsNewAutoCompleteOptions = [];

@@ -4,14 +4,14 @@
  * @format
  */
 
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import {
 	Add as AddIcon,
 	VerticalSplitOutlined as DefinationContextIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -105,7 +105,7 @@ export default {
 					blog: "Blog",
 					category: "Category",
 					press: "Press",
-					faq: "FAQ",					
+					faq: "FAQ",
 					"knowledge-base": "Knowledge Base",
 					newsletter: "Newsletter",
 					anouncement: "Anouncement",
@@ -128,7 +128,7 @@ export default {
 				},
 				possibilities: {
 					'auto-draft': "Auto Draft",
-					'draft' : "Draft",
+					'draft': "Draft",
 					'published': "Published",
 					'trash': "trash"
 				},
@@ -278,7 +278,7 @@ export default {
 						dropzoneText: "Click to select File(s)\n or \n Drag and drop an files here",
 						dropzoneIcon: "attachment",
 					}
-					
+
 				},
 				reference: {
 					name: "attachments",
@@ -303,11 +303,11 @@ export default {
 					required: true,
 				},
 				possibilities: {
-					'open' : "Open to public", 
-					'authorized': "Authorized users only", 
-					'author': "Author only", 
-					'admin': "Administrators only", 
-					'non-admin': "Non Administrators only", 
+					'open': "Open to public",
+					'authorized': "Authorized users only",
+					'author': "Author only",
+					'admin': "Administrators only",
+					'non-admin': "Non Administrators only",
 					'customers': "Customers",
 				},
 			},
@@ -357,7 +357,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -391,7 +391,7 @@ export default {
 								<Link to={"posts/add/"} {...props}>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -418,7 +418,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -449,7 +449,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

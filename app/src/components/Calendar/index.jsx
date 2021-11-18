@@ -1,15 +1,15 @@
 /** @format */
 
-import IconButton from "@material-ui/core/IconButton";
-import withStyles from "@material-ui/core/styles/withStyles";
-import Tab from "@material-ui/core/Tab";
+import IconButton from "@mui/material/IconButton";
+
+import Tab from "@mui/material/Tab";
 //
-import Tabs from "@material-ui/core/Tabs";
+import Tabs from "@mui/material/Tabs";
 import {
 	ArrowBack as PrevIcon,
 	ArrowForward as NextIcon,
 	EventOutlined as CalendarIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import Calendar from "@toast-ui/react-calendar";
 import { colors } from "assets/jss/app-theme";
 import Avatar from "components/Avatar";
@@ -25,35 +25,7 @@ import { formats } from "config/data";
 import PropTypes from "prop-types";
 import React from "react";
 import { UtilitiesHelper } from "hoc/Helpers";
-import withRoot from "hoc/withRoot";
-import styles from "views/pages/styles";
 
-const AntTabs = withStyles({
-	indicator: {
-		backgroundColor: colors.hex.accent,
-	},
-})(Tabs);
-
-const AntTab = withStyles(theme => ({
-	root: {
-		textTransform: "none",
-		minWidth: 50,
-		fontWeight: theme.typography.fontWeightRegular,
-		marginRight: theme.spacing(),
-		"&:hover": {
-			color: colors.hex.default,
-			opacity: 1,
-		},
-		"&$selected": {
-			color: colors.hex.accent,
-			fontWeight: theme.typography.fontWeightMedium,
-		},
-		"&:focus": {
-			color: colors.hex.accent,
-		},
-	},
-	selected: {},
-}))(props => <Tab {...props} />);
 
 class CustomCalendar extends React.Component {
 	calendarRef = React.createRef();
@@ -90,8 +62,8 @@ class CustomCalendar extends React.Component {
 				view === "day"
 					? new Date().format(formats.dateformats.date)
 					: view === "week"
-					? new Date().format(formats.dateformats.week)
-					: new Date().format(formats.dateformats.month),
+						? new Date().format(formats.dateformats.week)
+						: new Date().format(formats.dateformats.month),
 			calendars: calendars,
 			tasks: tasks,
 			schedules: schedules,
@@ -144,8 +116,8 @@ class CustomCalendar extends React.Component {
 						view === "day"
 							? new Date().format(formats.dateformats.date)
 							: view === "week"
-							? new Date().format(formats.dateformats.week)
-							: new Date().format(formats.dateformats.month),
+								? new Date().format(formats.dateformats.week)
+								: new Date().format(formats.dateformats.month),
 					calendars: calendars,
 					tasks: tasks,
 					schedules: schedules,
@@ -173,22 +145,22 @@ class CustomCalendar extends React.Component {
 		const calendar = this.calendarRef.current.getInstance();
 		if (calendar) {
 			calendar.on({
-				clickSchedule: function(e) {
+				clickSchedule: function (e) {
 					if (UtilitiesHelper.isOfType(onClickEntry, "function")) {
 						onClickEntry(e.schedule);
 					}
 				},
-				beforeCreateSchedule: function(e) {
+				beforeCreateSchedule: function (e) {
 					if (UtilitiesHelper.isOfType(onSelect, "function")) {
 						onSelect(e);
 					}
 				},
-				beforeUpdateSchedule: function(e) {
+				beforeUpdateSchedule: function (e) {
 					if (UtilitiesHelper.isOfType(onClickEdit, "function")) {
 						onClickEdit(e);
 					}
 				},
-				beforeDeleteSchedule: function(e) {
+				beforeDeleteSchedule: function (e) {
 					if (UtilitiesHelper.isOfType(onClickDelete, "function")) {
 						onClickDelete(e);
 					}
@@ -207,8 +179,8 @@ class CustomCalendar extends React.Component {
 					view === "day"
 						? rendered_date.format(formats.dateformats.date)
 						: view === "week"
-						? rendered_date.format(formats.dateformats.week)
-						: rendered_date.format(formats.dateformats.month),
+							? rendered_date.format(formats.dateformats.week)
+							: rendered_date.format(formats.dateformats.month),
 			}));
 		} else {
 			this.setState(state => ({ view: view }));
@@ -225,8 +197,8 @@ class CustomCalendar extends React.Component {
 					state.view === "day"
 						? rendered_date.format(formats.dateformats.date)
 						: state.view === "week"
-						? rendered_date.format(formats.dateformats.week)
-						: rendered_date.format(formats.dateformats.month),
+							? rendered_date.format(formats.dateformats.week)
+							: rendered_date.format(formats.dateformats.month),
 			}));
 		}
 	};
@@ -241,8 +213,8 @@ class CustomCalendar extends React.Component {
 					state.view === "day"
 						? rendered_date.format(formats.dateformats.date)
 						: state.view === "week"
-						? rendered_date.format(formats.dateformats.week)
-						: rendered_date.format(formats.dateformats.month),
+							? rendered_date.format(formats.dateformats.week)
+							: rendered_date.format(formats.dateformats.month),
 			}));
 		}
 	};
@@ -259,7 +231,6 @@ class CustomCalendar extends React.Component {
 
 	render() {
 		const {
-			classes,
 			height,
 			defaultView,
 			disableDblClick,
@@ -317,7 +288,7 @@ class CustomCalendar extends React.Component {
 					<GridContainer className="p-0 m-0">
 						<GridContainer className="p-0 m-0">
 							<GridItem sm={6} md={4}>
-								<AntTabs
+								<Tabs
 									value={view}
 									onChange={this.handleChangeCalendarView}
 									indicatorColor="primary"
@@ -325,10 +296,10 @@ class CustomCalendar extends React.Component {
 									variant="fullWidth"
 									aria-label="view change tabs"
 								>
-									<AntTab value="month" label="Month" />
-									<AntTab value="week" label="Week" />
-									<AntTab value="day" label="Day" />
-								</AntTabs>
+									<Tab value="month" label="Month" />
+									<Tab value="week" label="Week" />
+									<Tab value="day" label="Day" />
+								</Tabs>
 							</GridItem>
 
 							<GridItem sm={6} md={4}>
@@ -359,7 +330,6 @@ class CustomCalendar extends React.Component {
 								<Calendar
 									theme={theme}
 									view={view}
-									className={classes.calendar}
 									calendars={calendars}
 									tasks={tasks}
 									schedules={schedules}
@@ -376,7 +346,7 @@ class CustomCalendar extends React.Component {
 							<Typography
 								variant="subtitle2"
 								display="block"
-								color="default"
+
 								gutterBottom
 							>
 								{" "}
@@ -404,7 +374,7 @@ class CustomCalendar extends React.Component {
 }
 
 CustomCalendar.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	className: PropTypes.string,
 	calendars: PropTypes.array,
 	view: PropTypes.string,
@@ -468,4 +438,4 @@ CustomCalendar.defaultProps = {
 	taskView: true,
 };
 
-export default withRoot(withStyles(styles)(CustomCalendar));
+export default (CustomCalendar);

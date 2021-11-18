@@ -1,7 +1,8 @@
 /** @format */
 
 // Material helpers
-import { LinearProgress, Typography, withStyles } from "@material-ui/core";
+import { LinearProgress, Typography } from "@mui/material";
+
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 // Shared components
@@ -16,11 +17,11 @@ import { connect } from "react-redux";
 import compose from "recompose/compose";
 import ApiService from "services/Api";
 import { updateCurrentUser } from "state/actions/auth";
-import {withErrorHandler} from "hoc/ErrorHandler";
+
 //
 import BaseForm from "views/forms/BaseForm";
 // Component styles
-import styles from "./styles";
+
 
 class AccountProfile extends Component {
 	state = {
@@ -58,7 +59,7 @@ class AccountProfile extends Component {
 					}
 				}
 			})
-			.catch(e => {});
+			.catch(e => { });
 	}
 
 	handleProfileFormSubmit(data, event) {
@@ -75,14 +76,12 @@ class AccountProfile extends Component {
 	}
 
 	render() {
-		const { classes, auth } = this.props;
-
-		const rootClassName = classes.root;
+		const { className, auth } = this.props;
 
 		return (
-			<Portlet className={rootClassName}>
+			<Portlet className={className}>
 				<PortletContent>
-					<div className={classes.progressWrapper}>
+					<div className={"mt-4"}>
 						<Typography variant="body1">
 							Profile Completeness: 70%
 						</Typography>
@@ -116,9 +115,7 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(
-	compose(
-		withStyles(styles),
-		connect(mapStateToProps, { updateCurrentUser })
-	)(AccountProfile)
-);
+export default compose(
+
+	connect(mapStateToProps, { updateCurrentUser })
+)(AccountProfile);

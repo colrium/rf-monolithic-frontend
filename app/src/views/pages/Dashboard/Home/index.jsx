@@ -1,6 +1,6 @@
 /** @format */
 
-import withStyles from "@material-ui/core/styles/withStyles";
+
 import { colors } from "assets/jss/app-theme";
 //
 import Card from "components/Card";
@@ -10,15 +10,14 @@ import LazyModule from "components/LazyModule";
 import PropTypes from "prop-types";
 import React from "react";
 import Icon from '@mdi/react'
-import { mdiOverscan, mdiArrowCollapseAll  } from '@mdi/js';
+import { mdiOverscan, mdiArrowCollapseAll } from '@mdi/js';
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { appendNavHistory } from "state/actions/ui/nav";
-import {withErrorHandler} from "hoc/ErrorHandler";
-import { withTheme } from '@material-ui/core/styles';
+
+import { withTheme } from '@mui/styles';
 //
-import styles from "views/pages/styles";
-import {responses} from "definations";
+import { responses } from "definations";
 
 
 
@@ -42,14 +41,14 @@ class Page extends React.Component {
 				type: "count",
 				query: {},
 			},
-			
+
 		}
 	};
 
-	constructor(props){
-        super(props);
-        const {auth} = props;
-        if (auth.user.isAdmin) {
+	constructor(props) {
+		super(props);
+		const { auth } = props;
+		if (auth.user.isAdmin) {
 			this.state.counts_overview_contexts = {
 				surveys: {
 					type: "count",
@@ -81,37 +80,37 @@ class Page extends React.Component {
 						group: "gender",
 						role: "collector",
 					},
-					title: (value)=>{
+					title: (value) => {
 						let new_value = "";
 						if (Array.isArray(value)) {
 							value.map(entry => {
 								if (entry._id) {
-									new_value = new_value+(new_value.length>0? " / ": "")+entry._id.humanize();
-								}						
+									new_value = new_value + (new_value.length > 0 ? " / " : "") + entry._id.humanize();
+								}
 							});
 						}
 						return new_value;
 					},
-					description: (value)=>{
+					description: (value) => {
 						let new_value = "";
 						if (Array.isArray(value)) {
 							value.map(entry => {
 								if (entry._id) {
-									new_value = new_value+(new_value.length>0? " / ": "")+entry._id.humanize();
+									new_value = new_value + (new_value.length > 0 ? " / " : "") + entry._id.humanize();
 								}
-								
+
 							});
 						}
-						return "Total "+new_value;
+						return "Total " + new_value;
 					},
-					resolveValue: (value)=>{
+					resolveValue: (value) => {
 						let new_value = "";
 						if (Array.isArray(value)) {
 							value.map(entry => {
 								if (entry._id && entry.count) {
-									new_value = new_value+(new_value.length>0? " / ": "")+entry.count;
+									new_value = new_value + (new_value.length > 0 ? " / " : "") + entry.count;
 								}
-								
+
 							});
 						}
 						return new_value;
@@ -119,7 +118,7 @@ class Page extends React.Component {
 				}
 			};
 		}
-    }
+	}
 
 	componentDidMount() {
 		const { location, appendNavHistory } = this.props;
@@ -137,169 +136,168 @@ class Page extends React.Component {
 
 	render() {
 		const {
-			classes,
-			app: {preferences},
+			app: { preferences },
 			auth,
 			location,
 			theme,
 			device,
 		} = this.props;
 
-		const {views: {dashboard: {counts: ResponsesCountsReport}}} = responses;
-		
+		const { views: { dashboard: { counts: ResponsesCountsReport } } } = responses;
+
 
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer >
 
-					<GridItem xs={12} lg={this.state.mainMapInFullWidth? 12 : 7} className="p-2">
-						<Card>
-										<LazyModule
-												resolve={() =>
-													import(
-														"views/widgets/Overview/GoogleMapOverview"
-													)
-												}
-												placeholderType="skeleton"
-												placeholder={[
-													[
-														{
-															variant: "circle",
-															width: 40,
-															height: 40,
-															className: "mt-2 ml-4",
-														},
-														{
-															variant: "text",
-															width: 100,
-															className: "mx-2 mt-4",
-														},
-													],
-													{
-														variant: "rect",
-														width: "100%",
-														height: 600,
-														className: "mt-4",
-													},
-												]}
-												actions={device.window_size.width > 1280? [
-													{
-														icon: (
-															<Icon 
-																path={this.state.mainMapInFullWidth? mdiArrowCollapseAll : mdiOverscan}
-																title="Toggle size"
-																className={"invisible xl:visible"}
-																size={0.8}   
-																color={theme.palette.text.primary}
-															/>
-														),
-														onClick: ()=> {
-															this.setState(prevState=>({
-																mainMapInFullWidth: !prevState.mainMapInFullWidth
-															}))
-														}
-													}
-												] : []}
-										/>
-						</Card>
-					</GridItem>
-
-					<GridItem xs={12} className="p-2">
-						<Card>
-							<ResponsesCountsReport/>
-						</Card>
-					</GridItem>
-
-					<GridItem xs={12} lg={this.state.mainMapInFullWidth? 12 : 5} className="p-2">
-						<GridContainer className="p-0 m-0">
-										<LazyModule
-												resolve={() =>
-													import(
-														"views/widgets/Overview/CountsOverview"
-													)
-												}
-												placeholderType="skeleton"
-												placeholder={[
-														{
-															variant: "text",
-															width: "100%",
-															className: "mx-2 mt-4",
-														},
-														{
-															variant: "rect",
-															width: 40,
-															height: 40,
-															className: "mt-2 ml-4",
-														},
-												]}
-												contexts={this.state.counts_overview_contexts}
-												wrapperSize={this.state.mainMapInFullWidth? 12 : 5}
-										/>
-						</GridContainer>
-						<GridContainer className="p-0 m-0">
-							<LazyModule
-											resolve={() =>
-												import(
-													"views/widgets/Overview/CompactAggregatesOverview"
-												)
-											}
-											placeholder={[
-												{
-													variant: "rect",
-													width: "100%",
-													height: 200,
-													className: "mt-4",
-												},
-												{
-													variant: "rect",
-													width: "100%",
-													height: 200,
-													className: "mt-4",
-												},
-												{
-													variant: "rect",
-													width: "100%",
-													height: 200,
-													className: "mt-4",
-												},
-											]}
-											chartType={"bar"}
-											contexts={["responses"]}
-							/>
-						</GridContainer>
-					</GridItem>
-
-					<GridItem xs={12} className="p-2">
+				<GridItem xs={12} lg={this.state.mainMapInFullWidth ? 12 : 7} className="p-2">
+					<Card>
 						<LazyModule
-											resolve={() =>
-												import(
-													"views/widgets/Overview/AggregatesOverview"
-												)
-											}
-											placeholder={[
-												{
-													variant: "rect",
-													width: "100%",
-													height: 200,
-													className: "mt-4",
-												},
-												{
-													variant: "rect",
-													width: "100%",
-													height: 200,
-													className: "mt-4",
-												},
-												{
-													variant: "rect",
-													width: "100%",
-													height: 200,
-													className: "mt-4",
-												},
-											]}
-											gridSize={4}
+							resolve={() =>
+								import(
+									"views/widgets/Overview/GoogleMapOverview"
+								)
+							}
+							placeholderType="skeleton"
+							placeholder={[
+								[
+									{
+										variant: "circle",
+										width: 40,
+										height: 40,
+										className: "mt-2 ml-4",
+									},
+									{
+										variant: "text",
+										width: 100,
+										className: "mx-2 mt-4",
+									},
+								],
+								{
+									variant: "rect",
+									width: "100%",
+									height: 600,
+									className: "mt-4",
+								},
+							]}
+							actions={device.window_size.width > 1280 ? [
+								{
+									icon: (
+										<Icon
+											path={this.state.mainMapInFullWidth ? mdiArrowCollapseAll : mdiOverscan}
+											title="Toggle size"
+											className={"invisible xl:visible"}
+											size={0.8}
+											color={theme.palette.text.primary}
+										/>
+									),
+									onClick: () => {
+										this.setState(prevState => ({
+											mainMapInFullWidth: !prevState.mainMapInFullWidth
+										}))
+									}
+								}
+							] : []}
 						/>
-					</GridItem>
-					
-				
+					</Card>
+				</GridItem>
+
+				<GridItem xs={12} className="p-2">
+					<Card>
+						<ResponsesCountsReport />
+					</Card>
+				</GridItem>
+
+				<GridItem xs={12} lg={this.state.mainMapInFullWidth ? 12 : 5} className="p-2">
+					<GridContainer className="p-0 m-0">
+						<LazyModule
+							resolve={() =>
+								import(
+									"views/widgets/Overview/CountsOverview"
+								)
+							}
+							placeholderType="skeleton"
+							placeholder={[
+								{
+									variant: "text",
+									width: "100%",
+									className: "mx-2 mt-4",
+								},
+								{
+									variant: "rect",
+									width: 40,
+									height: 40,
+									className: "mt-2 ml-4",
+								},
+							]}
+							contexts={this.state.counts_overview_contexts}
+							wrapperSize={this.state.mainMapInFullWidth ? 12 : 5}
+						/>
+					</GridContainer>
+					<GridContainer className="p-0 m-0">
+						<LazyModule
+							resolve={() =>
+								import(
+									"views/widgets/Overview/CompactAggregatesOverview"
+								)
+							}
+							placeholder={[
+								{
+									variant: "rect",
+									width: "100%",
+									height: 200,
+									className: "mt-4",
+								},
+								{
+									variant: "rect",
+									width: "100%",
+									height: 200,
+									className: "mt-4",
+								},
+								{
+									variant: "rect",
+									width: "100%",
+									height: 200,
+									className: "mt-4",
+								},
+							]}
+							chartType={"bar"}
+							contexts={["responses"]}
+						/>
+					</GridContainer>
+				</GridItem>
+
+				<GridItem xs={12} className="p-2">
+					<LazyModule
+						resolve={() =>
+							import(
+								"views/widgets/Overview/AggregatesOverview"
+							)
+						}
+						placeholder={[
+							{
+								variant: "rect",
+								width: "100%",
+								height: 200,
+								className: "mt-4",
+							},
+							{
+								variant: "rect",
+								width: "100%",
+								height: 200,
+								className: "mt-4",
+							},
+							{
+								variant: "rect",
+								width: "100%",
+								height: 200,
+								className: "mt-4",
+							},
+						]}
+						gridSize={4}
+					/>
+				</GridItem>
+
+
 			</GridContainer>
 		);
 	}
@@ -312,7 +310,7 @@ const mapStateToProps = state => ({
 });
 
 Page.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 };
 
-export default compose( withStyles(styles), connect(mapStateToProps, { appendNavHistory }), withTheme, withErrorHandler )(Page);
+export default compose(connect(mapStateToProps, { appendNavHistory }), withTheme)(Page);

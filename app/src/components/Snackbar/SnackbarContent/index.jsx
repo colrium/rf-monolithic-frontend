@@ -1,18 +1,19 @@
 /** @format */
 
-import IconButton from "@material-ui/core/IconButton";
-import SnackbarContent from "@material-ui/core/SnackbarContent";
-import { withStyles } from "@material-ui/core/styles";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import CloseIcon from "@material-ui/icons/Close";
-import ErrorIcon from "@material-ui/icons/Error";
-import InfoIcon from "@material-ui/icons/Info";
-import WarningIcon from "@material-ui/icons/Warning";
+import IconButton from "@mui/material/IconButton";
+import SnackbarContent from "@mui/material/SnackbarContent";
+
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CloseIcon from "@mui/icons-material/Close";
+import ErrorIcon from "@mui/icons-material/Error";
+import InfoIcon from "@mui/icons-material/Info";
+import WarningIcon from "@mui/icons-material/Warning";
 import { colors } from "assets/jss/app-theme.jsx";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import withRoot from "hoc/withRoot";
+
+
 const styles = theme => ({
 	root: {
 		zIndex: 99999999,
@@ -45,18 +46,18 @@ function CustomSnackbarContent(props) {
 
 	return (
 		<SnackbarContent
-			className={classNames(classes.root, {
+			className={classNames(classes?.root, {
 				[color]: color,
 				[textColorClass]: textColorClass,
 				[className]: className,
 			})}
 			aria-describedby="client-snackbar"
 			message={
-				<span id="client-snackbar" className={classes.message}>
+				<span id="client-snackbar" className={classes?.message}>
 					<Icon
 						className={classNames(
-							classes.icon,
-							classes.iconVariant
+							classes?.icon,
+							classes?.iconVariant
 						)}
 					/>
 					{message}
@@ -67,10 +68,10 @@ function CustomSnackbarContent(props) {
 					key="close"
 					aria-label="Close"
 					color="inherit"
-					className={classes.close}
+					className={classes?.close}
 					onClick={onClose}
 				>
-					<CloseIcon className={classes.icon} />
+					<CloseIcon className={classes?.icon} />
 				</IconButton>,
 			]}
 			{...other}
@@ -83,11 +84,11 @@ CustomSnackbarContent.defaultProps = {
 };
 
 CustomSnackbarContent.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	className: PropTypes.string,
 	message: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
 	onClose: PropTypes.func,
 	color: PropTypes.oneOf(colors.names).isRequired,
 };
 
-export default withRoot(withStyles(styles)(CustomSnackbarContent));
+export default (CustomSnackbarContent);

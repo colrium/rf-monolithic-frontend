@@ -1,11 +1,11 @@
 /** @format */
 
-import MobileStepper from "@material-ui/core/MobileStepper";
-import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
-import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import MobileStepper from "@mui/material/MobileStepper";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import Button from "components/Button";
 import React from "react";
-import withRoot from "hoc/withRoot";
+
 
 function MobileSteps(props) {
 	const { direction, steps, step, backText, nextText } = props;
@@ -31,7 +31,7 @@ function MobileSteps(props) {
 					color={activeStep === steps ? "grey" : "primary"}
 					onClick={handleNext}
 					disabled={activeStep === steps}
-					simple
+
 				>
 					{nextText}
 					{direction === "rtl" ? (
@@ -46,7 +46,7 @@ function MobileSteps(props) {
 					color={activeStep === 0 ? "grey" : "primary"}
 					onClick={handleBack}
 					disabled={activeStep === 0}
-					simple
+
 				>
 					{direction === "rtl" ? (
 						<KeyboardArrowRight />
@@ -68,4 +68,4 @@ MobileSteps.defaultProps = {
 	step: 0,
 };
 
-export default withRoot(MobileSteps);
+export default MobileSteps;

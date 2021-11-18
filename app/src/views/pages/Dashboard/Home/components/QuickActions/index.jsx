@@ -1,6 +1,6 @@
 /** @format */
 
-import AddIcon from "@material-ui/icons/Add";
+import AddIcon from "@mui/icons-material/Add";
 import { colors } from "assets/jss/app-theme";
 import Avatar from "components/Avatar";
 import Card from "components/Card";
@@ -11,13 +11,13 @@ import CardHeader from "components/Card/CardHeader";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
-import {withGlobals} from "contexts/Globals";
+import { withGlobals } from "contexts/Globals";
 import React from "react";
 //Redux imports
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import compose from "recompose/compose";
-import {withErrorHandler} from "hoc/ErrorHandler";
+
 
 
 
@@ -28,7 +28,7 @@ class QuickActions extends React.Component {
 		super(props);
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 
 	render() {
 		const { auth, definations } = this.props;
@@ -73,8 +73,7 @@ class QuickActions extends React.Component {
 													component="h3"
 													display="block"
 													paragraph
-													center
-													style={{
+																										style={{
 														color: defination.color,
 														"&:hover": {
 															color:
@@ -90,8 +89,7 @@ class QuickActions extends React.Component {
 													display="block"
 													className="grey_text"
 													paragraph
-													center
-												>
+																									>
 													New {defination.label}
 												</Typography>
 											</Link>
@@ -108,7 +106,7 @@ class QuickActions extends React.Component {
 									variant="body2"
 									component="p"
 									display="block"
-									color="default"
+
 								>
 									Quick Links
 								</Typography>
@@ -128,4 +126,4 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withGlobals(compose(connect(mapStateToProps, {}), withErrorHandler)(QuickActions));
+export default withGlobals(compose(connect(mapStateToProps, {}))(QuickActions));

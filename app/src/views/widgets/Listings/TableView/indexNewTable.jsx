@@ -1,17 +1,16 @@
 /** @format */
 
 //
-import Chip from "@material-ui/core/Chip";
-import Menu from "@material-ui/core/Menu";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import MenuItem from "@material-ui/core/MenuItem";
-import withStyles from "@material-ui/core/styles/withStyles";
-import EmptyStateImage from "assets/img/empty-state-table.svg";
+import Chip from "@mui/material/Chip";
+import Menu from "@mui/material/Menu";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import MenuItem from "@mui/material/MenuItem";
+
 import Avatar from "components/Avatar";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
-import Skeleton from "@material-ui/lab/Skeleton";
+import Skeleton from '@mui/material/Skeleton';
 import { formats } from "config/data";
 import PropTypes from "prop-types";
 import React, { forwardRef } from "react";
@@ -19,21 +18,21 @@ import { connect } from "react-redux";
 import compose from "recompose/compose";
 
 
-import AddBox from '@material-ui/icons/AddBox';
-import ArrowDownward from '@material-ui/icons/ArrowDownward';
-import Check from '@material-ui/icons/Check';
-import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import ChevronRight from '@material-ui/icons/ChevronRight';
-import Clear from '@material-ui/icons/Clear';
-import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import Edit from '@material-ui/icons/Edit';
-import FilterList from '@material-ui/icons/FilterList';
-import FirstPage from '@material-ui/icons/FirstPage';
-import LastPage from '@material-ui/icons/LastPage';
-import Remove from '@material-ui/icons/Remove';
-import SaveAlt from '@material-ui/icons/SaveAlt';
-import Search from '@material-ui/icons/Search';
-import ViewColumn from '@material-ui/icons/ViewColumn';
+import AddBox from '@mui/icons-material/AddBox';
+import ArrowDownward from '@mui/icons-material/ArrowDownward';
+import Check from '@mui/icons-material/Check';
+import ChevronLeft from '@mui/icons-material/ChevronLeft';
+import ChevronRight from '@mui/icons-material/ChevronRight';
+import Clear from '@mui/icons-material/Clear';
+import DeleteOutline from '@mui/icons-material/DeleteOutline';
+import Edit from '@mui/icons-material/Edit';
+import FilterList from '@mui/icons-material/FilterList';
+import FirstPage from '@mui/icons-material/FirstPage';
+import LastPage from '@mui/icons-material/LastPage';
+import Remove from '@mui/icons-material/Remove';
+import SaveAlt from '@mui/icons-material/SaveAlt';
+import Search from '@mui/icons-material/Search';
+import ViewColumn from '@mui/icons-material/ViewColumn';
 
 import MaterialTable from "material-table";
 
@@ -43,7 +42,7 @@ import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
 import { FilesHelper, ServiceDataHelper } from "hoc/Helpers";
 import { withGlobals } from "contexts/Globals";
-import styles from "./styles";
+
 
 
 const tableIcons = {
@@ -89,7 +88,7 @@ class TableView extends React.Component {
 		this.state.defination = defination;
 		this.state.service = service;
 		this.state.query = query ? { ...query, p: 1 } : { p: 1 };
-		this.state.records = Array.isArray(cachedData[defination.name])? cachedData[defination.name] : [];
+		this.state.records = Array.isArray(cachedData[defination.name]) ? cachedData[defination.name] : [];
 		this.mounted = false;
 		this.handleDeleteItemConfirm = this.handleDeleteItemConfirm.bind(this);
 		this.handleDeleteItem = this.handleDeleteItem.bind(this);
@@ -97,7 +96,7 @@ class TableView extends React.Component {
 		this.handleSocketsOnCreate = this.handleSocketsOnCreate.bind(this);
 
 
-		
+
 	}
 
 	componentDidMount() {
@@ -109,7 +108,7 @@ class TableView extends React.Component {
 		}
 		this.mounted = true;
 		this.loadContext();
-		this.prepareData((Array.isArray(cache.data[defination.name])? cache.data[defination.name] : []));
+		this.prepareData((Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : []));
 	}
 
 	getSnapshotBeforeUpdate(prevProps) {
@@ -117,7 +116,7 @@ class TableView extends React.Component {
 		const { cache, defination } = this.props;
 		return {
 			contextReloadRequired: !Object.areEqual(prevProps.defination, this.props.defination),
-			dataReloadRequired: !Object.areEqual(prevProps.query,this.props.query),
+			dataReloadRequired: !Object.areEqual(prevProps.query, this.props.query),
 			/*dataPreparationRequired: Array.isArray(cache.data[defination.name])? !cache.data[prevProps.defination.name].equals(prevProps.cache.data[defination.name]) : (Array.isArray(prevProps.cache.data[defination.name])? !prevProps.cache.data[prevProps.defination.name].equals(cache.data[defination.name]) : false),*/
 			dataPreparationRequired: false,
 		};
@@ -158,19 +157,19 @@ class TableView extends React.Component {
 		if (defination.model === context) {
 			this.setState(prevState => {
 				const { raw_data } = prevState;
-				/*console.log("handleSocketsOnCreate context", context);
-				console.log("handleSocketsOnCreate action", action);*/
-				let new_raw_data = Array.isArray(raw_data)? raw_data : [];
+				/*
+				*/
+				let new_raw_data = Array.isArray(raw_data) ? raw_data : [];
 				new_raw_data.unshift(action.result);
-				/*console.log("handleSocketsOnCreate new_raw_data", new_raw_data);*/
+				/**/
 				return {
 					raw_data: new_raw_data,
 					raw_data_mutated: true,
 				}
 			});
-				
+
 		}
-		
+
 	}
 
 	handleDeleteItemConfirm = item_id => event => {
@@ -206,9 +205,9 @@ class TableView extends React.Component {
 				this.setState(prevState => {
 					let new_records = prevState.records;
 					if (Array.isArray(new_records)) {
-						new_records = new_records.filter((record)=>{
+						new_records = new_records.filter((record) => {
 							if (record.entry) {
-								if (record.entry._id === item_id ) {
+								if (record.entry._id === item_id) {
 									return false;
 								}
 							}
@@ -265,7 +264,7 @@ class TableView extends React.Component {
 			let dt_columns = [];
 			if (!defination.access.restricted(auth.user)) {
 				dt_columns.push({
-					title: String.isString(defination.label)? defination.label.singularize() : ("ID"),
+					title: String.isString(defination.label) ? defination.label.singularize() : ("ID"),
 					field: '_id',
 				});
 
@@ -289,16 +288,16 @@ class TableView extends React.Component {
 									title: field.label,
 									render: rowData => {
 										if (Array.isArray(rowData[name])) {
-												return (
-													<GridContainer spacing={2}>
-														{rowData[name].map((entry, cursor) => (
-																<div key={cursor} >{entry} </div>
-														))}
-													</GridContainer>
-												);
-										} 
+											return (
+												<GridContainer spacing={2}>
+													{rowData[name].map((entry, cursor) => (
+														<div key={cursor} >{entry} </div>
+													))}
+												</GridContainer>
+											);
+										}
 										else {
-												return rowData? rowData : "";
+											return rowData ? rowData : "";
 										}
 									},
 									...field.tableProps
@@ -310,108 +309,108 @@ class TableView extends React.Component {
 									...field.tableProps
 								});
 							}
-						} 
+						}
 						else {
-							if (field.reference && field.input.type !== "file" && !field.isAttachment ) {
+							if (field.reference && field.input.type !== "file" && !field.isAttachment) {
 								dt_columns.push({
 									field: name,
 									title: field.label,
 									render: rowData => {
 										if (Array.isArray(rowData[name])) {
-												return (
-													<GridContainer spacing={2}>
-														{rowData[name].map((entry, cursor) => (
-																<Chip className={classes.valueChip} key={entry.value} label={entry.resolve}/>
-															)
-														)}
-													</GridContainer>
-												);
-										} 
+											return (
+												<GridContainer spacing={2}>
+													{rowData[name].map((entry, cursor) => (
+														<Chip className={classes?.valueChip} key={entry.value} label={entry.resolve} />
+													)
+													)}
+												</GridContainer>
+											);
+										}
 										else {
-												return rowData[name]? ( <Chip label={rowData[name].resolve} /> ) : ( "" );
+											return rowData[name] ? (<Chip label={rowData[name].resolve} />) : ("");
 										}
 									},
 									...field.tableProps
 								});
-							} 
+							}
 							else if (field.reference && (field.input.type === "file" || field.isAttachment)) {
 								dt_columns.push({
 									field: name,
 									title: field.label,
 									render: rowData => {
 										if (Array.isArray(rowData[name])) {
-												return (
-													<GridContainer spacing={2}>
-														{rowData[name].map(
-															(entry, cursor) => (
-																<Chip
-																	className={classes.valueChip}
-																	avatar={
-																		<Avatar color="#cfd8dc" textColor="#000000"
-																			src={
-																				FilesHelper.fileType(entry.resolve) ==="image"
-																					? ApiService.getAttachmentFileUrl(entry.value): undefined
-																			}
-																		>
-																			{FilesHelper.fileIcon(entry.resolve)}
-																		</Avatar>
-																	}
-																	label={
-																		entry.resolve
-																	}
-																	onClick={e => {
-																		e.preventDefault();
-																		let win = window.open(
-																			ApiService.getAttachmentFileUrl(
-																				entry.value
-																			),
-																			"_blank"
-																		);
-																		win.focus();
-																	}}
-																	key={
-																		"file-" +
-																		entry.value
-																	}
-																/>
-															)
-														)}
-													</GridContainer>
-												);
-											} 
-											else {
-												return rowData[name]? (
-													<Chip
-														avatar={
-															<Avatar
-																color="#cfd8dc"
-																textColor="#000000"
-																src={
-																	FilesHelper.fileType(rowData[name].resolve) ==="image"? ApiService.getAttachmentFileUrl(rowData[name].value): undefined
+											return (
+												<GridContainer spacing={2}>
+													{rowData[name].map(
+														(entry, cursor) => (
+															<Chip
+																className={classes?.valueChip}
+																avatar={
+																	<Avatar color="#cfd8dc" textColor="#000000"
+																		src={
+																			FilesHelper.fileType(entry.resolve) === "image"
+																				? ApiService.getAttachmentFileUrl(entry.value) : undefined
+																		}
+																	>
+																		{FilesHelper.fileIcon(entry.resolve)}
+																	</Avatar>
 																}
-															>
-																{FilesHelper.fileIcon(rowData[name].resolve)}
-															</Avatar>
-														}
-														onClick={e => {
-															e.preventDefault();
-															let win = window.open(
-																ApiService.getAttachmentFileUrl(
-																	rowData[name].value
-																),
-																"_blank"
-															);
-															win.focus();
-														}}
-														label={rowData[name].resolve}
-													/>
-												) : (
-													""
-												);
-											}
-										},
-										...field.tableProps
-									
+																label={
+																	entry.resolve
+																}
+																onClick={e => {
+																	e.preventDefault();
+																	let win = window.open(
+																		ApiService.getAttachmentFileUrl(
+																			entry.value
+																		),
+																		"_blank"
+																	);
+																	win.focus();
+																}}
+																key={
+																	"file-" +
+																	entry.value
+																}
+															/>
+														)
+													)}
+												</GridContainer>
+											);
+										}
+										else {
+											return rowData[name] ? (
+												<Chip
+													avatar={
+														<Avatar
+															color="#cfd8dc"
+															textColor="#000000"
+															src={
+																FilesHelper.fileType(rowData[name].resolve) === "image" ? ApiService.getAttachmentFileUrl(rowData[name].value) : undefined
+															}
+														>
+															{FilesHelper.fileIcon(rowData[name].resolve)}
+														</Avatar>
+													}
+													onClick={e => {
+														e.preventDefault();
+														let win = window.open(
+															ApiService.getAttachmentFileUrl(
+																rowData[name].value
+															),
+															"_blank"
+														);
+														win.focus();
+													}}
+													label={rowData[name].resolve}
+												/>
+											) : (
+												""
+											);
+										}
+									},
+									...field.tableProps
+
 								});
 							} else {
 								dt_columns.push({
@@ -440,7 +439,7 @@ class TableView extends React.Component {
 				}, () => {
 					this.loadData(query ? { ...query, p: 1 } : { p: 1 })
 				}
-				
+
 			);
 		}
 	}
@@ -513,12 +512,12 @@ class TableView extends React.Component {
 		return parsed_data;
 	}
 
-	loadData(query={}) {
+	loadData(query = {}) {
 		const { auth, cache, defination, apiCallRequest, cache_data, onLoadData, load_data } = this.props;
-		if (defination ) {
+		if (defination) {
 			if (load_data) {
-				this.setState({loading: true, load_error: false});
-				apiCallRequest( defination.name,
+				this.setState({ loading: true, load_error: false });
+				apiCallRequest(defination.name,
 					{
 						uri: defination.endpoint,
 						type: "records",
@@ -527,11 +526,11 @@ class TableView extends React.Component {
 						cache: cache_data,
 					}
 				).then(res => {
-					const {data} = res.body;
+					const { data } = res.body;
 					if (Function.isFunction(onLoadData)) {
 						onLoadData(data, query);
 					}
-					this.setState({loading: false});
+					this.setState({ loading: false });
 					this.prepareData(data);
 				}).catch(e => {
 					this.setState(state => ({
@@ -542,7 +541,7 @@ class TableView extends React.Component {
 				});
 			}
 			else {
-				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];				
+				let data = Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : [];
 				this.prepareData(data);
 				if (Function.isFunction(onLoadData)) {
 					onLoadData(data, query);
@@ -558,22 +557,22 @@ class TableView extends React.Component {
 		}
 	}
 
-	prepareData(data=null) {
-        const { auth, cache, defination } = this.props;
-        let target_data = Array.isArray(data)? data : (Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : []);
-        let columns = defination ? defination.scope.columns : {};
-        let resolved_data = [];
+	prepareData(data = null) {
+		const { auth, cache, defination } = this.props;
+		let target_data = Array.isArray(data) ? data : (Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : []);
+		let columns = defination ? defination.scope.columns : {};
+		let resolved_data = [];
 
 
 
-        resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(target_data, columns, auth.user);
-        let that = this;
-        let all_records = resolved_data.map(entry => {
-            return that.parseData(entry);
-        });
+		resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(target_data, columns, auth.user);
+		let that = this;
+		let all_records = resolved_data.map(entry => {
+			return that.parseData(entry);
+		});
 
-        this.setState(state => ({ records: all_records }));
-    }
+		this.setState(state => ({ records: all_records }));
+	}
 
 	downloadCSV(data) {
 		data.toCSV();
@@ -581,48 +580,48 @@ class TableView extends React.Component {
 
 	render() {
 		const { classes, defination, api, cache, actionsType, history, location, auth } = this.props;
-		
+
 
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer className={classes?.root}>
 				<GridItem className="p-0 m-0" xs={12}>
-					{ this.state.loading && <GridContainer className={classes.full_height} justify="center" alignItems="center">
-								<GridItem xs={12} className="flex relative flex-row">
-									<div className="flex-grow">
-										<Skeleton variant="text" width={150}/>
-									</div>
-									<div className="flex">
-										<Skeleton variant="circle" width={32} height={32} className="float-right mx-2"/>
-										<Skeleton variant="circle" width={32} height={32} className="float-right mx-2"/>
-										<Skeleton variant="circle" width={32} height={32} className="float-right mx-2"/>
-										<Skeleton variant="circle" width={32} height={32} className="float-right mx-2"/>
-									</div>
-								</GridItem>
-								
-								<GridItem xs={12}>
-									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
-									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
-									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
-									<Skeleton variant="rect" width={"100%"} height={70} className="mt-2"/>
-								</GridItem>
-					</GridContainer> }
+					{this.state.loading && <GridContainer className={classes?.full_height} justify="center" alignItems="center">
+						<GridItem xs={12} className="flex relative flex-row">
+							<div className="flex-grow">
+								<Skeleton variant="text" width={150} />
+							</div>
+							<div className="flex">
+								<Skeleton variant="circle" width={32} height={32} className="float-right mx-2" />
+								<Skeleton variant="circle" width={32} height={32} className="float-right mx-2" />
+								<Skeleton variant="circle" width={32} height={32} className="float-right mx-2" />
+								<Skeleton variant="circle" width={32} height={32} className="float-right mx-2" />
+							</div>
+						</GridItem>
+
+						<GridItem xs={12}>
+							<Skeleton variant="rect" width={"100%"} height={70} className="mt-2" />
+							<Skeleton variant="rect" width={"100%"} height={70} className="mt-2" />
+							<Skeleton variant="rect" width={"100%"} height={70} className="mt-2" />
+							<Skeleton variant="rect" width={"100%"} height={70} className="mt-2" />
+						</GridItem>
+					</GridContainer>}
 
 					{(!this.state.loading && Array.isArray(this.state.records)) && <GridContainer className="p-0 m-0">
 						<GridContainer className="p-0 m-0">
 							<GridItem className="p-0 m-0" xs={12}>
 								{actionsType === "context" && <ClickAwayListener onContextMenu={this.handleOnRowContextMenuClose} onClickAway={this.handleOnRowContextMenuClose}>
-										<Menu											
-											open={this.state.mouseY !== null}
-											onClose={this.handleOnRowContextMenuClose}
-											anchorReference="anchorPosition"
-											anchorPosition={ this.state.mouseY !== null && this.state.mouseX !== null? { top: this.state.mouseY, left: this.state.mouseX } : undefined }
-										>
-											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Copy</MenuItem>
-											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Print</MenuItem>
-											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Highlight</MenuItem>
-											<MenuItem onClick={ this.handleOnRowContextMenuClose }>Email</MenuItem>
-										</Menu>
-									</ClickAwayListener>}
+									<Menu
+										open={this.state.mouseY !== null}
+										onClose={this.handleOnRowContextMenuClose}
+										anchorReference="anchorPosition"
+										anchorPosition={this.state.mouseY !== null && this.state.mouseX !== null ? { top: this.state.mouseY, left: this.state.mouseX } : undefined}
+									>
+										<MenuItem onClick={this.handleOnRowContextMenuClose}>Copy</MenuItem>
+										<MenuItem onClick={this.handleOnRowContextMenuClose}>Print</MenuItem>
+										<MenuItem onClick={this.handleOnRowContextMenuClose}>Highlight</MenuItem>
+										<MenuItem onClick={this.handleOnRowContextMenuClose}>Email</MenuItem>
+									</Menu>
+								</ClickAwayListener>}
 
 								{this.state.records.length > 0 ? (
 									<MaterialTable
@@ -638,7 +637,7 @@ class TableView extends React.Component {
 													csvDataColumns[column.field] = column.title;
 												});
 												tableData.unshift(csvDataColumns);
-												
+
 												tableData.forEach(row => {
 													Object.entries(row).map(([column, value]) => {
 														if (JSON.isJSON(value)) {
@@ -646,16 +645,16 @@ class TableView extends React.Component {
 														}
 													});
 												});
-												tableData.toCSV(((defination ? defination.label : "Records") +" - " + new Date().format("d M Y H:i:s A") + ".csv"));
-									        },
-									        paging: false,
+												tableData.toCSV(((defination ? defination.label : "Records") + " - " + new Date().format("d M Y H:i:s A") + ".csv"));
+											},
+											paging: false,
 										}}
 										title={(api.loading ? "Loading " : "") + defination.label + (api.loading ? "..." : "")}
 										onRowClick={(event, rowData) => {
-											//console.log("onRowClick rowData", rowData);
+											//
 											//history.push(('/'+defination.name+'/view/'+rowData._id).toUriWithDashboardPrefix());
 										}}
-										actions={Function.isFunction(defination.access.actions.tableview)? defination.access.actions.tableview(auth.user) : defination.access.actions.tableview}
+										actions={Function.isFunction(defination.access.actions.tableview) ? defination.access.actions.tableview(auth.user) : defination.access.actions.tableview}
 									/>
 								) : (
 									<GridContainer
@@ -665,15 +664,14 @@ class TableView extends React.Component {
 									>
 										<img
 											alt="Empty list"
-											className={classes.emptyImage}
-											src={EmptyStateImage}
+											className={classes?.emptyImage}
+											src={ApiService.endpoint("/public/img/empty-state-table.svg")}
 										/>
 										<Typography
-											className={classes.emptyText}
+											className={classes?.emptyText}
 											color="grey"
 											variant="body2"
-											center
-											fullWidth
+																						fullWidth
 										>
 											No{" "}
 											{defination.label
@@ -691,15 +689,14 @@ class TableView extends React.Component {
 									<Typography
 										color="error"
 										variant="body2"
-										center
-										fullWidth
+																				fullWidth
 									>
-										{"An error occured. \n " + api.error.msg +" \n Displaying cached data."}
+										{"An error occured. \n " + api.error.msg + " \n Displaying cached data."}
 									</Typography>
 								</GridItem>
 							</GridContainer>
 						)}
-					</GridContainer> }
+					</GridContainer>}
 
 				</GridItem>
 			</GridContainer>
@@ -708,7 +705,7 @@ class TableView extends React.Component {
 }
 TableView.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	defination: PropTypes.object.isRequired,
 	service: PropTypes.any.isRequired,
 	show_actions: PropTypes.bool,
@@ -717,7 +714,7 @@ TableView.propTypes = {
 	cache_data: PropTypes.bool,
 	load_data: PropTypes.bool,
 	onLoadData: PropTypes.func,
-	
+
 };
 
 TableView.defaultProps = {
@@ -732,12 +729,12 @@ TableView.defaultProps = {
 const mapStateToProps = (state, ownProps) => ({
 	auth: state.auth,
 	cache: state.cache,
-	api:state.api,
+	api: state.api,
 });
 
-export default 
+export default
 	compose(
-		withStyles(styles),
+
 		withGlobals,
 		withRouter,
 		connect(mapStateToProps, { openDialog, closeDialog, apiCallRequest })

@@ -3,7 +3,7 @@
 //App constants
 export const appName = (process.env.NODE_ENV === "development" ? "DEV::" : "") + "Realfield";
 export const appDescription = "Realfield Dashboard";
-export const appLogo = require("assets/img/realfield/logo.svg");
+export const appLogo = "https://api.realfield.io/public/img/realfield/logo.svg";
 //
 
 //Colorscheme
@@ -33,7 +33,7 @@ export const authTokenLocation = "cookie"; // "cookie" or "redux";
 
 export const authTokenName = "rf_auth";
 
-export const surpressed_logs = ['Warning:', 'Deprecation', 'Material-UI:', './src/', '[Deprecation]', 'There were more warnings in other files', '@material-ui/styles', 'WebSocket'];
+export const surpressed_logs = ['Warning:', 'Deprecation', 'Material-UI:', './src/', '[Deprecation]', 'There were more warnings in other files', 'WebSocket'];
 
 export const environment = process.env.NODE_ENV;
 export const client_id = process.env.REACT_APP_CLIENT_ID;

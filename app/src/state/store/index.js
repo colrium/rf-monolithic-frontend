@@ -4,7 +4,7 @@ import { app } from "assets/jss/app-theme";
 import { compose, createStore } from "redux";
 import middleware from "state/middleware";
 import reducers from "state/reducers";
-import {environment} from "config";
+import { environment } from "config";
 
 function saveStateToLocalStorage(state) {
 	try {
@@ -13,7 +13,7 @@ function saveStateToLocalStorage(state) {
 			app.name.replace(/\s+/g, "").toLowerCase() + "-state",
 			serializedState
 		);
-	} catch (e) {}
+	} catch (e) { }
 }
 function loadStateFromLocalStorage() {
 	try {
@@ -27,8 +27,8 @@ function loadStateFromLocalStorage() {
 		}
 		return JSON.parse(serializedState);
 	} catch (e) {
-        return undefined;
-    }
+		return undefined;
+	}
 }
 
 let volatile_state = {};
@@ -36,7 +36,7 @@ export const applyPermanence = (state) => {
 	let persistent_state = {};
 	for (const [name, value] of Object.entries(state)) {
 		if (value.volatile) {
-			//console.log("volatile_state[name]", state[name]);
+			//
 			volatile_state[name] = state[name];
 		} else {
 			persistent_state[name] = state[name];
@@ -55,29 +55,29 @@ let storeState = { ...persistedState, ...volatile_state };
 
 const StoreSingleton = (function () {
 	var instance;
-	function createInstance(state=false) {
-        var newInstance =  createStore(reducers, (state? state : storeState), compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ && environment === "development"? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f ));
-        
-        //Subscribe store for peristent states
+	function createInstance(state = false) {
+		var newInstance = createStore(reducers, (state ? state : storeState), compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ && environment === "development" ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f));
+
+		//Subscribe store for peristent states
 		newInstance.subscribe(() => applyPermanence(newInstance.getState()));
-        return newInstance;
-    }
-    return {
-        getInstance: function () {
-            if (!instance) {
-                instance = createInstance();
-            }
-            return instance;
-        },
-        destroyInstance: function() {	
+		return newInstance;
+	}
+	return {
+		getInstance: function () {
+			if (!instance) {
+				instance = createInstance();
+			}
+			return instance;
+		},
+		destroyInstance: function () {
 			instance = undefined;
 			return instance;
 		},
-		newInstance: function(state) {	
+		newInstance: function (state) {
 			instance = createInstance(state);
 			return instance;
 		},
-    };
+	};
 
 })();
 

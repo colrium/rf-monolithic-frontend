@@ -1,13 +1,13 @@
 /** @format */
 
-import IconButton from "@material-ui/core/IconButton";
-import BackIcon from "@material-ui/icons/ArrowBack";
+import IconButton from "@mui/material/IconButton";
+import BackIcon from "@mui/icons-material/ArrowBack";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import React from "react";
 import { connect } from "react-redux";
 import { addToCart, closeDialog, openDialog, removeFromCart } from "state/actions";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 import ItemView from "views/widgets/Ecommerce/Item";
 import GridView from "./GridView";
 
@@ -34,7 +34,7 @@ class Widget extends React.Component {
 		this.handleOnBackClick = this.handleOnBackClick.bind(this);
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		const { context, view } = this.props;
@@ -113,7 +113,7 @@ const mapStateToProps = state => ({
 	order_progress: state.ecommerce.order_progress,
 });
 
-export default withErrorHandler(
+export default (
 	connect(mapStateToProps, {
 		addToCart,
 		removeFromCart,

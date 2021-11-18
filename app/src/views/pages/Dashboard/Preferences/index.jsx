@@ -1,7 +1,7 @@
 /** @format */
 
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import React from "react";
@@ -13,7 +13,7 @@ import DataPreferences from "views/widgets/Preferences/Data";
 import NotificationsPreferences from "views/widgets/Preferences/Notifications";
 import SubscriptionsPreferences from "views/widgets/Preferences/Subscriptions";
 import CookiesPreferences from "views/widgets/Preferences/Cookies";
-import {withErrorHandler} from "hoc/ErrorHandler";
+
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -147,7 +147,7 @@ class Page extends React.Component {
 								{name === "notifications" && <NotificationsPreferences />}
 								{name === "subscriptions" && <SubscriptionsPreferences />}
 								{name === "cookies" && <CookiesPreferences />}
-								
+
 							</TabPanel>
 						)
 					)}
@@ -163,4 +163,4 @@ const mapStateToProps = state => ({
 	device: state.device,
 });
 
-export default connect(mapStateToProps, { appendNavHistory })(withErrorHandler(Page));
+export default connect(mapStateToProps, { appendNavHistory })((Page));

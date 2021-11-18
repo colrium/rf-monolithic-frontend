@@ -1,37 +1,33 @@
-import firebase from "firebase/app";
-import "firebase/messaging";
-import "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import { getMessaging } from "firebase/messaging";
+// import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, doc, setDoc, getDocs, getDoc } from 'firebase/firestore/lite';
+// import "firebase/messaging";
+// import "firebase/firestore";
 import { firebase as firebaseConfig, firebaseWebPushCertificate } from "config";
 
 
-const initializedFirebaseApp = firebase.initializeApp(firebaseConfig);
+const initializedFirebaseApp = initializeApp(firebaseConfig);
+export const messaging = getMessaging();
+export const firestore = getFirestore(initializedFirebaseApp);
+//messaging.usePublicVapidKey(firebaseWebPushCertificate);
 
-export const messaging = initializedFirebaseApp.messaging();
-export const  firestore = initializedFirebaseApp.firestore();
-messaging.usePublicVapidKey(firebaseWebPushCertificate);
-
-
-export const getFirestoreDoc = (collection, doc) => {
+export const getFirestoreDoc = (collectionName, entry) => {
 	return new Promise((resolve, reject) => {
-		firestore.collection(collection).doc(doc).get().then(async (querySnapshot) => {
-			resolve(querySnapshot.data());
+		getDoc(doc(collection(firestore, collectionName), entry)).then(async (querySnapshot) => {
+			resolve(querySnapshot);
 		}).catch(err => {
 			reject(err);
-		});	
+		});
 	});
 }
 
 
-export const createUpdateFirestoreDoc = (collection, doc, data) => {
+export const createUpdateFirestoreDoc = (collectionName, entry, data) => {
 	return new Promise((resolve, reject) => {
-		firestore.collection(collection).doc(doc).get().then(async (querySnapshot) => {
-			let querySnapshotData = querySnapshot.data();
-			let newData = {...querySnapshotData, ...data};
-			firestore.collection(collection).doc(doc).set(newData);
-			resolve(newData);
-		}).catch(err => {
+		setDoc(doc(collection(firestore, collectionName), entry), { ...data }).then((snap) => resolve(snap)).catch(err => {
 			reject(err);
-		});	
+		});
 	});
 }
 

@@ -116,9 +116,19 @@ export const API_SET_RESPONSE = "[API] SET_RESPONSE";
 export const API_SET_COMPLETE = "[API] SET_COMPLETE";
 export const API_SET_ERROR = "[API] SET_ERROR";
 
+//API
+export const FORMS_ADD = "[FORMS] ADD";
+export const FORMS_SET = "[FORMS] SET";
+export const FORMS_REMOVE = "[FORMS] REMOVE";
+
 // CONSENTS
 export const SET_CONSENT_VALUE = "[CONSENT] SET_VALUE";
 export const SHOW_CONSENT = "[CONSENT] SHOW_CONSENT";
 
 
 export const CLEAR_APP_STATE = "[APP] CLEAR_STATE";
+// 
+///////////////////////////////////////////////
+//START OF TYPESCRIPT MIGRATION
+///////////////////////////////////////////////
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";

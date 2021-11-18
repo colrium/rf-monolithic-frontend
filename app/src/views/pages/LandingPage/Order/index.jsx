@@ -1,6 +1,6 @@
 /** @format */
 
-import Hidden from "@material-ui/core/Hidden";
+import Hidden from "@mui/material/Hidden";
 import { app } from "assets/jss/app-theme";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -9,7 +9,7 @@ import { environment } from "config";
 import React from "react";
 import { connect } from "react-redux";
 import { addToCart, closeDialog, openDialog, removeFromCart, setOrderProgress } from "state/actions";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 import asyncComponent from "views/widgets/asyncComponent";
 import Stepper from "./components/Stepper";
 
@@ -137,7 +137,7 @@ class Page extends React.Component {
 		}));
 	}
 
-	handleStepNavigation(prev, current) {}
+	handleStepNavigation(prev, current) { }
 
 	handleOnStepComplete(data = {}) {
 		const { auth, order_progress, setOrderProgress } = this.props;
@@ -236,7 +236,7 @@ class Page extends React.Component {
 				...this.state.steps_data,
 				[Object.keys(this.state.steps)[this.state.step]]: {
 					...this.state.steps_data[
-						Object.keys(this.state.steps)[this.state.step]
+					Object.keys(this.state.steps)[this.state.step]
 					],
 					context: context,
 					view: view,
@@ -248,7 +248,7 @@ class Page extends React.Component {
 				...this.state.steps_data,
 				[Object.keys(this.state.steps)[this.state.step]]: {
 					...this.state.steps_data[
-						Object.keys(this.state.steps)[this.state.step]
+					Object.keys(this.state.steps)[this.state.step]
 					],
 					context: context,
 					view: view,
@@ -397,7 +397,7 @@ const mapStateToProps = state => ({
 	order_progress: state.ecommerce.order_progress,
 });
 
-export default withErrorHandler(
+export default (
 	connect(mapStateToProps, {
 		setOrderProgress,
 		addToCart,

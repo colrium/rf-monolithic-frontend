@@ -1,14 +1,14 @@
 /** @format */
 
-import withStyles from "@material-ui/core/styles/withStyles";
+
 import classNames from "classnames";
 import { CheckboxInput, DateInput, FileInput, MapInput, RadioInput, SelectInput, TextInput, WysiwygInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import PropTypes from "prop-types";
 import React from "react";
-import withRoot from "hoc/withRoot";
-import styles from "./styles";
+
+
 
 
 
@@ -132,13 +132,13 @@ class GenerationView extends React.Component {
 	}
 
 	handleChange = name => value => {
-        let newValue = JSON.isJSON(this.state.value)
+		let newValue = JSON.isJSON(this.state.value)
 			? JSON.parse(JSON.stringify(this.state.value))
 			: {};
-        newValue[name] = value;
-        this.setState({ value: newValue });
-        this.triggerOnChange(newValue);
-    };
+		newValue[name] = value;
+		this.setState({ value: newValue });
+		this.triggerOnChange(newValue);
+	};
 
 	renderInputField(properties) {
 		const { textfield_variant, readOnly, disabled } = this.props;
@@ -409,7 +409,7 @@ class GenerationView extends React.Component {
 	}
 
 	render() {
-		const { classes, className } = this.props;
+		const { className } = this.props;
 		const rootClassName = classNames({
 			[className]: className,
 		});
@@ -426,7 +426,7 @@ class GenerationView extends React.Component {
 }
 
 GenerationView.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	className: PropTypes.string,
 	blueprint: PropTypes.object.isRequired,
 	value: PropTypes.object,
@@ -448,4 +448,4 @@ GenerationView.defaultProps = {
 	textfield_variant: "outlined",
 };
 
-export default withRoot(withStyles(styles)(GenerationView));
+export default (GenerationView);

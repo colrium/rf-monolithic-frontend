@@ -1,13 +1,13 @@
 /** @format */
 
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import {
 	Add as AddIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	EventOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import Button from "components/Button";
 import { formats } from "config/data";
 import React from "react";
@@ -26,7 +26,7 @@ export default {
 			default: "cardview",
 			cardview: {
 				title: ["name"],
-				resolveData: entry => {},
+				resolveData: entry => { },
 				subtitle: ["code"],
 				body: [
 					"status",
@@ -171,7 +171,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar", },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", },
 					resolves: {
 						value: "_id",
 						display: {
@@ -306,7 +306,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className) => {},
+						default: (entry, className) => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -340,7 +340,7 @@ export default {
 								>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -367,7 +367,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className = "grey_text") => {},
+						default: (entry, className = "grey_text") => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -402,7 +402,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className = "error_text") => {},
+						default: (id, className = "error_text") => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

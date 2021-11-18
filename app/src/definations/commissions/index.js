@@ -1,14 +1,14 @@
 /** @format */
 
-import { IconButton } from "@material-ui/core";
-import Chip from "@material-ui/core/Chip";
+import { IconButton } from "@mui/material";
+import Chip from "@mui/material/Chip";
 import {
 	Add as AddIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
-} from "@material-ui/icons";
-import DefinationContextIcon from "@material-ui/icons/WorkOutlineOutlined";
+} from "@mui/icons-material";
+import DefinationContextIcon from "@mui/icons-material/WorkOutlineOutlined";
 import Avatar from "components/Avatar";
 import Badge from "components/Badge";
 import Button from "components/Button";
@@ -18,26 +18,26 @@ import GridItem from "components/Grid/GridItem";
 import Status from "components/Status";
 import Typography from "components/Typography";
 import { formats } from "config/data";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ApiService from "services/Api";
 import LazyModule from "components/LazyModule";
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@mui/styles';
 import compose from "recompose/compose";
 import { connect } from "react-redux";
 import * as definations from "definations";
 import { apiCallRequest } from "state/actions";
 import { defaults, Pie, Bar, HorizontalBar } from "react-chartjs-2";
 import { UtilitiesHelper } from "hoc/Helpers";
-import MuiAlert from '@material-ui/lab/Alert';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import MuiAlert from '@mui/material/Alert';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import { FixedSizeList } from 'react-window';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import List from '@material-ui/core/List';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import ListSubheader from '@mui/material/ListSubheader';
+import List from '@mui/material/List';
+import CircularProgress from '@mui/material/CircularProgress';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { DataGrid } from '@material-ui/data-grid';
 import ReactJsonView from 'react-json-view'
 
@@ -75,7 +75,7 @@ let distanceToMeters = (distance, unit = "meters") => {
 };
 
 const renderResponseSummaryRow = (data) => (props) => {
-	const {index, ...rest } = props;
+	const { index, ...rest } = props;
 
 	return (
 		<ListItem button {...rest} key={index}>
@@ -88,17 +88,17 @@ const renderResponseSummaryRow = (data) => (props) => {
 }
 
 const TextResponseSummaryDataGrid = React.memo((props) => {
-	const {data, label} = props;
+	const { data, label } = props;
 	const [columns, setColumns] = useState([
 		{ field: 'value', headerName: label, width: 400 },
-  		{ field: 'count', headerName: 'Total', width: 150 },
+		{ field: 'count', headerName: 'Total', width: 150 },
 	]);
 	const [rows, setRows] = useState([]);
-	useEffect(()=> {
+	useEffect(() => {
 		let newRows = [];
 		if (JSON.isJSON(data)) {
 			Object.entries(data).map(([key, value], index) => {
-				newRows.push({id: index, value: key, count: value});
+				newRows.push({ id: index, value: key, count: value });
 			});
 		}
 		setRows(newRows);
@@ -114,7 +114,7 @@ const TextResponseSummaryDataGrid = React.memo((props) => {
 
 
 const CardViewBody = React.memo((props) => {
-	const {entry, user, isPopulated } = props;
+	const { entry, user, isPopulated } = props;
 
 	const [loadingSummary, setLoadingSummary] = useState(true);
 	const [summaryError, setSummaryError] = useState(false);
@@ -125,13 +125,13 @@ const CardViewBody = React.memo((props) => {
 	const loadResponsesSummary = () => {
 		setSummaryError(false);
 		setLoadingSummary(true);
-		ApiService.get("/responses/form-responses-summary/"+entry?._id).then(res => {
-			const {body: {data: {labels, types, counts}}} = res;
+		ApiService.get("/responses/form-responses-summary/" + entry?._id).then(res => {
+			const { body: { data: { labels, types, counts } } } = res;
 			setCommissionFormSummaryLabels(labels);
 			setCommissionFormSummaryTypes(types);
 			setCommissionFormSummary(counts);
 			setLoadingSummary(false);
-			
+
 		}).catch(err => {
 			setLoadingSummary(false);
 			setCommissionFormSummary(false);
@@ -145,274 +145,102 @@ const CardViewBody = React.memo((props) => {
 	}, [])
 	return (
 		<GridContainer className="p-0 m-0">
-								<GridItem className="p-0 m-0" xs={12}>
-									<GoogleMap
-										circles={[
-											{
-												id: entry?._id,
-												center: entry.focus_center,
-												//title: entry.survey? entry.survey.title+' Survey Commission' : 'Commission',
-												infoWindow: (
-													<React.Fragment>
-														<Typography
-															component="h5"
-															variant="subtitle2"
-															color="primary"
-															bold
-															paragraph
-														>
-															Commission
-														</Typography>
-														{entry.survey ? (
-															<Typography
-																component="p"
-																variant="body2"
-																color="default"
-															>
-																{" "}
-																Survey : {entry.survey.title} <br />
-															</Typography>
-														) : (
-															""
-														)}
+			<GridItem className="p-0 m-0" xs={12}>
+				<GoogleMap
+					circles={[
+						{
+							id: entry?._id,
+							center: entry.focus_center,
+							//title: entry.survey? entry.survey.title+' Survey Commission' : 'Commission',
+							infoWindow: (
+								<React.Fragment>
+									<Typography
+										component="h5"
+										variant="subtitle2"
+										color="primary"
+										bold
+										paragraph
+									>
+										Commission
+									</Typography>
+									{entry.survey ? (
+										<Typography
+											component="p"
+											variant="body2"
 
-														<Typography
-															component="p"
-															variant="body2"
-															color="default"
-															gutterBottom
-															paragraph
-														>
-															{" "}
-															From:{" "}
-															{new Date(entry.start_date).format(
-																"d M Y H:i:s A"
-															)}{" "}
-														</Typography>
-														<Typography
-															component="p"
-															variant="body2"
-															color="default"
-															gutterBottom
-															paragraph
-														>
-															{" "}
-															To:{" "}
-															{new Date(entry.end_date).format(
-																"d M Y H:i:s A"
-															)}{" "}
-														</Typography>
-														<Typography
-															component="p"
-															variant="body2"
-															color="default"
-															gutterBottom
-															paragraph
-														>
-															{" "}
-															Involvement:{" "}
-															{entry.involvement === "team"
-																? "Team"
-																: "Individual"}{" "}
-														</Typography>
-														<Typography
-															component="p"
-															variant="body2"
-															color="default"
-															gutterBottom
-															paragraph
-														>
-															{" "}
-															Radius:{" "}
-															{entry.focus_radius +
-																" " +
-																entry.focus_radius_metric}{" "}
-														</Typography>
-														<Typography
-															component="p"
-															variant="body2"
-															color="default"
-															gutterBottom
-															paragraph
-														>
-															{entry.involvement === "team" && (
-																	<Chip
-																		size="small"
-																		label={entry.status}
-																	/>
-																) && (
-																	<Chip
-																		size="small"
-																		avatar={
-																			entry.team.avatar ? (
-																				<Avatar
-																					alt={
-																						entry.team
-																							.name
-																					}
-																					src={ApiService.getAttachmentFileUrl(
-																						entry.team
-																							.avatar
-																					)}
-																				/>
-																			) : null
-																		}
-																		label={entry.team.name}
-																	/>
-																)}
-															{entry.involvement === "individual" && (
-																<Chip
-																	size="small"
-																	label="Individual"
-																/>
-															)}
-															{entry.involvement === "individual" &&
-																entry.individual && (
-																	<Chip
-																		size="small"
-																		avatar={
-																			entry.individual
-																				.avatar ? (
-																				<Avatar
-																					alt={
-																						entry
-																							.individual
-																							.first_name
-																					}
-																					src={ApiService.getAttachmentFileUrl(
-																						entry
-																							.individual
-																							.avatar
-																					)}
-																				/>
-																			) : null
-																		}
-																		label={
-																			entry.individual
-																				.first_name +
-																			" " +
-																			entry.individual
-																				.last_name
-																		}
-																	/>
-																)}
-															&nbsp;
-														</Typography>
-														<Badge color="primary" variant="dot">
-															<Chip
-																size="small"
-																label={entry.status}
-															/>{" "}
-														</Badge>
-													</React.Fragment>
-												),
-												//color: '#4a148c',
-												radius: distanceToMeters(
-													entry.focus_radius,
-													entry.focus_radius_metric
-												),
-												options: {
-													fillColor: "#4a148c",
-													strokeColor: "#4a148c",
-												},
-											}
-										]}
-										
-										selectedEntryType={"circle"}
-										selectedEntry={0}
-									/>
-								</GridItem>
-
-								<GridItem xs={12} className="p-4">
+										>
+											{" "}
+											Survey : {entry.survey.title} <br />
+										</Typography>
+									) : (
+										""
+									)}
 
 									<Typography
-										component="div"
+										component="p"
 										variant="body2"
-										color="default"
-										paragraph
-									>
-										Survey
-									</Typography>
-									<Typography
-										component="div"
-										variant="body1"
-										color="default"
-										paragraph
-									>
-										{entry.survey? entry.survey.title : ""}
-									</Typography>
 
+										gutterBottom
+										paragraph
+									>
+										{" "}
+										From:{" "}
+										{new Date(entry.start_date).format(
+											"d M Y H:i:s A"
+										)}{" "}
+									</Typography>
 									<Typography
-										component="div"
+										component="p"
 										variant="body2"
-										color="default"
-										paragraph
-									>
-										From
-									</Typography>
-									<Typography
-										component="div"
-										variant="body1"
-										color="default"
-										paragraph
-									>
-										{new Date(entry.start_date).toString()}
-									</Typography>
 
+										gutterBottom
+										paragraph
+									>
+										{" "}
+										To:{" "}
+										{new Date(entry.end_date).format(
+											"d M Y H:i:s A"
+										)}{" "}
+									</Typography>
 									<Typography
-										component="div"
+										component="p"
 										variant="body2"
-										color="default"
-										paragraph
-									>
-										To
-									</Typography>
-									<Typography
-										component="div"
-										variant="body1"
-										color="default"
-										paragraph
-									>
-										{new Date(entry.end_date).toString()}
-									</Typography>
-									<Typography
-										component="div"
-										variant="body2"
-										color="default"
-										paragraph
-									>
-										Involvement
-									</Typography>
-									<Typography
-										component="div"
-										variant="body1"
-										color="default"
-										paragraph
-									>
-										{String.isString(entry.involvement)? entry.involvement.humanize() : ""}
-									</Typography>
 
-									<Typography
-										component="div"
-										variant="body2"
-										color="default"
+										gutterBottom
 										paragraph
 									>
-										{String.isString(entry.involvement)? entry.involvement.humanize() : ""}
+										{" "}
+										Involvement:{" "}
+										{entry.involvement === "team"
+											? "Team"
+											: "Individual"}{" "}
 									</Typography>
-
 									<Typography
-										component="div"
-										variant="body1"
-										color="default"
+										component="p"
+										variant="body2"
+
+										gutterBottom
+										paragraph
+									>
+										{" "}
+										Radius:{" "}
+										{entry.focus_radius +
+											" " +
+											entry.focus_radius_metric}{" "}
+									</Typography>
+									<Typography
+										component="p"
+										variant="body2"
+
+										gutterBottom
 										paragraph
 									>
 										{entry.involvement === "team" && (
-												<Chip
-													size="small"
-													label={entry.status}
-												/>
-											) && (
+											<Chip
+												size="small"
+												label={entry.status}
+											/>
+										) && (
 												<Chip
 													size="small"
 													avatar={
@@ -470,90 +298,261 @@ const CardViewBody = React.memo((props) => {
 											)}
 										&nbsp;
 									</Typography>
+									<Badge color="primary" variant="dot">
+										<Chip
+											size="small"
+											label={entry.status}
+										/>{" "}
+									</Badge>
+								</React.Fragment>
+							),
+							//color: '#4a148c',
+							radius: distanceToMeters(
+								entry.focus_radius,
+								entry.focus_radius_metric
+							),
+							options: {
+								fillColor: "#4a148c",
+								strokeColor: "#4a148c",
+							},
+						}
+					]}
 
-									<Typography
-										component="div"
-										variant="body2"
-										color="default"
-										paragraph
-									>
-										Focus Center
-									</Typography>
-									<Typography
-										component="div"
-										variant="body1"
-										color="default"
-										paragraph
-									>
-										<ReactJsonView name={"Coordinates"} src={entry.focus_center} displayDataTypes={false} />
-									</Typography>
+					selectedEntryType={"circle"}
+					selectedEntry={0}
+				/>
+			</GridItem>
 
-									<Typography
-										component="div"
-										variant="body2"
-										color="default"
-										paragraph
-									>
-										Focus Radius
-									</Typography>
-									<Typography
-										component="div"
-										variant="body1"
-										color="default"
-										paragraph
-									>
-										{entry.focus_radius +" " +entry.focus_radius_metric}
-									</Typography>
+			<GridItem xs={12} className="p-4">
+
+				<Typography
+					component="div"
+					variant="body2"
+
+					paragraph
+				>
+					Survey
+				</Typography>
+				<Typography
+					component="div"
+					variant="body1"
+
+					paragraph
+				>
+					{entry.survey ? entry.survey.title : ""}
+				</Typography>
+
+				<Typography
+					component="div"
+					variant="body2"
+
+					paragraph
+				>
+					From
+				</Typography>
+				<Typography
+					component="div"
+					variant="body1"
+
+					paragraph
+				>
+					{new Date(entry.start_date).toString()}
+				</Typography>
+
+				<Typography
+					component="div"
+					variant="body2"
+
+					paragraph
+				>
+					To
+				</Typography>
+				<Typography
+					component="div"
+					variant="body1"
+
+					paragraph
+				>
+					{new Date(entry.end_date).toString()}
+				</Typography>
+				<Typography
+					component="div"
+					variant="body2"
+
+					paragraph
+				>
+					Involvement
+				</Typography>
+				<Typography
+					component="div"
+					variant="body1"
+
+					paragraph
+				>
+					{String.isString(entry.involvement) ? entry.involvement.humanize() : ""}
+				</Typography>
+
+				<Typography
+					component="div"
+					variant="body2"
+
+					paragraph
+				>
+					{String.isString(entry.involvement) ? entry.involvement.humanize() : ""}
+				</Typography>
+
+				<Typography
+					component="div"
+					variant="body1"
+
+					paragraph
+				>
+					{entry.involvement === "team" && (
+						<Chip
+							size="small"
+							label={entry.status}
+						/>
+					) && (
+							<Chip
+								size="small"
+								avatar={
+									entry.team.avatar ? (
+										<Avatar
+											alt={
+												entry.team
+													.name
+											}
+											src={ApiService.getAttachmentFileUrl(
+												entry.team
+													.avatar
+											)}
+										/>
+									) : null
+								}
+								label={entry.team.name}
+							/>
+						)}
+					{entry.involvement === "individual" && (
+						<Chip
+							size="small"
+							label="Individual"
+						/>
+					)}
+					{entry.involvement === "individual" &&
+						entry.individual && (
+							<Chip
+								size="small"
+								avatar={
+									entry.individual
+										.avatar ? (
+										<Avatar
+											alt={
+												entry
+													.individual
+													.first_name
+											}
+											src={ApiService.getAttachmentFileUrl(
+												entry
+													.individual
+													.avatar
+											)}
+										/>
+									) : null
+								}
+								label={
+									entry.individual
+										.first_name +
+									" " +
+									entry.individual
+										.last_name
+								}
+							/>
+						)}
+					&nbsp;
+				</Typography>
+
+				<Typography
+					component="div"
+					variant="body2"
+
+					paragraph
+				>
+					Focus 				</Typography>
+				<Typography
+					component="div"
+					variant="body1"
+
+					paragraph
+				>
+					<ReactJsonView name={"Coordinates"} src={entry.focus_center} displayDataTypes={false} />
+				</Typography>
+
+				<Typography
+					component="div"
+					variant="body2"
+
+					paragraph
+				>
+					Focus Radius
+				</Typography>
+				<Typography
+					component="div"
+					variant="body1"
+
+					paragraph
+				>
+					{entry.focus_radius + " " + entry.focus_radius_metric}
+				</Typography>
+			</GridItem>
+			<GridContainer className={"mt-8"}>
+				<GridItem xs={12}>
+					<Typography variant="subtitle1"> Responses Summary</Typography>
+				</GridItem>
+			</GridContainer>
+
+			{loadingSummary && <GridContainer className={"mt-8"}>
+				<GridItem className={"flex flex-col justify-center items-center"} xs={12}>
+					<CircularProgress className={"mb-4"} color="secondary" />
+					<Typography variant="caption"> Loading Responses Summary...</Typography>
+				</GridItem>
+			</GridContainer>}
+			{summaryError && <GridContainer className={"mt-8"}>
+				<GridItem className={"flex flex-col justify-center items-center"} xs={12}>
+					<ErrorOutlineIcon fontSize="large" className={"mb-4"} color="error" />
+					<Typography variant="caption"> Something went wrong. {JSON.stringify(summaryError)}</Typography>
+				</GridItem>
+			</GridContainer>}
+			{(commissionFormSummary && !loadingSummary) && <GridContainer className={"mb-8"}>
+
+				<GridItem xs={12}>
+					<Alert severity="warning">This is an automated report based on raw data submitted to this project. Please conduct proper data cleaning prior to using the graphs and figures used on this page.</Alert>
+				</GridItem>
+				<GridContainer className={"mb-8"}>
+
+					{Object.entries(commissionFormSummary).map(([key, value]) => (
+						(!JSON.isEmpty(value) && commissionFormSummaryLabels[key] && commissionFormSummaryTypes[key]) && <GridItem xs={12}>
+							<GridContainer className={"mb-8"}>
+								<GridItem xs={12}>
+									<Typography variant="subtitle2" className={"w-full text-center"}> {commissionFormSummaryLabels[key]}</Typography>
 								</GridItem>
-								<GridContainer className={"mt-8"}>
-									<GridItem xs={12}>
-										<Typography variant="subtitle1"> Responses Summary</Typography>
-									</GridItem>
-								</GridContainer>
 
-								{loadingSummary && <GridContainer className={"mt-8"}>
-									<GridItem className={"flex flex-col justify-center items-center"} xs={12}>
-										<CircularProgress className={"mb-4"} color="secondary" />
-										<Typography variant="caption"> Loading Responses Summary...</Typography>
-									</GridItem>
-								</GridContainer>}
-								{summaryError && <GridContainer className={"mt-8"}>
-									<GridItem className={"flex flex-col justify-center items-center"} xs={12}>
-										<ErrorOutlineIcon fontSize="large" className={"mb-4"} color="error" />
-										<Typography variant="caption"> Something went wrong. {JSON.stringify(summaryError)}</Typography>
-									</GridItem>
-								</GridContainer>}
-								{(commissionFormSummary && !loadingSummary) && <GridContainer className={"mb-8"}>
-									
-									<GridItem xs={12}>
-										<Alert severity="warning">This is an automated report based on raw data submitted to this project. Please conduct proper data cleaning prior to using the graphs and figures used on this page.</Alert>
-									</GridItem>
-									<GridContainer className={"mb-8"}>
-										
-										{ Object.entries(commissionFormSummary).map(([key, value]) => (
-											(!JSON.isEmpty(value) && commissionFormSummaryLabels[key] && commissionFormSummaryTypes[key]) && <GridItem xs={12}>
-												<GridContainer className={"mb-8"}>
-													<GridItem xs={12}>
-														<Typography  variant="subtitle2" className={"w-full text-center"}> {commissionFormSummaryLabels[key]}</Typography>
-													</GridItem>
+								<GridItem xs={12}>
+									{commissionFormSummaryTypes[key] === "select_one" && <Bar
+										data={{
+											labels: Object.keys(value),
+											datasets: [{
+												label: commissionFormSummaryLabels[key],
+												data: Object.values(value),
+												backgroundColor: "#00AF41",
+												hoverBackgroundColor: "#76C4D5",
+											}]
+										}}
+									/>}
 
-													<GridItem xs={12}>
-														{commissionFormSummaryTypes[key] === "select_one" && <Bar 
-																data={{
-																	labels: Object.keys(value), 
-																	datasets: [{
-																		label: commissionFormSummaryLabels[key], 
-																		data:  Object.values(value), 
-																		backgroundColor: "#00AF41", 
-																		hoverBackgroundColor: "#76C4D5",
-																	}]
-																}} 
-														/>}
-														
 
-														{commissionFormSummaryTypes[key] === "text" && <TextResponseSummaryDataGrid data={value} label={commissionFormSummaryLabels[key]} />}
+									{commissionFormSummaryTypes[key] === "text" && <TextResponseSummaryDataGrid data={value} label={commissionFormSummaryLabels[key]} />}
 
-														{/*Object.size(value) <= 20? (
+									{/*Object.size(value) <= 20? (
 															
 															) : (
 															<HorizontalBar 
@@ -567,15 +566,15 @@ const CardViewBody = React.memo((props) => {
 																	}]
 																}} 
 															/>)*/}
-														
-													</GridItem>
-												</GridContainer>
-											</GridItem>
-										))}
-									</GridContainer>
-								</GridContainer>}
-								
+
+								</GridItem>
 							</GridContainer>
+						</GridItem>
+					))}
+				</GridContainer>
+			</GridContainer>}
+
+		</GridContainer>
 	)
 });
 
@@ -606,7 +605,7 @@ export default {
 									/>
 								) : null
 							) : entry.involvement === "individual" &&
-							  entry.individual ? (
+								entry.individual ? (
 								entry.individual.avatar && (
 									<Avatar
 										alt={entry.individual.first_name}
@@ -620,23 +619,23 @@ export default {
 							<Typography variant="h4" gutterBottom>
 								{entry.start_date
 									? new Date(entry.start_date).format(
-											formats.dateformats.date
-									  ) + (entry.end_date ? " - " : "")
+										formats.dateformats.date
+									) + (entry.end_date ? " - " : "")
 									: ""}
 								{entry.end_date
 									? new Date(entry.end_date).format(
-											formats.dateformats.date
-									  )
+										formats.dateformats.date
+									)
 									: ""}
 							</Typography>
 						),
 						subtitle: (
 							<React.Fragment>
 								<GridContainer className={"p-0"}>
-									<GridItem xs={12}>										
+									<GridItem xs={12}>
 										<Typography variant="subtitle2" paragraph>{entry.requirements}</Typography>
 									</GridItem>
-									<GridItem xs={12}>										
+									<GridItem xs={12}>
 										{entry.status && (
 											<Status
 												color={status_colors[entry.status]}
@@ -647,7 +646,7 @@ export default {
 								</GridContainer>
 							</React.Fragment>
 						),
-						body: ( <CardViewBody entry={entry} user={user} isPopulated={isPopulated}/>),
+						body: (<CardViewBody entry={entry} user={user} isPopulated={isPopulated} />),
 					};
 				},
 			},
@@ -666,7 +665,7 @@ export default {
 			default: "tableview",
 			listview: {
 				avatar: false,
-				resolveData: async (entries,user = null,isPopulated = true) => {
+				resolveData: async (entries, user = null, isPopulated = true) => {
 					let resolved_data = [];
 
 					if (Array.isArray(entries)) {
@@ -675,19 +674,19 @@ export default {
 								id: entry?._id,
 								icon:
 									entry.involvement === "team" &&
-									entry.team ? (
+										entry.team ? (
 										entry.team.avatar ? null : (
 											<DefinationContextIcon />
 										)
 									) : entry.involvement === "individual" &&
-									  entry.individual ? (
+										entry.individual ? (
 										entry.individual.avatar ? null : (
 											<DefinationContextIcon />
 										)
 									) : null,
 								avatar:
 									entry.involvement === "team" &&
-									entry.team ? (
+										entry.team ? (
 										entry.team.avatar ? (
 											<Avatar
 												alt={entry.team.name}
@@ -697,7 +696,7 @@ export default {
 											/>
 										) : null
 									) : entry.involvement === "individual" &&
-									  entry.individual ? (
+										entry.individual ? (
 										entry.individual.avatar ? (
 											<Avatar
 												alt={
@@ -721,7 +720,7 @@ export default {
 											<Typography
 												component="span"
 												variant="body1"
-												color="default"
+
 												paragraph
 											>
 												{" "}
@@ -737,7 +736,7 @@ export default {
 										<Typography
 											component="span"
 											variant="body2"
-											color="default"
+
 											paragraph
 										>
 											{entry.involvement === "team" && (
@@ -748,11 +747,11 @@ export default {
 											)}
 											&nbsp;
 											{entry.involvement === "team" && (
-													<Chip
-														size="small"
-														label={entry.status}
-													/>
-												) && (
+												<Chip
+													size="small"
+													label={entry.status}
+												/>
+											) && (
 													<Chip
 														size="small"
 														avatar={
@@ -777,11 +776,11 @@ export default {
 												)}
 											{entry.involvement ===
 												"individual" && (
-												<Chip
-													size="small"
-													label="Individual"
-												/>
-											)}
+													<Chip
+														size="small"
+														label="Individual"
+													/>
+												)}
 											&nbsp;
 											{entry.involvement ===
 												"individual" &&
@@ -857,18 +856,18 @@ export default {
 								body:
 									(entry.survey
 										? "<b>Survey :</b> : " +
-										  entry.survey.title +
-										  "<br /> "
+										entry.survey.title +
+										"<br /> "
 										: "") +
 									"<b>Involvement :</b> " +
 									(entry.involvement === "team"
 										? entry.team.name + "(Team)"
 										: entry.individual
-										? entry.individual.first_name +
-										  " " +
-										  entry.individual.last_name +
-										  "(Individual)"
-										: "") +
+											? entry.individual.first_name +
+											" " +
+											entry.individual.last_name +
+											"(Individual)"
+											: "") +
 									"<br /> <b>Status :</b> " +
 									entry.status,
 								category: "time",
@@ -909,7 +908,7 @@ export default {
 										<Typography
 											component="p"
 											variant="body2"
-											color="default"
+
 										>
 											{" "}
 											Survey : {entry.survey.title} <br />
@@ -921,7 +920,7 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-										color="default"
+
 										gutterBottom
 										paragraph
 									>
@@ -934,7 +933,7 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-										color="default"
+
 										gutterBottom
 										paragraph
 									>
@@ -945,7 +944,7 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-										color="default"
+
 										gutterBottom
 										paragraph
 									>
@@ -958,7 +957,7 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-										color="default"
+
 										gutterBottom
 										paragraph
 									>
@@ -971,16 +970,16 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-										color="default"
+
 										gutterBottom
 										paragraph
 									>
 										{entry.involvement === "team" && (
-												<Chip
-													size="small"
-													label={entry.status}
-												/>
-											) && (
+											<Chip
+												size="small"
+												label={entry.status}
+											/>
+										) && (
 												<Chip
 													size="small"
 													avatar={
@@ -1152,7 +1151,7 @@ export default {
 							if (entry.response_mode === "queries") {
 								return false;
 							}
-						}					
+						}
 						return true;
 					},
 					input: (values, user) => {
@@ -1160,8 +1159,8 @@ export default {
 							if (values.response_mode === "queries") {
 								return false;
 							}
-							
-						}						
+
+						}
 						return true;
 					}
 				},
@@ -1207,7 +1206,7 @@ export default {
 							if (entry.response_mode === "form") {
 								return false;
 							}
-						}					
+						}
 						return true;
 					},
 					input: (values, user) => {
@@ -1215,14 +1214,14 @@ export default {
 							if (values.response_mode === "form") {
 								return false;
 							}
-							
-						}						
+
+						}
 						return true;
-					}					
+					}
 				},
 				reference: {
 					name: "forms",
-					service_query: {active: true},
+					service_query: { active: true },
 					resolves: {
 						value: "_id",
 						display: {
@@ -1428,16 +1427,16 @@ export default {
 									</GridItem>
 								</GridContainer>
 							);
-						} catch(err){
+						} catch (err) {
 							return (
 								<GridContainer>
 									<GridItem className="py-0 flex-col">
-										<Typography className="px-2" variant="body2">{""+err}</Typography>
+										<Typography className="px-2" variant="body2">{"" + err}</Typography>
 									</GridItem>
 								</GridContainer>
 							);
 						}
-							
+
 					}
 				}
 			},
@@ -1646,7 +1645,7 @@ export default {
 			return !user;
 		},
 		view: {
-			summary: user => {				
+			summary: user => {
 				return !JSON.isEmpty(user);
 			},
 			all: user => {
@@ -1670,7 +1669,7 @@ export default {
 
 				if (user) {
 					if (user.isAdmin || user.isCollector) {
-						
+
 						actions.push({
 							icon: 'launch',
 							tooltip: 'View',
@@ -1734,7 +1733,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className) => {},
+						default: (entry, className) => { },
 						listing: (entry, className = "grey_text") => {
 							if (entry) {
 								return (
@@ -1754,7 +1753,7 @@ export default {
 								);
 							}
 							return;
-								
+
 						},
 					},
 				},
@@ -1777,7 +1776,7 @@ export default {
 								>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -1806,7 +1805,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className = "grey_text") => {},
+						default: (entry, className = "grey_text") => { },
 						listing: (entry, className = "grey_text") => {
 							if (entry) {
 								return (
@@ -1825,7 +1824,7 @@ export default {
 									</Link>
 								);
 							}
-							return;	
+							return;
 						},
 					},
 				},
@@ -1844,7 +1843,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className = "error_text") => {},
+						default: (id, className = "error_text") => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

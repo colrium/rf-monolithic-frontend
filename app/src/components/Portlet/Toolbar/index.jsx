@@ -1,7 +1,7 @@
 /** @format */
 
 // Material helpers
-import { withStyles } from "@material-ui/core";
+
 // Externals
 import classNames from "classnames";
 import PropTypes from "prop-types";
@@ -21,7 +21,7 @@ const styles = theme => ({
 const PortletToolbar = props => {
 	const { classes, className, children } = props;
 
-	const rootClassName = classNames(classes.root, className);
+	const rootClassName = classNames(classes?.root, className);
 
 	return <div className={rootClassName}>{children}</div>;
 };
@@ -29,7 +29,7 @@ const PortletToolbar = props => {
 PortletToolbar.propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 };
 
-export default withStyles(styles)(PortletToolbar);
+export default (PortletToolbar);

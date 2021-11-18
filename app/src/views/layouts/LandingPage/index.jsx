@@ -1,47 +1,67 @@
 /** @format */
 
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core";
+
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import ActionDialog from "components/ActionDialog";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import styles from "./styles";
-import {withErrorHandler} from "hoc/ErrorHandler";
 
-class LandingPage extends Component {
-	render() {
-		const {
-			classes,
-			className,
-			children,
-			navItems,
-			showHeader,
-			showFooter,
-			nav,
-			sidebar_items,
-			indexUri,
-			contexts,
-			...rest
-		} = this.props;
+import { useErrorBoundary } from "hooks";
 
-		return (	
-				<div>
-					
-					{showHeader && <Header navItems={navItems} {...rest}/>}
-					<main  className={(showHeader ? (classes.mainContent+" p-0 mt-16 pb-32 relative") : " p-0 pb-32 mt-16 relative")}>
-						
-						<ActionDialog  {...rest}/>
-						{children}
-						
-					</main>
-					{showFooter && <Footer color="accent"  {...rest}/>}
-				</div>
-			
-		);
-	}
+const LandingPage = (props) => {
+	const {
+		className,
+		children,
+		navItems,
+		showHeader,
+		showFooter,
+		nav,
+		sidebar_items,
+		indexUri,
+		contexts,
+		...rest
+	} = props;
+
+	// const { ErrorBoundary, didCatch, error } = useErrorBoundary()
+
+
+	// return (
+	// 	// <>
+	// 	// 	{didCatch ? (
+	// 	// 		<p>An error has been caught: {error.message}</p>
+	// 	// 	) : (
+	// 	// 		<ErrorBoundary>
+	// 	// 			{showHeader && <Header navItems={navItems} {...rest} />}
+	// 	// 			<main className={(showHeader ? (" p-20 mt-16  relative") : " p-0  mt-16 relative")}>
+
+	// 	// 				<ActionDialog  {...rest} />
+	// 	// 				{children}
+
+	// 	// 			</main>
+	// 	// 			{showFooter && <Footer color="accent"  {...rest} />}
+	// 	// 		</ErrorBoundary>
+	// 	// 	)}
+	// 	// </>
+
+	// );
+
+	return (
+		<>
+			{showHeader && <Header navItems={navItems} {...rest} />}
+			<main className={"min-h-screen p-0 relative"}>
+
+				<ActionDialog  {...rest} />
+				{children}
+
+			</main>
+			{showFooter && <Footer color="accent"  {...rest} />}
+		</>
+
+	);
+
 }
 
 LandingPage.propTypes = {
@@ -61,13 +81,11 @@ const mapStateToProps = state => ({
 });
 
 
-export default withErrorHandler(
-	compose(
-		withStyles(styles),
-		connect(
-			mapStateToProps,
-			{}
-		)
+export default compose(
 
-	)(LandingPage)
-);
+	connect(
+		mapStateToProps,
+		{}
+	)
+
+)(LandingPage);

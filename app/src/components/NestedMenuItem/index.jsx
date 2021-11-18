@@ -1,17 +1,16 @@
-import React, {useState, useRef, useImperativeHandle} from 'react';
-import Menu from '@material-ui/core/Menu';
-import MenuItem, {MenuItemProps} from '@material-ui/core/MenuItem';
-import ArrowRight from '@material-ui/icons/ArrowRight';
+import React, { useState, useRef, useImperativeHandle } from 'react';
+import Menu from '@mui/material/Menu';
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem';
+import ArrowRight from '@mui/icons-material/ArrowRight';
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import styles from "./styles";
+
+
 
 
 
 const NestedMenuItem = React.forwardRef((props, ref) => {
 	const {
-		classes,
 		parentMenuOpen,
 		component = 'div',
 		label,
@@ -25,7 +24,7 @@ const NestedMenuItem = React.forwardRef((props, ref) => {
 		...MenuItemProps
 	} = props
 
-	const {ref: containerRefProp, ...ContainerProps} = ContainerPropsProp
+	const { ref: containerRefProp, ...ContainerProps } = ContainerPropsProp
 
 	const menuItemRef = useRef(null)
 	useImperativeHandle(ref, () => menuItemRef.current)
@@ -85,12 +84,12 @@ const NestedMenuItem = React.forwardRef((props, ref) => {
 		const active = containerRef.current?.ownerDocument?.activeElement
 
 		if (event.key === 'ArrowLeft' && isSubmenuFocused()) {
-			containerRef.current??containerRef.current.focus()
+			containerRef.current ?? containerRef.current.focus()
 		}
 
-		if (event.key === 'ArrowRight' && event.target === containerRef.current && event.target === active ) {
+		if (event.key === 'ArrowRight' && event.target === containerRef.current && event.target === active) {
 			const firstChild = menuContainerRef.current?.children[0] | undefined
-			firstChild??firstChild.focus()
+			firstChild ?? firstChild.focus()
 		}
 	}
 
@@ -115,7 +114,7 @@ const NestedMenuItem = React.forwardRef((props, ref) => {
 		>
 			<MenuItem
 				{...MenuItemProps}
-				className={classNames({[classes.root]: true, [classes.open]: isSubMenuOpen, [className]: Boolean(className) })}
+				className={classNames({ [className]: Boolean(className) })}
 				ref={menuItemRef}
 			>
 				{leftIcon}
@@ -125,7 +124,7 @@ const NestedMenuItem = React.forwardRef((props, ref) => {
 			<Menu
 				// Set pointer events to 'none' to prevent the invisible Popover div
 				// from capturing events for clicks and hovers
-				style={{pointerEvents: 'none'}}
+				style={{ pointerEvents: 'none' }}
 				anchorEl={menuItemRef.current}
 				anchorOrigin={{
 					vertical: 'top',
@@ -144,7 +143,7 @@ const NestedMenuItem = React.forwardRef((props, ref) => {
 				}}
 				{...MenuProps}
 			>
-				<div ref={menuContainerRef} style={{pointerEvents: 'auto'}}>
+				<div ref={menuContainerRef} style={{ pointerEvents: 'auto' }}>
 					{children}
 				</div>
 			</Menu>
@@ -153,7 +152,7 @@ const NestedMenuItem = React.forwardRef((props, ref) => {
 });
 
 NestedMenuItem.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	parentMenuOpen: PropTypes.bool,
 	component: PropTypes.element,
 	label: PropTypes.node,
@@ -163,4 +162,4 @@ NestedMenuItem.propTypes = {
 	MenuProps: PropTypes.object,
 	button: PropTypes.bool,
 };
-export default withStyles(styles)(React.memo(NestedMenuItem));
+export default (React.memo(NestedMenuItem));

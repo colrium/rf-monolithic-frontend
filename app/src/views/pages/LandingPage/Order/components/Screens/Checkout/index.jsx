@@ -1,13 +1,13 @@
 /** @format */
 
-import Check from "@material-ui/icons/Check";
+import Check from "@mui/icons-material/Check";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
 import ApiService from "services/Api";
-import withRoot from "hoc/withRoot";
+
 
 class Step extends React.Component {
 	state = {
@@ -40,17 +40,17 @@ class Step extends React.Component {
 				}));
 			})
 			.catch(err => {
-            this.setState(state => ({
-                gatewayData: {},
-                load_error: err,
-                loading: false,
-            }));
-        });
+				this.setState(state => ({
+					gatewayData: {},
+					load_error: err,
+					loading: false,
+				}));
+			});
 	}
 
 	render() {
-        const { onComplete, onCancel } = this.props;
-        return (
+		const { onComplete, onCancel } = this.props;
+		return (
 			<GridContainer className="p-0 m-0">
 				<GridContainer>
 					<GridItem xs={12}>
@@ -153,7 +153,7 @@ class Step extends React.Component {
 				</GridContainer>
 			</GridContainer>
 		);
-    }
+	}
 }
 
-export default withRoot(Step);
+export default Step;

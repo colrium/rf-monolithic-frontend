@@ -21,7 +21,7 @@ const handlerNameByEvent = {
 };
 Object.freeze(handlerNameByEvent);
 
-const Scrollbars = React.forwardRef(function Scrollbars(props, ref) {
+const Scrollbars = React.forwardRef((props, ref) => {
 	ref = ref || createRef();
 	const ps = useRef(null);
 	const handlerByEvent = useRef(new Map());
@@ -37,7 +37,6 @@ const Scrollbars = React.forwardRef(function Scrollbars(props, ref) {
 				ref.current.addEventListener(key, handler, false);
 			}
 		});
-		// eslint-disable-next-line
 	}, [ref]);
 
 	const unHookUpEvents = useCallback(() => {
@@ -119,10 +118,10 @@ const Scrollbars = React.forwardRef(function Scrollbars(props, ref) {
 			style={
 				props.customScrollbars && (props.enable || true) && !isMobile
 					? {
-							position: "relative",
-							overflowY: "hidden",
-							overflowX: "hidden",
-					  }
+						position: "relative",
+						overflowY: "hidden",
+						overflowX: "hidden",
+					}
 					: {}
 			}
 			ref={ref}

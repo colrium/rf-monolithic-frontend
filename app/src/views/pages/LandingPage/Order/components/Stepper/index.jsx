@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useEffect, useState } from "react";
-import withRoot from "hoc/withRoot";
+
 import DefaultStepper from "./Default";
 import MobileStepper from "./Mobile";
 
@@ -28,4 +28,4 @@ function Stepper(props) {
 Stepper.defaultProps = {
 	type: "default",
 };
-export default withRoot(Stepper);
+export default Stepper;

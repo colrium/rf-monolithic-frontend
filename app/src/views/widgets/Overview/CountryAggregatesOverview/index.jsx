@@ -12,7 +12,7 @@ import Typography from "components/Typography";
 import VectorMap from "components/VectorMap";
 import * as definations from "definations";
 import React from "react";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 const wrapperStyles = {
 	width: "100%",
@@ -63,4 +63,4 @@ class CountryAggregatesOverview extends React.Component {
 	}
 }
 
-export default withErrorHandler(CountryAggregatesOverview);
+export default (CountryAggregatesOverview);

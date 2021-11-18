@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import LightBox from "components/LightBox";
-import ErrorImage from "assets/img/icons/file-error.svg";
+import { Api as ApiService } from "services";
 import { useLazyImage } from "hooks";
 
 const placeHolder = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAD0lEQVR42mNkwAIYh7IgAAVVAAuInjI5AAAAAElFTkSuQmCC";
@@ -32,13 +32,13 @@ const Image = styled.img`
 `;
 
 const LazyImage = (props) => {
-	const { src, alt, onClick, lightbox, className, fallbackSrc, ...rest } = props;
-	
-	const [imageRef, setImageRef] = useState();
+	const { src, alt, onClick, lightbox, className, fallbackSrc = ApiService.endpoint("/public/img/icons/file-error.svg"), ...rest } = props;
+
+
 	const [lightboxOpen, setLightboxOpen] = useState(false);
 	const [hasError, setHasError] = useState(false);
 
-	const imageSrc = useLazyImage(src, imageRef, fallbackSrc)
+	const [imageSrc, { ref: imageRef, error: imageError, loading: imageLoading }] = useLazyImage(src, fallbackSrc)
 
 	const onLoad = event => {
 		event.target.classList.add("loaded");
@@ -53,14 +53,14 @@ const LazyImage = (props) => {
 		<div className={className ? className : "inline-block"}>
 			{lightbox && lightboxOpen && (
 				<LightBox
-					src={src}
+					src={imageSrc}
 					alt={alt}
 					open={lightboxOpen}
 					onClose={() => setLightboxOpen(false)}
 				/>
 			)}
 			<Image
-				ref={setImageRef}
+				ref={imageRef}
 				src={imageSrc}
 				onClick={event => {
 					if (Function.isFunction(onClick)) {
@@ -81,7 +81,6 @@ const LazyImage = (props) => {
 
 LazyImage.defaultProps = {
 	lightbox: true,
-	fallbackSrc: ErrorImage,
 };
 
 export default LazyImage;

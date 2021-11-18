@@ -1,24 +1,24 @@
-import CircularProgress from "@material-ui/core/CircularProgress";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import { withStyles } from "@material-ui/core/styles";
+import CircularProgress from "@mui/material/CircularProgress";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
+import ListItemText from "@mui/material/ListItemText";
+
 import {
 	CloudDownloadOutlined as DownloadIcon,
 	DeleteOutlined as DeleteIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
 import Avatar from "components/Avatar";
 import Typography from "components/Typography";
 import React from "react";
 import ApiService from "services/Api";
 import { FilesHelper, UtilitiesHelper } from "hoc/Helpers";
-import withRoot from "hoc/withRoot";
+import { makeStyles } from '@mui/styles';
 
-const styles = {
+const useStyles = makeStyles((theme) => ({
 	root: {
 		width: "100%",
 	},
@@ -57,12 +57,14 @@ const styles = {
 	},
 	downloadBtn: {
 		transition: ".5s ease",
+		margin: "1rem 0",
 		"&:hover": {
 			color: colors.hex.accent,
 		},
 	},
 	uploadProgressBtn: {
 		transition: ".5s ease",
+		margin: "0 1rem",
 		"&:hover": {
 			color: colors.hex.accent,
 		},
@@ -73,7 +75,7 @@ const styles = {
 			color: colors.hex.error,
 		},
 	},
-};
+}));
 
 function PreviewList(props) {
 	const {
@@ -83,10 +85,10 @@ function PreviewList(props) {
 		handleDownload,
 		handleRemove,
 		showFileNames,
-		classes,
+		disabled,
 	} = props;
 	const [dense, setDense] = React.useState(false);
-
+	const classes = useStyles()
 	return (
 		<List
 			dense={dense}
@@ -123,8 +125,8 @@ function PreviewList(props) {
 										src={
 											fileObject.attachment
 												? ApiService.getAttachmentFileUrl(
-														fileObject.attachment
-												  )
+													fileObject.attachment
+												)
 												: fileObject.data
 										}
 									/>
@@ -153,8 +155,8 @@ function PreviewList(props) {
 												? fileObject.attachment.name
 												: fileObject.file.name
 											: fileObject.attachment
-											? fileObject.attachment.name
-											: fileObject.file.name}
+												? fileObject.attachment.name
+												: fileObject.file.name}
 									</Typography>
 								}
 								secondary={UtilitiesHelper.readableFileSize(
@@ -177,7 +179,7 @@ function PreviewList(props) {
 												"function"
 											)
 												? handleCancelUpload(i)
-												: () => {}
+												: () => { }
 										}
 										aria-label="upload"
 									>
@@ -227,4 +229,4 @@ function PreviewList(props) {
 	);
 }
 
-export default withRoot(withStyles(styles)(PreviewList));
+export default (PreviewList);

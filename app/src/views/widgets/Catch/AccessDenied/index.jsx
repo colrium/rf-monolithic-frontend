@@ -1,6 +1,6 @@
 /** @format */
 
-import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import Button from "components/Button";
 //
 import GridContainer from "components/Grid/GridContainer";
@@ -8,7 +8,7 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
 import { Link } from "react-router-dom";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 class AccessDenied extends React.Component {
 	render() {
@@ -31,13 +31,13 @@ class AccessDenied extends React.Component {
 						<GridItem xs={12} className={"flex justify-center"}>
 							<Typography
 								color="error"
-								style={{fontSize: "12rem"}}
+								style={{ fontSize: "12rem" }}
 								variant="h1"
 							>
 								{icon}
 							</Typography>
 						</GridItem>
-						<GridItem xs={12}  className={"flex justify-center"}>
+						<GridItem xs={12} className={"flex justify-center"}>
 							<Typography
 								color={color}
 								variant="h3"
@@ -49,7 +49,7 @@ class AccessDenied extends React.Component {
 
 						<GridItem xs={12} className={"flex justify-center"}>
 							<Typography
-								color="default"
+
 								variant="body1"
 								className={"text-center"}
 							>
@@ -59,14 +59,14 @@ class AccessDenied extends React.Component {
 
 						<GridItem xs={12} className={"flex justify-center"}>
 							<Link to={link}>
-									<Button
-										variant="text"
-										color="default"
-										simple
-									>
-										{linkText}
-									</Button>
-								</Link>
+								<Button
+									variant="text"
+
+
+								>
+									{linkText}
+								</Button>
+							</Link>
 						</GridItem>
 					</GridContainer>
 				</GridItem>
@@ -85,4 +85,4 @@ AccessDenied.defaultProps = {
 	linkText: "Home",
 };
 
-export default withErrorHandler(AccessDenied);
+export default (AccessDenied);

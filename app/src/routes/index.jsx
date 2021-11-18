@@ -15,35 +15,34 @@ const RouteComponentPlaceHolder = () => (
 	<ProgressIndicator type="logo" size={200} />
 );
 
-export default class Routes extends Component {
-	render() {
-		return (
-			<Switch>
-				<Route
-					path={"/".toUriWithLandingPagePrefix()}
-					component={Fairing}
-					placeholder={<RouteComponentPlaceHolder />}
-					componentProps={{
-						routing: "landingpage",
-						layout: "landingpage",
-						layoutProps: { showHeader: true, showFooter: true },
-					}}
-				/>
-				<Route
-					path={"/".toUriWithDashboardPrefix()}
-					component={Fairing}
-					placeholder={<RouteComponentPlaceHolder />}
-					componentProps={{ 
-						layout: "dashboard" 
-					}}
-					authRestrict
-				/>
-				<Route
-					path="/login"
-					component={Login}
-					placeholder={<RouteComponentPlaceHolder />}
-				/>
-				{/*<Route
+const Routes = (props) => {
+	return (
+		<Switch>
+			<Route
+				path={"/".toUriWithLandingPagePrefix()}
+				component={Fairing}
+				placeholder={<RouteComponentPlaceHolder />}
+				componentProps={{
+					routing: "landingpage",
+					layout: "landingpage",
+					layoutProps: { showHeader: true, showFooter: true },
+				}}
+			/>
+			<Route
+				path={"/".toUriWithDashboardPrefix()}
+				component={Fairing}
+				placeholder={<RouteComponentPlaceHolder />}
+				componentProps={{
+					layout: "dashboard"
+				}}
+				authRestrict
+			/>
+			<Route
+				path="/login"
+				component={Login}
+				placeholder={<RouteComponentPlaceHolder />}
+			/>
+			{/*<Route
 					path="/signin"
 					component={Login}
 					placeholder={<RouteComponentPlaceHolder />}
@@ -60,13 +59,14 @@ export default class Routes extends Component {
 					component={Register}
 					placeholder={<RouteComponentPlaceHolder />}
 				/>*/}
-				<Route path="/" entry entryPaths={{unauthenticated: "/home".toUriWithLandingPagePrefix(), authenticated: "/home".toUriWithDashboardPrefix() }} />
-				<Route
-					path="*"
-					component={NotFound}
-					placeholder={<RouteComponentPlaceHolder />}
-				/>
-			</Switch>
-		);
-	}
+			<Route path="/" entry entryPaths={{ unauthenticated: "/home".toUriWithLandingPagePrefix(), authenticated: "/home".toUriWithDashboardPrefix() }} />
+			<Route
+				path="*"
+				component={NotFound}
+				placeholder={<RouteComponentPlaceHolder />}
+			/>
+		</Switch>
+	);
+
 }
+export default Routes;

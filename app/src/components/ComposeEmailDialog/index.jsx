@@ -1,77 +1,74 @@
 /** @format */
 
-import React, {useState, useEffect} from "react";
-import { Dialog } from "@material-ui/core";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import Typography from '@material-ui/core/Typography';
-import Slide from '@material-ui/core/Slide';
+import React, { useState, useEffect } from "react";
+import { Dialog } from "@mui/material";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import Typography from '@mui/material/Typography';
+import Slide from '@mui/material/Slide';
 import { connect } from "react-redux";
-import { withTheme } from '@material-ui/core/styles';
-import withStyles from "@material-ui/core/styles/withStyles";
+import { withTheme } from '@mui/styles';
+
 import compose from "recompose/compose";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { apiCallRequest, setEmailingCache, clearEmailingCache } from "state/actions";
 import { TextInput } from "components/FormInputs";
 import ScrollBars from "components/ScrollBars";
-import styles from "./styles";
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const Alert = (props) => {
-	return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 function ComposeEmailDialog(props) {
-	const { classes, communication: { emailing : { popup_open, recipient_address, recipient_name, cc, bcc, subject, content, context, record} }, apiCallRequest, setEmailingCache, clearEmailingCache} = props;
+	const { communication: { emailing: { popup_open, recipient_address, recipient_name, cc, bcc, subject, content, context, record } }, apiCallRequest, setEmailingCache, clearEmailingCache } = props;
 
-	const [emailRecipientAddress, setEmailRecipientAddress] = useState(recipient_address); 
-	const [emailCC, setEmailCC] = useState(cc); 
+	const [emailRecipientAddress, setEmailRecipientAddress] = useState(recipient_address);
+	const [emailCC, setEmailCC] = useState(cc);
 	const [emailBCC, setEmailBCC] = useState(bcc);
 	const [emailSubject, setEmailSubject] = useState(subject);
-	const [emailContent, setEmailContent] = useState(content); 
-	const [emailContext, setEmailContext] = useState(context); 
-	const [emailRecord, setEmailRecord] = useState(record); 
+	const [emailContent, setEmailContent] = useState(content);
+	const [emailContext, setEmailContext] = useState(context);
+	const [emailRecord, setEmailRecord] = useState(record);
 	const [canSend, setCanSend] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState(false);
 	const [alert, setAlert] = useState(false);
-	const [hasCC, setHasCC] = useState(!String.isEmpty(cc)); 
-	const [hasBCC, setHasBCC] = useState(!String.isEmpty(bcc)); 
+	const [hasCC, setHasCC] = useState(!String.isEmpty(cc));
+	const [hasBCC, setHasBCC] = useState(!String.isEmpty(bcc));
 
 	const handleSendEmail = () => {
 		setSubmitting(true);
 		setAlert(false);
 		setError(false);
-		apiCallRequest( "emails",
-					{
-						uri: "/emails",
-						type: "create",
-						params: {p: "1"},
-						data: {
-							folder: "outbox",
-							subject: emailSubject,
-							recipient_address: emailRecipientAddress,
-							cc: emailCC,
-							bcc: emailBCC,
-							content: emailContent,							
-							context: emailContext,
-							record: emailRecord,
-							attachments: null,
-						},
-						cache: false,
-						silent: true,
-					}
+		apiCallRequest("emails",
+			{
+				uri: "/emails",
+				type: "create",
+				params: { p: "1" },
+				data: {
+					folder: "outbox",
+					subject: emailSubject,
+					recipient_address: emailRecipientAddress,
+					cc: emailCC,
+					bcc: emailBCC,
+					content: emailContent,
+					context: emailContext,
+					record: emailRecord,
+					attachments: null,
+				},
+				cache: false,
+				silent: true,
+			}
 		).then(res => {
-			const {data} = res.body;
+			const { data } = res.body;
 			clearEmailingCache();
 			setEmailingCache("popup_open", false);
 			setSubmitting(false);
@@ -82,7 +79,7 @@ function ComposeEmailDialog(props) {
 			setAlert(false);
 			setError(err);
 		});
-		
+
 
 	}
 
@@ -91,7 +88,7 @@ function ComposeEmailDialog(props) {
 		setEmailingCache("popup_open", false)
 	}
 
-	
+
 
 	const descriptionElementRef = React.useRef(null);
 	useEffect(() => {
@@ -137,14 +134,14 @@ function ComposeEmailDialog(props) {
 
 	useEffect(() => {
 		return () => {
-					setEmailingCache("recipient_address", emailRecipientAddress);
-					setEmailingCache("subject", emailSubject);
-					setEmailingCache("content", emailContent);
-					setEmailingCache("context", emailContext);
-					setEmailingCache("cc", emailCC);
-					setEmailingCache("bcc", emailBCC);
-					setEmailingCache("context", emailContext);
-					setEmailingCache("record", emailRecord);
+			setEmailingCache("recipient_address", emailRecipientAddress);
+			setEmailingCache("subject", emailSubject);
+			setEmailingCache("content", emailContent);
+			setEmailingCache("context", emailContext);
+			setEmailingCache("cc", emailCC);
+			setEmailingCache("bcc", emailBCC);
+			setEmailingCache("context", emailContext);
+			setEmailingCache("record", emailRecord);
 		}
 	}, []);
 
@@ -158,9 +155,9 @@ function ComposeEmailDialog(props) {
 			scroll="paper"
 			fullScreen
 		>
-			<DialogTitle 
+			<DialogTitle
 				id="compose-mail-dialog-title"
-				
+
 			>
 				<div className="w-full flex flex-row items-center">
 
@@ -177,21 +174,21 @@ function ComposeEmailDialog(props) {
 				</div>
 			</DialogTitle>
 
-			
+
 			<DialogContent dividers={true} className={"flex flex-col"}>
-				<ScrollBars className={classes.contentScrollWrapper}>
-				<DialogContentText
-					id="compose-mail-scroll-dialog-description"
-					ref={descriptionElementRef}
-					tabIndex={-1}
-				>
-					
-					<GridContainer id="compose-email-dialog-body">
-						<GridItem xs={12}>
-							<TextInput
-									variant={"outlined"}								
+				<ScrollBars className={`overflow-y-scroll overflow-x-hidden top-0 flex-grow p-4`}>
+					<DialogContentText
+						id="compose-mail-scroll-dialog-description"
+						ref={descriptionElementRef}
+						tabIndex={-1}
+					>
+
+						<GridContainer id="compose-email-dialog-body">
+							<GridItem xs={12}>
+								<TextInput
+									variant={"outlined"}
 									defaultValue={emailSubject}
-									onChange={(new_value)=>{
+									onChange={(new_value) => {
 										setEmailSubject(new_value);
 									}}
 									label={"Subject:"}
@@ -208,20 +205,20 @@ function ComposeEmailDialog(props) {
 												}
 												setEmailSubject(new_value);
 												event.target.blur()
-													
+
 											}
 										},
 									}}
 									required
 									validate
-							/>
-						</GridItem>
+								/>
+							</GridItem>
 
-						 <GridItem xs={12}>
-							<TextInput
-									variant={"outlined"}								
+							<GridItem xs={12}>
+								<TextInput
+									variant={"outlined"}
 									defaultValue={emailRecipientAddress}
-									onChange={(new_value)=>{
+									onChange={(new_value) => {
 										setEmailRecipientAddress(new_value);
 									}}
 									placeholder="Enter Recipient Email Address"
@@ -239,19 +236,19 @@ function ComposeEmailDialog(props) {
 												}
 												setEmailRecipientAddress(new_value);
 												event.target.blur()
-													
+
 											}
 										},
 									}}
 									required
 									validate
-							/>
-						 </GridItem>
-						 {hasCC && <GridItem xs={12}>
-							<TextInput
-									variant={"outlined"}								
+								/>
+							</GridItem>
+							{hasCC && <GridItem xs={12}>
+								<TextInput
+									variant={"outlined"}
 									defaultValue={emailCC}
-									onChange={(new_value)=>{
+									onChange={(new_value) => {
 										setEmailCC(new_value);
 									}}
 									placeholder="CC Email Address"
@@ -269,27 +266,27 @@ function ComposeEmailDialog(props) {
 												}
 												setEmailCC(new_value);
 												event.target.blur()
-													
+
 											}
 										},
 									}}
-							/>
-						 </GridItem>}
+								/>
+							</GridItem>}
 
-						 {!hasCC && <GridItem xs={12} className={"flex flex-row-reverse"}>
-							<Button
-								onClick={() => setHasCC(true)}
-								color={"secondary"}
-							>
-								Add CC
-							</Button>
-						 </GridItem>}
+							{!hasCC && <GridItem xs={12} className={"flex flex-row-reverse"}>
+								<Button
+									onClick={() => setHasCC(true)}
+									color={"secondary"}
+								>
+									Add CC
+								</Button>
+							</GridItem>}
 
-						 {hasBCC && <GridItem xs={12}>
-							<TextInput
-									variant={"outlined"}								
+							{hasBCC && <GridItem xs={12}>
+								<TextInput
+									variant={"outlined"}
 									defaultValue={emailBCC}
-									onChange={(new_value)=>{
+									onChange={(new_value) => {
 										setEmailBCC(new_value);
 									}}
 									placeholder="BCC Email Address"
@@ -307,29 +304,29 @@ function ComposeEmailDialog(props) {
 												}
 												setEmailBCC(new_value);
 												event.target.blur()
-													
+
 											}
 										},
 									}}
-							/>
-						 </GridItem>}
+								/>
+							</GridItem>}
 
-						 {(!hasBCC && hasCC) && <GridItem xs={12} className={"flex flex-row-reverse"}>
-							<Button
-								onClick={() => setHasBCC(true)}
-								color={"secondary"}
-							>
-								Add BCC
-							</Button>
-						 </GridItem>}
+							{(!hasBCC && hasCC) && <GridItem xs={12} className={"flex flex-row-reverse"}>
+								<Button
+									onClick={() => setHasBCC(true)}
+									color={"secondary"}
+								>
+									Add BCC
+								</Button>
+							</GridItem>}
 
-						 
 
-						 <GridItem xs={12}>
-							<TextInput
-									variant={"outlined"}								
+
+							<GridItem xs={12}>
+								<TextInput
+									variant={"outlined"}
 									defaultValue={emailContent}
-									onChange={(new_value)=>{
+									onChange={(new_value) => {
 										setEmailContent(new_value);
 									}}
 									placeholder="Enter Email Message here ..."
@@ -338,17 +335,17 @@ function ComposeEmailDialog(props) {
 									label={"Message"}
 									required
 									validate
-									
-							/>
-						 </GridItem>
-					</GridContainer>
-					
-				</DialogContentText>
+
+								/>
+							</GridItem>
+						</GridContainer>
+
+					</DialogContentText>
 				</ScrollBars>
 			</DialogContent>
-			
+
 			<DialogActions>
-				
+
 
 				<Button
 					onClick={() => handleSendEmail()}
@@ -359,14 +356,14 @@ function ComposeEmailDialog(props) {
 				</Button>
 			</DialogActions>
 			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
-		        <Alert onClose={() => setError(false)} severity="error">
+				<Alert elevation={6} variant="filled" onClose={() => setError(false)} severity="error">
 					{error.toString()}
-		        </Alert>
+				</Alert>
 			</Snackbar>}
 			{alert && <Snackbar open={Boolean(alert)} autoHideDuration={5000} onClose={() => setAlert(false)}>
-		        <Alert onClose={() => setAlert(false)} severity="success">
+				<Alert elevation={6} variant="filled" onClose={() => setAlert(false)} severity="success">
 					{alert.toString()}
-		        </Alert>
+				</Alert>
 			</Snackbar>}
 		</Dialog>
 	);
@@ -380,8 +377,8 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-	withStyles(styles),
-	connect(mapStateToProps, {apiCallRequest, setEmailingCache, clearEmailingCache}),
+
+	connect(mapStateToProps, { apiCallRequest, setEmailingCache, clearEmailingCache }),
 	withTheme,
 )((ComposeEmailDialog));
 

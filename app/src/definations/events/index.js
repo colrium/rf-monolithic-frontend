@@ -1,14 +1,14 @@
 /** @format */
 
-import { IconButton } from "@material-ui/core";
-import Chip from "@material-ui/core/Chip";
+import { IconButton } from "@mui/material";
+import Chip from "@mui/material/Chip";
 import {
 	Add as AddIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	EventOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
@@ -34,7 +34,7 @@ export default {
 			default: "cardview",
 			cardview: {
 				title: ["name"],
-				resolveData: entry => {},
+				resolveData: entry => { },
 				subtitle: ["code"],
 				body: [
 					"status",
@@ -283,7 +283,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: {sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
+					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -308,7 +308,7 @@ export default {
 						if (user && user.role !== "admin") {
 							return { sort: "first_name", fields: "first_name,last_name,email_address,avatar", _id: user._id };
 						}
-						return {sort: "first_name", fields: "first_name,last_name,email_address,avatar", };
+						return { sort: "first_name", fields: "first_name,last_name,email_address,avatar", };
 					},
 					resolves: {
 						value: "_id",
@@ -416,7 +416,7 @@ export default {
 		},
 		view: {
 			summary: user => {
-				
+
 				return false;
 			},
 			all: user => {
@@ -445,7 +445,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className) => {},
+						default: (entry, className) => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -481,7 +481,7 @@ export default {
 								>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -508,7 +508,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className = "grey_text") => {},
+						default: (entry, className = "grey_text") => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -541,7 +541,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className = "error_text") => {},
+						default: (id, className = "error_text") => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

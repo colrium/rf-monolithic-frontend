@@ -1,6 +1,6 @@
 /** @format */
 
-import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import Button from "components/Button";
 //
 import GridContainer from "components/Grid/GridContainer";
@@ -8,7 +8,7 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
 import { Link } from "react-router-dom";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 class RequestError extends React.Component {
 	render() {
@@ -33,8 +33,7 @@ class RequestError extends React.Component {
 								color="error"
 								className="text-6xl"
 								variant="h1"
-								center
-								fullWidth
+																fullWidth
 							>
 								{icon}
 							</Typography>
@@ -44,8 +43,7 @@ class RequestError extends React.Component {
 								color="grey"
 								className="text-3xl"
 								variant="h3"
-								center
-								fullWidth
+																fullWidth
 							>
 								{code}
 							</Typography>
@@ -54,8 +52,7 @@ class RequestError extends React.Component {
 							<Typography
 								color={color}
 								variant="h4"
-								center
-								fullWidth
+																fullWidth
 							>
 								{title}
 							</Typography>
@@ -63,10 +60,9 @@ class RequestError extends React.Component {
 
 						<GridItem xs={12}>
 							<Typography
-								color="default"
+
 								variant="body1"
-								center
-								fullWidth
+																fullWidth
 							>
 								{description}
 							</Typography>
@@ -76,15 +72,14 @@ class RequestError extends React.Component {
 							<Typography
 								color="error"
 								variant="body1"
-								center
-								fullWidth
+																fullWidth
 							>
 								<Link to={link}>
 									{" "}
 									<Button
 										variant="text"
-										color="default"
-										simple
+
+
 									>
 										{" "}
 										Back{" "}
@@ -108,4 +103,4 @@ RequestError.defaultProps = {
 	link: "/",
 };
 
-export default withErrorHandler(RequestError);
+export default (RequestError);

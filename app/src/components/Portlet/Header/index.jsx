@@ -1,7 +1,7 @@
 /** @format */
 
 // Material helpers
-import { withStyles } from "@material-ui/core";
+
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import GridContainer from "components/Grid/GridContainer";
@@ -37,9 +37,9 @@ const PortletHeader = props => {
 
 	const rootClassName = classNames(
 		{
-			[classes.root]: true,
-			[classes.noDivider]: noDivider,
-			[classes.noPadding]: noPadding,
+			[classes?.root]: true,
+			[classes?.noDivider]: noDivider,
+			[classes?.noPadding]: noPadding,
 		},
 		className
 	);
@@ -50,9 +50,9 @@ const PortletHeader = props => {
 PortletHeader.propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	noDivider: PropTypes.bool,
 	noPadding: PropTypes.bool,
 };
 
-export default withStyles(styles)(PortletHeader);
+export default (PortletHeader);

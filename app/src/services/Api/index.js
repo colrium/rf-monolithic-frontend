@@ -1,13 +1,12 @@
 import axios from 'axios';
 import Cookies from "universal-cookie";
 import { setupCache } from 'axios-cache-adapter';
-import { baseUrls, client_id, client_secret, environment } from "config";
 import store from "state/store";
 import watch from 'redux-watch';
 import decode from "jwt-decode";
-import { authTokenLocation, authTokenName } from "config";
+import { baseUrls, client_id, client_secret, environment, authTokenLocation, authTokenName } from "config";
 import { setAuthenticated, setCurrentUser, setToken, clearAppState } from "state/actions";
-
+import { EventRegister } from "utils";
 const DEFAULT = baseUrls.api.endsWith("/") ? baseUrls.api : (baseUrls.api + "/");
 const HOST = baseUrls.host;
 
@@ -37,6 +36,7 @@ const ApiSingleton = (function () {
 			Authorization: "",
 		}
 	};
+	var access_token = {};
 	// To mitigate mutation of default_options as an effect of instance_options mutation and not wanting to use Object.freeze()
 	var instance_options = Object.toJSON(default_options);
 
@@ -66,20 +66,16 @@ const ApiSingleton = (function () {
 	}
 
 	function getAccessToken() {
-		if (authTokenLocation === "cookie") {
-			return getAuthCookies();
-		}
-		else {
-			//ToDo:- Get Redux state access_token
-		}
-		return null;
+
+		return access_token;
 	}
 
 	function getAuthorizationHeader(token) {
-		//console.log("getAuthorizationHeader token", token)
-		if (JSON.isJSON(token)) {
+		//
+		let targetAccessToken = token || access_token;
+		if (isAccessTokenValid(targetAccessToken)) {
 			return {
-				Authorization: ("token_type" in token ? token.token_type + " " : "") + ("access_token" in token ? token.access_token : ""),
+				Authorization: (targetAccessToken?.token_type || "") + " " + (targetAccessToken?.access_token || ""),
 			};
 		}
 		return { Authorization: "" };
@@ -115,49 +111,27 @@ const ApiSingleton = (function () {
 		return isValid;
 	}
 
-	function setAccessToken(access_token) {
-		if (authTokenLocation === "cookie") {
-			const cookies = new Cookies();
-			if (JSON.isJSON(access_token) && !JSON.isEmpty(access_token)) {
-
-				let expires_date = new Date().addDays(365);
-				let maxAge = 60 * 60 * 24 * 365;
-
-				let options = {
-					path: '/',
-					expires: expires_date.addMilliSeconds(maxAge).toUTCString(),
-					domain: baseUrls.domain,
-					secure: environment === "production",
-					httpOnly: false
-				};
-
-				const payload = decodeAccessToken(access_token.access_token);
-				options.expires = expires_date;
-				cookies.set(authTokenName, access_token.access_token, options);
-				cookies.set(authTokenName + "_type", access_token.token_type, options);
-				cookies.set(authTokenName + "_refresh_token", access_token.refresh_token, options);
-				store.dispatch(setAuthenticated(true));
+	function setAccessToken(value) {
+		if (isAccessTokenValid(value)) {
+			access_token = value;
+			instance_options = JSON.merge(instance_options, { headers: { Authorization: `${value.token_type} ${value.access_token}` } });
+			axios.defaults.headers.common['Authorization'] = `${value.token_type} ${value.access_token}`;
+			if (instance) {
+				instance.defaults.headers.common['Authorization'] = `${value.token_type} ${value.access_token}`;
 			}
-			else {
-				//Else Remove Browser cookie. Clear auth cookies clearance Intensions assummed here because lazy
 
-				cookies.remove(authTokenName);
-				cookies.remove(authTokenName + "_type");
-				cookies.remove(authTokenName + "_refresh_token");
-				store.dispatch(setAuthenticated(false));
-				instance_options = JSON.merge(instance_options, { headers: { Authorization: "" } });
-			}
+			EventRegister.emit('access-token-set', value);
 		}
 		else {
-			//
-			if (JSON.isJSON(access_token) && !JSON.isEmpty(access_token)) {
-				store.dispatch(setToken(access_token));
-				store.dispatch(setAuthenticated(true));
+			access_token = {}
+			axios.defaults.headers.common['Authorization'] = ``;
+			instance_options = JSON.merge(instance_options, { headers: { Authorization: "" } });
+
+			if (instance) {
+				instance.defaults.headers.common['Authorization'] = ``;
 			}
-			else {
-				store.dispatch(setToken(false));
-				store.dispatch(setAuthenticated(false));
-			}
+
+			EventRegister.emit('access-token-unset', value);
 		}
 	}
 
@@ -166,63 +140,63 @@ const ApiSingleton = (function () {
 		return isAccessTokenValid(access_token);
 	}
 
-	function onErrorHandler(error) {
-		let errobj = {
-			...error,
-			msg: "Request Failed",
-			message: "Request Failed",
-			body: null,
-			code: 400,
-		};
-		if (error.response) {
-			errobj = {
-				headers: error.response.headers,
-				...error.response,
-				code: error.response.status,
-				msg: error.response.statusText,
-				message: error.response.statusText,
-				body: error.response.data,
+	// function onErrorHandler(error) {
+	// 	let errobj = {
+	// 		...error,
+	// 		msg: "Request Failed",
+	// 		message: "Request Failed",
+	// 		body: null,
+	// 		code: 400,
+	// 	};
+	// 	if (error.response) {
+	// 		errobj = {
+	// 			headers: error.response.headers,
+	// 			...error.response,
+	// 			code: error.response.status,
+	// 			msg: error.response.statusText,
+	// 			message: error.response.statusText,
+	// 			body: error.response.data,
 
-			};
-			if (error.response.data) {
-				if (error.response.data.message || error.response.data.msg || error.response.data.error) {
-					errobj.msg = error.response.data.message || error.response.data.msg || error.response.data.error;
-					errobj.message = error.response.data.message || error.response.data.msg || error.response.data.error;
-				}
-			}
-		} else if (error.request) {
-			errobj = {
-				...error,
-				code: 400,
-				msg: "Request Error: " + error.message,
-				message: "Request Error: " + error.message,
-				body: null,
+	// 		};
+	// 		if (error.response.data) {
+	// 			if (error.response.data.message || error.response.data.msg || error.response.data.error) {
+	// 				errobj.msg = error.response.data.message || error.response.data.msg || error.response.data.error;
+	// 				errobj.message = error.response.data.message || error.response.data.msg || error.response.data.error;
+	// 			}
+	// 		}
+	// 	} else if (error.request) {
+	// 		errobj = {
+	// 			...error,
+	// 			code: 400,
+	// 			msg: "Request Error: " + error.message,
+	// 			message: "Request Error: " + error.message,
+	// 			body: null,
 
-			};
-		}
+	// 		};
+	// 	}
 
-		//console.warn("onErrorHandler errobj", errobj);
-		return Promise.reject(errobj);
-	}
+	// 	//console.warn("onErrorHandler errobj", errobj);
+	// 	return Promise.reject(errobj);
+	// }
 
-	function onSuccessHandler(response) {
-		const { data: { message, msg, ...body }, status, headers, ...rest } = response;
-		let res_message = message || msg || "Success";
+	// function onSuccessHandler(response) {
+	// 	const { data: { message, msg, ...body }, status, headers, ...rest } = response;
+	// 	let res_message = message || msg || "Success";
 
-		let res = {
-			...rest,
-			message: res_message,
-			body: body,
-			code: status,
-			status: status,
-			headers: headers,
-		};
+	// 	let res = {
+	// 		...rest,
+	// 		message: res_message,
+	// 		body: body,
+	// 		code: status,
+	// 		status: status,
+	// 		headers: headers,
+	// 	};
 
-		return Promise.resolve(res);
-	}
+	// 	return Promise.resolve(res);
+	// }
 
 	function isUserAuthenticated(validUser = true) {
-		return accessTokenSetAndValid() && instance_authenticated && ((validUser && !JSON.isEmpty(instance_user)) || !validUser);
+		return accessTokenSetAndValid();
 	}
 
 	function login(data, get_profile = true) {
@@ -230,20 +204,22 @@ const ApiSingleton = (function () {
 			if (instance) {
 				if (isUserAuthenticated(get_profile) || isUserAuthenticated(!get_profile)) {
 					let resObj = {
-						access_token: getAccessToken(),
+						token: getAccessToken(),
 						profile: instance_user,
 					};
 					if (get_profile && isUserAuthenticated(false)) {
-						instance.get("profile").then(profile_res => {
+						axios.get(endpoint("/profile")).then(profile_res => {
 							let profile = profile_res.body.data;
-							store.dispatch(setCurrentUser(profile));
+							//store.dispatch(setCurrentUser(profile));
 							resObj.profile = profile;
+							EventRegister.emit('login', resObj);
 							resolve(resObj);
 						}).catch(err => {
 							reject(err);
 						});
 					}
 					else {
+						EventRegister.emit('login', resObj);
 						resolve(resObj);
 					}
 
@@ -257,19 +233,26 @@ const ApiSingleton = (function () {
 							profile: false,
 						};
 						setAccessToken(res_access_token);
+						let profile = await axios.get(endpoint("/profile"), { headers: { ...getAuthorizationHeader(res_access_token) } }).then(profile_res => {
+							return profile_res.data.data;
+						}).catch(err => {
+							console.error(err)
+							// reject(err);
+						});
+						if (JSON.isJSON(profile)) {
+							//store.dispatch(setCurrentUser(profile));
+							resObj.profile = profile;
+						}
+						EventRegister.emit('login', resObj);
 						if (get_profile) {
-							let profile = await instance.get("profile").then(profile_res => {
-								return profile_res.body.data;
-							}).catch(err => {
-								reject(err);
-							});
-							if (JSON.isJSON(profile)) {
-								store.dispatch(setCurrentUser(profile));
-								resObj.profile = profile;
-							}
+
+						}
+						else {
+							// EventRegister.emit('login', resObj);
 						}
 						resolve(resObj);
 					}).catch(err => {
+						console.error(err)
 						reject(err);
 					});
 
@@ -293,8 +276,12 @@ const ApiSingleton = (function () {
 		return new Promise((resolve, reject) => {
 			let current_access_token = getAccessToken();
 			setAccessToken(null);
-			store.dispatch(clearAppState());
+
+			// store.dispatch(clearAppState());
+
+			EventRegister.emit('logout', { token: current_access_token, user: null });
 			if (instance && current_access_token) {
+
 				instance.get("logout", { params: { access_token: current_access_token } }).then(res => {
 					resolve(res)
 				}).catch(err => {
@@ -313,7 +300,7 @@ const ApiSingleton = (function () {
 		return new Promise((resolve, reject) => {
 			let current_access_token = getAccessToken();
 			setAccessToken(null);
-			store.dispatch(clearAppState());
+			EventRegister.emit('logout', { token: current_access_token, user: null });
 
 			if (instance && current_access_token) {
 				instance.get("logout/all", { params: { access_token: current_access_token } }).then(res => {
@@ -333,7 +320,6 @@ const ApiSingleton = (function () {
 		return new Promise((resolve, reject) => {
 			let current_access_token = getAccessToken();
 			setAccessToken(null);
-			store.dispatch(clearAppState());
 
 			if (instance && current_access_token) {
 				instance.get("logout/others", { params: { access_token: current_access_token } }).then(res => {
@@ -376,78 +362,196 @@ const ApiSingleton = (function () {
 
 	function getAttachmentFileUrl(attachment) {
 		return endpoint("/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment));
+		//return ("https://api.realfield.io/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment));
 	}
 
 
 
 	function createInstance(config = {}) {
-		if (!instance_initialized) {
-			const { auth: { isAuthenticated, user } } = store.getState();
-			instance_authenticated = isAuthenticated;
-			instance_user = user;
-			//console.log("api createInstance isAuthenticated", isAuthenticated);
-			if (isAuthenticated) {
-				var access_token = getAccessToken();
-				//console.log("api createInstance access_token", access_token);
-				if (access_token) {
-					if (isAccessTokenValid(access_token)) {
-						instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(access_token) } });
-					}
-					else {
-						//Refresh 
-						instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
-					}
-				}
-				else {
-					instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
-				}
-			}
-			else {
-				instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
-			}
+		// if (!instance_initialized) {
+		// 	const { auth: { isAuthenticated, user } } = store.getState();
+		// 	instance_authenticated = isAuthenticated;
+		// 	instance_user = user;
+		// 	//
+		// 	if (isAuthenticated) {
+		// 		var access_token = getAccessToken();
+		// 		//
+		// 		if (access_token) {
+		// 			if (isAccessTokenValid(access_token)) {
+		// 				instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(access_token) } });
+		// 			}
+		// 			else {
+		// 				//Refresh 
+		// 				instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
+		// 			}
+		// 		}
+		// 		else {
+		// 			instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
+		// 		}
+		// 	}
+		// 	else {
+		// 		instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
+		// 	}
 
-			let watchAuthenticatedState = watch(store.getState, 'auth.isAuthenticated', Object.areEqual);
-			store.subscribe(watchAuthenticatedState((newVal, oldVal, objectPath) => {
-				instance_authenticated = newVal;
-				if (newVal) {
-					var access_token = getAccessToken();
-					if (isAccessTokenValid(access_token)) {
-						instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(access_token) } });
-					}
-				}
-				else {
-					instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
-				}
-				//console.log(objectPath, 'changed from', oldVal, 'to', newVal)
-			}));
+		// 	let watchAuthenticatedState = watch(store.getState, 'auth.isAuthenticated', Object.areEqual);
+		// 	store.subscribe(watchAuthenticatedState((newVal, oldVal, objectPath) => {
+		// 		instance_authenticated = newVal;
+		// 		if (newVal) {
+		// 			var access_token = getAccessToken();
+		// 			if (isAccessTokenValid(access_token)) {
+		// 				instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(access_token) } });
+		// 			}
+		// 		}
+		// 		else {
+		// 			instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
+		// 		}
+		// 		//
+		// 	}));
 
-			let watchUserState = watch(store.getState, 'auth.user', Object.areEqual);
+		// 	let watchUserState = watch(store.getState, 'auth.user', Object.areEqual);
 
-			store.subscribe(watchUserState((newVal, oldVal, objectPath) => {
-				instance_user = newVal;
-				//console.log(objectPath, 'changed from', oldVal, 'to', newVal)
-			}));
-			instance_initialized = true;
-		}
+		// 	store.subscribe(watchUserState((newVal, oldVal, objectPath) => {
+		// 		instance_user = newVal;
+		// 		//
+		// 	}));
+		// 	instance_initialized = true;
+		// }
 
 		const { cache, interceptors, ...options } = JSON.merge(default_options, config, instance_options);
 
 		let newInstance = axios.create((cache ? (Boolean.isBoolean(cache) ? { ...options, adapter: axios_cache.adapter } : (cache.adapter ? { ...options, ...cache } : { ...options })) : { ...options }));
-		//Custom interceptors to ensure authorization is kept and responses are formatted accordingly. PS: NO DUPLICATES HERE. One's for request. One's for Response.        
-		newInstance.interceptors.request.use(function (config) {
-			config.headers = { ...config.headers, ...getAuthorizationHeader(getAccessToken()) }
+
+		EventRegister.on('api-request-attempt', (config) => {
+			const { cancelOnTimeout, cancelUUID, cancelToken, cancelTokenSource, timeout } = config;
+			let timeoutAction = undefined;
+			//
+			let cancellableOnTimeout = cancelOnTimeout > 0 && Function.isFunction(cancelTokenSource?.cancel);
+			if (cancellableOnTimeout) {
+				const timeoutMs = Number.parseNumber(timeout, 30000);
+				let onRequestError = null;
+				let onRequestComplete = null;
+
+				const removeRequestListeners = () => {
+					if (!!onRequestError) {
+						EventRegister.removeEventListener(onRequestError);
+					}
+					if (!!onRequestComplete) {
+						EventRegister.removeEventListener(onRequestComplete);
+					}
+				}
+				onRequestError = EventRegister.on('api-request-error', (error) => {
+					//
+					if (cancelUUID === data?.config?.cancelUUID) {
+						clearTimeout(timeoutAction);
+						removeRequestListeners();
+					}
+				});
+				onRequestComplete = EventRegister.on('api-request-complete', (data) => {
+					//
+					if (cancelUUID === data?.config?.cancelUUID) {
+						clearTimeout(timeoutAction);
+						removeRequestListeners();
+					}
+				});
+
+				timeoutAction = setTimeout(() => {
+					EventRegister.emit("api-request-timeout", config);
+					cancelTokenSource.cancel();
+					removeRequestListeners();
+				}, timeoutMs);
+
+
+			}
+		});
+		//Custom interceptors to ensure authorization is kept and responses are formatted accordingly. PS: NO DUPLICATES HERE. One's for request. One's for Response.   
+		function onErrorHandler(error) {
+			//console.warn("onErrorHandler error", error);
+			let errobj = {
+				...error,
+				msg: "Request Failed",
+				message: "Request Failed",
+				body: null,
+				code: 400,
+			};
+			if (error.response) {
+				errobj = {
+					...error,
+					...error.response,
+					code: error.response.status,
+					msg: error.response.statusText,
+					message: error.response.statusText,
+					body: error.response.data,
+
+				};
+				if (error.response.data) {
+					if (error.response.data.message || error.response.data.msg || error.response.data.error) {
+						errobj.msg = error.response.data.message || error.response.data.msg || error.response.data.error;
+						errobj.message = error.response.data.message || error.response.data.msg || error.response.data.error;
+					}
+				}
+			} else if (error.request) {
+				errobj = {
+					...error,
+					code: 400,
+					msg: "Request Failed. " + error.message,
+					message: "Request Failed. " + error.message,
+					body: null,
+
+				};
+			}
+			EventRegister.emit('api-request-error', errobj);
+
+			return Promise.reject(errobj);
+		}
+
+		function onSuccessHandler(response) {
+			const { data: { message, msg, ...body }, status, headers, ...rest } = response;
+			let res_message = message || msg || "Success";
+
+			let res = {
+				...rest,
+				message: res_message,
+				body: body,
+				code: status,
+				status: status,
+				headers: headers,
+			};
+			EventRegister.emit('api-request-complete', res);
+			return Promise.resolve(res);
+		}
+
+		function onRequestAttemptHandler(config) {
+			let cancelToken = axios.CancelToken;
+			let cancelOnTimeout = config?.timeout ?? 0 > 0;
+			if (!!config.cancelToken) {
+				cancelToken = config.cancelToken;
+			}
+			if (cancelOnTimeout) {
+				config.cancelOnTimeout = cancelOnTimeout;
+				config.cancelToken = cancelToken?.source()?.token;
+				config.cancelUUID = String.uuid();
+				config.cancelTokenSource = cancelToken?.source();
+			}
+
+			config.headers = { ...config.headers, ...getAuthorizationHeader(access_token) }
+			EventRegister.emit('api-request-attempt', config);
 			return config;
+		}
+		newInstance.interceptors.request.use(function (config) {
+			return onRequestAttemptHandler(config)
+		}, function (error) {
+			return onErrorHandler(error);
+		});
+		newInstance.interceptors.response.use(function (res) {
+
+			return onSuccessHandler(res)
 		}, function (error) {
 			return onErrorHandler(error);
 		});
 
-		newInstance.interceptors.response.use(function (response) {
-			return onSuccessHandler(response)
-		}, function (error) {
-			return onErrorHandler(error)
-		});
-		newInstance.getAttachmentFileUrl = getAttachmentFileUrl;
 
+
+		newInstance.getAttachmentFileUrl = getAttachmentFileUrl;
 		newInstance.upload = (data, params = {}) => newInstance.post("/attachments/upload", data, params);
 		newInstance.isolated = (config = {}) => createIsolatedInstance(config);
 		newInstance.endpoint = (uri = "/") => endpoint(uri);
@@ -478,7 +582,7 @@ const ApiSingleton = (function () {
 		newInstance.refresh_auth_token = (data) => newInstance.post("refresh-token", data);
 
 
-
+		instance = newInstance;
 
 		return newInstance;
 	}
@@ -489,8 +593,8 @@ const ApiSingleton = (function () {
 	return {
 		getInstance: function (options = {}) {
 			if (!instance || !instance_initialized) {
-				instance = createInstance(options);
-				instance.login({ email: "colrium@gmail.com", password: "WI5HINd8" }).then(data => { });
+				createInstance(options);
+				// instance.login({ email: "colrium@gmail.com", password: "WI5HINd8" }).then(data => { });
 
 				instance_initialized = true;
 			}

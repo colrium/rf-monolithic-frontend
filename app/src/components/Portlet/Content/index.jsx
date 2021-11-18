@@ -1,7 +1,7 @@
 /** @format */
 
 // Material helpers
-import { withStyles } from "@material-ui/core";
+
 import classNames from "classnames";
 // Externals
 import PropTypes from "prop-types";
@@ -26,8 +26,8 @@ const PortletContent = props => {
 
 	const rootClassName = classNames(
 		{
-			[classes.root]: true,
-			[classes.noPadding]: noPadding,
+			[classes?.root]: true,
+			[classes?.noPadding]: noPadding,
 		},
 		className
 	);
@@ -38,8 +38,8 @@ const PortletContent = props => {
 PortletContent.propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	noPadding: PropTypes.bool,
 };
 
-export default withStyles(styles)(PortletContent);
+export default (PortletContent);

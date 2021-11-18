@@ -1,7 +1,7 @@
 /** @format */
 
-import { IconButton } from "@material-ui/core";
-import Chip from "@material-ui/core/Chip";
+import { IconButton } from "@mui/material";
+import Chip from "@mui/material/Chip";
 import {
 	Add as AddIcon,
 	DeleteOutlined as DeleteIcon,
@@ -9,7 +9,7 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 	PersonOutlined as UserIcon,
 	PersonPinOutlined as DefinationContextIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import Status from "components/Status";
@@ -17,7 +17,7 @@ import Typography from "components/Typography";
 import React from "react";
 import { Link } from "react-router-dom";
 import ApiService from "services/Api";
-import GpsFixedIcon from '@material-ui/icons/GpsFixed';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
 export default {
 	name: "tracks",
@@ -54,20 +54,20 @@ export default {
 							return {
 								id: entry?._id,
 								icon: false,
-								avatar: ( 
-										<Avatar className="accent_text ">
-											<GpsFixedIcon />
-										</Avatar>
-									),
-								title: new Date(entry.start_time).toString()+ " - " + new Date(entry.stop_time).toString(),
+								avatar: (
+									<Avatar className="accent_text ">
+										<GpsFixedIcon />
+									</Avatar>
+								),
+								title: new Date(entry.start_time).toString() + " - " + new Date(entry.stop_time).toString(),
 								body: (
 									<React.Fragment>
 										{entry.user && <Typography
 											component="span"
 											variant="body2"
-											color="default"
+
 										>
-											{isPopulated? (entry.user.first_name+" "+entry.user.last_name) : entry.user}
+											{isPopulated ? (entry.user.first_name + " " + entry.user.last_name) : entry.user}
 										</Typography>}
 										{entry.time_type ? (
 											<Status
@@ -86,12 +86,12 @@ export default {
 											""
 										)}
 
-										
-										
+
+
 										{entry.context && (
 											<Status
-												color={entry.context === "commission"? "#00bfa5" : "#CCCCCC"}
-												text={entry.context === "commission"? "Commission": "Roam"}
+												color={entry.context === "commission" ? "#00bfa5" : "#CCCCCC"}
+												text={entry.context === "commission" ? "Commission" : "Roam"}
 											/>
 										)}
 									</React.Fragment>
@@ -122,7 +122,7 @@ export default {
 									}
 								/>
 							),
-							commision: entry.commision? entry.commision._id: "",
+							commision: entry.commision ? entry.commision._id : "",
 							positions: (
 								<React.Fragment>
 									{/*Array.isArray(entry.positions) &&
@@ -217,8 +217,8 @@ export default {
 							calendarId: "tracks",
 							title: entry.user
 								? entry.user.first_name +
-								  " " +
-								  entry.user.last_name
+								" " +
+								entry.user.last_name
 								: entry.context,
 							body:
 								"<b>Type</b> <br />" +
@@ -254,15 +254,15 @@ export default {
 									position.longitude +
 									(position.timestamp
 										? " (Timestamp: " +
-										  position.timestamp +
-										  ")"
+										position.timestamp +
+										")"
 										: "") +
 									(entry.user
 										? " (User: " +
-										  entry.user.first_name +
-										  " " +
-										  entry.user.last_name +
-										  ")"
+										entry.user.first_name +
+										" " +
+										entry.user.last_name +
+										")"
 										: "")
 								);
 							}),
@@ -271,16 +271,16 @@ export default {
 							title:
 								(entry.start_time
 									? " Start Time: " +
-									  new Date(entry.start_time).format(
-											"d M Y H:i:s A"
-									  ) 
+									new Date(entry.start_time).format(
+										"d M Y H:i:s A"
+									)
 									: "") +
 								(entry.user
 									? " (User: " +
-									  entry.user.first_name +
-									  " " +
-									  entry.user.last_name +
-									  ")"
+									entry.user.first_name +
+									" " +
+									entry.user.last_name +
+									")"
 									: ""),
 							infoWindow: (
 								<React.Fragment>
@@ -298,7 +298,7 @@ export default {
 									<Typography
 										component="div"
 										variant="body2"
-										color="default"
+
 									>
 										{" "}
 										{entry.user && (
@@ -335,7 +335,7 @@ export default {
 										<Typography
 											component="p"
 											variant="body2"
-											color="default"
+
 										>
 											{" "}
 											Start Time:{" "}
@@ -344,12 +344,12 @@ export default {
 											)}
 										</Typography>
 									)}
-									
+
 									{entry.context && (
 										<Typography
 											component="p"
 											variant="body2"
-											color="default"
+
 										>
 											{" "}
 											Context : {entry.context}
@@ -360,7 +360,7 @@ export default {
 											<Typography
 												component="p"
 												variant="body2"
-												color="default"
+
 											>
 												{" "}
 												Commission :{" "}
@@ -756,7 +756,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className) => {},
+						default: (entry, className) => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -787,7 +787,7 @@ export default {
 								<Link to={"tracks/add/"} {...props}>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -814,7 +814,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className = "grey_text") => {},
+						default: (entry, className = "grey_text") => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -845,7 +845,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className = "error_text", onClick) => {},
+						default: (id, className = "error_text", onClick) => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

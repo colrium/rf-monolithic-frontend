@@ -4,7 +4,7 @@ import { app } from "assets/jss/app-theme";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import React from "react";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 import CartView from "views/widgets/Ecommerce/Cart";
 
 class Page extends React.Component {
@@ -39,4 +39,4 @@ class Page extends React.Component {
 	}
 }
 
-export default withErrorHandler(Page);
+export default (Page);

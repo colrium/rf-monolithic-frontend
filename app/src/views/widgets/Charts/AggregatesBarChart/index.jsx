@@ -1,10 +1,9 @@
 /** @format */
 
-import { Menu, MenuItem } from "@material-ui/core";
+import { Menu, MenuItem } from "@mui/material";
 //
-import withStyles from "@material-ui/core/styles/withStyles";
-import { MoreVert as AggregateMenuIcon } from "@material-ui/icons";
-import EmptyStateImage from "assets/img/empty-state-table.svg";
+
+import { MoreVert as AggregateMenuIcon } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
@@ -16,10 +15,11 @@ import { defaults, Bar } from "react-chartjs-2";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { apiCallRequest } from "state/actions";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 //
+import ApiService from "services/Api";
 import { UtilitiesHelper } from "hoc/Helpers";
-import styles from "./styles";
+
 
 //
 defaults.global.legend.display = false;
@@ -256,8 +256,8 @@ class AggregatesBarChart extends React.Component {
 			"g" in query_data
 				? query_data.g
 				: "group" in query_data
-				? query_data.group
-				: false;
+					? query_data.group
+					: false;
 		this.setState(state => ({ aggregate: new_aggregate }));
 
 		if (defination) {
@@ -290,8 +290,7 @@ class AggregatesBarChart extends React.Component {
 	};
 
 	render() {
-        const {
-			classes,
+		const {
 			className,
 			aggregate,
 			dynamic,
@@ -303,7 +302,7 @@ class AggregatesBarChart extends React.Component {
 			cache,
 		} = this.props;
 
-        return (
+		return (
 			!JSON.isEmpty(defination) && <GridContainer className={className + " p-0 m-0"}>
 				<GridItem xs={12} className="p-0 m-0">
 					<GridContainer className="p-0 m-0">
@@ -314,19 +313,18 @@ class AggregatesBarChart extends React.Component {
 										{showTitle && !showMenu && (
 											<GridItem xs={12}>
 												<Typography
-													color="default"
+
 													variant="body1"
 													fullWidth
-													center
-												>
+																									>
 													{defination.scope.columns[
 														this.state.aggregate
 													]
 														? defination.scope
-																.columns[
-																this.state
-																	.aggregate
-														  ].label
+															.columns[
+															this.state
+																.aggregate
+														].label
 														: "Unknown"}{" "}
 													Aggregate
 												</Typography>
@@ -345,20 +343,20 @@ class AggregatesBarChart extends React.Component {
 														this
 															.handleShowAggregateMenu
 													}
-													color="default"
+
 													className="float-right"
 													size="md"
 													aria-label="Aggregate Menu"
-													simple
+
 												>
 													{defination.scope?.columns[
 														this.state.aggregate
 													]
 														? defination.scope
-																.columns[
-																this.state
-																	.aggregate
-														  ].label
+															.columns[
+															this.state
+																.aggregate
+														].label
 														: "Unknown"}{" "}
 													Aggregate
 													<AggregateMenuIcon />
@@ -407,9 +405,9 @@ class AggregatesBarChart extends React.Component {
 
 							<GridItem className="p-0 m-0" xs={12}>
 								{Array.isArray(this.state.chart_data.labels) &&
-								this.state.chart_data.labels.length > 0 ? (
-									<Bar 
-										data={this.state.chart_data} 
+									this.state.chart_data.labels.length > 0 ? (
+									<Bar
+										data={this.state.chart_data}
 										options={{
 											maintainAspectRatio: false,
 											scales: {
@@ -429,23 +427,22 @@ class AggregatesBarChart extends React.Component {
 									>
 										<img
 											alt="Empty Aggregates"
-											className={classes.emptyImage}
-											src={EmptyStateImage}
+											className={"m-8 w-9/12"}
+											src={ApiService.endpoint("/public/img/empty-state-table.svg")}
 										/>
 										<Typography
-											className={classes.emptyText}
+											className={"mt-4"}
 											color="grey"
 											variant="body2"
-											center
-											fullWidth
+																						fullWidth
 										>
 											No{" "}
 											{defination.scope.columns[
 												this.state.aggregate
 											]
 												? defination.scope.columns[
-														this.state.aggregate
-												  ].label
+													this.state.aggregate
+												].label
 												: ""}{" "}
 											Aggregates
 										</Typography>
@@ -460,8 +457,7 @@ class AggregatesBarChart extends React.Component {
 									<Typography
 										color="error"
 										variant="body2"
-										center
-										fullWidth
+																				fullWidth
 									>
 										{"An error occured. \n " +
 											api.error.msg}
@@ -473,12 +469,12 @@ class AggregatesBarChart extends React.Component {
 				</GridItem>
 			</GridContainer>
 		);
-    }
+	}
 }
 
 AggregatesBarChart.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	dynamic: PropTypes.bool,
 	showTitle: PropTypes.bool,
 	showMenu: PropTypes.bool,
@@ -514,7 +510,6 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default compose(
-	withStyles(styles),
-	connect(mapStateToProps, { apiCallRequest }),
-	withErrorHandler
+
+	connect(mapStateToProps, { apiCallRequest })
 )(AggregatesBarChart);

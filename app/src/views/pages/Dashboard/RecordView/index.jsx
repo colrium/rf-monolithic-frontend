@@ -1,8 +1,8 @@
 /** @format */
 
-import { Icon } from "@material-ui/core";
-import withStyles from "@material-ui/core/styles/withStyles";
-import AccessErrorIcon from "@material-ui/icons/WarningRounded";
+import { Icon } from "@mui/material";
+
+import AccessErrorIcon from "@mui/icons-material/WarningRounded";
 //
 import { colors } from "assets/jss/app-theme";
 import Button from "components/Button";
@@ -19,9 +19,8 @@ import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import ApiService from "services/Api";
 //
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 import { appendNavHistory } from "state/actions/ui/nav";
-import styles from "views/pages/styles";
 //Widgets
 import RecordView from "views/widgets/RecordView";
 
@@ -77,7 +76,7 @@ class Page extends React.Component {
 	}
 
 	render() {
-		const { classes, auth, nav } = this.props;
+		const { auth, nav } = this.props;
 
 		const last_location = Array.isArray(nav.entries)
 			? nav.entries.length > 1
@@ -87,14 +86,13 @@ class Page extends React.Component {
 		const forbidden = this.state.loading
 			? false
 			: JSON.isJSON(this.state.record)
-			? this.defination.access.actions.view_single.restricted(auth.user)
-			: true;
+				? this.defination.access.actions.view_single.restricted(auth.user)
+				: true;
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer >
 				<GridItem xs={12}>
 					{this.state.loading ? (
 						<GridContainer
-							className={classes.full_height}
 							justify="center"
 							alignItems="center"
 						>
@@ -102,7 +100,6 @@ class Page extends React.Component {
 								<ProgressIndicator
 									size={24}
 									thickness={4}
-									className={classes.progress}
 									color="secondary"
 									disableShrink
 								/>
@@ -116,8 +113,7 @@ class Page extends React.Component {
 										<Typography
 											color="error"
 											variant="h1"
-											center
-											fullWidth
+																						fullWidth
 										>
 											<Icon fontSize="large">error</Icon>
 										</Typography>
@@ -126,8 +122,7 @@ class Page extends React.Component {
 										<Typography
 											color="error"
 											variant="body1"
-											center
-											fullWidth
+																						fullWidth
 										>
 											An error occured.
 											<br />
@@ -142,7 +137,6 @@ class Page extends React.Component {
 								<GridContainer>
 									{forbidden && (
 										<GridContainer
-											className={classes.fullPageHeight}
 											direction="column"
 											justify="center"
 											alignItems="center"
@@ -151,22 +145,16 @@ class Page extends React.Component {
 												<Typography
 													color="error"
 													variant="h1"
-													center
-													fullWidth
+																										fullWidth
 												>
-													<AccessErrorIcon
-														className={
-															classes.errorIcon
-														}
-													/>
+													<AccessErrorIcon />
 												</Typography>
 											</GridItem>
 											<GridItem xs={12}>
 												<Typography
 													color="grey"
 													variant="h3"
-													center
-													fullWidth
+																										fullWidth
 												>
 													Access Denied!
 												</Typography>
@@ -174,10 +162,9 @@ class Page extends React.Component {
 
 											<GridItem xs={12}>
 												<Typography
-													color="default"
+
 													variant="body1"
-													center
-													fullWidth
+																										fullWidth
 												>
 													Sorry! Access to this
 													resource is prohibitted
@@ -193,8 +180,7 @@ class Page extends React.Component {
 												<Typography
 													color="error"
 													variant="body1"
-													center
-													fullWidth
+																										fullWidth
 												>
 													<Link
 														to={"home".toUriWithDashboardPrefix()}
@@ -202,8 +188,6 @@ class Page extends React.Component {
 														{" "}
 														<Button
 															variant="text"
-															color="default"
-															simple
 														>
 															{" "}
 															Home{" "}
@@ -216,8 +200,6 @@ class Page extends React.Component {
 															{" "}
 															<Button
 																variant="text"
-																color="default"
-																simple
 															>
 																{" "}
 																Back{" "}
@@ -264,7 +246,6 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-	withStyles(styles),
-	connect(mapStateToProps, { appendNavHistory }),
-	withErrorHandler
+
+	connect(mapStateToProps, { appendNavHistory })
 )(Page);

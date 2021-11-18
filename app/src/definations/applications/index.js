@@ -1,26 +1,26 @@
 /** @format */
 
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import {
 	Add as AddIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	HowToVoteOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,
-} from "@material-ui/icons";
-import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
-import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
+} from "@mui/icons-material";
+import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import Button from "components/Button";
-import React, {useEffect, useState} from "react";
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React, { useEffect, useState } from "react";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 import { Link } from "react-router-dom";
 import { CountriesHelper, UtilitiesHelper } from "hoc/Helpers";
 import { useGlobals } from "contexts/Globals";
-import {useGooglePlaces, useGeoLocation} from "hooks";
+import { useGooglePlaces, useGeoLocation } from "hooks";
 import { connect } from "react-redux";
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@mui/styles';
 import compose from "recompose/compose";
 import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions";
 
@@ -28,10 +28,6 @@ let currentDate = new Date();
 
 const ke_regions = CountriesHelper.administrative_features_options("KE", 2, "Nairobi");
 
-
-const Alert = (props) => {
-	return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 
 const ConvertToUserIconAction = (props) => {
@@ -43,71 +39,71 @@ const ConvertToUserIconAction = (props) => {
 	const [initiated, setInitiated] = useState(false);
 	const [emailCacheTouched, setEmailCacheTouched] = useState(false);
 
-	const handleCreateApplicantUserAccount = (sendEmail = false) => {			
-			setLoading(true);
+	const handleCreateApplicantUserAccount = (sendEmail = false) => {
+		setLoading(true);
+		setError(false);
+		let accountDetails = JSON.fromJSON(application);
+		delete accountDetails["_id"];
+		delete accountDetails["entry"];
+		accountDetails.staff_id = staffID;
+		accountDetails.password = staffID;
+		accountDetails.status = "active";
+		apiCallRequest("applications",
+			{
+				uri: "/recruitment/applications/" + application._id + "/create-user",
+				type: "create",
+				params: { p: "1" },
+				data: accountDetails,
+				cache: true,
+				silent: true,
+			}
+		).then(res => {
+			const { data } = res.body;
+			if (sendEmail) {
+				setEmailingCache("recipient_address", data.email_address);
+				setEmailingCache("recipient_name", data.first_name);
+				setEmailingCache("subject", "Your Realfield user account");
+				setEmailingCache("content", "Hey " + data.first_name + ", \n\n\nHere are your unique login details.\n\n\nUsername: " + application.email_address + " \nPassword: " + (!String.isEmpty(data.staffID) ? data.staffID : staffID) + "\n\n\n When you get inside the app things are pretty self-explanatory and under the ‘Reading’ tab, you’ll find a stack of materials we’d like you to review over the next few days. You’ll see a Realfield Training Manual and a number of other great resources for you to review.\nThe training will consist of a number elements starting with a short quiz. Don’t worry, the purpose of the quiz is to give us an idea of where we need to provide additional support, it’s not designed to catch you out.\nFollowing the quiz, we’ll be scheduling a number of live sessions. These sessions are really important and designed to help us test our platform.  They will also help us test things like responsiveness and accuracy, and each of the live sessions will be time sensitive. For example, you may be given a number of hours or a couple of days to complete the training assignment.\nMany of you have been writing in with encouragement and questions, and we love it! If you have questions, want to offer feedback or need support, please continue to use the jobs@realfield.io address.\nAsante sana and have an amazing weekend!!\n\n\nRealfield People Ops");
+				setEmailingCache("context", "Application");
+				setEmailingCache("record", application._id);
+				setEmailingCache("popup_open", true);
+				setEmailCacheTouched(true);
+
+			}
+
 			setError(false);
-			let accountDetails = JSON.fromJSON(application);
-			delete accountDetails["_id"];
-			delete accountDetails["entry"];
-			accountDetails.staff_id = staffID;
-			accountDetails.password = staffID;
-			accountDetails.status = "active";
-			apiCallRequest( "applications",
-					{
-						uri: "/recruitment/applications/"+application._id+"/create-user",
-						type: "create",
-						params: {p: "1"},
-						data: accountDetails,
-						cache: true,
-						silent: true,
-					}
-			).then(res => {
-				const {data} = res.body;
-                if (sendEmail) {
-					setEmailingCache("recipient_address", data.email_address);
-					setEmailingCache("recipient_name", data.first_name);
-					setEmailingCache("subject", "Your Realfield user account");
-					setEmailingCache("content", "Hey "+data.first_name+", \n\n\nHere are your unique login details.\n\n\nUsername: "+application.email_address+" \nPassword: "+(!String.isEmpty(data.staffID)? data.staffID : staffID)+"\n\n\n When you get inside the app things are pretty self-explanatory and under the ‘Reading’ tab, you’ll find a stack of materials we’d like you to review over the next few days. You’ll see a Realfield Training Manual and a number of other great resources for you to review.\nThe training will consist of a number elements starting with a short quiz. Don’t worry, the purpose of the quiz is to give us an idea of where we need to provide additional support, it’s not designed to catch you out.\nFollowing the quiz, we’ll be scheduling a number of live sessions. These sessions are really important and designed to help us test our platform.  They will also help us test things like responsiveness and accuracy, and each of the live sessions will be time sensitive. For example, you may be given a number of hours or a couple of days to complete the training assignment.\nMany of you have been writing in with encouragement and questions, and we love it! If you have questions, want to offer feedback or need support, please continue to use the jobs@realfield.io address.\nAsante sana and have an amazing weekend!!\n\n\nRealfield People Ops");
-					setEmailingCache("context", "Application");
-					setEmailingCache("record", application._id);
-					setEmailingCache("popup_open", true);
-					setEmailCacheTouched(true);
+			setLoading(false);
+		}).catch(e => {
 
-				}
 
-                setError(false);
-                setLoading(false);
-            }).catch(e => {
-
-            	
-				let errMsg = e;
-				if (JSON.isJSON(e)) {
-					if (String.isString(e.error)) {
-						errMsg = e.error;
-					}
-					else if (String.isString(e.message)) {
-						errMsg = e.message;
-					}
-					else if (String.isString(e.msg)) {
-						errMsg = e.msg;
-					}
-					else{
-						errMsg = JSON.stringify(e);
-					}
+			let errMsg = e;
+			if (JSON.isJSON(e)) {
+				if (String.isString(e.error)) {
+					errMsg = e.error;
 				}
-				else{
-					errMsg = e.toString();
+				else if (String.isString(e.message)) {
+					errMsg = e.message;
 				}
-				setError(errMsg);
-				setLoading(false);
-			});
+				else if (String.isString(e.msg)) {
+					errMsg = e.msg;
+				}
+				else {
+					errMsg = JSON.stringify(e);
+				}
+			}
+			else {
+				errMsg = e.toString();
+			}
+			setError(errMsg);
+			setLoading(false);
+		});
 	}
 
 	const handleOnCreateUserAccountConfirm = () => {
 		openDialog({
-			title: "Add "+application.first_name+" "+application.last_name+" as a new user?",
+			title: "Add " + application.first_name + " " + application.last_name + " as a new user?",
 			body:
-				"A new user account will be created for <b> "+application.first_name+" "+application.last_name+"</b> with the staff ID: <b>"+staffID+"</b> and the following credentials.<br /><br /> <b> Username:</b>"+application.email_address+" <br /> <b>Password:</b>"+staffID,
+				"A new user account will be created for <b> " + application.first_name + " " + application.last_name + "</b> with the staff ID: <b>" + staffID + "</b> and the following credentials.<br /><br /> <b> Username:</b>" + application.email_address + " <br /> <b>Password:</b>" + staffID,
 			actions: {
 				cancel: {
 					text: "Cancel",
@@ -132,12 +128,12 @@ const ConvertToUserIconAction = (props) => {
 					color: "primary",
 					onClick: () => {
 						closeDialog();
-						try{
+						try {
 							handleCreateApplicantUserAccount(true);
-						} catch(err){
+						} catch (err) {
 							console.error("try handleCreateApplicantUserAccount err", err)
 						}
-						
+
 					},
 				},
 			},
@@ -164,14 +160,14 @@ const ConvertToUserIconAction = (props) => {
 			delete profObject["provider_handle"];
 			delete profObject["provider_url"];
 			Object.entries(profObject).map(([key, value]) => {
-				profileContent = profileContent+' <div class="flex flex-row w-full"><b>'+key.humanize()+': </b> <span class="flex-grow mx-2">'+value+'</span></div>';
+				profileContent = profileContent + ' <div class="flex flex-row w-full"><b>' + key.humanize() + ': </b> <span class="flex-grow mx-2">' + value + '</span></div>';
 			});
 			profileContent = profileContent + '</div>';
 		} catch (e) {
 
 		}
 		openDialog({
-			title: "User Account for  "+application.first_name+" "+application.last_name,
+			title: "User Account for  " + application.first_name + " " + application.last_name,
 			body: profileContent,
 			actions: {
 				cancel: {
@@ -216,56 +212,56 @@ const ConvertToUserIconAction = (props) => {
 	}
 
 	const checkStaffIDAvailability = () => {
-			setLoading(true);
-			setError(false);
-			apiCallRequest( "users",
-					{
-						uri: "/users",
-						type: "records",
-						params: {p: "1", staff_id: staffID},
-						data: {},
-						cache: false,
-						silent: true,
-					}
-			).then(res => {
-				const {data} = res.body;
-                if (Array.isArray(data)) {
-					if (data.length > 0) {
-						let staff_id = String.uid(8, false, true);
-						setStaffID(staff_id);
-					}
-					else {
-						handleOnCreateUserAccountConfirm();
-					}
+		setLoading(true);
+		setError(false);
+		apiCallRequest("users",
+			{
+				uri: "/users",
+				type: "records",
+				params: { p: "1", staff_id: staffID },
+				data: {},
+				cache: false,
+				silent: true,
+			}
+		).then(res => {
+			const { data } = res.body;
+			if (Array.isArray(data)) {
+				if (data.length > 0) {
+					let staff_id = String.uid(8, false, true);
+					setStaffID(staff_id);
 				}
-            }).catch(e => {
-				let errMsg = e;
-				if (JSON.isJSON(e)) {
-					if (String.isString(e.error)) {
-						errMsg = e.error;
-					}
-					else if (String.isString(e.message)) {
-						errMsg = e.message;
-					}
-					else if (String.isString(e.msg)) {
-						errMsg = e.msg;
-					}
-					else{
-						errMsg = JSON.stringify(e);
-					}
+				else {
+					handleOnCreateUserAccountConfirm();
 				}
-				else{
-					errMsg = e.toString();
+			}
+		}).catch(e => {
+			let errMsg = e;
+			if (JSON.isJSON(e)) {
+				if (String.isString(e.error)) {
+					errMsg = e.error;
 				}
-				setError(errMsg);
-				setLoading(false);
-			});
-		
+				else if (String.isString(e.message)) {
+					errMsg = e.message;
+				}
+				else if (String.isString(e.msg)) {
+					errMsg = e.msg;
+				}
+				else {
+					errMsg = JSON.stringify(e);
+				}
+			}
+			else {
+				errMsg = e.toString();
+			}
+			setError(errMsg);
+			setLoading(false);
+		});
+
 	}
 
 
 
-	
+
 
 	useEffect(() => {
 		if (initiated) {
@@ -275,7 +271,7 @@ const ConvertToUserIconAction = (props) => {
 			else {
 				handleOnShowUser();
 			}
-		}		
+		}
 	}, [initiated, staffID]);
 
 	useEffect(() => {
@@ -283,14 +279,14 @@ const ConvertToUserIconAction = (props) => {
 			if (emailCacheTouched) {
 				clearEmailingCache();
 			}
-		}		
+		}
 	}, [emailCacheTouched]);
 
 	return (
 		<React.Fragment>
 			{loading && <CircularProgress size={16} color="secondary" />}
 			{(layoutType === "inline" && !loading) && <IconButton
-				color={application.user? "secondary" : "inherit"}
+				color={application.user ? "secondary" : "inherit"}
 				aria-label="Create application user"
 				onClick={() => {
 					if (initiated) {
@@ -301,18 +297,18 @@ const ConvertToUserIconAction = (props) => {
 							handleOnShowUser();
 						}
 					}
-					else{
+					else {
 						setInitiated(true);
-					}					
+					}
 				}}
 			>
 				{!application.user && <PersonAddOutlinedIcon fontSize="small" />}
 				{application.user && <AccountCircleOutlinedIcon fontSize="small" />}
 			</IconButton>}
 			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
-		        <Alert onClose={() => setError(false)} severity="error">
+				<Alert elevation={6} variant="filled" onClose={() => setError(false)} severity="error">
 					{error}
-		        </Alert>
+				</Alert>
 			</Snackbar>}
 		</React.Fragment>
 	)
@@ -329,7 +325,7 @@ const mapStateToProps = state => ({
 });
 
 const ConvertToUserIconActionComponent = compose(
-	connect(mapStateToProps, {apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog}),
+	connect(mapStateToProps, { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog }),
 	withTheme,
 )(ConvertToUserIconAction);
 
@@ -363,7 +359,7 @@ export default {
 					required: true,
 					props: {
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						}
 					},
@@ -390,12 +386,12 @@ export default {
 					required: true,
 					props: {
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						},
 					},
 				},
-				
+
 			},
 
 			/*honorific: {
@@ -415,7 +411,7 @@ export default {
 					type: "text",
 					required: true,
 					size: 6,
-					
+
 				},
 			},
 
@@ -427,7 +423,7 @@ export default {
 					default: "",
 					required: true,
 					size: 6,
-					
+
 				},
 			},
 
@@ -439,7 +435,7 @@ export default {
 					type: "email",
 					default: "",
 					required: true,
-					
+
 				},
 			},
 
@@ -450,7 +446,7 @@ export default {
 					type: "phone",
 					default: "",
 					required: false,
-					
+
 				},
 			},
 
@@ -479,14 +475,14 @@ export default {
 				label: "Date of birth",
 				input: {
 					type: "date",
-					default: new Date().setFullYear(currentDate.getFullYear()-18),
+					default: new Date().setFullYear(currentDate.getFullYear() - 18),
 					required: false,
 					props: {
-						maxDate: new Date().setFullYear(currentDate.getFullYear()-18),
-						format:"DD/MM/YYYY",
+						maxDate: new Date().setFullYear(currentDate.getFullYear() - 18),
+						format: "DD/MM/YYYY",
 						margin: "dense",
-						InputProps: { 
-							classes : {
+						InputProps: {
+							classes: {
 								root: "inverse",
 							}
 						}
@@ -501,7 +497,7 @@ export default {
 					type: "text",
 					default: "",
 					required: false,
-					
+
 				},
 			},
 
@@ -515,7 +511,7 @@ export default {
 					required: true,
 					props: {
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						},
 					},
@@ -523,7 +519,7 @@ export default {
 				possibilities: CountriesHelper.names(),
 			},
 
-			
+
 
 			administrative_level_1: {
 				type: "string",
@@ -534,23 +530,23 @@ export default {
 					props: {
 						freeSolo: true,
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						},
-					},			
+					},
 				},
 				possibilities: async (values, user) => {
-					//console.log("values.country", values);
-						if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
-							return await CountriesHelper.administrative_features_options(values.country, 1).then(data => {return data}).catch(err => {return {}});
-						}
-						return {};
-						
-				}			
-			
+					//
+					if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
+						return await CountriesHelper.administrative_features_options(values.country, 1).then(data => { return data }).catch(err => { return {} });
+					}
+					return {};
+
+				}
+
 			},
 
-			
+
 
 			administrative_level_2: {
 				type: "string",
@@ -562,21 +558,21 @@ export default {
 					props: {
 						freeSolo: true,
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						},
 					}
 				},
-				possibilities: async (values, user) => {					
-						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_1)) {
-							return await CountriesHelper.administrative_features_options(values.country, 2, values.administrative_level_1).then(data => {
-                                return data;
-                            }).catch(err => {
-                                return {};
-                            });
-						}
-						return {};
-						
+				possibilities: async (values, user) => {
+					if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_1)) {
+						return await CountriesHelper.administrative_features_options(values.country, 2, values.administrative_level_1).then(data => {
+							return data;
+						}).catch(err => {
+							return {};
+						});
+					}
+					return {};
+
 				}
 			},
 
@@ -587,24 +583,24 @@ export default {
 					type: "select",
 					default: "",
 					required: false,
-					props: {						
+					props: {
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						},
 					}
-					
+
 				},
-				possibilities: async (values, user) => {					
-						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_2)) {
-							return await CountriesHelper.administrative_features_options(values.country, 3, values.administrative_level_2).then(data => {
-                                return data;
-                            }).catch(err => {
-                                return {};
-                            });
-						}
-						return {};
-						
+				possibilities: async (values, user) => {
+					if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_2)) {
+						return await CountriesHelper.administrative_features_options(values.country, 3, values.administrative_level_2).then(data => {
+							return data;
+						}).catch(err => {
+							return {};
+						});
+					}
+					return {};
+
 				}
 			},
 			region: {
@@ -616,23 +612,23 @@ export default {
 					props: {
 						freeSolo: true,
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						},
-					},			
+					},
 				},
 				possibilities: async (values, user) => {
-					//console.log("values.country", values);
-						if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
-							return await CountriesHelper.administrative_features_options(values.country, 1).then(data => {return data}).catch(err => {return {}});
-						}
-						return {};
-						
-				}			
-			
+					//
+					if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
+						return await CountriesHelper.administrative_features_options(values.country, 1).then(data => { return data }).catch(err => { return {} });
+					}
+					return {};
+
+				}
+
 			},
 
-			
+
 
 			subcounty: {
 				type: "string",
@@ -644,21 +640,21 @@ export default {
 					props: {
 						freeSolo: true,
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						},
 					}
 				},
-				possibilities: async (values, user) => {					
-						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.region)) {
-							return await CountriesHelper.administrative_features_options(values.country, 2, values.region).then(data => {
-                                return data;
-                            }).catch(err => {
-                                return {};
-                            });
-						}
-						return {};
-						
+				possibilities: async (values, user) => {
+					if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.region)) {
+						return await CountriesHelper.administrative_features_options(values.country, 2, values.region).then(data => {
+							return data;
+						}).catch(err => {
+							return {};
+						});
+					}
+					return {};
+
 				}
 			},
 
@@ -669,24 +665,24 @@ export default {
 					type: "hidden",
 					default: "",
 					required: false,
-					props: {						
+					props: {
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						},
 					}
-					
+
 				},
-				possibilities: async (values, user) => {					
-						if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.subcounty)) {
-							return await CountriesHelper.administrative_features_options(values.country, 3, values.subcounty).then(data => {
-                                return data;
-                            }).catch(err => {
-                                return {};
-                            });
-						}
-						return {};
-						
+				possibilities: async (values, user) => {
+					if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.subcounty)) {
+						return await CountriesHelper.administrative_features_options(values.country, 3, values.subcounty).then(data => {
+							return data;
+						}).catch(err => {
+							return {};
+						});
+					}
+					return {};
+
 				}
 			},
 
@@ -697,7 +693,7 @@ export default {
 					type: "text",
 					default: "",
 					required: false,
-					
+
 				},
 			},
 
@@ -710,7 +706,7 @@ export default {
 					required: true,
 					props: {
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						}
 					},
@@ -731,7 +727,7 @@ export default {
 					type: "text",
 					default: "",
 					required: true,
-					
+
 				},
 			},
 
@@ -742,7 +738,7 @@ export default {
 					type: "text",
 					default: "",
 					required: true,
-					
+
 				},
 			},
 
@@ -754,7 +750,7 @@ export default {
 					default: "",
 					required: false,
 					rich_text: true,
-					
+
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -780,7 +776,7 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						
+
 						return true;
 					},
 					input: (values, user) => {
@@ -791,7 +787,7 @@ export default {
 					},
 				},
 			},
-			
+
 
 			avatar: {
 				type: "string",
@@ -895,14 +891,14 @@ export default {
 					props: {
 						freeSolo: true,
 						margin: "dense",
-						classes : {
+						classes: {
 							inputRoot: "inverse",
 						},
 					},
 				},
 				possibilities: (values, user) => {
-					let sources = { 
-						"Twitter": "Twitter",	
+					let sources = {
+						"Twitter": "Twitter",
 						"Facebook": "Facebook",
 						"Instagram": "Instagram",
 						"LinkedIn": "LinkedIn",
@@ -918,7 +914,7 @@ export default {
 					return sources;
 				},
 			},
-			
+
 		},
 		identity: {
 			primary: ["title"],
@@ -978,7 +974,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className) => {},
+						default: (entry, className) => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -1014,7 +1010,7 @@ export default {
 								>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -1043,7 +1039,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className = "grey_text") => {},
+						default: (entry, className = "grey_text") => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -1078,7 +1074,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className = "grey_text") => {},
+						default: (entry, className = "grey_text") => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<ConvertToUserIconActionComponent application={entry} />
@@ -1101,7 +1097,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className = "error_text") => {},
+						default: (id, className = "error_text") => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import Button from "components/Button";
 import {
 	AssignmentTurnedInOutlined as DefinationContextIcon,
@@ -8,7 +8,7 @@ import {
 	Add as AddIcon,
 	EditOutlined as EditIcon,
 	DeleteOutlined as DeleteIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 export default {
 	name: "answers",
@@ -22,10 +22,10 @@ export default {
 		single: {
 			default: "cardview",
 			cardview: {
-				
+
 				resolveData: entry => {
 					let view_data = {};
-					
+
 
 					return view_data;
 				},
@@ -70,10 +70,10 @@ export default {
 						if (String.isString(values.question)) {
 							//ToDo: --
 						}
-						else if (JSON.isJSON(values.question)){						
+						else if (JSON.isJSON(values.question)) {
 
 							if (Array.isArray(values.question.choices)) {
-								values.question.choices.map( choice => {
+								values.question.choices.map(choice => {
 									if (String.isString(choice)) {
 										resolvedPossibilities[choice] = choice.humanize();
 									}
@@ -159,7 +159,7 @@ export default {
 			},
 
 
-			
+
 
 			evaluation: {
 				type: "number",
@@ -169,7 +169,7 @@ export default {
 					default: 0,
 					required: false,
 				},
-				
+
 				restricted: {
 					display: () => {
 						return false;
@@ -180,7 +180,7 @@ export default {
 				},
 			},
 
-			
+
 		},
 		identity: {
 			primary: ["value"],
@@ -189,7 +189,7 @@ export default {
 		},
 		dependencies: [],
 		dependants: {
-			
+
 			actionlogs: {
 				column: "record",
 				query: { context: "Commission" },
@@ -285,7 +285,7 @@ export default {
 								>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New Answer
@@ -360,7 +360,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

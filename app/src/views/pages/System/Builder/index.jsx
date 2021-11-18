@@ -1,6 +1,6 @@
 /** @format */
 
-import withStyles from "@material-ui/core/styles/withStyles";
+
 import { colors } from "assets/jss/app-theme";
 //
 import GridContainer from "components/Grid/GridContainer";
@@ -13,9 +13,8 @@ import compose from "recompose/compose";
 //
 //
 import { appendNavHistory } from "state/actions/ui/nav";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 //
-import styles from "views/pages/styles";
 import AccessDenied from "views/widgets/Catch/AccessDenied";
 import BuilderIO from "views/widgets/Catch/BuilderIO";
 
@@ -47,12 +46,12 @@ class Page extends React.Component {
 	}
 
 	render() {
-		const { classes, auth } = this.props;
+		const { auth } = this.props;
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer >
 				<GridItem xs={12}>
-					{!auth.user.isAdmin && <AccessDenied />}
-					{auth.user.isAdmin && <BuilderIO />}
+					{!auth.user?.isAdmin && <AccessDenied />}
+					{auth.user?.isAdmin && <BuilderIO />}
 				</GridItem>
 			</GridContainer>
 		);
@@ -60,16 +59,16 @@ class Page extends React.Component {
 }
 
 Page.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 };
 
 const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(
+export default (
 	compose(
-		withStyles(styles),
+
 		connect(mapStateToProps, { appendNavHistory })
 	)(Page)
 );

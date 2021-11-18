@@ -5,16 +5,16 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 	PeopleOutlined as DefinationContextIcon,
 	PersonOutlined as EntryIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import Button from "components/Button";
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CountriesHelper } from "hoc/Helpers";
 import compose from "recompose/compose";
 import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions";
-import IconButton from "@material-ui/core/IconButton";
-import { withTheme } from '@material-ui/core/styles';
-import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import IconButton from "@mui/material/IconButton";
+import { withTheme } from '@mui/styles';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import { useGlobals } from "contexts/Globals";
 import { connect } from "react-redux";
 import Typography from "components/Typography";
@@ -33,7 +33,7 @@ const EmailUserAction = (props) => {
 	const { user, apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth } = props;
 	const { definations, sockets } = useGlobals();
 	const [initiated, setInitiated] = useState(false);
-	
+
 
 	useEffect(() => {
 		if (initiated && JSON.isJSON(user)) {
@@ -41,15 +41,15 @@ const EmailUserAction = (props) => {
 			setEmailingCache("recipient_address", user.email_address);
 			setEmailingCache("recipient_name", user.first_name);
 			setEmailingCache("subject", "");
-			setEmailingCache("content", "Hey "+user.first_name+", \n\n\n\n\n"+auth.user.first_name+"\nRealfield.io");
+			setEmailingCache("content", "Hey " + user.first_name + ", \n\n\n\n\n" + auth.user.first_name + "\nRealfield.io");
 			setEmailingCache("popup_open", true);
-		}			
+		}
 	}, [user, initiated]);
 
 
 	return (
 		<React.Fragment>
-			
+
 			{user && <IconButton
 				color={"secondary"}
 				aria-label="Create application user"
@@ -59,7 +59,7 @@ const EmailUserAction = (props) => {
 			>
 				<MailOutlineIcon fontSize="small" />
 			</IconButton>}
-			
+
 		</React.Fragment>
 	)
 
@@ -75,7 +75,7 @@ const mapStateToProps = state => ({
 });
 
 const EmailUserActionComponent = compose(
-	connect(mapStateToProps, {apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog}),
+	connect(mapStateToProps, { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog }),
 	withTheme,
 )(EmailUserAction);
 
@@ -122,41 +122,41 @@ export default {
 						resolved_data = entries.map((entry, index) => {
 							return {
 								id: entry?._id,
-								icon: isPopulated && entry.avatar? null : (<EntryIcon />),
+								icon: isPopulated && entry.avatar ? null : (<EntryIcon />),
 								avatar: (isPopulated && entry.avatar ? (
-											<Avatar
-												alt={entry.first_name}
-												src={ApiService.getAttachmentFileUrl(entry.avatar)}
-											/>
-										) : null),
-								title:(<Typography
-												className={"truncate"}
-												component="p"
-												variant="body1"
-												color="default"
-										>
-										{entry.first_name+" "+entry.last_name}
+									<Avatar
+										alt={entry.first_name}
+										src={ApiService.getAttachmentFileUrl(entry.avatar)}
+									/>
+								) : null),
+								title: (<Typography
+									className={"truncate"}
+									component="p"
+									variant="body1"
+
+								>
+									{entry.first_name + " " + entry.last_name}
 								</Typography>),
 								body: (
 									<React.Fragment>
 										{entry.email_address && <Typography
-												component="p"
-												className={"truncate"}
-												variant="body2"
-												color="default"
+											component="p"
+											className={"truncate"}
+											variant="body2"
+
 										>
-												{entry.email_address}
+											{entry.email_address}
 										</Typography>}
 
 										{entry.role && <Typography
-												component="p"
-												variant="body2"
-												color="default"
+											component="p"
+											variant="body2"
+
 										>
 											{entry.role}
 										</Typography>}
 
-										
+
 									</React.Fragment>
 								),
 							};
@@ -273,7 +273,7 @@ export default {
 
 				possibilities: {
 					female: "Female",
-					male: "Male",					
+					male: "Male",
 					other: "Other",
 				},
 			},
@@ -437,7 +437,7 @@ export default {
 				label: "Repeat Password",
 				input: {
 					type: "password",
-					default: "",					
+					default: "",
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -745,7 +745,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className) => {},
+						default: (entry, className) => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -776,7 +776,7 @@ export default {
 								<Link to={"users/add/"} {...props}>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -803,7 +803,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className = "grey_text") => {},
+						default: (entry, className = "grey_text") => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -830,11 +830,11 @@ export default {
 					return true;
 				},
 				uri: entry => {
-					return ( "/" ).toUriWithDashboardPrefix();
+					return ("/").toUriWithDashboardPrefix();
 				},
 				link: {
 					inline: {
-						default: (entry, className = "grey_text") => {},
+						default: (entry, className = "grey_text") => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<EmailUserActionComponent user={entry} />
@@ -855,7 +855,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className = "error_text") => {},
+						default: (id, className = "error_text") => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

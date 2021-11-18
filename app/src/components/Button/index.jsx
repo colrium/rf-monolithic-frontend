@@ -1,16 +1,15 @@
 /** @format */
 
-import Button from "@material-ui/core/Button";
-import withStyles from "@material-ui/core/styles/withStyles";
+import Button from "@mui/material/Button";
+
 import { colors } from "assets/jss/app-theme.jsx";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import styles from "./styles";
+
 
 const CustomButton = React.memo((props) => {
 	const {
-		classes,
 		color,
 		round,
 		children,
@@ -29,24 +28,6 @@ const CustomButton = React.memo((props) => {
 		...rest
 	} = props;
 	const btnClasses = classNames({
-		[classes.button]: true,
-		[classes[size]]: size,
-		[classes[textCase]]: textCase,
-		[color]: color && !gradient && !simple,
-		[color + "_gradient"]: color && gradient && !simple && !outlined,
-		hoverraise: !outlined && !simple,
-		[color + "_text"]: color && (outlined || simple),
-		["inverse_text"]:
-			!["inverse", "transparent"].includes(color) && !outlined && !simple,
-		[classes.round]: round,
-		[classes.fullWidth]: fullWidth,
-		[classes.simple]: simple,
-		[classes.block]: block,
-		[classes.link]: link,
-		[classes.justIcon]: justIcon,
-		outlined: outlined,
-		[classes.left]: left,
-		[classes.right]: right,
 		[className]: className,
 	});
 	return (
@@ -57,7 +38,7 @@ const CustomButton = React.memo((props) => {
 });
 
 CustomButton.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	color: PropTypes.oneOf(colors.names),
 	size: PropTypes.oneOf(["sm", "md", "lg"]),
 	textCase: PropTypes.oneOf([
@@ -83,4 +64,4 @@ CustomButton.defaultProps = {
 	gradient: false,
 };
 
-export default withStyles(styles)(CustomButton);
+export default (CustomButton);

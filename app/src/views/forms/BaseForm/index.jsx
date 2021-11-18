@@ -2,24 +2,24 @@
 import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import { Snackbar } from "@material-ui/core";
-import withStyles from "@material-ui/core/styles/withStyles";
-import { Add as AddIcon, EditOutlined as EditIcon } from "@material-ui/icons";
+import { Snackbar } from "@mui/material";
+
+import { Add as AddIcon, EditOutlined as EditIcon } from "@mui/icons-material";
 import {
-    TextInput,
-    DateInput,
-    DateTimeInput,
-    RadioInput,
-    WysiwygInput,
-    CheckboxInput,
-    SliderInput,
-    TranferListInput,
-    MultiSelectInput,
-    SelectInput,
-    FileInput,
-    MapInput,
-    DynamicInput,
-    GooglePlacesAutocomplete,
+	TextInput,
+	DateInput,
+	DateTimeInput,
+	RadioInput,
+	WysiwygInput,
+	CheckboxInput,
+	SliderInput,
+	TranferListInput,
+	MultiSelectInput,
+	SelectInput,
+	FileInput,
+	MapInput,
+	DynamicInput,
+	GooglePlacesAutocomplete,
 } from "components/FormInputs";
 import { colors } from "assets/jss/app-theme";
 // Externals
@@ -30,10 +30,10 @@ import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
 //
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -45,18 +45,18 @@ import * as definations from "definations";
 //Redux imports
 import { change, reduxForm, reset } from "redux-form";
 //
-import {withGlobals} from "contexts/Globals";
-import {withErrorHandler} from "hoc/ErrorHandler";
+import { withGlobals } from "contexts/Globals";
+
 //
 import { ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";
-import styles from "./styles";
+
 
 
 
 const LightInputField = (props) => {
-	const { component:InputComponent, ...rest } = props;
+	const { component: InputComponent, ...rest } = props;
 	return (
-		<InputComponent {...rest}/>
+		<InputComponent {...rest} />
 	);
 };
 
@@ -86,7 +86,7 @@ class BaseForm extends React.Component {
 		//
 
 		const { defination, record } = props;
-		this.creatingNew = record? false : true; 
+		this.creatingNew = record ? false : true;
 		this.defination = defination;
 		this.ref_input_types = [
 			"select",
@@ -103,8 +103,8 @@ class BaseForm extends React.Component {
 		this.onCloseSnackbar = this.onCloseSnackbar.bind(this);
 		this.applyChangeEffects = this.applyChangeEffects.bind(this);
 		this.callDefinationMethod = this.callDefinationMethod.bind(this);
-		
-		
+
+
 		this.handleResetForm = this.handleResetForm.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -112,10 +112,10 @@ class BaseForm extends React.Component {
 		this.prepareForForm();
 	}
 
-	
+
 	componentDidMount() {
 		this.mounted = true;
-		
+
 	}
 
 	componentWillUnmount() {
@@ -152,28 +152,28 @@ class BaseForm extends React.Component {
 	prepareForForm() {
 		const { defination, initialValues, initialize, exclude, record, fields, form_state, auth, change, onValuesChange } = this.props;
 		this.defination = defination;
-		
+
 		let field_values = {};
 		let initializeRedux = true;
 
 		if (form_state) {
 			if (JSON.isJSON(form_state.values)) {
-                field_values = form_state.values;
-                initializeRedux = false;
-                if (Function.isFunction(onValuesChange)) {
+				field_values = form_state.values;
+				initializeRedux = false;
+				if (Function.isFunction(onValuesChange)) {
 					let labels = {};
 					for (let key of Object.keys(field_values)) {
 						if (key in this.state.value_possibilities) {
 							labels[key] = this.state.value_possibilities[key][field_values[key]];
 						}
-						else if(key in defination.scope.columns ){
+						else if (key in defination.scope.columns) {
 							labels[key] = field_values[key];
 						}
 					}
 					onValuesChange(field_values, labels);
 				}
-            }				
-		} 
+			}
+		}
 		else if (JSON.isJSON(initialValues) && Object.size(initialValues) > 0) {
 			field_values = initialValues;
 		}
@@ -181,16 +181,16 @@ class BaseForm extends React.Component {
 
 		//const { evaluatedFields, onChangeEffects } = this.evaluateFields();
 		this.evaluateFields().then(({ evaluatedFields, onChangeEffects }) => {
-			let arrangedFields = {unpositioned: {}};
-			
-			
+			let arrangedFields = { unpositioned: {} };
+
+
 			for (let [name, properties] of Object.entries(evaluatedFields)) {
 				if ((Array.isArray(fields) && fields.includes(name) && !exclude) || (!Array.isArray(fields) && !exclude)) {
 					if (this.creatingNew && (properties.input.default || properties.input.value) && !(name in field_values)) {
 						if (properties.input.value) {
 							field_values[name] = properties.input.value;
-						}				
-						else{
+						}
+						else {
 							field_values[name] = properties.input.default;
 						}
 						if (!initializeRedux) {
@@ -198,14 +198,14 @@ class BaseForm extends React.Component {
 						}
 					}
 				}
-					
+
 			}
 
 			if (initializeRedux) {
 				initialize(field_values);
 			}
-			
-			
+
+
 
 			/*for (let [name, properties] of Object.entries(evaluatedFields)) {
 				if (properties.input.position) {
@@ -220,7 +220,7 @@ class BaseForm extends React.Component {
 					}
 				}
 			}*/
-			
+
 			/* if (Object.size(field_values) === 0) {
 				for (const [name, properties] of Object.entries(evaluatedFields)) {
 					if (Array.isArray(fields)) {
@@ -235,12 +235,12 @@ class BaseForm extends React.Component {
 			} */
 
 
-			this.setState({record: record, fields: evaluatedFields, arrangedFields: arrangedFields, onChangeEffects: onChangeEffects, evaluating: false}, () =>{
+			this.setState({ record: record, fields: evaluatedFields, arrangedFields: arrangedFields, onChangeEffects: onChangeEffects, evaluating: false }, () => {
 				this.loadFieldValuePosibilities();
 			});
 			//this.state = { ...this.state, record: record, fields: evaluatedFields, arrangedFields: arrangedFields, onChangeEffects: onChangeEffects, evaluating: false };
 		});
-			
+
 
 	}
 
@@ -261,7 +261,7 @@ class BaseForm extends React.Component {
 						field_values[name] = field.input.value;
 						fieldValuesChanged = true;
 					}*/
-					if (field.possibilities && !Object.areEqual(field.possibilities, value_possibilities)) {						
+					if (field.possibilities && !Object.areEqual(field.possibilities, value_possibilities)) {
 						if (field_values[name] && !(field_values[name] in field.possibilities)) {
 							field_values[name] = field.input.value;
 						}
@@ -271,24 +271,24 @@ class BaseForm extends React.Component {
 					else if (field.input.value && field_values[name] !== field.input.value) {
 						field_values[name] = field.input.value;
 						fieldValuesChanged = true;
-						
+
 					}
 					onChangeEffectsFields[name] = field;
 				}
-				
+
 			}
 		}
 		if (fieldValuesChanged) {
 			initialize(field_values);
 		}
 
-		
+
 
 		if (Object.size(onChangeEffectsFields) > 0) {
 			if (mounted) {
 				this.setState({ fields: fields, field_values: field_values, value_possibilities: value_possibilities, onChangeEffectsFields: onChangeEffectsFields, evaluating: false });
 			}
-			else{
+			else {
 				this.state.fields = fields;
 				this.state.field_values = field_values;
 				this.state.value_possibilities = value_possibilities;
@@ -348,13 +348,13 @@ class BaseForm extends React.Component {
 				}
 			}
 		}
-		
-		if (Object.size(value_possibilities) > 0 ) {
-			//console.log("loadFieldValuePosibilities fields_to_load", fields_to_load, "value_possibilities", value_possibilities);
-			
+
+		if (Object.size(value_possibilities) > 0) {
+			//
+
 			this.state.value_possibilities = { ...this.state.value_possibilities, ...value_possibilities };
 		}
-		
+
 		if (Object.size(fields_to_load) > 0) {
 			for (let [name, field] of Object.entries(fields_to_load)) {
 				if (Array.isArray(fields) && fields.length > 0) {
@@ -368,13 +368,13 @@ class BaseForm extends React.Component {
 					if (String.isString(field.reference.name) && JSON.isJSON(field.reference.service_query)) {
 						let service_key = field.reference.name;
 						let service_query = field.reference.service_query;
-						let service = definations[service_key]? ApiService.getContextRequests(definations[service_key]?.endpoint) : false;
-						console.log("service_key", service_key);
-						console.log("service", service);
+						let service = definations[service_key] ? ApiService.getContextRequests(definations[service_key]?.endpoint) : false;
+						
+						
 
 						let execute_service_call = service && service_query && this.state.last_field_changed !== name && this.ref_input_types.includes(field.input.type);
 
-						if (execute_service_call) {							
+						if (execute_service_call) {
 							this.setState(prevState => ({ loading: { ...prevState.loading, [name]: true } }));
 							service.getRecords(service_query).then(response => {
 								let raw_data = response.body.data;
@@ -432,11 +432,11 @@ class BaseForm extends React.Component {
 										loading: { ...state.loading, [name]: false }
 									}));
 								}
-								else{
+								else {
 									this.state.value_possibilities = { ...this.state.value_possibilities, [name]: possibilities };
 									this.state.loading = { ...this.state.loading, [name]: false }
 								}
-									
+
 
 							}).catch(err => {
 								if (this.mounted) {
@@ -447,7 +447,7 @@ class BaseForm extends React.Component {
 										snackbarColor: "warning"
 									}));
 								}
-								else{
+								else {
 									this.state.loading = { ...this.state.loading, [name]: false };
 									this.state.openSnackBar = true;
 									this.state.snackbarMessage = "Error fetching " + field.label + " ::: " + err.msg;
@@ -462,10 +462,10 @@ class BaseForm extends React.Component {
 			}
 			this.setState({ onChangeEffectsFields: {} });
 		}
-		
+
 
 	}
-	
+
 
 	async evaluateFields() {
 		const that = this;
@@ -498,7 +498,7 @@ class BaseForm extends React.Component {
 			}
 
 			if (Function.isFunction(properties.input.value)) {
-				field.input.value =  await that.callDefinationMethod(properties.input.value);
+				field.input.value = await that.callDefinationMethod(properties.input.value);
 			}
 
 			if (Function.isFunction(properties.input.required)) {
@@ -519,24 +519,24 @@ class BaseForm extends React.Component {
 			}
 			if (properties.reference) {
 				if (Function.isFunction(properties.reference)) {
-						field.reference = await that.callDefinationMethod(properties.reference);
-						if (JSON.isJSON(field.reference)) {
-							if (Function.isFunction(field.reference.name)) {
-								field.reference.name = await that.callDefinationMethod(field.reference.name);
-							}
-							if (Function.isFunction(field.reference.resolves)) {
-								field.reference.resolves = await that.callDefinationMethod(field.reference.resolves);
-							}
-							if (Function.isFunction(field.reference.service_query)) {
-								field.reference.service_query = await that.callDefinationMethod(field.reference.service_query);
-							}
+					field.reference = await that.callDefinationMethod(properties.reference);
+					if (JSON.isJSON(field.reference)) {
+						if (Function.isFunction(field.reference.name)) {
+							field.reference.name = await that.callDefinationMethod(field.reference.name);
 						}
-						else{
-							delete field.reference;
+						if (Function.isFunction(field.reference.resolves)) {
+							field.reference.resolves = await that.callDefinationMethod(field.reference.resolves);
 						}
-							
+						if (Function.isFunction(field.reference.service_query)) {
+							field.reference.service_query = await that.callDefinationMethod(field.reference.service_query);
+						}
+					}
+					else {
+						delete field.reference;
+					}
+
 				}
-				else{
+				else {
 					if (Function.isFunction(properties.reference.name)) {
 						field.reference.name = await that.callDefinationMethod(properties.reference.name);
 					}
@@ -556,8 +556,8 @@ class BaseForm extends React.Component {
 						field.reference.service_query = properties.reference.service_query;
 					}
 				}
-						
-					
+
+
 			}
 			if (properties.possibilities) {
 				if (Function.isFunction(properties.possibilities)) {
@@ -624,11 +624,11 @@ class BaseForm extends React.Component {
 								field_with_effects.reference.service_query = await instance.callDefinationMethod(field_with_effects.reference.service_query);
 							}
 						}
-						else{
+						else {
 							delete field_with_effects.reference;
-						}							
+						}
 					}
-					else{
+					else {
 						if (Function.isFunction(properties.reference.name)) {
 							field_with_effects.reference.name = await instance.callDefinationMethod(properties.reference.name);
 						}
@@ -648,16 +648,16 @@ class BaseForm extends React.Component {
 							field_with_effects.reference.service_query = properties.reference.service_query;
 						}
 					}
-						
+
 				}
 				if (properties.possibilities) {
 					if (Function.isFunction(properties.possibilities)) {
 						field_with_effects.possibilities = await instance.callDefinationMethod(properties.possibilities);
-					}					
+					}
 				}
 
-				
-				if (!Object.areEqual(instance.state.fields[name], field_with_effects) ) {
+
+				if (!Object.areEqual(instance.state.fields[name], field_with_effects)) {
 
 					return field_with_effects;
 				}
@@ -716,11 +716,11 @@ class BaseForm extends React.Component {
 		this.setState({
 			field_values: values,
 			last_field_changed: name
-		}, ()=>{
+		}, () => {
 			if (Function.isFunction(onValuesChange)) {
 				let labels = {};
 				for (let key of Object.keys(values)) {
-					
+
 					if (key in this.state.value_possibilities) {
 						labels[key] = this.state.value_possibilities[key][values[key]];
 					}
@@ -730,7 +730,7 @@ class BaseForm extends React.Component {
 		});
 	}
 
-	handleChange = (name) => (value, event = null) => {	
+	handleChange = (name) => (value, event = null) => {
 		this.setFieldValue(name, value);
 	};
 
@@ -748,11 +748,11 @@ class BaseForm extends React.Component {
 		}
 	}
 
-	handleKeyPress(event){		
-		if((event.key === 's' || event.key === 'S') && event.ctrlKey){
+	handleKeyPress(event) {
+		if ((event.key === 's' || event.key === 'S') && event.ctrlKey) {
 			event.preventDefault();
 			this.handleSubmit(event);
-			//console.log(event.key, ' pressed! ', "event.ctrlKey", event.ctrlKey, event.currentTarget, event);
+			//
 		}
 	}
 
@@ -773,8 +773,8 @@ class BaseForm extends React.Component {
 			method_data = method(this.state.field_values, auth.user, this);
 		}
 		return Promise.all([method_data]).then(data => {
-					return method_data;
-		}).catch(err => {});
+			return method_data;
+		}).catch(err => { });
 	}
 
 	renderFieldInput(name, field, restricted = false) {
@@ -782,8 +782,8 @@ class BaseForm extends React.Component {
 		let that = this;
 
 
-		let field_values = {...this.state.default_field_values, ...this.state.field_values};
-		
+		let field_values = { ...this.state.default_field_values, ...this.state.field_values };
+
 		//Evaluate value
 		let value = undefined;
 		if (name in field_values) {
@@ -797,100 +797,100 @@ class BaseForm extends React.Component {
 		}
 
 		if (field.input.type === "radio") {
-				if (layout == "inline") {
-					return (
-						<LightInputField
-							name={name}
-							component={SelectInput}
-							disabled={restricted}
-							value={value}
-							validate={validation}
-							variant={text_fields_variant}
-							required={validation && field.input.required}
-							disabled={restricted}
-							margin="dense"							
-							onChange={this.handleChange(name)}
-							options={this.state.value_possibilities[name]? this.state.value_possibilities[name] : {}}
-							placeholder={"Select " + field.label.singularize()}
-							validate={validation}
-							size="small"
-							{...inputProps}
-						/>
-					);
-				}
-				else{
-					return (
-						<LightInputField
-							name={name}
-							component={RadioInput}
-							label={field.label}
-							defaultValue={value}
-							onChange={this.handleChange(name)}
-							required={field.input.required}
-							disabled={restricted}
-							options={this.state.value_possibilities[name]? this.state.value_possibilities[name] : {}}
-							validate={validation}
-							{...inputProps}
-						/>
-					);
-				}
-					
-			
-			return "";
-		}
-		else if (field.input.type === "select") {
+			if (layout == "inline") {
 				return (
 					<LightInputField
 						name={name}
 						component={SelectInput}
 						disabled={restricted}
 						value={value}
-						onChange={this.handleChange(name)}
-						options={this.state.value_possibilities[name]? this.state.value_possibilities[name] : {}}
-						placeholder={"Select " + field.label.singularize()}
-						validate={true}
+						validate={validation}
 						variant={text_fields_variant}
 						required={validation && field.input.required}
 						disabled={restricted}
-						label={field.label}
-						loading={this.state.loading[name]}
+						margin="dense"
+						onChange={this.handleChange(name)}
+						options={this.state.value_possibilities[name] ? this.state.value_possibilities[name] : {}}
+						placeholder={"Select " + field.label.singularize()}
+						validate={validation}
 						size="small"
-						{...selectFieldsProps}
 						{...inputProps}
 					/>
 				);
-		}
-		else if (field.input.type === "multiselect") {
-				value = Array.isArray(value) ? value : [];
-
+			}
+			else {
 				return (
 					<LightInputField
 						name={name}
-						component={MultiSelectInput}
-						disabled={restricted}
-						value={value}
+						component={RadioInput}
 						label={field.label}
+						defaultValue={value}
 						onChange={this.handleChange(name)}
-						options={this.state.value_possibilities[name]? this.state.value_possibilities[name] : {}}
-						placeholder={"Select " + field.label}
-						required={validation && field.input.required}
+						required={field.input.required}
 						disabled={restricted}
-						variant={text_fields_variant}
-						isMulti
+						options={this.state.value_possibilities[name] ? this.state.value_possibilities[name] : {}}
 						validate={validation}
-						loading={this.state.loading[name]}
-						{...selectFieldsProps}
 						{...inputProps}
 					/>
 				);
-			
+			}
+
+
+			return "";
+		}
+		else if (field.input.type === "select") {
+			return (
+				<LightInputField
+					name={name}
+					component={SelectInput}
+					disabled={restricted}
+					value={value}
+					onChange={this.handleChange(name)}
+					options={this.state.value_possibilities[name] ? this.state.value_possibilities[name] : {}}
+					placeholder={"Select " + field.label.singularize()}
+					validate={true}
+					variant={text_fields_variant}
+					required={validation && field.input.required}
+					disabled={restricted}
+					label={field.label}
+					loading={this.state.loading[name]}
+					size="small"
+					{...selectFieldsProps}
+					{...inputProps}
+				/>
+			);
+		}
+		else if (field.input.type === "multiselect") {
+			value = Array.isArray(value) ? value : [];
+
+			return (
+				<LightInputField
+					name={name}
+					component={MultiSelectInput}
+					disabled={restricted}
+					value={value}
+					label={field.label}
+					onChange={this.handleChange(name)}
+					options={this.state.value_possibilities[name] ? this.state.value_possibilities[name] : {}}
+					placeholder={"Select " + field.label}
+					required={validation && field.input.required}
+					disabled={restricted}
+					variant={text_fields_variant}
+					isMulti
+					validate={validation}
+					loading={this.state.loading[name]}
+					{...selectFieldsProps}
+					{...inputProps}
+				/>
+			);
+
 			return "";
 		}
 		else if (field.input.type === "transferlist") {
 			if (this.state.value_possibilities[name]) {
 				return (
 					<LightInputField
-						name={name}						
+						name={name}
 						component={TranferListInput}
 						label={field.label}
 						defaultValue={value}
@@ -910,7 +910,7 @@ class BaseForm extends React.Component {
 					type={field.input.type}
 					disabled={restricted}
 					component={TextInput}
-					defaultValue={value}					
+					defaultValue={value}
 					label={field.label}
 					variant={text_fields_variant}
 					onChange={this.handleChange(name)}
@@ -954,7 +954,7 @@ class BaseForm extends React.Component {
 					multiline
 					rows={4}
 					defaultValue={value}
-					onChange={this.handleChange(name)}					
+					onChange={this.handleChange(name)}
 					controls={[
 						"bold",
 						"italic",
@@ -979,7 +979,7 @@ class BaseForm extends React.Component {
 					fullWidth
 					margin="normal"
 					name={name}
-					label={field.label}					
+					label={field.label}
 					disabled={restricted}
 					component={DateInput}
 					autoOk
@@ -1001,7 +1001,7 @@ class BaseForm extends React.Component {
 			return (
 				<LightInputField
 					name={name}
-					label={field.label}					
+					label={field.label}
 					disabled={restricted}
 					component={DateTimeInput}
 					autoOk
@@ -1111,7 +1111,7 @@ class BaseForm extends React.Component {
 				upload: true,
 				filesLimit: Array.isArray(field.type) ? 20 : 1
 			};
-			
+
 
 			inputProps = { ...defaultInputProps, ...inputProps };
 			return (
@@ -1160,7 +1160,7 @@ class BaseForm extends React.Component {
 		}
 		else if (field.input.type === "dynamic") {
 			inputProps.mode = ["defination", "generation"].includes(inputProps.mode) ? inputProps.mode : "defination";
-			inputProps.blueprint = JSON.isJSON(inputProps.blueprint)? inputProps.blueprint : {};
+			inputProps.blueprint = JSON.isJSON(inputProps.blueprint) ? inputProps.blueprint : {};
 			if (String.isString(value)) {
 				try {
 					value = JSON.parse(value);
@@ -1187,13 +1187,13 @@ class BaseForm extends React.Component {
 	}
 
 	renderField(name) {
-		const {layout, inputColumnSize} = this.props;
+		const { layout, inputColumnSize } = this.props;
 		const field = this.state.fields[name];
 		let restricted = this.state.submitting;
 		if (!this.state.submitting && field.restricted) {
 			restricted = field.restricted.input;
 		}
-		if (layout=="inline") {
+		if (layout == "inline") {
 			/*if (this.state.loading[name]) {
 				return (
 					<TableCell key={"field_" + name} >
@@ -1209,24 +1209,24 @@ class BaseForm extends React.Component {
 				);
 			}*/
 			return (
-					<TableCell key={"field_" + name} >
-						{this.renderFieldInput(name, field, restricted)}
-					</TableCell>
-				);
+				<TableCell key={"field_" + name} >
+					{this.renderFieldInput(name, field, restricted)}
+				</TableCell>
+			);
 		}
-		else{
+		else {
 			return (
-				<GridItem					
+				<GridItem
 					className={"p-0 m-0 px-1 py-1"}
-					md={field.input.size ? (inputColumnSize < 12 && field.input.size < inputColumnSize? inputColumnSize : field.input.size) : inputColumnSize}
-					style={field.input?.type === "hidden"? {display: "none"} : {}}
+					md={field.input.size ? (inputColumnSize < 12 && field.input.size < inputColumnSize ? inputColumnSize : field.input.size) : inputColumnSize}
+					style={field.input?.type === "hidden" ? { display: "none" } : {}}
 					key={"field_" + name}
 				>
 					{this.renderFieldInput(name, field, restricted)}
 				</GridItem>
 			);
 		}
-			
+
 	}
 
 	async handleSubmit(event) {
@@ -1249,24 +1249,24 @@ class BaseForm extends React.Component {
 		if (onSubmit) {
 			this.setState(state => ({ submitting: true }));
 		}
-		let service = defination? ApiService.getContextRequests(defination?.endpoint) : false;
+		let service = defination ? ApiService.getContextRequests(defination?.endpoint) : false;
 		if (onSubmit) {
 			let submit_callback = onSubmit(form_data, submit_event);
 			Promise.all([submit_callback]).then(res => {
-					this.setState({
-						openSnackBar: true,
-						snackbarMessage: onSubmitSuccessMessage
-							? onSubmitSuccessMessage
-							: UtilitiesHelper.singularize(this.defination.label) +
-							" changes saved",
-						snackbarColor: "success",
-						submitting: false
-					});
-					if (Function.isFunction(onSubmitSuccess)) {
-						onSubmitSuccess(res);
-					}
+				this.setState({
+					openSnackBar: true,
+					snackbarMessage: onSubmitSuccessMessage
+						? onSubmitSuccessMessage
+						: UtilitiesHelper.singularize(this.defination.label) +
+						" changes saved",
+					snackbarColor: "success",
+					submitting: false
+				});
+				if (Function.isFunction(onSubmitSuccess)) {
+					onSubmitSuccess(res);
+				}
 
-				})
+			})
 				.catch(err => {
 					this.setState({
 						openSnackBar: true,
@@ -1337,7 +1337,6 @@ class BaseForm extends React.Component {
 
 	render() {
 		const {
-			classes,
 			className,
 			defination,
 			record,
@@ -1352,15 +1351,15 @@ class BaseForm extends React.Component {
 			DiscardBtn,
 			discardBtnProps,
 			submit_btn_text,
-			pristine, 
+			pristine,
 			layout,
 			...rest
 
 		} = this.props;
 		let formClasses = classNames({
-			[classes.root]: true,
+			[`p-0`]: true,
 			[className]: className,
-			[classes.submitting]: this.state.submitting
+			[`cursor-wait`]: this.state.submitting
 		});
 
 
@@ -1389,29 +1388,29 @@ class BaseForm extends React.Component {
 							subheader={record ? "Update " : "New "}
 						/>
 					) : (
-							""
-						)}
+						""
+					)}
 
 					<CardContent className="m-0 p-0 py-4">
-						{ layout=="normal" && <GridContainer className="m-0 p-0">
+						{layout == "normal" && <GridContainer className="m-0 p-0">
 							{Object.keys(this.state.fields).map(
 								(column_name, column_index) =>
-									Array.isArray(fields) && fields.length > 0 ? exclude? fields.includes(column_name)? ""
-												: this.renderField(column_name)
-											: fields.includes(column_name)
-												? this.renderField(column_name)
-												: ""
+									Array.isArray(fields) && fields.length > 0 ? exclude ? fields.includes(column_name) ? ""
+										: this.renderField(column_name)
+										: fields.includes(column_name)
+											? this.renderField(column_name)
+											: ""
 										: this.renderField(column_name)
 							)}
-						</GridContainer> }
+						</GridContainer>}
 
-						{ layout=="inline" && <GridContainer className="m-0 p-0">
+						{layout == "inline" && <GridContainer className="m-0 p-0">
 							<GridItem xs={12}>
 								<Table className="w-full ">
 									<TableBody>
 										<TableRow>
 											{Object.keys(this.state.fields).map((column_name, column_index) => {
-												return ((Array.isArray(fields)? fields.includes(column_name) : true) && (Array.isArray(exclude)? !exclude.includes(column_name) : (exclude? false : true)))? this.renderField(column_name) : "";
+												return ((Array.isArray(fields) ? fields.includes(column_name) : true) && (Array.isArray(exclude) ? !exclude.includes(column_name) : (exclude ? false : true))) ? this.renderField(column_name) : "";
 											})}
 										</TableRow>
 									</TableBody>
@@ -1422,18 +1421,18 @@ class BaseForm extends React.Component {
 
 					{((show_discard || show_submit) && Object.keys(this.state.fields).length > 0) && <CardActions>
 						<GridContainer className="m-0 p-0">
-							
+
 							{show_discard && <GridItem xs={12} md={6} className="flex flex-row items-center justify-center md:items-start md:justify-start">
 								{!DiscardBtn && <Button className="sm:w-full md:w-auto" variant="text" outlined onClick={this.handleResetForm} > Discard changes </Button>}
-								{DiscardBtn && <DiscardBtn className="sm:w-full md:w-auto" variant="text" outlined onClick={this.handleResetForm} {...(discardBtnProps? discardBtnProps : {})}/>}
-							</GridItem>}	
-								
-								
-							{show_submit && <GridItem xs={12} md={show_discard? 6 : 12} className="flex flex-row items-center justify-center md:items-end md:justify-end">
-								{!SubmitBtn && <Button type="submit" className="sm:w-full md:w-auto" color="primary"  outlined > {submit_btn_text ? submit_btn_text : "Save Changes"} </Button>}
-								{SubmitBtn && <SubmitBtn type="submit" className="sm:w-full md:w-auto" color="primary" outlined {...(submitBtnProps? submitBtnProps : {})}/>}
+								{DiscardBtn && <DiscardBtn className="sm:w-full md:w-auto" variant="text" outlined onClick={this.handleResetForm} {...(discardBtnProps ? discardBtnProps : {})} />}
 							</GridItem>}
-							
+
+
+							{show_submit && <GridItem xs={12} md={show_discard ? 6 : 12} className="flex flex-row items-center justify-center md:items-end md:justify-end">
+								{!SubmitBtn && <Button type="submit" className="sm:w-full md:w-auto" color="primary" outlined > {submit_btn_text ? submit_btn_text : "Save Changes"} </Button>}
+								{SubmitBtn && <SubmitBtn type="submit" className="sm:w-full md:w-auto" color="primary" outlined {...(submitBtnProps ? submitBtnProps : {})} />}
+							</GridItem>}
+
 						</GridContainer>
 					</CardActions>}
 				</Card>
@@ -1470,7 +1469,7 @@ BaseForm.defaultProps = {
 };
 
 BaseForm.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	className: PropTypes.string,
 	defination: PropTypes.object.isRequired,
 	service: PropTypes.any,
@@ -1512,7 +1511,6 @@ export default withGlobals(
 			mapStateToProps,
 			{ change, reset }
 		),
-		withStyles(styles),
-		withErrorHandler
-	)(reduxForm({enableReinitialize : true})(BaseForm))
+
+	)(reduxForm({ enableReinitialize: true })(BaseForm))
 );

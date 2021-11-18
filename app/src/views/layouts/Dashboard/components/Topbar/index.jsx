@@ -1,37 +1,38 @@
 /** @format */
 
-import { AppBar, Badge, Box, IconButton, Popover, Snackbar, Toolbar, withStyles } from "@material-ui/core";
-import CloseSideBarIcon from '@material-ui/icons/MenuOpen';
-import OpenSideBarIcon from "@material-ui/icons/Menu";
+import { AppBar, Badge, Box, IconButton, Popover, Snackbar, Toolbar } from "@mui/material";
+import CloseSideBarIcon from '@mui/icons-material/MenuOpen';
+import OpenSideBarIcon from "@mui/icons-material/Menu";
 import classNames from "classnames";
 import SnackbarContent from "components/Snackbar/SnackbarContent";
 import Typography from "components/Typography";
 import { notifications as notificationsDefination } from "definations";
 import Icon from '@mdi/react'
 import { mdiBellOutline } from '@mdi/js';
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Fade from "@material-ui/core/Fade";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Fade from "@mui/material/Fade";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import compose from "recompose/compose";
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@mui/styles';
 import Avatar from "components/Avatar";
 import ApiService from "services/Api";
-import { PersonOutlined as UserIcon } from "@material-ui/icons";
-import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
+import { PersonOutlined as UserIcon } from "@mui/icons-material";
+import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import { logout, setCurrentUser } from "state/actions";
 import { ServiceDataHelper } from "hoc/Helpers";
-import {withGlobals} from "contexts/Globals";
-import {withErrorHandler} from "hoc/ErrorHandler";
+import { withGlobals } from "contexts/Globals";
+
 // Custom components
 import { NotificationList } from "./components";
 import { app } from "assets/jss/app-theme";
+
 import { createUpdateFirestoreDoc } from "services/Firebase";
 // Component styles
-import styles from "./styles";
+
 
 
 
@@ -84,13 +85,13 @@ class Topbar extends Component {
 	}
 
 	componentDidMount() {
-		let {dashboard} = this.props;
-		
+		let { dashboard } = this.props;
+
 		this.signal = true;
 		this.mounted = true;
 		this.setState({ prominent: true });
-		//console.log("dashboard", dashboard);
-		
+		//
+
 	}
 
 	componentWillUnmount() {
@@ -127,7 +128,7 @@ class Topbar extends Component {
 		const { auth, sockets, setCurrentUser } = this.props;
 		if (sockets.default && auth.isAuthenticated) {
 			//createUpdateFirestoreDoc("users", auth.user._id, {presence: presence});
-			setCurrentUser({...auth.user, presence: presence});
+			setCurrentUser({ ...auth.user, presence: presence });
 			sockets.default.emit("change-user-presence", {
 				id: auth.user._id,
 				presence: presence,
@@ -144,11 +145,11 @@ class Topbar extends Component {
 		if (sockets.default) {
 			sockets.default.on("connect", () => {
 				this.setState({
-						connectionSnackBarOpen: false,
-						serverConnected: true,
-						connectionSnackBarColor: "success",
-						connectionSnackBarMessage: "Connection Restored",
-					});
+					connectionSnackBarOpen: false,
+					serverConnected: true,
+					connectionSnackBarColor: "success",
+					connectionSnackBarMessage: "Connection Restored",
+				});
 			});
 			sockets.default.on("disconnect", () => {
 				if (!this.ignoreConnectionState) {
@@ -163,7 +164,7 @@ class Topbar extends Component {
 			});
 
 			sockets.default.on("reconnect_failed", (attemptNumber) => {
-					////console.log("sockets.default reconnect_failed attemptNumber", attemptNumber);			
+				////			
 				if (attemptNumber >= 10 && !this.ignoreConnectionState) {
 					this.setState({
 						connectionSnackBarOpened: false,
@@ -173,7 +174,7 @@ class Topbar extends Component {
 						connectionSnackBarMessage: "Connection Lost",
 					});
 				}
-					
+
 			});
 
 			sockets.default.on("new_notification", notification => {
@@ -194,13 +195,13 @@ class Topbar extends Component {
 				}
 			});
 
-			
+
 
 			sockets.default.on("update", ({ context, action }) => {
 				if (context.toLowerCase() === "notification") {
 					if (action.effects.notify === auth.user._id) {
 						this.setState(prevState => ({
-							notifications: Array.isArray(prevState.notifications)? prevState.notifications.unshift(action.effects) : [action.effects],
+							notifications: Array.isArray(prevState.notifications) ? prevState.notifications.unshift(action.effects) : [action.effects],
 							notificationSnackBarOpen: true,
 							notificationSnackBarMessage: action.effects.body,
 						}));
@@ -221,9 +222,9 @@ class Topbar extends Component {
 				}*/
 			});
 
-			
 
-			
+
+
 		}
 	}
 
@@ -261,19 +262,19 @@ class Topbar extends Component {
 		const { notificationsLimit } = this.state;
 
 		ApiService.getContextRequests("/notifications").getRecordsCount({ read: "0" }).then(res => {
-				if (this.mounted) {
-					this.setState(state => ({
-						notificationsCount: res.body.data.count,
-						load_error: false,
-						loading: false,
-					}));
-				}
-				else{
-					this.state.notificationsCount = res.body.data.count;
-					this.state.load_error = false;
-					this.state.loading = false;
-				}	
-			})
+			if (this.mounted) {
+				this.setState(state => ({
+					notificationsCount: res.body.data.count,
+					load_error: false,
+					loading: false,
+				}));
+			}
+			else {
+				this.state.notificationsCount = res.body.data.count;
+				this.state.load_error = false;
+				this.state.loading = false;
+			}
+		})
 			.catch(err => {
 				if (this.mounted) {
 					this.setState(state => ({ load_error: err, loading: false }));
@@ -283,13 +284,13 @@ class Topbar extends Component {
 					this.state.loading = false;
 				}
 			});
-				
+
 
 		ApiService.getContextRequests("/notifications").getRecords({
-				p: 1,
-				pagination: notificationsLimit,
-				desc: "date_created",
-			})
+			p: 1,
+			pagination: notificationsLimit,
+			desc: "date_created",
+		})
 			.then(response => {
 				let raw_data = response.body.data;
 				let resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(
@@ -312,19 +313,19 @@ class Topbar extends Component {
 					this.state.notifications = all_records;
 					this.state.load_error = false;
 					this.state.loading = false;
-				}	
+				}
 			})
 			.catch(err => {
 				if (this.mounted) {
 					this.setState(state => ({ load_error: err, loading: false }));
 				}
-				else{
+				else {
 					this.state.load_error = err;
 					this.state.loading = false;
 				}
-				
+
 			});
-				
+
 	}
 
 	handleSignOut() {
@@ -338,8 +339,8 @@ class Topbar extends Component {
 		this.setState({ notificationsEl: event.currentTarget }, () => {
 			if (this.state.notificationsCount > 0) {
 				ApiService.get("/notifications/mark/all/read").then(res => {
-						this.setState({ notificationsCount: 0 });
-					})
+					this.setState({ notificationsCount: 0 });
+				})
 					.catch(e => {
 						this.setState({ notificationsCount: 0 });
 					});
@@ -368,7 +369,6 @@ class Topbar extends Component {
 	render() {
 		const {
 			theme,
-			classes,
 			className,
 			title,
 			isSidebarOpen,
@@ -383,56 +383,78 @@ class Topbar extends Component {
 			notificationsCount,
 			notificationsEl,
 		} = this.state;
-
-		const rootClassName = classNames(classes.root, className);
 		const showNotifications = Boolean(notificationsEl);
 
 		const breadcrumbs = nav.entries;
 
 		return (
 			<Box>
-				<AppBar className={rootClassName}>
+				<AppBar
+					className={className}
+					sx={{
+						borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+						backgroundColor: (theme) => theme.palette.background.paper,
+						zIndex: (theme) => theme.zIndex.appBar,
+						flexGrow: 1,
+					}}
+				>
 					<Toolbar
 						className={classNames({
-							[classes.toolbar]: true /*, [classes.prominent]: this.state.prominent*/,
 							"flex": true,
 							"relative": true,
 							"px-2": true,
 						})}
+						sx={{
+							height: (theme) => theme.spacing(8),
+							transition: "height 100ms",
+							width: "100%",
+							transitionTimingFunction: "cubic-bezier(0.1, 0.7, 1.0, 0.1)",
+							zIndex: 1300,
+							color: (theme) => theme.palette.text.primary,
+						}}
 					>
 
-						
-							{<IconButton
-								className={classes.menuButton}
-								onClick={onToggleSidebar}
-								variant="text"
 
-							>
-								{isSidebarOpen ? (
-									<CloseSideBarIcon />
-								) : (
-									<OpenSideBarIcon />
-								)}
-							</IconButton>}
-						
+						{<IconButton
+							onClick={onToggleSidebar}
+							variant="text"
+							sx={{
+								alignSelf: "center",
+								marginLeft: "-4px",
+								color: (theme) => theme.palette.text.primary,
+								"&:hover": {
+									color: (theme) => theme.palette.primary.main + " !important",
+								},
+							}}
+						>
+							{isSidebarOpen ? (
+								<CloseSideBarIcon />
+							) : (
+								<OpenSideBarIcon />
+							)}
+						</IconButton>}
 
-						
-							<Link className={classes.logoLink+" cursor-pointer"} to={"/home".toUriWithDashboardPrefix()}>
-								<img
-									alt={app.name + " logo cursor-pointer"}
-									className={classes.logoImage}
-									src={app.logo}
-								/>
-							</Link>
-						
+
+
+						<Link
+							className={"inline-block text-left w-auto self-center cursor-pointer"}
+							to={"/home".toUriWithDashboardPrefix()}
+						>
+							<img
+								alt={app.name + " logo cursor-pointer"}
+								className={"cursor-pointer"}
+								src={app.logo}
+							/>
+						</Link>
+
 
 
 						{/*dashboard.searchbar_displayed && <SearchBar
 							innerRef={this.searchRef}
-							onChange={(value) => console.log('onChange', value)}
+							onChange={(value) => }
 							onRequestSearch={() => {
 								this.searchRef.current.blur()
-								console.log('onRequestSearch')
+								
 							}}
 							style={{
 								margin: '0 auto',
@@ -440,25 +462,22 @@ class Topbar extends Component {
 							}}
 						/>*/}
 
-						
+
 
 						{/*<Hidden mdDown>
 							<Breadcrumbs
 								maxItems={4}
 								aria-label="breadcrumb"
 								separator={"/"}
-								className={classes.breadcrumbs}
 							>
 								{breadcrumbs.map(
 									(breadcrumb, index) =>
 										index < breadcrumbs.length - 1 && (
 											<Link
-												className={classes.breadcrumb}
 												to={breadcrumb.uri}
 												key={"breadcrumb-" + index}
 											>
 												<Typography
-													className={classes.title}
 													variant="body1"
 													color="inverse"
 												>
@@ -476,7 +495,6 @@ class Topbar extends Component {
 
 						<Hidden lgUp>
 							<Typography
-								className={classes.title}
 								variant="body1"
 								color="inverse"
 							>
@@ -489,7 +507,7 @@ class Topbar extends Component {
 							{/*auth.isAuthenticated && (
 								<Chip
 									avatar={auth.user.avatar ? (
-										<Avatar alt="Avatar" className={classes.avatar}>
+										<Avatar alt="Avatar" >
 											<LazyImage
 												src={ApiService.getAttachmentFileUrl(
 													auth.user.avatar
@@ -497,7 +515,7 @@ class Topbar extends Component {
 											/>
 										</Avatar>
 									) : (
-										<Avatar className={classes.iconAvatar}>
+										<Avatar>
 											<UserIcon />
 										</Avatar>
 									)}
@@ -522,8 +540,8 @@ class Topbar extends Component {
 							)*/}
 
 							{auth.isAuthenticated && (
-								<Badge 
-									variant="dot" 
+								<Badge
+									variant="dot"
 									badgeContent=" "
 									className="mx-4"
 									anchorOrigin={{
@@ -531,18 +549,18 @@ class Topbar extends Component {
 										horizontal: 'right',
 									}}
 									classes={{
-										dot: this.state.serverConnected? (auth.user.presence === "online"? "bg-green-700" : (auth.user.presence == "away"? "bg-orange-700" : "bg-gray-700")) : "bg-red-700"
+										dot: this.state.serverConnected ? (auth.user.presence === "online" ? "bg-green-700" : (auth.user.presence == "away" ? "bg-orange-700" : "bg-gray-700")) : "bg-red-700"
 									}}
 								>
 									{auth.user.avatar ? (
-										<Avatar 
-											alt="Avatar" 
-											className={classes.userAvatar+" cursor-pointer"} 
-											src={ApiService.getAttachmentFileUrl(auth.user.avatar)} 
-											onClick={this.onOpenUserPresenceMenu} 
+										<Avatar
+											alt="Avatar"
+											className={" cursor-pointer"}
+											src={ApiService.getAttachmentFileUrl(auth.user.avatar)}
+											onClick={this.onOpenUserPresenceMenu}
 										/>
 									) : (
-										<Avatar className={classes.userAvatar+" cursor-pointer"} style={{color: theme.palette.text.primary, background: theme.palette.action.selected}} onClick={this.onOpenUserPresenceMenu}>
+										<Avatar className={" cursor-pointer"} style={{ color: theme.palette.text.primary, background: theme.palette.action.selected }} onClick={this.onOpenUserPresenceMenu}>
 											<UserIcon />
 										</Avatar>
 									)}
@@ -570,9 +588,9 @@ class Topbar extends Component {
 
 							<Link className={"cursor-pointer"} to={"/messages".toUriWithDashboardPrefix()}>
 								<IconButton>
-								<Badge variant="dot" invisible={Number.parseNumber(messaging.unread_count, 0) === 0} badgeContent={messaging.unread_count} color="primary">
-									<ForumOutlinedIcon />
-								</Badge>
+									<Badge variant="dot" invisible={Number.parseNumber(messaging.unread_count, 0) === 0} badgeContent={messaging.unread_count} color="primary">
+										<ForumOutlinedIcon />
+									</Badge>
 								</IconButton>
 							</Link>
 
@@ -588,13 +606,13 @@ class Topbar extends Component {
 								}}
 								keepMounted
 							>
-								<MenuItem 
+								<MenuItem
 									classes={{
-										root: "opacity-100 inverse-text "+(this.state.serverConnected? (auth.user.presence === "online"? "bg-green-700" : (auth.user.presence == "away"? "bg-orange-700" : "bg-gray-700")) : "bg-red-700")
-									}} 
+										root: "opacity-100 inverse-text " + (this.state.serverConnected ? (auth.user.presence === "online" ? "bg-green-700" : (auth.user.presence == "away" ? "bg-orange-700" : "bg-gray-700")) : "bg-red-700")
+									}}
 									disabled
 								>
-									<Typography color="inherit" variant="subtitle1">{auth.user.first_name +" " +auth.user.last_name}</Typography>
+									<Typography color="inherit" variant="subtitle1">{auth.user.first_name + " " + auth.user.last_name}</Typography>
 								</MenuItem>
 								<MenuItem
 									onClick={this.onChangeUserPresenceMenu(
@@ -615,31 +633,31 @@ class Topbar extends Component {
 								{["online", "away"].includes(
 									auth.user.presence
 								) && (
-									<MenuItem
-										onClick={this.onChangeUserPresenceMenu(
-											"offline"
-										)}
-										disabled={!this.state.serverConnected}
-									>
-										Set to offline
-									</MenuItem>
-								)}
+										<MenuItem
+											onClick={this.onChangeUserPresenceMenu(
+												"offline"
+											)}
+											disabled={!this.state.serverConnected}
+										>
+											Set to offline
+										</MenuItem>
+									)}
 								<MenuItem>
 									<Link
 										to={"/account".toUriWithDashboardPrefix()}
-										color="default"
+
 									>
 										My account
 									</Link>{" "}
 								</MenuItem>
 								<MenuItem onClick={this.handleSignOut}
 								>
-								Logout
+									Logout
 								</MenuItem>
 							</Menu>
 
 							<IconButton
-								className={classes.notificationsButton}
+								className={""}
 								onClick={this.handleShowNotifications}
 							>
 								<Badge
@@ -647,9 +665,9 @@ class Topbar extends Component {
 									color="secondary"
 									variant="dot"
 								>
-									<Icon 
+									<Icon
 										path={mdiBellOutline}
-										title="Notification Icon"    
+										title="Notification Icon"
 										size={1}
 										color={theme.palette.text.primary}
 									/>
@@ -685,7 +703,7 @@ class Topbar extends Component {
 						horizontal: "center",
 					}}
 					open={this.state.connectionSnackBarOpen}
-					autoHideDuration={this.state.connectionSnackBarColor === "error"? null : 2000}
+					autoHideDuration={this.state.connectionSnackBarColor === "error" ? null : 2000}
 					onClose={this.onCloseConnectionSnackbar}
 				>
 					<SnackbarContent
@@ -717,14 +735,14 @@ class Topbar extends Component {
 
 Topbar.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	isSidebarOpen: PropTypes.bool,
 	onToggleSidebar: PropTypes.func,
 	title: PropTypes.string,
 };
 
 Topbar.defaultProps = {
-	onToggleSidebar: () => {},
+	onToggleSidebar: () => { },
 };
 
 const mapStateToProps = state => ({
@@ -737,9 +755,8 @@ const mapStateToProps = state => ({
 
 
 export default compose(
-		withTheme,
-		withStyles(styles),
-		connect(mapStateToProps, {logout, setCurrentUser}),
-		withGlobals,
-		withErrorHandler
-	)(Topbar);
+	withTheme,
+
+	connect(mapStateToProps, { logout, setCurrentUser }),
+	withGlobals
+)(Topbar);

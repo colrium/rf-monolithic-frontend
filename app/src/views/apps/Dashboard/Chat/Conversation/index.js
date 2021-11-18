@@ -1,8 +1,8 @@
 import React, { memo } from "react";
-import withStyles from "@material-ui/core/styles/withStyles";
-import { withTheme } from '@material-ui/core/styles';
+
+import { withTheme } from '@mui/styles';
 import compose from "recompose/compose";
-import styles from "./styles";
+
 
 
 
@@ -11,6 +11,6 @@ const Conversation = (props) => {
 }
 
 export default compose(
-	withStyles(styles),
+
 	withTheme,
 )(memo(Conversation));

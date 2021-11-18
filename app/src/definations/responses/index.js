@@ -1,27 +1,27 @@
 /** @format */
 
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import {
 	Add as AddIcon,
 	AssignmentTurnedInOutlined as DefinationContextIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import Button from "components/Button";
-import React, {useState, useEffect, memo} from "react";
+import React, { useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
-import {context_country_data} from "config/data";
+import { context_country_data } from "config/data";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import ApiService from "services/Api";
 import compose from "recompose/compose";
 import { connect } from "react-redux";
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@mui/styles';
 import { Bar } from "react-chartjs-2";
 import { UtilitiesHelper } from "hoc/Helpers";
 
-const getRegions = ()=>{
+const getRegions = () => {
 	let regions = {};
 
 	context_country_data.regions.map(region => {
@@ -37,7 +37,7 @@ const mapStateToProps = state => ({
 });
 
 const CountSummaryGraph = (props) => {
-	const {auth: {isAuthenticated}} = props;
+	const { auth: { isAuthenticated } } = props;
 
 	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -45,9 +45,9 @@ const CountSummaryGraph = (props) => {
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			
+
 			ApiService.get("/responses/reports/date-count-summary").then(res => {
-				const {body: {data}} = res;
+				const { body: { data } } = res;
 				let labels = [];
 				let entries = [];
 				if (Array.isArray(data)) {
@@ -56,7 +56,7 @@ const CountSummaryGraph = (props) => {
 						entries.push(entry.count);
 					})
 				}
-				setReport({labels: labels, data: entries});
+				setReport({ labels: labels, data: entries });
 				setLoading(false);
 				setError(false);
 			}).catch(err => {
@@ -71,7 +71,7 @@ const CountSummaryGraph = (props) => {
 	return (
 		<GridContainer>
 			<GridItem>
-				{report && <Bar data={{labels: report.labels, datasets: [{label: "Responses count by date", data:  report.data, backgroundColor: "#00AF41", hoverBackgroundColor: "#76C4D5",}]}} />}
+				{report && <Bar data={{ labels: report.labels, datasets: [{ label: "Responses count by date", data: report.data, backgroundColor: "#00AF41", hoverBackgroundColor: "#76C4D5", }] }} />}
 			</GridItem>
 		</GridContainer>
 	)
@@ -90,7 +90,7 @@ export default {
 	endpoint: "/responses",
 	cache: true,
 	views: {
-		dashboard:  {
+		dashboard: {
 			counts: DashboardCountGraph
 		},
 		single: {
@@ -300,7 +300,7 @@ export default {
 								return true;
 							}
 						}
-						
+
 						if (user) {
 							return !user.isAdmin;
 						}
@@ -344,7 +344,7 @@ export default {
 					},
 				},
 			},
-			
+
 			text_response: {
 				type: "string",
 				label: "Text response",
@@ -394,7 +394,7 @@ export default {
 			response_file: {
 				type: "string",
 				label: "Response file",
-				isAttachment: true, 
+				isAttachment: true,
 				input: {
 					type: (values, user) => {
 						if (values) {
@@ -760,7 +760,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className) => {},
+						default: (entry, className) => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -791,7 +791,7 @@ export default {
 								<Link to={"responses/add/"} {...props}>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -815,7 +815,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (entry, className = "grey_text") => {},
+						default: (entry, className = "grey_text") => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -843,7 +843,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: (id, className = "error_text") => {},
+						default: (id, className = "error_text") => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

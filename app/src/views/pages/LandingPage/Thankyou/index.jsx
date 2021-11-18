@@ -1,6 +1,6 @@
 /** @format */
 
-import ThankyouIcon from "@material-ui/icons/ThumbUpOutlined";
+import ThankyouIcon from "@mui/icons-material/ThumbUpOutlined";
 import { app } from "assets/jss/app-theme";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -8,8 +8,8 @@ import Typography from "components/Typography";
 import React from "react";
 import { connect } from "react-redux";
 import { resetEcommerce } from "state/actions";
-import {withGlobals} from "contexts/Globals";
-import { withErrorHandler } from "hoc/ErrorHandler";
+import { withGlobals } from "contexts/Globals";
+
 
 class Page extends React.Component {
 	constructor(props) {
@@ -69,4 +69,4 @@ const mapStateToProps = state => ({
 	checkout_data: state.ecommerce.checkout_data,
 });
 
-export default withGlobals(connect(mapStateToProps, { resetEcommerce })(withErrorHandler(Page)));
+export default withGlobals(connect(mapStateToProps, { resetEcommerce })((Page)));

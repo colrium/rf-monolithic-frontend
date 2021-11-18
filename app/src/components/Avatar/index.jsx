@@ -1,19 +1,19 @@
 /** @format */
 
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
+import Avatar from "@mui/material/Avatar";
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 
 const CustomAvatar = (props) => {
 	const {
-	classes,
-	className,
-	color,
-	textColor,
-	children,
-	...rest
-} = props;
+		classes,
+		className,
+		color,
+		textColor,
+		children,
+		...rest
+	} = props;
 	const avatarClasses = classNames({
 		[className]: className,
 	});

@@ -1,15 +1,15 @@
 /** @format */
 
-import IconButton from "@material-ui/core/IconButton";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import Stepper from "@material-ui/core/Stepper";
-import ArrowDown from "@material-ui/icons/ArrowDownward";
-import ArrowUp from "@material-ui/icons/ArrowUpward";
-import Check from "@material-ui/icons/Check";
+import IconButton from "@mui/material/IconButton";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
+import ArrowDown from "@mui/icons-material/ArrowDownward";
+import ArrowUp from "@mui/icons-material/ArrowUpward";
+import Check from "@mui/icons-material/Check";
 import Typography from "components/Typography";
 import React, { useEffect, useState } from "react";
-import withRoot from "hoc/withRoot";
+
 
 
 function StepIcon(props) {
@@ -89,7 +89,7 @@ function DefaultStepper(props) {
 							step === 0
 								? "center_horizontally opacity-0"
 								: activeColor +
-								  "_text opacity-100 center_horizontally"
+								"_text opacity-100 center_horizontally"
 						}
 						onClick={handleBack}
 						disabled={step === 0}
@@ -154,4 +154,4 @@ DefaultStepper.defaultProps = {
 	controlled: true,
 };
 
-export default withRoot(DefaultStepper);
+export default DefaultStepper;

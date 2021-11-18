@@ -1,17 +1,16 @@
 /** @format */
-
-import NotFoundImage from "assets/img/not_found.svg";
 //
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import LazyImage from "components/LazyImage";
 import Typography from "components/Typography";
 import React from "react";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
+import { Api as ApiService } from "services";
 
 class NotFound extends React.Component {
 	render() {
-		const { image, title, description, color } = this.props;
+		const { image = ApiService.endpoint("/public/img/not_found.svg"), title, description, color } = this.props;
 
 		return (
 			<GridContainer
@@ -61,8 +60,7 @@ class NotFound extends React.Component {
 NotFound.defaultProps = {
 	title: "404",
 	description: "Not Found",
-	image: NotFoundImage,
 	color: "grey",
 };
 
-export default withErrorHandler(NotFound);
+export default (NotFound);

@@ -1,7 +1,7 @@
 /** @format */
 
 // Material helpers
-import { withStyles } from "@material-ui/core";
+
 import classNames from "classnames";
 // Externals
 import PropTypes from "prop-types";
@@ -29,8 +29,8 @@ const PortletFooter = props => {
 
 	const rootClassName = classNames(
 		{
-			[classes.root]: true,
-			[classes.noDivider]: noDivider,
+			[classes?.root]: true,
+			[classes?.noDivider]: noDivider,
 		},
 		className
 	);
@@ -41,8 +41,8 @@ const PortletFooter = props => {
 PortletFooter.propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	noDivider: PropTypes.bool,
 };
 
-export default withStyles(styles)(PortletFooter);
+export default (PortletFooter);

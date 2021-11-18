@@ -1,10 +1,10 @@
 /** @format */
 
 import {
-    AccountCircleOutlined as ProfileIcon,
-    DashboardOutlined as DashboardIcon,
-    SettingsApplicationsOutlined as SettingsIcon,
-} from "@material-ui/icons";
+	AccountCircleOutlined as ProfileIcon,
+	DashboardOutlined as DashboardIcon,
+	SettingsApplicationsOutlined as SettingsIcon,
+} from "@mui/icons-material";
 import * as definations from "definations";
 import React from "react";
 

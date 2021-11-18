@@ -1,6 +1,6 @@
 /** @format */
 
-import { withStyles } from "@material-ui/core/styles";
+
 import {
 	errorColor,
 	grayColor,
@@ -13,7 +13,7 @@ import classNames from "classnames";
 import createReactClass from "create-react-class";
 import PropTypes from "prop-types";
 import React from "react";
-import withRoot from "hoc/withRoot";
+
 
 export const STATE = {
 	LOADING: "loading",
@@ -150,7 +150,7 @@ const styles = theme => ({
 
 const ProgressButton = createReactClass({
 	propTypes: {
-		classes: PropTypes.object.isRequired,
+
 		controlled: PropTypes.bool,
 		durationError: PropTypes.number,
 		durationSuccess: PropTypes.number,
@@ -168,9 +168,9 @@ const ProgressButton = createReactClass({
 			controlled: false,
 			durationError: 1200,
 			durationSuccess: 500,
-			onClick() {},
-			onError() {},
-			onSuccess() {},
+			onClick() { },
+			onError() { },
+			onSuccess() { },
 			shouldAllowClickOnLoading: false,
 		};
 	},
@@ -228,7 +228,7 @@ const ProgressButton = createReactClass({
 			...containerProps
 		} = this.props;
 		containerProps.className = classNames({
-			[classes.pbContainer]: true,
+			[classes?.pbContainer]: true,
 			[this.state.currentState]: true,
 			[className]: className ? true : false,
 		});
@@ -236,23 +236,23 @@ const ProgressButton = createReactClass({
 		return (
 			<div {...containerProps}>
 				<button
-					className={classes.pbButton}
+					className={classes?.pbButton}
 					disabled={state === STATE.DISABLED}
 					type={type}
 					form={form}
 				>
 					<span>{children}</span>
 					<svg
-						className={classes.pbProgressCircle}
+						className={classes?.pbProgressCircle}
 						viewBox="0 0 41 41"
 					>
 						<path d="M38,20.5 C38,30.1685093 30.1685093,38 20.5,38" />
 					</svg>
-					<svg className={classes.pbCheckmark} viewBox="0 0 70 70">
+					<svg className={classes?.pbCheckmark} viewBox="0 0 70 70">
 						<path d="m31.5,46.5l15.3,-23.2" />
 						<path d="m31.5,46.5l-8.5,-7.1" />
 					</svg>
-					<svg className={classes.pbCross} viewBox="0 0 70 70">
+					<svg className={classes?.pbCross} viewBox="0 0 70 70">
 						<path d="m35,35l-9.3,-9.3" />
 						<path d="m35,35l9.3,9.3" />
 						<path d="m35,35l-9.3,9.3" />
@@ -336,7 +336,7 @@ const ProgressButton = createReactClass({
 });
 
 ProgressButton.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 };
 
-export default withRoot(withStyles(styles)(ProgressButton));
+export default (ProgressButton);

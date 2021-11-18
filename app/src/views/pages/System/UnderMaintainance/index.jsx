@@ -1,7 +1,6 @@
 /** @format */
 
-import withStyles from "@material-ui/core/styles/withStyles";
-import UnderConstructionImage from "assets/img/under_development.svg";
+
 import { app } from "assets/jss/app-theme";
 //
 import GridContainer from "components/Grid/GridContainer";
@@ -14,9 +13,9 @@ import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { appendNavHistory } from "state/actions/ui/nav";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
+import ApiService from "services/Api";
 //
-import styles from "views/pages/styles";
 
 class Page extends React.Component {
 	componentDidMount() {
@@ -24,11 +23,9 @@ class Page extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
 
 		return (
 			<GridContainer
-				className={classes.root}
 				direction="row"
 				justify="center"
 				alignItems="center"
@@ -42,7 +39,6 @@ class Page extends React.Component {
 					>
 						<Typography
 							variant="h4"
-							className={classes.main_title}
 							color="grey"
 						>
 							Resource Under Development
@@ -57,9 +53,8 @@ class Page extends React.Component {
 					>
 						<img
 							alt="Under development"
-							className={classes.image}
 							style={{ width: "80%" }}
-							src={UnderConstructionImage}
+							src={ApiService.endpoint("/public/img/under_development.svg")}
 						/>
 					</GridContainer>
 
@@ -79,16 +74,16 @@ class Page extends React.Component {
 	}
 }
 Page.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 };
 
 const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(
+export default (
 	compose(
-		withStyles(styles),
+
 		connect(mapStateToProps, { appendNavHistory })
 	)(Page)
 );

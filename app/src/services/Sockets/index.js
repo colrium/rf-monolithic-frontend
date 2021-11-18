@@ -1,18 +1,18 @@
 /** @format */
 import io from "socket.io-client";
 import { appName, baseUrls, environment, client_id, client_secret } from "config";
-import  store from "state/store";
+import store from "state/store";
 
 const SocketsSingleton = (function () {
-    var instance;
+	var instance;
 
- 
-    function createInstance() {
-    	const { auth } = store.getState();
+
+	function createInstance() {
+		const { auth } = store.getState();
 		let socket_url = baseUrls.api;
 		let options = {
 			secure: false,
-			agent: appName+' mobile',
+			agent: appName + ' mobile',
 			transportOptions: {
 				polling: {
 					extraHeaders: {
@@ -25,12 +25,12 @@ const SocketsSingleton = (function () {
 			rememberUpgrade: true,
 			rejectUnauthorized: false,
 			'reconnection': true,
-          	'reconnectionDelay': 500,
-			'reconnectionAttempts': Infinity, 
+			'reconnectionDelay': 500,
+			'reconnectionAttempts': Infinity,
 			'transports': ['websocket', 'polling'],
 			extraHeaders: {
-						"x-client-id": client_id,
-						"x-client-secret": client_secret,
+				"x-client-id": client_id,
+				"x-client-secret": client_secret,
 			}
 		};
 
@@ -40,7 +40,7 @@ const SocketsSingleton = (function () {
 		// make sure socket is 
 		var socket = io(socket_url, options);
 		socket.on('reconnect_attempt', () => {
-			////console.log("reconnect_attempt called");
+			////
 			socket.io.opts.transportOptions = {
 				polling: {
 					extraHeaders: {
@@ -51,21 +51,21 @@ const SocketsSingleton = (function () {
 			};
 			socket.io.opts.extraHeaders = {
 				"x-client-id": client_id,
-						"x-client-secret": client_secret,
+				"x-client-secret": client_secret,
 			};
 		});
 
-        return socket;
-    }
- 
-    return {
-        getInstance: function () {
-            if (!instance) {
-                instance = createInstance();
-            }
-            return instance;
-        }
-    };
+		return socket;
+	}
+
+	return {
+		getInstance: function () {
+			if (!instance) {
+				instance = createInstance();
+			}
+			return instance;
+		}
+	};
 })();
 const socket = SocketsSingleton.getInstance();
 export {

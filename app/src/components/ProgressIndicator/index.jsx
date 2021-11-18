@@ -4,9 +4,9 @@ import React from "react";
 import PropTypes from "prop-types";
 //
 
-import CircularProgress from "@material-ui/core/CircularProgress";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import withRoot from "hoc/withRoot";
+import CircularProgress from "@mui/material/CircularProgress";
+import LinearProgress from "@mui/material/LinearProgress";
+
 import LogoAnimation from "./LogoAnimation";
 
 class ProgressIndicator extends React.Component {
@@ -24,7 +24,7 @@ class ProgressIndicator extends React.Component {
 		const percent_progress = (progress / max) * 100;
 		const percent_buffer = (buffer / max) * 100;
 		return (
-			<div className={"p-2 m-0 h-auto w-auto"+(className? " "+className : "") }>
+			<div className={"p-2 m-0 h-auto w-auto" + (className ? " " + className : "")}>
 				{type === "circular" && (
 					<CircularProgress
 						className="m-auto"
@@ -82,4 +82,4 @@ ProgressIndicator.defaultProps = {
 	color: "secondary",
 };
 
-export default withRoot(ProgressIndicator);
+export default ProgressIndicator;

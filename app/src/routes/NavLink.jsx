@@ -4,16 +4,16 @@ import { NavLink } from "react-router-dom";
 
 
 const CustomNavLink = props => {
-	const {children, to, ...rest} = props;
+	const { children, to, ...rest } = props;
 	return (
-		<NavLink 
+		<NavLink
 			to={to}
 			isActive={(match, location) => {
 				if (location && String.isString(to)) {
 					let hash = "";
 					let pathname = to;
 					if (to.indexOf("#") !== -1) {
-						hash = to.trim().substr(to.indexOf("#"));						
+						hash = to.trim().substr(to.indexOf("#"));
 						pathname = to.trim().substr(0, to.indexOf("#"));
 					}
 					return location.pathname === pathname && location.hash === hash;

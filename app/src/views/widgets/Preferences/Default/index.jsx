@@ -1,16 +1,16 @@
 /** @format */
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { RadioInput, SelectInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { useGlobals } from "contexts/Globals";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 import { locales } from "config";
 
 
-function Widget({ app: {preferences} }) {	
+function Widget({ app: { preferences } }) {
 
 	const { updatePreferences } = useGlobals();
 	let [prefs, setPrefs] = useState(preferences);
@@ -18,29 +18,29 @@ function Widget({ app: {preferences} }) {
 	let [errors, setErrors] = useState({});
 	let [loading, setLoading] = useState({});
 
-	useEffect(()=>{
+	useEffect(() => {
 		setPrefs(preferences);
 	}, [preferences])
 
-	
-	
+
+
 
 	const handleOnChange = (name) => async value => {
-        setAlerts({[name]: undefined });
-        setErrors({...errors, [name]: undefined });
-        setLoading({...loading, [name]: true });
-        let new_value = value;
+		setAlerts({ [name]: undefined });
+		setErrors({ ...errors, [name]: undefined });
+		setLoading({ ...loading, [name]: true });
+		let new_value = value;
 
-        updatePreferences(name, new_value).then(updated_prefs => {
-			setAlerts({[name]: name + " saved"});
-			setErrors({...errors, [name]: false });
-			setLoading({...loading, [name]: false });
+		updatePreferences(name, new_value).then(updated_prefs => {
+			setAlerts({ [name]: name + " saved" });
+			setErrors({ ...errors, [name]: false });
+			setLoading({ ...loading, [name]: false });
 		}).catch(e => {
-			setAlerts({[name]: undefined });
-			setErrors({...errors, [name]: e.msg });
-			setLoading({...loading, [name]: false });
+			setAlerts({ [name]: undefined });
+			setErrors({ ...errors, [name]: e.msg });
+			setLoading({ ...loading, [name]: false });
 		});
-    };
+	};
 
 	return (
 		<GridContainer className="px-2">
@@ -55,7 +55,7 @@ function Widget({ app: {preferences} }) {
 					value={prefs.theme}
 					onChange={handleOnChange("theme")}
 					helperText={alerts["theme"]}
-					options={{"light" : "Light", "dark": "Dark"}}
+					options={{ "light": "Light", "dark": "Dark" }}
 					disabled={loading["theme"]}
 					error={errors["theme"]}
 					validate
@@ -79,7 +79,7 @@ function Widget({ app: {preferences} }) {
 				/>
 			</GridItem>
 
-			
+
 		</GridContainer>
 	);
 }
@@ -88,4 +88,4 @@ const mapStateToProps = state => ({
 	app: state.app,
 });
 
-export default withErrorHandler(connect(mapStateToProps, {})(React.memo(Widget)));
+export default (connect(mapStateToProps, {})(React.memo(Widget)));

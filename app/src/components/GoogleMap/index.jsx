@@ -3,16 +3,15 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import classNames from "classnames";
 import { compose } from "recompose";
-import { withStyles } from "@material-ui/core";
 import { default_location } from "config";
 import { useGoogleMaps } from "hooks";
 import { useGlobals } from "contexts/Globals";
 import { useUpdateEffect, useWindowSize, useLatest, useGeolocation } from "react-use"
 
-import styles, { light, dark } from "./styles";
+import { light, dark } from "./styles";
 
 const GoogleMap = React.forwardRef((props, ref) => {
-	const { app, classes, className, onMapLoad, height, device, zoom, defaultZoom = 5, center = default_location, showCurrentPosition = false, ...rest
+	const { app, className, onMapLoad, height, device, zoom, defaultZoom = 5, center = default_location, showCurrentPosition = false, ...rest
 	} = props;
 	const domElement = useLatest(ref || null);
 	const geoLocation = useGeolocation();
@@ -31,7 +30,6 @@ const GoogleMap = React.forwardRef((props, ref) => {
 			onMapLoad(googlemap)
 			google.maps.event.trigger(googlemap, "center_changed");
 		}
-		console.log("app.theme", app.theme)
 	}, [onMapLoad, googlemap]);
 
 
@@ -40,9 +38,12 @@ const GoogleMap = React.forwardRef((props, ref) => {
 		<div
 			ref={mapRef}
 			className={classNames({
-				"m-0 mb-4 relative": true,
+				"m-0 mb-4 p-0 relative": true,
 				[className]: !!className,
 			})}
+			style={{
+				height: height,
+			}}
 		>
 		</div>
 	);
@@ -53,4 +54,4 @@ const mapStateToProps = state => ({
 	device: state.device,
 });
 
-export default compose(connect(mapStateToProps, {}), withStyles(styles))(React.memo(GoogleMap));
+export default compose(connect(mapStateToProps, {}),)(React.memo(GoogleMap));

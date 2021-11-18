@@ -4,7 +4,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
-import withRoot from "hoc/withRoot";
+
 import LoginForm from "views/forms/LoginForm";
 
 class Step extends React.Component {
@@ -17,8 +17,7 @@ class Step extends React.Component {
 						<Typography
 							variant="h3"
 							className="primary_text"
-							center
-						>
+													>
 							Login
 						</Typography>
 					</GridItem>
@@ -34,4 +33,4 @@ class Step extends React.Component {
 	}
 }
 
-export default withRoot(Step);
+export default Step;

@@ -1,7 +1,6 @@
 /** @format */
 
-import Chip from "@material-ui/core/Chip";
-import LogoChevron from "assets/img/realfield/logo-chevron.svg";
+import Chip from "@mui/material/Chip";
 import Button from "components/Button";
 import { DynamicInput } from "components/FormInputs";
 import GridContainer from "components/Grid/GridContainer";
@@ -10,7 +9,7 @@ import LazyImage from "components/LazyImage";
 import Typography from "components/Typography";
 import React from "react";
 import ApiService from "services/Api";
-import withRoot from "hoc/withRoot";
+
 
 class ItemView extends React.Component {
 	state = {
@@ -257,7 +256,7 @@ class ItemView extends React.Component {
 								src={
 									this.state.selected_image
 										? this.state.selected_image
-										: LogoChevron
+										: ApiService.endpoint("/public/img/realfield/logo-chevron.svg")
 								}
 							/>
 						</div>
@@ -319,4 +318,4 @@ class ItemView extends React.Component {
 	}
 }
 
-export default withRoot(ItemView);
+export default ItemView;

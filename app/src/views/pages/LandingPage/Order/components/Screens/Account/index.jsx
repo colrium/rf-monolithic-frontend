@@ -1,12 +1,12 @@
 /** @format */
 
-import Check from "@material-ui/icons/Check";
+import Check from "@mui/icons-material/Check";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
-import withRoot from "hoc/withRoot";
+
 import Profile from "views/pages/Dashboard/Account/components/Profile";
 
 class Step extends React.Component {
@@ -46,4 +46,4 @@ class Step extends React.Component {
 	}
 }
 
-export default withRoot(Step);
+export default Step;

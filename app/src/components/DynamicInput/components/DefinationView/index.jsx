@@ -1,21 +1,21 @@
 /** @format */
 
-import Collapse from "@material-ui/core/Collapse";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import IconButton from "@material-ui/core/IconButton";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import withStyles from "@material-ui/core/styles/withStyles";
-import Tooltip from "@material-ui/core/Tooltip";
-import AddIcon from "@material-ui/icons/Add";
-import MoveDownIcon from "@material-ui/icons/ArrowDownward";
-import MoveUpIcon from "@material-ui/icons/ArrowUpward";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import MenuIcon from "@material-ui/icons/MoreVert";
+import Collapse from "@mui/material/Collapse";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+
+import Tooltip from "@mui/material/Tooltip";
+import AddIcon from "@mui/icons-material/Add";
+import MoveDownIcon from "@mui/icons-material/ArrowDownward";
+import MoveUpIcon from "@mui/icons-material/ArrowUpward";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import MenuIcon from "@mui/icons-material/MoreVert";
 import classNames from "classnames";
 import Button from "components/Button";
 import { CheckboxInput, MapInput, RadioInput, SelectInput, TextInput } from "components/FormInputs";
@@ -24,8 +24,8 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import PropTypes from "prop-types";
 import React from "react";
-import withRoot from "hoc/withRoot";
-import styles from "./styles";
+
+
 
 
 
@@ -550,7 +550,6 @@ class DefinationView extends React.Component {
 	}
 
 	renderInputsDefination() {
-		const { classes } = this.props;
 		let {
 			value,
 			disabled,
@@ -570,14 +569,14 @@ class DefinationView extends React.Component {
 									? Number.parseNumber(properties.input.size)
 									: 12
 								: properties.size
-								? Number.parseNumber(properties.size)
-								: 12
+									? Number.parseNumber(properties.size)
+									: 12
 						}
 						key={"field-" + cursor}
 					>
 						{properties.type === "field" && (
-							<div className={classes.inputWrapper}>
-								<div className={classes.inputContainer}>
+							<div >
+								<div >
 									<GridContainer className="m-0">
 										<GridItem xs={12} className="m-0 p-0">
 											<Typography
@@ -598,13 +597,13 @@ class DefinationView extends React.Component {
 													properties.label +
 													(properties.input
 														? properties.input
-																.required
+															.required
 															? "*"
 															: ""
 														: "") +
 													(properties.input
 														? properties.input
-																.multiple
+															.multiple
 															? "]"
 															: ""
 														: "")}
@@ -619,39 +618,31 @@ class DefinationView extends React.Component {
 												{" "}
 												{properties.input
 													? properties.input.type in
-													  this.input_types
+														this.input_types
 														? this.input_types[
-																properties.input
-																	.type
-														  ]
+														properties.input
+															.type
+														]
 														: "Field"
 													: "Field"}{" "}
 											</Typography>
 										</GridItem>
 									</GridContainer>
 								</div>
-								<div className={classes.actionContainer}>
+								<div >
 									{properties.type === "group" && (
 										<IconButton
-											className={classNames(
-												classes.inputAction,
-												{
-													[classes.expandOpen]: this.state.expandedGroups.includes(
-														name
-													),
-												}
-											)}
 											fontSize="small"
 											onClick={
 												!this.state.expandedGroups.includes(
 													name
 												)
 													? this.handleOnGroupContextExpand(
-															name
-													  )
+														name
+													)
 													: this.handleOnGroupContextCollapse(
-															name
-													  )
+														name
+													)
 											}
 											aria-label="menu-icon"
 										>
@@ -661,7 +652,7 @@ class DefinationView extends React.Component {
 
 									{JSON.positionOfKey(value, name) !== 0 && (
 										<IconButton
-											className={classes.inputAction}
+
 											size="small"
 											onClick={this.handleOnItemMove(
 												"up",
@@ -675,21 +666,21 @@ class DefinationView extends React.Component {
 
 									{JSON.positionOfKey(value, name) <
 										Object.size(value) - 1 && (
-										<IconButton
-											className={classes.inputAction}
-											size="small"
-											onClick={this.handleOnItemMove(
-												"down",
-												{ name: name, ...properties }
-											)}
-											aria-label="menu-icon"
-										>
-											<MoveDownIcon className="text-lg" />
-										</IconButton>
-									)}
+											<IconButton
+
+												size="small"
+												onClick={this.handleOnItemMove(
+													"down",
+													{ name: name, ...properties }
+												)}
+												aria-label="menu-icon"
+											>
+												<MoveDownIcon className="text-lg" />
+											</IconButton>
+										)}
 
 									<IconButton
-										className={classes.inputAction}
+
 										size="small"
 										onClick={this.handleOnInputMenuOpen({
 											name: name,
@@ -705,8 +696,8 @@ class DefinationView extends React.Component {
 
 						{properties.type === "group" && (
 							<div className="w-full p-1">
-								<div className={classes.inputWrapper + " m-0"}>
-									<div className={classes.inputContainer}>
+								<div className={" m-0"}>
+									<div >
 										<GridContainer className="m-0 p-0">
 											<GridItem
 												xs={12}
@@ -740,27 +731,19 @@ class DefinationView extends React.Component {
 											</GridItem>
 										</GridContainer>
 									</div>
-									<div className={classes.actionContainer}>
+									<div >
 										<IconButton
-											className={classNames(
-												classes.inputAction,
-												{
-													[classes.expandOpen]: this.state.expandedGroups.includes(
-														name
-													),
-												}
-											)}
 											size="small"
 											onClick={
 												!this.state.expandedGroups.includes(
 													name
 												)
 													? this.handleOnGroupContextExpand(
-															name
-													  )
+														name
+													)
 													: this.handleOnGroupContextCollapse(
-															name
-													  )
+														name
+													)
 											}
 											aria-label="menu-icon"
 										>
@@ -769,42 +752,40 @@ class DefinationView extends React.Component {
 
 										{JSON.positionOfKey(value, name) !==
 											0 && (
-											<IconButton
-												className={classes.inputAction}
-												size="small"
-												onClick={this.handleOnItemMove(
-													"up",
-													{
-														name: name,
-														...properties,
-													}
-												)}
-												aria-label="menu-icon"
-											>
-												<MoveUpIcon className="text-lg" />
-											</IconButton>
-										)}
+												<IconButton
+
+													size="small"
+													onClick={this.handleOnItemMove(
+														"up",
+														{
+															name: name,
+															...properties,
+														}
+													)}
+													aria-label="menu-icon"
+												>
+													<MoveUpIcon className="text-lg" />
+												</IconButton>
+											)}
 
 										{JSON.positionOfKey(value, name) <
 											Object.size(value) - 1 && (
-											<IconButton
-												className={classes.inputAction}
-												size="small"
-												onClick={this.handleOnItemMove(
-													"down",
-													{
-														name: name,
-														...properties,
-													}
-												)}
-												aria-label="menu-icon"
-											>
-												<MoveDownIcon className="text-lg" />
-											</IconButton>
-										)}
+												<IconButton
+													size="small"
+													onClick={this.handleOnItemMove(
+														"down",
+														{
+															name: name,
+															...properties,
+														}
+													)}
+													aria-label="menu-icon"
+												>
+													<MoveDownIcon className="text-lg" />
+												</IconButton>
+											)}
 
 										<IconButton
-											className={classes.inputAction}
 											size="small"
 											onClick={this.handleOnInputMenuOpen(
 												{ name: name, ...properties }
@@ -844,26 +825,19 @@ class DefinationView extends React.Component {
 																	entry.input
 																		.size
 																		? Number.parseNumber(
-																				entry
-																					.input
-																					.size
-																		  )
+																			entry
+																				.input
+																				.size
+																		)
 																		: 12
 																}
-																className={classNames(
-																	classes.inputWrapper,
-																	"m-0 p-0"
-																)}
+																className={"m-0 p-0"}
 																key={
 																	"group-field-" +
 																	index
 																}
 															>
-																<div
-																	className={
-																		classes.inputContainer
-																	}
-																>
+																<div>
 																	<GridContainer className="m-0">
 																		<GridItem
 																			xs={
@@ -877,23 +851,23 @@ class DefinationView extends React.Component {
 																			>
 																				{(entry.input
 																					? entry
-																							.input
-																							.multiple
+																						.input
+																						.multiple
 																						? "["
 																						: ""
 																					: "") +
 																					entry.label +
 																					(entry.input
 																						? entry
-																								.input
-																								.required
+																							.input
+																							.required
 																							? "*"
 																							: ""
 																						: "") +
 																					(entry.input
 																						? entry
-																								.input
-																								.multiple
+																							.input
+																							.multiple
 																							? "]"
 																							: ""
 																						: "")}
@@ -913,16 +887,16 @@ class DefinationView extends React.Component {
 																				{" "}
 																				{entry.input
 																					? entry
-																							.input
-																							.type in
-																					  this
+																						.input
+																						.type in
+																						this
 																							.input_types
 																						? this
-																								.input_types[
-																								entry
-																									.input
-																									.type
-																						  ]
+																							.input_types[
+																						entry
+																							.input
+																							.type
+																						]
 																						: "Field"
 																					: "Field"}{" "}
 																			</Typography>
@@ -930,14 +904,8 @@ class DefinationView extends React.Component {
 																	</GridContainer>
 																</div>
 																<div
-																	className={
-																		classes.actionContainer
-																	}
 																>
 																	<IconButton
-																		className={
-																			classes.inputAction
-																		}
 																		size="small"
 																		onClick={this.handleOnInputMenuOpen(
 																			entry
@@ -983,11 +951,11 @@ class DefinationView extends React.Component {
 									context.name
 								)
 									? this.handleOnGroupContextExpand(
-											context.name
-									  )
+										context.name
+									)
 									: this.handleOnGroupContextCollapse(
-											context.name
-									  )
+										context.name
+									)
 							}
 						>
 							{" "}
@@ -1008,11 +976,11 @@ class DefinationView extends React.Component {
 					)}
 					{JSON.positionOfKey(value, context.name) <
 						Object.size(value) - 1 && (
-						<MenuItem onClick={this.handleOnItemMove("down")}>
-							{" "}
-							Move Down{" "}
-						</MenuItem>
-					)}
+							<MenuItem onClick={this.handleOnItemMove("down")}>
+								{" "}
+								Move Down{" "}
+							</MenuItem>
+						)}
 					<MenuItem onClick={this.handleContextRemove}>
 						{" "}
 						Delete{" "}
@@ -1044,7 +1012,7 @@ class DefinationView extends React.Component {
 								if (value.trim().length > 0) {
 									this.onContextParamsChange("name", value);
 								}
-							}								
+							}
 						}}
 						label="Group Name"
 						type="text"
@@ -1082,8 +1050,8 @@ class DefinationView extends React.Component {
 						value={
 							context.input
 								? ["12", "10", "8", "6", "4", "2"].includes(
-										context.input.size
-								  )
+									context.input.size
+								)
 									? context.input.size
 									: "12"
 								: "12"
@@ -1143,22 +1111,22 @@ class DefinationView extends React.Component {
 										"input",
 										context.input
 											? {
-													...context.input,
-													props: context.input.props
-														? {
-																...context.input
-																	.props,
-																type: value,
-														  }
-														: { type: value },
-											  }
+												...context.input,
+												props: context.input.props
+													? {
+														...context.input
+															.props,
+														type: value,
+													}
+													: { type: value },
+											}
 											: {
-													type: "text",
-													size: 12,
-													props: { type: value },
-													required: false,
-													disabled: false,
-											  }
+												type: "text",
+												size: 12,
+												props: { type: value },
+												required: false,
+												disabled: false,
+											}
 									);
 								}
 							}
@@ -1200,22 +1168,22 @@ class DefinationView extends React.Component {
 										"input",
 										context.input
 											? {
-													...context.input,
-													props: context.input.props
-														? {
-																...context.input
-																	.props,
-																type: value,
-														  }
-														: { type: value },
-											  }
+												...context.input,
+												props: context.input.props
+													? {
+														...context.input
+															.props,
+														type: value,
+													}
+													: { type: value },
+											}
 											: {
-													type: "text",
-													size: 12,
-													props: { type: value },
-													required: false,
-													disabled: false,
-											  }
+												type: "text",
+												size: 12,
+												props: { type: value },
+												required: false,
+												disabled: false,
+											}
 									);
 								}
 							}
@@ -1227,8 +1195,8 @@ class DefinationView extends React.Component {
 						value={
 							context.input
 								? ["coordinates", "address"].includes(
-										context.input.props.type
-								  )
+									context.input.props.type
+								)
 									? context.input.props.type
 									: "coordinates"
 								: "coordinates"
@@ -1247,41 +1215,41 @@ class DefinationView extends React.Component {
 				{["select", "transferlist", "radio", "checkbox"].includes(
 					context.input ? context.input.type : undefined
 				) && (
-					<GridItem xs={12}>
-						<TextInput
-							variant="outlined"
-							onChange={value => {
-								let possibilities = {};
-								value.split(",").map((possibility, index) => {
-									if (possibility.length > 0) {
-										possibilities[
-											possibility.variablelize()
-										] = possibility.trim();
+						<GridItem xs={12}>
+							<TextInput
+								variant="outlined"
+								onChange={value => {
+									let possibilities = {};
+									value.split(",").map((possibility, index) => {
+										if (possibility.length > 0) {
+											possibilities[
+												possibility.variablelize()
+											] = possibility.trim();
+										}
+									});
+									if (Object.keys(possibilities).length > 0) {
+										this.onContextParamsChange(
+											"possibilities",
+											possibilities
+										);
 									}
-								});
-								if (Object.keys(possibilities).length > 0) {
-									this.onContextParamsChange(
-										"possibilities",
-										possibilities
-									);
-								}
-							}}
-							label="Options"
-							defaultValue={
-								context.possibilities
-									? Object.values(context.possibilities).join(
+								}}
+								label="Options"
+								defaultValue={
+									context.possibilities
+										? Object.values(context.possibilities).join(
 											", "
-									  )
-									: ""
-							}
-							type="text"
-							multiline
-							rows={3}
-							helperText="Enter options each separated by a comma (,)"
-							fullWidth
-						/>
-					</GridItem>
-				)}
+										)
+										: ""
+								}
+								type="text"
+								multiline
+								rows={3}
+								helperText="Enter options each separated by a comma (,)"
+								fullWidth
+							/>
+						</GridItem>
+					)}
 			</GridContainer>
 		);
 	}
@@ -1323,16 +1291,16 @@ class DefinationView extends React.Component {
 		let appendableProps = this.getAppendableProps();
 
 		return (
-            <GridContainer className="p-0 m-0">
+			<GridContainer className="p-0 m-0">
 				{appendableProps.map((appendableProp, cursor) => {
-                    const {
+					const {
 						name,
 						label,
 						input,
 						size,
 						possibilities,
 					} = appendableProp;
-                    if (JSON.isJSON(appendableProp.input)) {
+					if (JSON.isJSON(appendableProp.input)) {
 						const {
 							type,
 							size,
@@ -1343,8 +1311,8 @@ class DefinationView extends React.Component {
 						let inputValue = context[name]
 							? context[name]
 							: value
-							? value
-							: defaultValue;
+								? value
+								: defaultValue;
 						return (
 							<GridItem
 								xs={12}
@@ -1354,20 +1322,20 @@ class DefinationView extends React.Component {
 								{["text", "email", "phone", "number"].includes(
 									type ? type : undefined
 								) && (
-									<TextInput
-										onChange={value => {
-											this.onContextParamsChange(
-												name,
-												value
-											);
-										}}
-										name={name}
-										label={label}
-										type={type}
-										defaultValue={inputValue}
-										{...inputProps}
-									/>
-								)}
+										<TextInput
+											onChange={value => {
+												this.onContextParamsChange(
+													name,
+													value
+												);
+											}}
+											name={name}
+											label={label}
+											type={type}
+											defaultValue={inputValue}
+											{...inputProps}
+										/>
+									)}
 
 								{type == "select" && (
 									<SelectInput
@@ -1419,9 +1387,9 @@ class DefinationView extends React.Component {
 							</GridItem>
 						);
 					}
-                })}
+				})}
 			</GridContainer>
-        );
+		);
 	}
 
 	inputDefaultValueDefinationHelper() {
@@ -1431,30 +1399,30 @@ class DefinationView extends React.Component {
 				{["select", "transferlist", "radio", "checkbox"].includes(
 					context.input ? context.input.type : undefined
 				) && (
-					<GridItem xs={12} className="p-0 m-0">
-						<SelectInput
-							textFieldProps={{
-								label: "Default Value",
-								InputLabelProps: {
-									shrink: true,
-								},
-								variant: "outlined",
-								required: true,
-							}}
-							onChange={value => {
-								this.onContextParamsChange(
-									"input",
-									context.input
-										? { ...context.input, default: value }
-										: { default: value }
-								);
-							}}
-							options={context.possibilities}
-							value={context.input? (context.input.default? context.input.default: undefined) : undefined}
-							placeholder="Select Default"
-						/>
-					</GridItem>
-				)}
+						<GridItem xs={12} className="p-0 m-0">
+							<SelectInput
+								textFieldProps={{
+									label: "Default Value",
+									InputLabelProps: {
+										shrink: true,
+									},
+									variant: "outlined",
+									required: true,
+								}}
+								onChange={value => {
+									this.onContextParamsChange(
+										"input",
+										context.input
+											? { ...context.input, default: value }
+											: { default: value }
+									);
+								}}
+								options={context.possibilities}
+								value={context.input ? (context.input.default ? context.input.default : undefined) : undefined}
+								placeholder="Select Default"
+							/>
+						</GridItem>
+					)}
 
 				{![
 					"select",
@@ -1464,27 +1432,27 @@ class DefinationView extends React.Component {
 					"checkbox",
 					"map",
 				].includes(context.input ? context.input.type : undefined) && (
-					<GridItem xs={12} className="p-0 m-0">
-						<TextInput
-							onChange={value => {
-								if (value.trim().length > 0) {
-									this.onContextParamsChange(
-										"input",
-										context.input
-											? {
+						<GridItem xs={12} className="p-0 m-0">
+							<TextInput
+								onChange={value => {
+									if (value.trim().length > 0) {
+										this.onContextParamsChange(
+											"input",
+											context.input
+												? {
 													...context.input,
 													default: value,
-											  }
-											: { default: value }
-									);
-								}
-							}}
-							label="Default"
-							type="text"
-							fullWidth
-						/>
-					</GridItem>
-				)}
+												}
+												: { default: value }
+										);
+									}
+								}}
+								label="Default"
+								type="text"
+								fullWidth
+							/>
+						</GridItem>
+					)}
 
 				{["map"].includes(
 					context.input ? context.input.type : undefined
@@ -1504,9 +1472,9 @@ class DefinationView extends React.Component {
 											"input",
 											context.input
 												? {
-														...context.input,
-														default: value,
-												  }
+													...context.input,
+													default: value,
+												}
 												: { default: value }
 										);
 									}
@@ -1522,7 +1490,6 @@ class DefinationView extends React.Component {
 	}
 
 	renderFieldContextDefination() {
-		const { classes } = this.props;
 		const { context } = this.state;
 		return (
 			<GridContainer className="p-0 m-0">
@@ -1597,16 +1564,16 @@ class DefinationView extends React.Component {
 										"input",
 										context.input
 											? {
-													...context.input,
-													size: Number.parseNumber(
-														value
-													),
-											  }
+												...context.input,
+												size: Number.parseNumber(
+													value
+												),
+											}
 											: {
-													size: Number.parseNumber(
-														value
-													),
-											  }
+												size: Number.parseNumber(
+													value
+												),
+											}
 									);
 								}
 							}
@@ -1623,10 +1590,10 @@ class DefinationView extends React.Component {
 						value={
 							context.input
 								? ["12", "10", "8", "6", "4", "2"].includes(
-										context.input.size
-											? context.input.size.toString()
-											: "12"
-								  )
+									context.input.size
+										? context.input.size.toString()
+										: "12"
+								)
 									? context.input.size.toString()
 									: "12"
 								: "12"
@@ -1652,45 +1619,45 @@ class DefinationView extends React.Component {
 				{["select", "transferlist", "checkbox", "map"].includes(
 					context.input ? context.input.type : undefined
 				) && (
-					<GridItem xs={12}>
-						<CheckboxInput
-							checked={
-								context.input
-									? context.input.props
-										? context.input.props.isMulti
+						<GridItem xs={12}>
+							<CheckboxInput
+								checked={
+									context.input
+										? context.input.props
 											? context.input.props.isMulti
+												? context.input.props.isMulti
+												: false
 											: false
 										: false
-									: false
-							}
-							onChange={isMulti => {
-								this.onContextParamsChange(
-									"input",
-									context.input
-										? {
+								}
+								onChange={isMulti => {
+									this.onContextParamsChange(
+										"input",
+										context.input
+											? {
 												...context.input,
 												props: context.input.props
 													? {
-															...context.input
-																.props,
-															isMulti: isMulti,
-													  }
+														...context.input
+															.props,
+														isMulti: isMulti,
+													}
 													: { isMulti: isMulti },
-										  }
-										: {
+											}
+											: {
 												type: "text",
 												size: 12,
 												props: { isMulti: isMulti },
 												required: false,
 												disabled: false,
-										  }
-								);
-							}}
-							color="primary"
-							label="Multiple"
-						/>
-					</GridItem>
-				)}
+											}
+									);
+								}}
+								color="primary"
+								label="Multiple"
+							/>
+						</GridItem>
+					)}
 
 				<GridItem xs={12}>
 					<CheckboxInput
@@ -1754,8 +1721,8 @@ class DefinationView extends React.Component {
 					{context.type === "group"
 						? "Grouped Input"
 						: (context.group && context.group in value
-								? value[context.group].label
-								: "") + " Input"}
+							? value[context.group].label
+							: "") + " Input"}
 				</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
@@ -1771,14 +1738,12 @@ class DefinationView extends React.Component {
 					<Button
 						onClick={this.handleAddContextDialogClose}
 						color="error"
-						simple
 					>
 						Cancel
 					</Button>
 					<Button
 						onClick={this.handleContextSave}
 						color="primary"
-						simple
 						disabled={context.name ? false : true}
 					>
 						Save {context.type === "group" ? "Group" : "Field"}
@@ -1789,7 +1754,6 @@ class DefinationView extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
 		const {
 			addContextMenuAnchor,
 			context,
@@ -1858,7 +1822,7 @@ class DefinationView extends React.Component {
 }
 
 DefinationView.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	className: PropTypes.string,
 	value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 	onChange: PropTypes.func,
@@ -1881,4 +1845,4 @@ DefinationView.defaultProps = {
 	appendProps: { field: [], group: [] },
 };
 
-export default withRoot(withStyles(styles)(DefinationView));
+export default (DefinationView);

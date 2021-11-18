@@ -1,82 +1,95 @@
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
+import { useMountedState } from 'react-use';
+import useSetState from './useSetState';
 
+const useLazyImage = (src, fallbackUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAD0lEQVR42mNkwAIYh7IgAAVVAAuInjI5AAAAAElFTkSuQmCC", placeholderUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAD0lEQVR42mNkwAIYh7IgAAVVAAuInjI5AAAAAElFTkSuQmCC", intersectionObserverOptions = {}) => {
 
-const useLazyImage = (imgUrl, lazyTargetRef=null, fallbackUrl=`${process.env.PUBLIC_URL}/img/placeholder.png`, placeholderUrl="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAD0lEQVR42mNkwAIYh7IgAAVVAAuInjI5AAAAAElFTkSuQmCC",  intersectionObserverOptions = {}) => {
-	const [loading, setLoading] = useState(true);
-	const [imgSrc, setImgSrc] = useState(placeholderUrl)
-	const [errSrc, setErrSrc] = useState(null);
-	const [error, setError] = useState(null)
-	const onError = () => {
-		setErrSrc(fallbackUrl || placeholderUrl);
-	}
+	const ref = useRef()
+	const imageRef = useRef(new Image())
+	const isMounted = useMountedState();
+	const [state, setState] = useSetState({
+		loading: false,
+		src: placeholderUrl,
+		error: null,
+	})
 
-	const loadImage = (src) => {
-			setErrSrc(null);
-			const imageToLoad = new Image();
-		    
-		    imageToLoad.onload = (event) => {
-				imageToLoad.onload = null;
-				imageToLoad.onerror = null;
-		    	imageToLoad.src = "";
-		    	setError(null);
-				// When image is loaded replace the src and set loading to false
-				setLoading(false);
-				setErrSrc(null);
-				setImgSrc(src);
-		    }
-		    imageToLoad.onerror = (event) => {
-		    	if (!String.isEmpty(imageToLoad.src)) {
-                    setLoading(false);
-                    setError(event);
-                    setErrSrc(fallbackUrl || placeholderUrl);
-                }					
-		    }
-			imageToLoad.src = src;
-	}
+	const onImageLoad = useCallback((event) => {
+		// 
+		imageRef.current.onload = null;
+		// imageRef.current.src = "";
+		if (isMounted) {
+			setState({
+				loading: false,
+				error: null,
+				src: src,
+			});
+		}
+	}, [])
+
+	const onImageError = useCallback((event) => {
+		// 
+		imageRef.current.onerror = null;
+		if (isMounted && !String.isEmpty(imageRef.current.src)) {
+			setState({
+				loading: false,
+				error: event,
+				src: fallbackUrl || placeholderUrl,
+			});
+			imageRef.current.src = fallbackUrl || placeholderUrl
+		}
+	}, [])
+
+	const loadImage = useCallback((imgSrc) => {
+		imageRef.current.onload = onImageLoad;
+		imageRef.current.onerror = onImageError;
+		imageRef.current.src = imgSrc;
+	}, [])
 	// load image
 	useEffect(() => {
 		let observer = undefined;
-		let didCancel = false;	
-		if (!error && imgUrl !== imgSrc) {	
-			// if browser supports IntersectionObserver and lazyTargetRef is given
-			if ('IntersectionObserver' in window && lazyTargetRef && lazyTargetRef.current instanceof Element) {
-				// reload image when prop - imgUrl changed
-				
-					observer = new IntersectionObserver(entries => {
-						entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-								// change state
-								loadImage(imgUrl);
-								// don't need to observe anymore
-								observer.unobserve(entry.target)
-							}
-                        })
-					}, intersectionObserverOptions)
-					// start to observe element
-					observer.observe(lazyTargetRef.current)
-			
+		let didCancel = false;
+		if (!state.error && src !== state.src) {
+			// if browser supports IntersectionObserver and ref is given
+			if ('IntersectionObserver' in window && ref && ref.current instanceof Element) {
+				// reload image when prop - src changed
+
+				observer = new IntersectionObserver(entries => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting) {
+							// change state
+							loadImage(src);
+							// don't need to observe anymore
+							observer.unobserve(entry.target)
+						}
+					})
+				}, intersectionObserverOptions)
+				// start to observe element
+				observer.observe(ref.current)
+
 			} else {
 				// baseline: load image after componentDidMount
-				loadImage(imgUrl);
+				//loadImage(src);
 			}
 			return () => {
 				didCancel = true;
+				imageRef.current.onerror = null;
+				imageRef.current.onload = null;
 				// on component cleanup, we remove the listner
-				if (observer && lazyTargetRef && lazyTargetRef.current instanceof Element) {
-					observer.unobserve(lazyTargetRef.current);
+				if (observer && ref && ref.current instanceof Element) {
+					observer.unobserve(ref.current);
 				}
 			};
 		}
-	}, [imgUrl, imgSrc, lazyTargetRef, error]);
+	}, [src, state.src, ref, state.error]);
 
-	useEffect(() => {
-		if (errSrc && errSrc !== fallbackUrl) {
-			setErrSrc(fallbackUrl);
-		}
+	// useEffect(() => {
+	// 	if (errSrc && errSrc !== fallbackUrl) {
+	// 		setErrSrc(fallbackUrl);
+	// 	}
 
-	}, [errSrc, fallbackUrl]);
+	// }, [errSrc, fallbackUrl]);
 
-	return errSrc || imgSrc;
+	return [state.src, { ...state, ref, fallback: fallbackUrl, placeholder: placeholderUrl }];
 }
 export default useLazyImage;

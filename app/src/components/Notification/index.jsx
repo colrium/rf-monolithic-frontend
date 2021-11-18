@@ -1,6 +1,6 @@
 /** @format */
 
-import { Box, Snackbar } from "@material-ui/core";
+import { Box, Snackbar } from "@mui/material";
 import NotificationMp3 from "assets/audio/notification.mp3";
 import NotificationOgg from "assets/audio/notification.ogg";
 import { colors } from "assets/jss/app-theme";
@@ -86,37 +86,37 @@ class Notification extends React.Component {
 	}
 
 	handleDesktopPermissionGranted() {
-        this.setState({
+		this.setState({
 			ignore: false,
 		});
-    }
+	}
 	handleDesktopPermissionDenied() {
-        this.setState({
+		this.setState({
 			ignore: true,
 		});
-    }
+	}
 	handleDesktopNotSupported() {
-        this.setState({
+		this.setState({
 			ignore: true,
 		});
-    }
+	}
 
-	handleDesktopNotificationOnClick(e, tag) {}
+	handleDesktopNotificationOnClick(e, tag) { }
 
-	handleDesktopNotificationOnError(e, tag) {}
+	handleDesktopNotificationOnError(e, tag) { }
 
-	handleDesktopNotificationOnClose(e, tag) {}
+	handleDesktopNotificationOnClose(e, tag) { }
 
 	handleDesktopNotificationOnShow(e, tag) {
-        this.playSound();
-    }
+		this.playSound();
+	}
 
 	playSound(filename) {
 		document.getElementById("sound").play();
 	}
 
 	render() {
-        const {
+		const {
 			type,
 			title,
 			body,
@@ -131,8 +131,8 @@ class Notification extends React.Component {
 			windowNotificationProps,
 			embeddedNotificationProps,
 		} = this.state;
-        let typeArr = Array.isArray(type) ? type : [type];
-        return (
+		let typeArr = Array.isArray(type) ? type : [type];
+		return (
 			<Box>
 				<audio id="sound" preload="auto">
 					<source src={NotificationMp3} type="audio/mpeg" />
@@ -177,7 +177,7 @@ class Notification extends React.Component {
 				)}
 			</Box>
 		);
-    }
+	}
 
 	close(n) {
 		if (n && typeof n.close === "function") {
@@ -218,10 +218,10 @@ Notification.defaultProps = {
 		},
 		autoHideDuration: 6000,
 	},
-	onShow: () => {},
-	onClick: () => {},
-	onClose: () => {},
-	onError: () => {},
+	onShow: () => { },
+	onClick: () => { },
+	onClose: () => { },
+	onError: () => { },
 	timeout: 6000,
 	options: {},
 	body: "",

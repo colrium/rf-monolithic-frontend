@@ -1,19 +1,19 @@
 /** @format */
 import React from "react";
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import {
 	Add as AddIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	NoteOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { UtilitiesHelper } from "hoc/Helpers";
 import * as definations from "definations";
 import { Link } from "react-router-dom";
 import Button from "components/Button";
 
-export default  {
+export default {
 	name: "forms",
 	label: "Forms",
 	icon: <DefinationContextIcon />,
@@ -43,7 +43,7 @@ export default  {
 			},
 		},
 	},
-	scope:{
+	scope: {
 		columns: {
 
 			name: {
@@ -55,12 +55,12 @@ export default  {
 					default: "",
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						return true
 					},
-					input: (values, user) => {						
+					input: (values, user) => {
 						return true;
-					}					
+					}
 				},
 			},
 
@@ -75,17 +75,17 @@ export default  {
 					required: true,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					}
 				},
-				possibilities : (entry, user) => {
+				possibilities: (entry, user) => {
 					let possibilies = {};
 					if (user) {
 						Object.entries(definations).map(([name, defination], index) => {
@@ -93,9 +93,9 @@ export default  {
 								if (UtilitiesHelper.isOfType(defination.label, "function")) {
 									possibilies[defination.model] = defination.label(user);
 								}
-								else{
+								else {
 									possibilies[defination.model] = defination.label;
-								}				
+								}
 							}
 						});
 					}
@@ -109,20 +109,20 @@ export default  {
 				label: "Provider",
 				input: {
 					type: "select",
-					size: 6,	
+					size: 6,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					}
 				},
-				possibilities : {
+				possibilities: {
 					"local": "Local",
 					"kobotoolbox": "Kobotoolbox",
 				}
@@ -133,18 +133,18 @@ export default  {
 				label: "UID",
 				input: {
 					type: "text",
-					size: 6,	
+					size: 6,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					}
 				},
 			},
 
@@ -157,33 +157,33 @@ export default  {
 					required: false,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					}
 				},
-				possibilities : (entry, user) => {
+				possibilities: (entry, user) => {
 					let possibilies = {};
 					Object.entries(definations).map(([name, defination], index) => {
-						if (entry.context === defination.model ) {
+						if (entry.context === defination.model) {
 							if (user && JSON.isJSON(defination)) {
 								Object.entries(defination.scope.columns).map(([column_name, column], cursor) => {
 									if (UtilitiesHelper.isOfType(column.label, "function")) {
 										possibilies[column_name] = column.label(user);
 									}
-									else{
+									else {
 										possibilies[column_name] = column.label;
-									}				
+									}
 								});
 							}
 						}
 					});
-							
+
 
 					return possibilies;
 				}
@@ -193,20 +193,20 @@ export default  {
 				label: "Filter",
 				input: {
 					type: "select",
-					size: 4,	
+					size: 4,
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					}
 				},
-				possibilities : {
+				possibilities: {
 					"is": "Is Equal To",
 					"not": "Is Not Equal To",
 					"lessthan": "Is Less than",
@@ -220,7 +220,7 @@ export default  {
 					type: (entry, user) => {
 						let type = undefined;
 						Object.entries(definations).map(([name, defination], index) => {
-							if (entry.context === defination.model ) {
+							if (entry.context === defination.model) {
 								if (JSON.isJSON(defination.scope.columns[entry.filter_by])) {
 									type = defination.scope.columns[entry.filter_by].input.type;
 								}
@@ -229,14 +229,14 @@ export default  {
 								}
 							}
 						});
-						
+
 						return type;
 					},
-					size: 4,					
+					size: 4,
 					default: (entry, user) => {
 						let default_value = undefined;
 						Object.entries(definations).map(([name, defination], index) => {
-							if (entry.context === defination.model ) {
+							if (entry.context === defination.model) {
 								if (JSON.isJSON(defination.scope.columns[entry.filter_by])) {
 									default_value = defination.scope.columns[entry.filter_by].input.default;
 								}
@@ -249,20 +249,20 @@ export default  {
 					},
 				},
 				restricted: {
-					display: (entry, user) => {						
+					display: (entry, user) => {
 						return false
 					},
 					input: (values, user) => {
-						if (user && user.role==="admin") {
+						if (user && user.role === "admin") {
 							return false;
-						}						
+						}
 						return true;
-					}					
+					}
 				},
-				possibilities : (entry, user) => {
+				possibilities: (entry, user) => {
 					let possibilities = undefined;
 					Object.entries(definations).map(([name, defination], index) => {
-						if (entry.context === defination.model ) {
+						if (entry.context === defination.model) {
 							if (JSON.isJSON(defination.scope.columns[entry.filter_by])) {
 								possibilities = defination.scope.columns[entry.filter_by].possibilities;
 							}
@@ -273,10 +273,10 @@ export default  {
 					});
 					return possibilities;
 				},
-				reference : (entry, user) => {
+				reference: (entry, user) => {
 					let reference = undefined;
 					Object.entries(definations).map(([name, defination], index) => {
-						if (entry.context === defination.model ) {
+						if (entry.context === defination.model) {
 							if (JSON.isJSON(defination.scope.columns[entry.filter_by])) {
 								reference = defination.scope.columns[entry.filter_by].reference;
 							}
@@ -298,12 +298,12 @@ export default  {
 					default: {},
 				},
 				restricted: {
-					display: (entry, user) => {				
+					display: (entry, user) => {
 						return true;
 					},
-					input: (values, user) => {						
+					input: (values, user) => {
 						return false;
-					}					
+					}
 				},
 			},
 
@@ -321,23 +321,23 @@ export default  {
 			primary: ["title"],
 			secondary: ["context"],
 			avatar: false,
-		},		
+		},
 		dependencies: [],
 		dependants: {
 			actionlogs: {
 				column: "record",
 				query: { context: "Form" }
 			},
-		},	
+		},
 	},
-	access:{
+	access: {
 		restricted: (user) => {
 			if (user) {
 				return !user.isAdmin;
 			}
 			return true;
 		},
-		view:{
+		view: {
 			summary: (user) => {
 				return false;
 			},
@@ -362,38 +362,38 @@ export default  {
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("forms/view/"+id).toUriWithDashboardPrefix()
+				uri: (id) => {
+					return ("forms/view/" + id).toUriWithDashboardPrefix()
 				},
 				link: {
-					inline: {						
+					inline: {
 						default: (entry, className) => {
 
 						},
-						listing: (id, className="grey_text") => {
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("forms/view/"+id).toUriWithDashboardPrefix() } className={ className }>
+								<Link to={("forms/view/" + id).toUriWithDashboardPrefix()} className={className}>
 									<IconButton color="inherit" aria-label="edit">
-										<OpenInNewIcon fontSize="small"/>
+										<OpenInNewIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							)
 						},
-					}					
+					}
 				}
 			},
 			create: {
 				restricted: (user) => {
-					return user? !user.isAdmin : true;
+					return user ? !user.isAdmin : true;
 				},
 				uri: "forms/add",
 				link: {
 					inline: {
 						default: (props) => {
-							return ( 
+							return (
 								<Link to={("forms/add/").toUriWithDashboardPrefix()} {...props}>
 									<Button color="primary" outlined aria-label="add">
-										<AddIcon className="float-left"/> New Form
+										<AddIcon className="float-left" /> New Form
 									</Button>
 								</Link>
 							)
@@ -401,7 +401,7 @@ export default  {
 						listing: (props) => {
 							return ""
 						},
-					}					
+					}
 				}
 			},
 			update: {
@@ -411,24 +411,24 @@ export default  {
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("forms/edit/"+id).toUriWithDashboardPrefix()
+				uri: (id) => {
+					return ("forms/edit/" + id).toUriWithDashboardPrefix()
 				},
 				link: {
 					inline: {
-						default: (id, className="grey_text") => {
+						default: (id, className = "grey_text") => {
 
 						},
-						listing: (id, className="grey_text") => {
+						listing: (id, className = "grey_text") => {
 							return (
-								<Link to={ ("forms/edit/"+id).toUriWithDashboardPrefix() } className={ className? className : ""}>
+								<Link to={("forms/edit/" + id).toUriWithDashboardPrefix()} className={className ? className : ""}>
 									<IconButton color="inherit" aria-label="edit">
-										<EditIcon  fontSize="small"/>
+										<EditIcon fontSize="small" />
 									</IconButton>
 								</Link>
 							)
 						},
-					}					
+					}
 				}
 			},
 			delete: {
@@ -438,24 +438,24 @@ export default  {
 					}
 					return true;
 				},
-				uri: (id)=>{
-					return ("forms/delete/"+id).toUriWithDashboardPrefix()
+				uri: (id) => {
+					return ("forms/delete/" + id).toUriWithDashboardPrefix()
 				},
 				link: {
 					inline: {
-						default: (id, className="error_text") => {
+						default: (id, className = "error_text") => {
 
 						},
-						listing: (id, className="error_text", onClick) => {
+						listing: (id, className = "error_text", onClick) => {
 							return (
-								<IconButton color="inherit" className={ className? className : ""} aria-label="delete" onClick={onClick}>
-									<DeleteIcon fontSize="small"/>
+								<IconButton color="inherit" className={className ? className : ""} aria-label="delete" onClick={onClick}>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
 							)
 						},
-					}					
+					}
 				}
 			},
-		}			
-	},	
+		}
+	},
 };

@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import AutoComplete from 'components/AutoComplete';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import { createFilterOptions } from '@material-ui/lab/Autocomplete';
-import Grid from '@material-ui/core/Grid';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from "@material-ui/core/IconButton";
-import MyLocationIcon from "@material-ui/icons/MyLocation";
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from "@mui/material/IconButton";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
+import CircularProgress from '@mui/material/CircularProgress';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { connect } from "react-redux";
 import { google_maps_url } from "config";
 import { useScript, useWhyDidYouUpdate, useAsync, useGooglePlaces, useGeoLocation, useSetState, useEffectOnceWhen } from "hooks";
@@ -114,12 +113,7 @@ const GooglePlacesAutocomplete = (props) => {
     	
     }, geolocation && googlePlaces.scriptLoaded && googlePlaces.geocode && googlePlaces.regions.includes(type));*/
 
-    const filterOptions = createFilterOptions({
-        matchFrom: 'start',
-        stringify: option => option.description,
-    });
 
-    const throttledEventHandler = useRef(Function.createThrottle(1)).current;
 
     const parseValueToType = (targetValue, targetType = "address", resultType = false, options = {}, appendData = false) => {
         setInputLoading(true);
@@ -135,7 +129,7 @@ const GooglePlacesAutocomplete = (props) => {
                 reject("Geocode was not successful. Geocoder is Missing");
             }
             autocompleteGeocoder.current.geocode({ ...options, [targetType]: targetValue }, function (results, status) {
-                //console.log("results", results);	
+                //	
                 if (status == 'OK') {
                     let resultValue = undefined;
                     let resultsNewAutoCompleteOptions = [];
@@ -317,8 +311,8 @@ const GooglePlacesAutocomplete = (props) => {
     }, [placesPrediction.value, type]);
 
 
-    //console.log("placesPrediction", placesPrediction);
-    //console.log("autocompleteOptions", autocompleteOptions);
+    //
+    //
 
     return (
         <AutoComplete
@@ -338,7 +332,7 @@ const GooglePlacesAutocomplete = (props) => {
             }}
             inputValue={textFieldValue}
             renderInput={({ inputProps: { className, value, onChange: inputOnChange, ...inputPropsParams }, ...params }) => {
-                //console.log("inputPropsParams", inputPropsParams);
+                //
                 return (
                     <TextInput
                         {...params}

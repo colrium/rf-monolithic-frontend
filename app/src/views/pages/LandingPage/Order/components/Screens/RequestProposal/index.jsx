@@ -1,6 +1,6 @@
 /** @format */
 
-import { ArrowBack, Send } from "@material-ui/icons";
+import { ArrowBack, Send } from "@mui/icons-material";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -8,7 +8,7 @@ import Typography from "components/Typography";
 import { quoterequests as defination } from "definations";
 import React from "react";
 import ApiService from "services/Api";
-import withRoot from "hoc/withRoot";
+
 import BaseForm from "views/forms/BaseForm";
 
 class Step extends React.Component {
@@ -63,4 +63,4 @@ class Step extends React.Component {
 	}
 }
 
-export default withRoot(Step);
+export default Step;

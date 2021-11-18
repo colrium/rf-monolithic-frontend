@@ -1,20 +1,20 @@
 /** @format */
 
-import Button from "@material-ui/core/Button";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import withStyles from "@material-ui/core/styles/withStyles";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+
 //
 import clsx from "clsx";
-import Collapse from "@material-ui/core/Collapse";
-import IconButton from "@material-ui/core/IconButton";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "components/Typography";
 import ListingView from "views/widgets/Listings";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Box from "@material-ui/core/Box";
+import AppBar from "@mui/material/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
 //
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -23,13 +23,13 @@ import React from "react";
 //Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 //
 import CardView from "./CardView";
 import * as definations from "definations";
 import * as services from "services";
 //
-import styles from "./styles";
+
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -80,7 +80,7 @@ class RecordView extends React.Component {
 		this.handleCloseViewsMenu = this.handleCloseViewsMenu.bind(this);
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 
 	handleViewMenuItemClick = name => event => {
 		this.setState({ view: name, viewMenuAnchorEl: null });
@@ -143,13 +143,15 @@ class RecordView extends React.Component {
 	}
 
 	render() {
-		const { classes, auth, defination, record, service } = this.props;
+		const { className, auth, defination, record, service } = this.props;
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer
+				className={`${className ? className : ""} relative p-4`}
+			>
 				<GridContainer>
 					<GridItem xs={12}>
 						<Button
-							className={classes.viewSelectBtn}
+							className={"absolute right-4 bottom-4"}
 							onClick={this.handleShowViewsMenu}
 							aria-label="view-select"
 						>
@@ -193,9 +195,8 @@ class RecordView extends React.Component {
 						<GridContainer>
 							<GridItem xs={2} md={1}>
 								<IconButton
-									className={clsx(classes.expand, {
-										[classes.expandOpen]: this.state
-											.expanded,
+									className={clsx(`transform rotate-0`, {
+										[`rotate-180`]: this.state.expanded,
 									})}
 									onClick={this.handleExpandClick}
 									aria-expanded={this.state.expanded}
@@ -206,9 +207,8 @@ class RecordView extends React.Component {
 							</GridItem>
 							<GridItem xs={10} md={11}>
 								<Typography
-									className={classes.relationsSectionTitle}
 									color={
-										this.state.expanded ? "default" : "grey"
+										this.state.expanded ? "text.secondary" : "text.disabled"
 									}
 									variant="body2"
 								>
@@ -224,7 +224,7 @@ class RecordView extends React.Component {
 							{JSON.isJSON(defination.scope.dependants) ? (
 								<AppBar
 									position="static"
-									color="default"
+
 									elevation={0}
 								>
 									<Tabs
@@ -274,36 +274,36 @@ class RecordView extends React.Component {
 								</Typography>
 							)}
 
-							
+
 
 							{JSON.isJSON(defination.scope.dependants) && Object.entries(defination.scope.dependants).map(
-									([dependant, properties], cursor) =>
-										!definations[
-											dependant
-										].access.restricted(auth.user) && (
-											<TabPanel
-												className="p-0"
-												value={this.state.relatedTab}
-												index={dependant}
-												key={"tab-" + cursor}
-											>
-												<ListingView
-													defination={
-														definations[dependant]
-													}
-													service={
-														services[dependant]
-													}
-													query={{
-														...properties.query,
-														[properties.column]:
-															record._id,
-													}}
-													show_actions={false}
-													showAddBtn={false}
-												/>
-											</TabPanel>
-										)
+								([dependant, properties], cursor) =>
+									!definations[
+										dependant
+									].access.restricted(auth.user) && (
+										<TabPanel
+											className="p-0"
+											value={this.state.relatedTab}
+											index={dependant}
+											key={"tab-" + cursor}
+										>
+											<ListingView
+												defination={
+													definations[dependant]
+												}
+												service={
+													services[dependant]
+												}
+												query={{
+													...properties.query,
+													[properties.column]:
+														record._id,
+												}}
+												show_actions={false}
+												showAddBtn={false}
+											/>
+										</TabPanel>
+									)
 							)}
 						</Collapse>
 					</GridItem>
@@ -314,7 +314,6 @@ class RecordView extends React.Component {
 }
 RecordView.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
 	defination: PropTypes.object.isRequired,
 	service: PropTypes.any.isRequired,
 	record: PropTypes.object.isRequired,
@@ -328,7 +327,6 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-	withStyles(styles),
-	connect(mapStateToProps, {}),
-	withErrorHandler
+
+	connect(mapStateToProps, {})
 )(RecordView);

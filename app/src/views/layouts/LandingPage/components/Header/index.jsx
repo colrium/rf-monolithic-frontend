@@ -1,28 +1,28 @@
 /** @format */
 
-import AppBar from "@material-ui/core/AppBar";
-import Button from "@material-ui/core/Button";
-import Fab from '@material-ui/core/Fab';
-import Hidden from "@material-ui/core/Hidden";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Slide from "@material-ui/core/Slide";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import Toolbar from "@material-ui/core/Toolbar";
-import useScrollTrigger from "@material-ui/core/useScrollTrigger";
-import MenuIcon from "@material-ui/icons/Menu";
-import logo from "assets/img/realfield/logo.svg";
+import AppBar from "@mui/material/AppBar";
+import Button from "@mui/material/Button";
+import Fab from '@mui/material/Fab';
+import Hidden from "@mui/material/Hidden";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Slide from "@mui/material/Slide";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Toolbar from "@mui/material/Toolbar";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Api as ApiService } from "services";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@mui/styles';
 import { withRouter, useLocation } from "react-router-dom";
 import NavLink from "routes/NavLink";
 
-import {withErrorHandler} from "hoc/ErrorHandler";
+
 
 
 function HideOnScroll(props) {
@@ -64,17 +64,17 @@ function Header(props) {
 	let location = useLocation();
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [activeSection, setActiveSection] = useState("jumbotron");
-	
-	
+
+
 	const { className, showLogo, auth, window, cart, theme, app, history, ...rest } = props;
-	let cart_items_count = JSON.isJSON(cart)? (Array.isArray(cart.entries)? cart.entries.length : 0) : 0;
+	let cart_items_count = JSON.isJSON(cart) ? (Array.isArray(cart.entries) ? cart.entries.length : 0) : 0;
 
 
-	
+
 	const trigger = useScrollTrigger({
 		target: window ? window() : undefined,
 		disableHysteresis: true,
-		threshold: 64,
+		threshold: 1,
 	});
 
 	const toggleDrawer = open => event => {
@@ -91,42 +91,42 @@ function Header(props) {
 	const gotoSection = id => event => {
 		let section = document.getElementById(id);
 		if (section) {
-			section.scrollIntoView({behavior: "smooth", block: "start"});
+			section.scrollIntoView({ behavior: "smooth", block: "start" });
 			setActiveSection(id);
 		}
-			
+
 	};
 
-	useEffect(()=>{
-		
-		if (location) {			
+	useEffect(() => {
 
-			const {hash} = location;
-			
+		if (location) {
+
+			const { hash } = location;
+
 			if (!String.isEmpty(hash)) {
 				let elementId = hash.trim();
 				if (elementId.startsWith("#")) {
 					elementId = elementId.replace("#", "");
 					let section = document.getElementById(elementId);
 
-					if (section) {	
-						let sectionTitle = 	section.getAttribute("title");			
-						section.scrollIntoView({behavior: "smooth", block: "center"});
-					}					
+					if (section) {
+						let sectionTitle = section.getAttribute("title");
+						section.scrollIntoView({ behavior: "smooth", block: "center" });
+					}
 				}
 			}
-			else{
+			else {
 				let backToTopAnchor = document.getElementById("back-to-top-anchor");
 
-					if (backToTopAnchor) {				
-						backToTopAnchor.scrollIntoView({ behavior: "smooth", block: "center" });
-					}					
-			}			
+				if (backToTopAnchor) {
+					backToTopAnchor.scrollIntoView({ behavior: "smooth", block: "center" });
+				}
+			}
 		}
-		
+
 	}, [location]);
 
-	
+
 
 	const DrawerItems = () => {
 		return (
@@ -143,7 +143,7 @@ function Header(props) {
 								<NavLink
 									to={"/why-us".toUriWithLandingPagePrefix()}
 									color="inherit"
-									activeStyle={{ 
+									activeStyle={{
 										color: theme.palette.primary.main,
 									}}
 								>
@@ -173,7 +173,7 @@ function Header(props) {
 								<NavLink
 									to={"/about-us".toUriWithLandingPagePrefix()}
 									color="inherit"
-									activeStyle={{ 
+									activeStyle={{
 										color: theme.palette.primary.main,
 									}}
 								>
@@ -182,19 +182,19 @@ function Header(props) {
 							}
 						/>
 					</ListItem>
-					
+
 					{(!auth.isAuthenticated ||
 						Object.size(auth.user) === 0) && (
-						<ListItem button>
-							<ListItemText
-								primary={
-									<NavLink to={"/login"} color="inherit">
-										Login
-									</NavLink>
-								}
-							/>
-						</ListItem>
-					)}
+							<ListItem button>
+								<ListItemText
+									primary={
+										<NavLink to={"/login"} color="inherit">
+											Login
+										</NavLink>
+									}
+								/>
+							</ListItem>
+						)}
 					{auth.isAuthenticated && Object.size(auth.user) > 0 && (
 						<ListItem button>
 							<ListItemText
@@ -217,7 +217,7 @@ function Header(props) {
 								<NavLink
 									to={"/jobs".toUriWithLandingPagePrefix()}
 									color="inherit"
-									activeStyle={{ 
+									activeStyle={{
 										color: theme.palette.primary.main,
 									}}
 								>
@@ -226,7 +226,7 @@ function Header(props) {
 							}
 						/>
 					</ListItem>
-					
+
 				</List>
 			</div>
 		);
@@ -235,55 +235,55 @@ function Header(props) {
 	return (
 		<div id="back-to-top-anchor">
 			<Hidden smDown>
-				
-					<ElevationScroll {...props}>
-						<AppBar
-							className={
-								trigger
-									? "shadow-xl inverse default_text md:px-32"
-									: "bg-transparent shadow-none default_text md:px-32"
-							}
-							style={{
-								WebkitTransition: "all 200ms",
-								transition: "all 200ms",
-							}}
-						>
-							{app.settings.general["landing-page-routing"] === "pages"? (
-								<Toolbar className={"p-0"}>
-									<NavLink
-										className="flex-grow"
-										to={"/home".toUriWithLandingPagePrefix()}
+
+				<ElevationScroll {...props}>
+					<AppBar
+						className={
+							trigger ? "shadow-xl blur-bg-sm  md:px-32 transition-all" : "shadow-none md:px-32 relative transition-all"
+						}
+						sx={{
+							// WebkitTransition: "all 200ms",
+							// transition: "all 200ms",
+							color: theme => theme.palette.text.secondary,
+							backgroundColor: theme => theme.palette.background.default
+						}}
+					>
+						{app.settings.general["landing-page-routing"] === "pages" ? (
+							<Toolbar className={"p-0"}>
+
+								<NavLink
+									className="mx-2"
+									to={"/home".toUriWithLandingPagePrefix()}
+									color="inherit"
+								>
+									<Button className="justify-center p-0" >
+										{
+											<img
+												src={ApiService.endpoint("/public/img/realfield/logo.svg")}
+												className="h-10"
+												alt="logo"
+											/>
+										}
+									</Button>
+								</NavLink>
+								<div className="flex-grow" />
+								<NavLink
+									to={"/why-us".toUriWithLandingPagePrefix()}
+									color="inherit"
+									className="mx-2"
+									activeStyle={{
+										borderBottom: "2px solid " + theme.palette.primary.main,
+									}}
+								>
+									<Button
+										edge="end"
 										color="inherit"
+										className=" capitalize"
 									>
-										<Button className="justify-center p-0" color="default">
-											{
-												<img
-													src={logo}
-													className="h-10"
-													alt="logo"
-												/>
-											}
-										</Button>
-									</NavLink>
-									<NavLink
-										to={"/why-us".toUriWithLandingPagePrefix()}
-										color="inherit"
-										className="mx-2"
-										activeStyle={{ 
-											borderBottom: "2px solid "+theme.palette.primary.main,
-										}}
-									>
-										<Button
-											edge="end"
-											color="default"
-											classes={{
-												label: "capitalize"
-											}}
-										>
-											Why Realfield?
-										</Button>
-									</NavLink>
-									{/*<NavLink
+										Why Realfield?
+									</Button>
+								</NavLink>
+								{/*<NavLink
 										to={"/products".toUriWithLandingPagePrefix()}
 										color="inherit"
 										className="mx-2"
@@ -293,84 +293,75 @@ function Header(props) {
 									>
 										<Button
 											edge="end"
-											color="default"
-											classes={{
-												label: "capitalize"
-											}}
+											color="inherit"
+										className=" capitalize"
 										>
 											Products
 										</Button>
 									</NavLink>*/}
-									<NavLink
-										to={"/about-us".toUriWithLandingPagePrefix()}
+								<NavLink
+									to={"/about-us".toUriWithLandingPagePrefix()}
+									color="inherit"
+									className="mx-2"
+									activeStyle={{
+										borderBottom: "2px solid " + theme.palette.primary.main,
+									}}
+								>
+									<Button
+										edge="end"
 										color="inherit"
-										className="mx-2"
-										activeStyle={{ 
-											borderBottom: "2px solid "+theme.palette.primary.main,
-										}}
+										className=" capitalize"
 									>
-										<Button
-											edge="end"
-											color="default"
-											classes={{
-												label: "capitalize"
-											}}
-										>
-											About us
-										</Button>
-									</NavLink>
+										About us
+									</Button>
+								</NavLink>
 
-									{(!auth.isAuthenticated ||
-										Object.size(auth.user) === 0) && (
+								{(!auth.isAuthenticated ||
+									Object.size(auth.user) === 0) && (
 										<Button
 											href="/login"
 											edge="end"
-											color="default"
-											classes={{
-												label: "capitalize accent-text"
-											}}
+											color="accent"
+											className=" capitalize"
 										>
 											Login
 										</Button>
 									)}
-									{auth.isAuthenticated &&
-										Object.size(auth.user) > 0 && (
-											<Button
-												href={"/home".toUriWithDashboardPrefix()}
-												edge="end"
-												color="default"
-												target="_blank"
-												classes={{
-													label: "capitalize accent-text"
-												}}
-											>
-												Dashboard
-											</Button>
-										)}
-									
+								{auth.isAuthenticated &&
+									Object.size(auth.user) > 0 && (
+										<Button
+											href={"/home".toUriWithDashboardPrefix()}
+											edge="end"
 
-									<NavLink
-										to={"/jobs".toUriWithLandingPagePrefix()}
-										color="inherit"
-
-										activeStyle={{ 
-											borderBottom: "2px solid "+theme.palette.primary.main,
-										}}
-									>
-										<Fab
-											className="mx-2 px-6"
-											color="primary"
-											variant="extended"
-											size="small" 
-											classes={{
-												label: "capitalize"
-											}}
+											target="_blank"
+											color="accent"
+											className=" capitalize"
 										>
-											Jobs!
-										</Fab>
-									</NavLink>
+											Dashboard
+										</Button>
+									)}
 
-									{/*<NavLink
+
+								<NavLink
+									to={"/jobs".toUriWithLandingPagePrefix()}
+									color="inherit"
+
+									activeStyle={{
+										borderBottom: "2px solid " + theme.palette.primary.main,
+									}}
+								>
+									<Fab
+										className="mx-2 px-6"
+										color="primary"
+										variant="extended"
+										size="small"
+										className=" capitalize"
+									>
+										Jobs!
+									</Fab>
+								</NavLink>
+
+								{/*<NavLink
 										to={"/cart".toUriWithLandingPagePrefix()}
 										color="inherit"
 									>
@@ -383,45 +374,44 @@ function Header(props) {
 											</Badge>
 										</IconButton>
 									</NavLink>*/}
-								</Toolbar>
-							) : (
-								<Toolbar  className={"p-0"}>
-									<NavLink
-										className="flex-grow"
-										to={"/home".toUriWithLandingPagePrefix()}
+							</Toolbar>
+						) : (
+							<Toolbar className={"p-0"}>
+								<NavLink
+									className="mx-2"
+									to={"/home".toUriWithLandingPagePrefix()}
+									color="inherit"
+								>
+									<Button className="px-0">
+										{
+											<img
+												src={ApiService.endpoint("/public/img/realfield/logo.svg")}
+												className="h-8"
+												alt="logo"
+											/>
+										}
+									</Button>
+								</NavLink>
+
+								<div className="flex-grow" />
+								<NavLink
+									to={"/why-us".toUriWithLandingPagePrefix()}
+									color="inherit"
+									className="mr-4"
+									activeStyle={{
+										borderBottom: "2px solid " + theme.palette.primary.main,
+									}}
+
+								>
+									<Button
+										edge="end"
 										color="inherit"
+										className=" capitalize"
 									>
-										<Button color="default" className="px-0">
-											{
-												<img
-													src={logo}
-													className="h-8"
-													alt="logo"
-												/>
-											}
-										</Button>
-									</NavLink>
-									<NavLink
-										to={"/why-us".toUriWithLandingPagePrefix()}
-										color="inherit"
-										className="mr-4"
-										activeStyle={{ 
-											borderBottom: "2px solid "+theme.palette.primary.main,
-										}}
-										
-									>
-										<Button
-											edge="end"
-											color="default"
-											className="px-0"
-											classes={{
-												label: "capitalize"
-											}}
-										>
-											Why Realfield?
-										</Button>
-									</NavLink>
-									{/*<NavLink
+										Why Realfield?
+									</Button>
+								</NavLink>
+								{/*<NavLink
 										to={"/home#products".toUriWithLandingPagePrefix()}
 										color="inherit"
 										className="mr-4"
@@ -431,85 +421,77 @@ function Header(props) {
 									>
 										<Button
 											edge="end"
-											color="default"
-											className="px-0"
-											classes={{
-												label: "capitalize"
-											}}
+											color="inherit"
+										className=" capitalize"
 										>
 											Products
 										</Button>
 									</NavLink>*/}
-									<NavLink
-										to={"/about-us".toUriWithLandingPagePrefix()}
+								<NavLink
+									to={"/about-us".toUriWithLandingPagePrefix()}
+									color="inherit"
+									className="mr-4"
+									activeStyle={{
+										borderBottom: "2px solid " + theme.palette.primary.main,
+										color: `${theme.palette.primary.main} !important`,
+									}}
+								>
+									<Button
+										edge="end"
+										className="px-0"
 										color="inherit"
-										className="mr-4"
-										activeStyle={{ 
-											borderBottom: "2px solid "+theme.palette.primary.main,
-										}}
+										className=" capitalize"
 									>
-										<Button
-											edge="end"
-											color="default"
-											className="px-0"
-											classes={{
-												label: "capitalize"
-											}}
-										>
-											About us
-										</Button>
-									</NavLink>
+										About us
+									</Button>
+								</NavLink>
 
-									{(!auth.isAuthenticated ||
-										Object.size(auth.user) === 0) && (
+								{(!auth.isAuthenticated ||
+									Object.size(auth.user) === 0) && (
 										<Button
 											href="/login"
 											edge="end"
-											color="default"
-											classes={{
-												label: "capitalize accent-text"
+											color="inherit"
+											className=" capitalize"
+											sx={{
+												color: (theme) => (`${theme.palette.accent.main}`)
 											}}
 										>
 											Login
 										</Button>
 									)}
-									{auth.isAuthenticated &&
-										Object.size(auth.user) > 0 && (
-											<Button
-												href={"/home".toUriWithDashboardPrefix()}
-												edge="end"
-												color="default"
-												target="_blank"
-												classes={{
-													label: "capitalize accent-text"
-												}}
-											>
-												Dashboard
-											</Button>
-										)}
-									
-
-									<NavLink
-										to={"/jobs".toUriWithLandingPagePrefix()}
-										color="inherit"
-										activeStyle={{ 
-											//borderBottom: "2px solid "+theme.palette.primary.main,
-										}}
-									>
-										<Fab
-											className="mx-2 px-6"
-											color="primary"
-											variant="extended"
-											size="small" 
-											classes={{
-												label: "capitalize"
-											}}
+								{auth.isAuthenticated &&
+									Object.size(auth.user) > 0 && (
+										<Button
+											href={"/home".toUriWithDashboardPrefix()}
+											edge="end"
+											target="_blank"
+											className="capitalize"
+											color={"accent"}
 										>
-											Jobs!
-										</Fab>
-									</NavLink>
+											Dashboard
+										</Button>
+									)}
 
-									{/*<NavLink
+
+								<NavLink
+									to={"/jobs".toUriWithLandingPagePrefix()}
+									color="inherit"
+									activeStyle={{
+										//borderBottom: "2px solid "+theme.palette.primary.main,
+									}}
+								>
+									<Fab
+										color="primary"
+										variant="extended"
+										size="small"
+										className="mx-2 px-6 capitalize"
+									>
+										Jobs!
+									</Fab>
+								</NavLink>
+
+								{/*<NavLink
 										to={"/cart".toUriWithLandingPagePrefix()}
 										color="inherit"
 									>
@@ -524,9 +506,9 @@ function Header(props) {
 									</NavLink>*/}
 							</Toolbar>
 						)}
-						</AppBar>
-					</ElevationScroll>
-				
+					</AppBar>
+				</ElevationScroll>
+
 			</Hidden>
 
 			<Hidden mdUp>
@@ -550,7 +532,7 @@ function Header(props) {
 								<Button color="inherit">
 									{
 										<img
-											src={logo}
+											src={ApiService.endpoint("/public/img/realfield/logo.svg")}
 											className="h-6"
 											alt="logo"
 										/>
@@ -592,4 +574,4 @@ const mapStateToProps = state => ({
 	app: state.app,
 });
 
-export default withErrorHandler(compose(connect(mapStateToProps, {}), withTheme, withRouter)(Header));
+export default compose(connect(mapStateToProps, {}), withTheme, withRouter)(Header);

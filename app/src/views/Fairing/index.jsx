@@ -4,7 +4,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { items as drawer_items } from "config/ui/drawer";
 
-import {withGlobals} from "contexts/Globals";
+import { withGlobals } from "contexts/Globals";
 
 import DashboardRoutes from "routes/Dashboard";
 import LandingPageRoutes from "routes/LandingPageRoutes";
@@ -14,18 +14,17 @@ import {
 	LandingPage as LandingPageLayout,
 } from "views/layouts";
 import {
-	apiCallRequest, 
-	setDataCache, 
-	setSettings, 
-	setPreferences, 
-	setInitialized, 
+	apiCallRequest,
+	setDataCache,
+	setSettings,
+	setPreferences,
+	setInitialized,
 	setCurrentUser,
 	setDashboardAppBarDisplayed,
 	setDashboardDrawerDisplayed,
 	setDashboardFooterDisplayed,
 } from "state/actions";
 
-import {withErrorHandler} from "hoc/ErrorHandler";
 
 class Fairing extends React.Component {
 	constructor(props) {
@@ -39,9 +38,9 @@ class Fairing extends React.Component {
 		this.layoutProps = componentProps.layoutProps;
 		this.routing = componentProps.routing;
 
-		this.state = { 
+		this.state = {
 			routes_key: props.location.key,
-			error: false, 
+			error: false,
 			errorInfo: null,
 		};
 		//this.initSocketsEvents();
@@ -80,10 +79,10 @@ class Fairing extends React.Component {
 			"results",
 		];
 		this.indexUri = Array.isArray(nav.entries) ? (nav.entries.length > 0 ? nav.entries[nav.entries.length - 1].uri : "/home".toUriWithDashboardPrefix()) : "/home".toUriWithDashboardPrefix();
-		
+
 	}
 
-	
+
 
 	render() {
 		const {
@@ -111,14 +110,14 @@ class Fairing extends React.Component {
 		} else {
 			return (
 				<LandingPageLayout {...this.layoutProps}>
-					<LandingPageRoutes />					
+					<LandingPageRoutes />
 				</LandingPageLayout>
 			);
 		}
 	}
 }
 const mapStateToProps = state => ({
-		
+
 	api: state.api,
 	app: state.app,
 	auth: state.auth,
@@ -127,13 +126,13 @@ const mapStateToProps = state => ({
 });
 
 export default withGlobals(connect(mapStateToProps, {
-	apiCallRequest, 
-	setDataCache, 
-	setSettings, 
-	setPreferences, 
-	setInitialized, 
+	apiCallRequest,
+	setDataCache,
+	setSettings,
+	setPreferences,
+	setInitialized,
 	setCurrentUser,
 	setDashboardAppBarDisplayed,
 	setDashboardDrawerDisplayed,
 	setDashboardFooterDisplayed,
-})(withErrorHandler(Fairing)));
+})(Fairing));

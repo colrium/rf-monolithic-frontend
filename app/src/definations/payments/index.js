@@ -4,14 +4,14 @@
  * @format
  */
 
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import {
 	Add as AddIcon,
 	AttachMoneyOutlined as DefinationContextIcon,
 	DeleteOutlined as DeleteIcon,
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -441,7 +441,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -475,7 +475,7 @@ export default {
 								<Link to={"payments/add/"} {...props}>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -502,7 +502,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (entry, className = "grey_text") => {
 							return (
 								<Link
@@ -533,7 +533,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

@@ -9,235 +9,35 @@
 // Styles that are used on more than one component
 // #############################
 import {
-    appName,
-    appDescription,
-    appLogo,
-    defaultColor,
-    primaryColor,
-    primaryDarkColor,
-    secondaryColor,
-    accentColor,
-    inverseColor,
-    textColor,
-    warningColor,
-    dangerColor,
-    errorColor,
-    successColor,
-    infoColor,
-    roseColor,
-    grayColor,
-    twitterColor,
-    facebookColor,
-    googleColor,
-    githubColor,
-    linkedinColor,
+	appName,
+	appDescription,
+	appLogo,
+	defaultColor,
+	primaryColor,
+	primaryDarkColor,
+	secondaryColor,
+	accentColor,
+	inverseColor,
+	textColor,
+	warningColor,
+	dangerColor,
+	errorColor,
+	successColor,
+	infoColor,
+	roseColor,
+	grayColor,
+	twitterColor,
+	facebookColor,
+	googleColor,
+	githubColor,
+	linkedinColor,
 } from "config";
 
 import Color from "color";
 
-import { createMuiTheme } from "@material-ui/core/styles";
-import AvenirWoff from 'assets/fonts/Avenir.woff';
-import MuliRegular from 'assets/fonts/Muli-Regular.woff';
-import MuliItalic from 'assets/fonts/Muli-Italic.woff';
-import MuliBlack from 'assets/fonts/Muli-Black.woff';
-import MuliBlackItalic from 'assets/fonts/Muli-BlackItalic.woff';
-import MuliBold from 'assets/fonts/Muli-Bold.woff';
-import MuliBoldItalic from 'assets/fonts/Muli-BoldItalic.woff';
-import MuliExtraBold from 'assets/fonts/Muli-ExtraBold.woff';
-import MuliExtraBoldItalic from 'assets/fonts/Muli-ExtraBoldItalic.woff';
-import MuliExtraLight from 'assets/fonts/Muli-ExtraLight.woff';
-import MuliExtraLightItalic from 'assets/fonts/Muli-ExtraLightItalic.woff';
-import MuliLight from 'assets/fonts/Muli-Light.woff';
-import MuliLightItalic from 'assets/fonts/Muli-LightItalic.woff';
-import MuliSemiBold from 'assets/fonts/Muli-SemiBold.woff';
-import MuliSemiBoldItalic from 'assets/fonts/Muli-SemiBoldItalic.woff';
-import MaterialIconsWoff2 from 'assets/fonts/MaterialIcons-Regular.woff2';
+import { createMuiTheme } from "@mui/material/styles";
 
-
-
-const materialIconsFont = {
-	fontFamily: 'Material Icons',
-	fontWeight: 400,
-	fontStyle: "normal",
-	src: `url(${MaterialIconsWoff2}) format("woff2");`,
-};
-
-const avenirFont = {
-	fontFamily: 'Avenir',
-	fontWeight: 400,
-	fontStyle: "normal",
-	src: `url(${AvenirWoff}) format("woff");`,
-};
-
-const muliRegularFont = {
-	fontFamily: 'Muli',
-	fontWeight: 400,
-	fontDisplay: 'swap',
-	src: `
-		local('Muli'),
-		local('Muli Regular'),
-		url(${MuliRegular}) format('woff')
-	`,
-};
-
-const muliItalicFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 400,
-	src: `
-		local('Muli'),
-		local('Muli Italic'),
-		url(${MuliItalic}) format('woff')
-	`,
-};
-
-
-const muliBlackFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 900,
-	src: `
-		local('Muli'),
-		local('Muli Black'),
-		url(${MuliBlack}) format('woff')
-	`,
-};
-
-const muliBlackItalicFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 900,
-	src: `
-		local('Muli'),
-		local('Muli Black Italic'),
-		url(${MuliBlackItalic}) format('woff')
-	`,
-};
-
-const muliBoldFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 700,
-	src: `
-		local('Muli'),
-		local('Muli Bold'),
-		url(${MuliBold}) format('woff')
-	`,
-};
-
-const muliBoldItalicFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 700,
-	src: `
-		local('Muli'),
-		local('Muli Bold Italic'),
-		url(${MuliBoldItalic}) format('woff')
-	`,
-};
-
-const muliExtraBoldFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 800,
-	src: `
-		local('Muli'),
-		local('Muli Extra Bold'),
-		url(${MuliExtraBold}) format('woff')
-	`,
-};
-
-const muliExtraBoldItalicFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 800,
-	src: `
-		local('Muli'),
-		local('Muli Extra Bold Italic'),
-		url(${MuliExtraBoldItalic}) format('woff')
-	`,
-};
-
-
-const muliExtraLightFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 200,
-	src: `
-		local('Muli'),
-		local('Muli Extra Light'),
-		url(${MuliExtraLight}) format('woff')
-	`,
-};
-
-const muliExtraLightItalicFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 200,
-	src: `
-		local('Muli'),
-		local('Muli Extra Light Italic'),
-		url(${MuliExtraLightItalic}) format('woff')
-	`,
-};
-
-const muliLightFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 300,
-	src: `
-		local('Muli'),
-		local('Muli Light'),
-		url(${MuliLight}) format('woff')
-	`,
-};
-
-const muliLightItalicFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 300,
-	src: `
-		local('Muli'),
-		local('Muli Light Italic'),
-		url(${MuliLightItalic}) format('woff')
-	`,
-};
-
-const muliSemiBoldFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 600,
-	src: `
-		local('Muli'),
-		local('Muli Semi Bold'),
-		url(${MuliSemiBold}) format('woff')
-	`,
-};
-
-const muliSemiBoldItalicFont = {
-	fontFamily: 'Muli',
-	fontStyle: 'normal',
-	fontDisplay: 'swap',
-	fontWeight: 600,
-	src: `
-		local('Muli'),
-		local('Muli Semi Bold Italic'),
-		url(${MuliSemiBoldItalic}) format('woff')
-	`,
-};
-
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
 
 
@@ -624,78 +424,74 @@ let defaultPallete = {
 		accent_3: "#ffc400",
 		accent_4: "#ffab00",
 	},
+	facebook: {
+		main: facebookColor,
+	},
+	google: {
+		main: googleColor,
+	},
+	github: {
+		main: githubColor,
+	},
+	linkedin: {
+		main: linkedinColor,
+	},
 };
 
-let theme = createMuiTheme({
-	props: {
-		MuiTypography: {
-			variantMapping: {
-				h1: 'h1',
-				h2: 'h2',
-				h3: 'h3',
-				h4: 'h4',
-				h5: 'h5',
-				h6: 'h6',
-				subtitle1: 'h5',
-				subtitle2: 'h5',
-				body1: 'span',
-				body2: 'span',
-			},
-		},
-	},
+let theme = createTheme({
+	// props: {
+	// 	MuiTypography: {
+	// 		variantMapping: {
+	// 			h1: 'h1',
+	// 			h2: 'h2',
+	// 			h3: 'h3',
+	// 			h4: 'h4',
+	// 			h5: 'h5',
+	// 			h6: 'h6',
+	// 			subtitle1: 'h5',
+	// 			subtitle2: 'h5',
+	// 			body1: 'span',
+	// 			body2: 'span',
+	// 		},
+	// 	},
+	// },
 	palette: {
-		type: "light",
+
 		primary: {
 			contrastText: inverseColor,
 			main: primaryColor,
-			light: Color(primaryColor)
-				.lighten(0.3)
-				.desaturate(0.5)
-				.hex(),
-			dark: Color(primaryColor)
-				.darken(0.2)
-				.hex(),
 		},
 		secondary: {
 			main: secondaryColor,
-			light: Color(secondaryColor)
-				.lighten(0.2)
-				.desaturate(0.5)
-				.hex(),
-			dark: Color(secondaryColor)
-				.darken(0.5)
-				.hex(),
 		},
 		accent: {
 			main: accentColor,
-			light: Color(accentColor)
-				.lighten(0.3)
-				.desaturate(0.5)
-				.hex(),
-			dark: Color(accentColor)
-				.darken(0.2)
-				.hex(),
+			contrastText: inverseColor,
+		},
+		inverse: {
+			main: inverseColor,
+			contrastText: defaultColor,
 		},
 		error: {
 			main: errorColor,
 		},
 		background: {
-			default: "#EBEBEB",
+			default: "#F7F7F7",
 			paper: "#FFFFFF",
 		},
 		text: {
 			primary: "#575757",
 			secondary: "#737373",
 			disabled: "#999999",
+			inverse: inverseColor,
 		},
-		...defaultPallete,
-
+		...defaultPallete
 	},
 	typography: {
-		useNextVariants: true,
+		fontSize: 16,
 		// Use the system font instead of the default Roboto font.
-		/*fontFamily: [
-			"Muli SemiBold",			
+		fontFamily: [
+			"Muli SemiBold",
 			"-apple-system",
 			"BlinkMacSystemFont",
 			"Segoe UI",
@@ -706,7 +502,7 @@ let theme = createMuiTheme({
 			"Apple Color Emoji",
 			"Segoe UI Emoji",
 			"Segoe UI Symbol",
-		].join(","),*/
+		].join(","),
 		fontFamily: 'Muli',
 		htmlFontSize: 16,
 		h1: {
@@ -771,237 +567,70 @@ let theme = createMuiTheme({
 			lineHeight: "16px",
 		},
 	},
-	appDrawer: {
-		width: app.drawer.width,
-	},
-	overrides: {
-		MuiCssBaseline: {
-			'@global': {
-				'@font-face': [
-					avenirFont,
-					materialIconsFont,					
-					muliRegularFont,
-					//muliItalicFont,
-					muliBlackFont,
-					//muliBlackItalicFont,
-					muliBoldFont,
-					//muliBoldItalicFont,
-					muliExtraBoldFont,
-					//muliExtraBoldItalicFont,
-					muliExtraLightFont,
-					//muliExtraLightItalicFont,
-					muliLightFont,
-					//muliLightItalicFont,
-				],
-			},
-		},
-		MuiButtonBase: {
-			disableRipple: true, // No more ripple, on the whole application 💣!
-		},
-		MuiInputBase: {
-			legend: {
-				display: "inline-block",
-			},
-		},
-		MuiFormControl: {
-			root: {
-				width: "100%",
-			},
-		},
-		MUIDataTable: {
-			paper: {
-				boxShadow: "none",
-				border: "1px solid #c7c7c7",
-			},
-			responsiveScroll: {
-				maxHeight: "100%",
-			},
-		},
-		MUIDataTableToolbar: {
-			titleText: {
-				color: primaryDarkColor,
-			},
-		},
-		MUIDataTableBodyCell: {
-			root: {
-				borderBottom: "0px solid transparent",
-			},
-		},
-		MUIDataTableBodyRow: {
-			root: {
-				borderBottom: "1px solid #c9c9c9",
-			},
-		},
-	},
+	// appDrawer: {
+	// 	width: app.drawer.width,
+	// },
+	// overrides: {
+	// 	MuiCssBaseline: {
+	// 		'@global': {
+	// 			'@font-face': [
+	// 				// avenirFont,
+	// 				// materialIconsFont,					
+	// 				// muliRegularFont,
+	// 				// //muliItalicFont,
+	// 				// muliBlackFont,
+	// 				// //muliBlackItalicFont,
+	// 				// muliBoldFont,
+	// 				// //muliBoldItalicFont,
+	// 				// muliExtraBoldFont,
+	// 				// //muliExtraBoldItalicFont,
+	// 				// muliExtraLightFont,
+	// 				// //muliExtraLightItalicFont,
+	// 				// muliLightFont,
+	// 				//muliLightItalicFont,
+	// 			],
+	// 		},
+	// 	},
+	// 	MuiButtonBase: {
+	// 		disableRipple: true, // No more ripple, on the whole application 💣!
+	// 	},
+	// 	MuiInputBase: {
+	// 		legend: {
+	// 			display: "inline-block",
+	// 		},
+	// 	},
+	// 	MuiFormControl: {
+	// 		root: {
+	// 			width: "100%",
+	// 		},
+	// 	},
+	// 	MUIDataTable: {
+	// 		paper: {
+	// 			boxShadow: "none",
+	// 			border: "1px solid #c7c7c7",
+	// 		},
+	// 		responsiveScroll: {
+	// 			maxHeight: "100%",
+	// 		},
+	// 	},
+	// 	MUIDataTableToolbar: {
+	// 		titleText: {
+	// 			color: primaryDarkColor,
+	// 		},
+	// 	},
+	// 	MUIDataTableBodyCell: {
+	// 		root: {
+	// 			borderBottom: "0px solid transparent",
+	// 		},
+	// 	},
+	// 	MUIDataTableBodyRow: {
+	// 		root: {
+	// 			borderBottom: "1px solid #c9c9c9",
+	// 		},
+	// 	},
+	// },
 });
 
-let theme_dark = createMuiTheme({
-	props: {
-		MuiTypography: {
-			variantMapping: {
-				h1: 'h1',
-				h2: 'h2',
-				h3: 'h3',
-				h4: 'h4',
-				h5: 'h5',
-				h6: 'h6',
-				subtitle1: 'h5',
-				subtitle2: 'h5',
-				body1: 'span',
-				body2: 'span',
-			},
-		},
-		// Name of the component ⚛️
-		MuiButtonBase: {
-			// The properties to apply
-			disableRipple: true, // No more ripple, on the whole application 💣!
-		},
-	},
-	palette: {
-		type: "dark",
-		primary: {
-			contrastText: inverseColor,
-			main: primaryColor,
-			light: Color(primaryColor)
-				.lighten(0.5)
-				.desaturate(0.5)
-				.hex(),
-			dark: Color(primaryColor)
-				.darken(0.5)
-				.hex(),
-		},
-		secondary: {
-			main: secondaryColor,
-		},
-		accent: {
-			main: accentColor,
-		},
-		error: {
-			main: errorColor,
-		},		
-		...defaultPallete,
-	},
-	typography: {
-		useNextVariants: true,
-		// Use the system font instead of the default Roboto font.
-		fontFamily: 'Muli, Arial',
-		htmlFontSize: 16,
-		h1: {
-			fontWeight: 700,
-			fontSize: "60px",
-			lineHeight: "68px",
-		},
-		h2: {
-			fontWeight: 700,
-			fontSize: "48px",
-			lineHeight: "54px",
-		},
-		h3: {
-			fontWeight: 700,
-			fontSize: "32px",
-			lineHeight: "38px",
-		},
-		h4: {
-			fontWeight: 700,
-			fontSize: "24px",
-			lineHeight: "28px",
-		},
-		h5: {
-			fontWeight: 700,
-			fontSize: "20px",
-			lineHeight: "24px",
-		},
-		h6: {
-			fontWeight: 700,
-			fontSize: "18px",
-			lineHeight: "20px",
-		},
-		subtitle1: {
-			fontWeight: 800,
-			fontSize: "18px",
-			lineHeight: "25px",
-		},
-		subtitle2: {
-			fontSize: "18px",
-			letterSpacing: 0,
-			lineHeight: "20px",
-		},
-		body1: {
-			fontSize: 14,
-			lineHeight: "21px",
-		},
-		body2: {
-			fontWeight: 600,
-			fontSize: "12px",
-		},
-		button: {
-			fontWeight: 600,
-			fontSize: "14px",
-		},
-		caption: {
-			fontWeight: 400,
-			fontSize: "12px",
-			lineHeight: "16px",
-		},
-	},
-	appDrawer: {
-		width: app.drawer.width,
-	},
-	overrides: {
-		MuiCssBaseline: {
-			'@global': {
-				'@font-face': [
-					avenirFont,
-					materialIconsFont,
-					muliRegularFont,
-					//muliItalicFont,
-					muliBlackFont,
-					//muliBlackItalicFont,
-					muliBoldFont,
-					//muliBoldItalicFont,
-					muliExtraBoldFont,
-					//muliExtraBoldItalicFont,
-					muliExtraLightFont,
-					//muliExtraLightItalicFont,
-					muliLightFont,
-					//muliLightItalicFont,
-				],
-			},
-		},
-		MuiButtonBase: {
-			//disableRipple: false, // No more ripple, on the whole application 💣!
-		},
-		MuiInputBase: {
-			legend: {
-				display: "inline-block",
-			},
-		},
-		MuiFormControl: {
-			root: {
-				width: "100%",
-			},
-		},
-		MUIDataTable: {
-			paper: {
-				boxShadow: "none",
-				border: "1px solid #7A7A7A",
-			},
-			responsiveScroll: {
-				maxHeight: "100%",
-			},
-		},
-		MUIDataTableToolbar: {
-			titleText: {
-				color: "#FFFFFF",
-			},
-		},
-		MUIDataTableBodyCell: {
-			root: {
-				borderBottom: "1px solid #7A7A7A",
-			},
-		},
-	},
-});
 
 const alignments = {
 	right: {
@@ -1585,10 +1214,10 @@ const gradients = {
 		")",
 };
 
+// theme = responsiveFontSizes(theme);
 export {
 	app,
 	theme,
-	theme_dark,
 	colors,
 	gradients,
 	shadows,

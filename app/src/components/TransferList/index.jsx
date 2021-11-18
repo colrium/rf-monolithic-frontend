@@ -1,21 +1,21 @@
 /** @format */
 
-import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox";
-import Grid from "@material-ui/core/Grid";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Paper from "@material-ui/core/Paper";
-import withStyles from "@material-ui/core/styles/withStyles";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import Grid from "@mui/material/Grid";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Paper from "@mui/material/Paper";
+
 // Externals
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { UtilitiesHelper } from "hoc/Helpers";
-import withRoot from "hoc/withRoot";
-import styles from "./styles";
+
+
 
 function setNativeValue(element, value) {
 	const valueSetter = Object.getOwnPropertyDescriptor(element, "value").set;
@@ -146,11 +146,10 @@ class TransferList extends React.Component {
 	}
 
 	optionsList(values, list_type = "non-value-options") {
-		const { classes, name, value_options } = this.props;
+		const { name, value_options } = this.props;
 		let input_name = name ? name : "nameless";
 		return (
 			<Paper
-				className={classNames(classes.paper, classes.options_wrapper)}
 			>
 				<List dense component="div" role="list">
 					{values.map(value_entry => {
@@ -197,7 +196,6 @@ class TransferList extends React.Component {
 
 	render() {
 		const {
-			classes,
 			className,
 			value_options,
 			meta,
@@ -206,8 +204,8 @@ class TransferList extends React.Component {
 		} = this.props;
 
 		return (
-			<Grid container className={classes.root}>
-				<Grid item className={classes.options_wrapper}>
+			<Grid >
+				<Grid item >
 					{this.optionsList(
 						UtilitiesHelper.arrayDifference(
 							Object.keys(value_options),
@@ -216,12 +214,11 @@ class TransferList extends React.Component {
 						"non-value-options"
 					)}
 				</Grid>
-				<Grid item className={classes.actions_wrapper}>
+				<Grid item>
 					<Grid container direction="column" alignItems="center">
 						<Button
 							variant="outlined"
 							size="small"
-							className={classes.button}
 							onClick={this.handleSelectAll}
 							disabled={
 								Object.keys(value_options).length ===
@@ -234,7 +231,6 @@ class TransferList extends React.Component {
 						<Button
 							variant="outlined"
 							size="small"
-							className={classes.button}
 							onClick={this.handleSelectChecked}
 							disabled={this.state.checked_options.length === 0}
 							aria-label="move selected right"
@@ -244,7 +240,6 @@ class TransferList extends React.Component {
 						<Button
 							variant="outlined"
 							size="small"
-							className={classes.button}
 							onClick={this.handleUnSelectChecked}
 							disabled={
 								this.state.checked_value_options.length === 0
@@ -256,7 +251,6 @@ class TransferList extends React.Component {
 						<Button
 							variant="outlined"
 							size="small"
-							className={classes.button}
 							onClick={this.handleUnSelectAll}
 							disabled={this.state.value.length === 0}
 							aria-label="move all left"
@@ -264,7 +258,6 @@ class TransferList extends React.Component {
 							≪
 						</Button>
 						<input
-							className={classes.input}
 							type="text"
 							value={JSON.stringify(this.state.value)}
 							ref={input => (this.inputElement = input)}
@@ -272,7 +265,7 @@ class TransferList extends React.Component {
 						/>
 					</Grid>
 				</Grid>
-				<Grid item className={classes.options_wrapper}>
+				<Grid item >
 					{this.optionsList(this.state.value, "value-options")}
 				</Grid>
 			</Grid>
@@ -285,9 +278,9 @@ TransferList.defaultProps = {
 };
 
 TransferList.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	className: PropTypes.string,
 	value_options: PropTypes.object,
 };
 
-export default withRoot(withStyles(styles)(TransferList));
+export default (TransferList);

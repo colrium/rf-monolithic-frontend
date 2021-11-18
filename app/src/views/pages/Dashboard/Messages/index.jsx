@@ -3,10 +3,10 @@ import GridItem from "components/Grid/GridItem";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@mui/styles';
 import { appendNavHistory } from "state/actions";
 import ChatApp from "views/apps/Dashboard/Chat";
-import {withErrorHandler} from "hoc/ErrorHandler";
+
 
 
 
@@ -25,7 +25,7 @@ class Page extends Component {
 		}
 	}
 
-	
+
 
 	render() {
 		const { classes } = this.props;
@@ -44,6 +44,4 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(
-	compose(connect(mapStateToProps, {appendNavHistory}), withTheme)(Page)
-);
+export default compose(connect(mapStateToProps, { appendNavHistory }), withTheme)(Page);

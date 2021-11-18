@@ -1,13 +1,12 @@
 import React, { useCallback } from "react";
 import AutoComplete from 'components/AutoComplete';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import { createFilterOptions } from '@material-ui/lab/Autocomplete';
-import Grid from '@material-ui/core/Grid';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from "@material-ui/core/IconButton";
-import MyLocationIcon from "@material-ui/icons/MyLocation";
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from "@mui/material/IconButton";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
+import CircularProgress from '@mui/material/CircularProgress';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { connect } from "react-redux";
 import { useSetState, useDidUpdate, usePlacesAutocomplete } from "hooks";
 import { TextInput } from "components/FormInputs";
@@ -91,7 +90,7 @@ const GooglePlacesAutocomplete = (props) => {
 	const handleInput = (e) => {
 		// Update the keyword of the input element		
 		// let newValue = e?.target?.value ? e.target.value : "";
-		// console.log("handleInput newValue: ", newValue);
+		// 
 		if (e) {
 			setKeyword(e.target.value);
 		}
@@ -99,11 +98,11 @@ const GooglePlacesAutocomplete = (props) => {
 	};
 
 	const handleOnSelect = useCallback((option, event) => {
-		console.log("handleOnSelect option", option, "event", event)
+		
 		selectSuggestion(option);
 	}, []);
 
-	console.log("keyword", keyword, "value", value)
+	
 
 	return (
 		<AutoComplete
@@ -128,8 +127,8 @@ const GooglePlacesAutocomplete = (props) => {
 				return label || description
 			}}
 			renderInput={(params) => {
-				/*console.log("autocompleteOptions", autocompleteOptions);
-		console.log("autocompleteValue", autocompleteValue);*/
+				/*
+		*/
 				return (
 					<TextInput
 						{...params}
@@ -172,7 +171,7 @@ const GooglePlacesAutocomplete = (props) => {
 				let main_text = option.structured_formatting?.main_text || option.label || option.description || "";
 				let secondary_text = option.structured_formatting?.secondary_text || "";;
 
-				console.log("renderOption option", option);
+				
 
 				return (
 					<Grid container alignItems="center">

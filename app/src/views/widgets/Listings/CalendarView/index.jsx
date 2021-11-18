@@ -1,8 +1,7 @@
 /** @format */
 
-import { Icon } from "@material-ui/core";
-import withStyles from "@material-ui/core/styles/withStyles";
-import EmptyStateImage from "assets/img/empty-state-table.svg";
+import { Icon } from "@mui/material";
+
 //
 import Calendar from "components/Calendar";
 import GridContainer from "components/Grid/GridContainer";
@@ -14,10 +13,11 @@ import React from "react";
 //Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
+import ApiService from "services/Api";
 import { apiCallRequest, closeDialog, openDialog } from "state/actions";
 //
-import { withErrorHandler } from "hoc/ErrorHandler";
-import styles from "./styles";
+
+
 
 class CalendarView extends React.Component {
 	calendarRef = React.createRef();
@@ -128,8 +128,8 @@ class CalendarView extends React.Component {
 				this.loadData();
 			})
 			.catch(e => {
-            closeDialog();
-        });
+				closeDialog();
+			});
 	};
 
 	loadContext() {
@@ -158,9 +158,9 @@ class CalendarView extends React.Component {
 
 	loadData() {
 		const { auth, cache, defination, apiCallRequest, cache_data, onLoadData, load_data } = this.props;
-		if (defination ) {
+		if (defination) {
 			if (load_data) {
-				apiCallRequest( defination.name,
+				apiCallRequest(defination.name,
 					{
 						uri: defination.endpoint,
 						type: "records",
@@ -169,21 +169,21 @@ class CalendarView extends React.Component {
 						cache: cache_data,
 					}
 				).then(res => {
-					const {data} = res.body;
-                    if (Function.isFunction(onLoadData)) {
+					const { data } = res.body;
+					if (Function.isFunction(onLoadData)) {
 						onLoadData(data, this.state.query);
 					}
-                    this.prepareData(data);
-                }).catch(e => {
-                    this.setState(state => ({
+					this.prepareData(data);
+				}).catch(e => {
+					this.setState(state => ({
 						records: [],
 						load_error: e,
 						loading: false,
 					}));
-                });
+				});
 			}
 			else {
-				let data = Array.isArray(cache.data[defination.name])? cache.data[defination.name] : [];
+				let data = Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : [];
 				if (Function.isFunction(onLoadData)) {
 					onLoadData(data, this.state.query);
 				}
@@ -199,34 +199,32 @@ class CalendarView extends React.Component {
 		}
 	}
 
-	prepareData(data=null) {
+	prepareData(data = null) {
 		const { auth, cache, defination } = this.props;
-		let target_data = Array.isArray(data)? data : (Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : []);
+		let target_data = Array.isArray(data) ? data : (Array.isArray(cache.data[defination.name]) ? cache.data[defination.name] : []);
 		let columns = defination ? defination.scope.columns : {};
 		let resolved_data = [];
 
-		if ( Function.isFunction( defination.views.listing.calendarview.resolveData ) ) {
+		if (Function.isFunction(defination.views.listing.calendarview.resolveData)) {
 			defination.views.listing.calendarview.resolveData(target_data, true).then(resolve => {
-					this.setState(state => ({
-						records: resolve,
-						loading: false,
-					}));
-			}).catch(err => {					
+				this.setState(state => ({
+					records: resolve,
+					loading: false,
+				}));
+			}).catch(err => {
 				this.setState(state => ({ records: [], loading: false }));
 			});
 		}
 	}
 
 	render() {
-		const { classes } = this.props;
 
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer>
 				{this.state.defination && (
 					<GridItem className="p-0 m-0" xs={12}>
 						{this.state.loading ? (
 							<GridContainer
-								className={classes.full_height}
 								justify="center"
 								alignItems="center"
 							>
@@ -234,7 +232,6 @@ class CalendarView extends React.Component {
 									<ProgressIndicator
 										size={24}
 										thickness={4}
-										className={classes.progress}
 										color="secondary"
 										disableShrink
 									/>
@@ -248,8 +245,7 @@ class CalendarView extends React.Component {
 											<Typography
 												color="error"
 												variant="h1"
-												center
-												fullWidth
+																								fullWidth
 											>
 												<Icon fontSize="large">
 													error
@@ -260,8 +256,7 @@ class CalendarView extends React.Component {
 											<Typography
 												color="error"
 												variant="body1"
-												center
-												fullWidth
+																								fullWidth
 											>
 												An error occured.
 												<br />
@@ -278,7 +273,7 @@ class CalendarView extends React.Component {
 											{Array.isArray(
 												this.state.records
 											) &&
-											this.state.records.length > 0 ? (
+												this.state.records.length > 0 ? (
 												<GridContainer className="p-0 m-0">
 													<GridItem xs={12}>
 														<Calendar
@@ -311,9 +306,6 @@ class CalendarView extends React.Component {
 																this.state
 																	.records
 															}
-															className={
-																classes.calendar
-															}
 															onClickEdit={
 																this
 																	.handleEditItem
@@ -333,26 +325,21 @@ class CalendarView extends React.Component {
 												>
 													<img
 														alt="Empty list"
-														className={
-															classes.emptyImage
-														}
-														src={EmptyStateImage}
+														className={"m-8 w-9/12"}
+														src={ApiService.endpoint("/public/img/empty-state-table.svg")}
 													/>
 													<Typography
-														className={
-															classes.emptyText
-														}
+														className={"mt-4"}
 														color="grey"
 														variant="body2"
-														center
-														fullWidth
+																												fullWidth
 													>
 														No{" "}
 														{this.state.defination
 															.label
 															? this.state
-																	.defination
-																	.label
+																.defination
+																.label
 															: "Records"}{" "}
 														found
 													</Typography>
@@ -371,7 +358,7 @@ class CalendarView extends React.Component {
 }
 CalendarView.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	defination: PropTypes.object.isRequired,
 	service: PropTypes.any.isRequired,
 	calendarProps: PropTypes.object,
@@ -403,9 +390,9 @@ const mapStateToProps = state => ({
 	app: state.app,
 });
 
-export default withErrorHandler(
+export default (
 	compose(
-		withStyles(styles),
+
 		connect(mapStateToProps, { apiCallRequest, openDialog, closeDialog })
 	)(CalendarView)
 );

@@ -1,16 +1,16 @@
 /** @format */
 
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Check from "@material-ui/icons/Check";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Check from "@mui/icons-material/Check";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
 import { connect } from "react-redux";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 class Widget extends React.Component {
 	state = {
@@ -32,7 +32,7 @@ class Widget extends React.Component {
 		}
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 
 	render() {
 		let { checkout_data, cart, auth } = this.props;
@@ -101,7 +101,7 @@ class Widget extends React.Component {
 																				component="div"
 																				variant="body1"
 																				className="inline"
-																				color="default"
+
 																			>
 																				{" "}
 																				{
@@ -170,4 +170,4 @@ const mapStateToProps = state => ({
 	checkout_data: state.ecommerce.checkout_data,
 });
 
-export default withErrorHandler(connect(mapStateToProps, {})(Widget));
+export default (connect(mapStateToProps, {})(Widget));

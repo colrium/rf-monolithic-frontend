@@ -1,14 +1,14 @@
 /** @format */
 
-import withStyles from "@material-ui/core/styles/withStyles";
+
 import { app } from "assets/jss/app-theme.jsx";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import React from "react";
 import { connect } from "react-redux";
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@mui/styles';
 import compose from "recompose/compose";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 
 // Sections for this page
@@ -23,7 +23,7 @@ const styles = theme => ({
 	container: {
 		padding: 0,
 	},
-	title: {		
+	title: {
 		color: theme.palette.text.secondary,
 		textDecoration: "none",
 	},
@@ -42,15 +42,15 @@ class Page extends React.Component {
 		return (
 			<div>
 				<GridContainer
-					className={classes.root+" sm:px-4 md:px-32"}
+					className={classes?.root + " sm:px-4 md:px-32"}
 					direction="column"
 					alignItems="center"
 					justify="center"
 				>
-					<GridContainer className={classes.container}>
+					<GridContainer className={classes?.container}>
 						<GridItem xs={12} sm={12} md={12}>
 							<FAQsSection />
-						</GridItem>							
+						</GridItem>
 					</GridContainer>
 				</GridContainer>
 			</div>
@@ -63,6 +63,6 @@ const mapStateToProps = (state, ownProps) => ({
 	device: state.device,
 });
 
-export default withErrorHandler(
-	compose(connect(mapStateToProps, {}), withStyles(styles), withTheme)(Page)
+export default (
+	compose(connect(mapStateToProps, {}), withTheme)(Page)
 );

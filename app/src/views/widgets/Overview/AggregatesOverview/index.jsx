@@ -1,6 +1,6 @@
 /** @format */
 
-import { withStyles } from "@material-ui/core";
+
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import Color from "color";
@@ -10,19 +10,19 @@ import CardContent from "components/Card/CardContent";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 //
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@mui/styles';
 import LazyModule from "components/LazyModule";
 import Typography from "components/Typography";
-import {withGlobals} from "contexts/Globals";
+import { withGlobals } from "contexts/Globals";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import ApiService from "services/Api";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 
 //
-import styles from "./styles";
+
 
 class Overview extends Component {
 	state = {
@@ -70,9 +70,9 @@ class Overview extends Component {
 		}
 	}
 
-	handleShowOptionsMenu = name => event => {};
+	handleShowOptionsMenu = name => event => { };
 
-	handleCloseOptionsMenu = name => event => {};
+	handleCloseOptionsMenu = name => event => { };
 
 	handleOnResolveAggregates(name, aggregates) {
 		this.setState(state => ({
@@ -80,15 +80,15 @@ class Overview extends Component {
 		}));
 	}
 
-	handleAggregateMenuItemClick = column => event => {};
+	handleAggregateMenuItemClick = column => event => { };
 
 	render() {
-		const { classes, className, auth, definations, services, contexts,  gridSize, theme, chartType } = this.props;
+		const { className, auth, definations, services, contexts, gridSize, theme, chartType } = this.props;
 
-		const rootClassName = classNames(classes.root, className);
+		const rootClassName = classNames(`p-0`, className);
 
 		return (
-			<GridContainer className="p-0" className={rootClassName}>
+			<GridContainer className={rootClassName}>
 				{Object.entries(definations).map(
 					([name, defination], index) =>
 						!defination.access.restricted(auth.user) &&
@@ -185,10 +185,9 @@ class Overview extends Component {
 									<CardActions>
 										{defination.icon}
 										<Typography
-											className={classes.caption}
 											variant="caption"
 										>
-											 Total{" "}
+											Total{" "}
 											{defination.label} :{" "}
 											{this.state.counts[name]
 												? this.state.counts[name] + ""
@@ -206,10 +205,10 @@ class Overview extends Component {
 
 Overview.propTypes = {
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	gridSize: PropTypes.number,
 	chartType: PropTypes.string,
-	contexts:  PropTypes.array,
+	contexts: PropTypes.array,
 };
 
 Overview.defaultProps = {
@@ -224,7 +223,6 @@ const mapStateToProps = state => ({
 
 export default withGlobals(compose(
 	withTheme,
-	withStyles(styles),
-	connect(mapStateToProps, {}),
-	withErrorHandler
+
+	connect(mapStateToProps, {})
 )(Overview));

@@ -16,10 +16,11 @@ import landingpage from "./ui/layouts/LandingPage";
 import dialog from "./dialog";
 import ecommerce from "./ecommerce";
 import communication from "./communication";
+import forms from "./forms";
 
 
 const combinedReducer = combineReducers({
-    api,
+	api,
 	app,
 	auth,
 	cache,
@@ -29,19 +30,20 @@ const combinedReducer = combineReducers({
 	dashboard,
 	landingpage,
 	form,
+	forms,
 	ecommerce,
 	communication,
 });
 const appReducer = combineReducers((state = {}) => state);
 
 const rootReducer = (state, action) => {
-    if (action.type === CLEAR_APP_STATE) {
-        // clear everything but keep the stuff we want to be preserved ..
-        const { app } = state;
-    	state = { app };
-    	return combinedReducer(state, action);
-    }
-    return combinedReducer(state, action);
+	if (action.type === CLEAR_APP_STATE) {
+		// clear everything but keep the stuff we want to be preserved ..
+		const { app } = state;
+		state = { app };
+		return combinedReducer(state, action);
+	}
+	return combinedReducer(state, action);
 }
 
 export default rootReducer;

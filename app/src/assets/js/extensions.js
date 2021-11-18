@@ -1,6 +1,6 @@
 /** @format */
 
-import lodash, {debounce, throttle, isEqual} from "lodash";
+import lodash, { debounce, throttle, isEqual } from "lodash";
 import lodash_inflection from "lodash-inflection";
 import { dashboardBaseUri, landingPageBaseUri, orderFormBaseUri, surpressed_logs } from "config";
 
@@ -34,9 +34,9 @@ console.log = function surpressLogs(msg) {
 
 //Type Extensions
 // Warn if overriding existing method
-if (String.isString) {}
+if (String.isString) { }
 
-String.isString = function(input) {
+String.isString = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === String
 		: false;
@@ -45,37 +45,35 @@ String.isString = function(input) {
 
 
 String.capitalize = (targetStr) => {
-    //let targetStr = this;
-    
+	//let targetStr = this;
+	const words = targetStr.trim().toLowerCase().split(" ");
 
-    const words = targetStr.trim().toLowerCase().split(" ");
+	const result = words.map((word) => {
+		if (word.length > 1) {
+			return word[0].toUpperCase() + word.substring(1);
+		}
+		return word.toUpperCase()
 
-    const result =  words.map((word) => { 
-        if (word.length > 1) {
-            return word[0].toUpperCase() + word.substring(1);
-        }
-        return word.toUpperCase()
-         
-    }).join(" ");
-    return result;
+	}).join(" ");
+	return result;
 }
 
 
-String.prototype.replaceAll = function(search, replacement) {
+String.prototype.replaceAll = function (search, replacement) {
 	var target = this;
 	return target.replace(new RegExp(search, "g"), replacement);
 };
 
-String.toDate = function(input) {
+String.toDate = function (input) {
 	try {
 		let ms = Date.parse(input);
 		return new Date(ms);
 	} catch (e) {
-        return null;
-    }
+		return null;
+	}
 };
 
-String.uid = function(len, numeric, all_caps) {
+String.uid = function (len, numeric, all_caps) {
 	let buf = [];
 	let chars =
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -97,7 +95,7 @@ String.uid = function(len, numeric, all_caps) {
 
 
 
-String.prototype.truncate = function(size, ellipsis = "...") {
+String.prototype.truncate = function (size, ellipsis = "...") {
 	let target = this;
 	if (target.length > size) {
 		return target.substring(0, size) + ellipsis;
@@ -108,7 +106,7 @@ String.prototype.truncate = function(size, ellipsis = "...") {
 String.prototype.shorten = String.prototype.truncate;
 
 
-String.prototype.toUriWithDashboardPrefix = function() {
+String.prototype.toUriWithDashboardPrefix = function () {
 	let target = this;
 	let uriWithBaseRoute = dashboardBaseUri.startsWith("/")
 		? dashboardBaseUri
@@ -120,7 +118,7 @@ String.prototype.toUriWithDashboardPrefix = function() {
 	return uriWithBaseRoute;
 };
 
-String.prototype.toUriWithLandingPagePrefix = function() {
+String.prototype.toUriWithLandingPagePrefix = function () {
 	let target = this;
 	let uriWithBaseRoute = landingPageBaseUri.startsWith("/")
 		? landingPageBaseUri
@@ -132,7 +130,7 @@ String.prototype.toUriWithLandingPagePrefix = function() {
 	return uriWithBaseRoute;
 };
 
-String.prototype.toUriWithOrderFormPrefix = function() {
+String.prototype.toUriWithOrderFormPrefix = function () {
 	let target = this;
 	let uriWithBaseRoute = orderFormBaseUri.startsWith("/")
 		? orderFormBaseUri
@@ -144,26 +142,26 @@ String.prototype.toUriWithOrderFormPrefix = function() {
 	return uriWithBaseRoute;
 };
 
-String.prototype.singularize = function() {
+String.prototype.singularize = function () {
 	var target = this;
 	return lodash.singularize(target);
 };
 
-String.prototype.translate = function(lang="en") {
+String.prototype.translate = function (lang = "en") {
 	var target = this;
-	if (lang="en") {
+	if (lang = "en") {
 		return target;
 	}
 	return "";
 };
 
-String.prototype.pluralize = function() {
+String.prototype.pluralize = function () {
 	var target = this;
 	return lodash.pluralize(target);
 };
 
-String.prototype.variablelize = function(connector = "_") {
-	//console.log("connector", connector);
+String.prototype.variablelize = function (connector = "_") {
+	//
 	var target = this;
 	target = target.replaceAll(/([A-Z])/g, " $1");
 	target = target.trim();
@@ -172,24 +170,24 @@ String.prototype.variablelize = function(connector = "_") {
 	return target.toLowerCase();
 };
 
-String.prototype.humanize = function() {
+String.prototype.humanize = function () {
 	var target = this;
 	return target
 		.replace(/([A-Z])/g, " $1")
 		.trim()
 		.replace(/^[\s_]+|[\s_]+$/g, "")
 		.replace(/[_\s]+/g, " ")
-		.replace(/^[a-z]/, function(m) {
+		.replace(/^[a-z]/, function (m) {
 			return m.toUpperCase();
 		});
 };
 
-String.prototype.hasHTML = function() {
+String.prototype.hasHTML = function () {
 	var target = this;
 	return /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/.test(target);
 };
 
-String.isUrl = function(target, protocol = true) {
+String.isUrl = function (target, protocol = true) {
 	if (String.isString(target)) {
 		if (protocol) {
 			return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(
@@ -204,7 +202,7 @@ String.isUrl = function(target, protocol = true) {
 	return false;
 };
 
-String.isEmpty = function(target) {
+String.isEmpty = function (target) {
 	if (String.isString(target)) {
 		return target.trim().length > 0 ? false : true;
 	}
@@ -213,22 +211,22 @@ String.isEmpty = function(target) {
 
 
 
-if (Boolean.isBoolean) {}
-Boolean.isBoolean = function(input) {
+if (Boolean.isBoolean) { }
+Boolean.isBoolean = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === Boolean
 		: false;
 };
 
-if (Function.isFunction) {}
-Function.isFunction = function(input) {
+if (Function.isFunction) { }
+Function.isFunction = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === Function || typeof input === "function"
 		: false;
 };
 
-if (Function.sleep) {}
-Function.sleep = function(milliseconds) {
+if (Function.sleep) { }
+Function.sleep = function (milliseconds) {
 	const date = Date.now();
 	let currentDate = null;
 	do {
@@ -241,20 +239,20 @@ Function.sleep = function(milliseconds) {
 // but if you'd like to disable the execution on the leading edge, pass
 // `{leading: false}`. To disable execution on the trailing edge, ditto.
 
-if (Function.throttle) {}
+if (Function.throttle) { }
 //Function.throttle = throttle;
 Function.throttle = (func, wait, options) => {
 	var context, args, result;
 	var timeout = null;
 	var previous = 0;
-	if (!options) options = {leading: false, trailing: true};
-	var later = function() {
+	if (!options) options = { leading: false, trailing: true };
+	var later = function () {
 		previous = options.leading === false ? 0 : Date.now();
 		timeout = null;
 		result = func.apply(context, args);
 		if (!timeout) context = args = null;
 	};
-	return function() {
+	return function () {
 		var now = Date.now();
 		if (!previous && options.leading === false) previous = now;
 		var remaining = wait - (now - previous);
@@ -275,10 +273,10 @@ Function.throttle = (func, wait, options) => {
 	};
 };
 
-if (Function.debounce) {}
+if (Function.debounce) { }
 Function.debounce = debounce;
 
-if (Function.createThrottle) {}
+if (Function.createThrottle) { }
 Function.createThrottle = function (max) {
 	if (typeof max !== 'number') {
 		throw new TypeError('`createThrottle` expects a valid Number')
@@ -291,13 +289,13 @@ Function.createThrottle = function (max) {
 			function handleFn() {
 				if (cur < max) {
 					throttle.current = ++cur
-					let resolveFn = Function.isFunction(fn)? fn() : fn;
-					Promise.all([resolveFn]).then(resolveArr =>{
+					let resolveFn = Function.isFunction(fn) ? fn() : fn;
+					Promise.all([resolveFn]).then(resolveArr => {
 						resolve(resolveArr[0]);
 					}).catch(err => {
 						reject(err)
 					}).finally(() => {
-						//console.log("createThrottle queue", queue);
+						//
 						throttle.current = --cur
 						if (queue.length > 0) {
 							queue.shift()()
@@ -320,44 +318,44 @@ Function.createThrottle = function (max) {
 }
 
 
-if (Number.isNumber) {}
-Number.isNumber = function(input) {
+if (Number.isNumber) { }
+Number.isNumber = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === Number && input !== NaN
 		: false;
 };
 
-if (Error.isError) {}
-Error.isError = function(input) {
+if (Error.isError) { }
+Error.isError = function (input) {
 	return input !== undefined && input !== null
 		? input instanceof Error
 		: false;
 };
 
-if (RegExp.isRegExp) {}
-RegExp.isRegExp = function(input) {
+if (RegExp.isRegExp) { }
+RegExp.isRegExp = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === RegExp
 		: false;
 };
 
 //Number Extensions
-if (Number.isFloat) {}
-Number.isFloat = function(input) {
+if (Number.isFloat) { }
+Number.isFloat = function (input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /[-+]?(?:\d*\.\d+\.?\d*)(?:[eE][-+]?\d+)?/gim.test(input)
 		: false;
 };
 
-if (Number.isInt) {}
-Number.isInt = function(input) {
+if (Number.isInt) { }
+Number.isInt = function (input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /^[-+]?(\d*)?\d+$/gim.test(input)
 		: false;
 };
 
-if (Number.parseNumber) {}
-Number.parseNumber = function(input, fallback = null) {
+if (Number.parseNumber) { }
+Number.parseNumber = function (input, fallback = null) {
 	if (Number.isFloat(input)) {
 		return parseFloat(input);
 	} else if (Number.isInt(input)) {
@@ -368,24 +366,33 @@ Number.parseNumber = function(input, fallback = null) {
 };
 
 //String Extensions
-if (Number.parseNumber) {}
-Number.getRandomInt = function(min, max) {
+if (Number.parseNumber) { }
+Number.getRandomInt = function (min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-if (Array.prototype.remove) {}
-Array.prototype.remove = function(from, to) {
+if (Array.prototype.remove) { }
+Array.prototype.remove = function (from, to) {
 	var rest = this.slice((to || from) + 1 || this.length);
 	this.length = from < 0 ? this.length + from : from;
-	return this.push.apply(this, rest);
+	this.push.apply(this, rest);
+	//return this.push.apply(this, rest);
+	return this;
 };
 
-Array.prototype.shuffle = function() {
+Array.isEmpty = function (target) {
+	if (Array.isArray(target)) {
+		return target.length === 0;
+	}
+	return true;
+};
+
+Array.prototype.shuffle = function () {
 	var i = this.length, j, temp;
-	if (i == 0) { 
+	if (i == 0) {
 		return this;
 	}
 	while (--i) {
-		j = Math.floor( Math.random() * ( i + 1 ));
+		j = Math.floor(Math.random() * (i + 1));
 		temp = this[i]
 		this[i] = this[j];
 		this[j] = temp;
@@ -393,13 +400,13 @@ Array.prototype.shuffle = function() {
 	return this;
 };
 
-Array.prototype.removeAtIndex = function(index) {
+Array.prototype.removeAtIndex = function (index) {
 	var target = this;
 	target.splice(index, 1);
 	return target;
 };
 
-Array.prototype.removeItem = function() {
+Array.prototype.removeItem = function () {
 	var what,
 		a = arguments,
 		L = a.length,
@@ -415,31 +422,43 @@ Array.prototype.removeItem = function() {
 };
 
 
-Array.prototype.unique = function() {
-	var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
-    return this.filter(function(item) {
-        var type = typeof item;
-        if(type in prims){
-            return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
-        }
-        else{
-            return objs.indexOf(item) >= 0 ? false : objs.push(item);
-        }
-    });
+
+Array.prototype.unique = function () {
+	var prims = { "boolean": {}, "number": {}, "string": {} }, objs = [];
+	return this.filter(function (item) {
+		var type = typeof item;
+		if (type in prims) {
+			return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+		}
+		else {
+			return objs.indexOf(item) >= 0 ? false : objs.push(item);
+		}
+	});
 };
+
 //Most frequent element
-Array.prototype.mode = function() {
+Array.prototype.mode = function () {
 	var target = this;
-    return target.sort((a,b) =>
-          target.filter(v => v===a).length
-        - target.filter(v => v===b).length
-    ).pop();
+	return target.sort((a, b) =>
+		target.filter(v => v === a).length
+		- target.filter(v => v === b).length
+	).pop();
 };
 
-
-Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
+//Chunks
+Array.prototype.chunks = function (chunk = 1) {
 	var target = this;
-	filename = filename.endsWith(".csv")? filename : (filename+".csv");
+	var i, j;
+	var chunked = [];
+	for (i = 0, j = target.length; i < j; i += chunk) {
+		chunked.push(target.slice(i, i + chunk));
+	}
+	return chunked;
+};
+
+Array.prototype.toCSV = function (filename = String.uid(25), columns = false) {
+	var target = this;
+	filename = filename.endsWith(".csv") ? filename : (filename + ".csv");
 
 
 	var processRow = function (row) {
@@ -453,34 +472,34 @@ Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 				});
 				row = Object.values(newRow);
 			}
-			else{
+			else {
 				row = Object.values(row);
 			}
-			
-		}
-		
-		for (var j = 0; j < row.length; j++) {
-				var innerValue = row[j] === null || row[j] === undefined? '' : JSON.stringify(row[j]);
-				if (row[j] instanceof Date) {
-					innerValue = row[j].toLocaleString();
-				}
-				else if (row[j] instanceof Object) {
-					innerValue = JSON.stringify(row[j]);
-				};				
-				//var result = innerValue.replace(/"/g, '""');
-				var result = innerValue;
 
-				if (result.search(/(,|\n)/g) >= 0){
-					//result = '"' + result + '"';
-					result = '"' + result + '"';
-				}
-				if (j > 0){
-					finalVal += ',';
-				}
-				finalVal += result;
-			
 		}
-			
+
+		for (var j = 0; j < row.length; j++) {
+			var innerValue = row[j] === null || row[j] === undefined ? '' : JSON.stringify(row[j]);
+			if (row[j] instanceof Date) {
+				innerValue = row[j].toLocaleString();
+			}
+			else if (row[j] instanceof Object) {
+				innerValue = JSON.stringify(row[j]);
+			};
+			//var result = innerValue.replace(/"/g, '""');
+			var result = innerValue;
+
+			if (result.search(/(,|\n)/g) >= 0) {
+				//result = '"' + result + '"';
+				result = '"' + result + '"';
+			}
+			if (j > 0) {
+				finalVal += ',';
+			}
+			finalVal += result;
+
+		}
+
 		return finalVal + '\n';
 	};
 
@@ -492,7 +511,7 @@ Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 	var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
 	if (navigator.msSaveBlob) { // IE 10+
 		navigator.msSaveBlob(blob, filename);
-	} 
+	}
 	else {
 		var link = document.createElement("a");
 		if (link.download !== undefined) { // feature detection
@@ -509,7 +528,7 @@ Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 };
 
 
-Array.prototype.equals = function(array) {
+Array.prototype.equals = function (array) {
 	// if the other array is a falsy value, return
 	if (!array) return false;
 
@@ -531,7 +550,7 @@ Array.prototype.equals = function(array) {
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", { enumerable: false });
 
-Object.size = function(obj) {
+Object.size = function (obj) {
 	var size = 0,
 		key;
 	for (key in obj) {
@@ -540,16 +559,16 @@ Object.size = function(obj) {
 	return size;
 };
 
-Object.difference = function(a, b, comprehensive = true) {
+Object.difference = function (a, b, comprehensive = true) {
 	var result = {
-		different: [],
+		differences: [],
 		missing_from_first: [],
 		missing_from_second: [],
 	};
 	if (JSON.isJSON(a) && JSON.isJSON(b)) {
 		lodash.reduce(
 			a,
-			function(result, value, key) {
+			function (result, value, key) {
 				if (b.hasOwnProperty(key)) {
 					if (lodash.isEqual(value, b[key])) {
 						return result;
@@ -559,12 +578,12 @@ Object.difference = function(a, b, comprehensive = true) {
 							typeof b[key] != typeof {}
 						) {
 							//dead end.
-							result.different.push(key);
+							result.differences.push(key);
 							return result;
 						} else {
 							var deeper = Object.difference(a[key], b[key]);
-							result.different = result.different.concat(
-								lodash.map(deeper.different, sub_path => {
+							result.differences = result.differences.concat(
+								lodash.map(deeper.differences, sub_path => {
 									return key + "." + sub_path;
 								})
 							);
@@ -603,7 +622,7 @@ Object.difference = function(a, b, comprehensive = true) {
 
 		lodash.reduce(
 			b,
-			function(result, value, key) {
+			function (result, value, key) {
 				if (JSON.isJSON(a)) {
 					if (a.hasOwnProperty(key)) {
 						return result;
@@ -622,31 +641,31 @@ Object.difference = function(a, b, comprehensive = true) {
 		if (comprehensive) {
 			return result;
 		} else {
-			return result.different;
+			return result.differences;
 		}
 	} else if (JSON.isJSON(a) && !JSON.isJSON(b)) {
-		let different = Object.keys(a);
-		result.different = different;
-		result.missing_from_second = different;
+		let differences = Object.keys(a);
+		result.differences = differences;
+		result.missing_from_second = differences;
 		if (comprehensive) {
 			return result;
 		} else {
-			return result.different;
+			return result.differences;
 		}
 	} else if (!JSON.isJSON(a) && JSON.isJSON(b)) {
-		let different = Object.keys(b);
-		result.different = different;
-		result.missing_from_first = different;
+		let differences = Object.keys(b);
+		result.differences = differences;
+		result.missing_from_first = differences;
 		if (comprehensive) {
 			return result;
 		} else {
-			return result.different;
+			return result.differences;
 		}
 	} else {
 		if (comprehensive) {
 			return result;
 		} else {
-			return result.different;
+			return result.differences;
 		}
 	}
 };
@@ -669,7 +688,7 @@ function parseToJSON(input) {
 	let newObject = {};
 	try {
 		newObject = JSON.parse(JSON.stringify(input));
-	} catch(err) {
+	} catch (err) {
 		newObject = {};
 	}
 	return newObject;
@@ -679,7 +698,7 @@ Object.toJSON = parseToJSON;
 JSON.fromJSON = parseToJSON;
 JSON.parseJSON = parseToJSON;
 
-JSON.isJSON = function(input) {
+JSON.isJSON = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === {}.constructor
 		: false;
@@ -689,7 +708,7 @@ JSON.isJSON = function(input) {
 JSON.areEqual = isEqual;
 JSON.isEqual = isEqual;
 
-JSON.prettyStringify = function(input, spaces = 4) {
+JSON.prettyStringify = function (input, spaces = 4) {
 	let spacing = "";
 	for (var i = 0; i < spaces; i++) {
 		spacing = spacing + " ";
@@ -701,7 +720,7 @@ JSON.prettyStringify = function(input, spaces = 4) {
 			.replace(/>/g, "&gt;");
 		return json.replace(
 			/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-			function(match) {
+			function (match) {
 				var cls = "text-gray-700";
 				if (/^"/.test(match)) {
 					if (/:$/.test(match)) {
@@ -727,7 +746,7 @@ JSON.prettyStringify = function(input, spaces = 4) {
 	}
 	return str;
 };
-JSON.readable = function(
+JSON.readable = function (
 	input,
 	highLightSytax = true,
 	linebreaker = "\n",
@@ -777,9 +796,9 @@ JSON.readable = function(
 	return str;
 };
 
-if (JSON.indexOf) {}
+if (JSON.indexOf) { }
 
-JSON.positionOfKey = function(object, key) {
+JSON.positionOfKey = function (object, key) {
 	let position = -1;
 	if (JSON.isJSON(object)) {
 		let keys = Object.keys(object);
@@ -788,18 +807,18 @@ JSON.positionOfKey = function(object, key) {
 	return position;
 };
 
-JSON.keyOf = function(object, value) {
+JSON.keyOf = function (object, value) {
 	let key = null;
 	if (JSON.isJSON(object)) {
 		let values = Object.values(object);
 		let position = values.indexOf(value);
-		key = position !== -1? Object.keys(object)[position] : null;
+		key = position !== -1 ? Object.keys(object)[position] : null;
 	}
 	return key;
 };
 
-if (JSON.moveKey) {}
-JSON.moveKey = function(object, key, position = 0) {
+if (JSON.moveKey) { }
+JSON.moveKey = function (object, key, position = 0) {
 	let newObject = {};
 	if (JSON.isJSON(object)) {
 		newObject = {};
@@ -834,7 +853,7 @@ JSON.moveKey = function(object, key, position = 0) {
  * @param target
  * @param ...sources
  */
-const deepMerge = function(target, ...sources) {
+const deepMerge = function (target, ...sources) {
 	if (!sources.length) return target;
 	/*
 	sources = JSON.parse(sources);
@@ -860,7 +879,7 @@ const deepMerge = function(target, ...sources) {
 JSON.merge = deepMerge;
 JSON.deepMerge = deepMerge;
 
-JSON.updateJSON = function(original = {}, updater = {}) {
+JSON.updateJSON = function (original = {}, updater = {}) {
 	let newObject = {};
 	if (JSON.isJSON(original) && JSON.isJSON(updater)) {
 		newObject = JSON.fromJSON(original);
@@ -873,7 +892,7 @@ JSON.updateJSON = function(original = {}, updater = {}) {
 	}
 	return newObject;
 };
-JSON.removeProperty = function(input, key) {
+JSON.removeProperty = function (input, key) {
 	let newObject = {};
 	if (JSON.isJSON(input)) {
 		newObject = JSON.fromJSON(input);
@@ -882,14 +901,59 @@ JSON.removeProperty = function(input, key) {
 	return newObject;
 };
 
-JSON.isEmpty = function(target) {
+JSON.isEmpty = function (target) {
 	if (JSON.isJSON(target)) {
 		return Object.keys(target).length > 0 ? false : true;
 	}
 	return true;
 };
 
-Date.prototype.format = function(format) {
+JSON.getDeepPropertyValue = function (deepKey, target) {
+	var value = undefined;
+	if (String.isString(deepKey) && !String.isEmpty(deepKey) && !JSON.isEmpty(target)) {
+		var deepKeyArr = deepKey.trim().split(".");
+		var obj = target;
+		var lastIndex = deepKeyArr.length - 1;
+		for (var i = 0; i <= lastIndex; i++) {
+
+			if (i < lastIndex) {
+				obj = obj[deepKeyArr[i]]
+				let nextDeepKey = deepKeyArr.slice((i + 1)).join(".");
+				if (!JSON.isJSON(obj)) {
+					obj = {}
+				}
+				value = JSON.getDeepPropertyValue(nextDeepKey, obj);
+			}
+			else {
+				value = obj[deepKeyArr[i]];
+			}
+
+		}
+	}
+
+	return value;
+};
+
+JSON.setDeepPropertyValue = (deepKey, value, target = {}) => {
+	const [head, ...rest] = deepKey.trim().split('.');
+	let newObj = JSON.fromJSON(target);
+	if (!JSON.isJSON(newObj)) {
+		newObj = {};
+	}
+	if (rest.length > 0) {
+		if (!JSON.isJSON(newObj[head])) {
+			newObj[head] = {}
+		}
+		newObj[head] = JSON.setDeepPropertyValue(rest.join('.'), value, newObj[head])
+	}
+	else {
+		newObj[head] = value;
+	}
+
+	return newObj
+};
+
+Date.prototype.format = function (format) {
 	//PHP's date format function Javascript emulation
 	/*
 	d	Day of the month, 2 digits with leading zeros	01 to 31
@@ -992,121 +1056,121 @@ Date.replaceChars = {
 	],
 
 	// Day
-	d: function() {
+	d: function () {
 		return (this.getDate() < 10 ? "0" : "") + this.getDate();
 	},
-	D: function() {
+	D: function () {
 		return Date.replaceChars.shortDays[this.getDay()];
 	},
-	j: function() {
+	j: function () {
 		return this.getDate();
 	},
-	l: function() {
+	l: function () {
 		return Date.replaceChars.longDays[this.getDay()];
 	},
-	N: function() {
+	N: function () {
 		return this.getDay() + 1;
 	},
-	S: function() {
+	S: function () {
 		return this.getDate() % 10 == 1 && this.getDate() != 11
 			? "st"
 			: this.getDate() % 10 == 2 && this.getDate() != 12
-			? "nd"
-			: this.getDate() % 10 == 3 && this.getDate() != 13
-			? "rd"
-			: "th";
+				? "nd"
+				: this.getDate() % 10 == 3 && this.getDate() != 13
+					? "rd"
+					: "th";
 	},
-	w: function() {
+	w: function () {
 		return this.getDay();
 	},
-	z: function() {
+	z: function () {
 		var d = new Date(this.getFullYear(), 0, 1);
 		return Math.ceil((this - d) / 86400000);
 	}, // Fixed now
 	// Week
-	W: function() {
+	W: function () {
 		var d = new Date(this.getFullYear(), 0, 1);
 		return Math.ceil(((this - d) / 86400000 + d.getDay() + 1) / 7);
 	}, // Fixed now
 	// Month
-	F: function() {
+	F: function () {
 		return Date.replaceChars.longMonths[this.getMonth()];
 	},
-	m: function() {
+	m: function () {
 		return (this.getMonth() < 9 ? "0" : "") + (this.getMonth() + 1);
 	},
-	M: function() {
+	M: function () {
 		return Date.replaceChars.shortMonths[this.getMonth()];
 	},
-	n: function() {
+	n: function () {
 		return this.getMonth() + 1;
 	},
-	t: function() {
+	t: function () {
 		var d = new Date();
 		return new Date(d.getFullYear(), d.getMonth(), 0).getDate();
 	}, // Fixed now, gets #days of date
 	// Year
-	L: function() {
+	L: function () {
 		var year = this.getFullYear();
 		return year % 400 == 0 || (year % 100 != 0 && year % 4 == 0);
 	}, // Fixed now
-	o: function() {
+	o: function () {
 		var d = new Date(this.valueOf());
 		d.setDate(d.getDate() - ((this.getDay() + 6) % 7) + 3);
 		return d.getFullYear();
 	}, //Fixed now
-	Y: function() {
+	Y: function () {
 		return this.getFullYear();
 	},
-	y: function() {
+	y: function () {
 		return ("" + this.getFullYear()).substr(2);
 	},
 	// Time
-	a: function() {
+	a: function () {
 		return this.getHours() < 12 ? "am" : "pm";
 	},
-	A: function() {
+	A: function () {
 		return this.getHours() < 12 ? "AM" : "PM";
 	},
-	B: function() {
+	B: function () {
 		return Math.floor(
 			((((this.getUTCHours() + 1) % 24) +
 				this.getUTCMinutes() / 60 +
 				this.getUTCSeconds() / 3600) *
 				1000) /
-				24
+			24
 		);
 	}, // Fixed now
-	g: function() {
+	g: function () {
 		return this.getHours() % 12 || 12;
 	},
-	G: function() {
+	G: function () {
 		return this.getHours();
 	},
-	h: function() {
+	h: function () {
 		return (
 			((this.getHours() % 12 || 12) < 10 ? "0" : "") +
 			(this.getHours() % 12 || 12)
 		);
 	},
-	H: function() {
+	H: function () {
 		return (this.getHours() < 10 ? "0" : "") + this.getHours();
 	},
-	i: function() {
+	i: function () {
 		return (this.getMinutes() < 10 ? "0" : "") + this.getMinutes();
 	},
-	s: function() {
+	s: function () {
 		return (this.getSeconds() < 10 ? "0" : "") + this.getSeconds();
 	},
-	u: function() {
+	u: function () {
 		var m = this.getMilliseconds();
 		return (m < 10 ? "00" : m < 100 ? "0" : "") + m;
 	},
 	// Timezone
-	e: function() {
+	e: function () {
 		return "Not Yet Supported";
 	},
-	I: function() {
+	I: function () {
 		var DST = null;
 		for (var i = 0; i < 12; ++i) {
 			var d = new Date(this.getFullYear(), i, 1);
@@ -1123,7 +1187,7 @@ Date.replaceChars = {
 		}
 		return (this.getTimezoneOffset() == DST) | 0;
 	},
-	O: function() {
+	O: function () {
 		return (
 			(-this.getTimezoneOffset() < 0 ? "-" : "+") +
 			(Math.abs(this.getTimezoneOffset() / 60) < 10 ? "0" : "") +
@@ -1131,7 +1195,7 @@ Date.replaceChars = {
 			"00"
 		);
 	},
-	P: function() {
+	P: function () {
 		return (
 			(-this.getTimezoneOffset() < 0 ? "-" : "+") +
 			(Math.abs(this.getTimezoneOffset() / 60) < 10 ? "0" : "") +
@@ -1139,47 +1203,47 @@ Date.replaceChars = {
 			":00"
 		);
 	}, // Fixed now
-	T: function() {
+	T: function () {
 		var m = this.getMonth();
 		this.setMonth(0);
 		var result = this.toTimeString().replace(/^.+ \(?([^\)]+)\)?$/, "$1");
 		this.setMonth(m);
 		return result;
 	},
-	Z: function() {
+	Z: function () {
 		return -this.getTimezoneOffset() * 60;
 	},
 	// Full Date/Time
-	c: function() {
+	c: function () {
 		return this.format("Y-m-d\\TH:i:sP");
 	}, // Fixed now
-	r: function() {
+	r: function () {
 		return this.toString();
 	},
-	U: function() {
+	U: function () {
 		return this.getTime() / 1000;
 	},
-	since: function() {
+	since: function () {
 		let startTime = this.getTime();
 		let endTime = performance.now();
 		var timeDiff = endTime - startTime; //in ms 
 		// strip the ms 
-		timeDiff /= 1000; 		  
+		timeDiff /= 1000;
 		// get seconds 
 		let seconds = Math.round(timeDiff);
 
 		function secondsToDHms(secs) {
 			secs = Number(secs);
 
-			var d = Math.floor(secs / (3600*24));
-			var h = Math.floor(secs % (3600*24) / 3600);
+			var d = Math.floor(secs / (3600 * 24));
+			var h = Math.floor(secs % (3600 * 24) / 3600);
 			var m = Math.floor(secs % 3600 / 60);
 			var s = Math.floor(secs % 60);
 			return {
 				days: d,
-				hrs : h,
-				mins : m,
-				secs : s,
+				hrs: h,
+				mins: m,
+				secs: s,
 			};
 		}
 
@@ -1187,52 +1251,52 @@ Date.replaceChars = {
 	},
 };
 
-Date.prototype.addDays = function(days) {
+Date.prototype.addDays = function (days) {
 	this.setDate(this.getDate() + days);
 	return this;
 };
 
-Date.prototype.addHours = function(hrs) {
+Date.prototype.addHours = function (hrs) {
 	this.setTime(this.getTime() + hrs * 3600000);
 	return this;
 };
 
-Date.prototype.addMinutes = function(min) {
+Date.prototype.addMinutes = function (min) {
 	this.setTime(this.getTime() + min * 60000);
 	return this;
 };
 
-Date.prototype.addSeconds = function(sec) {
+Date.prototype.addSeconds = function (sec) {
 	this.setTime(this.getTime() + sec * 1000);
 	return this;
 };
 
-Date.prototype.addMilliSeconds = function(ms) {
+Date.prototype.addMilliSeconds = function (ms) {
 	this.setTime(this.getTime() + ms);
 	return this;
 };
 
-Date.prototype.minusDays = function(days) {
+Date.prototype.minusDays = function (days) {
 	this.setDate(this.getDate() - days);
 	return this;
 };
 
-Date.prototype.minusHours = function(hrs) {
+Date.prototype.minusHours = function (hrs) {
 	this.setTime(this.getTime() - hrs * 3600000);
 	return this;
 };
 
-Date.prototype.minusMinutes = function(min) {
+Date.prototype.minusMinutes = function (min) {
 	this.setTime(this.getTime() - min * 60000);
 	return this;
 };
 
-Date.prototype.minusSeconds = function(sec) {
+Date.prototype.minusSeconds = function (sec) {
 	this.setTime(this.getTime() - sec * 1000);
 	return this;
 };
 
-Date.prototype.minusMilliSeconds = function(ms) {
+Date.prototype.minusMilliSeconds = function (ms) {
 	this.setTime(this.getTime() - ms);
 	return this;
 };
@@ -1245,14 +1309,14 @@ Date.prototype.minusMilliSeconds = function(ms) {
 		try {
 			date1 = new Date(date1);
 		} catch (e) {
-			console.log("difference date1 error", e);
+			
 		}
 	}
 	if (Number.isNumber(date2)) {
 		try {
 			date2 = new Date(date2);
 		} catch (e) {
-			console.log("difference date2 error", e);
+			
 		}
 	}
 	
@@ -1332,28 +1396,25 @@ Date.prototype.minusMilliSeconds = function(ms) {
 		intervals.milliseconds = milliseconds;
 		intervals.direction = direction;
 		intervals.description = description;
-
-		console.log("date1", date1.toLocaleString());
-		console.log("date2", date2.toLocaleString());
 	}
 		
 
 	return intervals;
 };*/
 
-Date.difference = function(date1, date2 = new Date()) {
-	
+Date.difference = function (date1, date2 = new Date()) {
+
 	if (Number.isNumber(date1)) {
 		try {
 			date1 = new Date(date1);
-		} catch (e) {}
+		} catch (e) { }
 	}
 	if (Number.isNumber(date2)) {
 		try {
 			date2 = new Date(date2);
-		} catch (e) {}
+		} catch (e) { }
 	}
-	
+
 	var intervals = {
 		years: 0,
 		months: 0,
@@ -1368,36 +1429,36 @@ Date.difference = function(date1, date2 = new Date()) {
 	}
 
 	if ((date1 instanceof Date) && (date2 instanceof Date)) {
-        var date2Millis = date2.getTime();
-        var targetMillis = date1.getTime();
+		var date2Millis = date2.getTime();
+		var targetMillis = date1.getTime();
 
-        var duration = targetMillis - date2Millis;
-        var years = Math.floor(duration / 3.154e+10);
-        var durationMinusYears = duration - (years * 3.154e+10);
-        var months = Math.floor(duration / 2.628e+9) % 12;
-        var durationMinusMonths = durationMinusYears - (months * 2.628e+9);
-        var days = Math.floor(durationMinusMonths / 8.64e+7);
-        var hours = Math.floor(duration / 3.6e+6 ) % 24;
-        var minutes = Math.floor(duration / 60000 ) % 60;
-        var seconds = Math.floor(duration / 1000 ) % 60;
-
-
+		var duration = targetMillis - date2Millis;
+		var years = Math.floor(duration / 3.154e+10);
+		var durationMinusYears = duration - (years * 3.154e+10);
+		var months = Math.floor(duration / 2.628e+9) % 12;
+		var durationMinusMonths = durationMinusYears - (months * 2.628e+9);
+		var days = Math.floor(durationMinusMonths / 8.64e+7);
+		var hours = Math.floor(duration / 3.6e+6) % 24;
+		var minutes = Math.floor(duration / 60000) % 60;
+		var seconds = Math.floor(duration / 1000) % 60;
 
 
 
-        intervals.years = Math.abs(years);
-        intervals.months =  Math.abs(months);
-        //intervals.weeks = weeks;
-        intervals.days =  Math.abs(days);
-        intervals.hours =  Math.abs(hours);
-        intervals.minutes =  Math.abs(minutes);
-        intervals.seconds =  Math.abs(seconds);
-    }
-		
+
+
+		intervals.years = Math.abs(years);
+		intervals.months = Math.abs(months);
+		//intervals.weeks = weeks;
+		intervals.days = Math.abs(days);
+		intervals.hours = Math.abs(hours);
+		intervals.minutes = Math.abs(minutes);
+		intervals.seconds = Math.abs(seconds);
+	}
+
 
 	return intervals;
 };
-Date.prototype.difference = function(otherdate) {
+Date.prototype.difference = function (otherdate) {
 	let difference = Date.difference(otherdate, this);
-    return difference;
+	return difference;
 };

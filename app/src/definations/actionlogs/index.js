@@ -6,7 +6,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import Button from "components/Button";
 import Avatar from "components/Avatar";
 import {
@@ -15,7 +15,7 @@ import {
 	Add as AddIcon,
 	EditOutlined as EditIcon,
 	DeleteOutlined as DeleteIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 import { UtilitiesHelper, FilesHelper } from "hoc/Helpers";
 
@@ -175,9 +175,9 @@ export default {
 					name: "users",
 					service_query: (values, user) => {
 						if (user && user.role !== "admin") {
-							return {sort: "first_name", fields: "first_name,last_name,email_address,avatar", _id: user._id };
+							return { sort: "first_name", fields: "first_name,last_name,email_address,avatar", _id: user._id };
 						}
-						return {sort: "first_name", fields: "first_name,last_name,email_address,avatar"};
+						return { sort: "first_name", fields: "first_name,last_name,email_address,avatar" };
 					},
 					resolves: {
 						value: "_id",
@@ -349,7 +349,7 @@ export default {
 								>
 									<Button
 										color="primary"
-										outlined
+										variant="outlined"
 										aria-label="add"
 									>
 										<AddIcon className="float-left" /> New
@@ -429,7 +429,7 @@ export default {
 				},
 				link: {
 					inline: {
-						default: () => {},
+						default: () => { },
 						listing: (id, className = "error_text", onClick) => {
 							return (
 								<IconButton

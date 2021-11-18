@@ -1,13 +1,12 @@
 /** @format */
 
-import withStyles from "@material-ui/core/styles/withStyles";
+
 import Calendar from "components/Calendar";
 import GridContainer from "components/Grid/GridContainer";
 import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-import { withErrorHandler } from "hoc/ErrorHandler";
-import styles from "views/pages/styles";
+
 
 class OverviewCalendar extends React.Component {
 	calendarRef = React.createRef();
@@ -22,10 +21,10 @@ class OverviewCalendar extends React.Component {
 		const { auth } = props;
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 
 	render() {
-		const { classes, auth } = this.props;
+		const { auth } = this.props;
 		return (
 			<GridContainer className="p-0 m-0">
 				<Calendar
@@ -52,7 +51,5 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-	withStyles(styles),
-	connect(mapStateToProps, {}),
-	withErrorHandler
+	connect(mapStateToProps, {})
 )(OverviewCalendar);

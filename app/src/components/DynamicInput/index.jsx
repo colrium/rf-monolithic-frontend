@@ -1,15 +1,15 @@
-import withStyles from "@material-ui/core/styles/withStyles";
+
 import Card from "components/Card";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
 import Typography from "components/Typography";
 import PropTypes from "prop-types";
 import React from "react";
-import withRoot from "hoc/withRoot";
+
 
 import DefinationView from "./components/DefinationView";
 import GenerationView from "./components/GenerationView";
-import styles from "./styles";
+
 
 class DynamicInput extends React.Component {
 	state = {
@@ -54,7 +54,7 @@ class DynamicInput extends React.Component {
 		};
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 
 	getSnapshotBeforeUpdate(prevProps) {
 		return { refreshRequired: !Object.areEqual(prevProps, this.props) };
@@ -89,7 +89,7 @@ class DynamicInput extends React.Component {
 	}
 
 	render() {
-		const { classes, className, variant } = this.props;
+		const { className, variant } = this.props;
 
 		const {
 			mode,
@@ -120,8 +120,8 @@ class DynamicInput extends React.Component {
 										disabled || readOnly
 											? "grey"
 											: active
-											? "primary"
-											: "grey"
+												? "primary"
+												: "grey"
 									}
 								>
 									{label} {required && <span> * </span>}
@@ -145,7 +145,7 @@ class DynamicInput extends React.Component {
 }
 
 DynamicInput.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 	className: PropTypes.string,
 	blueprint: PropTypes.object,
 	value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
@@ -177,4 +177,4 @@ DynamicInput.defaultProps = {
 	mode: "defination",
 };
 
-export default withRoot(withStyles(styles)(DynamicInput));
+export default (DynamicInput);

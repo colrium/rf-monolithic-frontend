@@ -1,9 +1,9 @@
 /** @format */
 
-import { Icon } from "@material-ui/core";
-import withStyles from "@material-ui/core/styles/withStyles";
-import AccessErrorIcon from "@material-ui/icons/WarningRounded";
-import Skeleton from "@material-ui/lab/Skeleton";
+import { Icon } from "@mui/material";
+
+import AccessErrorIcon from "@mui/icons-material/WarningRounded";
+import Skeleton from '@mui/material/Skeleton';
 import { colors } from "assets/jss/app-theme";
 import Button from "components/Button";
 import GridContainer from "components/Grid/GridContainer";
@@ -16,16 +16,15 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import compose from "recompose/compose";
-import {withGlobals} from "contexts/Globals";
+import { withGlobals } from "contexts/Globals";
 import { appendNavHistory } from "state/actions/ui/nav";
 //
 import { UtilitiesHelper } from "hoc/Helpers";
-import { withErrorHandler } from "hoc/ErrorHandler";
+
 //Widgets
 import ContextDataForm from "views/forms/BaseForm";
 import ApiService from "services/Api";
 //
-import styles from "views/pages/styles";
 
 class Page extends React.Component {
 	state = {
@@ -45,7 +44,7 @@ class Page extends React.Component {
 		const {
 			componentProps,
 			match: { params },
-			definations, 
+			definations,
 		} = props;
 		this.context = componentProps.context;
 		this.defination = definations[componentProps.context];
@@ -125,7 +124,7 @@ class Page extends React.Component {
 	}
 
 	render() {
-		const { classes, auth, nav } = this.props;
+		const { auth, nav } = this.props;
 
 		const last_location = Array.isArray(nav.entries)
 			? nav.entries.length > 1
@@ -135,14 +134,13 @@ class Page extends React.Component {
 		const forbidden = this.state.loading
 			? false
 			: JSON.isJSON(this.state.record)
-			? this.defination.access.actions.update.restricted(auth.user)
-			: this.defination.access.actions.create.restricted(auth.user);
+				? this.defination.access.actions.update.restricted(auth.user)
+				: this.defination.access.actions.create.restricted(auth.user);
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer>
 				<GridItem xs={12}>
 					{this.state.loading ? (
 						<GridContainer
-							className={classes.full_height}
 							justify="center"
 							alignItems="center"
 						>
@@ -160,7 +158,6 @@ class Page extends React.Component {
 										<Typography
 											color="error"
 											variant="h1"
-											center
 											fullWidth
 										>
 											<Icon fontSize="large">error</Icon>
@@ -170,7 +167,6 @@ class Page extends React.Component {
 										<Typography
 											color="error"
 											variant="body1"
-											center
 											fullWidth
 										>
 											An error occured.
@@ -186,7 +182,7 @@ class Page extends React.Component {
 								<GridContainer>
 									{forbidden && (
 										<GridContainer
-											className={classes.fullPageHeight}
+											className={"min-h-screen"}
 											direction="column"
 											justify="center"
 											alignItems="center"
@@ -195,13 +191,9 @@ class Page extends React.Component {
 												<Typography
 													color="error"
 													variant="h1"
-													center
-													fullWidth
+																										fullWidth
 												>
 													<AccessErrorIcon
-														className={
-															classes.errorIcon
-														}
 													/>
 												</Typography>
 											</GridItem>
@@ -209,8 +201,7 @@ class Page extends React.Component {
 												<Typography
 													color="grey"
 													variant="h3"
-													center
-													fullWidth
+																										fullWidth
 												>
 													Access Denied!
 												</Typography>
@@ -218,10 +209,9 @@ class Page extends React.Component {
 
 											<GridItem xs={12}>
 												<Typography
-													color="default"
+
 													variant="body1"
-													center
-													fullWidth
+																										fullWidth
 												>
 													Sorry! Access to this
 													resource is prohibitted
@@ -237,8 +227,7 @@ class Page extends React.Component {
 												<Typography
 													color="error"
 													variant="body1"
-													center
-													fullWidth
+																										fullWidth
 												>
 													<Link
 														to={"home".toUriWithDashboardPrefix()}
@@ -246,8 +235,6 @@ class Page extends React.Component {
 														{" "}
 														<Button
 															variant="text"
-															color="default"
-															simple
 														>
 															{" "}
 															Home{" "}
@@ -260,8 +247,8 @@ class Page extends React.Component {
 															{" "}
 															<Button
 																variant="text"
-																color="default"
-																simple
+
+
 															>
 																{" "}
 																Back{" "}
@@ -283,7 +270,7 @@ class Page extends React.Component {
 													record={
 														this.state.record
 															? this.state.record
-																	._id
+																._id
 															: null
 													}
 													initialValues={
@@ -296,20 +283,20 @@ class Page extends React.Component {
 													}
 													form={
 														this.defination &&
-														"name" in
+															"name" in
 															this.defination
 															? (this.state
+																.record_id
+																? this.state
 																	.record_id
-																	? this.state
-																			.record_id
-																	: "new") +
-															  "_" +
-															  UtilitiesHelper.singularize(
-																	this
-																		.defination
-																		.name
-															  ).toLowerCase() +
-															  "_form"
+																: "new") +
+															"_" +
+															UtilitiesHelper.singularize(
+																this
+																	.defination
+																	.name
+															).toLowerCase() +
+															"_form"
 															: "record_form"
 													}
 												/>
@@ -327,7 +314,7 @@ class Page extends React.Component {
 }
 
 Page.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 };
 
 const mapStateToProps = state => ({
@@ -337,8 +324,6 @@ const mapStateToProps = state => ({
 
 export default withGlobals(
 	compose(
-		withStyles(styles),
-		connect(mapStateToProps, { appendNavHistory }),
-		withErrorHandler
+		connect(mapStateToProps, { appendNavHistory })
 	)(Page)
 );

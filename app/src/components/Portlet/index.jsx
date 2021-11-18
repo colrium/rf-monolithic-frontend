@@ -1,7 +1,7 @@
 /** @format */
 
 // Material helpers
-import { withStyles } from "@material-ui/core";
+
 import classNames from "classnames";
 // Externals
 import PropTypes from "prop-types";
@@ -32,9 +32,9 @@ const Portlet = props => {
 		children,
 	} = props;
 
-	//const rootClassName = classNames(classes.root, {[className]: true, [classes.fullHeight]: fullHeight });
-	const rootClassName = classNames(classes.root, {
-		[classes.fullHeight]: fullHeight,
+	//const rootClassName = classNames(classes?.root, {[className]: true, [classes?.fullHeight]: fullHeight });
+	const rootClassName = classNames(classes?.root, {
+		[classes?.fullHeight]: fullHeight,
 		[className]: className,
 	});
 
@@ -53,10 +53,10 @@ const Portlet = props => {
 Portlet.propTypes = {
 	children: PropTypes.node,
 	className: PropTypes.string,
-	classes: PropTypes.object.isRequired,
+
 	outlined: PropTypes.bool,
 	squared: PropTypes.bool,
 	fullHeight: PropTypes.bool,
 };
 
-export default withStyles(styles)(Portlet);
+export default (Portlet);

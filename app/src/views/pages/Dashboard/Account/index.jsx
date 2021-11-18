@@ -1,7 +1,7 @@
 /** @format */
 
 // Material helpers
-import { withStyles } from "@material-ui/core";
+
 //
 import { colors } from "assets/jss/app-theme";
 // Material components
@@ -15,9 +15,7 @@ import compose from "recompose/compose";
 import { appendNavHistory } from "state/actions/ui/nav";
 // Shared layouts
 //Redux imports
-import {withErrorHandler} from "hoc/ErrorHandler";
-// Component styles
-import styles from "views/pages/styles";
+
 // Custom components
 import { AccountDetails, AccountProfile, Profile } from "./components";
 
@@ -37,10 +35,9 @@ class Account extends Component {
 	}
 
 	render() {
-		const { classes } = this.props;
 
 		return (
-			<GridContainer className={classes.root}>
+			<GridContainer>
 				<GridContainer>
 					<GridItem xs={12}>
 						<Profile />
@@ -64,16 +61,13 @@ class Account extends Component {
 }
 
 Account.propTypes = {
-	classes: PropTypes.object.isRequired,
+
 };
 
 const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withErrorHandler(
-	compose(
-		withStyles(styles),
-		connect(mapStateToProps, { appendNavHistory })
-	)(Account)
-);
+export default compose(
+	connect(mapStateToProps, { appendNavHistory })
+)(Account);

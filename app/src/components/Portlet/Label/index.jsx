@@ -1,19 +1,19 @@
 /** @format */
 
-import { Typography } from "@material-ui/core";
-import withStyles from "@material-ui/core/styles/withStyles";
+import { Typography } from "@mui/material";
+
 import { colors } from "assets/jss/app-theme";
 // Material helpers
 // Material components
 import GridContainer from "components/Grid/GridContainer";
 import PropTypes from "prop-types";
 import React from "react";
-import withRoot from "hoc/withRoot";
-import styles from "./styles";
+
+
 
 const PortletLabel = props => {
 	const {
-		classes,
+
 		className,
 		icon,
 		title,
@@ -27,12 +27,11 @@ const PortletLabel = props => {
 
 	return (
 		<GridContainer
-			className={classes.portletLabelContainer}
+			className={className}
 			style={color ? { color: color } : {}}
 		>
 			{icon && (
 				<Typography
-					className={classes.labelIcon}
 					variant="h3"
 					style={icon_color ? { color: icon_color } : {}}
 				>
@@ -42,7 +41,6 @@ const PortletLabel = props => {
 			)}
 			{title && (
 				<Typography
-					className={classes.labelTitle}
 					variant="h5"
 					style={title_color ? { color: title_color } : {}}
 				>
@@ -52,7 +50,6 @@ const PortletLabel = props => {
 			)}
 			{subtitle && (
 				<Typography
-					className={classes.subtitle}
 					variant="subtitle2"
 					style={subtitle_color ? { color: subtitle_color } : {}}
 				>
@@ -77,7 +74,7 @@ PortletLabel.propTypes = {
 };
 
 PortletLabel.defaultProps = {
-	classes: PropTypes.object.isRequired,
+
 	color: colors.hex.default,
 	title_color: colors.hex.default,
 	subtitle_color: colors.hex.grey,
@@ -85,4 +82,4 @@ PortletLabel.defaultProps = {
 	description_color: colors.hex.default,
 };
 
-export default withRoot(withStyles(styles)(PortletLabel));
+export default (PortletLabel);

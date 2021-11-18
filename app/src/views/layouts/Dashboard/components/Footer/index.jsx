@@ -1,7 +1,6 @@
 // Externals
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import {withErrorHandler} from "hoc/ErrorHandler";
 
 // Component styles
 const styles = theme => ({
@@ -40,4 +39,4 @@ Footer.propTypes = {
 	className: PropTypes.string,
 };
 
-export default withErrorHandler(Footer);
+export default Footer;

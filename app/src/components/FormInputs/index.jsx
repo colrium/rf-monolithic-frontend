@@ -2,19 +2,24 @@
 
 import React, { useState, useEffect } from "react";
 import {
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
-    FormHelperText,
-    FormLabel,
-    Slider,
-    TextField,
-    Typography,
-    Switch,
-} from "@material-ui/core";
+	Checkbox,
+	FormControl,
+	FormControlLabel,
+	FormGroup,
+	FormHelperText,
+	FormLabel,
+	Slider,
+	TextField,
+	Typography,
+	Switch,
+} from "@mui/material";
 //
-import { DatePicker, DateTimePicker } from "@material-ui/pickers";
+import DatePicker from '@mui/lab/DatePicker';
+import DateTimePicker from '@mui/lab/DateTimePicker';
+import StaticDatePicker from '@mui/lab/StaticDatePicker';
+import AdapterDateFns from '@mui/lab/AdapterMoment';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+
 import AutoComplete from "components/AutoComplete";
 import DynamicField from "components/DynamicInput";
 import FileDropZone from "components/FileDropZone";
@@ -43,10 +48,9 @@ export const DateInput = ({
 }) => {
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
 	return (
-		<FormControl 
-			className={"flex-1"+(className? (" "+className) : "")}
-			component="fieldset"
-		>
+		<LocalizationProvider dateAdapter={AdapterDateFns}>
+
+
 			<DatePicker
 				onChange={async input_value => {
 					let value = input_value._d;
@@ -62,10 +66,51 @@ export const DateInput = ({
 						}
 					}
 				}}
-				value={inputValue}
+				value={value || defaultValue || null}
+				renderInput={(params) => <TextField {...params} />}
 				{...rest}
 			/>
-		</FormControl>
+		</LocalizationProvider>
+	);
+};
+
+export const StaticDateInput = ({
+	touched,
+	invalid,
+	error,
+	onChange,
+	value,
+	className,
+	defaultValue,
+	...rest
+}) => {
+	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
+	return (
+		<LocalizationProvider dateAdapter={AdapterDateFns}>
+
+
+			<StaticDatePicker
+				orientation="landscape"
+				openTo="day"
+				onChange={async input_value => {
+					let value = input_value._d;
+					setInputValue(value);
+
+					if (Function.isFunction(onChange)) {
+						if (onChange.length === 0) {
+							onChange();
+						} else if (onChange.length === 1) {
+							onChange(value);
+						} else {
+							onChange(value, input_value);
+						}
+					}
+				}}
+				value={value || defaultValue || null}
+				renderInput={(params) => <TextField {...params} />}
+				{...rest}
+			/>
+		</LocalizationProvider>
 	);
 };
 
@@ -83,7 +128,7 @@ export const DateTimeInput = ({
 }) => {
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
 	return (
-		<FormControl component="fieldset">
+		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<DateTimePicker
 				onChange={async input_value => {
 					let value = input_value._i;
@@ -99,9 +144,11 @@ export const DateTimeInput = ({
 						}
 					}
 				}}
+				value={value || defaultValue || null}
+				renderInput={(params) => <TextField {...params} />}
 				{...rest}
 			/>
-		</FormControl>
+		</LocalizationProvider>
 	);
 };
 
@@ -122,28 +169,31 @@ export const TimeInput = ({
 }) => {
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
 	return (
-		<TextField
-			label={label}
-			error={touched && invalid}
-			helperText={touched && error}
-			onChange={async event => {
-				let value = event.target.value;
-				setInputValue(value);
+		<LocalizationProvider dateAdapter={AdapterDateFns}>
+			<TextField
+				label={label}
+				error={touched && invalid}
+				helperText={touched && error}
+				onChange={async event => {
+					let value = event.target.value;
+					setInputValue(value);
 
-				if (Function.isFunction(onChange)) {
-					if (onChange.length === 0) {
-						onChange();
-					} else if (onChange.length === 1) {
-						onChange(value);
-					} else {
-						onChange(value, null);
+					if (Function.isFunction(onChange)) {
+						if (onChange.length === 0) {
+							onChange();
+						} else if (onChange.length === 1) {
+							onChange(value);
+						} else {
+							onChange(value, null);
+						}
 					}
-				}
-			}}
-			margin="dense"
-			value={inputValue}
-			{...rest}
-		/>
+				}}
+				margin="dense"
+				value={value || defaultValue || null}
+				renderInput={(params) => <TextField {...params} />}
+				{...rest}
+			/>
+		</LocalizationProvider>
 	);
 };
 
@@ -208,7 +258,7 @@ export const CheckboxInput = (props) => {
 	} = state;
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
 	useEffect(() => {
-		setInputValue(Boolean.isBoolean(value)? value : (Boolean.isBoolean(defaultValue)? defaultValue : false))
+		setInputValue(Boolean.isBoolean(value) ? value : (Boolean.isBoolean(defaultValue) ? defaultValue : false))
 	}, [value, defaultValue]);
 
 	return (
@@ -342,7 +392,7 @@ export const MultiSelectInput = (props) => {
 	return (
 		<FormControl fullWidth>
 			<AutoComplete
-				isMulti				
+				isMulti
 				{...props}
 			/>
 		</FormControl>
@@ -352,7 +402,7 @@ export const MultiSelectInput = (props) => {
 export const SelectInput = (props) => {
 	return (
 		<FormControl fullWidth>
-			<AutoComplete			
+			<AutoComplete
 				{...props}
 			/>
 		</FormControl>
@@ -377,7 +427,7 @@ export const FileInput = ({
 			label={label}
 			error={touched && invalid}
 			helperText={touched && error ? "Invalid" : null}
-			
+
 			value={value ? value : defaultValue}
 			{...rest}
 		/>
@@ -449,7 +499,7 @@ export const SwitchInput = ({
 
 	...rest
 }) => {
-	const [inputValue, setInputValue] = useState(value ? true : (defaultValue? true : false));
+	const [inputValue, setInputValue] = useState(value ? true : (defaultValue ? true : false));
 	const [inputDisabled, setInputDisabled] = useState(disabled);
 	const [inputError, setInputError] = useState(error);
 	const [isInvalid, setIsInvalid] = useState(invalid);
@@ -457,7 +507,7 @@ export const SwitchInput = ({
 
 	const inputValueValid = async input_value => {
 		const { required, excludeValidation } = rest;
-		let excludedValidators = Array.isArray(excludeValidation)? excludeValidation : (String.isString(excludeValidation)? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
+		let excludedValidators = Array.isArray(excludeValidation) ? excludeValidation : (String.isString(excludeValidation) ? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
 		let valid = true;
 		let validationError = "";
 		if (validate) {
@@ -470,36 +520,36 @@ export const SwitchInput = ({
 			if (valid && Function.isFunction(validator) && !excludedValidators.includes("validator")) {
 				try {
 					validationError = await validator(input_value);
-				} catch(err) {
-                    validationError = " validity cannot be determined.";
-                };
+				} catch (err) {
+					validationError = " validity cannot be determined.";
+				};
 				valid = !String.isString(validationError);
-			}			
+			}
 		}
 		if (valid !== !isInvalid && Function.isFunction(onValidityChange)) {
 			onValidityChange(valid);
 		}
 		setInputError(valid ? undefined : validationError);
 		setIsInvalid(!valid);
-		
+
 		return valid;
 	};
 
 	const triggerOnChange = async (new_value) => {
 		setInputDisabled(true);
-		if ( Function.isFunction(onChange)) {
+		if (Function.isFunction(onChange)) {
 			let changed = onChange(new_value);
-			Promise.all([changed]).then(()=>{
+			Promise.all([changed]).then(() => {
 				setInputDisabled(false);
 			}).catch(e => {
-                setInputDisabled(false);
-            });
-			
+				setInputDisabled(false);
+			});
+
 		}
-		else{
+		else {
 			setInputDisabled(false);
 		}
-		
+
 	}
 
 	useEffect(() => {
@@ -509,24 +559,24 @@ export const SwitchInput = ({
 				if (validity) {
 					triggerOnChange(inputValue);
 				}
-			}).catch(e => {});
-							
+			}).catch(e => { });
+
 		}
 	}, [inputValue, inputTouched]);
 
 	return (
 		<FormControl fullWidth={fullWidth}>
 			<FormControlLabel
-				control={<Switch 
+				control={<Switch
 					color={"primary"}
-					disabled={inputDisabled} 
-					checked={inputValue} 
-					onChange={()=>{
+					disabled={inputDisabled}
+					checked={inputValue}
+					onChange={() => {
 						setInputValue(!inputValue);
 						if (!inputTouched) {
 							setInputTouched(true);
 						}
-					}} 
+					}}
 					{...rest}
 				/>}
 				label={label}

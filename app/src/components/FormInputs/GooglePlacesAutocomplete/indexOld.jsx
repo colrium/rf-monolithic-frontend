@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import Grid from '@material-ui/core/Grid';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from "@material-ui/core/IconButton";
-import MyLocationIcon from "@material-ui/icons/MyLocation";
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import Autocomplete from '@mui/material/Autocomplete';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from "@mui/material/IconButton";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
+import CircularProgress from '@mui/material/CircularProgress';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { connect } from "react-redux";
 import { google_maps_url } from "config";
 import { TextInput } from "components/FormInputs";
@@ -57,36 +57,36 @@ const styles = theme => ({
 			color: theme.palette.text.default,
 		}
 	},
-	inputRoot:{
+	inputRoot: {
 
 	},
 });
 
 const targetTypes = {
-				coordinates: "location",
-				address: "address",
-				formatted_address: "address",
-				place_id: "placeId",
-				street_number: "address",
-				route: "address",
-				neighborhood: "address",
-				political: "address",
-				locality: "address",
-				administrative_area_level_1: "address",
-				administrative_area_level_2: "address",				
-				country: "address",
-				postal_code: "address",
-			};
+	coordinates: "location",
+	address: "address",
+	formatted_address: "address",
+	place_id: "placeId",
+	street_number: "address",
+	route: "address",
+	neighborhood: "address",
+	political: "address",
+	locality: "address",
+	administrative_area_level_1: "address",
+	administrative_area_level_2: "address",
+	country: "address",
+	postal_code: "address",
+};
 
 function LocationInput(props) {
 	const [open, setOpen] = useState(false);
 	const loaded = React.useRef(false);
-	const { className, device, placeholder, placeholderType, label, value, type, variant, isMulti, required, touched, disabled, error, invalid, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, loading, query, onOpen, onClose, onChange, isClearable, onClickMyLocationBtn, result_type, short_name, showMyLocationBtn, controlPosition, ...rest} = props;
-	const [autocompleteValue, setAutocompleteValue] = useState(value? value : null);
-	const [typeValue, setTypeValue] = useState(value? value : null);
+	const { className, device, placeholder, placeholderType, label, value, type, variant, isMulti, required, touched, disabled, error, invalid, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, loading, query, onOpen, onClose, onChange, isClearable, onClickMyLocationBtn, result_type, short_name, showMyLocationBtn, controlPosition, ...rest } = props;
+	const [autocompleteValue, setAutocompleteValue] = useState(value ? value : null);
+	const [typeValue, setTypeValue] = useState(value ? value : null);
 	const [textFieldValue, setTextFieldValue] = useState('');
-	const [inputValue, setInputValue] = useState(value? value : undefined);
-	const [inputType, setInputType] = useState(type? (targetTypes[type]? targetTypes[type]  : "formatted_address") : "formatted_address");
+	const [inputValue, setInputValue] = useState(value ? value : undefined);
+	const [inputType, setInputType] = useState(type ? (targetTypes[type] ? targetTypes[type] : "formatted_address") : "formatted_address");
 	const [autocompleteOptions, setAutocompleteOptions] = useState([]);
 	const [inputError, setInputError] = useState(error);
 	const [isInvalid, setIsInvalid] = useState(invalid);
@@ -96,14 +96,14 @@ function LocationInput(props) {
 
 	if (typeof window !== 'undefined' && !loaded.current) {
 		if (!document.querySelector('[src*="https://maps.googleapis.com/maps/api/js"]')) {
-			loadScript(google_maps_url, document.querySelector('head'), 'google-maps-from-location-input' );
+			loadScript(google_maps_url, document.querySelector('head'), 'google-maps-from-location-input');
 		}
 
 		loaded.current = true;
 	}
 
-	const inputValueValid = async input_value => {		
-		let excludedValidators = Array.isArray(excludeValidation)? excludeValidation : (String.isString(excludeValidation)? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
+	const inputValueValid = async input_value => {
+		let excludedValidators = Array.isArray(excludeValidation) ? excludeValidation : (String.isString(excludeValidation) ? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
 		let valid = true;
 		let validationError = "";
 		if (validate) {
@@ -112,10 +112,10 @@ function LocationInput(props) {
 					valid = false;
 					validationError = label + " is required";
 				}
-				else if ((Array.isArray(input_value) && input_value.length > 0) || (JSON.isJSON(input_value) && Object.keys(input_value).length > 0) || (input_value && input_value.length > 0)) {					
-						valid = true;
-						validationError = "";
-					
+				else if ((Array.isArray(input_value) && input_value.length > 0) || (JSON.isJSON(input_value) && Object.keys(input_value).length > 0) || (input_value && input_value.length > 0)) {
+					valid = true;
+					validationError = "";
+
 				} else {
 					valid = false;
 					validationError = label + " required";
@@ -125,9 +125,9 @@ function LocationInput(props) {
 			if (valid && Function.isFunction(validator) && !excludedValidators.includes("validator")) {
 				try {
 					validationError = await validator(input_value);
-				} catch(err) {
-                    validationError = " validity cannot be determined.";
-                };
+				} catch (err) {
+					validationError = " validity cannot be determined.";
+				};
 				valid = !String.isString(validationError);
 			}
 		}
@@ -143,44 +143,44 @@ function LocationInput(props) {
 		setInputDisabled(true);
 		let new_value = null;
 		if (Array.isArray(newValue) || JSON.isJSON(newValue)) {
-					if (isMulti) {
-						new_value = [];
-						newValue.map((entry, cursor) => {
-							if (entry) {
-								new_value.push(entry.value);
-							}
-							
-						});
-						if (Function.isFunction(onChange)) {
-							onChange(new_value);
-						}
-					} else {
-						
-						if (JSON.isJSON(newValue)) {
-							new_value = newValue.value;
-						}
-						
+			if (isMulti) {
+				new_value = [];
+				newValue.map((entry, cursor) => {
+					if (entry) {
+						new_value.push(entry.value);
 					}
+
+				});
+				if (Function.isFunction(onChange)) {
+					onChange(new_value);
 				}
-				
-		if ( Function.isFunction(onChange)) {
+			} else {
+
+				if (JSON.isJSON(newValue)) {
+					new_value = newValue.value;
+				}
+
+			}
+		}
+
+		if (Function.isFunction(onChange)) {
 			let changed = onChange(new_value);
-			Promise.all([changed]).then(()=>{
+			Promise.all([changed]).then(() => {
 				setInputDisabled(false);
 			}).catch(e => {
-                setInputDisabled(false);
-            });
-			
+				setInputDisabled(false);
+			});
+
 		}
-		else{
+		else {
 			setInputDisabled(false);
 		}
-		
+
 	}
 
-	const parseValueToType = (targetValue, targetType = "address", resultType=false, options={}, appendData=false) => {
+	const parseValueToType = (targetValue, targetType = "address", resultType = false, options = {}, appendData = false) => {
 		setInputLoading(true);
-		return new Promise(function(resolve, reject) {
+		return new Promise(function (resolve, reject) {
 			if (!resultType) {
 				setInputLoading(false);
 				reject("Geocode was not successful. Result type is missing");
@@ -193,13 +193,13 @@ function LocationInput(props) {
 				setInputLoading(false);
 				reject("Geocode was not successful. Geocoder is Missing");
 			}
-			autocompleteGeocoder.current.geocode( {...options, [targetType]: targetValue}, function(results, status) {				
+			autocompleteGeocoder.current.geocode({ ...options, [targetType]: targetValue }, function (results, status) {
 				if (status == 'OK') {
-                    let resultValue = undefined;
-                    let resultsNewAutoCompleteOptions = [];
-                    let resultsNewAutoCompleteValue = autocompleteValue;
+					let resultValue = undefined;
+					let resultsNewAutoCompleteOptions = [];
+					let resultsNewAutoCompleteValue = autocompleteValue;
 
-                    if (Array.isArray(targetValue)) {
+					if (Array.isArray(targetValue)) {
 						resultValue = [];
 						resultsNewAutoCompleteOptions = [];
 						resultsNewAutoCompleteValue = undefined;
@@ -207,22 +207,22 @@ function LocationInput(props) {
 							resultsNewAutoCompleteOptions = [];
 							resultsNewAutoCompleteValue = [];
 							results.map(result => {
-								if (resultType==="address_components") {
+								if (resultType === "address_components") {
 									resultsNewAutoCompleteOptions.push(result);
 									resultsNewAutoCompleteValue.push(result);
 									resultValue.push(result.address_components);
 								}
-								else if (resultType==="coordinates") {
+								else if (resultType === "coordinates") {
 									resultsNewAutoCompleteOptions.push(result);
 									resultsNewAutoCompleteValue.push(result);
-									resultValue.push({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
+									resultValue.push({ lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() });
 								}
-								else if (resultType==="viewport") {
+								else if (resultType === "viewport") {
 									resultsNewAutoCompleteOptions.push(result);
 									resultsNewAutoCompleteValue.push(result);
 									resultValue.push(result.geometry.viewport);
 								}
-								else if (resultType==="place_id") {
+								else if (resultType === "place_id") {
 									resultsNewAutoCompleteOptions.push(result);
 									resultsNewAutoCompleteValue.push(result);
 									resultValue.push(result.place_id);
@@ -230,14 +230,14 @@ function LocationInput(props) {
 								else if (["street_number", "route", "neighborhood", "political", "locality", "administrative_area_level_2", "administrative_area_level_1", "country", "postal_code"].includes(resultType)) {
 									let resultStr = "";
 									let address_components = result.address_components;
-									let name_type = short_name? "short_name" : "long_name";
+									let name_type = short_name ? "short_name" : "long_name";
 									for (var i = 0; i < address_components.length; i++) {
 										if (Array.isArray(address_components[i].types) && address_components[i].types.includes(resultType)) {
 											resultsNewAutoCompleteOptions.push(result);
 											resultsNewAutoCompleteValue.push(result);
-											resultStr = resultStr+(resultStr.length > 0? " ": "")+address_components[i][name_type]; 
+											resultStr = resultStr + (resultStr.length > 0 ? " " : "") + address_components[i][name_type];
 										}
-										
+
 									}
 									resultValue.push(resultStr);
 								}
@@ -246,64 +246,64 @@ function LocationInput(props) {
 								}
 							});
 						}
-							
+
 					}
-					else if (Array.isArray(results) && results.length > 0){
+					else if (Array.isArray(results) && results.length > 0) {
 						resultsNewAutoCompleteOptions = [];
 						resultsNewAutoCompleteValue = undefined;
-						if (resultType==="address_components") {
+						if (resultType === "address_components") {
 							resultsNewAutoCompleteOptions.push(results[0]);
 							resultsNewAutoCompleteValue = results[0];
 							resultValue = results[0].address_components;
 						}
-						else if (resultType==="coordinates") {
+						else if (resultType === "coordinates") {
 							resultsNewAutoCompleteOptions.push(results[0]);
 							resultsNewAutoCompleteValue = results[0];
-							resultValue = {lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
+							resultValue = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() };
 						}
-						else if (resultType==="viewport") {
+						else if (resultType === "viewport") {
 							resultsNewAutoCompleteOptions.push(results[0]);
 							resultValue = results[0].geometry.viewport;
 						}
-						else if (resultType==="place_id") {
+						else if (resultType === "place_id") {
 							resultsNewAutoCompleteOptions.push(results[0]);
 							resultsNewAutoCompleteValue = results[0];
 							resultValue = results[0].place_id;
 						}
 						else if (["street_number", "route", "neighborhood", "political", "locality", "administrative_area_level_1", "administrative_area_level_2", "country", "postal_code"].includes(resultType)) {
-                            let resultStr = "";
-                            let address_components = results[0].address_components;
-                            let name_type = short_name? "short_name" : "long_name";
-                            for (var i = 0; i < address_components.length; i++) {
-                                if (Array.isArray(address_components[i].types) && address_components[i].types.includes(resultType)) {
-                                    resultsNewAutoCompleteOptions.push(results[0]);
-                                    resultsNewAutoCompleteValue = results[0];
-                                    resultStr = resultStr+(resultStr.length > 0? " ": "")+address_components[i][name_type]; 
-                                }
-                                
-                            }
-                            resultValue = resultStr;
-                        }
+							let resultStr = "";
+							let address_components = results[0].address_components;
+							let name_type = short_name ? "short_name" : "long_name";
+							for (var i = 0; i < address_components.length; i++) {
+								if (Array.isArray(address_components[i].types) && address_components[i].types.includes(resultType)) {
+									resultsNewAutoCompleteOptions.push(results[0]);
+									resultsNewAutoCompleteValue = results[0];
+									resultStr = resultStr + (resultStr.length > 0 ? " " : "") + address_components[i][name_type];
+								}
+
+							}
+							resultValue = resultStr;
+						}
 						else {
 							resultsNewAutoCompleteOptions.push(results[0]);
 							resultsNewAutoCompleteValue = results[0];
 							resultValue = results[0].formatted_address;
 						}
 					}
-                    if (appendData) {
+					if (appendData) {
 						setAutocompleteOptions(resultsNewAutoCompleteOptions);
 						setAutocompleteValue(resultsNewAutoCompleteValue);
 					}
-                    setInputLoading(false);
-                    resolve(resultValue);
-                } else {
+					setInputLoading(false);
+					resolve(resultValue);
+				} else {
 					setInputLoading(false);
 					reject("Geocode was not successful." + status);
 				}
 			});
 
 		});
-			
+
 	}
 
 	const fetch = React.useMemo(
@@ -315,10 +315,10 @@ function LocationInput(props) {
 	);
 
 	React.useEffect(() => {
-        let active = true;
-        let executeFetch = true;
+		let active = true;
+		let executeFetch = true;
 
-        if (executeFetch) {
+		if (executeFetch) {
 			if (!autocompleteService.current && window.google) {
 				autocompleteService.current = new window.google.maps.places.AutocompleteService();
 			}
@@ -345,51 +345,51 @@ function LocationInput(props) {
 				return undefined;
 			}
 
-			
-			fetch({ input: textFieldValue, ...(["locality", "sublocality", "administrative_area_level_1", "administrative_area_level_2", "country", "postal_code"].includes(type)? {regions:[type]} : {}), ...query }, (results) => {
-					let newAutocompleteOptions = [];
 
-					if (autocompleteValue) {
-						newAutocompleteOptions = [autocompleteValue];
+			fetch({ input: textFieldValue, ...(["locality", "sublocality", "administrative_area_level_1", "administrative_area_level_2", "country", "postal_code"].includes(type) ? { regions: [type] } : {}), ...query }, (results) => {
+				let newAutocompleteOptions = [];
+
+				if (autocompleteValue) {
+					newAutocompleteOptions = [autocompleteValue];
+				}
+
+
+				let newAutocompleteValue = undefined;
+				if (Array.isArray(results)) {
+
+					if (["street_number", "route", "neighborhood", "political", "locality", "administrative_area_level_1", "administrative_area_level_2", "country", "postal_code"].includes(type)) {
+						results.map(result => {
+							if (result.types.includes(type)) {
+								newAutocompleteOptions.push(result);
+							}
+						});
 					}
+					else {
+						newAutocompleteOptions = [...newAutocompleteOptions, ...results];
+					}
+				}
 
-
-					let newAutocompleteValue = undefined;
-						if (Array.isArray(results)) {
-
-							if (["street_number", "route", "neighborhood", "political", "locality", "administrative_area_level_1", "administrative_area_level_2", "country", "postal_code"].includes(type)) {
-								results.map(result => {
-									if (result.types.includes(type)) {
-										newAutocompleteOptions.push(result);
-									}
-								});
-							}
-							else{
-								newAutocompleteOptions = [...newAutocompleteOptions, ...results];
-							}
-						}
-
-					//setAutocompleteValue(newAutocompleteValue);
-					setAutocompleteOptions(newAutocompleteOptions);
+				//setAutocompleteValue(newAutocompleteValue);
+				setAutocompleteOptions(newAutocompleteOptions);
 
 			});
 		}
 
 
-        return () => {
+		return () => {
 			active = false;
 		};
-    }, [textFieldValue, fetch, query]);
+	}, [textFieldValue, fetch, query]);
 
 	useEffect(() => {
 		if (inputTouched) {
-            let valueValid = inputValueValid(inputValue);
-            Promise.all([valueValid]).then(validity => {
+			let valueValid = inputValueValid(inputValue);
+			Promise.all([valueValid]).then(validity => {
 				if (validity[0]) {
 					triggerOnChange(inputValue);
 				}
-			}).catch(e => {});
-        }
+			}).catch(e => { });
+		}
 		else {
 			/*if (inputValue) {
 				if (type === "coordinates" && JSON.isJSON(value)) {					
@@ -417,20 +417,20 @@ function LocationInput(props) {
 								setAutocompleteValue(newAutocompleteValue);
 							
 						});
-						console.log("useEffect value, type parsedTypeValue \n", parsedTypeValue, "autocompleteValue", autocompleteValue);
+						
 					}
 						
 				}).catch(parseErr => {
-					console.log("parseValueToType parseErr", parseErr);
+					
 					setTextFieldValue("");
 				});
 			}*/
-			
+
 		}
 	}, [inputValue, inputTouched, type]);
 
 	/*useEffect(() => {
-		console.log("value", value);
+		
 		if (targetTypes[type] && value) {
 			if (!autocompleteService.current && window.google) {
 				autocompleteService.current = new window.google.maps.places.AutocompleteService();
@@ -483,11 +483,11 @@ function LocationInput(props) {
 								setAutocompleteValue(newAutocompleteValue);
 							
 						});
-						console.log("useEffect value, type parsedTypeValue \n", parsedTypeValue, "autocompleteValue", autocompleteValue);
+						
 					}
 						
 				}).catch(parseErr => {
-					console.log("parseValueToType parseErr", parseErr);
+					
 					setTextFieldValue("");
 				});
 			}
@@ -496,19 +496,19 @@ function LocationInput(props) {
 	}, [value, type, placeholderType]);*/
 
 	const handleOnChange = async (event, newValue) => {
-        let newAutocompleteOptions = newValue ? [newValue, ...autocompleteOptions] : autocompleteOptions;
-        setAutocompleteOptions(newAutocompleteOptions);
-        setAutocompleteValue(newValue);
-        if (!inputTouched) {
+		let newAutocompleteOptions = newValue ? [newValue, ...autocompleteOptions] : autocompleteOptions;
+		setAutocompleteOptions(newAutocompleteOptions);
+		setAutocompleteValue(newValue);
+		if (!inputTouched) {
 			setInputTouched(true);
 		}
-        if (newValue) {
+		if (newValue) {
 			parseValueToType(newValue.description, "address", type, {}, true).then(parsedTypeValue => {
-                setInputValue(parsedTypeValue);
-                setInputError(false);
-            }).catch(parseErr => {
-                setInputError(parseErr);
-            });
+				setInputValue(parsedTypeValue);
+				setInputError(false);
+			}).catch(parseErr => {
+				setInputError(parseErr);
+			});
 		}
 		else {
 			if (isMulti) {
@@ -519,42 +519,42 @@ function LocationInput(props) {
 			}
 			setInputError(false);
 		}
-    };
+	};
 
 	const handleOnClickMyLocationBtn = event => {
-        const {device} = props;
-        if (device.location) {
-			parseValueToType({lat: device.location.lat, lng: device.location.lng}, "location", (placeholderType? placeholderType : (targetTypes[type] === "address"? type : "formatted_address")), {}, true).then(parsedTypeValue => {
-                setTextFieldValue(parsedTypeValue);
-                setInputError(false);
+		const { device } = props;
+		if (device.location) {
+			parseValueToType({ lat: device.location.lat, lng: device.location.lng }, "location", (placeholderType ? placeholderType : (targetTypes[type] === "address" ? type : "formatted_address")), {}, true).then(parsedTypeValue => {
+				setTextFieldValue(parsedTypeValue);
+				setInputError(false);
 
-                if (targetTypes[type] && targetTypes[type] !== "address") {
-					parseValueToType({lat: device.location.lat, lng: device.location.lng}, "location", type).then(parsedTypeValue => {
+				if (targetTypes[type] && targetTypes[type] !== "address") {
+					parseValueToType({ lat: device.location.lat, lng: device.location.lng }, "location", type).then(parsedTypeValue => {
 						setInputValue(parsedTypeValue);
 						if (!inputTouched) {
 							setInputTouched(true);
 						}
 					});
 				}
-				else{
+				else {
 					setInputValue(parsedTypeValue);
-						if (!inputTouched) {
-							setInputTouched(true);
-						}					
+					if (!inputTouched) {
+						setInputTouched(true);
+					}
 				}
-            }).catch(parseErr => {
-                setInputError(parseErr);
-            });
+			}).catch(parseErr => {
+				setInputError(parseErr);
+			});
 			if (Function.isFunction(onClickMyLocationBtn)) {
 				onClickMyLocationBtn(device.location);
 			}
 		}
-    };
+	};
 
 	return (
 
 		<Autocomplete
-			className={"flex-1"+(className? (" "+className) : "")}
+			className={"flex-1" + (className ? (" " + className) : "")}
 			getOptionLabel={(option) => (typeof option === 'string' ? option : option.description)}
 			filterOptions={(x) => x}
 			options={autocompleteOptions}
@@ -568,52 +568,52 @@ function LocationInput(props) {
 			}}
 			inputValue={textFieldValue}
 			renderInput={(params) => {
-				/*console.log("autocompleteOptions", autocompleteOptions);
-		console.log("autocompleteValue", autocompleteValue);*/
+				/*
+		*/
 				return (
-					<TextInput 
-							{...params} 
-							InputLabelProps={{
-								...params.InputLabelProps,
-								shrink: (isMulti && (Array.isArray(autocompleteValue) && autocompleteValue.length > 0)) || (JSON.isJSON(params.InputLabelProps)? params.InputLabelProps.shrink : open),
-							}}
-							inputProps={{
-								...params.inputProps,
-								autoComplete: String.uid(11),
+					<TextInput
+						{...params}
+						InputLabelProps={{
+							...params.InputLabelProps,
+							shrink: (isMulti && (Array.isArray(autocompleteValue) && autocompleteValue.length > 0)) || (JSON.isJSON(params.InputLabelProps) ? params.InputLabelProps.shrink : open),
+						}}
+						inputProps={{
+							...params.inputProps,
+							autoComplete: String.uid(11),
 
-							}}
-							InputProps={{
-								...params.InputProps,
-								autoComplete: String.uid(11),
-				            	endAdornment: inputLoading ? (
-				            		<InputAdornment position="end">
-				            			<CircularProgress size={"1rem"}  color="inherit" />
-				            		</InputAdornment>
-								) : (showMyLocationBtn? (
-										<IconButton
-											aria-label="my-location"
-											className={"text-base"}
-											onClick={handleOnClickMyLocationBtn}
-										>
-											<MyLocationIcon fontSize="inherit"/>
-										</IconButton>
+						}}
+						InputProps={{
+							...params.InputProps,
+							autoComplete: String.uid(11),
+							endAdornment: inputLoading ? (
+								<InputAdornment position="end">
+									<CircularProgress size={"1rem"} color="inherit" />
+								</InputAdornment>
+							) : (showMyLocationBtn ? (
+								<IconButton
+									aria-label="my-location"
+									className={"text-base"}
+									onClick={handleOnClickMyLocationBtn}
+								>
+									<MyLocationIcon fontSize="inherit" />
+								</IconButton>
 							) : params.InputProps.endAdornment),
-				        	}}					
-							label={label} 
-							variant={variant} 
-							margin={margin}
-							size={size}
-							required={required}
-							disabled={inputDisabled}
-							error={inputError ? true : isInvalid}
-							helperText={ inputError ? inputError : (isInvalid ? "Invalid" : helperText) }
-							fullWidth 
-						/>
-					
+						}}
+						label={label}
+						variant={variant}
+						margin={margin}
+						size={size}
+						required={required}
+						disabled={inputDisabled}
+						error={inputError ? true : isInvalid}
+						helperText={inputError ? inputError : (isInvalid ? "Invalid" : helperText)}
+						fullWidth
+					/>
+
 				);
 			}}
 			forcePopupIcon={true}
-			popupIcon={inputLoading ? <CircularProgress size={"1.2rem"}  color="inherit" /> : (showMyLocationBtn? <MyLocationIcon className="cursor-pointer" onClick={handleOnClickMyLocationBtn} fontSize="inherit"/> : <ArrowDropDownIcon  fontSize="inherit" />)}
+			popupIcon={inputLoading ? <CircularProgress size={"1.2rem"} color="inherit" /> : (showMyLocationBtn ? <MyLocationIcon className="cursor-pointer" onClick={handleOnClickMyLocationBtn} fontSize="inherit" /> : <ArrowDropDownIcon fontSize="inherit" />)}
 			open={open}
 			onOpen={() => {
 				setOpen(true);
@@ -628,12 +628,12 @@ function LocationInput(props) {
 				}
 			}}
 
-			
+
 			renderOption={(option) => {
 				if (option.structured_formatting) {
 					const matches = option.structured_formatting.main_text_matched_substrings;
-					const parts = parse( option.structured_formatting.main_text, matches.map((match) => [match.offset, match.offset + match.length]), );
-					//console.log("parts", parts);
+					const parts = parse(option.structured_formatting.main_text, matches.map((match) => [match.offset, match.offset + match.length]),);
+					//
 					if (Array.isArray(option.types) && option.types.includes(type)) {
 						return (
 							<Grid container alignItems="center">
@@ -654,37 +654,37 @@ function LocationInput(props) {
 							</Grid>
 						);
 					}
-					
-				}
-				else if(option && Array.isArray(option.address_components)){
-									let address_components = option.address_components;
-									let address_component = false;
-									let name_type = short_name? "short_name" : "long_name";
-									for (var i = 0; i < address_components.length; i++) {
-										if (Array.isArray(address_components[i].types) && address_components[i].types.includes(type)) {
-											address_component = address_components[i];
-											break;
-										}
-										
-									}
 
-									if (address_component) {
-										return (
-											<Grid container alignItems="center">
-												<Grid item>
-													<LocationOnIcon className={"mr-2 text-current"} />
-												</Grid>
-												<Grid item xs>													
-													<span className="mx-1">
-														{address_component[name_type]}
-													</span>
-												</Grid>
-											</Grid>
-										);
-									}
-									
 				}
-				return;	
+				else if (option && Array.isArray(option.address_components)) {
+					let address_components = option.address_components;
+					let address_component = false;
+					let name_type = short_name ? "short_name" : "long_name";
+					for (var i = 0; i < address_components.length; i++) {
+						if (Array.isArray(address_components[i].types) && address_components[i].types.includes(type)) {
+							address_component = address_components[i];
+							break;
+						}
+
+					}
+
+					if (address_component) {
+						return (
+							<Grid container alignItems="center">
+								<Grid item>
+									<LocationOnIcon className={"mr-2 text-current"} />
+								</Grid>
+								<Grid item xs>
+									<span className="mx-1">
+										{address_component[name_type]}
+									</span>
+								</Grid>
+							</Grid>
+						);
+					}
+
+				}
+				return;
 			}}
 			multiple={isMulti}
 			disableClearable
@@ -695,7 +695,7 @@ function LocationInput(props) {
 	);
 }
 
-LocationInput.defaultProps = {	
+LocationInput.defaultProps = {
 	margin: "dense",
 	size: "small",
 	variant: "outlined",
