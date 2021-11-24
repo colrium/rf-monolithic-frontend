@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-    rf_frontend:
+    rf-fe-production:
         build:
             context: ./app
             dockerfile: Dockerfile.prod
