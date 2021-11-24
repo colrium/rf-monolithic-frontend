@@ -1,0 +1,624 @@
+{
+		"Baringo": {
+			"name": "Baringo",
+			"capital": "Kabarnet",
+			"code": 30,
+			"adminitrative_level_2": [
+				"Baringo central",
+				"Baringo north",
+				"Baringo south",
+				"Eldama ravine",
+				"Mogotio",
+				"Tiaty"
+			]
+		},
+		"Bomet": {
+			"name": "Bomet",
+			"capital": "Bomet",
+			"code": 36,
+			"adminitrative_level_2": [
+				"Bomet central",
+				"Bomet east",
+				"Chepalungu",
+				"Konoin",
+				"Sotik"
+			]
+		},
+		"Bungoma": {
+			"name": "Bungoma",
+			"capital": "Bungoma",
+			"code": 39,
+			"adminitrative_level_2": [
+				"Bumula",
+				"Kabuchai",
+				"Kanduyi",
+				"Kimilil",
+				"Mt Elgon",
+				"Sirisia",
+				"Tongaren",
+				"Webuye east",
+				"Webuye west"
+			]
+		},
+		"Busia": {
+			"name": "Busia",
+			"capital": "Busia",
+			"code": 40,
+			"adminitrative_level_2": [
+				"Budalangi",
+				"Butula",
+				"Funyula",
+				"Nambele",
+				"Teso North",
+				"Teso South"
+			]
+		},
+		"Elgeyo-Marakwet": {
+			"name": "Elgeyo-Marakwet",
+			"capital": "Iten",
+			"code": 28,
+			"adminitrative_level_2": [
+				"Keiyo north",
+				"Keiyo south",
+				"Marakwet east",
+				"Marakwet west"
+			]
+		},
+		"Embu": {
+			"name": "Embu",
+			"capital": "Embu",
+			"code": 14,
+			"adminitrative_level_2": [
+				"Manyatta",
+				"Mbeere north",
+				"Mbeere south",
+				"Runyenjes"
+			]
+		},
+		"Garissa": {
+			"name": "Garissa",
+			"capital": "Garissa",
+			"code": 7,
+			"adminitrative_level_2": [
+				"Daadab",
+				"Fafi",
+				"Garissa",
+				"Hulugho",
+				"Ijara",
+				"Lagdera balambala"
+			]
+		},
+		"Homa Bay": {
+			"name": "Homa Bay",
+			"capital": "Homa Bay",
+			"code": 43,
+			"adminitrative_level_2": [
+				"Homabay town",
+				"Kabondo",
+				"Karachwonyo",
+				"Kasipul",
+				"Mbita",
+				"Ndhiwa",
+				"Rangwe",
+				"Suba"
+			]
+		},
+		"Isiolo": {
+			"name": "Isiolo",
+			"capital": "Isiolo",
+			"code": 11,
+			"adminitrative_level_2": [
+				"Central",
+				"Garba tula",
+				"Kina",
+				"Merit",
+				"Oldonyiro",
+				"Sericho"
+			]
+		},
+		"Kajiado": {
+			"name": "Kajiado",
+			"code": 34,
+			"adminitrative_level_2": [
+				"Isinya.",
+				"Kajiado Central.",
+				"Kajiado North.",
+				"Loitokitok.",
+				"Mashuuru."
+			]
+		},
+		"Kakamega": {
+			"name": "Kakamega",
+			"capital": "Kakamega",
+			"code": 37,
+			"adminitrative_level_2": [
+				"Butere",
+				"Kakamega central",
+				"Kakamega east",
+				"Kakamega north",
+				"Kakamega south",
+				"Khwisero",
+				"Lugari",
+				"Lukuyani",
+				"Lurambi",
+				"Matete",
+				"Mumias",
+				"Mutungu",
+				"Navakholo"
+			]
+		},
+		"Kericho": {
+			"name": "Kericho",
+			"capital": "Kericho",
+			"code": 35,
+			"adminitrative_level_2": [
+				"Ainamoi",
+				"Belgut",
+				"Bureti",
+				"Kipkelion east",
+				"Kipkelion west",
+				"Soin sigowet"
+			]
+		},
+		"Kiambu": {
+			"name": "Kiambu",
+			"capital": "Kiambu",
+			"code": 22,
+			"adminitrative_level_2": [
+				"Gatundu north",
+				"Gatundu south",
+				"Githunguri",
+				"Juja",
+				"Kabete",
+				"Kiambaa",
+				"Kiambu",
+				"Kikuyu",
+				"Limuru",
+				"Ruiru",
+				"Thika town",
+				"lari"
+			]
+		},
+		"Kilifi": {
+			"name": "Kilifi",
+			"capital": "Kilifi",
+			"code": 3,
+			"adminitrative_level_2": [
+				"Genzw",
+				"Kaloleni",
+				"Kilifi north",
+				"Kilifi south",
+				"Magarini",
+				"Malindi",
+				"Rabai"
+			]
+		},
+		"Kirinyaga": {
+			"name": "Kirinyaga",
+			"capital": "Kerugoya/Kutus",
+			"code": 20,
+			"adminitrative_level_2": [
+				"Kirinyaga central",
+				"Kirinyaga east",
+				"Kirinyaga west",
+				"Mwea east",
+				"Mwea west"
+			]
+		},
+		"Kisii": {
+			"name": "Kisii",
+			"capital": "Kisii",
+			"code": 45,
+			"adminitrative_level_2": [
+				
+			]
+		},
+		"Kisumu": {
+			"name": "Kisumu",
+			"capital": "Kisumu",
+			"code": 42,
+			"adminitrative_level_2": [
+				"Kisumu central",
+				"Kisumu east ",
+				"Kisumu west",
+				"Mohoroni",
+				"Nyakach",
+				"Nyando",
+				"Seme"
+			]
+		},
+		"Kitui": {
+			"name": "Kitui",
+			"capital": "Kitui",
+			"code": 15,
+			"adminitrative_level_2": [
+				"Ikutha",
+				"Katulani",
+				"Kisasi",
+				"Kitui central",
+				"Kitui west ",
+				"Lower yatta",
+				"Matiyani",
+				"Migwani",
+				"Mutitu",
+				"Mutomo",
+				"Muumonikyusu",
+				"Mwingi central",
+				"Mwingi east",
+				"Nzambani",
+				"Tseikuru"
+			]
+		},
+		"Kwale": {
+			"name": "Kwale",
+			"capital": "Kwale",
+			"code": 2,
+			"adminitrative_level_2": [
+				"Kinango",
+				"Lungalunga",
+				"Msambweni",
+				"Mutuga"
+			]
+		},
+		"Laikipia": {
+			"name": "Laikipia",
+			"capital": "Rumuruti",
+			"code": 31,
+			"adminitrative_level_2": [
+				"Laikipia central",
+				"Laikipia east",
+				"Laikipia north",
+				"Laikipia west ",
+				"Nyahururu"
+			]
+		},
+		"Lamu": {
+			"name": "Lamu",
+			"capital": "Lamu",
+			"code": 5,
+			"adminitrative_level_2": [
+				"Lamu East",
+				"Lamu West"
+			]
+		},
+		"Machakos": {
+			"name": "Machakos",
+			"capital": "Machakos",
+			"code": 16,
+			"adminitrative_level_2": [
+				"Kathiani",
+				"Machakos town",
+				"Masinga",
+				"Matungulu",
+				"Mavoko",
+				"Mwala",
+				"Yatta"
+			]
+		},
+		"Makueni": {
+			"name": "Makueni",
+			"capital": "Wote",
+			"code": 17,
+			"adminitrative_level_2": [
+				"Kaiti",
+				"Kibwei west",
+				"Kibwezi east",
+				"Kilome",
+				"Makueni",
+				"Mbooni"
+			]
+		},
+		"Mandera": {
+			"name": "Mandera",
+			"capital": "Mandera",
+			"code": 9,
+			"adminitrative_level_2": [
+				"Banissa",
+				"Lafey",
+				"Mandera East",
+				"Mandera North",
+				"Mandera South",
+				"Mandera West"
+			]
+		},
+		"Marsabit": {
+			"name": "Marsabit",
+			"capital": "Marsabit",
+			"code": 10,
+			"adminitrative_level_2": [
+				"Laisamis",
+				"Moyale",
+				"North hor",
+				"Saku"
+			]
+		},
+		"Meru": {
+			"name": "Meru",
+			"capital": "Meru",
+			"code": 12,
+			"adminitrative_level_2": [
+				"Buuri",
+				"Igembe central",
+				"Igembe north",
+				"Igembe south",
+				"Imenti central",
+				"Imenti north",
+				"Imenti south",
+				"Tigania east",
+				"Tigania west"
+			]
+		},
+		"Migori": {
+			"name": "Migori",
+			"capital": "Migori",
+			"code": 44,
+			"adminitrative_level_2": [
+				"Awendo",
+				"Kuria east",
+				"Kuria west",
+				"Mabera",
+				"Ntimaru",
+				"Rongo",
+				"Suna east",
+				"Suna west",
+				"Uriri"
+			]
+		},
+		"Mombasa": {
+			"name": "Mombasa",
+			"capital": "Mombasa City",
+			"code": 1,
+			"adminitrative_level_2": [
+				"Changamwe",
+				"Jomvu",
+				"Kisauni",
+				"Likoni",
+				"Mvita",
+				"Nyali"
+			]
+		},
+		"Murang'a": {
+			"name": "Murang'a",
+			"capital": "Murang'a",
+			"code": 21,
+			"adminitrative_level_2": [
+				"Gatanga",
+				"Kahuro",
+				"Kandara",
+				"Kangema",
+				"Kigumo",
+				"Kiharu",
+				"Mathioya",
+				"Murang’a south"
+			]
+		},
+		"Nairobi": {
+			"name": "Nairobi",
+			"capital": "Nairobi City",
+			"code": 47,
+			"adminitrative_level_2": [
+				"Dagoretti North Sub County",
+				"Dagoretti South Sub County ",
+				"Embakasi Central Sub Count",
+				"Embakasi East Sub County",
+				"Embakasi North Sub County ",
+				"Embakasi South Sub County",
+				"Embakasi West Sub County",
+				"Kamukunji Sub County",
+				"Kasarani Sub County ",
+				"Kibra Sub County ",
+				"Lang'ata Sub County ",
+				"Makadara Sub County",
+				"Mathare Sub County ",
+				"Roysambu Sub County ",
+				"Ruaraka Sub County ",
+				"Starehe Sub County ",
+				"Westlands Sub County "
+			]
+		},
+		"Nakuru": {
+			"name": "Nakuru",
+			"capital": "Nakuru",
+			"code": 32,
+			"adminitrative_level_2": [
+				"Bahati",
+				"Gilgil",
+				"Kuresoi north",
+				"Kuresoi south",
+				"Molo",
+				"Naivasha",
+				"Nakuru town east",
+				"Nakuru town west",
+				"Njoro",
+				"Rongai",
+				"Subukia"
+			]
+		},
+		"Nandi": {
+			"name": "Nandi",
+			"capital": "Kapsabet",
+			"code": 29,
+			"adminitrative_level_2": [
+				"Aldai",
+				"Chesumei",
+				"Emgwen",
+				"Mosop",
+				"Namdi hills",
+				"Tindiret"
+			]
+		},
+		"Narok": {
+			"name": "Narok",
+			"capital": "Narok",
+			"code": 33,
+			"adminitrative_level_2": [
+				"Narok east",
+				"Narok north",
+				"Narok south",
+				"Narok west",
+				"Transmara east",
+				"Transmara west"
+			]
+		},
+		"Nyamira": {
+			"name": "Nyamira",
+			"capital": "Nyamira",
+			"code": 46,
+			"adminitrative_level_2": [
+				"Borabu",
+				"Manga",
+				"Masaba north",
+				"Nyamira north",
+				"Nyamira south"
+			]
+		},
+		"Nyandarua": {
+			"name": "Nyandarua",
+			"capital": "Ol Kalou",
+			"code": 18,
+			"adminitrative_level_2": [
+				"Kinangop",
+				"Kipipiri",
+				"Ndaragwa",
+				"Ol Kalou",
+				"Ol joro orok"
+			]
+		},
+		"Nyeri": {
+			"name": "Nyeri",
+			"capital": "Nyeri",
+			"code": 19,
+			"adminitrative_level_2": [
+				"Kieni east",
+				"Kieni west",
+				"Mathira east",
+				"Mathira west",
+				"Mkurweni",
+				"Nyeri town",
+				"Othaya",
+				"Tetu"
+			]
+		},
+		"Samburu": {
+			"name": "Samburu",
+			"capital": "Maralal",
+			"code": 25,
+			"adminitrative_level_2": [
+				"Samburu east",
+				"Samburu north",
+				"Samburu west"
+			]
+		},
+		"Siaya": {
+			"name": "Siaya",
+			"capital": "Siaya",
+			"code": 41,
+			"adminitrative_level_2": [
+				"Alego usonga",
+				"Bondo",
+				"Gem",
+				"Rarieda",
+				"Ugenya",
+				"Unguja"
+			]
+		},
+		"Taita-Taveta": {
+			"name": "Taita-Taveta",
+			"capital": "Voi",
+			"code": 6,
+			"adminitrative_level_2": [
+				"Mwatate",
+				"Taveta",
+				"Voi",
+				"Wundanyi"
+			]
+		},
+		"Tana River": {
+			"capital": "Hola",
+			"code": 4,
+			"adminitrative_level_2": [
+				"Bura",
+				"Galole",
+				"Garsen"
+			]
+		},
+		"Tharaka-Nithi": {
+			"capital": "Chuka",
+			"code": 13,
+			"adminitrative_level_2": [
+				"Chuka",
+				"Igambangobe",
+				"Maara",
+				"Muthambi",
+				"Tharak north",
+				"Tharaka south"
+			]
+		},
+		"Trans-Nzoia": {
+			"capital": "Kitale",
+			"code": 26,
+			"adminitrative_level_2": [
+				"Cherangany",
+				"Endebess",
+				"Kiminini",
+				"Kwanza",
+				"Saboti"
+			]
+		},
+		"Turkana": {
+			"capital": "Lodwar",
+			"code": 23,
+			"adminitrative_level_2": [
+				"Loima",
+				"Turkana central",
+				"Turkana east",
+				"Turkana north",
+				"Turkana south"
+			]
+		},
+		"Uasin Gishu": {
+			"capital": "Eldoret",
+			"code": 27,
+			"adminitrative_level_2": [
+				"Ainabkoi",
+				"Kapseret",
+				"Kesses",
+				"Moiben",
+				"Soy",
+				"Turbo"
+			]
+		},
+		"Vihiga": {
+			"capital": "Vihiga",
+			"code": 38,
+			"adminitrative_level_2": [
+				"Emuhaya",
+				"Hamisi",
+				"Luanda",
+				"Sabatia",
+				"vihiga"
+			]
+		},
+		"Wajir": {
+			"capital": "Wajir",
+			"code": 8,
+			"adminitrative_level_2": [
+				"Eldas",
+				"Tarbaj",
+				"Wajir East",
+				"Wajir North",
+				"Wajir South",
+				"Wajir West"
+			]
+		},
+		"West Pokot": {
+			"capital": "Kapenguria",
+			"code": 24,
+			"adminitrative_level_2": [
+				"Central Pokot",
+				"North Pokot",
+				"Pokot South",
+				"West Pokot"
+			]
+		}
+}

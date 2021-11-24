@@ -1,0 +1,1666 @@
+[
+  {
+    "code": "UG306601",
+    "name": "Agago",
+    "level-2-code": "UG3066",
+    "level-2": "Agago",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG202701",
+    "name": "Amuria",
+    "level-2-code": "UG2027",
+    "level-2": "Amuria",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG307101",
+    "name": "Apac Municipality",
+    "level-2-code": "UG3071",
+    "level-2": "Apac",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG309901",
+    "name": "Aringa",
+    "level-2-code": "UG3099",
+    "level-2": "Yumbe",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307201",
+    "name": "Arua Municipality",
+    "level-2-code": "UG3072",
+    "level-2": "Arua",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG309701",
+    "name": "Aruu",
+    "level-2-code": "UG3097",
+    "level-2": "Pader",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307401",
+    "name": "Aswa",
+    "level-2-code": "UG3074",
+    "level-2": "Gulu",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307202",
+    "name": "Ayivu",
+    "level-2-code": "UG3072",
+    "level-2": "Arua",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG101401",
+    "name": "Bamunanika",
+    "level-2-code": "UG1014",
+    "level-2": "Luwero",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG101001",
+    "name": "Bbaale",
+    "level-2-code": "UG1010",
+    "level-2": "Kayunga",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG309001",
+    "name": "Bokora",
+    "level-2-code": "UG3090",
+    "level-2": "Napak",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG205201",
+    "name": "Bubulo",
+    "level-2-code": "UG2052",
+    "level-2": "Manafwa",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG205601",
+    "name": "Bubulo",
+    "level-2-code": "UG2056",
+    "level-2": "Namisindwa",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG206101",
+    "name": "Budadiri",
+    "level-2-code": "UG2061",
+    "level-2": "Sironko",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG202801",
+    "name": "Budaka",
+    "level-2-code": "UG2028",
+    "level-2": "Budaka",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG203801",
+    "name": "Budiope",
+    "level-2-code": "UG2038",
+    "level-2": "Buyende",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG412101",
+    "name": "Bufumbira",
+    "level-2-code": "UG4121",
+    "level-2": "Kisoro",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG204401",
+    "name": "Bugabula",
+    "level-2-code": "UG2044",
+    "level-2": "Kamuli",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG410601",
+    "name": "Bugahya",
+    "level-2-code": "UG4106",
+    "level-2": "Hoima",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG411201",
+    "name": "Bugangaizi",
+    "level-2-code": "UG4112",
+    "level-2": "Kakumiro",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG410301",
+    "name": "Bughendera",
+    "level-2-code": "UG4103",
+    "level-2": "Bundibugyo",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG203001",
+    "name": "Bugiri Municipality",
+    "level-2-code": "UG2030",
+    "level-2": "Bugiri",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG203101",
+    "name": "Bugweri",
+    "level-2-code": "UG2031",
+    "level-2": "Bugweri",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG411801",
+    "name": "Buhaguzi",
+    "level-2-code": "UG4118",
+    "level-2": "Kikuube",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG410101",
+    "name": "Buhweju",
+    "level-2-code": "UG4101",
+    "level-2": "Buhweju",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG100101",
+    "name": "Buikwe",
+    "level-2-code": "UG1001",
+    "level-2": "Buikwe",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG412501",
+    "name": "Bujenje",
+    "level-2-code": "UG4125",
+    "level-2": "Masindi",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG412501",
+    "name": "Bujenje",
+    "level-2-code": "UG4125",
+    "level-2": "Masindi",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG100601",
+    "name": "Bujumba",
+    "level-2-code": "UG1006",
+    "level-2": "Kalangala",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG413301",
+    "name": "Bujumbura",
+    "level-2-code": "UG4133",
+    "level-2": "Rukungiri",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG410801",
+    "name": "Bukanga",
+    "level-2-code": "UG4108",
+    "level-2": "Isingiro",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG203201",
+    "name": "Bukedea",
+    "level-2-code": "UG2032",
+    "level-2": "Bukedea",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG100201",
+    "name": "Bukomansimbi",
+    "level-2-code": "UG1002",
+    "level-2": "Bukomansimbi",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG411501",
+    "name": "Bukonjo",
+    "level-2-code": "UG4115",
+    "level-2": "Kasese",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG203002",
+    "name": "Bukooli",
+    "level-2-code": "UG2030",
+    "level-2": "Bugiri",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG205501",
+    "name": "Bukooli",
+    "level-2-code": "UG2055",
+    "level-2": "Namayingo",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG101501",
+    "name": "Bukoto",
+    "level-2-code": "UG1015",
+    "level-2": "Lwengo",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG101701",
+    "name": "Bukoto",
+    "level-2-code": "UG1017",
+    "level-2": "Masaka",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG203401",
+    "name": "Bulambuli",
+    "level-2-code": "UG2034",
+    "level-2": "Bulambuli",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG204301",
+    "name": "Bulamogi",
+    "level-2-code": "UG2043",
+    "level-2": "Kaliro",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG410201",
+    "name": "Buliisa",
+    "level-2-code": "UG4102",
+    "level-2": "Buliisa",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG205401",
+    "name": "Bungokho",
+    "level-2-code": "UG2054",
+    "level-2": "Mbale",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG205301",
+    "name": "Bunya",
+    "level-2-code": "UG2053",
+    "level-2": "Mayuge",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG410401",
+    "name": "Bunyangabu",
+    "level-2-code": "UG4104",
+    "level-2": "Bunyangabu",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG413101",
+    "name": "Bunyaruguru",
+    "level-2-code": "UG4131",
+    "level-2": "Rubirizi",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG203601",
+    "name": "Bunyole",
+    "level-2-code": "UG2036",
+    "level-2": "Butaleja",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG411001",
+    "name": "Burahya",
+    "level-2-code": "UG4110",
+    "level-2": "Kabarole",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG102301",
+    "name": "Buruli",
+    "level-2-code": "UG1023",
+    "level-2": "Nakasongola",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG412502",
+    "name": "Buruuli",
+    "level-2-code": "UG4125",
+    "level-2": "Masindi",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG410501",
+    "name": "Bushenyi  Municipality",
+    "level-2-code": "UG4105",
+    "level-2": "Bushenyi",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG203501",
+    "name": "Busia Municipality",
+    "level-2-code": "UG2035",
+    "level-2": "Busia",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG205701",
+    "name": "Busiki",
+    "level-2-code": "UG2057",
+    "level-2": "Namutumba",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG102601",
+    "name": "Busiro",
+    "level-2-code": "UG1026",
+    "level-2": "Wakiso",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG411502",
+    "name": "Busongora",
+    "level-2-code": "UG4115",
+    "level-2": "Kasese",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG101801",
+    "name": "Busujju",
+    "level-2-code": "UG1018",
+    "level-2": "Mityana",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG100301",
+    "name": "Butambala",
+    "level-2-code": "UG1003",
+    "level-2": "Butambala",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG203701",
+    "name": "Butebo",
+    "level-2-code": "UG2037",
+    "level-2": "Butebo",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG205901",
+    "name": "Butebo",
+    "level-2-code": "UG2059",
+    "level-2": "Pallisa",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG204001",
+    "name": "Butembe",
+    "level-2-code": "UG2040",
+    "level-2": "Jinja",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG100401",
+    "name": "Buvuma Island",
+    "level-2-code": "UG1004",
+    "level-2": "Buvuma",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG102001",
+    "name": "Buwekula",
+    "level-2-code": "UG1020",
+    "level-2": "Mubende",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG411101",
+    "name": "Buyaga",
+    "level-2-code": "UG4111",
+    "level-2": "Kagadi",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG411701",
+    "name": "Buyanja",
+    "level-2-code": "UG4117",
+    "level-2": "Kibaale",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG204402",
+    "name": "Buzaaya",
+    "level-2-code": "UG2044",
+    "level-2": "Kamuli",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG410302",
+    "name": "Bwamba",
+    "level-2-code": "UG4103",
+    "level-2": "Bundibugyo",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG308901",
+    "name": "Chekwi",
+    "level-2-code": "UG3089",
+    "level-2": "Nakapiripirit",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307701",
+    "name": "Chua",
+    "level-2-code": "UG3077",
+    "level-2": "Kitgum",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307501",
+    "name": "Dodoth",
+    "level-2-code": "UG3075",
+    "level-2": "Kaabong",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307601",
+    "name": "Dodoth",
+    "level-2-code": "UG3076",
+    "level-2": "Karenga",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307301",
+    "name": "Dokolo",
+    "level-2-code": "UG3073",
+    "level-2": "Dokolo",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG306501",
+    "name": "East Moyo",
+    "level-2-code": "UG3065",
+    "level-2": "Adjumani",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG102602",
+    "name": "Entebbe Municipality",
+    "level-2-code": "UG1026",
+    "level-2": "Wakiso",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG308301",
+    "name": "Erute",
+    "level-2-code": "UG3083",
+    "level-2": "Lira",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG411002",
+    "name": "Fort Portal Municipality",
+    "level-2-code": "UG4110",
+    "level-2": "Kabarole",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG100501",
+    "name": "Gomba",
+    "level-2-code": "UG1005",
+    "level-2": "Gomba",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG307402",
+    "name": "Gulu Municipality",
+    "level-2-code": "UG3074",
+    "level-2": "Gulu",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG410602",
+    "name": "Hoima Municipality",
+    "level-2-code": "UG4106",
+    "level-2": "Hoima",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG410701",
+    "name": "Ibanda",
+    "level-2-code": "UG4107",
+    "level-2": "Ibanda",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG410701",
+    "name": "Ibanda",
+    "level-2-code": "UG4107",
+    "level-2": "Ibanda",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG410701",
+    "name": "Ibanda",
+    "level-2-code": "UG4107",
+    "level-2": "Ibanda",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG410702",
+    "name": "Ibanda Municipality",
+    "level-2-code": "UG4107",
+    "level-2": "Ibanda",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG203901",
+    "name": "Iganga Municipality",
+    "level-2-code": "UG2039",
+    "level-2": "Iganga",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG410502",
+    "name": "Igara",
+    "level-2-code": "UG4105",
+    "level-2": "Bushenyi",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG202802",
+    "name": "Iki-Iki",
+    "level-2-code": "UG2028",
+    "level-2": "Budaka",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG410802",
+    "name": "Isingiro",
+    "level-2-code": "UG4108",
+    "level-2": "Isingiro",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG308001",
+    "name": "Jie",
+    "level-2-code": "UG3080",
+    "level-2": "Kotido",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG204002",
+    "name": "Jinja Municipality",
+    "level-2-code": "UG2040",
+    "level-2": "Jinja",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG309801",
+    "name": "Jonam",
+    "level-2-code": "UG3098",
+    "level-2": "Pakwach",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG410901",
+    "name": "Kabale Municipality",
+    "level-2-code": "UG4109",
+    "level-2": "Kabale",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG204101",
+    "name": "Kaberamaido",
+    "level-2-code": "UG2041",
+    "level-2": "Kaberamaido",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG101601",
+    "name": "Kabula",
+    "level-2-code": "UG1016",
+    "level-2": "Lyantonde",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG204003",
+    "name": "Kagoma",
+    "level-2-code": "UG2040",
+    "level-2": "Jinja",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG412901",
+    "name": "Kajara",
+    "level-2-code": "UG4129",
+    "level-2": "Ntungamo",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG204201",
+    "name": "Kalaki",
+    "level-2-code": "UG2042",
+    "level-2": "Kalaki",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG100701",
+    "name": "Kalungu",
+    "level-2-code": "UG1007",
+    "level-2": "Kalungu",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG204403",
+    "name": "Kamuli Municipality",
+    "level-2-code": "UG2044",
+    "level-2": "Kamuli",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG204501",
+    "name": "Kapchorwa Municipality",
+    "level-2-code": "UG2045",
+    "level-2": "Kapchorwa",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG204601",
+    "name": "Kapelebyong",
+    "level-2-code": "UG2046",
+    "level-2": "Kapelebyong",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG102002",
+    "name": "Kasambya",
+    "level-2-code": "UG1020",
+    "level-2": "Mubende",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG411503",
+    "name": "Kasese Municipality",
+    "level-2-code": "UG4115",
+    "level-2": "Kasese",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG412601",
+    "name": "Kashari",
+    "level-2-code": "UG4126",
+    "level-2": "Mbarara",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG206001",
+    "name": "Kasilo",
+    "level-2-code": "UG2060",
+    "level-2": "Serere",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG100901",
+    "name": "Kassanda",
+    "level-2-code": "UG1009",
+    "level-2": "Kassanda",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG204701",
+    "name": "Katakwi",
+    "level-2-code": "UG2047",
+    "level-2": "Katakwi",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG101402",
+    "name": "Katikamu",
+    "level-2-code": "UG1014",
+    "level-2": "Luwero",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG411601",
+    "name": "Kazo",
+    "level-2-code": "UG4116",
+    "level-2": "Kazo",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG100102",
+    "name": "KCCA",
+    "level-2-code": "UG1001",
+    "level-2": "Buikwe",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG100801",
+    "name": "KCCA",
+    "level-2-code": "UG1008",
+    "level-2": "Kampala",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG101802",
+    "name": "KCCA",
+    "level-2-code": "UG1018",
+    "level-2": "Mityana",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG102101",
+    "name": "KCCA",
+    "level-2-code": "UG1021",
+    "level-2": "Mukono",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG411301",
+    "name": "Kibale",
+    "level-2-code": "UG4113",
+    "level-2": "Kamwenge",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG412001",
+    "name": "Kibanda",
+    "level-2-code": "UG4120",
+    "level-2": "Kiryandongo",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG101101",
+    "name": "Kiboga",
+    "level-2-code": "UG1011",
+    "level-2": "Kiboga",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG101201",
+    "name": "Kiboga",
+    "level-2-code": "UG1012",
+    "level-2": "Kyankwanzi",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG204801",
+    "name": "Kibuku",
+    "level-2-code": "UG2048",
+    "level-2": "Kibuku",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG203902",
+    "name": "Kigulu",
+    "level-2-code": "UG2039",
+    "level-2": "Iganga",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG307001",
+    "name": "Kilak",
+    "level-2-code": "UG3070",
+    "level-2": "Amuru",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG411401",
+    "name": "Kinkizi",
+    "level-2-code": "UG4114",
+    "level-2": "Kanungu",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG306801",
+    "name": "Kioga",
+    "level-2-code": "UG3068",
+    "level-2": "Amolatar",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG102603",
+    "name": "Kira Municipality",
+    "level-2-code": "UG1026",
+    "level-2": "Wakiso",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG412102",
+    "name": "Kisoro Municipality",
+    "level-2-code": "UG4121",
+    "level-2": "Kisoro",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG412201",
+    "name": "Kitagwenda",
+    "level-2-code": "UG4122",
+    "level-2": "Kitagwenda",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG307702",
+    "name": "Kitgum Municipality",
+    "level-2-code": "UG3077",
+    "level-2": "Kitgum",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307801",
+    "name": "Koboko",
+    "level-2-code": "UG3078",
+    "level-2": "Koboko",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307802",
+    "name": "Koboko Municipality",
+    "level-2-code": "UG3078",
+    "level-2": "Koboko",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307901",
+    "name": "Kole",
+    "level-2-code": "UG3079",
+    "level-2": "Kole",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG203301",
+    "name": "Kongasis",
+    "level-2-code": "UG2033",
+    "level-2": "Bukwo",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG102401",
+    "name": "Kooki",
+    "level-2-code": "UG1024",
+    "level-2": "Rakai",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG308002",
+    "name": "Kotido Municipality",
+    "level-2-code": "UG3080",
+    "level-2": "Kotido",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG204901",
+    "name": "Kumi",
+    "level-2-code": "UG2049",
+    "level-2": "Kumi",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG204902",
+    "name": "Kumi Municipality",
+    "level-2-code": "UG2049",
+    "level-2": "Kumi",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG308101",
+    "name": "Kwania",
+    "level-2-code": "UG3081",
+    "level-2": "Kwania",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG205001",
+    "name": "Kween",
+    "level-2-code": "UG2050",
+    "level-2": "Kween",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG102604",
+    "name": "Kyadondo",
+    "level-2-code": "UG1026",
+    "level-2": "Wakiso",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG412301",
+    "name": "Kyaka",
+    "level-2-code": "UG4123",
+    "level-2": "Kyegegwa",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG100602",
+    "name": "Kyamuswa",
+    "level-2-code": "UG1006",
+    "level-2": "Kalangala",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG101301",
+    "name": "Kyotera",
+    "level-2-code": "UG1013",
+    "level-2": "Kyotera",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG306401",
+    "name": "Labwor",
+    "level-2-code": "UG3064",
+    "level-2": "Abim",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG308201",
+    "name": "Lamwo",
+    "level-2-code": "UG3082",
+    "level-2": "Lamwo",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG308302",
+    "name": "Lira Municipality",
+    "level-2-code": "UG3083",
+    "level-2": "Lira",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG100103",
+    "name": "Lugazi Municipality",
+    "level-2-code": "UG1001",
+    "level-2": "Buikwe",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG205101",
+    "name": "Luuka",
+    "level-2-code": "UG2051",
+    "level-2": "Luuka",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG102501",
+    "name": "Lwemiyaga",
+    "level-2-code": "UG1025",
+    "level-2": "Ssembabule",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG308401",
+    "name": "Madi Okollo",
+    "level-2-code": "UG3084",
+    "level-2": "Madi Okollo",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG102605",
+    "name": "Makindye Ssabagabo Municipality",
+    "level-2-code": "UG1026",
+    "level-2": "Wakiso",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG202901",
+    "name": "Manjiya",
+    "level-2-code": "UG2029",
+    "level-2": "Bududa",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG308501",
+    "name": "Maracha",
+    "level-2-code": "UG3085",
+    "level-2": "Maracha",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG307102",
+    "name": "Maruzi",
+    "level-2-code": "UG3071",
+    "level-2": "Apac",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG101702",
+    "name": "Masaka Municipality",
+    "level-2-code": "UG1017",
+    "level-2": "Masaka",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG412503",
+    "name": "Masindi Municipality",
+    "level-2-code": "UG4125",
+    "level-2": "Masindi",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG308601",
+    "name": "Matheniko",
+    "level-2-code": "UG3086",
+    "level-2": "Moroto",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG102502",
+    "name": "Mawogola",
+    "level-2-code": "UG1025",
+    "level-2": "Ssembabule",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG101901",
+    "name": "Mawokota",
+    "level-2-code": "UG1019",
+    "level-2": "Mpigi",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG205402",
+    "name": "Mbale Municipality",
+    "level-2-code": "UG2054",
+    "level-2": "Mbale",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG412602",
+    "name": "Mbarara Municipality",
+    "level-2-code": "UG4126",
+    "level-2": "Mbarara",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG101803",
+    "name": "Mityana",
+    "level-2-code": "UG1018",
+    "level-2": "Mityana",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG101804",
+    "name": "Mityana Municipality",
+    "level-2-code": "UG1018",
+    "level-2": "Mityana",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG306701",
+    "name": "Moroto",
+    "level-2-code": "UG3067",
+    "level-2": "Alebtong",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG308602",
+    "name": "Moroto Municipality",
+    "level-2-code": "UG3086",
+    "level-2": "Moroto",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG308701",
+    "name": "Moyo",
+    "level-2-code": "UG3087",
+    "level-2": "Moyo",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG102003",
+    "name": "Mubende Municipality",
+    "level-2-code": "UG1020",
+    "level-2": "Mubende",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG102102",
+    "name": "Mukono",
+    "level-2-code": "UG1021",
+    "level-2": "Mukono",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG102103",
+    "name": "Mukono Municipality",
+    "level-2-code": "UG1021",
+    "level-2": "Mukono",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG412401",
+    "name": "Mwenge",
+    "level-2-code": "UG4124",
+    "level-2": "Kyenjojo",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG102201",
+    "name": "Nakaseke",
+    "level-2-code": "UG1022",
+    "level-2": "Nakaseke",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG102104",
+    "name": "Nakifuma",
+    "level-2-code": "UG1021",
+    "level-2": "Mukono",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG102606",
+    "name": "Nansana Municipality",
+    "level-2-code": "UG1026",
+    "level-2": "Wakiso",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG410902",
+    "name": "Ndorwa",
+    "level-2-code": "UG4109",
+    "level-2": "Kabale",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG309101",
+    "name": "Nebbi Municipality",
+    "level-2-code": "UG3091",
+    "level-2": "Nebbi",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG205801",
+    "name": "Ngora",
+    "level-2-code": "UG2058",
+    "level-2": "Ngora",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG100104",
+    "name": "Njeru Municipality",
+    "level-2-code": "UG1001",
+    "level-2": "Buikwe",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG101002",
+    "name": "Ntenjeru",
+    "level-2-code": "UG1010",
+    "level-2": "Kayunga",
+    "level-1-code": "UG1",
+    "level-1": "Central"
+  },
+  {
+    "code": "UG412801",
+    "name": "Ntoroko",
+    "level-2-code": "UG4128",
+    "level-2": "Ntoroko",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG412902",
+    "name": "Ntungamo Municipality",
+    "level-2-code": "UG4129",
+    "level-2": "Ntungamo",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG309201",
+    "name": "Nwoya",
+    "level-2-code": "UG3092",
+    "level-2": "Nwoya",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG411901",
+    "name": "Nyabushozi",
+    "level-2-code": "UG4119",
+    "level-2": "Kiruhura",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG309301",
+    "name": "Obongi",
+    "level-2-code": "UG3093",
+    "level-2": "Obongi",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG310001",
+    "name": "Okoro",
+    "level-2-code": "UG3100",
+    "level-2": "Zombo",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG309401",
+    "name": "Omoro",
+    "level-2-code": "UG3094",
+    "level-2": "Omoro",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG309501",
+    "name": "Otuke",
+    "level-2-code": "UG3095",
+    "level-2": "Otuke",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG309601",
+    "name": "Oyam",
+    "level-2-code": "UG3096",
+    "level-2": "Oyam",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG309102",
+    "name": "Padyere",
+    "level-2-code": "UG3091",
+    "level-2": "Nebbi",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG205902",
+    "name": "Pallisa",
+    "level-2-code": "UG2059",
+    "level-2": "Pallisa",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG308801",
+    "name": "Pian",
+    "level-2-code": "UG3088",
+    "level-2": "Nabilatuk",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG306901",
+    "name": "Pokot",
+    "level-2-code": "UG3069",
+    "level-2": "Amudat",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG413302",
+    "name": "Rubabo",
+    "level-2-code": "UG4133",
+    "level-2": "Rukungiri",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG413001",
+    "name": "Rubanda",
+    "level-2-code": "UG4130",
+    "level-2": "Rubanda",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG412903",
+    "name": "Ruhaama",
+    "level-2-code": "UG4129",
+    "level-2": "Ntungamo",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG412701",
+    "name": "Ruhinda",
+    "level-2-code": "UG4127",
+    "level-2": "Mitooma",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG413201",
+    "name": "Rukiga",
+    "level-2-code": "UG4132",
+    "level-2": "Rukiga",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG413303",
+    "name": "Rukungiri Municipality",
+    "level-2-code": "UG4133",
+    "level-2": "Rukungiri",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG412904",
+    "name": "Rushenyi",
+    "level-2-code": "UG4129",
+    "level-2": "Ntungamo",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG413401",
+    "name": "Rwampara",
+    "level-2-code": "UG4134",
+    "level-2": "Rwampara",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG203502",
+    "name": "Samia-Bugwe",
+    "level-2-code": "UG2035",
+    "level-2": "Busia",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG206002",
+    "name": "Serere",
+    "level-2-code": "UG2060",
+    "level-2": "Serere",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG413501",
+    "name": "Sheema",
+    "level-2-code": "UG4135",
+    "level-2": "Sheema",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG413501",
+    "name": "Sheema",
+    "level-2-code": "UG4135",
+    "level-2": "Sheema",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG413502",
+    "name": "Sheema Municipality",
+    "level-2-code": "UG4135",
+    "level-2": "Sheema",
+    "level-1-code": "UG4",
+    "level-1": "Western"
+  },
+  {
+    "code": "UG206201",
+    "name": "Soroti",
+    "level-2-code": "UG2062",
+    "level-2": "Soroti",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG206202",
+    "name": "Soroti Municipality",
+    "level-2-code": "UG2062",
+    "level-2": "Soroti",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG307203",
+    "name": "Terego",
+    "level-2-code": "UG3072",
+    "level-2": "Arua",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG204502",
+    "name": "Tingey",
+    "level-2-code": "UG2045",
+    "level-2": "Kapchorwa",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG204502",
+    "name": "Tingey",
+    "level-2-code": "UG2045",
+    "level-2": "Kapchorwa",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG204702",
+    "name": "Toroma",
+    "level-2-code": "UG2047",
+    "level-2": "Katakwi",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG206301",
+    "name": "Tororo",
+    "level-2-code": "UG2063",
+    "level-2": "Tororo",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG206302",
+    "name": "Tororo Municipality",
+    "level-2-code": "UG2063",
+    "level-2": "Tororo",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  },
+  {
+    "code": "UG307204",
+    "name": "Vurra",
+    "level-2-code": "UG3072",
+    "level-2": "Arua",
+    "level-1-code": "UG3",
+    "level-1": "Northern"
+  },
+  {
+    "code": "UG206303",
+    "name": "West Budama (Kisolo)",
+    "level-2-code": "UG2063",
+    "level-2": "Tororo",
+    "level-1-code": "UG2",
+    "level-1": "Eastern"
+  }
+]

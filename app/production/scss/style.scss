@@ -1,0 +1,25 @@
+/*! =========================================================
+ *
+ * Realfield.io style based on Material Kit - v2.0.2 (Bootstrap 4.0.0 Final Edition)
+ *
+ * =========================================================
+ *
+ * Product Page: https://realfield.io
+ * Available with purchase of license from https://realfield.io
+ * Copyright 2019 Realfield.io (https://realfield.io)
+ * License Realfield.io (https://realfield.io/license)
+ *
+ * ========================================================= */
+
+@import "core/variables";
+@import "core/mixins";
+
+// Core Components
+@import "core/misc";
+
+// Core Plugins
+
+// @import "plugins/plugin-datetime-picker";
+@import "plugins/plugin-nouislider";
+@import "plugins/plugin-react-datetime";
+@import "plugins/plugin-react-slick";

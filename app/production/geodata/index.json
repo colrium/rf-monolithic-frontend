@@ -1,0 +1,59 @@
+[
+	{
+		"code": "KE",
+		"name": "kenya",
+		"prefix": "+254",
+		"currency": "KES",
+		"capital": "Nairobi",
+		"labels": {
+			"name": "Kenya",
+			"currency": "Kenya Shilling",
+			"features": {
+				"administrative": {
+					"level-1": "County",
+					"level-2": "Constituency",
+					"level-3": "Ward",
+					"level-4": "Subcounty",
+				}
+			}
+		}			
+	},
+	{
+		"code": "UG",
+		"name": "uganda",
+		"prefix": "+256",
+		"currency": "UGS",
+		"capital": "Kampala",
+		"labels": {
+			"name": "Uganda",
+			"currency": "Uganda Shilling",
+			"features": {
+				"administrative": {
+					"level-1": "Region",
+					"level-2": "District",
+					"level-3": "County",
+					"level-4": "Sub County",
+				}
+			}
+		}			
+	},
+	{
+		"code": "TZ",
+		"name": "tanzania",
+		"prefix": "+255",
+		"currency": "TZS",
+		"capital": "Dar es salaa,",
+		"labels": {
+			"name": "Tanzania",
+			"currency": "Tanzania Shilling",
+			"features": {
+				"administrative": {
+					"level-1": "Region",
+					"level-2": "District",
+					"level-3": "County",
+					"level-4": "Sub County",
+				}
+			}
+		}			
+	}
+]
