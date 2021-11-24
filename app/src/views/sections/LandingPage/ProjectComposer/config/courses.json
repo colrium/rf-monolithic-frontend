@@ -1,0 +1,412 @@
+[
+  {
+    "course": "ACCOUNTING",
+    "tags": "Accounting, Actuarial Science",
+    "group": "Business Administration"
+  },
+  {
+    "course": "ACTUARIAL SCIENCE",
+    "tags": "Actuarial Science",
+    "group": "Business Administration"
+  },
+  {
+    "course": "ACTUARIAL SCIENCE AND STATISTICS",
+    "tags": "Actuarial Science, Statistics",
+    "group": "Business Administration"
+  },
+  {
+    "course": "AERONAUTICAL ENGINEERING",
+    "tags": "Aeronautical Engineering",
+    "group": "Engineering"
+  },
+  {
+    "course": "AGRIBUSINESS",
+    "tags": "Agriculture, Business",
+    "group": "Agriculture"
+  },
+  {
+    "course": "AGRIBUSINESS MANAGEMENT",
+    "tags": "Agriculture, Business",
+    "group": "Agriculture"
+  },
+  {
+    "course": "AGRIBUSINESS MANAGEMENT AND TRADE",
+    "tags": "Agriculture, Business, Trade",
+    "group": "Agriculture"
+  },
+  {
+    "course": "AGRIBUSINESS MANAGEMENT WITH INFORMATION TECHNOLOGY",
+    "tags": "Agriculture, ICT",
+    "group": "Agriculture, ICT"
+  },
+  {
+    "course": "AGRICULTURAL AND APPLIED ECONOMICS",
+    "tags": "Agriculture, Economics",
+    "group": "Agriculture"
+  },
+  {
+    "course": "AGRICULTURAL AND BIOSYSTEMS ENGINEERING",
+    "tags": "Agriculture, Biosystems Engineering",
+    "group": "Agriculture, Engineering"
+  },
+  {
+    "course": "AGRICULTURAL ECONOMICS AND NATURAL RESOURCE MANAGEMENT",
+    "tags": "Agriculture, Economics, Natural Resource Management",
+    "group": "Agriculture, Economics, Natural Resource Management"
+  },
+  {
+    "course": "AGRICULTURAL ECONOMICS AND RURAL DEVELOPMENT",
+    "tags": "Agriculture, Economics, Rural Development",
+    "group": "Agriculture, Economics, Rural Development"
+  },
+  {
+    "course": "AGRICULTURAL ENGINEERING",
+    "tags": "Agriculture, Engineering",
+    "group": "Agriculture, Engineering"
+  },
+  {
+    "course": "AGRICULTURAL EXTENSION EDUCATION",
+    "tags": "Agriculture, Education",
+    "group": "Agriculture, Education"
+  },
+  {
+    "course": "AGROFORESTRY AND RURAL DEVELOPMENT",
+    "tags": "Agriculture, Forestry, Rural Development",
+    "group": "Agriculture, Rural Development, Natural Resources"
+  },
+  {
+    "course": "ANALYTICAL CHEMISTRY",
+    "tags": "Chemistry",
+    "group": "Natural Sciences"
+  },
+  {
+    "course": "ANALYTICAL CHEMISTRY WITH COMPUTING",
+    "tags": "Chemistry, ICT",
+    "group": "Natural Sciences, ICT"
+  },
+  {
+    "course": "ANIMAL HEALTH AND PRODUCTION",
+    "tags": "Animal Health",
+    "group": "Veterinary Sciences"
+  },
+  {
+    "course": "ANIMATION AND DIGITAL MEDIA",
+    "tags": "Animation, ICT",
+    "group": "Media, ICT"
+  },
+  {
+    "course": "ANTHROPOLOGY",
+    "tags": "Anthropology",
+    "group": "Social Sciences"
+  },
+  {
+    "course": "APPLIED BIOENGINEERING",
+    "tags": "Bioengineering",
+    "group": "Engineering"
+  },
+  {
+    "course": "APPLIED COMMUNICATION",
+    "tags": "Communication",
+    "group": "Communication"
+  },
+  {
+    "course": "ARTS",
+    "tags": "Humanities",
+    "group": "Humanities, Social Sciences"
+  },
+  {
+    "course": "AUTOMOTIVE ENGEERING",
+    "tags": "Automotive Engineering",
+    "group": "Engineering"
+  },
+  {
+    "course": "B. A GENDER AND DEVELOPMENT STUDIES",
+    "tags": "Gender, Development Studies",
+    "group": "Social Sciences"
+  },
+  {
+    "course": "B.A POLITICAL SCIENCE",
+    "tags": "Politics",
+    "group": "Social Sciences"
+  },
+  {
+    "course": "B.A(ECONOMICS AND HISTORY)",
+    "tags": "Economics, History",
+    "group": "Economics, Social Science"
+  },
+  {
+    "course": "B.A. SOCIOLOGY AND ANTHROPOLOGY",
+    "tags": "Sociology, Anthropology",
+    "group": "Social Sciences"
+  },
+  {
+    "course": "B.COM (OPERATIONS MANAGEMENT)",
+    "tags": "Operations Management",
+    "group": "Business Administration"
+  },
+  {
+    "course": "B.ED (ARTS)",
+    "tags": "Humanities",
+    "group": "Humanities, Social Sciences"
+  },
+  {
+    "course": "B.ED ENGLISH AND LITERATURE",
+    "tags": "English",
+    "group": "Modern Languages"
+  },
+  {
+    "course": "B.S ECONOMICS AND FINANCE.",
+    "tags": "Economics, Finance",
+    "group": "Economics"
+  },
+  {
+    "course": "B.SC AGRICULTURE (CROP IMPROVEMENT AND PROTECTION)",
+    "tags": "Crop Management",
+    "group": "Agriculture"
+  },
+  {
+    "course": "B.SC BIOSTATISTICS",
+    "tags": "Biostatistics",
+    "group": "Medicine"
+  },
+  {
+    "course": "B.SC.DISASTER MANAGEMENT AND INTERNATIONAL DIPLOMACY.",
+    "tags": "Disaster Managerment, IR",
+    "group": "Social Sciences"
+  },
+  {
+    "course": "BA COMMERCE: MARKETING",
+    "tags": "Marketing",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BA CRIMINOLOGY AND PENOLOGY",
+    "tags": "Criminology, Penology",
+    "group": "Criminology, Security Studies"
+  },
+  {
+    "course": "BA DOUBLE MAJOR ENVIRONMENTAL STUDIES AND POLITICAL SCIENCE",
+    "tags": "Environment, Politics",
+    "group": "Environmental Science, Social Science"
+  },
+  {
+    "course": "BA LINGUISTICS",
+    "tags": "Linguitsics",
+    "group": "Modern Languages"
+  },
+  {
+    "course": "BA LITERATURE AND LINGUISTICS",
+    "tags": "Linguistics, Literature",
+    "group": ""
+  },
+  {
+    "course": "BA. LINGUISTICS, MEDIA & COMMUNICATION",
+    "tags": "Linguistics, Media, Communications",
+    "group": "Linguistics, Media, Communications"
+  },
+  {
+    "course": "BACELOR OF COMMERCE,ACCOUNTING",
+    "tags": "Accounting",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR IN FILM MAKING AND ANIMATION",
+    "tags": "Film, Animation",
+    "group": "Media"
+  },
+  {
+    "course": "BACHELOR IN LOGISTICS AND SUPPLY CHAIN",
+    "tags": "Logistics, Supply Chain",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR IN STATISTIC AND FINANCE",
+    "tags": "Statistics, Finance",
+    "group": "Statistics, Business Administration"
+  },
+  {
+    "course": "BACHELOR OF ACCOUNTANCY AND FINANCIAL MANAGEMENT IS",
+    "tags": "Accounting, Finance",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF ARCHITECTURE CONSTRUCTION MANAGEMENT",
+    "tags": "Architecture, Construction Management",
+    "group": "Architecture"
+  },
+  {
+    "course": "BACHELOR OF BUSINESS ADMINISTRATION MANAGEMENT ( HUMAN RESOURCE MANAGEMENT)",
+    "tags": "Human Resources",
+    "group": ""
+  },
+  {
+    "course": "BACHELOR OF BUSINESS MANAGEMENT, PURCHASING AND SUPPLY MANAGEMENT MAJOR",
+    "tags": "Management, Purchasing, Supply Chain",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF CIVIL ENGINEERING",
+    "tags": "Civil Engineering",
+    "group": "Engineering"
+  },
+  {
+    "course": "BACHELOR OF COMMERCE (ACCOUNTING OPTION)",
+    "tags": "Accounting",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF COMMERCE (FINANCE OPTION)",
+    "tags": "Finance",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF COMMERCE (PROCUREMENT AND SUPPLY CHAIN MANAGEMENT)",
+    "tags": "Procurement, Supply Chain",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF COOPERATIVE BUSINESS",
+    "tags": "Cooperative Management",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF COOPERATIVE BUSINESS, FINANCE OPTION",
+    "tags": "Cooperative Management, Finance",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF ENVIRONMENTAL STUDIES (RESOURCE CONSERVATION)",
+    "tags": "Environment, Conservation",
+    "group": "Environmental Sciences, Natural Resource Management, Earth Sciences"
+  },
+  {
+    "course": "BACHELOR OF HUMAN RESOURCE MANAGEMENT",
+    "tags": "Human Resources",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF MEDICINE AND BACHELOR OF SURGERY",
+    "tags": "Medicine, Surgery",
+    "group": "Public Health"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE CHEMISTRY",
+    "tags": "Chemistry",
+    "group": "Natural Sciences"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE IN  ENTREPRENEURSHIP",
+    "tags": "Entrepreneurship",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE IN  NURSING",
+    "tags": "Nursing",
+    "group": "Public Health"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE IN CHEMISTRY",
+    "tags": "Chemistry",
+    "group": "Natural Sciences"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE IN CLINICAL MEDICINE",
+    "tags": "Clinical Medicine",
+    "group": "Public Health"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE IN COMMUNITY HEALTH",
+    "tags": "Community Health",
+    "group": "Public Health"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE IN COMMUNITY RESOURCE MANAGEMENT",
+    "tags": "Community Resource Management",
+    "group": "Natural Resource Management, Earth Sciences"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE IN ENTREPRENEURSHIP STUDIES",
+    "tags": "Entrepreneurship",
+    "group": "Business Administration"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE IN SOFTWARE ENGINEERING",
+    "tags": "Software Engineering",
+    "group": "ICT, Engineering"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE MICROBIOLOGY",
+    "tags": "Microbiology",
+    "group": "Natural Sciences"
+  },
+  {
+    "course": "BACHELOR OF SCIENCE PETROLEUM CHEMISTRY",
+    "tags": "Petroleum Chemistry",
+    "group": "Natural Sciences"
+  },
+  {
+    "course": "BACHELOR OF TECHNOLOGY IN ANALYTICAL CHEMISTRY",
+    "tags": "Analytical Chemistry",
+    "group": "Natural Sciences"
+  },
+  {
+    "course": "BACHELOR OF VETERINARY MEDICINE",
+    "tags": "Veterinary Medicine",
+    "group": "Veterinary Sciences"
+  },
+  {
+    "course": "BACHELOR OR ARTS PSYCHOLOGY AND GEOGRAPHY",
+    "tags": "Psychology, Geography",
+    "group": "Geography, Public Health"
+  },
+  {
+    "course": "BAKING",
+    "tags": "Baking",
+    "group": "Culinary Arts"
+  },
+  {
+    "course": "BED",
+    "tags": "Education",
+    "group": "Education"
+  },
+  {
+    "course": "BSC GEOSPATIAL INFORMATION SYSTEMS AND REMOTE SENSING",
+    "tags": "GEOSPATIAL INFORMATION SYSTEMS, REMOTE SENSING",
+    "group": "ICT"
+  },
+  {
+    "course": "BSC GIS AND REMOTE SENSING",
+    "tags": "GEOSPATIAL INFORMATION SYSTEMS, REMOTE SENSING",
+    "group": "ICT"
+  },
+  {
+    "course": "BSC HORTICULTURE",
+    "tags": "Horticulture",
+    "group": "Agriculture"
+  },
+  {
+    "course": "BSC IN MARINE RESOURCE MANAGEMENT",
+    "tags": "Marine Resources",
+    "group": "Natural Resource Management, Earth Sciences"
+  },
+  {
+    "course": "BSC IN PHYSICS",
+    "tags": "Phsyics",
+    "group": "Natural Sciences"
+  },
+  {
+    "course": "BSC METEOROLOGY",
+    "tags": "Meteorology",
+    "group": "Meteorology"
+  },
+  {
+    "course": "BSC RANGE MANAGEMENT",
+    "tags": "Range Management, Conservation",
+    "group": "Natural Resource Management"
+  },
+  {
+    "course": "BSC RENEWABLE ENERGY AND TECHNOLOGY",
+    "tags": "Renewable Energy, ICT",
+    "group": "Energy, ICT"
+  }
+]

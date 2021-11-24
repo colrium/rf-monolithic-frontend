@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+    rf_frontend:
+        build:
+            context: ./app
+            dockerfile: Dockerfile.prod
+        container_name: rf-fe-production
+        restart: unless-stopped
+        networks:
+            - proxy-bridge
+
+networks:
+    proxy-bridge:
+        external: true
+        name: proxy-bridge
