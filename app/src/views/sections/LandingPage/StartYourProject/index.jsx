@@ -56,7 +56,7 @@ function ChevronIcon(props) {
 
 	return (
 		<IconButton>
-			<img src={active ? ApiService.endpoint("/public/img/realfield/chevron-black.svg") : ApiService.endpoint("/public/img/realfield/chevron-white.svg")} style={{ width: 24, height: 24, transform: "rotate(90)" }} />
+			<img src={active ? ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-black.svg") : ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg")} style={{ width: 24, height: 24, transform: "rotate(90)" }} />
 		</IconButton>
 	);
 }
@@ -95,7 +95,7 @@ const SectionComponent = (props) => {
 				<GridContainer className={"p-0"}>
 					<GridContainer className={"p-0 accent md:px-6  md:py-6"}>
 						<GridItem xs={12} className={"flex flex-row items-center"}>
-							<img src={ApiService.endpoint("/public/img/realfield/chevron-white.svg")} className={"mr-4 h-10 w-10"} />
+							<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg")} className={"mr-4 h-10 w-10"} />
 							<Typography variant="h1">
 								Commission a Realfield Survey
 							</Typography>

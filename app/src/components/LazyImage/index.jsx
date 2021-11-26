@@ -32,7 +32,7 @@ const Image = styled.img`
 `;
 
 const LazyImage = (props) => {
-	const { src, alt, onClick, lightbox, className, fallbackSrc = ApiService.endpoint("/public/img/icons/file-error.svg"), ...rest } = props;
+	const {src, alt, onClick, lightbox, className, fallbackSrc = "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/icons/file-error.svg", ...rest } = props;
 
 
 	const [lightboxOpen, setLightboxOpen] = useState(false);

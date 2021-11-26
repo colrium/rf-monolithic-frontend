@@ -1138,7 +1138,7 @@ class CountriesData {
 					country_name = "tanzania";
 				}
 				if (country_name && (level == 1 || (level > 1 && level < 4 && value))) {
-					ApiService.isolated({ cache: true, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }).get(`/public/geodata/${country_name}/features/administrative/level-${level}/index.json`).then(response => response.data).then(data => {
+					ApiService.isolated( {cache: true, headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}} ).get(`https://realfield.nyc3.cdn.digitaloceanspaces.com/public/geodata/${country_name}/features/administrative/level-${level}/index.json`).then(response => response.data).then(data => {
 						let lower_level = level - 1
 						if (Array.isArray(data)) {
 							data.map(entry => {

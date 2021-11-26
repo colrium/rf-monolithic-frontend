@@ -24,7 +24,7 @@ const SectionComponent = (props) => {
 		<Section className={"p-0"} id="get-started">
 			<GridContainer className={"p-0 accent md:px-6  md:py-6"}>
 				<GridItem xs={12} className={"flex flex-row items-center"}>
-					<img src={ApiService.endpoint("/public/img/realfield/chevron-white.svg")} className={"mr-4 h-10 w-10"} />
+					<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg")} className={"mr-4 h-10 w-10"} />
 					<Typography variant="h4">
 						Commission a Realfield Survey
 					</Typography>

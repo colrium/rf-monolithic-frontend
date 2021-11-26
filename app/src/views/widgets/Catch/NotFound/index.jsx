@@ -10,7 +10,7 @@ import { Api as ApiService } from "services";
 
 class NotFound extends React.Component {
 	render() {
-		const { image = ApiService.endpoint("/public/img/not_found.svg"), title, description, color } = this.props;
+		const { image = ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/not_found.svg"), title, description, color } = this.props;
 
 		return (
 			<GridContainer

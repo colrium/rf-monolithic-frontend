@@ -55,7 +55,7 @@ const SectionComponent = (props) => {
 			<GridContainer
 				className={"md:px-32 lg:px-48 py-16"}
 				style={{
-					backgroundImage: "url(" + ApiService.endpoint("/public/img/realfield/dots-map.png") + ")",
+					backgroundImage: "url(" + ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/dots-map.png") + ")",
 					backgroundRepeat: "no-repeat",
 					backgroundAttachment: "scroll",
 					backgroundPosition: "right top",
@@ -67,12 +67,12 @@ const SectionComponent = (props) => {
 						xs={12}
 						className={"flex flex-row items-center"}
 					>
-						<img src={ApiService.endpoint("/public/img/realfield/chevron-white.svg")} className={"mr-4 h-8 w-8"} />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg")} className={"mr-4 h-8 w-8"} />
 						<Typography variant="h4" className={"capitalize"} >
 							COMMISSION A
 						</Typography>
 
-						<img src={ApiService.endpoint("/public/img/realfield/logo.svg")} className={"mx-4 h-6 w-auto"} />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")} className={"mx-4 h-6 w-auto"} />
 
 						<Typography variant="h4" className={"capitalize"}>
 							SURVEY
@@ -85,12 +85,12 @@ const SectionComponent = (props) => {
 						xs={12}
 						className={"flex flex-col items-center justify-center"}
 					>
-						<img src={ApiService.endpoint("/public/img/realfield/chevron-white.svg")} className={"mb-4 h-8 w-8"} />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg")} className={"mb-4 h-8 w-8"} />
 						<Typography variant="h4" className={"capitalize"} >
 							COMMISSION A
 						</Typography>
 
-						<img src={ApiService.endpoint("/public/img/realfield/logo.svg")} className={"my-4 h-6 w-auto"} />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")} className={"my-4 h-6 w-auto"} />
 
 						<Typography variant="h4" className={"capitalize"}>
 							SURVEY

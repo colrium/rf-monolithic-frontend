@@ -251,7 +251,7 @@ function Widget(props) {
 														? ApiService.getAttachmentFileUrl(
 															item.featured_image
 														)
-														: ApiService.endpoint("/public/img/realfield/logo-chevron.svg")
+														: ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-chevron.svg")
 												}
 											/>
 										</Avatar>

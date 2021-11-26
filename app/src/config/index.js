@@ -3,7 +3,7 @@
 //App constants
 export const appName = (process.env.NODE_ENV === "development" ? "DEV::" : "") + "Realfield";
 export const appDescription = "Realfield Dashboard";
-export const appLogo = "https://api.realfield.io/public/img/realfield/logo.svg";
+export const appLogo = "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg";
 //
 
 //Colorscheme

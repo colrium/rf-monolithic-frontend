@@ -256,7 +256,7 @@ class ItemView extends React.Component {
 								src={
 									this.state.selected_image
 										? this.state.selected_image
-										: ApiService.endpoint("/public/img/realfield/logo-chevron.svg")
+										: ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-chevron.svg")
 								}
 							/>
 						</div>

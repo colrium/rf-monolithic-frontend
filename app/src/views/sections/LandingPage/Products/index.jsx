@@ -282,7 +282,7 @@ const SectionComponent = (props) => {
 
 						<GridContainer className="p-0">
 							<GridItem xs={12} className="p-0 pt-8 md:px-32 flex flex-row items-center justify-center">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process1.png")} className="w-32 h-auto" alt="process1" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process1.png")} className="w-32 h-auto" alt="process1" />
 								<Typography color="textSecondary" variant="h5" className="md:ml-12 flex-1" paragraph>
 									<span>To </span> <span className="secondary-text">get started</span><span>, just sign up to meet your Realfield <br /> Data Collection Supervisor!</span>
 								</Typography>
@@ -292,7 +292,7 @@ const SectionComponent = (props) => {
 						<GridContainer className="p-0">
 							<GridItem xs={12} className="p-0 md:pr-32 flex flex-row items-center justify-start">
 								<div className="flex flex-col md:pr-2">
-									<img src={ApiService.endpoint("/public/img/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12" />
+									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12" />
 									<Typography color="secondary" variant="body1" className="my-2 uppercase font-black" paragraph>
 										Day 1
 									</Typography>
@@ -302,12 +302,12 @@ const SectionComponent = (props) => {
 									<span>Outline and </span> <span className="secondary-text">discuss </span> <span>your data requirements to make your project a success.</span>
 								</Typography>
 
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process2.png")} className="w-32 h-auto" alt="process2" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process2.png")} className="w-32 h-auto" alt="process2" />
 
 							</GridItem>
 
 							<GridItem xs={12} className="p-0 md:px-32 flex flex-row items-center justify-center">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process3.png")} className="w-32 h-auto" alt="process3" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process3.png")} className="w-32 h-auto" alt="process3" />
 
 								<Typography color="textSecondary" variant="body1" className="md:ml-12 flex-1 text-xl font-bold">
 									<span>Next, we’ll</span> <span className="secondary-text">schedule </span> <span>collection start to ensure your timelines are met.</span>
@@ -322,7 +322,7 @@ const SectionComponent = (props) => {
 									<span className="secondary-text">Choose </span><span>your </span> <span className="secondary-text">field team. </span> <span>You can select your own field team, or we can assign one for you that best suits your research design.</span>
 								</Typography>
 
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process4.png")} className="w-32 h-auto" alt="process4" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process4.png")} className="w-32 h-auto" alt="process4" />
 
 							</GridItem>
 						</GridContainer>
@@ -331,7 +331,7 @@ const SectionComponent = (props) => {
 						<GridContainer className="p-0 ">
 							<GridItem xs={12} className="p-0 md:pr-32 flex flex-row items-center justify-center">
 								<div className="flex flex-col pr-2">
-									<img src={ApiService.endpoint("/public/img/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-auto md:mr-2" />
+									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-auto md:mr-2" />
 									<Typography color="secondary" variant="body1" className="uppercase font-black">
 										Day 1
 									</Typography>
@@ -341,7 +341,7 @@ const SectionComponent = (props) => {
 
 								</div>
 
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process5.png")} className="w-32 h-auto" alt="process5" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process5.png")} className="w-32 h-auto" alt="process5" />
 
 
 								<Typography color="textSecondary" variant="body1" className="flex-1 md:ml-8 text-xl font-bold">
@@ -355,7 +355,7 @@ const SectionComponent = (props) => {
 						<GridContainer className="p-0">
 							<GridItem xs={12} className="p-0 pr-32 flex flex-row items-center justify-center">
 								<div className="flex flex-col pr-2">
-									<img src={ApiService.endpoint("/public/img/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-auto md:mr-2" />
+									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-auto md:mr-2" />
 									<Typography color="secondary" variant="body1" className="uppercase font-black">
 										Day 1
 									</Typography>
@@ -368,11 +368,11 @@ const SectionComponent = (props) => {
 									<span>Your data will be uploaded in real time onto the </span> <span className="secondary-text">dashboard </span> <span>for review or download it to analyse at your convenience.</span>
 								</Typography>
 
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process6.png")} className="w-32 h-auto" alt="process6" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process6.png")} className="w-32 h-auto" alt="process6" />
 							</GridItem>
 
 							<GridItem xs={12} className="p-0 md:px-32 flex flex-row items-center justify-center">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process7.png")} className="w-32 h-auto" alt="process7" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process7.png")} className="w-32 h-auto" alt="process7" />
 
 								<Typography color="textSecondary" variant="body1" className="md:mx-12 text-xl font-bold">
 									<span className="secondary-text">Data Quality </span> <span>and </span> <span className="secondary-text">ethical data </span> <span>collection are central to our mission to provide you with the data you need, real time.</span>
@@ -395,7 +395,7 @@ const SectionComponent = (props) => {
 
 						<GridContainer className="p-0">
 							<GridItem xs={3} className="p-0">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process1.png")} className="w-16 h-auto" alt="process1" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process1.png")} className="w-16 h-auto" alt="process1" />
 							</GridItem>
 
 							<GridItem xs={9} className="p-0 flex flex-col items-center">
@@ -408,7 +408,7 @@ const SectionComponent = (props) => {
 						<GridContainer className="p-0 pt-8">
 							<GridItem xs={3} className="p-0 flex flex-row items-center">
 								<div className="flex flex-col pr-2">
-									<img src={ApiService.endpoint("/public/img/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12" />
+									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12" />
 								</div>
 							</GridItem>
 
@@ -419,7 +419,7 @@ const SectionComponent = (props) => {
 							</GridItem>
 
 							<GridItem xs={12} className="p-0  py-4 flex flex-row items-center ">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process2.png")} className="w-16 h-auto" alt="process5" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process2.png")} className="w-16 h-auto" alt="process5" />
 
 
 								<Typography color="textSecondary" variant="body1" className="flex-1 ml-4 text-xl font-bold">
@@ -428,7 +428,7 @@ const SectionComponent = (props) => {
 							</GridItem>
 
 							<GridItem xs={12} className="p-0 py-4 flex flex-row items-center ">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process3.png")} className="w-16 h-auto" alt="process4" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process3.png")} className="w-16 h-auto" alt="process4" />
 
 								<Typography color="textSecondary" variant="body1" className="ml-4 flex-1 text-xl font-bold">
 									<span>Next, we’ll</span> <span className="secondary-text">schedule </span> <span>collection start to ensure your timelines are met.</span>
@@ -436,7 +436,7 @@ const SectionComponent = (props) => {
 							</GridItem>
 
 							<GridItem xs={12} className="p-0 py-4 flex flex-row items-center ">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process4.png")} className="w-16 h-auto" alt="process4" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process4.png")} className="w-16 h-auto" alt="process4" />
 
 								<Typography color="textSecondary" variant="body1" className="ml-4 flex-1 text-xl font-bold">
 									<span className="secondary-text">Choose </span><span>your </span> <span className="secondary-text">field team. </span> <span>You can select your own field team, or we can assign one for you that best suits your research design.</span>
@@ -449,7 +449,7 @@ const SectionComponent = (props) => {
 						<GridContainer className="p-0 pt-8">
 							<GridItem xs={3} className="p-0 flex flex-row items-center justify-start">
 								<div className="flex flex-col md:pr-2">
-									<img src={ApiService.endpoint("/public/img/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-12" />
+									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-12" />
 
 								</div>
 							</GridItem>
@@ -462,7 +462,7 @@ const SectionComponent = (props) => {
 
 
 							<GridItem xs={12} className="p-0 flex flex-row items-center ">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process5.png")} className="w-16 h-auto" alt="process5" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process5.png")} className="w-16 h-auto" alt="process5" />
 
 
 								<Typography color="textSecondary" variant="body1" className="flex-1 ml-4 text-xl font-bold">
@@ -475,7 +475,7 @@ const SectionComponent = (props) => {
 						<GridContainer className="p-0 pt-8 ">
 							<GridItem xs={3} className="p-0 flex flex-row items-center justify-start">
 								<div className="flex flex-col md:pr-2">
-									<img src={ApiService.endpoint("/public/img/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-12" />
+									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-12" />
 								</div>
 							</GridItem>
 
@@ -486,14 +486,14 @@ const SectionComponent = (props) => {
 							</GridItem>
 
 							<GridItem xs={12} className="p-0 py-4 flex flex-row items-center ">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process3.png")} className="w-16 h-auto" alt="process4" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process3.png")} className="w-16 h-auto" alt="process4" />
 								<Typography color="textSecondary" variant="body1" className="ml-4 flex-1 text-xl font-bold">
 									<span>Your data will be uploaded in real time onto the </span> <span className="secondary-text">dashboard </span> <span>for review or download it to analyse at your convenience.</span>
 								</Typography>
 							</GridItem>
 
 							<GridItem xs={12} className="p-0 py-4 flex flex-row items-center ">
-								<img src={ApiService.endpoint("/public/img/img/realfield/process/process7.png")} className="w-16 h-auto" alt="process5" />
+								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process7.png")} className="w-16 h-auto" alt="process5" />
 
 
 								<Typography color="textSecondary" variant="body1" className="flex-1 ml-4 text-xl font-bold">

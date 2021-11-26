@@ -370,7 +370,7 @@ class ListView extends React.Component {
 											>
 												<img
 													alt="Empty list"
-													src={ApiService.endpoint("/public/img/empty-state-table.svg")}
+													src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/empty-state-table.svg")}
 												/>
 												<Typography
 													color="grey"

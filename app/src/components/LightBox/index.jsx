@@ -17,7 +17,7 @@ const LightBox = ({ src, alt, open, onClose, className, ...rest }) => {
 	};
 
 	const onError = event => {
-		event.target.src = ApiService.endpoint("/public/img/icons/file-error.svg");
+		event.target.src = "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/icons/file-error.svg";
 	};
 
 	useEffect(() => {
