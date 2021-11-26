@@ -340,7 +340,7 @@ const Stage = (props) => {
                                         Confidence Level
                                     </Typography>
                                     <Typography className={"mx-8 font-bold"} color="text.secondary">
-                                        {`${stagesValues?.target?.confidence_level}%`}
+                                        {`${stagesValues?.target?.confidence_level}`}
                                     </Typography>
                                 </GridItem>
 
@@ -349,7 +349,7 @@ const Stage = (props) => {
                                         Error Margin
                                     </Typography>
                                     <Typography className={"mx-8 font-bold"} color="text.secondary">
-                                        {`${stagesValues?.target?.error_margin}%`}
+                                        {`${stagesValues?.target?.error_margin}`}
                                     </Typography>
                                 </GridItem>
 
