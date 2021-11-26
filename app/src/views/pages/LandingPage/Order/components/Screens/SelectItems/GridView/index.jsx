@@ -208,7 +208,7 @@ class GridView extends React.Component {
 																? ApiService.getAttachmentFileUrl(
 																	retailitem.featured_image
 																)
-																: ApiService.endpoint("/public/img/realfield/logo-chevron.svg")
+																: ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-chevron.svg")
 														}
 													/>
 												</div>

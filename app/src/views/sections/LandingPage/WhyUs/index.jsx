@@ -83,22 +83,22 @@ const SectionComponent = (props) => {
 
 					<GridContainer className={"p-0"}>
 						<GridItem xs={12} className="p-0 px-2 md:px-12 mb-2 flex flex-row items-center">
-							<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
+							<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
 							<Typography variant="subtitle2">High quality empirical data</Typography>
 						</GridItem>
 
 						<GridItem xs={12} className="p-0 px-2 md:px-12 mb-2 flex flex-row items-center">
-							<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
+							<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
 							<Typography variant="subtitle2">Real time results</Typography>
 						</GridItem>
 
 						<GridItem xs={12} className="p-0 px-2 md:px-12 mb-2 flex flex-row items-center">
-							<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
+							<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
 							<Typography variant="subtitle2">Ethical sourcing</Typography>
 						</GridItem>
 
 						<GridItem xs={12} className="p-0 px-2 md:px-12 mb-2 flex flex-row items-center">
-							<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/4_Blue_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
+							<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/4_Blue_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
 							<Typography variant="subtitle2">Accessible pricing</Typography>
 						</GridItem>
 
@@ -113,7 +113,7 @@ const SectionComponent = (props) => {
 				</GridItem>
 
 				<GridItem xs={12} className="p-0 flex flex-row items-center py-4">
-					<img src={ApiService.endpoint("/public/img/realfield/logo-chevron.svg")} className="w-4 h-4 mr-4" />
+					<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-chevron.svg")} className="w-4 h-4 mr-4" />
 					<Typography variant="subtitle1">
 						Why are our ethical data collection practices important for your project?
 					</Typography>
@@ -141,7 +141,7 @@ const SectionComponent = (props) => {
 				</GridItem>
 
 				<GridItem xs={12} className="p-0 flex flex-row items-center pb-4">
-					<img src={ApiService.endpoint("/public/img/realfield/logo-chevron.svg")} className="w-4 h-4 mr-4" />
+					<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-chevron.svg")} className="w-4 h-4 mr-4" />
 					<Typography variant="subtitle1">
 						What else have we got?
 					</Typography>
@@ -149,17 +149,17 @@ const SectionComponent = (props) => {
 
 				<GridContainer className={"p-0 mb-4"}>
 					<GridItem xs={12} className="p-0 px-2 py-4 md:px-12 mb-2 flex flex-row items-center">
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/1_Green_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/1_Green_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
 						<Typography variant="subtitle2">We work where few others can, building a fast-growing network of Fielders across Africa and emerging markets.</Typography>
 					</GridItem>
 
 					<GridItem xs={12} className="p-0 px-2 py-4 md:px-12 mb-2 flex flex-row items-center">
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/2_Green_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/2_Green_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
 						<Typography variant="subtitle2">We provide flexibility and full transparency to adapt to the needs of your project during the collection process.</Typography>
 					</GridItem>
 
 					<GridItem xs={12} className="p-0 px-2 py-4 md:px-12 mb-2 flex flex-row items-center">
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/3_Green_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/3_Green_BG.png")} className="w-12 h-12 mx-4 md:mx-12" />
 						<Typography variant="subtitle2">We offer an A-Z service including collection design, large-scale field operation, data quality assurance, and annotation.</Typography>
 					</GridItem>
 

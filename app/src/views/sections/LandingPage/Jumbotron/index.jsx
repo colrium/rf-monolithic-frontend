@@ -73,7 +73,7 @@ const SectionComponent = (props) => {
 							>
 								<GridContainer className={"p-0"}
 									style={{
-										backgroundImage: "url(" + ApiService.endpoint("/public/img/realfield/chevron-map.png") + ")",
+										backgroundImage: "url(" + ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-map.png") + ")",
 										backgroundRepeat: "no-repeat",
 										backgroundAttachment: "scroll",
 										backgroundPosition: "center top",

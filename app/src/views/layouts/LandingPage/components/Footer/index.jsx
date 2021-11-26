@@ -86,7 +86,7 @@ function Footer(props) {
 			className={"w-full " + color}
 			style={{
 				backgroundImage:
-					"url(" + ApiService.endpoint("/public/img/realfield/logo-rotated.png") + ")",
+					"url(" + ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-rotated.png") + ")",
 				backgroundRepeat: "no-repeat",
 				backgroundAttachment: "scroll",
 				backgroundPosition: "right center",
@@ -457,7 +457,7 @@ function Footer(props) {
 							<Button color="inherit" >
 								{
 									<img
-										src={ApiService.endpoint("/public/img/realfield/logo.svg")}
+										src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")}
 										className="h-8"
 										alt="logo"
 									/>

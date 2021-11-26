@@ -38,7 +38,7 @@ class Page extends React.Component {
 						<img
 							alt="Under development"
 							style={{ width: "50%" }}
-							src={ApiService.endpoint("/public/img/not_found.svg")}
+							src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/not_found.svg")}
 						/>
 					</GridContainer>
 

@@ -428,7 +428,7 @@ class AggregatesBarChart extends React.Component {
 										<img
 											alt="Empty Aggregates"
 											className={"m-8 w-9/12"}
-											src={ApiService.endpoint("/public/img/empty-state-table.svg")}
+											src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/empty-state-table.svg")}
 										/>
 										<Typography
 											className={"mt-4"}

@@ -23,7 +23,7 @@ const Sidebar = (props) => {
     return (
         <GridContainer className="min-h-screen">
             <GridItem className="flex flex-col items-end px-4">
-                <img src={ApiService.endpoint("/public/img/realfield/survey.png")} />
+                <img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/survey.png")} />
             </GridItem>
 
             <GridItem className="flex flex-col items-end justify-center px-8">

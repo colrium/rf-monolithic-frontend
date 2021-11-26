@@ -54,7 +54,7 @@ const SectionComponent = (props) => {
 
 
 				<GridItem xs={12} className="p-0 flex flex-col items-center  py-4">
-					<img src={ApiService.endpoint("/public/img/realfield/logo-black.svg")} className="sm:w-5/6 md:w-4/6 lg:w-1/3 h-auto" />
+					<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-black.svg")} className="sm:w-5/6 md:w-4/6 lg:w-1/3 h-auto" />
 				</GridItem>
 
 				<GridItem xs={12} className="p-0 py-4">

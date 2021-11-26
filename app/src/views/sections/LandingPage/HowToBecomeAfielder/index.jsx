@@ -35,11 +35,11 @@ const SectionComponent = (props) => {
 
 			<GridContainer className={"p-0 px-6 inverse"} >
 				<GridItem xs={3} className={"p-0"}>
-					<img src={ApiService.endpoint("/public/img/realfield/girl.png")} className="w-full h-auto" alt="girl" />
+					<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/girl.png")} className="w-full h-auto" alt="girl" />
 				</GridItem>
 
 				<GridItem xs={6} className={"flex flex-col items-center justify-center p-0"}>
-					<img src={ApiService.endpoint("/public/img/realfield/logo.svg")} className="w-full h-auto" alt="girl" />
+					<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")} className="w-full h-auto" alt="girl" />
 					<Hidden smDown>
 						<Typography variant="subtitle1" className="pt-12 w-full text-3xl text-center accent-text uppercase" paragraph>Become a Fielder Today!</Typography>
 					</Hidden>
@@ -50,7 +50,7 @@ const SectionComponent = (props) => {
 				</GridItem>
 
 				<GridItem xs={3} className={"p-0"}>
-					<img src={ApiService.endpoint("/public/img/realfield/boy.png")} className="w-full h-auto" alt="boy" />
+					<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/boy.png")} className="w-full h-auto" alt="boy" />
 				</GridItem>
 			</GridContainer>
 
@@ -64,41 +64,41 @@ const SectionComponent = (props) => {
 			<Hidden smDown>
 				<GridContainer className={"p-0 py-12 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12" />
 						<Typography variant="body1" className="mx-8 text-xl font-bold" color="secondary" paragraph>
 							From the comfort of wherever you live or study, simply register on the Realfield app or website.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/people-on-realfield.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-realfield" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/people-on-realfield.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-realfield" />
 					</GridItem>
 				</GridContainer>
 
 				<GridContainer className={"p-0 py-12 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/people-on-commission.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-commission" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/people-on-commission.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-commission" />
 					</GridItem>
 
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
 						<Typography variant="body1" className="mx-8 text-xl font-bold" color="secondary" paragraph>
 							Get assignments to collect data as part of our Fielder team.
 						</Typography>
-						<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-12" />
 
 					</GridItem>
 				</GridContainer>
 
 				<GridContainer className={"p-0 py-12 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-12" />
 						<Typography variant="body1" className="mx-8 text-xl font-bold" color="secondary" paragraph>
 							And get paid weekly without delays through your M-Pesa.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/people-payments.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-realfield" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/people-payments.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-realfield" />
 					</GridItem>
 				</GridContainer>
 			</Hidden>
@@ -106,21 +106,21 @@ const SectionComponent = (props) => {
 			<Hidden mdUp>
 				<GridContainer className={"p-0 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} className={"p-0 pb-4 flex flex-row items-start mb-4"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12 mr-4" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12 mr-4" />
 						<Typography variant="body1" className="text-xl font-bold" color="secondary">
 							From the comfort of wherever you live or study, simply register on the Realfield app or website.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} className={"p-0 pb-8 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/people-on-realfield.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-realfield" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/people-on-realfield.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-realfield" />
 					</GridItem>
 				</GridContainer>
 
 				<GridContainer className={"p-0 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 
 					<GridItem xs={12} className={"p-0 pb-4  flex flex-row items-start mb-4"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-12 mr-4" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-12 mr-4" />
 						<Typography variant="body1" className="text-xl font-bold" color="secondary">
 							Get assignments to collect data as part of our Fielder team.
 						</Typography>
@@ -129,20 +129,20 @@ const SectionComponent = (props) => {
 					</GridItem>
 
 					<GridItem xs={12} className={"p-0 pb-8 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/people-on-commission.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-commission" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/people-on-commission.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-commission" />
 					</GridItem>
 				</GridContainer>
 
 				<GridContainer className={"p-0 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} className={"p-0 pb-4 flex flex-row items-start mb-4"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-12 mr-4" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-12 mr-4" />
 						<Typography variant="body1" className="text-xl font-bold" color="secondary">
 							And get paid weekly without delays through your M-Pesa.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} md={6} className={"p-0 pb-8 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/people-payments.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-realfield" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/people-payments.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="people-on-realfield" />
 					</GridItem>
 				</GridContainer>
 			</Hidden>
@@ -172,54 +172,54 @@ const SectionComponent = (props) => {
 			<Hidden smDown>
 				<GridContainer className={"p-0 py-12 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/1_Green_BG.png")} className="w-12 h-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/1_Green_BG.png")} className="w-12 h-12" />
 						<Typography variant="body1" className="mx-8 text-lg font-bold" color="primary" paragraph>
 							Gain local knowledge about your community.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/boy-on-survey.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/boy-on-survey.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
 					</GridItem>
 				</GridContainer>
 
 				<GridContainer className={"p-0 py-12 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/girl-on-survey.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="girl-on-survey" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/girl-on-survey.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="girl-on-survey" />
 					</GridItem>
 
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
 						<Typography variant="body1" className="mx-8 text-xl font-bold" color="primary" paragraph>
 							Build up on your communication and interpersonal skills.
 						</Typography>
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/2_Green_BG.png")} className="w-12 h-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/2_Green_BG.png")} className="w-12 h-12" />
 
 					</GridItem>
 				</GridContainer>
 
 				<GridContainer className={"p-0 py-12 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/3_Green_BG.png")} className="w-12 h-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/3_Green_BG.png")} className="w-12 h-12" />
 						<Typography variant="body1" className="mx-8 text-xl font-bold" color="primary" paragraph>
 							Gain local knowledge about your community.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/resumes.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="resumes" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/resumes.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="resumes" />
 					</GridItem>
 				</GridContainer>
 
 				<GridContainer className={"p-0 py-12 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} md={6} className={"p-0 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/hands-on-device.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="hands-on-device" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/hands-on-device.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="hands-on-device" />
 					</GridItem>
 
 					<GridItem xs={12} md={6} className={"sm:py-4 md:p-0 flex flex-row items-start"}>
 						<Typography variant="body1" className="mx-8 text-xl font-bold" color="primary" paragraph>
 							Get paid weekly on data collected through your M-Pesa.
 						</Typography>
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/4_Green_BG.png")} className="w-12 h-12" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/4_Green_BG.png")} className="w-12 h-12" />
 
 					</GridItem>
 				</GridContainer>
@@ -229,54 +229,54 @@ const SectionComponent = (props) => {
 			<Hidden mdUp>
 				<GridContainer className={"p-0 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} className={"p-0 pb-4 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/1_Green_BG.png")} className="w-12 h-12 mr-4" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/1_Green_BG.png")} className="w-12 h-12 mr-4" />
 						<Typography variant="body1" className="text-lg font-bold" color="primary">
 							Gain local knowledge about your community.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} className={"p-0 pb-8 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/boy-on-survey.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/boy-on-survey.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
 					</GridItem>
 				</GridContainer>
 
 				<GridContainer className={"p-0 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} className={"p-0 pb-4 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/2_Green_BG.png")} className="w-12 h-12 mr-4" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/2_Green_BG.png")} className="w-12 h-12 mr-4" />
 						<Typography variant="body1" className="text-lg font-bold" color="primary">
 							Build up on your communication and interpersonal skills.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} className={"p-0 pb-8 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/girl-on-survey.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/girl-on-survey.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
 					</GridItem>
 				</GridContainer>
 
 				<GridContainer className={"p-0 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} className={"p-0 pb-4 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/3_Green_BG.png")} className="w-12 h-12 mr-4" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/3_Green_BG.png")} className="w-12 h-12 mr-4" />
 						<Typography variant="body1" className="text-lg font-bold" color="primary">
 							Gain local knowledge about your community.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} className={"p-0 pb-8 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/resumes.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/resumes.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
 					</GridItem>
 				</GridContainer>
 
 
 				<GridContainer className={"p-0 sm:px-8 md:px-12 lg:px-24 xl:px-32"}>
 					<GridItem xs={12} className={"p-0 pb-4 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/Green_Bg/4_Green_BG.png")} className="w-12 h-12 mr-4" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/Green_Bg/4_Green_BG.png")} className="w-12 h-12 mr-4" />
 						<Typography variant="body1" className="text-lg font-bold" color="primary">
 							Get paid weekly on data collected through your M-Pesa.
 						</Typography>
 					</GridItem>
 
 					<GridItem xs={12} className={"p-0 pb-8 flex flex-row items-start"}>
-						<img src={ApiService.endpoint("/public/img/realfield/hands-on-device.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/hands-on-device.png")} className="w-full h-auto shadow-2xl rounded-md inverse" alt="boy-on-survey" />
 					</GridItem>
 				</GridContainer>
 
@@ -286,7 +286,7 @@ const SectionComponent = (props) => {
 				<GridContainer className={"p-0 py-16"}>
 
 					<GridItem xs={12} className={"p-0 flex  sm:flex-col md:flex-row items-center justify-center"}>
-						<img src={ApiService.endpoint("/public/img/realfield/logo.svg")} className="w-auto h-8" alt="logo" />
+						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")} className="w-auto h-8" alt="logo" />
 
 						<Typography variant="h4" className="mx-8 font-bold">
 							Ethical Data. Real Time.
