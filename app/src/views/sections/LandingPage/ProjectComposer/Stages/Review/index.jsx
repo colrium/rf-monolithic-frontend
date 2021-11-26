@@ -375,6 +375,50 @@ const Stage = (props) => {
                             </CardContent>
                         </Card>
 
+
+                        <Card
+                            elevation={0}
+                            className={"mb-8"}
+                            sx={{
+                                backgroundColor: "transparent",
+                                border: ( theme ) => ( `1px solid ${ theme.palette.divider }` )
+                            }}
+                        >
+                            <CardHeader
+                                title={stages.workforce.title}
+                                subheader={stages.workforce.subtitle}
+                                titleTypographyProps={{
+                                    color: "text.disabled",
+                                    variant: "subtitle2",
+                                }}
+                                subheaderTypographyProps={{
+                                    color: "text.secondary",
+                                    variant: "caption",
+                                }}
+                                action={
+                                    <IconButton
+                                        onClick={( event ) => setValue( "stage", "workforce" )}
+                                        color="primary"
+                                        size="small"
+                                        aria-label="Details"
+                                    >
+                                        <EditIcon fontSize="inherit" />
+                                    </IconButton>
+                                }
+                            />
+                            <CardContent>
+
+                                <GridItem xs={12} className={"p-0 py-1 flex flex-row items-center"}>
+                                    <Typography color="text.disabled">
+                                        Fielders
+                                    </Typography>
+                                    <Typography className={"mx-8 font-bold"} color="text.secondary">
+                                        {`${ stagesValues?.workforce?.autoSelect ? "Auto select" : ( stagesValues?.workforce?.fielders?.length || "0") }`}
+                                    </Typography>
+                                </GridItem>
+                            </CardContent>
+                        </Card>
+
                         <GridItem xs={12} className={"p-0 py-4 flex flex-row items-center"}>
                             <Typography color="text.disabled">
                                 Last Autosave
