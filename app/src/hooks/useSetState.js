@@ -5,7 +5,10 @@ const useSetState = (initialState = {}) => {
 	const update = useUpdate();
 	const state = useRef({ ...(initialState) });
 	const isMountedRef = useRef(false);
+
 	const prevState = useRef({});
+	const stateChangesRef = useRef({});
+
 	useEffect(() => {
 		isMountedRef.current = true
 		return () => (isMountedRef.current = false)
@@ -14,7 +17,7 @@ const useSetState = (initialState = {}) => {
 	const getState = useCallback(() => state.current, []);
 	const getPreviousState = useCallback(() => prevState.current, []);
 
-	const setState = useCallback((patch) => {
+	const setState = useCallback((patch, cb) => {
 		if (!patch) {
 			return;
 		}
@@ -22,8 +25,11 @@ const useSetState = (initialState = {}) => {
 		if (JSON.isJSON(patch)) {
 			Object.assign(state.current, staleState, patch);
 			if (!Object.areEqual(staleState, state.current) && isMountedRef.current) {
-				prevState.current = staleState
+				prevState.current = staleState;
 				update();
+				if (Function.isFunction(cb)) {
+					cb(state.current)
+				}
 			}
 		}
 		else if (Function.isFunction(patch)) {
@@ -35,6 +41,9 @@ const useSetState = (initialState = {}) => {
 					if (!Object.areEqual(staleState, state.current) && isMountedRef.current) {
 						prevState.current = staleState;
 						update();
+						if (Function.isFunction(cb)) {
+							cb(state.current)
+						}
 					}
 				}
 			}).catch(error => console.error("useSetState error", error))

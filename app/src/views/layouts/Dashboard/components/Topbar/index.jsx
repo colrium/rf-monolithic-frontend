@@ -60,7 +60,7 @@ class Topbar extends Component {
 		userPresenceMenuAnchorEl: null,
 	};
 
-	constructor(props) {
+	constructor (props) {
 		super(props);
 		this.mounted = false;
 		const { sockets, auth, setCurrentUser } = this.props;
@@ -84,7 +84,7 @@ class Topbar extends Component {
 		this.initSocketActionsListener();
 	}
 
-	componentDidMount() {
+	componentDidMount () {
 		let { dashboard } = this.props;
 
 		this.signal = true;
@@ -94,18 +94,18 @@ class Topbar extends Component {
 
 	}
 
-	componentWillUnmount() {
+	componentWillUnmount () {
 		this.signal = false;
 		this.mounted = false;
 		this.ignoreConnectionState = true;
 	}
 
-	getSnapshotBeforeUpdate(prevProps, prevState) {
+	getSnapshotBeforeUpdate (prevProps, prevState) {
 		this.mounted = false;
 		return null;
 	}
 
-	componentDidUpdate(prevProps, prevState, snapshot) {
+	componentDidUpdate (prevProps, prevState, snapshot) {
 		this.mounted = true;
 	}
 
@@ -140,7 +140,7 @@ class Topbar extends Component {
 		});
 	};
 
-	initSocketActionsListener() {
+	initSocketActionsListener () {
 		const { sockets, auth, setCurrentUser } = this.props;
 		if (sockets.default) {
 			sockets.default.on("connect", () => {
@@ -228,7 +228,7 @@ class Topbar extends Component {
 		}
 	}
 
-	parseData(entry) {
+	parseData (entry) {
 		const { auth } = this.props;
 		let parsed_data = entry;
 		let columns = notificationsDefination.scope.columns;
@@ -256,7 +256,7 @@ class Topbar extends Component {
 		return parsed_data;
 	}
 
-	getNotifications() {
+	getNotifications () {
 		const { auth, definations } = this.props;
 
 		const { notificationsLimit } = this.state;
@@ -328,7 +328,7 @@ class Topbar extends Component {
 
 	}
 
-	handleSignOut() {
+	handleSignOut () {
 		const { logout } = this.props;
 		logout();
 		ApiService.logout();
@@ -348,25 +348,25 @@ class Topbar extends Component {
 		});
 	};
 
-	handleCloseNotifications() {
+	handleCloseNotifications () {
 		this.setState({
 			notificationsEl: null,
 		});
 	}
 
-	onCloseConnectionSnackbar() {
+	onCloseConnectionSnackbar () {
 		this.setState({
 			connectionSnackBarOpen: false,
 		});
 	}
 
-	onCloseNotificationSnackbar() {
+	onCloseNotificationSnackbar () {
 		this.setState({
 			notificationSnackBarOpen: false,
 		});
 	}
 
-	render() {
+	render () {
 		const {
 			theme,
 			className,
@@ -377,6 +377,7 @@ class Topbar extends Component {
 			nav,
 			communication: { messaging },
 			auth,
+			...rest
 		} = this.props;
 		const {
 			notifications,
@@ -388,122 +389,71 @@ class Topbar extends Component {
 		const breadcrumbs = nav.entries;
 
 		return (
-			<Box>
+			<Box className={ className } >
 				<AppBar
-					className={className}
-					sx={{
-						borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+
+					sx={ {
+						borderBottom: (theme) => `1px solid ${ theme.palette.divider }`,
 						backgroundColor: (theme) => theme.palette.background.paper,
 						zIndex: (theme) => theme.zIndex.appBar,
 						flexGrow: 1,
-					}}
+					} }
 				>
 					<Toolbar
-						className={classNames({
+						className={ classNames({
 							"flex": true,
 							"relative": true,
 							"px-2": true,
-						})}
-						sx={{
+						}) }
+						sx={ {
 							height: (theme) => theme.spacing(8),
 							transition: "height 100ms",
 							width: "100%",
 							transitionTimingFunction: "cubic-bezier(0.1, 0.7, 1.0, 0.1)",
 							zIndex: 1300,
 							color: (theme) => theme.palette.text.primary,
-						}}
+						} }
 					>
 
 
-						{<IconButton
-							onClick={onToggleSidebar}
+						{ <IconButton
+							onClick={ onToggleSidebar }
 							variant="text"
-							sx={{
+							sx={ {
 								alignSelf: "center",
 								marginLeft: "-4px",
 								color: (theme) => theme.palette.text.primary,
 								"&:hover": {
 									color: (theme) => theme.palette.primary.main + " !important",
 								},
-							}}
+							} }
 						>
-							{isSidebarOpen ? (
+							{ isSidebarOpen ? (
 								<CloseSideBarIcon />
 							) : (
 								<OpenSideBarIcon />
-							)}
-						</IconButton>}
+							) }
+						</IconButton> }
 
 
 
 						<Link
-							className={"inline-block text-left w-auto self-center cursor-pointer"}
-							to={"/home".toUriWithDashboardPrefix()}
+							className={ "inline-block text-left w-auto cursor-pointer" }
+							to={ "/home".toUriWithDashboardPrefix() }
 						>
 							<img
-								alt={app.name + " logo cursor-pointer"}
-								className={"cursor-pointer"}
-								src={app.logo}
+								alt={ app.name + " logo cursor-pointer" }
+								className={ "cursor-pointer h-8" }
+								src={ app.logo }
 							/>
 						</Link>
 
 
 
-						{/*dashboard.searchbar_displayed && <SearchBar
-							innerRef={this.searchRef}
-							onChange={(value) => }
-							onRequestSearch={() => {
-								this.searchRef.current.blur()
-								
-							}}
-							style={{
-								margin: '0 auto',
-								flex: 1
-							}}
-						/>*/}
 
 
 
-						{/*<Hidden mdDown>
-							<Breadcrumbs
-								maxItems={4}
-								aria-label="breadcrumb"
-								separator={"/"}
-							>
-								{breadcrumbs.map(
-									(breadcrumb, index) =>
-										index < breadcrumbs.length - 1 && (
-											<Link
-												to={breadcrumb.uri}
-												key={"breadcrumb-" + index}
-											>
-												<Typography
-													variant="body1"
-													color="inverse"
-												>
-													{" "}
-													{breadcrumb.title}
-												</Typography>
-											</Link>
-										)
-								)}
-								<Typography variant="body1" color="inverse">
-									{title}
-								</Typography>
-							</Breadcrumbs>
-						</Hidden>
-
-						<Hidden lgUp>
-							<Typography
-								variant="body1"
-								color="inverse"
-							>
-								{title}
-							</Typography>
-						</Hidden>*/}
-
-
-						<div className={"flex flex-grow justify-center flex-row-reverse items-center  px-4"}>
+						<div className={ "flex flex-grow justify-start flex-row-reverse items-center px-4" }>
 							{/*auth.isAuthenticated && (
 								<Chip
 									avatar={auth.user.avatar ? (
@@ -539,34 +489,34 @@ class Topbar extends Component {
 								
 							)*/}
 
-							{auth.isAuthenticated && (
+							{ auth.isAuthenticated && (
 								<Badge
 									variant="dot"
 									badgeContent=" "
 									className="mx-4"
-									anchorOrigin={{
+									anchorOrigin={ {
 										vertical: 'bottom',
 										horizontal: 'right',
-									}}
-									classes={{
+									} }
+									classes={ {
 										dot: this.state.serverConnected ? (auth.user.presence === "online" ? "bg-green-700" : (auth.user.presence == "away" ? "bg-orange-700" : "bg-gray-700")) : "bg-red-700"
-									}}
+									} }
 								>
-									{auth.user.avatar ? (
+									{ auth.user.avatar ? (
 										<Avatar
 											alt="Avatar"
-											className={" cursor-pointer"}
-											src={ApiService.getAttachmentFileUrl(auth.user.avatar)}
-											onClick={this.onOpenUserPresenceMenu}
+											className={ " cursor-pointer" }
+											src={ ApiService.getAttachmentFileUrl(auth.user.avatar) }
+											onClick={ this.onOpenUserPresenceMenu }
 										/>
 									) : (
-										<Avatar className={" cursor-pointer"} style={{ color: theme.palette.text.primary, background: theme.palette.action.selected }} onClick={this.onOpenUserPresenceMenu}>
+										<Avatar className={ " cursor-pointer" } style={ { color: theme.palette.text.primary, background: theme.palette.action.selected } } onClick={ this.onOpenUserPresenceMenu }>
 											<UserIcon />
 										</Avatar>
-									)}
+									) }
 
 								</Badge>
-							)}
+							) }
 
 							{/*auth.isAuthenticated && (
 								<Status
@@ -586,9 +536,9 @@ class Topbar extends Component {
 								
 							)*/}
 
-							<Link className={"cursor-pointer"} to={"/messages".toUriWithDashboardPrefix()}>
+							<Link className={ "cursor-pointer" } to={ "/messages".toUriWithDashboardPrefix() }>
 								<IconButton>
-									<Badge variant="dot" invisible={Number.parseNumber(messaging.unread_count, 0) === 0} badgeContent={messaging.unread_count} color="primary">
+									<Badge variant="dot" invisible={ Number.parseNumber(messaging.unread_count, 0) === 0 } badgeContent={ messaging.unread_count } color="primary">
 										<ForumOutlinedIcon />
 									</Badge>
 								</IconButton>
@@ -597,79 +547,79 @@ class Topbar extends Component {
 
 							<Menu
 								id="user-presence-menu"
-								anchorEl={this.state.userPresenceMenuAnchorEl}
-								open={this.state.userPresenceMenuOpen}
-								onClose={this.onCloseUserPresenceMenu}
-								TransitionComponent={Fade}
-								classes={{
+								anchorEl={ this.state.userPresenceMenuAnchorEl }
+								open={ this.state.userPresenceMenuOpen }
+								onClose={ this.onCloseUserPresenceMenu }
+								TransitionComponent={ Fade }
+								classes={ {
 									list: "pt-0"
-								}}
+								} }
 								keepMounted
 							>
 								<MenuItem
-									classes={{
+									classes={ {
 										root: "opacity-100 inverse-text " + (this.state.serverConnected ? (auth.user.presence === "online" ? "bg-green-700" : (auth.user.presence == "away" ? "bg-orange-700" : "bg-gray-700")) : "bg-red-700")
-									}}
+									} }
 									disabled
 								>
-									<Typography color="inherit" variant="subtitle1">{auth.user.first_name + " " + auth.user.last_name}</Typography>
+									<Typography color="inherit" variant="subtitle1">{ auth.user.first_name + " " + auth.user.last_name }</Typography>
 								</MenuItem>
 								<MenuItem
-									onClick={this.onChangeUserPresenceMenu(
+									onClick={ this.onChangeUserPresenceMenu(
 										auth.user
 											? auth.user.presence === "online"
 												? "away"
 												: "online"
 											: "online"
-									)}
-									disabled={!this.state.serverConnected}
+									) }
+									disabled={ !this.state.serverConnected }
 								>
-									{auth.user
+									{ auth.user
 										? auth.user.presence === "online"
 											? "Set to away"
 											: "Set to online"
-										: "Set to online"}
+										: "Set to online" }
 								</MenuItem>
-								{["online", "away"].includes(
+								{ ["online", "away"].includes(
 									auth.user.presence
 								) && (
 										<MenuItem
-											onClick={this.onChangeUserPresenceMenu(
+											onClick={ this.onChangeUserPresenceMenu(
 												"offline"
-											)}
-											disabled={!this.state.serverConnected}
+											) }
+											disabled={ !this.state.serverConnected }
 										>
 											Set to offline
 										</MenuItem>
-									)}
+									) }
 								<MenuItem>
 									<Link
-										to={"/account".toUriWithDashboardPrefix()}
+										to={ "/account".toUriWithDashboardPrefix() }
 
 									>
 										My account
-									</Link>{" "}
+									</Link>{ " " }
 								</MenuItem>
-								<MenuItem onClick={this.handleSignOut}
+								<MenuItem onClick={ this.handleSignOut }
 								>
 									Logout
 								</MenuItem>
 							</Menu>
 
 							<IconButton
-								className={""}
-								onClick={this.handleShowNotifications}
+								className={ "" }
+								onClick={ this.handleShowNotifications }
 							>
 								<Badge
-									badgeContent={notificationsCount}
+									badgeContent={ notificationsCount }
 									color="secondary"
 									variant="dot"
 								>
 									<Icon
-										path={mdiBellOutline}
+										path={ mdiBellOutline }
 										title="Notification Icon"
-										size={1}
-										color={theme.palette.text.primary}
+										size={ 1 }
+										color={ theme.palette.text.primary }
 									/>
 								</Badge>
 							</IconButton>
@@ -677,55 +627,55 @@ class Topbar extends Component {
 					</Toolbar>
 				</AppBar>
 				<Popover
-					anchorEl={notificationsEl}
-					anchorOrigin={{
+					anchorEl={ notificationsEl }
+					anchorOrigin={ {
 						vertical: "bottom",
 						horizontal: "center",
-					}}
-					onClose={this.handleCloseNotifications}
-					open={showNotifications}
-					transformOrigin={{
+					} }
+					onClose={ this.handleCloseNotifications }
+					open={ showNotifications }
+					transformOrigin={ {
 						vertical: "top",
 						horizontal: "center",
-					}}
+					} }
 				>
 					<NotificationList
-						notifications={notifications}
-						onSelect={this.handleCloseNotifications}
+						notifications={ notifications }
+						onSelect={ this.handleCloseNotifications }
 					/>
 				</Popover>
 
-				{/* <Notification title="test notification"/> */}
+				{/* <Notification title="test notification"/> */ }
 
 				<Snackbar
-					anchorOrigin={{
+					anchorOrigin={ {
 						vertical: "top",
 						horizontal: "center",
-					}}
-					open={this.state.connectionSnackBarOpen}
-					autoHideDuration={this.state.connectionSnackBarColor === "error" ? null : 2000}
-					onClose={this.onCloseConnectionSnackbar}
+					} }
+					open={ this.state.connectionSnackBarOpen }
+					autoHideDuration={ this.state.connectionSnackBarColor === "error" ? null : 2000 }
+					onClose={ this.onCloseConnectionSnackbar }
 				>
 					<SnackbarContent
-						onClose={this.onCloseConnectionSnackbar}
-						color={this.state.connectionSnackBarColor}
-						message={this.state.connectionSnackBarMessage}
+						onClose={ this.onCloseConnectionSnackbar }
+						color={ this.state.connectionSnackBarColor }
+						message={ this.state.connectionSnackBarMessage }
 					/>
 				</Snackbar>
 
 				<Snackbar
-					anchorOrigin={{
+					anchorOrigin={ {
 						vertical: "top",
 						horizontal: "right",
-					}}
-					open={this.state.notificationSnackBarOpen}
-					autoHideDuration={7000}
-					onClose={this.onCloseNotificationSnackbar}
+					} }
+					open={ this.state.notificationSnackBarOpen }
+					autoHideDuration={ 7000 }
+					onClose={ this.onCloseNotificationSnackbar }
 				>
 					<SnackbarContent
-						onClose={this.onCloseNotificationSnackbar}
+						onClose={ this.onCloseNotificationSnackbar }
 						color="inverse"
-						message={this.state.notificationSnackBarMessage}
+						message={ this.state.notificationSnackBarMessage }
 					/>
 				</Snackbar>
 			</Box>
@@ -742,7 +692,7 @@ Topbar.propTypes = {
 };
 
 Topbar.defaultProps = {
-	onToggleSidebar: () => { },
+	onToggleSidebar: () => {},
 };
 
 const mapStateToProps = state => ({

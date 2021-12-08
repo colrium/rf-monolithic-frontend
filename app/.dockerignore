@@ -1,2 +1,8 @@
+**/.git
 **/node_modules
 **/npm-debug.log
+*package-lock*
+*Dockerfile*
+*README.md*
+*docker-compose*
+**/.git/*

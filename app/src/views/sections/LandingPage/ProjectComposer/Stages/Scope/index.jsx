@@ -17,7 +17,7 @@ const Stage = (props) => {
 
     const { handleSubmit, Field, RadioGroup, values, setValue, getValues, formState } = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage, } });
     const { isValid } = formState;
-    const stageValues = (JSON.getDeepPropertyValue(`stages.${stage}`, (values || {})) || {});
+    const stageValues = (JSON.getDeepPropertyValue(`stages.${ stage }`, (values || {})) || {});
 
     const changeStageValue = useCallback((name, value) => {
         setValue(name, value);
@@ -43,7 +43,7 @@ const Stage = (props) => {
         changeStageValue(name, event.target.value);
     }, []);
 
-    const submit = useCallback((formValues) => {        
+    const submit = useCallback((formValues) => {
         // let next_complete_stages = Array.isArray(complete_stagesRef.current) ? complete_stagesRef.current : [];
         // if (next_complete_stages.indexOf(stage) === -1) {
         //     next_complete_stages.push(stage);
@@ -61,53 +61,53 @@ const Stage = (props) => {
                     {title}
                 </Typography>
             </GridItem>} */}
-            {!!description && <GridItem className="flex flex-col items-start py-8">
+            { !!description && <GridItem className="flex flex-col items-start py-8">
                 <Typography variant="body2">
-                    {description}
+                    { description }
                 </Typography>
-            </GridItem>}
+            </GridItem> }
 
 
-            <GridItem className={"py-12"}>
+            <GridItem className={ "py-12" }>
                 <GridContainer>
-                    <GridItem md={12} className={"py-8"}>
+                    <GridItem md={ 12 } className={ "py-8" }>
                         <Field
-                            name={`stages.${stage}.questions`}
+                            name={ `stages.${ stage }.questions` }
                             label="Upload Questions"
                             helperText="Accepted Formats: doc, docx, csv, xlsx, xls, pdf"
-                            defaultValue={stageValues?.questions || []}
-                            component={FileDropZone}
-                            onChange={handleOnFilefieldChange(`stages.${stage}.questions`)}
-                            variant={"filled"}
-                            accept={".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf"}
-                            filesLimit={20}
-                            rules={{
+                            defaultValue={ stageValues?.questions || [] }
+                            component={ FileDropZone }
+                            onChange={ handleOnFilefieldChange(`stages.${ stage }.questions`) }
+                            variant={ "filled" }
+                            accept={ ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf" }
+                            filesLimit={ 20 }
+                            rules={ {
                                 validate: {
                                     isNotEmpty: v => !Array.isEmpty(v) || 'Questions Upload is Required',
                                 }
-                            }}
+                            } }
                             required
                         />
                     </GridItem>
 
-                    <GridItem md={12} className={"py-8"}>
+                    <GridItem md={ 12 } className={ "py-8" }>
 
                         <RadioGroup
-                            name={`stages.${stage}.data_gathering_format`}
+                            name={ `stages.${ stage }.data_gathering_format` }
                             label="Data gathering format"
-                            defaultValue={stageValues?.data_gathering_format || ""}
-                            onChange={handleOnRadiogroupChange(`stages.${stage}.data_gathering_format`)}
+                            defaultValue={ stageValues?.data_gathering_format || "" }
+                            onChange={ handleOnRadiogroupChange(`stages.${ stage }.data_gathering_format`) }
                             aria-label="data-gathering-format"
-                            options={{
+                            options={ {
                                 Written: "Written",
                                 Audio: "Audio",
                                 Video: "Video",
-                            }}
-                            rules={{
+                            } }
+                            rules={ {
                                 validate: {
                                     isNotEmpty: v => !String.isEmpty(v) || 'Data gathering format is Required',
                                 }
-                            }}
+                            } }
                             required
                         />
                     </GridItem>
@@ -127,8 +127,11 @@ const Stage = (props) => {
             </GridItem>
 
             <GridItem className="flex flex-col items-center  py-8">
-                <Button onClick={handleSubmit(submit)} disabled={!isValid} color="accent" variant="contained">
-                    Now Select the Regions
+                {/* <Button onClick={handleSubmit(submit)} disabled={!isValid} color="accent" variant="contained">
+                    Now Select your Target
+                </Button> */}
+                <Button onClick={ handleSubmit(submit) } color="accent" variant="contained">
+                    Now Select your Target
                 </Button>
             </GridItem>
         </GridContainer>

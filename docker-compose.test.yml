@@ -1,14 +1,15 @@
 version: "3.7"
 services:
-    rf-fe-testing:
+    rf-fe-landingpage-test:
         build:
             context: ./app
             dockerfile: Dockerfile.test
-        container_name: rf-fe-testing
+        container_name: rf-fe-test
         restart: unless-stopped
+        volumes:
+            - ./nginx:/nginx
         networks:
             - proxy-bridge
-
 networks:
     proxy-bridge:
         external: true

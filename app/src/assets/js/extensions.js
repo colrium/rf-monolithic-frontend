@@ -34,7 +34,7 @@ console.log = function surpressLogs(msg) {
 
 //Type Extensions
 // Warn if overriding existing method
-if (String.isString) { }
+if (String.isString) {}
 
 String.isString = function (input) {
 	return input !== undefined && input !== null
@@ -65,12 +65,14 @@ String.prototype.replaceAll = function (search, replacement) {
 };
 
 String.toDate = function (input) {
+
 	try {
 		let ms = Date.parse(input);
 		return new Date(ms);
 	} catch (e) {
 		return null;
 	}
+	return null;
 };
 
 String.uid = function (len, numeric, all_caps) {
@@ -211,21 +213,21 @@ String.isEmpty = function (target) {
 
 
 
-if (Boolean.isBoolean) { }
+if (Boolean.isBoolean) {}
 Boolean.isBoolean = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === Boolean
 		: false;
 };
 
-if (Function.isFunction) { }
+if (Function.isFunction) {}
 Function.isFunction = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === Function || typeof input === "function"
 		: false;
 };
 
-if (Function.sleep) { }
+if (Function.sleep) {}
 Function.sleep = function (milliseconds) {
 	const date = Date.now();
 	let currentDate = null;
@@ -239,7 +241,7 @@ Function.sleep = function (milliseconds) {
 // but if you'd like to disable the execution on the leading edge, pass
 // `{leading: false}`. To disable execution on the trailing edge, ditto.
 
-if (Function.throttle) { }
+if (Function.throttle) {}
 //Function.throttle = throttle;
 Function.throttle = (func, wait, options) => {
 	var context, args, result;
@@ -273,10 +275,10 @@ Function.throttle = (func, wait, options) => {
 	};
 };
 
-if (Function.debounce) { }
+if (Function.debounce) {}
 Function.debounce = debounce;
 
-if (Function.createThrottle) { }
+if (Function.createThrottle) {}
 Function.createThrottle = function (max) {
 	if (typeof max !== 'number') {
 		throw new TypeError('`createThrottle` expects a valid Number')
@@ -284,9 +286,9 @@ Function.createThrottle = function (max) {
 
 	let cur = 0
 	const queue = []
-	function throttle(fn) {
+	function throttle (fn) {
 		return new Promise((resolve, reject) => {
-			function handleFn() {
+			function handleFn () {
 				if (cur < max) {
 					throttle.current = ++cur
 					let resolveFn = Function.isFunction(fn) ? fn() : fn;
@@ -318,21 +320,21 @@ Function.createThrottle = function (max) {
 }
 
 
-if (Number.isNumber) { }
+if (Number.isNumber) {}
 Number.isNumber = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === Number && input !== NaN
 		: false;
 };
 
-if (Error.isError) { }
+if (Error.isError) {}
 Error.isError = function (input) {
 	return input !== undefined && input !== null
 		? input instanceof Error
 		: false;
 };
 
-if (RegExp.isRegExp) { }
+if (RegExp.isRegExp) {}
 RegExp.isRegExp = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === RegExp
@@ -340,21 +342,21 @@ RegExp.isRegExp = function (input) {
 };
 
 //Number Extensions
-if (Number.isFloat) { }
+if (Number.isFloat) {}
 Number.isFloat = function (input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /[-+]?(?:\d*\.\d+\.?\d*)(?:[eE][-+]?\d+)?/gim.test(input)
 		: false;
 };
 
-if (Number.isInt) { }
+if (Number.isInt) {}
 Number.isInt = function (input) {
 	return input !== undefined && input !== null && input !== NaN
 		? /^[-+]?(\d*)?\d+$/gim.test(input)
 		: false;
 };
 
-if (Number.parseNumber) { }
+if (Number.parseNumber) {}
 Number.parseNumber = function (input, fallback = null) {
 	if (Number.isFloat(input)) {
 		return parseFloat(input);
@@ -366,11 +368,11 @@ Number.parseNumber = function (input, fallback = null) {
 };
 
 //String Extensions
-if (Number.parseNumber) { }
+if (Number.parseNumber) {}
 Number.getRandomInt = function (min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-if (Array.prototype.remove) { }
+if (Array.prototype.remove) {}
 Array.prototype.remove = function (from, to) {
 	var rest = this.slice((to || from) + 1 || this.length);
 	this.length = from < 0 ? this.length + from : from;
@@ -684,7 +686,7 @@ Object.isReactComponent = Component => {
 };
 
 //This is to ensure equating objects doesnt change original
-function parseToJSON(input) {
+function parseToJSON (input) {
 	let newObject = {};
 	try {
 		newObject = JSON.parse(JSON.stringify(input));
@@ -713,7 +715,7 @@ JSON.prettyStringify = function (input, spaces = 4) {
 	for (var i = 0; i < spaces; i++) {
 		spacing = spacing + " ";
 	}
-	function syntaxHighlight(json) {
+	function syntaxHighlight (json) {
 		json = json
 			.replace(/&/g, "&amp;")
 			.replace(/</g, "&lt;")
@@ -796,7 +798,7 @@ JSON.readable = function (
 	return str;
 };
 
-if (JSON.indexOf) { }
+if (JSON.indexOf) {}
 
 JSON.positionOfKey = function (object, key) {
 	let position = -1;
@@ -817,7 +819,7 @@ JSON.keyOf = function (object, value) {
 	return key;
 };
 
-if (JSON.moveKey) { }
+if (JSON.moveKey) {}
 JSON.moveKey = function (object, key, position = 0) {
 	let newObject = {};
 	if (JSON.isJSON(object)) {
@@ -1232,7 +1234,7 @@ Date.replaceChars = {
 		// get seconds 
 		let seconds = Math.round(timeDiff);
 
-		function secondsToDHms(secs) {
+		function secondsToDHms (secs) {
 			secs = Number(secs);
 
 			var d = Math.floor(secs / (3600 * 24));
@@ -1403,19 +1405,11 @@ Date.prototype.minusMilliSeconds = function (ms) {
 };*/
 
 Date.difference = function (date1, date2 = new Date()) {
+	date1 = Date.from(date1);
+	date2 = Date.from(date2);
 
-	if (Number.isNumber(date1)) {
-		try {
-			date1 = new Date(date1);
-		} catch (e) { }
-	}
-	if (Number.isNumber(date2)) {
-		try {
-			date2 = new Date(date2);
-		} catch (e) { }
-	}
-
-	var intervals = {
+	let difference = {
+		value: 0,
 		years: 0,
 		months: 0,
 		weeks: 0,
@@ -1424,41 +1418,99 @@ Date.difference = function (date1, date2 = new Date()) {
 		minutes: 0,
 		seconds: 0,
 		milliseconds: 0,
-		direction: "forward",
+		type: "future",
 		description: "",
 	}
 
-	if ((date1 instanceof Date) && (date2 instanceof Date)) {
-		var date2Millis = date2.getTime();
-		var targetMillis = date1.getTime();
+	if (Date.isDate(date1) && Date.isDate(date2)) {
+		const secondMs = 1000;
+		const minuteMs = secondMs * 60;
+		const hourMs = minuteMs * 60;
+		const dayMs = hourMs * 24;
+		const weekMs = dayMs * 7;
+		const monthMs = dayMs * 30;
+		const yearMs = dayMs * 365;
 
-		var duration = targetMillis - date2Millis;
-		var years = Math.floor(duration / 3.154e+10);
-		var durationMinusYears = duration - (years * 3.154e+10);
-		var months = Math.floor(duration / 2.628e+9) % 12;
+		let differenceMs = date2.getTime() - date1.getTime();
+		if (differenceMs < 0) {
+			difference.type = "past";
+		}
+		differenceMs = differenceMs < 0 ? (0 - differenceMs) : differenceMs
+		var years = Math.floor(differenceMs / 3.154e+10);
+		var durationMinusYears = differenceMs - (years * 3.154e+10);
+		var months = Math.floor(differenceMs / 2.628e+9) % 12;
 		var durationMinusMonths = durationMinusYears - (months * 2.628e+9);
-		var days = Math.floor(durationMinusMonths / 8.64e+7);
-		var hours = Math.floor(duration / 3.6e+6) % 24;
-		var minutes = Math.floor(duration / 60000) % 60;
-		var seconds = Math.floor(duration / 1000) % 60;
+		var weeks = Math.floor(durationMinusMonths / weekMs);
+		var durationMinusWeeks = durationMinusMonths - (weeks * weekMs);
+		var days = Math.floor(durationMinusWeeks / dayMs);
+		var durationMinusDays = durationMinusWeeks - (days * dayMs);
+		var hours = Math.floor(durationMinusDays / hourMs);
+		var durationMinusHours = durationMinusDays - (hours * hourMs);
+		var minutes = Math.floor(durationMinusHours / hourMs);
+		var durationMinusMinutes = durationMinusHours - (minutes * minuteMs);
+		var seconds = Math.floor(durationMinusMinutes / secondMs);
+		var durationMinusSeconds = durationMinusMinutes - (seconds * secondMs);
+		var milliseconds = durationMinusSeconds;
+
+		// differenceMs = differenceMs < 0 ? (0 - differenceMs) : differenceMs
+		// var years = Math.floor(differenceMs / yearMs);
+		// differenceMs = differenceMs - (years * yearMs);
+		// var months = Math.floor(differenceMs / monthMs);
+		// differenceMs = differenceMs - (months * monthMs);
+		// var weeks = Math.floor(differenceMs / weekMs);
+		// differenceMs = differenceMs - (weeks * weekMs);
+		// var days = Math.floor(differenceMs / dayMs);
+		// differenceMs = differenceMs - (days * dayMs);
+		// var hours = Math.floor(differenceMs / hourMs);
+		// differenceMs = differenceMs - (hours * hourMs);
+		// var minutes = Math.floor(differenceMs / minuteMs);
+		// differenceMs = differenceMs - (minutes * minuteMs);
+		// var seconds = Math.floor(differenceMs / secondMs);
+		var milliseconds = differenceMs - (seconds * secondMs);
 
 
 
 
 
-		intervals.years = Math.abs(years);
-		intervals.months = Math.abs(months);
-		//intervals.weeks = weeks;
-		intervals.days = Math.abs(days);
-		intervals.hours = Math.abs(hours);
-		intervals.minutes = Math.abs(minutes);
-		intervals.seconds = Math.abs(seconds);
+		difference.value = date2.getTime() - date1.getTime();
+
+		difference.years = (years);
+		difference.months = (months);
+		difference.weeks = weeks;
+		difference.days = days;
+		difference.hours = (hours);
+		difference.minutes = (minutes);
+		difference.seconds = (seconds);
+		difference.milliseconds = milliseconds
+		difference.same_hour = differenceMs <= hourMs
+		difference.same_day = differenceMs <= dayMs && date1.getDay() == date2.getDay()
+		difference.same_month = differenceMs <= monthMs && date1.getMonth() == date2.getMonth()
 	}
 
 
-	return intervals;
-};
-Date.prototype.difference = function (otherdate) {
-	let difference = Date.difference(otherdate, this);
 	return difference;
+};
+Date.prototype.difference = function (targetdate) {
+	return Date.difference(this, targetdate);
+};
+
+Date.isDate = function (target) {
+	return target && Object.prototype.toString.call(target) === "[object Date]" && !isNaN(target);
+};
+
+Date.from = function (input, defaultDate = null) {
+	let date = defaultDate;
+	if (!!input) {
+		if (Date.isDate(input)) {
+			date = input
+		}
+		try {
+			let ms = Date.parse(input);
+			date = new Date(ms);
+		} catch (e) {
+			console.error("Date.from error", e);
+		}
+	}
+	// console.log("Date.from date", date);
+	return date;
 };

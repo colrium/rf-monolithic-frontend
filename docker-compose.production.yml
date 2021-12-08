@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+    rf-fe-landingpage-production:
+        build:
+            context: ./app
+            dockerfile: Dockerfile.production
+        container_name: rf-fe-production
+        restart: unless-stopped
+        volumes:
+            - ./nginx:/nginx
+        networks:
+            - proxy-bridge
+
+networks:
+    proxy-bridge:
+        external: true
+        name: proxy-bridge

@@ -34,7 +34,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-
+import { createStyles, makeStyles } from '@mui/styles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -52,32 +52,35 @@ import LazyImage from "components/LazyImage";
 import ViewPortSensor from "components/ViewPortSensor";
 import Listings from "views/widgets/Listings";
 
+
 import {
 	FileInput,
 	TextInput,
 } from "components/FormInputs";
 
-import { useGlobals } from "contexts/Globals";
+import { useNetworkServices } from "contexts";
+import * as definations from "definations";
 import { useLocation, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { withTheme } from '@mui/styles';
 import compose from "recompose/compose";
 import { apiCallRequest, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation } from "state/actions";
 
-import ApiService from "services/Api";
+import { useDidMount, useWillUnmount } from "hooks";
 
 
 
-const contactsDrawerWidth = 240;
 
-function Alert(props) {
-	return <MuiAlert elevation={6} variant="filled" {...props} />;
+
+const drawerWidth = 240;
+
+
+function Alert (props) {
+	return <MuiAlert elevation={ 6 } variant="filled" { ...props } />;
 }
 
 
 const AlwaysScrollToBottom = React.forwardRef((props, ref) => {
-
-	const { sockets } = useGlobals();
 
 	const scrollIntoView = useCallback(() => {
 		if (ref.current) {
@@ -86,19 +89,21 @@ const AlwaysScrollToBottom = React.forwardRef((props, ref) => {
 	}, [ref.current]);
 
 	useEffect(() => {
-		/*sockets.default.on("message-sent", scrollIntoView);
-		sockets.default.on("new-message", scrollIntoView);*/
+		/*Sockets.on("message-sent", scrollIntoView);
+		Sockets.on("new-message", scrollIntoView);*/
 		//scrollIntoView();
 		return () => {
-			/*sockets.default.off("message-sent", scrollIntoView);
-			sockets.default.off("new-message", scrollIntoView);*/
+			/*Sockets.off("message-sent", scrollIntoView);
+			Sockets.off("new-message", scrollIntoView);*/
 		}
 	}, []);
-	return <div ref={ref} />;
+	return <div ref={ ref } />;
 });
 
-function Chat(props) {
+function Chat (props) {
 	const { classes, className, layout, communication: { messaging }, activeConversation, auth, device: { window_size }, apiCallRequest, theme, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation, ...rest } = props;
+
+
 	let textInputRef = React.createRef();
 	let messagesWrapperRef = React.createRef();
 	let conversationBottomRef = useRef();
@@ -110,7 +115,7 @@ function Chat(props) {
 
 
 
-	const { definations, sockets } = useGlobals();
+	const { Sockets, Api: ApiService } = useNetworkServices();
 	const { unread_count, unread_ids, conversations, fetching_inbox, contacts: cacheContacts, drafts, active_conversation, active_conversation_messages, contactactable_contacts_ids } = messaging;
 
 	const [query, setQuery] = useState({ desc: "created_on" });
@@ -184,7 +189,7 @@ function Chat(props) {
 				return currentChats;
 			}
 		});
-		sockets.default.emit("archive-conversation", { conversation: conversation, user: auth.user });
+		Sockets.emit("archive-conversation", { conversation: conversation, user: auth.user });
 
 	};
 
@@ -209,7 +214,7 @@ function Chat(props) {
 			}
 		});
 
-		sockets.default.emit("delete-conversation-for-user", { conversation: conversation, user: auth.user });
+		Sockets.emit("delete-conversation-for-user", { conversation: conversation, user: auth.user });
 
 	};
 
@@ -238,7 +243,7 @@ function Chat(props) {
 					content: "",
 					conversation: new_conversation._id,
 				});
-			}).catch(err => { });
+			}).catch(err => {});
 
 
 			setContactsDrawerOpen(false);
@@ -362,9 +367,8 @@ function Chat(props) {
 
 				setError(errorMsg);
 			});
-			if (sockets.default) {
-				//sockets.default.emit("get-conversation-messages", {conversation: conversation._id, user: auth.user});
-			}
+			//Sockets.emit("get-conversation-messages", {conversation: conversation._id, user: auth.user});
+
 		}
 		else {
 			setLoadingActiveChatMessages(false);
@@ -421,7 +425,7 @@ function Chat(props) {
 				newMessageValue = "";
 			}
 			if (!String.isEmpty(newMessageValue) || (["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments.length > 0) : false))) {
-				sockets.default.emit("stopped-typing-message", { conversation: conversation_id, user: auth.user });
+				Sockets.emit("stopped-typing-message", { conversation: conversation_id, user: auth.user });
 				handleOnSendMessage(newMessageValue, conversation);
 			}
 
@@ -512,118 +516,112 @@ function Chat(props) {
 		}
 	}, [conversations]);
 
-	/*useEffect(() => {
-		
-		//fetchInbox();
-	}, [query]);*/
 
-	useEffect(() => {
+	useDidMount(() => {
 		fetchInbox();
-	}, []);
+	});
 
 
 
-	useEffect(() => {
-		if (sockets.default) {
-			sockets.default.on("presence-changed", handlePresenceChanged);
-			sockets.default.on("user-changed-presence", handlePresenceChanged);
-			//sockets.default.on("message-typing-started", handleOnUserStartedTypingMessage);
-			//sockets.default.on("message-typing-stopped", handleOnUserStoppedTypingMessage);
-			//sockets.default.on("conversation-messages", handleOnConversationMessages);
-			/*sockets.default.on("new-message", handleOnNewMessage);
-			sockets.default.on("message-sent", handleOnMessageSent);*/
-			sockets.default.on("messages-deleted-for-user", handleOnMessageDeletedForUser);
-			sockets.default.on("messages-deleted-for-all", handleOnMessageDeletedForAll);
-			sockets.default.on("message-marked-as-received", handleOnMessageStateChangedBySocketAction);
-			sockets.default.on("message-received", handleOnMessageStateChangedBySocketAction);
-			sockets.default.on("message-marked-as-read", handleOnMessageStateChangedBySocketAction);
-			sockets.default.on("message-read", handleOnMessageStateChangedBySocketAction);
-			sockets.default.on("delete-conversation-for-user-error", handleSocketActionError);
-			sockets.default.on("delete-message-for-user-error", handleSocketActionError);
-			sockets.default.on("delete-message-for-all-error", handleSocketActionError);
+	useDidMount(() => {
+		Sockets.on("presence-changed", handlePresenceChanged);
+		Sockets.on("user-changed-presence", handlePresenceChanged);
+		//Sockets.on("message-typing-started", handleOnUserStartedTypingMessage);
+		//Sockets.on("message-typing-stopped", handleOnUserStoppedTypingMessage);
+		//Sockets.on("conversation-messages", handleOnConversationMessages);
+		/*Sockets.on("new-message", handleOnNewMessage);
+		Sockets.on("message-sent", handleOnMessageSent);*/
+		Sockets.on("messages-deleted-for-user", handleOnMessageDeletedForUser);
+		Sockets.on("messages-deleted-for-all", handleOnMessageDeletedForAll);
+		Sockets.on("message-marked-as-received", handleOnMessageStateChangedBySocketAction);
+		Sockets.on("message-received", handleOnMessageStateChangedBySocketAction);
+		Sockets.on("message-marked-as-read", handleOnMessageStateChangedBySocketAction);
+		Sockets.on("message-read", handleOnMessageStateChangedBySocketAction);
+		Sockets.on("delete-conversation-for-user-error", handleSocketActionError);
+		Sockets.on("delete-message-for-user-error", handleSocketActionError);
+		Sockets.on("delete-message-for-all-error", handleSocketActionError);
 
 
 
 
 
-			return () => {
-				sockets.default.off("presence-changed", handlePresenceChanged);
-				sockets.default.off("user-changed-presence", handlePresenceChanged);
-				//sockets.default.off("conversation-messages", handleOnConversationMessages);
-				/*sockets.default.off("new-message", handleOnNewMessage);
-				sockets.default.off("message-sent", handleOnMessageSent);*/
-				sockets.default.off("messages-deleted-for-user", handleOnMessageDeletedForUser);
-				sockets.default.off("messages-deleted-for-all", handleOnMessageDeletedForAll);
-				sockets.default.off("delete-conversation-for-user-error", handleSocketActionError);
-				sockets.default.off("message-marked-as-received", handleOnMessageStateChangedBySocketAction);
-				sockets.default.off("message-received", handleOnMessageStateChangedBySocketAction);
-				sockets.default.off("message-marked-as-read", handleOnMessageStateChangedBySocketAction);
-				sockets.default.off("message-read", handleOnMessageStateChangedBySocketAction);
-				sockets.default.off("delete-message-for-user-error", handleSocketActionError);
-				sockets.default.off("delete-message-for-all-error", handleSocketActionError);
-				sockets.default.off("create-conversation-error", handleSocketActionError);
-			}
-		}
-	}, [sockets]);
 
+	});
 
+	useWillUnmount(() => {
+		Sockets.off("presence-changed", handlePresenceChanged);
+		Sockets.off("user-changed-presence", handlePresenceChanged);
+		//Sockets.off("conversation-messages", handleOnConversationMessages);
+		/*Sockets.off("new-message", handleOnNewMessage);
+		Sockets.off("message-sent", handleOnMessageSent);*/
+		Sockets.off("messages-deleted-for-user", handleOnMessageDeletedForUser);
+		Sockets.off("messages-deleted-for-all", handleOnMessageDeletedForAll);
+		Sockets.off("delete-conversation-for-user-error", handleSocketActionError);
+		Sockets.off("message-marked-as-received", handleOnMessageStateChangedBySocketAction);
+		Sockets.off("message-received", handleOnMessageStateChangedBySocketAction);
+		Sockets.off("message-marked-as-read", handleOnMessageStateChangedBySocketAction);
+		Sockets.off("message-read", handleOnMessageStateChangedBySocketAction);
+		Sockets.off("delete-message-for-user-error", handleSocketActionError);
+		Sockets.off("delete-message-for-all-error", handleSocketActionError);
+		Sockets.off("create-conversation-error", handleSocketActionError);
+	})
 
 	return (
-		<Paper className={classNames({ "p-0 m-0 relative": true, [classes?.root]: true, [className]: true })} >
-			<AppBar position="absolute" color="transparent" className={classes?.mainAppBar}>
+		<Paper className={ classNames({ "p-0 m-0 relative overflow-x-hidden overflow-y-visible ": true, [className]: !!className }) } >
+			<AppBar position="relative" color="transparent" className={ "" }>
 				<Toolbar>
-					{active_conversation && <IconButton
-						onClick={() => {
+					{ active_conversation && <IconButton
+						onClick={ () => {
 							if (history && locationHasWith) {
 								history.push(history.location.pathname);
 							}
 							setActiveConversation(false);
 
-						}}
-						className={"mr-2"}
+						} }
+						className={ "mr-2" }
 						edge="start"
 						color="inherit"
 						aria-label="back-to-conversations"
 					>
 						<ArrowBackIcon />
-					</IconButton>}
-					{active_conversation && (active_conversation.type == "individual" ? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && (Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0 && active_conversation.participants[0].avatar) ? (<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(active_conversation.participants[0].avatar)} />) : (active_conversation.started_by && active_conversation.started_by.avatar ? (<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(active_conversation.started_by.avatar)} />) : (<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}><PersonIcon /></Avatar>))) : (active_conversation.group_avatar ? (<Avatar className={"mr-6"} src={ApiService.getAttachmentFileUrl(active_conversation.group_avatar)} />) : (<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {active_conversation.type === "group" ? <PeopleIcon /> : <PersonIcon />}</Avatar>)))}
-					{active_conversation && <Typography variant="h6" className={"capitalize flex-grow"}>
-						{active_conversation.type == "individual" ? (((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0) ? (active_conversation.participants[0].first_name + " " + active_conversation.participants[0].last_name) : (active_conversation.started_by ? (active_conversation.started_by.first_name + " " + active_conversation.started_by.last_name) : "")) : (active_conversation.type == "group" ? active_conversation.group_name : "Realfield")}
-					</Typography>}
+					</IconButton> }
+					{ active_conversation && (active_conversation.type == "individual" ? ((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && (Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0 && active_conversation.participants[0].avatar) ? (<Avatar className={ "mr-6 w-6 h-6" } src={ ApiService.getAttachmentFileUrl(active_conversation.participants[0].avatar) } />) : (active_conversation.started_by && active_conversation.started_by.avatar ? (<Avatar className={ "mr-6 w-6 h-6" } src={ ApiService.getAttachmentFileUrl(active_conversation.started_by.avatar) } />) : (<Avatar className={ "mr-2 w-6 h-6 bg-transparent accent-text" }><PersonIcon /></Avatar>))) : (active_conversation.group_avatar ? (<Avatar className={ "mr-6" } src={ ApiService.getAttachmentFileUrl(active_conversation.group_avatar) } />) : (<Avatar className={ "mr-6 w-6 h-6 bg-transparent accent-text" }> { active_conversation.type === "group" ? <PeopleIcon /> : <PersonIcon /> }</Avatar>))) }
+					{ active_conversation && <Typography variant="h6" className={ "capitalize flex-grow" }>
+						{ active_conversation.type == "individual" ? (((auth.user._id === active_conversation.owner._id || auth.user._id === active_conversation.owner) && Array.isArray(active_conversation.participants) && active_conversation.participants.length > 0) ? (active_conversation.participants[0].first_name + " " + active_conversation.participants[0].last_name) : (active_conversation.started_by ? (active_conversation.started_by.first_name + " " + active_conversation.started_by.last_name) : "")) : (active_conversation.type == "group" ? active_conversation.group_name : "Realfield") }
+					</Typography> }
 
-					{!active_conversation && <Typography variant="h6" className={"capitalize flex-grow"}>
+					{ !active_conversation && <Typography variant="h6" className={ "capitalize flex-grow" }>
 						Conversations
-					</Typography>}
+					</Typography> }
 
 
-					{(!active_conversation && !contactsDrawerOpen) && <IconButton
-						onClick={() => setContactsDrawerOpen(true)}
-						className={"mr-2"}
+					{ (!active_conversation && !contactsDrawerOpen) && <IconButton
+						onClick={ () => setContactsDrawerOpen(true) }
+						className={ "mr-2" }
 						edge="end"
 						color="inherit"
 						aria-label="Contacts"
 					>
 						<ContactsIcon />
-					</IconButton>}
+					</IconButton> }
 				</Toolbar>
 			</AppBar>
 			<SwipeableDrawer
-				className={classNames({ [classes?.drawer]: true/*, "hidden": !contactsDrawerOpen*/ })}
-				variant={window_size.width >= 768 ? "persistent" : "temporary"}
+				className={ classNames({ "w-40": true/*, "hidden": !contactsDrawerOpen*/ }) }
+				variant={ window_size.width >= 768 ? "persistent" : "temporary" }
 				anchor="right"
-				open={contactsDrawerOpen}
-				onClose={() => setContactsDrawerOpen(false)}
-				onOpen={() => setContactsDrawerOpen(true)}
-				classes={{
+				open={ contactsDrawerOpen }
+				onClose={ () => setContactsDrawerOpen(false) }
+				onOpen={ () => setContactsDrawerOpen(true) }
+				classes={ {
 					paper: window_size.width >= 768 ? classes?.drawerPaper : classes?.temporaryDrawerPaper,
-				}}
+				} }
 			>
-				<div className={"w-full flex flex-row items-center h-16 secondary"}>
-					<IconButton className={"mx-2"} color="inherit">
+				<div className={ "w-full flex flex-row items-center h-16 secondary" }>
+					<IconButton className={ "mx-2" } color="inherit">
 						<ContactsIcon />
 					</IconButton>
-					<Typography variant="h6" className={"capitalize flex-grow"}>
+					<Typography variant="h6" className={ "capitalize flex-grow" }>
 						Contacts
 					</Typography>
 					{/*<TextInput
@@ -641,29 +639,29 @@ function Chat(props) {
 								label="Search"
 							/>*/}
 
-					<IconButton className={"mx-2"} color="inherit" onClick={() => setContactsDrawerOpen(false)}>
-						{theme.direction === 'ltr' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+					<IconButton className={ "mx-2" } color="inherit" onClick={ () => setContactsDrawerOpen(false) }>
+						{ theme.direction === 'ltr' ? <ChevronRightIcon /> : <ChevronLeftIcon /> }
 					</IconButton>
 				</div>
 				<Divider />
 
-				<ScrollBars className={classes?.bodyWrapper}>
+				<ScrollBars className={ "overflow-x-hidden overflow-y-scroll h-screen" }>
 
 
-					{definations && <Listings
-						show_actions={false}
-						show_links={false}
-						showViewOptions={false}
-						showAddBtn={false}
-						cache_data={false}
+					{ definations && <Listings
+						show_actions={ false }
+						show_links={ false }
+						showViewOptions={ false }
+						showAddBtn={ false }
+						cache_data={ false }
 						showPagination
 						showSorter
-						defination={definations.users}
-						service={ApiService.getContextRequests(definations.users.endpoint)}
-						query={contactsQuery}
-						view={"listview"}
-						onClickEntry={(contact) => handleNewChat(contact)}
-						onLoadData={(loadedData, loadedQuery) => {
+						defination={ definations.users }
+						service={ ApiService.getContextRequests(definations.users.endpoint) }
+						query={ contactsQuery }
+						view={ "listview" }
+						onClickEntry={ (contact) => handleNewChat(contact) }
+						onLoadData={ (loadedData, loadedQuery) => {
 							if (locationHasWith && Array.isArray(loadedData)) {
 								loadedData.map(entry => {
 									if (entry._id === loadedQuery._id || entry.email_address === loadedQuery.email_address) {
@@ -672,107 +670,107 @@ function Chat(props) {
 								})
 							}
 
-						}}
-					/>}
+						} }
+					/> }
 
 
 				</ScrollBars>
 			</SwipeableDrawer>
-			{!active_conversation && <GridItem md={12} className={"flex flex-col relative min-h-full p-0"}>
-				<Paper square className={classes?.paper}>
+			{ !active_conversation && <GridItem md={ 12 } className={ "flex flex-col relative min-h-full p-0" }>
+				<Paper elevation={ 0 } square className={ classes?.paper }>
 					<ScrollBars
-						className={classes?.bodyWrapper}
-						onYReachStart={(event) => {
+						className={ "overflow-x-hidden overflow-y-scroll h-screen pb-16" }
+						onYReachStart={ (event) => {
 							//
-						}}
+						} }
 					>
-						{(fetching_inbox && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-								<Skeleton variant="circle" width={40} height={40} />
+						{ (fetching_inbox && (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0))) && <GridContainer>
+							<GridItem md={ 12 } className={ "flex flex-row items-center relative p-0 px-4 my-4" }>
+								<Skeleton variant="circle" width={ 40 } height={ 40 } />
 								<div className="flex-grow mx-2 flex flex-col">
-									<Skeleton variant="text" width={80} className="mb-1" />
+									<Skeleton variant="text" width={ 80 } className="mb-1" />
 									<Skeleton variant="text" className="w-3/6" />
 								</div>
 							</GridItem>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-								<Skeleton variant="circle" width={40} height={40} />
+							<GridItem md={ 12 } className={ "flex flex-row items-center relative p-0 px-4 my-4" }>
+								<Skeleton variant="circle" width={ 40 } height={ 40 } />
 								<div className="flex-grow mx-2 flex flex-col">
-									<Skeleton variant="text" width={110} className="mb-1" />
+									<Skeleton variant="text" width={ 110 } className="mb-1" />
 									<Skeleton variant="text" className="w-8/12" />
 								</div>
 							</GridItem>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-								<Skeleton variant="circle" width={40} height={40} />
+							<GridItem md={ 12 } className={ "flex flex-row items-center relative p-0 px-4 my-4" }>
+								<Skeleton variant="circle" width={ 40 } height={ 40 } />
 								<div className="flex-grow mx-2 flex flex-col">
-									<Skeleton variant="text" width={80} className="mb-1" />
+									<Skeleton variant="text" width={ 80 } className="mb-1" />
 									<Skeleton variant="text" className="w-4/12" />
 								</div>
 							</GridItem>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-								<Skeleton variant="circle" width={40} height={40} />
+							<GridItem md={ 12 } className={ "flex flex-row items-center relative p-0 px-4 my-4" }>
+								<Skeleton variant="circle" width={ 40 } height={ 40 } />
 								<div className="flex-grow mx-2 flex flex-col">
-									<Skeleton variant="text" width={90} className="mb-1" />
+									<Skeleton variant="text" width={ 90 } className="mb-1" />
 									<Skeleton variant="text" className="w-3/6" />
 								</div>
 							</GridItem>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-								<Skeleton variant="circle" width={40} height={40} />
+							<GridItem md={ 12 } className={ "flex flex-row items-center relative p-0 px-4 my-4" }>
+								<Skeleton variant="circle" width={ 40 } height={ 40 } />
 								<div className="flex-grow mx-2 flex flex-col">
-									<Skeleton variant="text" width={70} className="mb-1" />
+									<Skeleton variant="text" width={ 70 } className="mb-1" />
 									<Skeleton variant="text" className="w-10/12" />
 								</div>
 							</GridItem>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-								<Skeleton variant="circle" width={40} height={40} />
+							<GridItem md={ 12 } className={ "flex flex-row items-center relative p-0 px-4 my-4" }>
+								<Skeleton variant="circle" width={ 40 } height={ 40 } />
 								<div className="flex-grow mx-2 flex flex-col">
-									<Skeleton variant="text" width={80} className="mb-1" />
+									<Skeleton variant="text" width={ 80 } className="mb-1" />
 									<Skeleton variant="text" className="w-9/12" />
 								</div>
 							</GridItem>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-								<Skeleton variant="circle" width={40} height={40} />
+							<GridItem md={ 12 } className={ "flex flex-row items-center relative p-0 px-4 my-4" }>
+								<Skeleton variant="circle" width={ 40 } height={ 40 } />
 								<div className="flex-grow mx-2 flex flex-col">
-									<Skeleton variant="text" width={120} className="mb-1" />
+									<Skeleton variant="text" width={ 120 } className="mb-1" />
 									<Skeleton variant="text" className="w-4/5" />
 								</div>
 							</GridItem>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-								<Skeleton variant="circle" width={40} height={40} />
+							<GridItem md={ 12 } className={ "flex flex-row items-center relative p-0 px-4 my-4" }>
+								<Skeleton variant="circle" width={ 40 } height={ 40 } />
 								<div className="flex-grow mx-2 flex flex-col">
-									<Skeleton variant="text" width={100} className="mb-1" />
+									<Skeleton variant="text" width={ 100 } className="mb-1" />
 									<Skeleton variant="text" className="w-3/6" />
 								</div>
 							</GridItem>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
-								<Skeleton variant="circle" width={40} height={40} />
+							<GridItem md={ 12 } className={ "flex flex-row items-center relative p-0 px-4 my-4" }>
+								<Skeleton variant="circle" width={ 40 } height={ 40 } />
 								<div className="flex-grow mx-2 flex flex-col">
-									<Skeleton variant="text" width={80} className="mb-1" />
+									<Skeleton variant="text" width={ 80 } className="mb-1" />
 									<Skeleton variant="text" className="w-11/12" />
 								</div>
 							</GridItem>
-						</GridContainer>}
+						</GridContainer> }
 
-						{(!fetching_inbox, (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0)) && <GridContainer>
-							<GridItem md={12} className={"flex flex-col items-center relative p-0 px-4 my-4"}>
-								<Typography variant="subtitle1" color="textSecondary" className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center" style={{ color: theme.palette.text.disabled, background: theme.palette.background.default }}>
+						{ (!fetching_inbox, (!Array.isArray(conversations) || (Array.isArray(conversations) && conversations.length === 0)) && <GridContainer>
+							<GridItem md={ 12 } className={ "flex flex-col items-center relative p-0 px-4 my-4" }>
+								<Typography variant="subtitle1" color="textSecondary" className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center" style={ { color: theme.palette.text.disabled, background: theme.palette.background.default } }>
 									<ForumOutlinedIcon fontSize="inherit" />
 								</Typography>
-								<Typography variant="body2" color="textSecondary" className="mx-0" style={{ color: theme.palette.text.disabled }}>
+								<Typography variant="body2" color="textSecondary" className="mx-0" style={ { color: theme.palette.text.disabled } }>
 									You don't have any active conversations yet
 								</Typography>
 							</GridItem>
-						</GridContainer>)}
+						</GridContainer>) }
 
-						{Array.isArray(conversations) && <List className={classes?.list}>
-							{conversations.map((chat, index) => {
+						{ Array.isArray(conversations) && <List className={ classes?.list }>
+							{ conversations.map((chat, index) => {
 
 								if (index === 0 || (index > 0 && conversations[index - 1]._id !== conversations[index]._id)) {
 									let primaryText = "";
@@ -831,101 +829,108 @@ function Chat(props) {
 
 									return (
 										<ListItem
-											className={"px-8 content-between"}
-											onClick={(event) => {
+											className={ "px-8 content-between" }
+											onClick={ (event) => {
 												//setMessagingCache("active_conversation_messages", []);	
 												//setMessagingCache("active_conversation", chat);	
 												setActiveConversation(chat);
-											}}
-											onContextMenu={handleContextOpen("conversation", chat)}
-											key={"chat-" + index}
-											style={{ background: (contextMenu.type === "conversation" ? (contextMenu.entry._id === chat._id ? theme.palette.background.default : "transparent") : "transparent") }}
+											} }
+											onContextMenu={ handleContextOpen("conversation", chat) }
+											key={ "chat-" + index }
+											style={ { background: (contextMenu.type === "conversation" ? (contextMenu.entry._id === chat._id ? theme.palette.background.default : "transparent") : "transparent") } }
 											button
 										>
-											{chatUser && <ListItemAvatar>
+											{ chatUser && <ListItemAvatar>
 												<Badge
 													variant="dot"
 													badgeContent=" "
-													anchorOrigin={{
+													anchorOrigin={ {
 														vertical: 'bottom',
 														horizontal: 'right',
-													}}
-													classes={{
+													} }
+													classes={ {
 														dot: chatUser.presence === "online" ? "bg-green-600" : (chatUser.presence == "away" ? "bg-orange-500" : "bg-gray-500")
-													}}
+													} }
 												>
-													{chatUser.avatar && <Avatar className={classes?.contactAvatar} src={ApiService.getAttachmentFileUrl(chatUser.avatar)} />}
-													{!chatUser.avatar && <Avatar className={classes?.contactAvatar}>
+													{ chatUser.avatar && <Avatar className={ classes?.contactAvatar } src={ ApiService.getAttachmentFileUrl(chatUser.avatar) } /> }
+													{ !chatUser.avatar && <Avatar className={ classes?.contactAvatar }>
 														<PersonIcon />
-													</Avatar>}
+													</Avatar> }
 												</Badge>
-											</ListItemAvatar>}
-											{!chatUser && <ListItemAvatar>
-												{avatar && <Avatar src={ApiService.getAttachmentFileUrl(avatar)} />}
-												{!avatar && <Avatar className={classes?.iconAvatar}>
-													{chat.type === "group" ? <PeopleIcon /> : <PersonIcon />}
-												</Avatar>}
-											</ListItemAvatar>}
+											</ListItemAvatar> }
+											{ !chatUser && <ListItemAvatar>
+												{ avatar && <Avatar src={ ApiService.getAttachmentFileUrl(avatar) } /> }
+												{ !avatar && <Avatar className={ classes?.iconAvatar }>
+													{ chat.type === "group" ? <PeopleIcon /> : <PersonIcon /> }
+												</Avatar> }
+											</ListItemAvatar> }
 											<ListItemText
 												className="flex flex-col justify-center"
-												primary={(
-													<Typography variant="body1" color="textPrimary" className={"capitalize font-bold"}>
-														{primaryText}
+												primary={ (
+													<Typography variant="body1" color="textPrimary" className={ "capitalize font-bold" }>
+														{ primaryText }
 													</Typography>
-												)}
-												secondary={(
+												) }
+												secondary={ (
 													<div className="w-full flex flex-row">
-														{Array.isArray(chat.typing) && <Typography variant="body2" color="primary" className="mx-0">
-															{chat.typing.length > 1 ? (chat.typing.length + " people are typing...") : (chat.typing.length === 1 ? (chat.typing[0].first_name + " is typing...") : "")}
-														</Typography>}
-														{(!Array.isArray(chat.typing) || chat.typing.length === 0) && <div className="w-full flex flex-row items-center">
+														{ Array.isArray(chat.typing) && <Typography variant="body2" color="primary" className="mx-0">
+															{ chat.typing.length > 1 ? (chat.typing.length + " people are typing...") : (chat.typing.length === 1 ? (chat.typing[0].first_name + " is typing...") : "") }
+														</Typography> }
+														{ (!Array.isArray(chat.typing) || chat.typing.length === 0) && <div className="w-full flex flex-row items-center">
 															<Typography variant="body2" color="textPrimary" className="font-bold mr-2">
-																{last_message_sender_name ? last_message_sender_name : ""}
+																{ last_message_sender_name ? last_message_sender_name : "" }
 															</Typography>
-															{!last_message_deleted && <Typography variant="body2" color="textSecondary" className="flex-initial truncate mr-2 font-normal" style={last_message_content ? {} : { color: theme.palette.disabled }}>
-																{last_message_content ? last_message_content : "No messages yet"}
-															</Typography>}
-															{last_message_deleted && <div className={"flex flex-row items-center flex-initial"} style={{ color: theme.palette.divider }}>
-																<Typography variant="body1" color="inherit" className={"flex-grow"}>
+															{ !last_message_deleted && <Typography variant="body2" color="textSecondary" className="flex-initial truncate mr-2 font-normal" style={ last_message_content ? {} : { color: theme.palette.disabled } }>
+																{ last_message_content ? last_message_content : "No messages yet" }
+															</Typography> }
+															{ last_message_deleted && <div className={ "flex flex-row items-center flex-initial" } style={ { color: theme.palette.divider } }>
+																<Typography variant="body1" color="inherit" className={ "flex-grow" }>
 																	Message deleted
 																</Typography>
-																<BlockIcon className={"mx-1 text-xs"} fontSize="small" />
-															</div>}
+																<BlockIcon className={ "mx-1 text-xs" } fontSize="small" />
+															</div> }
 
-															{(!last_message_deleted && chat.state && chat.state.last_message) && <div className={"flex flex-row items-center "} style={{ color: theme.palette.text.disabled }}>
-																{(chat.state.last_message.state === "pending" && (chat.state.last_message.sender ? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <ScheduleIcon className={"mx-1 text-xs"} fontSize="small" />}
-																{(chat.state.last_message.state === "sent" && chat.state.last_message.sender === auth.user._id) && <DoneIcon className={"mx-1 text-xs"} fontSize="small" />}
-																{((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && (chat.state.last_message.sender ? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={"mx-1 text-xs"} fontSize="small" />}
-																{((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && (chat.state.last_message.sender ? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small" />}
-															</div>}
-														</div>}
-														{(!Array.isArray(chat.typing) || chat.typing.length === 0) && <Typography variant="body2" color="secondary" className="mx-2">
-															{/*<DoneAllIcon fontSize="inherit" />*/}
-														</Typography>}
+															{ (!last_message_deleted && chat.state && chat.state.last_message) && <div className={ "flex flex-row items-center " } style={ { color: theme.palette.text.disabled } }>
+																{ (chat.state.last_message.state === "pending" && (chat.state.last_message.sender ? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <ScheduleIcon className={ "mx-1 text-xs" } fontSize="small" /> }
+																{ (chat.state.last_message.state === "sent" && chat.state.last_message.sender === auth.user._id) && <DoneIcon className={ "mx-1 text-xs" } fontSize="small" /> }
+																{ ((chat.state.last_message.state === "partially-received" || chat.state.last_message.state === "received") && (chat.state.last_message.sender ? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={ "mx-1 text-xs" } fontSize="small" /> }
+																{ ((chat.state.last_message.state === "partially-read" || chat.state.last_message.state === "read") && (chat.state.last_message.sender ? (chat.state.last_message.sender === auth.user._id || chat.state.last_message.sender._id === auth.user._id) : false)) && <DoneAllIcon className={ "mx-1 text-xs" } color={ "secondary" } fontSize="small" /> }
+															</div> }
+														</div> }
+														{ (!Array.isArray(chat.typing) || chat.typing.length === 0) && <Typography variant="body2" color="secondary" className="mx-2">
+															{/*<DoneAllIcon fontSize="inherit" />*/ }
+														</Typography> }
 													</div>
-												)}
+												) }
 											/>
-											{(chat.state && chat.state.incoming_unread > 0) && <ListItemSecondaryAction>
-												<Avatar className={"bg-transparent primary-text h-4 w-4 text-xs"}>
-													{chat.state.incoming_unread}
+											{ (chat.state && chat.state.incoming_unread > 0) && <ListItemSecondaryAction>
+												<Avatar className={ "bg-transparent primary-text h-4 w-4 text-xs" }>
+													{ chat.state.incoming_unread }
 												</Avatar>
-											</ListItemSecondaryAction>}
+											</ListItemSecondaryAction> }
 										</ListItem>
 									);
 								}
 
-							})}
+							}) }
 
-						</List>}
+						</List> }
 					</ScrollBars>
 				</Paper>
-				<AppBar position="absolute" color="secondary" className={classes?.chatsAppBar}>
+				<AppBar
+					position="relative"
+					color="secondary"
+					className={ "bottom-0 top-auto" }
+					sx={ {
+						backgroundColor: theme => theme.palette.secondary
+					} }
+				>
 					<Toolbar>
 						<IconButton
 							edge="start"
 							color="inherit"
 							aria-label="Refresh"
-							onClick={handleRefresh}
+							onClick={ handleRefresh }
 						>
 							<RefreshIcon />
 						</IconButton>
@@ -933,14 +938,14 @@ function Chat(props) {
 						<Fab
 							color="primary"
 							aria-label="add"
-							className={classes?.fabButton}
-							onClick={() => setContactsDrawerOpen(!contactsDrawerOpen)}
+							className={ classes?.fabButton }
+							onClick={ () => setContactsDrawerOpen(!contactsDrawerOpen) }
 						>
-							{!contactsDrawerOpen && <ChatBubbleOutlineIcon />}
-							{contactsDrawerOpen && <CloseIcon />}
+							{ !contactsDrawerOpen && <ChatBubbleOutlineIcon /> }
+							{ contactsDrawerOpen && <CloseIcon /> }
 						</Fab>
 
-						<div className={classes?.grow} />
+						<div className={ classes?.grow } />
 
 						{/*<IconButton edge="end" color="inherit">
 									<MoreIcon />
@@ -956,15 +961,16 @@ function Chat(props) {
 								</IconButton>*/}
 					</Toolbar>
 				</AppBar>
-			</GridItem>}
+			</GridItem> }
 
-			{active_conversation && <Paper square elevation={0} className={classes?.chatPaperWrapper}>
-				<GridItem md={12} className="h-full p-0 flex flex-col relative">
-					{!["audio", "file", "video", "image"].includes(draft.type) && <ScrollBars
-						className={"flex-grow " + classes?.chatScrollWrapper}
-						style={{ flex: 10, backgroundColor: theme.palette.background.default }}
-						scrollToBottomOnChildChange={false}
-						onYReachStart={(element) => {
+			{ active_conversation && <Paper square elevation={ 0 } className={ "relative flex-grow h-full overflow-hidden" }>
+				<GridItem md={ 12 } className="h-full p-0 flex flex-col relative">
+					{ !["audio", "file", "video", "image"].includes(draft.type) && <ScrollBars
+						className={ "flex-grow " + classes?.chatScrollWrapper }
+						className={ "overflow-x-hidden overflow-y-scroll h-4/5  pb-8" }
+						style={ { flex: 10, backgroundColor: theme.palette.background.default } }
+						scrollToBottomOnChildChange={ false }
+						onYReachStart={ (element) => {
 							if (element) {
 								if (active_conversation.state) {
 									if (!active_conversation.state.loading_messages && active_conversation.state.pages > 0 && active_conversation.state.page > 0 && active_conversation.state.page < active_conversation.state.pages) {
@@ -975,8 +981,8 @@ function Chat(props) {
 									}
 								}
 							}
-						}}
-						onYReachEnd={(element) => {
+						} }
+						onYReachEnd={ (element) => {
 							if (element) {
 								if (active_conversation.state) {
 									if (!active_conversation.state.loading_messages && active_conversation.state.pages > 0 && active_conversation.state.page > 1) {
@@ -989,12 +995,12 @@ function Chat(props) {
 								//
 							}
 
-						}}
-						ref={messagesWrapperRef}
+						} }
+						ref={ messagesWrapperRef }
 					>
 						<GridContainer className="px-4 relative">
-							{active_conversation.state && active_conversation.state.loading_messages && <div
-								style={{
+							{ active_conversation.state && active_conversation.state.loading_messages && <div
+								style={ {
 									position: "absolute",
 									left: "50%",
 									WebkitTransform: "translateX(-50%)",
@@ -1005,11 +1011,11 @@ function Chat(props) {
 									width: theme.spacing(3),
 									height: theme.spacing(3),
 									borderRadius: theme.spacing(1.5)
-								}}
+								} }
 							>
 
-							</div>}
-							{active_conversation_messages.map((activeChatMessage, cursor) => {
+							</div> }
+							{ active_conversation_messages.map((activeChatMessage, cursor) => {
 								let message_deleted = false;
 								let show_message = true;
 								if (active_conversation_messages[cursor]._id) {
@@ -1036,10 +1042,10 @@ function Chat(props) {
 									}
 									return (
 										<GridItem
-											xs={12}
-											className={"flex p-0 py-1 " + (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id ? "flex-row-reverse" : "flex-row")}
-											id={"message-" + activeChatMessage._id}
-											key={"conversation-" + active_conversation._id + "-message-" + cursor}
+											xs={ 12 }
+											className={ "flex p-0 py-1 " + (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id ? "flex-row-reverse" : "flex-row") }
+											id={ "message-" + activeChatMessage._id }
+											key={ "conversation-" + active_conversation._id + "-message-" + cursor }
 										>
 											{/* activeChatMessage.sender.avatar && <Avatar className={classes?.contactAvatar} src={ApiService.getAttachmentFileUrl(activeChatMessage.sender.avatar)} />}
 											{!activeChatMessage.sender.avatar && <Avatar className={classes?.contactAvatar}>
@@ -1047,144 +1053,144 @@ function Chat(props) {
 											</Avatar> */}
 
 											<ViewPortSensor
-												className={"p-2 mx-4  flex flex-col px-4 " + (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id ? ("bg-green-200 " + classes?.chatBubbleLocal) : ("bg-white " + classes?.chatBubbleExternal))}
-												onViewportVisibilityChange={(inViewport) => {
-													if (inViewport && sockets.default) {
+												className={ "p-2 mx-4  flex flex-col px-4 " + (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id ? ("bg-green-200 " + classes?.chatBubbleLocal) : ("bg-white " + classes?.chatBubbleExternal)) }
+												onViewportVisibilityChange={ (inViewport) => {
+													if (inViewport) {
 														if (activeChatMessage.sender._id !== auth.user._id && activeChatMessage.sender !== auth.user._id) {
 															if (activeChatMessage.state === "sent") {
-																sockets.default.emit("mark-message-as-received", { message: activeChatMessage, user: auth.user });
+																Sockets.emit("mark-message-as-received", { message: activeChatMessage, user: auth.user });
 															}
 															else if ((activeChatMessage.state === "received" || activeChatMessage.state === "partially-received")) {
-																sockets.default.emit("mark-message-as-read", { message: activeChatMessage, user: auth.user });
+																Sockets.emit("mark-message-as-read", { message: activeChatMessage, user: auth.user });
 															}
 														}
 													}
 
-												}}
+												} }
 											>
-												{!message_deleted && <div className={active_conversation.type !== "individual" ? "flex flex-row w-full items-center" : "flex flex-row-reverse w-full items-center"}>
-													{(active_conversation.type !== "individual" && JSON.isJSON(activeChatMessage.sender)) && <Typography variant="body1" className={"flex-grow text-gray-500 font-bold"}>
-														{activeChatMessage.sender.first_name + " " + activeChatMessage.sender.last_name}
-													</Typography>}
-													<IconButton aria-label="Toggle Menu" onClick={handleContextOpen("message", activeChatMessage)} className={""} size="small">
+												{ !message_deleted && <div className={ active_conversation.type !== "individual" ? "flex flex-row w-full items-center" : "flex flex-row-reverse w-full items-center" }>
+													{ (active_conversation.type !== "individual" && JSON.isJSON(activeChatMessage.sender)) && <Typography variant="body1" className={ "flex-grow text-gray-500 font-bold" }>
+														{ activeChatMessage.sender.first_name + " " + activeChatMessage.sender.last_name }
+													</Typography> }
+													<IconButton aria-label="Toggle Menu" onClick={ handleContextOpen("message", activeChatMessage) } className={ "" } size="small">
 														<ExpandMoreIcon fontSize="inherit" />
 													</IconButton>
-												</div>}
-												{(!message_deleted && ["audio", "file", "video", "image"].includes(activeChatMessage.type) && Array.isArray(activeChatMessage.attachments)) && <div className={"flex flex-col items-center cursor-pointer mb-2"}>
-													{activeChatMessage.attachments.map((attachment, cursor) => (
-														<div className={"p-2 w-11/12 border border-gray-400 rounded"} key={"attachment-" + cursor}>
-															{activeChatMessage.type === "image" && <LazyImage
-																className={"w-full h-auto"}
-																src={ApiService.getAttachmentFileUrl(attachment)}
-																alt={attachment.name}
-																onClick={e => {
+												</div> }
+												{ (!message_deleted && ["audio", "file", "video", "image"].includes(activeChatMessage.type) && Array.isArray(activeChatMessage.attachments)) && <div className={ "flex flex-col items-center cursor-pointer mb-2" }>
+													{ activeChatMessage.attachments.map((attachment, cursor) => (
+														<div className={ "p-2 w-11/12 border border-gray-400 rounded" } key={ "attachment-" + cursor }>
+															{ activeChatMessage.type === "image" && <LazyImage
+																className={ "w-full h-auto" }
+																src={ ApiService.getAttachmentFileUrl(attachment) }
+																alt={ attachment.name }
+																onClick={ e => {
 																	e.preventDefault();
 																	let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
 																	win.focus();
-																}}
-															/>}
-															{activeChatMessage.type === "audio" && <div
-																className={"w-full h-auto flex flex-row items-center"}
-																onClick={e => {
+																} }
+															/> }
+															{ activeChatMessage.type === "audio" && <div
+																className={ "w-full h-auto flex flex-row items-center" }
+																onClick={ e => {
 																	e.preventDefault();
 																	let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
 																	win.focus();
-																}}
+																} }
 															>
-																<AudiotrackOutlinedIcon className={"text-2xl"} />
-																<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"}>
-																	{attachment.name}
+																<AudiotrackOutlinedIcon className={ "text-2xl" } />
+																<Typography variant="body1" color="textPrimary" className={ "flex-grow truncate" }>
+																	{ attachment.name }
 																</Typography>
-															</div>}
-															{activeChatMessage.type === "video" && <div
-																className={"w-full h-auto flex flex-row items-center"}
-																onClick={e => {
+															</div> }
+															{ activeChatMessage.type === "video" && <div
+																className={ "w-full h-auto flex flex-row items-center" }
+																onClick={ e => {
 																	e.preventDefault();
 																	let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
 																	win.focus();
-																}}
+																} }
 															>
-																<MovieOutlinedIcon className={"text-2xl"} />
-																<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"} >
-																	{attachment.name}
+																<MovieOutlinedIcon className={ "text-2xl" } />
+																<Typography variant="body1" color="textPrimary" className={ "flex-grow truncate" } >
+																	{ attachment.name }
 																</Typography>
-															</div>}
-															{activeChatMessage.type === "file" && <div
-																className={"w-full h-auto flex flex-row items-center"}
-																onClick={e => {
+															</div> }
+															{ activeChatMessage.type === "file" && <div
+																className={ "w-full h-auto flex flex-row items-center" }
+																onClick={ e => {
 																	e.preventDefault();
 																	let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank");
 																	win.focus();
-																}}
+																} }
 															>
-																<AttachFileIcon className={"text-2xl"} />
-																<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"} >
-																	{attachment.name}
+																<AttachFileIcon className={ "text-2xl" } />
+																<Typography variant="body1" color="textPrimary" className={ "flex-grow truncate" } >
+																	{ attachment.name }
 																</Typography>
-															</div>}
+															</div> }
 
 														</div>
-													))}
-												</div>}
-												{!message_deleted && <Typography variant="body1" color="textPrimary" className={"flex-grow"} paragraph>
-													{activeChatMessage.content}
-												</Typography>}
+													)) }
+												</div> }
+												{ !message_deleted && <Typography variant="body1" color="textPrimary" className={ "flex-grow" } paragraph>
+													{ activeChatMessage.content }
+												</Typography> }
 
-												{message_deleted && <div className={"flex flex-row items-center w-full"} style={{ color: theme.palette.divider }}>
-													<Typography variant="body1" color="inherit" className={"flex-grow"}>
+												{ message_deleted && <div className={ "flex flex-row items-center w-full" } style={ { color: theme.palette.divider } }>
+													<Typography variant="body1" color="inherit" className={ "flex-grow" }>
 														Message deleted
 													</Typography>
-													<BlockIcon className={"mx-2"} fontSize="small" />
-												</div>}
+													<BlockIcon className={ "mx-2" } fontSize="small" />
+												</div> }
 
-												{!message_deleted && <div className={"flex flex-row items-center text-sm w-full"} style={{ color: theme.palette.text.disabled }}>
-													{activeChatMessage.created_on && <Typography className={"text-xs flex-grow"}>
-														{activeChatMessage.created_on instanceof Date ? activeChatMessage.created_on.toLocaleString() : new Date(activeChatMessage.created_on).toLocaleString()}
-													</Typography>}
-													{(activeChatMessage.state === "pending" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <ScheduleIcon className={"mx-2 text-xs"} fontSize="small" />}
-													{(activeChatMessage.state === "sent" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneIcon className={"mx-2 text-xs"} fontSize="small" />}
-													{((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2 text-xs"} fontSize="small" />}
-													{((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={"mx-2 text-xs"} color={"secondary"} fontSize="small" />}
-												</div>}
+												{ !message_deleted && <div className={ "flex flex-row items-center text-sm w-full" } style={ { color: theme.palette.text.disabled } }>
+													{ activeChatMessage.created_on && <Typography className={ "text-xs flex-grow" }>
+														{ activeChatMessage.created_on instanceof Date ? activeChatMessage.created_on.toLocaleString() : new Date(activeChatMessage.created_on).toLocaleString() }
+													</Typography> }
+													{ (activeChatMessage.state === "pending" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <ScheduleIcon className={ "mx-2 text-xs" } fontSize="small" /> }
+													{ (activeChatMessage.state === "sent" && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneIcon className={ "mx-2 text-xs" } fontSize="small" /> }
+													{ ((activeChatMessage.state === "partially-received" || activeChatMessage.state === "received") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={ "mx-2 text-xs" } fontSize="small" /> }
+													{ ((activeChatMessage.state === "partially-read" || activeChatMessage.state === "read") && (activeChatMessage.sender._id === auth.user._id || activeChatMessage.sender === auth.user._id)) && <DoneAllIcon className={ "mx-2 text-xs" } color={ "secondary" } fontSize="small" /> }
+												</div> }
 											</ViewPortSensor>
 										</GridItem>
 									);
 								}
 
-							})}
+							}) }
 
-							{(Array.isArray(active_conversation.typing) ? (active_conversation.typing.length > 0) : false) && <GridItem xs={12} className={"flex p-0 py-1 flex-row"} >
-								<div className={classes?.avatar}> </div>
-								<div className={"p-2 mx-4  flex flex-col px-4  rounded-full"}>
-									<div className={classes?.typing_loader}></div>
+							{ (Array.isArray(active_conversation.typing) ? (active_conversation.typing.length > 0) : false) && <GridItem xs={ 12 } className={ "flex p-0 py-1 flex-row" } >
+								<div className={ classes?.avatar }> </div>
+								<div className={ "p-2 mx-4  flex flex-col px-4  rounded-full" }>
+									<div className={ classes?.typing_loader }></div>
 								</div>
-							</GridItem>}
-							<div ref={conversationBottomRef} />
+							</GridItem> }
+							<div ref={ conversationBottomRef } />
 						</GridContainer>
-					</ScrollBars>}
+					</ScrollBars> }
 
 
 
-					{(auth.user.isAdmin || (contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.owner._id) || contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.recipients[0])) || active_conversation.type !== "individual") && <GridContainer
-						className={["audio", "file", "video", "image"].includes(draft.type) ? "flex-grow flex flex-col" : classes?.chatInputsWrapper}
-						style={{ backgroundColor: theme.palette.background.paper, top: ["audio", "file", "video", "image"].includes(draft.type) ? 0 : "auto" }}
+					{ (auth.user.isAdmin || (contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.owner._id) || contactactable_contacts_ids.includes(active_conversation.owner) || contactactable_contacts_ids.includes(active_conversation.recipients[0])) || active_conversation.type !== "individual") && <GridContainer
+						className={ ["audio", "file", "video", "image"].includes(draft.type) ? "flex-grow flex flex-col" : classes?.chatInputsWrapper }
+						style={ { backgroundColor: theme.palette.background.paper, top: ["audio", "file", "video", "image"].includes(draft.type) ? 0 : "auto" } }
 					>
-						{draft.reply_for && <GridItem xs={12} className={"flex flex-row items-center bg-green-200"}>
-							<div className={"p-2 mx-4"}>
-								<Typography variant="body1" color="textPrimary" className={"font-bold"}>
-									{draft.reply_for.sender.first_name + " " + draft.reply_for.sender.last_name}
+						{ draft.reply_for && <GridItem xs={ 12 } className={ "flex flex-row items-center bg-green-200" }>
+							<div className={ "p-2 mx-4" }>
+								<Typography variant="body1" color="textPrimary" className={ "font-bold" }>
+									{ draft.reply_for.sender.first_name + " " + draft.reply_for.sender.last_name }
 								</Typography>
-								<Typography variant="body1" color="textPrimary" className={""} >
-									{draft.reply_for.content}
+								<Typography variant="body1" color="textPrimary" className={ "" } >
+									{ draft.reply_for.content }
 								</Typography>
 							</div>
-						</GridItem>}
+						</GridItem> }
 
-						{["audio", "file", "video", "image"].includes(draft.type) && <GridItem xs={12} className={"flex flex-grow flex-row items-center bg-grey-200"}>
+						{ ["audio", "file", "video", "image"].includes(draft.type) && <GridItem xs={ 12 } className={ "flex flex-grow flex-row items-center bg-grey-200" }>
 							<FileInput
 								variant="outlined"
-								value={(["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments > 0) : false)) ? draft.attachments[0] : undefined}
-								onChange={(newValue) => {
+								value={ (["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments > 0) : false)) ? draft.attachments[0] : undefined }
+								onChange={ (newValue) => {
 									setDraft(currentDraft => {
 										try {
 											let newDraft = JSON.parse(JSON.stringify(currentDraft));
@@ -1199,47 +1205,47 @@ function Chat(props) {
 											return currentDraft;
 										}
 									})
-								}}
-								filesLimit={1}
-								acceptedFiles={draft.type === "file" ? ["image/*", "video/*", "audio/*", "application/*"] : [(draft.type + "/*")]}
+								} }
+								filesLimit={ 1 }
+								acceptedFiles={ draft.type === "file" ? ["image/*", "video/*", "audio/*", "application/*"] : [(draft.type + "/*")] }
 							/>
-						</GridItem>}
+						</GridItem> }
 
-						{attachmentDialOpen && <GridItem xs={12} className={"flex flex-row items-center justify-evenly bg-grey-200"}>
-							{attachmentActions.map((action) => (
+						{ attachmentDialOpen && <GridItem xs={ 12 } className={ "flex flex-row items-center justify-evenly bg-grey-200" }>
+							{ attachmentActions.map((action) => (
 								<Fab
-									key={action.name}
-									color={action.color}
-									aria-label={"Attach " + action.label}
-									onClick={() => {
+									key={ action.name }
+									color={ action.color }
+									aria-label={ "Attach " + action.label }
+									onClick={ () => {
 										setAttachmentDialOpen(false);
 										handleOnChangeDraftType(action.name);
-									}}
-									style={{ background: action.color, color: theme.palette.background.paper }}
-									className={"mx-2"}
+									} }
+									style={ { background: action.color, color: theme.palette.background.paper } }
+									className={ "mx-2" }
 								>
-									{action.icon}
+									{ action.icon }
 								</Fab>
-							))}
-						</GridItem>}
+							)) }
+						</GridItem> }
 
-						<GridItem xs={12} className={"flex flex-row items-center"}>
+						<GridItem xs={ 12 } className={ "flex flex-row items-center" }>
 
 							<IconButton
-								onClick={(event) => {
+								onClick={ (event) => {
 									setAttachmentDialOpen(!attachmentDialOpen)
-								}}
-								aria-label={attachmentDialOpen ? ((["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments > 0) : false)) ? "Remove Attachments" : "Dismiss File Attachment") : "Close File Attachment"}
-								className={"mx-2"}
+								} }
+								aria-label={ attachmentDialOpen ? ((["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments > 0) : false)) ? "Remove Attachments" : "Dismiss File Attachment") : "Close File Attachment" }
+								className={ "mx-2" }
 							>
-								{!attachmentDialOpen ? <AttachFileIcon color="inherit" /> : ((["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments > 0) : false)) ? <DeleteOutlinedIcon color="inherit" /> : <CloseIcon color="inherit" />)}
+								{ !attachmentDialOpen ? <AttachFileIcon color="inherit" /> : ((["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? (draft.attachments > 0) : false)) ? <DeleteOutlinedIcon color="inherit" /> : <CloseIcon color="inherit" />) }
 							</IconButton>
-							<div className={"flex-grow rounded-full mx-8"}>
+							<div className={ "flex-grow rounded-full mx-8" }>
 								<TextInput
-									variant={["audio", "file", "video", "image"].includes(draft.type) ? "standard" : "outlined"}
+									variant={ ["audio", "file", "video", "image"].includes(draft.type) ? "standard" : "outlined" }
 									multiline
-									rows={2}
-									onBlur={(new_value, event) => {
+									rows={ 2 }
+									onBlur={ (new_value, event) => {
 										if (active_conversation._id && !String.isEmpty(new_value)) {
 											setDraft(currentDraft => {
 												try {
@@ -1260,40 +1266,40 @@ function Chat(props) {
 											});
 
 										}
-										if (active_conversation._id && sockets.default) {
-											sockets.default.emit("stopped-typing-message", { conversation: active_conversation._id, user: auth.user });
+										if (active_conversation._id) {
+											Sockets.emit("stopped-typing-message", { conversation: active_conversation._id, user: auth.user });
 										}
-									}}
-									onFocus={() => {
-										if (active_conversation._id && sockets.default) {
-											sockets.default.emit("started-typing-message", { conversation: active_conversation._id, user: auth.user });
+									} }
+									onFocus={ () => {
+										if (active_conversation._id) {
+											Sockets.emit("started-typing-message", { conversation: active_conversation._id, user: auth.user });
 										}
-									}}
-									defaultValue={active_conversation._id === draft.conversation ? draft.content : undefined}
-									onChange={(new_value) => {
+									} }
+									defaultValue={ active_conversation._id === draft.conversation ? draft.content : undefined }
+									onChange={ (new_value) => {
 
-									}}
+									} }
 									placeholder="Type your message here..."
-									inputRef={textInputRef}
-									inputProps={{
+									inputRef={ textInputRef }
+									inputProps={ {
 										onKeyDown: handleMessageInputKeyDown(active_conversation),
-									}}
+									} }
 								/>
 							</div>
 							{/*<IconButton onClick={(event)=>handleOnSendMessage()} aria-label="send" className={"primary-text"} >
 															<SendIcon color="inherit" />
 														</IconButton>*/}
 						</GridItem>
-					</GridContainer>}
+					</GridContainer> }
 
 				</GridItem>
-			</Paper>}
+			</Paper> }
 
 
 			<Menu
 				keepMounted
-				open={contextMenu.mouseY !== null}
-				onClose={handleContextClose}
+				open={ contextMenu.mouseY !== null }
+				onClose={ handleContextClose }
 				anchorReference="anchorPosition"
 				anchorPosition={
 					contextMenu.mouseY !== null && contextMenu.mouseX !== null
@@ -1301,30 +1307,30 @@ function Chat(props) {
 						: undefined
 				}
 			>
-				{contextMenu.type === "conversation" && <MenuItem onClick={(event) => {
+				{ contextMenu.type === "conversation" && <MenuItem onClick={ (event) => {
 					//setMessagingCache("active_conversation", contextMenu.entry);
 					setActiveConversation(contextMenu.entry);
 					handleContextClose(event);
-				}}>Open Conversation</MenuItem>}
-				{contextMenu.type === "conversation" && <MenuItem
-					onClick={(event) => {
+				} }>Open Conversation</MenuItem> }
+				{ contextMenu.type === "conversation" && <MenuItem
+					onClick={ (event) => {
 						handleArchiveConversation(contextMenu.entry);
 						handleContextClose(event);
-					}}
+					} }
 				>
 					Archive Conversation
-				</MenuItem>}
-				{contextMenu.type === "conversation" && <MenuItem
-					onClick={(event) => {
+				</MenuItem> }
+				{ contextMenu.type === "conversation" && <MenuItem
+					onClick={ (event) => {
 						handleDeleteConversation(contextMenu.entry);
 						handleContextClose(event);
-					}}
+					} }
 				>
 					Delete Conversation
-				</MenuItem>}
+				</MenuItem> }
 
-				{(contextMenu.type === "message" && (contextMenu.entry.sender._id !== auth.user._id && contextMenu.entry.sender !== auth.user._id)) && <MenuItem
-					onClick={(event) => {
+				{ (contextMenu.type === "message" && (contextMenu.entry.sender._id !== auth.user._id && contextMenu.entry.sender !== auth.user._id)) && <MenuItem
+					onClick={ (event) => {
 						handleContextClose(event);
 						setDraft({
 							is_reply: true,
@@ -1339,41 +1345,37 @@ function Chat(props) {
 						}
 
 
-					}}
+					} }
 				>
 					Reply Message
-				</MenuItem>}
-				{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem
-					onClick={(event) => {
+				</MenuItem> }
+				{ (contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem
+					onClick={ (event) => {
 						handleContextClose(event);
 						updateMessage({ ...contextMenu.entry, state: "deleted-for-sender", deletions: (Array.isArray(contextMenu.entry.deletions) ? contextMenu.entry.deletions.concat([auth.user._id]) : [auth.user._id]) });
-						if (sockets.default) {
-							sockets.default.emit("delete-message-for-user", { message: contextMenu.entry, user: auth.user });
-						}
-					}}
+						Sockets.emit("delete-message-for-user", { message: contextMenu.entry, user: auth.user });
+					} }
 				>
 					Delete For Me
-				</MenuItem>}
+				</MenuItem> }
 
-				{(contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem
-					onClick={(event) => {
+				{ (contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user._id || contextMenu.entry.sender === auth.user._id)) && <MenuItem
+					onClick={ (event) => {
 						handleContextClose(event);
 
 						updateMessage({ ...contextMenu.entry, state: "deleted-for-all", deletions: active_conversation.recipients.concat([active_conversation.owner]) });
-						if (sockets.default) {
-							sockets.default.emit("delete-message-for-all", { message: contextMenu.entry, user: auth.user });
-						}
-					}}
+						Sockets.emit("delete-message-for-all", { message: contextMenu.entry, user: auth.user });
+					} }
 				>
 					Delete For All
-				</MenuItem>}
+				</MenuItem> }
 			</Menu>
 
-			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
-				<Alert onClose={() => setError(false)} severity="error">
-					{error}
+			{ error && <Snackbar open={ Boolean(error) } autoHideDuration={ 10000 } onClose={ () => setError(false) }>
+				<Alert onClose={ () => setError(false) } severity="error">
+					{ error }
 				</Alert>
-			</Snackbar>}
+			</Snackbar> }
 
 		</Paper>
 	);

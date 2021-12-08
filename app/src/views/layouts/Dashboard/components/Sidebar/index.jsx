@@ -20,11 +20,11 @@ import classNames from "classnames";
 import ScrollBars from "components/ScrollBars";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-//Redux imports
+import Box from '@mui/material/Box';
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
 import compose from "recompose/compose";
-
+import { width as drawerWidth } from "config/ui/drawer";
 import { logout } from "state/actions/auth";
 import { UtilitiesHelper } from "hoc/Helpers";
 import { withGlobals } from "contexts/Globals";
@@ -33,7 +33,7 @@ import { withGlobals } from "contexts/Globals";
 
 
 const AdapterLink = React.forwardRef((props, ref) => (
-	<NavLink innerRef={ref} {...props} />
+	<NavLink innerRef={ ref } { ...props } />
 ));
 
 class Sidebar extends Component {
@@ -42,7 +42,7 @@ class Sidebar extends Component {
 		userPresenceMenuOpen: false,
 	};
 
-	constructor(props) {
+	constructor (props) {
 		super(props);
 		this.onOpenUserPresenceMenu = this.onOpenUserPresenceMenu.bind(this);
 		this.onCloseUserPresenceMenu = this.onCloseUserPresenceMenu.bind(this);
@@ -80,7 +80,7 @@ class Sidebar extends Component {
 		});
 	};
 
-	applyItemsRestrictions() {
+	applyItemsRestrictions () {
 		const { auth, items } = this.props;
 		let items_with_restrictions = [];
 		//iterate
@@ -126,164 +126,51 @@ class Sidebar extends Component {
 		});
 		return items_with_restrictions;
 	}
-	render() {
+	render () {
 		const { className, items, auth, onClickNavLink } = this.props;
 
 		return (
-			<nav className={className}>
-				{/*<Toolbar className={""}>
-					<div className={""}>
-						<Link className={""} to="/">
-							<LazyImage
-								alt={app.name + " logo"}
-								className={""}
-								src={app.logo}
-							/>
-						</Link>
-					</div>
-				</Toolbar>*/}
-				{/*<div className={""}>
-					<div className={""}>
-						<Link className={""} to="/">
-							<LazyImage
-								alt={app.name + " logo"}
-								className={""}
-								src={app.logo}
-							/>
-						</Link>
-					</div>
-					<div className={""}>
-						{auth.user.avatar ? (
-							<Avatar alt="Avatar" className={""}>
-								<LazyImage
-									src={ApiService.getAttachmentFileUrl(
-										auth.user.avatar
-									)}
-								/>
-							</Avatar>
-						) : (
-							<Avatar className={""}>
-								<UserIcon />
-							</Avatar>
-						)}
+			<Box
+				className={ `${ className ? className : "" }  flex flex-col h-full ` }
+				sx={ {
+					width: drawerWidth
+				} }
+				component="nav"
+			>
 
-						{auth.isAuthenticated && (
-							<Button
-								className={""}
-								variant="text"
-								onClick={this.onOpenUserPresenceMenu}
-								textCase="wordcase"
-							>
-								{Object.size(auth.user) > 0 && (
-									<Status
-										color={
-											auth.user.presence === "online"
-												? "#00796b"
-												: auth.user.presence === "away"
-												? "#b88d00"
-												: "#5C5C5C"
-										}
-										text={
-											auth.user.first_name +
-											" " +
-											auth.user.last_name
-										}
-									/>
-								)}
-							</Button>
-						)}
-						<Menu
-							id="user-presence-menu"
-							anchorEl={this.state.userPresenceMenuAnchorEl}
-							open={this.state.userPresenceMenuOpen}
-							onClose={this.onCloseUserPresenceMenu}
-							TransitionComponent={Fade}
-							keepMounted
-						>
-							<MenuItem
-								onClick={this.onChangeUserPresenceMenu(
-									auth.user
-										? auth.user.presence === "online"
-											? "away"
-											: "online"
-										: "online"
-								)}
-							>
-								{auth.user
-									? auth.user.presence === "online"
-										? "Set to away"
-										: "Set to online"
-									: "Set to online"}
-							</MenuItem>
-							{["online", "away"].includes(
-								auth.user.presence
-							) && (
-								<MenuItem
-									onClick={this.onChangeUserPresenceMenu(
-										"offline"
-									)}
-								>
-									Set to offline
-								</MenuItem>
-							)}
-							<MenuItem>
-								<Link
-									to={"/account".toUriWithDashboardPrefix()}
-									
-								>
-									{" "}
-									My account{" "}
-								</Link>{" "}
-							</MenuItem>
-							<MenuItem>Logout</MenuItem>
-						</Menu>
-						{auth.isAuthenticated && (
-							<Typography
-								className={""}
-								variant="body2"
-							>
-								{auth.user ? auth.user.email_address : ""}
-							</Typography>
-						)}
-						{auth.isAuthenticated && (
-							<Typography
-								className={""}
-								variant="caption"
-							>
-								{auth.user ? auth.user.role : ""}
-							</Typography>
-						)}
-					</div>
-				</div>*/}
-				<ScrollBars className={""}>
-					<List component="div" disablePadding className="px-0">
-						{this.applyItemsRestrictions().map((item_link, index) =>
+				<ScrollBars className={ "overflow-x-hidden overflow-y-scroll" }>
+					<List
+						component="div"
+						disablePadding
+						className="px-0"
+					>
+						{ this.applyItemsRestrictions().map((item_link, index) =>
 							item_link.section ? (
-								<div key={"drawer_section_" + index}>
+								<div key={ "drawer_section_" + index }>
 									<List
 										component="div"
 										disablePadding
 										subheader={
 											<ListSubheader
-												className={""}
+												className={ "" }
 												disableSticky
 											>
-												{item_link.text}
+												{ item_link.text }
 											</ListSubheader>
 										}
 									>
-										{item_link.links.map(
+										{ item_link.links.map(
 											(link_obj, link_index) => (
 												<ListItem
-													activeClassName={"activeListItemCSS"}
-													className={""}
-													component={AdapterLink}
-													to={link_obj.route}
-													onClick={(event) => {
+													activeClassName={ "primary inverse-text" }
+													className={ "" }
+													component={ AdapterLink }
+													to={ link_obj.route }
+													onClick={ (event) => {
 														if (Function.isFunction(onClickNavLink)) {
 															onClickNavLink(link_obj);
 														}
-													}}
+													} }
 													key={
 														"drawer_item_" +
 														index +
@@ -291,19 +178,18 @@ class Sidebar extends Component {
 														link_index
 													}
 												>
-													{link_obj.icon ? (
+													{ link_obj.icon ? (
 														<ListItemIcon
-															className={classNames(
+															className={ classNames(
 																{
 																	[link_obj.color
 																		? link_obj.color +
 																		"_text"
 																		: ""]: true,
 																}
-															)}
+															) }
 														>
-															{typeof link_obj.icon ===
-																"string" ? (
+															{ typeof link_obj.icon === "string" ? (
 																<Icon>
 																	{
 																		link_obj.icon
@@ -311,14 +197,14 @@ class Sidebar extends Component {
 																</Icon>
 															) : (
 																link_obj.icon
-															)}
+															) }
 														</ListItemIcon>
 													) : (
 														""
-													)}
-													{link_obj.text ? (
+													) }
+													{ link_obj.text ? (
 														<ListItemText
-															primaryTypographyProps={{
+															primaryTypographyProps={ {
 																className: classNames(
 																	{
 																		[link_obj.color
@@ -327,72 +213,72 @@ class Sidebar extends Component {
 																			: ""]: true,
 																	}
 																),
-															}}
+															} }
 															primary={
 																link_obj.text
 															}
 														/>
 													) : (
 														""
-													)}
+													) }
 												</ListItem>
 											)
-										)}
+										) }
 									</List>
 									<Divider />
 								</div>
 							) : (
 								<ListItem
-									activeClassName={classNames({ "activeListItemCSS": true })}
-									className={""}
-									component={AdapterLink}
-									onClick={(event) => {
+									activeClassName={ classNames({ "activeListItemCSS": true }) }
+									className={ "" }
+									component={ AdapterLink }
+									onClick={ (event) => {
 										if (Function.isFunction(onClickNavLink)) {
 											onClickNavLink(item_link);
 										}
-									}}
-									to={item_link.route}
-									key={"drawer_item_" + index}
+									} }
+									to={ item_link.route }
+									key={ "drawer_item_" + index }
 								>
-									{item_link.icon ? (
+									{ item_link.icon ? (
 										<ListItemIcon
-											className={classNames({
+											className={ classNames({
 												[item_link.color
 													? item_link.color + "_text"
 													: ""]: true,
-											})}
+											}) }
 										>
-											{typeof item_link.icon ===
+											{ typeof item_link.icon ===
 												"string" ? (
-												<Icon>{item_link.icon}</Icon>
+												<Icon>{ item_link.icon }</Icon>
 											) : (
 												item_link.icon
-											)}
+											) }
 										</ListItemIcon>
 									) : (
 										""
-									)}
-									{item_link.text ? (
+									) }
+									{ item_link.text ? (
 										<ListItemText
-											primaryTypographyProps={{
+											primaryTypographyProps={ {
 												className: classNames({
 													[item_link.color
 														? item_link.color +
 														"_text"
 														: ""]: true,
 												}),
-											}}
-											primary={item_link.text}
+											} }
+											primary={ item_link.text }
 										/>
 									) : (
 										""
-									)}
+									) }
 								</ListItem>
 							)
-						)}
+						) }
 					</List>
 				</ScrollBars>
-			</nav>
+			</Box>
 		);
 	}
 }

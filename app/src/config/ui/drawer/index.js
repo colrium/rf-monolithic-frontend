@@ -370,4 +370,4 @@ export const items = [
 	},*/
 ];
 
-export const width = 240;
+export const width = 320;
