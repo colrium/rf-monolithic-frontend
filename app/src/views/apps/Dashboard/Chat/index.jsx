@@ -33,8 +33,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import BlockIcon from '@mui/icons-material/Block';
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
-import ScheduleIcon from '@mui/icons-material/Schedule';
-import { createStyles, makeStyles } from '@mui/styles';
+import ScheduleIcon from "@mui/icons-material/Schedule";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -679,7 +678,7 @@ function Chat (props) {
 			{ !active_conversation && <GridItem md={ 12 } className={ "flex flex-col relative min-h-full p-0" }>
 				<Paper elevation={ 0 } square className={ classes?.paper }>
 					<ScrollBars
-						className={ "overflow-x-hidden overflow-y-scroll h-screen pb-16" }
+						className={ "overflow-x-hidden overflow-y-scroll  pb-16" }
 						onYReachStart={ (event) => {
 							//
 						} }
@@ -816,10 +815,13 @@ function Chat (props) {
 
 										}
 										else {
-
-											chatUser = chat.started_by;
-											primaryText = chat.started_by.first_name + " " + chat.started_by.last_name;
-											avatar = chat.started_by.avatar;
+											if (chat.started_by){
+												chatUser = chat.started_by;
+												primaryText = chat.started_by?.first_name + " " + chat.started_by?.last_name;
+												avatar = chat.started_by?.avatar;
+											}
+											
+											
 										}
 									}
 									else if (chat.type == "group") {
@@ -963,7 +965,7 @@ function Chat (props) {
 				</AppBar>
 			</GridItem> }
 
-			{ active_conversation && <Paper square elevation={ 0 } className={ "relative flex-grow h-full overflow-hidden" }>
+			{ active_conversation && <Paper square elevation={ 0 } className={ "relative flex-grow h-screen overflow-hidden" }>
 				<GridItem md={ 12 } className="h-full p-0 flex flex-col relative">
 					{ !["audio", "file", "video", "image"].includes(draft.type) && <ScrollBars
 						className={ "flex-grow " + classes?.chatScrollWrapper }

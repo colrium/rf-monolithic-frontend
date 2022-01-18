@@ -7,8 +7,8 @@
     "proseWrap": "never",
     "insertPragma": true,
     "trailingComma": "es5",
-    "bracketSameLine": false,
+    "bracketSameLine": true,
     "endOfLine": "lf",
     "quoteProps": "as-needed",
-    "jsxBracketSameLine": false
+    "jsxBracketSameLine": true
 }

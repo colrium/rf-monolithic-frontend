@@ -44,7 +44,7 @@ export default {
 				},
 				reference: {
 					name: "courses",
-					service_query: { active: 1 },
+					service_query: { pagination: -1, active: 1 },
 					resolves: {
 						value: "_id",
 						display: {
@@ -165,182 +165,54 @@ export default {
 		},
 	},
 	access: {
-		restricted: user => {
-			if (user) {
-				return false;
-			}
-			return true;
-		},
+		restricted: user => user?.role !== "admin" && user?.role !== "collector",
 		view: {
-			summary: () => {
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return true;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user && record) {
-					return true;
-				}
-				return false;
-			},
+			summary: user => user?.role === "admin" || user?.role === "collector",
+			all: user => user?.role === "admin" || user?.role === "collector",
+			single: (user) => user?.role === "admin" || user?.role === "collector",
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+			view: {
+				restricted: user => user?.role !== "admin" && user?.role !== "collector",
 				uri: entry => {
-					return ("quizes/view/" + entry?._id).toUriWithDashboardPrefix();
+					return (
+						"/quizes/view/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => {
-							return (
-								<Link
-									to={(
-										"quizes/view/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="view"
-									>
-										<OpenInNewIcon />
-									</IconButton>
-								</Link>
-							);
-						},
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={("quizes/view/" + entry?._id).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="view"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					return !(user && user.role === "admin");
-				},
-				uri: "quizes/add".toUriWithDashboardPrefix(),
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link
-									to={"quizes/add/".toUriWithDashboardPrefix()}
-									{...props}
-								>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Quiz
-									</Button>
-								</Link>
-							);
-						},
-						listing: () => {
-							return "";
-						},
-					},
-				},
+				restricted: user => user?.role !== "admin",
+				uri: "/quizes/add".toUriWithDashboardPrefix(),
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						if (user.role) {
-						}
-						return false;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return ("quizes/edit/" + entry?._id).toUriWithDashboardPrefix();
+					return (
+						"/quizes/edit/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={("quizes/edit/" + entry?._id).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="add"
-									>
-										<AddIcon />
-									</IconButton>
-								</Link>
-							);
-						},
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={("quizes/edit/" + entry?._id).toUriWithDashboardPrefix()}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return ("quizes/delete/" + entry?._id).toUriWithDashboardPrefix();
+					return ("/quizes/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: () => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
 };

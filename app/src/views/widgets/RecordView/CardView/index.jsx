@@ -14,8 +14,8 @@ import { formats } from "config/data";
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
-import { ServiceDataHelper } from "hoc/Helpers";
-
+import { ServiceDataHelper } from "utils/Helpers";
+import JSONView from "components/JSONView";
 import { Typography } from "@mui/material";
 
 
@@ -72,7 +72,7 @@ function CardView({ ...props }) {
 			let primaries = defination.scope.identity.primary;
 			for (var i = 0; i < primaries.length; i++) {
 				title +=
-					defination.scope.columns[primaries[i]].reference &&
+					defination.scope.columns[primaries[i]]?.reference &&
 						resolvedRefRecord[primaries[i]]
 						? resolvedRefRecord[primaries[i]].resolve
 						: resolvedRefRecord[primaries[i]];
@@ -89,7 +89,7 @@ function CardView({ ...props }) {
 		} else if (resolvedRefRecord.resolver === "helper") {
 			let secondaries = defination.scope.identity.secondary;
 			for (var i = 0; i < secondaries.length; i++) {
-				subtitle += defination.scope.columns[secondaries[i]].reference &&
+				subtitle += defination.scope.columns[secondaries[i]]?.reference &&
 					resolvedRefRecord[secondaries[i]]
 					? resolvedRefRecord[secondaries[i]].resolve
 					: resolvedRefRecord[secondaries[i]];
@@ -248,7 +248,8 @@ function CardView({ ...props }) {
 				subheader={resolveSubTitle()}
 			/>
 
-			<CardContent className="p-0 m-0">{resolveValue()}</CardContent>
+			{/* <CardContent className="p-0 m-0">{resolveValue()}</CardContent> */}
+			<CardContent className="p-0 m-0 overflow-auto"><JSONView src={record} humanize/></CardContent>
 		</Card>
 	) : (
 		<GridContainer />

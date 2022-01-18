@@ -38,7 +38,6 @@ const Stage = (props) => {
     const getFeatureLatitudesLongitudes = (coords) => {
         let latitudes = [];
         let longitudes = [];
-        console.log("coords", coords)
         for (var i = 0; i < coords.length; i++) {
             if (Array.isArray(coords[i]) && Array.isArray(coords[i][0])) {
                 for (var j = 0; j < coords[i][j]; j++) {

@@ -26,5 +26,6 @@ export { default as useErrorBoundary } from "./useErrorBoundary";
 export { default as usePersistentForm } from "./usePersistentForm";
 export { default as useIntersectionObserver } from "./useIntersectionObserver";
 export { default as useVisibility } from "./useVisibility";
+export { default as useMark } from "./useMark";
 
 export * from "./useGoogleMaps";

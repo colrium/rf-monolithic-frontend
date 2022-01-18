@@ -1,45 +1,76 @@
 /** @format */
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { connect } from "react-redux";
 import { Typography } from "@mui/material";
 import { TextInput } from "components/FormInputs";
+import AutoComplete from "components/AutoComplete";
 import GridContainer from "components/Grid/GridContainer";
 import Card from "components/Card";
 import GridItem from "components/Grid/GridItem";
-// import { useGlobals } from "contexts/Globals";
+import { setPreferences } from "state/actions";
+import { useNetworkServices } from "contexts/NetworkServices";
 import { useTheme } from '@mui/material/styles';;
-
+import { useSetState } from "hooks";
 
 function Widget (props) {
-	let [state, setState] = useState(props);
-	useEffect(() => {
-		setState(props);
-	}, [props]);
-	let { app: { preferences } } = state;
+	let { auth, app: { preferences }, setPreferences } = props;
 
-	// const { updatePreferences } = useGlobals();
+	const { Api } = useNetworkServices();
 	const theme = useTheme();
+	const [state, setState] = useSetState({
+		alerts: {},
+		errors: {},
+		loading: {},
+	})
+	const [alerts, setAlerts] = useState({});
+	const [errors, setErrors] = useState({});
+	const [loading, setLoading] = useState({});
 
-	let [alerts, setAlerts] = useState({});
-	let [errors, setErrors] = useState({});
-	let [loading, setLoading] = useState({});
 
 
+	const updatePreferences = useCallback(async (name, new_value) => {
+			let updatedValue = false;
+			if (String.isString(name) && !String.isEmpty(name)) {
+				let slug = name.toLowerCase().variablelize("-");
+				if (new_value !== preferences[slug]) {
+					let postData = {
+						name: name,
+						slug: slug,
+						value: new_value,
+						user: auth?.user?._id,
+					};
+					return await Api.post(`/preferences`, postData, {params: { create: 1, placement: "slug" }}).then(res => {
+						let newPreferences = JSON.deepMerge(preferences, { [slug]: new_value });
+						setPreferences(newPreferences);
+						return newPreferences;
+					});
+				}
+			} else {
+				throw {msg : "missing name"};
+			}
+	}, [preferences])
 
-	let prefs = preferences.data;
-
-
-	const handleOnChange = (section, name = false) => async value => {
-		let new_value = section && name ? { ...prefs, [section]: { ...prefs[section], [name]: value } } : { ...prefs, [section]: value };
-
-		// updatePreferences("data", new_value).then(updated_prefs => {
-		// 	setAlerts(section && name? {[section]: {[name]: name + " saved"}} : {[section]: section + " saved"} );
-		// 	setErrors(section && name? {[section]: {[name]: undefined }} : { [section]: undefined } );
-		// }).catch(e => {
-		// 	setAlerts(section && name? {[section]: {[name]: undefined }} : {[section]: undefined} );
-		// 	setErrors(section && name? {[section]: {[name]: e.msg}} : {[section]: e.msg} );
-		// });
-	};
+	const handleOnChange = useCallback((name) => async value => {
+		let new_value = { ...preferences?.data, [name]: value };
+		setState(prevState => ({
+			loading: {...prevState.loading, [name]: true},
+			alerts: {...prevState.alerts, [name]: undefined},
+			errors: {...prevState.errors, [name]: undefined},
+		}))
+		updatePreferences("data", new_value).then(updated_prefs => {
+			setState(prevState => ({
+				loading: {...prevState.loading, [name]: false},
+				alerts: {...prevState.alerts, [name]: `${name.humanize()} saved`},
+				errors: {...prevState.errors, [name]: undefined},
+			}))
+		}).catch(e => {
+			setState(prevState => ({
+				loading: {...prevState.loading, [name]: false},
+				alerts: {...prevState.alerts, [name]: undefined},
+				errors: {...prevState.errors, [name]: e.msg},
+			}))
+		});
+	}, [preferences]);
 
 
 	return (
@@ -55,16 +86,26 @@ function Widget (props) {
 					</GridItem>
 					<GridItem xs={ 12 } className="mb-2">
 
-						<TextInput
+						<AutoComplete
 							name="pagination"
 							label="Records per Page"
 							type="number"
-							defaultValue={ prefs["pagination"] }
+							defaultValue={ preferences?.data?.pagination || 10 }
 							onChange={ handleOnChange("pagination") }
-							helperText={ alerts["pagination"] }
-							disabled={ loading["pagination"] }
-							error={ errors["pagination"] }
-							max={ 100 }
+							helperText={ state.alerts?.pagination }
+							disabled={ state.loading?.pagination}
+							loading={ state.loading?.pagination}
+							error={ state.errors?.pagination }
+							options={{
+								"5": "5",
+								"10": "10",
+								"25": "25",
+								"50": "50",
+								"100": "100",
+								"250": "250",
+								"500": "500",
+								"-1": "All",
+							} }
 							required
 						/>
 					</GridItem>
@@ -74,11 +115,11 @@ function Widget (props) {
 							name="defaultMapZoom"
 							label="Default Map Zoom"
 							type="number"
-							defaultValue={ prefs["defaultMapZoom"] }
+							defaultValue={ preferences?.data?.defaultMapZoom || 15 }
 							onChange={ handleOnChange("defaultMapZoom") }
-							helperText={ alerts["defaultMapZoom"] }
-							disabled={ loading["defaultMapZoom"] }
-							error={ errors["defaultMapZoom"] }
+							helperText={ state.alerts?.defaultMapZoom }
+							disabled={ state.loading?.defaultMapZoom}
+							error={ state.errors?.defaultMapZoom }
 							required
 						/>
 					</GridItem>
@@ -93,4 +134,4 @@ const mapStateToProps = state => ({
 	app: state.app,
 });
 
-export default connect(mapStateToProps, {})(React.memo(Widget));
+export default connect(mapStateToProps, {setPreferences})(React.memo(Widget));

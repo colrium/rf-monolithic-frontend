@@ -97,7 +97,7 @@ export default {
 				reference: {
 					name: "questions",
 					service_query: (values, user) => {
-						return {};
+						return {pagination: -1, p: 1};
 					},
 					resolves: {
 						value: "_id",
@@ -221,7 +221,7 @@ export default {
 			},
 		},
 		actions: {
-			view_single: {
+			view: {
 				restricted: user => {
 					if (user) {
 						return false;
@@ -231,73 +231,19 @@ export default {
 				uri: entry => {
 					return ("answers/view/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => {
-							return (
-								<Link
-									to={(
-										"answers/view/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="view"
-									>
-										<OpenInNewIcon />
-									</IconButton>
-								</Link>
-							);
-						},
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"answers/view/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="view"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
 				restricted: user => {
 					return !(user && user.role === "admin");
 				},
 				uri: "answers/add".toUriWithDashboardPrefix(),
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link
-									to={"answers/add/".toUriWithDashboardPrefix()}
-									{...props}
-								>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New Answer
-									</Button>
-								</Link>
-							);
-						},
-						listing: () => {
-							return "";
-						},
-					},
-				},
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
 				restricted: user => {
@@ -311,42 +257,9 @@ export default {
 				uri: entry => {
 					return ("answers/edit/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"answers/edit/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="add"
-									>
-										<AddIcon />
-									</IconButton>
-								</Link>
-							);
-						},
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={("answers/edit/" + entry?._id).toUriWithDashboardPrefix()}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
 				restricted: user => {
@@ -358,23 +271,10 @@ export default {
 				uri: entry => {
 					return ("answers/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: () => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
 	},

@@ -26,14 +26,12 @@ import { NavLink } from "react-router-dom";
 import compose from "recompose/compose";
 import { width as drawerWidth } from "config/ui/drawer";
 import { logout } from "state/actions/auth";
-import { UtilitiesHelper } from "hoc/Helpers";
+import { UtilitiesHelper } from "utils/Helpers";
 import { withGlobals } from "contexts/Globals";
 // Component styles
 
-
-
 const AdapterLink = React.forwardRef((props, ref) => (
-	<NavLink innerRef={ ref } { ...props } />
+	<NavLink innerRef={ref} {...props} />
 ));
 
 class Sidebar extends Component {
@@ -42,13 +40,12 @@ class Sidebar extends Component {
 		userPresenceMenuOpen: false,
 	};
 
-	constructor (props) {
+	constructor(props) {
 		super(props);
 		this.onOpenUserPresenceMenu = this.onOpenUserPresenceMenu.bind(this);
 		this.onCloseUserPresenceMenu = this.onCloseUserPresenceMenu.bind(this);
-		this.onChangeUserPresenceMenu = this.onChangeUserPresenceMenu.bind(
-			this
-		);
+		this.onChangeUserPresenceMenu =
+			this.onChangeUserPresenceMenu.bind(this);
 	}
 
 	onOpenUserPresenceMenu = event => {
@@ -80,7 +77,7 @@ class Sidebar extends Component {
 		});
 	};
 
-	applyItemsRestrictions () {
+	applyItemsRestrictions() {
 		const { auth, items } = this.props;
 		let items_with_restrictions = [];
 		//iterate
@@ -126,70 +123,85 @@ class Sidebar extends Component {
 		});
 		return items_with_restrictions;
 	}
-	render () {
+	render() {
 		const { className, items, auth, onClickNavLink } = this.props;
 
 		return (
 			<Box
-				className={ `${ className ? className : "" }  flex flex-col h-full ` }
-				sx={ {
-					width: drawerWidth
-				} }
-				component="nav"
-			>
-
-				<ScrollBars className={ "overflow-x-hidden overflow-y-scroll" }>
-					<List
-						component="div"
-						disablePadding
-						className="px-0"
-					>
-						{ this.applyItemsRestrictions().map((item_link, index) =>
+				className={`${
+					className ? className : ""
+				}  flex flex-col h-full `}
+				sx={{
+					width: drawerWidth,
+				}}
+				component="nav">
+				<ScrollBars className={"overflow-x-hidden overflow-y-scroll"}>
+					<List component="div" disablePadding className="px-0 pb-12">
+						{this.applyItemsRestrictions().map((item_link, index) =>
 							item_link.section ? (
-								<div key={ "drawer_section_" + index }>
+								<div key={"drawer_section_" + index}>
 									<List
 										component="div"
 										disablePadding
 										subheader={
 											<ListSubheader
-												className={ "" }
-												disableSticky
-											>
-												{ item_link.text }
+												sx={{
+													color: theme =>
+														theme.palette.text
+															.contrastDark,
+												}}
+												disableSticky>
+												{item_link.text}
 											</ListSubheader>
-										}
-									>
-										{ item_link.links.map(
+										}>
+										{item_link.links.map(
 											(link_obj, link_index) => (
 												<ListItem
-													activeClassName={ "primary inverse-text" }
-													className={ "" }
-													component={ AdapterLink }
-													to={ link_obj.route }
-													onClick={ (event) => {
-														if (Function.isFunction(onClickNavLink)) {
-															onClickNavLink(link_obj);
+													activeClassName={
+														"bg-black bg-opacity-10"
+													}
+													className={
+														"pointer transition-all hover:bg-black hover:bg-opacity-5"
+													}
+													sx={{
+														color: theme =>
+															theme.palette.text
+																.contrast,
+													}}
+													component={AdapterLink}
+													to={link_obj.route}
+													onClick={event => {
+														if (
+															Function.isFunction(
+																onClickNavLink
+															)
+														) {
+															onClickNavLink(
+																link_obj
+															);
 														}
-													} }
+													}}
 													key={
 														"drawer_item_" +
 														index +
 														"_" +
 														link_index
-													}
-												>
-													{ link_obj.icon ? (
+													}>
+													{!!link_obj.icon && (
 														<ListItemIcon
-															className={ classNames(
+															className={classNames(
 																{
+																	"text-current": true,
 																	[link_obj.color
 																		? link_obj.color +
-																		"_text"
-																		: ""]: true,
+																		  "_text"
+																		: ""]:
+																		!!link_obj.color,
 																}
-															) }
-														>
-															{ typeof link_obj.icon === "string" ? (
+															)}
+															color="inherit">
+															{typeof link_obj.icon ===
+															"string" ? (
 																<Icon>
 																	{
 																		link_obj.icon
@@ -197,85 +209,87 @@ class Sidebar extends Component {
 																</Icon>
 															) : (
 																link_obj.icon
-															) }
+															)}
 														</ListItemIcon>
-													) : (
-														""
-													) }
-													{ link_obj.text ? (
+													)}
+													{!!link_obj.text && (
 														<ListItemText
-															primaryTypographyProps={ {
-																className: classNames(
-																	{
-																		[link_obj.color
-																			? link_obj.color +
-																			"_text"
-																			: ""]: true,
-																	}
-																),
-															} }
+															primaryTypographyProps={{
+																className:
+																	classNames({
+																		"text-current": true,
+																		[item_link?.color +
+																		"_text"]:
+																			!!item_link?.color,
+																	}),
+															}}
 															primary={
 																link_obj.text
 															}
 														/>
-													) : (
-														""
-													) }
+													)}
 												</ListItem>
 											)
-										) }
+										)}
 									</List>
-									<Divider />
+									{/* <Divider /> */}
 								</div>
 							) : (
 								<ListItem
-									activeClassName={ classNames({ "activeListItemCSS": true }) }
-									className={ "" }
-									component={ AdapterLink }
-									onClick={ (event) => {
-										if (Function.isFunction(onClickNavLink)) {
+									activeClassName={"bg-black bg-opacity-10"}
+									sx={{
+										color: theme =>
+											theme.palette.text.contrast,
+									}}
+									className={
+										"pointer transition-all hover:bg-black hover:bg-opacity-5"
+									}
+									component={AdapterLink}
+									onClick={event => {
+										if (
+											Function.isFunction(onClickNavLink)
+										) {
 											onClickNavLink(item_link);
 										}
-									} }
-									to={ item_link.route }
-									key={ "drawer_item_" + index }
-								>
-									{ item_link.icon ? (
+									}}
+									to={item_link.route}
+									key={"drawer_item_" + index}>
+									{item_link.icon ? (
 										<ListItemIcon
-											className={ classNames({
-												[item_link.color
-													? item_link.color + "_text"
-													: ""]: true,
-											}) }
-										>
-											{ typeof item_link.icon ===
-												"string" ? (
-												<Icon>{ item_link.icon }</Icon>
+											className={classNames({
+												"text-current": true,
+												[item_link?.color + "_text"]:
+													!!item_link?.color,
+											})}
+											color="inherit">
+											{typeof item_link.icon ===
+											"string" ? (
+												<Icon>{item_link.icon}</Icon>
 											) : (
 												item_link.icon
-											) }
+											)}
 										</ListItemIcon>
 									) : (
 										""
-									) }
-									{ item_link.text ? (
+									)}
+									{item_link.text ? (
 										<ListItemText
-											primaryTypographyProps={ {
+											primaryTypographyProps={{
 												className: classNames({
-													[item_link.color
-														? item_link.color +
-														"_text"
-														: ""]: true,
+													"text-current": true,
+													[item_link?.color +
+													"_text"]:
+														!!item_link?.color,
 												}),
-											} }
-											primary={ item_link.text }
+											}}
+											primary={item_link.text}
 										/>
 									) : (
 										""
-									) }
+									)}
 								</ListItem>
 							)
-						) }
+						)}
 					</List>
 				</ScrollBars>
 			</Box>

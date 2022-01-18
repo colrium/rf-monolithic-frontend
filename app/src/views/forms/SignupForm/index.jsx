@@ -14,7 +14,7 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import { baseUrls, environment } from "config";
 
-import { CountriesHelper } from "hoc/Helpers";
+import { CountriesHelper } from "utils/Helpers";
 import { withGlobals } from "contexts/Globals";
 import ApiService from "services/Api";
 import { GooglePlacesAutocomplete } from "components/FormInputs";

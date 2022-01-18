@@ -321,150 +321,54 @@ export default {
 		dependants: [],
 	},
 	access: {
-		restricted: user => {
-			if (user) {
-				return !user.isAdmin;
-			}
-			return true;
-		},
+		restricted: user => String.isEmpty(user?.role),
 		view: {
-			summary: user => {
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return user.isAdmin;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user) {
-					return user.isAdmin;
-				}
-				return false;
-			},
+			summary: user => !String.isEmpty(user?.role),
+			all: user => !String.isEmpty(user?.role),
+			single: (user) => !String.isEmpty(user?.role),
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+			view: {
+				restricted: user => String.isEmpty(user?.role),
 				uri: entry => {
-					return "posts/view/" + entry?._id;
+					return (
+						"posts/view/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: () => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"posts/view/" + entry?._id}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
-				uri: "posts/add",
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link to={"posts/add/"} {...props}>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Post
-									</Button>
-								</Link>
-							);
-						},
-						listing: () => {
-							return "";
-						},
-					},
-				},
+				restricted: user => user?.role !== "admin",
+				uri: "posts/add".toUriWithDashboardPrefix(),
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "posts/edit/" + entry?._id;
+					return (
+						"posts/edit/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: () => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"posts/edit/" + entry?._id}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "posts/delete/" + entry?._id;
+					return ("posts/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: () => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
 };

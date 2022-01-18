@@ -7,9 +7,9 @@ import {
 	PersonOutlined as EntryIcon,
 } from "@mui/icons-material";
 import Button from "components/Button";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { CountriesHelper } from "hoc/Helpers";
+import { CountriesHelper } from "utils/Helpers";
 import compose from "recompose/compose";
 import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions";
 import IconButton from "@mui/material/IconButton";
@@ -30,37 +30,30 @@ const presences = {
 
 
 const EmailUserAction = (props) => {
-	const { user, apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth } = props;
-	const { definations, sockets } = useGlobals();
-	const [initiated, setInitiated] = useState(false);
+	const { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth, cache, data, ...rest } = props;
 
-
-	useEffect(() => {
-		if (initiated && JSON.isJSON(user)) {
+	const handleOnClick = useCallback(() => {
+		if (!!data && !!data?._id) {
 			clearEmailingCache();
-			setEmailingCache("recipient_address", user.email_address);
-			setEmailingCache("recipient_name", user.first_name);
+			setEmailingCache("recipient_address", data.email_address);
+			setEmailingCache("recipient_name", data.first_name);
 			setEmailingCache("subject", "");
-			setEmailingCache("content", "Hey " + user.first_name + ", \n\n\n\n\n" + auth.user.first_name + "\nRealfield.io");
+			setEmailingCache("content", "Hey " + data.first_name + ", \n\n\n\n\n" + auth.user.first_name + "\nRealfield.io");
 			setEmailingCache("popup_open", true);
 		}
-	}, [user, initiated]);
+			
+	}, [data] );
 
 
 	return (
-		<React.Fragment>
-
-			{user && <IconButton
+		<IconButton
 				color={"secondary"}
-				aria-label="Create application user"
-				onClick={() => {
-					setInitiated(true);
-				}}
+				aria-label="Send Email"
+				{...rest}
+				onClick={handleOnClick}
 			>
-				<MailOutlineIcon fontSize="small" />
-			</IconButton>}
-
-		</React.Fragment>
+				<MailOutlineIcon fontSize="inherit" />
+		</IconButton>
 	)
 
 };
@@ -75,7 +68,7 @@ const mapStateToProps = state => ({
 });
 
 const EmailUserActionComponent = compose(
-	connect(mapStateToProps, { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog }),
+	connect(mapStateToProps, { setEmailingCache, clearEmailingCache, closeDialog, openDialog }),
 	withTheme,
 )(EmailUserAction);
 
@@ -709,168 +702,65 @@ export default {
 		},
 	},
 	access: {
-		restricted: user => {
-			if (user) {
-				return false;
-			}
-			return true;
-		},
+		restricted: user => user?.role !== "admin",
 		view: {
-			summary: user => {
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return true;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user && record) {
-					return true;
-				}
-				return false;
-			},
+			summary: user => user?.role === "admin",
+			all: user => user?.role === "admin",
+			single: (user) => user?.role === "admin",
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+			view: {
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "users/view/" + entry?._id;
+					return (
+						"/users/view/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"users/view/" + entry?._id}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					return user && user.role === "admin" ? false : true;
-				},
-				uri: "users/add",
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link to={"users/add/"} {...props}>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										User
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
-				},
+				restricted: user => user?.role !== "admin",
+				uri: "/users/add".toUriWithDashboardPrefix(),
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "users/edit/" + entry?._id;
+					return (
+						"/users/edit/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"users/edit/" + entry?._id}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
-			send_user_email: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+			
+			email_user: {
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
 					return ("/").toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<EmailUserActionComponent user={entry} />
-							);
-						},
-					},
-				},
+				Component: EmailUserActionComponent,
+				className: "purple-text",
+				label: "Email User",
 			},
 			delete: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "users/delete/" + entry?._id;
+					return ("/users/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text") => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
+	
 };

@@ -12,7 +12,7 @@ import ImageIcon from "@mui/icons-material/ImageOutlined";
 import Button from "components/Button";
 import React from "react";
 import { Link } from "react-router-dom";
-import { CountriesHelper } from "hoc/Helpers";
+import { CountriesHelper } from "utils/Helpers";
 
 export default {
 	name: "vacancies",
@@ -332,147 +332,54 @@ export default {
 		},
 	},
 	access: {
-		restricted: user => {
-			if (user) {
-				return !user.isAdmin;
-			}
-			return true;
-		},
+		restricted: user => user?.role !== "admin",
 		view: {
-			summary: user => {
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return user.isAdmin;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user && record) {
-					return user.isAdmin;
-				}
-				return false;
-			},
+			summary: user => user?.role === "admin",
+			all: user => user?.role === "admin",
+			single: (user) => user?.role === "admin",
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+			view: {
+				restricted: user => String.isEmpty(user?.role),
 				uri: entry => {
-					return "vacancies/view/" + entry?._id;
+					return (
+						"vacancies/view/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"vacancies/view/" + entry?._id}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					return user ? !user.isAdmin : true;
-				},
-				uri: "vacancies/add",
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link to={"vacancies/add/"} {...props}>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Vacancy
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
-				},
+				restricted: user => user?.role !== "admin",
+				uri: "vacancies/add".toUriWithDashboardPrefix(),
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "vacancies/edit/" + entry?._id;
+					return (
+						"vacancies/edit/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"vacancies/edit/" + entry?._id}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "vacancies/delete/" + entry?._id;
+					return ("vacancies/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text") => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
 };

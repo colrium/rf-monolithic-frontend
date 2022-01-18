@@ -28,19 +28,18 @@ import { connect } from "react-redux";
 import * as definations from "definations";
 import { apiCallRequest } from "state/actions";
 import { defaults, Pie, Bar, HorizontalBar } from "react-chartjs-2";
-import { UtilitiesHelper } from "hoc/Helpers";
-import MuiAlert from '@mui/material/Alert';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import { FixedSizeList } from 'react-window';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
-import ListSubheader from '@mui/material/ListSubheader';
-import List from '@mui/material/List';
-import CircularProgress from '@mui/material/CircularProgress';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { DataGrid } from '@material-ui/data-grid';
-import ReactJsonView from 'react-json-view'
-
+import { UtilitiesHelper } from "utils/Helpers";
+import MuiAlert from "@mui/material/Alert";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import { FixedSizeList } from "react-window";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
+import ListSubheader from "@mui/material/ListSubheader";
+import List from "@mui/material/List";
+import CircularProgress from "@mui/material/CircularProgress";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { DataGrid } from "@material-ui/data-grid";
+import ReactJsonView from "react-json-view";
 
 function Alert(props) {
 	return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -74,7 +73,7 @@ let distanceToMeters = (distance, unit = "meters") => {
 	return distance;
 };
 
-const renderResponseSummaryRow = (data) => (props) => {
+const renderResponseSummaryRow = data => props => {
 	const { index, ...rest } = props;
 
 	return (
@@ -85,13 +84,13 @@ const renderResponseSummaryRow = (data) => (props) => {
 			</ListItemSecondaryAction>
 		</ListItem>
 	);
-}
+};
 
-const TextResponseSummaryDataGrid = React.memo((props) => {
+const TextResponseSummaryDataGrid = React.memo(props => {
 	const { data, label } = props;
 	const [columns, setColumns] = useState([
-		{ field: 'value', headerName: label, width: 400 },
-		{ field: 'count', headerName: 'Total', width: 150 },
+		{ field: "value", headerName: label, width: 400 },
+		{ field: "count", headerName: "Total", width: 150 },
 	]);
 	const [rows, setRows] = useState([]);
 	useEffect(() => {
@@ -105,44 +104,48 @@ const TextResponseSummaryDataGrid = React.memo((props) => {
 	}, [data]);
 
 	return (
-		<div style={{ height: 300, width: '100%' }}>
+		<div style={{ height: 300, width: "100%" }}>
 			<DataGrid rows={rows} columns={columns} />
 		</div>
 	);
-
 });
 
-
-const CardViewBody = React.memo((props) => {
+const CardViewBody = React.memo(props => {
 	const { entry, user, isPopulated } = props;
 
 	const [loadingSummary, setLoadingSummary] = useState(true);
 	const [summaryError, setSummaryError] = useState(false);
-	const [commissionFormSummaryLabels, setCommissionFormSummaryLabels] = useState(false);
-	const [commissionFormSummaryTypes, setCommissionFormSummaryTypes] = useState(false);
+	const [commissionFormSummaryLabels, setCommissionFormSummaryLabels] =
+		useState(false);
+	const [commissionFormSummaryTypes, setCommissionFormSummaryTypes] =
+		useState(false);
 	const [commissionFormSummary, setCommissionFormSummary] = useState(false);
 
 	const loadResponsesSummary = () => {
 		setSummaryError(false);
 		setLoadingSummary(true);
-		ApiService.get("/responses/form-responses-summary/" + entry?._id).then(res => {
-			const { body: { data: { labels, types, counts } } } = res;
-			setCommissionFormSummaryLabels(labels);
-			setCommissionFormSummaryTypes(types);
-			setCommissionFormSummary(counts);
-			setLoadingSummary(false);
-
-		}).catch(err => {
-			setLoadingSummary(false);
-			setCommissionFormSummary(false);
-			setSummaryError(err);
-		});
-	}
+		ApiService.get("/responses/form-responses-summary/" + entry?._id)
+			.then(res => {
+				const {
+					body: {
+						data: { labels, types, counts },
+					},
+				} = res;
+				setCommissionFormSummaryLabels(labels);
+				setCommissionFormSummaryTypes(types);
+				setCommissionFormSummary(counts);
+				setLoadingSummary(false);
+			})
+			.catch(err => {
+				setLoadingSummary(false);
+				setCommissionFormSummary(false);
+				setSummaryError(err);
+			});
+	};
 
 	useEffect(() => {
 		loadResponsesSummary();
-
-	}, [])
+	}, []);
 	return (
 		<GridContainer className="p-0 m-0">
 			<GridItem className="p-0 m-0" xs={12}>
@@ -159,16 +162,13 @@ const CardViewBody = React.memo((props) => {
 										variant="subtitle2"
 										color="primary"
 										bold
-										paragraph
-									>
+										paragraph>
 										Commission
 									</Typography>
 									{entry.survey ? (
 										<Typography
 											component="p"
-											variant="body2"
-
-										>
+											variant="body2">
 											{" "}
 											Survey : {entry.survey.title} <br />
 										</Typography>
@@ -179,10 +179,8 @@ const CardViewBody = React.memo((props) => {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{" "}
 										From:{" "}
 										{new Date(entry.start_date).format(
@@ -192,10 +190,8 @@ const CardViewBody = React.memo((props) => {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{" "}
 										To:{" "}
 										{new Date(entry.end_date).format(
@@ -205,10 +201,8 @@ const CardViewBody = React.memo((props) => {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{" "}
 										Involvement:{" "}
 										{entry.involvement === "team"
@@ -218,10 +212,8 @@ const CardViewBody = React.memo((props) => {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{" "}
 										Radius:{" "}
 										{entry.focus_radius +
@@ -231,16 +223,14 @@ const CardViewBody = React.memo((props) => {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{entry.involvement === "team" && (
-											<Chip
-												size="small"
-												label={entry.status}
-											/>
-										) && (
+												<Chip
+													size="small"
+													label={entry.status}
+												/>
+											) && (
 												<Chip
 													size="small"
 													avatar={
@@ -315,116 +305,61 @@ const CardViewBody = React.memo((props) => {
 								fillColor: "#4a148c",
 								strokeColor: "#4a148c",
 							},
-						}
+						},
 					]}
-
 					selectedEntryType={"circle"}
 					selectedEntry={0}
 				/>
 			</GridItem>
 
 			<GridItem xs={12} className="p-4">
-
-				<Typography
-					component="div"
-					variant="body2"
-
-					paragraph
-				>
+				<Typography component="div" variant="body2" paragraph>
 					Survey
 				</Typography>
-				<Typography
-					component="div"
-					variant="body1"
-
-					paragraph
-				>
+				<Typography component="div" variant="body1" paragraph>
 					{entry.survey ? entry.survey.title : ""}
 				</Typography>
 
-				<Typography
-					component="div"
-					variant="body2"
-
-					paragraph
-				>
+				<Typography component="div" variant="body2" paragraph>
 					From
 				</Typography>
-				<Typography
-					component="div"
-					variant="body1"
-
-					paragraph
-				>
+				<Typography component="div" variant="body1" paragraph>
 					{new Date(entry.start_date).toString()}
 				</Typography>
 
-				<Typography
-					component="div"
-					variant="body2"
-
-					paragraph
-				>
+				<Typography component="div" variant="body2" paragraph>
 					To
 				</Typography>
-				<Typography
-					component="div"
-					variant="body1"
-
-					paragraph
-				>
+				<Typography component="div" variant="body1" paragraph>
 					{new Date(entry.end_date).toString()}
 				</Typography>
-				<Typography
-					component="div"
-					variant="body2"
-
-					paragraph
-				>
+				<Typography component="div" variant="body2" paragraph>
 					Involvement
 				</Typography>
-				<Typography
-					component="div"
-					variant="body1"
-
-					paragraph
-				>
-					{String.isString(entry.involvement) ? entry.involvement.humanize() : ""}
+				<Typography component="div" variant="body1" paragraph>
+					{String.isString(entry.involvement)
+						? entry.involvement.humanize()
+						: ""}
 				</Typography>
 
-				<Typography
-					component="div"
-					variant="body2"
-
-					paragraph
-				>
-					{String.isString(entry.involvement) ? entry.involvement.humanize() : ""}
+				<Typography component="div" variant="body2" paragraph>
+					{String.isString(entry.involvement)
+						? entry.involvement.humanize()
+						: ""}
 				</Typography>
 
-				<Typography
-					component="div"
-					variant="body1"
-
-					paragraph
-				>
+				<Typography component="div" variant="body1" paragraph>
 					{entry.involvement === "team" && (
-						<Chip
-							size="small"
-							label={entry.status}
-						/>
-					) && (
+							<Chip size="small" label={entry.status} />
+						) && (
 							<Chip
 								size="small"
 								avatar={
 									entry.team.avatar ? (
 										<Avatar
-											alt={
-												entry.team
-													.name
-											}
+											alt={entry.team.name}
 											src={ApiService.getAttachmentFileUrl(
-												entry.team
-													.avatar
+												entry.team.avatar
 											)}
 										/>
 									) : null
@@ -433,126 +368,165 @@ const CardViewBody = React.memo((props) => {
 							/>
 						)}
 					{entry.involvement === "individual" && (
+						<Chip size="small" label="Individual" />
+					)}
+					{entry.involvement === "individual" && entry.individual && (
 						<Chip
 							size="small"
-							label="Individual"
+							avatar={
+								entry.individual.avatar ? (
+									<Avatar
+										alt={entry.individual.first_name}
+										src={ApiService.getAttachmentFileUrl(
+											entry.individual.avatar
+										)}
+									/>
+								) : null
+							}
+							label={
+								entry.individual.first_name +
+								" " +
+								entry.individual.last_name
+							}
 						/>
 					)}
-					{entry.involvement === "individual" &&
-						entry.individual && (
-							<Chip
-								size="small"
-								avatar={
-									entry.individual
-										.avatar ? (
-										<Avatar
-											alt={
-												entry
-													.individual
-													.first_name
-											}
-											src={ApiService.getAttachmentFileUrl(
-												entry
-													.individual
-													.avatar
-											)}
-										/>
-									) : null
-								}
-								label={
-									entry.individual
-										.first_name +
-									" " +
-									entry.individual
-										.last_name
-								}
-							/>
-						)}
 					&nbsp;
 				</Typography>
 
-				<Typography
-					component="div"
-					variant="body2"
-
-					paragraph
-				>
-					Focus 				</Typography>
-				<Typography
-					component="div"
-					variant="body1"
-
-					paragraph
-				>
-					<ReactJsonView name={"Coordinates"} src={entry.focus_center} displayDataTypes={false} />
+				<Typography component="div" variant="body2" paragraph>
+					Focus{" "}
+				</Typography>
+				<Typography component="div" variant="body1" paragraph>
+					<ReactJsonView
+						name={"Coordinates"}
+						src={entry.focus_center}
+						displayDataTypes={false}
+					/>
 				</Typography>
 
-				<Typography
-					component="div"
-					variant="body2"
-
-					paragraph
-				>
+				<Typography component="div" variant="body2" paragraph>
 					Focus Radius
 				</Typography>
-				<Typography
-					component="div"
-					variant="body1"
-
-					paragraph
-				>
+				<Typography component="div" variant="body1" paragraph>
 					{entry.focus_radius + " " + entry.focus_radius_metric}
 				</Typography>
 			</GridItem>
 			<GridContainer className={"mt-8"}>
 				<GridItem xs={12}>
-					<Typography variant="subtitle1"> Responses Summary</Typography>
+					<Typography variant="subtitle1">
+						{" "}
+						Responses Summary
+					</Typography>
 				</GridItem>
 			</GridContainer>
 
-			{loadingSummary && <GridContainer className={"mt-8"}>
-				<GridItem className={"flex flex-col justify-center items-center"} xs={12}>
-					<CircularProgress className={"mb-4"} color="secondary" />
-					<Typography variant="caption"> Loading Responses Summary...</Typography>
-				</GridItem>
-			</GridContainer>}
-			{summaryError && <GridContainer className={"mt-8"}>
-				<GridItem className={"flex flex-col justify-center items-center"} xs={12}>
-					<ErrorOutlineIcon fontSize="large" className={"mb-4"} color="error" />
-					<Typography variant="caption"> Something went wrong. {JSON.stringify(summaryError)}</Typography>
-				</GridItem>
-			</GridContainer>}
-			{(commissionFormSummary && !loadingSummary) && <GridContainer className={"mb-8"}>
-
-				<GridItem xs={12}>
-					<Alert severity="warning">This is an automated report based on raw data submitted to this project. Please conduct proper data cleaning prior to using the graphs and figures used on this page.</Alert>
-				</GridItem>
+			{loadingSummary && (
+				<GridContainer className={"mt-8"}>
+					<GridItem
+						className={"flex flex-col justify-center items-center"}
+						xs={12}>
+						<CircularProgress
+							className={"mb-4"}
+							color="secondary"
+						/>
+						<Typography variant="caption">
+							{" "}
+							Loading Responses Summary...
+						</Typography>
+					</GridItem>
+				</GridContainer>
+			)}
+			{summaryError && (
+				<GridContainer className={"mt-8"}>
+					<GridItem
+						className={"flex flex-col justify-center items-center"}
+						xs={12}>
+						<ErrorOutlineIcon
+							fontSize="large"
+							className={"mb-4"}
+							color="error"
+						/>
+						<Typography variant="caption">
+							{" "}
+							Something went wrong. {JSON.stringify(summaryError)}
+						</Typography>
+					</GridItem>
+				</GridContainer>
+			)}
+			{commissionFormSummary && !loadingSummary && (
 				<GridContainer className={"mb-8"}>
+					<GridItem xs={12}>
+						<Alert severity="warning">
+							This is an automated report based on raw data
+							submitted to this project. Please conduct proper
+							data cleaning prior to using the graphs and figures
+							used on this page.
+						</Alert>
+					</GridItem>
+					<GridContainer className={"mb-8"}>
+						{Object.entries(commissionFormSummary).map(
+							([key, value]) =>
+								!JSON.isEmpty(value) &&
+								commissionFormSummaryLabels[key] &&
+								commissionFormSummaryTypes[key] && (
+									<GridItem xs={12}>
+										<GridContainer className={"mb-8"}>
+											<GridItem xs={12}>
+												<Typography
+													variant="subtitle2"
+													className={
+														"w-full text-center"
+													}>
+													{" "}
+													{
+														commissionFormSummaryLabels[
+															key
+														]
+													}
+												</Typography>
+											</GridItem>
 
-					{Object.entries(commissionFormSummary).map(([key, value]) => (
-						(!JSON.isEmpty(value) && commissionFormSummaryLabels[key] && commissionFormSummaryTypes[key]) && <GridItem xs={12}>
-							<GridContainer className={"mb-8"}>
-								<GridItem xs={12}>
-									<Typography variant="subtitle2" className={"w-full text-center"}> {commissionFormSummaryLabels[key]}</Typography>
-								</GridItem>
+											<GridItem xs={12}>
+												{commissionFormSummaryTypes[
+													key
+												] === "select_one" && (
+													<Bar
+														data={{
+															labels: Object.keys(
+																value
+															),
+															datasets: [
+																{
+																	label: commissionFormSummaryLabels[
+																		key
+																	],
+																	data: Object.values(
+																		value
+																	),
+																	backgroundColor:
+																		"#00AF41",
+																	hoverBackgroundColor:
+																		"#76C4D5",
+																},
+															],
+														}}
+													/>
+												)}
 
-								<GridItem xs={12}>
-									{commissionFormSummaryTypes[key] === "select_one" && <Bar
-										data={{
-											labels: Object.keys(value),
-											datasets: [{
-												label: commissionFormSummaryLabels[key],
-												data: Object.values(value),
-												backgroundColor: "#00AF41",
-												hoverBackgroundColor: "#76C4D5",
-											}]
-										}}
-									/>}
+												{commissionFormSummaryTypes[
+													key
+												] === "text" && (
+													<TextResponseSummaryDataGrid
+														data={value}
+														label={
+															commissionFormSummaryLabels[
+																key
+															]
+														}
+													/>
+												)}
 
-
-									{commissionFormSummaryTypes[key] === "text" && <TextResponseSummaryDataGrid data={value} label={commissionFormSummaryLabels[key]} />}
-
-									{/*Object.size(value) <= 20? (
+												{/*Object.size(value) <= 20? (
 															
 															) : (
 															<HorizontalBar 
@@ -566,18 +540,17 @@ const CardViewBody = React.memo((props) => {
 																	}]
 																}} 
 															/>)*/}
-
-								</GridItem>
-							</GridContainer>
-						</GridItem>
-					))}
+											</GridItem>
+										</GridContainer>
+									</GridItem>
+								)
+						)}
+					</GridContainer>
 				</GridContainer>
-			</GridContainer>}
-
+			)}
 		</GridContainer>
-	)
+	);
 });
-
 
 export default {
 	name: "commissions",
@@ -605,7 +578,7 @@ export default {
 									/>
 								) : null
 							) : entry.involvement === "individual" &&
-								entry.individual ? (
+							  entry.individual ? (
 								entry.individual.avatar && (
 									<Avatar
 										alt={entry.individual.first_name}
@@ -619,13 +592,13 @@ export default {
 							<Typography variant="h4" gutterBottom>
 								{entry.start_date
 									? new Date(entry.start_date).format(
-										formats.dateformats.date
-									) + (entry.end_date ? " - " : "")
+											formats.dateformats.date
+									  ) + (entry.end_date ? " - " : "")
 									: ""}
 								{entry.end_date
 									? new Date(entry.end_date).format(
-										formats.dateformats.date
-									)
+											formats.dateformats.date
+									  )
 									: ""}
 							</Typography>
 						),
@@ -633,20 +606,34 @@ export default {
 							<React.Fragment>
 								<GridContainer className={"p-0"}>
 									<GridItem xs={12}>
-										<Typography variant="subtitle2" paragraph>{entry.requirements}</Typography>
+										<Typography
+											variant="subtitle2"
+											paragraph>
+											{entry.requirements}
+										</Typography>
 									</GridItem>
 									<GridItem xs={12}>
 										{entry.status && (
 											<Status
-												color={status_colors[entry.status]}
-												text={status_names[entry.status]}
+												color={
+													status_colors[entry.status]
+												}
+												text={
+													status_names[entry.status]
+												}
 											/>
 										)}
 									</GridItem>
 								</GridContainer>
 							</React.Fragment>
 						),
-						body: (<CardViewBody entry={entry} user={user} isPopulated={isPopulated} />),
+						body: (
+							<CardViewBody
+								entry={entry}
+								user={user}
+								isPopulated={isPopulated}
+							/>
+						),
 					};
 				},
 			},
@@ -665,7 +652,11 @@ export default {
 			default: "tableview",
 			listview: {
 				avatar: false,
-				resolveData: async (entries, user = null, isPopulated = true) => {
+				resolveData: async (
+					entries,
+					user = null,
+					isPopulated = true
+				) => {
 					let resolved_data = [];
 
 					if (Array.isArray(entries)) {
@@ -674,19 +665,19 @@ export default {
 								id: entry?._id,
 								icon:
 									entry.involvement === "team" &&
-										entry.team ? (
+									entry.team ? (
 										entry.team.avatar ? null : (
 											<DefinationContextIcon />
 										)
 									) : entry.involvement === "individual" &&
-										entry.individual ? (
+									  entry.individual ? (
 										entry.individual.avatar ? null : (
 											<DefinationContextIcon />
 										)
 									) : null,
 								avatar:
 									entry.involvement === "team" &&
-										entry.team ? (
+									entry.team ? (
 										entry.team.avatar ? (
 											<Avatar
 												alt={entry.team.name}
@@ -696,7 +687,7 @@ export default {
 											/>
 										) : null
 									) : entry.involvement === "individual" &&
-										entry.individual ? (
+									  entry.individual ? (
 										entry.individual.avatar ? (
 											<Avatar
 												alt={
@@ -720,9 +711,7 @@ export default {
 											<Typography
 												component="span"
 												variant="body1"
-
-												paragraph
-											>
+												paragraph>
 												{" "}
 												Survey : {
 													entry.survey.title
@@ -736,9 +725,7 @@ export default {
 										<Typography
 											component="span"
 											variant="body2"
-
-											paragraph
-										>
+											paragraph>
 											{entry.involvement === "team" && (
 												<Chip
 													size="small"
@@ -747,11 +734,11 @@ export default {
 											)}
 											&nbsp;
 											{entry.involvement === "team" && (
-												<Chip
-													size="small"
-													label={entry.status}
-												/>
-											) && (
+													<Chip
+														size="small"
+														label={entry.status}
+													/>
+												) && (
 													<Chip
 														size="small"
 														avatar={
@@ -776,11 +763,11 @@ export default {
 												)}
 											{entry.involvement ===
 												"individual" && (
-													<Chip
-														size="small"
-														label="Individual"
-													/>
-												)}
+												<Chip
+													size="small"
+													label="Individual"
+												/>
+											)}
 											&nbsp;
 											{entry.involvement ===
 												"individual" &&
@@ -833,9 +820,7 @@ export default {
 					return resolved_data;
 				},
 			},
-			tableview: {
-
-			},
+			tableview: {},
 			calendarview: {
 				type: "task",
 				resolveData: async (
@@ -856,18 +841,18 @@ export default {
 								body:
 									(entry.survey
 										? "<b>Survey :</b> : " +
-										entry.survey.title +
-										"<br /> "
+										  entry.survey.title +
+										  "<br /> "
 										: "") +
 									"<b>Involvement :</b> " +
 									(entry.involvement === "team"
 										? entry.team.name + "(Team)"
 										: entry.individual
-											? entry.individual.first_name +
-											" " +
-											entry.individual.last_name +
-											"(Individual)"
-											: "") +
+										? entry.individual.first_name +
+										  " " +
+										  entry.individual.last_name +
+										  "(Individual)"
+										: "") +
 									"<br /> <b>Status :</b> " +
 									entry.status,
 								category: "time",
@@ -900,16 +885,13 @@ export default {
 										variant="subtitle2"
 										color="primary"
 										bold
-										paragraph
-									>
+										paragraph>
 										Commission
 									</Typography>
 									{entry.survey ? (
 										<Typography
 											component="p"
-											variant="body2"
-
-										>
+											variant="body2">
 											{" "}
 											Survey : {entry.survey.title} <br />
 										</Typography>
@@ -920,10 +902,8 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{" "}
 										From:{" "}
 										{new Date(entry.start_date).format(
@@ -933,10 +913,8 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{" "}
 										To:{" "}
 										{new Date(entry.end_date).toString()}
@@ -944,10 +922,8 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{" "}
 										Involvement:{" "}
 										{entry.involvement === "team"
@@ -957,10 +933,8 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{" "}
 										Radius:{" "}
 										{entry.focus_radius +
@@ -970,16 +944,14 @@ export default {
 									<Typography
 										component="p"
 										variant="body2"
-
 										gutterBottom
-										paragraph
-									>
+										paragraph>
 										{entry.involvement === "team" && (
-											<Chip
-												size="small"
-												label={entry.status}
-											/>
-										) && (
+												<Chip
+													size="small"
+													label={entry.status}
+												/>
+											) && (
 												<Chip
 													size="small"
 													avatar={
@@ -1089,7 +1061,7 @@ export default {
 				},
 				reference: {
 					name: "surveys",
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -1133,7 +1105,10 @@ export default {
 				icon: "label",
 				input: {
 					type: (values, user) => {
-						if (JSON.isEmpty(values) || (values && values.response_mode === "queries")) {
+						if (
+							JSON.isEmpty(values) ||
+							(values && values.response_mode === "queries")
+						) {
 							return "multiselect";
 						}
 						return "hidden";
@@ -1159,10 +1134,9 @@ export default {
 							if (values.response_mode === "queries") {
 								return false;
 							}
-
 						}
 						return true;
-					}
+					},
 				},
 				reference: {
 					name: "queries",
@@ -1188,7 +1162,10 @@ export default {
 				label: "Form",
 				input: {
 					type: (values, user) => {
-						if (JSON.isEmpty(values) || (values && values.response_mode === "form")) {
+						if (
+							JSON.isEmpty(values) ||
+							(values && values.response_mode === "form")
+						) {
 							return "select";
 						}
 						return "hidden";
@@ -1214,14 +1191,13 @@ export default {
 							if (values.response_mode === "form") {
 								return false;
 							}
-
 						}
 						return true;
-					}
+					},
 				},
 				reference: {
 					name: "forms",
-					service_query: { active: true },
+					service_query: { pagination: -1, active: true },
 					resolves: {
 						value: "_id",
 						display: {
@@ -1265,7 +1241,10 @@ export default {
 				icon: "people",
 				input: {
 					type: (values, user) => {
-						if (JSON.isEmpty(values) || (values && values.involvement === "team")) {
+						if (
+							JSON.isEmpty(values) ||
+							(values && values.involvement === "team")
+						) {
 							return "select";
 						}
 						return "hidden";
@@ -1295,7 +1274,7 @@ export default {
 				},
 				reference: {
 					name: "teams",
-					service_query: { status: "disengaged" },
+					service_query: { pagination: -1, status: "disengaged" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -1312,7 +1291,10 @@ export default {
 				label: "Lead",
 				input: {
 					type: (values, user) => {
-						if (JSON.isEmpty(values) || (values && values.involvement === "team")) {
+						if (
+							JSON.isEmpty(values) ||
+							(values && values.involvement === "team")
+						) {
 							return "select";
 						}
 						return "hidden";
@@ -1334,7 +1316,12 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
+					service_query: {
+						pagination: -1, 
+						sort: "first_name",
+						fields: "first_name,last_name,email_address,avatar",
+						role: "collector",
+					},
 					resolves: {
 						value: "_id",
 						display: {
@@ -1350,7 +1337,10 @@ export default {
 				label: "Individual",
 				input: {
 					type: (values, user) => {
-						if (JSON.isEmpty(values) || (values && values.involvement === "individual")) {
+						if (
+							JSON.isEmpty(values) ||
+							(values && values.involvement === "individual")
+						) {
 							return "select";
 						}
 						return "hidden";
@@ -1379,7 +1369,12 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
+					service_query: {
+						pagination: -1, 
+						sort: "first_name",
+						fields: "first_name,last_name,email_address,avatar",
+						role: "collector",
+					},
 					resolves: {
 						value: "_id",
 						display: {
@@ -1397,7 +1392,6 @@ export default {
 					type: "coordinates",
 					placeholderType: "formatted_address",
 					required: true,
-
 				},
 				restricted: {
 					display: (entry, user) => {
@@ -1414,31 +1408,29 @@ export default {
 				tableProps: {
 					render: rowData => {
 						try {
-							let focus_center = JSON.parse(rowData.focus_center);
 							return (
-								<GridContainer>
-									<GridItem className="py-0 flex-col">
-										<Typography className="px-2" variant="body2">Latitude</Typography>
-										<Typography>{focus_center.lat}</Typography>
-									</GridItem>
-									<GridItem className="py-0 flex-col">
-										<Typography className="px-2" variant="body2">Longitude</Typography>
-										<Typography>{focus_center.lng}</Typography>
-									</GridItem>
-								</GridContainer>
+								<ReactJsonView
+									name={false}
+									src={rowData?.focus_center}
+									enableClipboard={true}
+									displayDataTypes={false}
+								/>
 							);
 						} catch (err) {
 							return (
 								<GridContainer>
 									<GridItem className="py-0 flex-col">
-										<Typography className="px-2" variant="body2">{"" + err}</Typography>
+										<Typography
+											className="px-2"
+											variant="body2">
+											{"" + err}
+										</Typography>
 									</GridItem>
 								</GridContainer>
 							);
 						}
-
-					}
-				}
+					},
+				},
 			},
 
 			focus_radius_metric: {
@@ -1524,7 +1516,7 @@ export default {
 				},
 				reference: {
 					name: "attachments",
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -1606,12 +1598,16 @@ export default {
 					render: rowData => {
 						return (
 							<Status
-								color={status_colors[(rowData.status.toLowerCase())]}
-								text={status_names[(rowData.status.toLowerCase())]}
+								color={
+									status_colors[rowData.status.toLowerCase()]
+								}
+								text={
+									status_names[rowData.status.toLowerCase()]
+								}
 							/>
 						);
-					}
-				}
+					},
+				},
 			},
 		},
 		identity: {
@@ -1664,201 +1660,49 @@ export default {
 			},
 		},
 		actions: {
-			tableview: user => {
-				let actions = [];
-
-				if (user) {
-					if (user.isAdmin || user.isCollector) {
-
-						actions.push({
-							icon: 'launch',
-							tooltip: 'View',
-							iconProps: {
-								fontSize: "small",
-								color: "action"
-							},
-							onClick: (event, rowData) => {
-								document.location.href = ("commissions/view/" + rowData._id).toUriWithDashboardPrefix();
-							}
-						});
-						if (user.isAdmin) {
-							actions.push({
-								icon: 'add',
-								tooltip: 'Add Commission',
-								isFreeAction: true,
-								onClick: (event, rowData) => {
-									document.location.href = "commissions/add".toUriWithDashboardPrefix();
-								}
-							});
-
-							actions.push({
-								icon: 'edit',
-								tooltip: 'Edit',
-								iconProps: {
-									fontSize: "small",
-									color: "secondary"
-								},
-								onClick: (event, rowData) => {
-									document.location.href = ("commissions/edit/" + rowData._id).toUriWithDashboardPrefix();
-								}
-							});
-
-							actions.push({
-								icon: 'delete',
-								tooltip: 'Delete',
-								iconProps: {
-									fontSize: "small",
-									color: "error"
-								},
-								onClick: (event, rowData) => {
-									document.location.href = ("commissions/delete/" + rowData._id).toUriWithDashboardPrefix();
-								}
-							});
-						}
-
-					}
-				}
-				return actions;
-			},
-			view_single: {
+			view: {
 				restricted: user => {
-					/*if (user) {
-						return !(user.isAdmin || user.isCollector);
-					}
-					return true;*/
 					return JSON.isEmpty(user);
 				},
 				uri: entry => {
-					return ("commissions/view/" + entry?._id).toUriWithDashboardPrefix();
+					return (
+						"commissions/view/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => { },
-						listing: (entry, className = "grey_text") => {
-							if (entry) {
-								return (
-									<Link
-										to={(
-											"commissions/view/" + entry?._id
-										).toUriWithDashboardPrefix()}
-										className={className}
-									>
-										<IconButton
-											color="inherit"
-											aria-label="edit"
-										>
-											<OpenInNewIcon fontSize="small" />
-										</IconButton>
-									</Link>
-								);
-							}
-							return;
-
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: "commissions/add".toUriWithDashboardPrefix(),
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link
-									to={"commissions/add/".toUriWithDashboardPrefix()}
-									{...props}
-								>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Commission
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
-				},
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
 					return (
 						"commissions/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							if (entry) {
-								return (
-									<Link
-										to={(
-											"commissions/edit/" + entry?._id
-										).toUriWithDashboardPrefix()}
-										className={className ? className : ""}
-									>
-										<IconButton
-											color="inherit"
-											aria-label="edit"
-										>
-											<EditIcon fontSize="small" />
-										</IconButton>
-									</Link>
-								);
-							}
-							return;
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return (
-						"commissions/delete/" + entry?._id
-					).toUriWithDashboardPrefix();
+					return ("commissions/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text") => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
 };

@@ -15,7 +15,7 @@ import Avatar from "components/Avatar";
 import Typography from "components/Typography";
 import React from "react";
 import ApiService from "services/Api";
-import { FilesHelper, UtilitiesHelper } from "hoc/Helpers";
+import { FilesHelper, UtilitiesHelper } from "utils/Helpers";
 import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles((theme) => ({

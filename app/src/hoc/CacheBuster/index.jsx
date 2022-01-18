@@ -28,20 +28,24 @@ class CacheBuster extends React.Component {
 			isLatestVersion: false,
 			latestVersion: app.version,
 			refreshCacheAndReload: () => {			
-				if (window) {
-					window.location.reload(true);
-				}
-				/*try {
-					// Service worker cache should be cleared with caches.delete()
-					localStorage.clear();
-					
-					caches.keys().then(function(names) {
-						for (let name of names) caches.delete(name);
-					});
-					window.location.reload(true);
-				} catch(e){
+				
+				try {
+					if (Function.isFunction(localStorage?.clear)) {
+						localStorage.clear();
+					}
+					if (Function.isFunction(caches?.keys)) {
+						// Service worker cache should be cleared with caches.delete()
+						caches.keys().then(function (names) {
+							for (let name of names) caches.delete(name);
+						});
+					}
+
+					if (Function.isFunction(window?.location?.reload)) {
+						window.location.reload(true);
+					}
+				} catch (e) {
 					console.error("Error clearing cached data: ", e);
-				}*/
+				}
 				
 			}
 		};
@@ -67,19 +71,20 @@ class CacheBuster extends React.Component {
 				const latestVersion = meta.version;
 
 				if (currentVersion === "0.0.0") {
+					setVersion(latestVersion);
                     this.setState({ loading: false, isLatestVersion: false, latestVersion: latestVersion });
-                    setVersion(latestVersion);
-                    setInitialized(true);
+                    
+                    // setInitialized(true);
                 }
 				else {
 					const shouldForceRefresh = currentVersion !== latestVersion;
 					if (shouldForceRefresh) {
                         this.setState({ loading: false, isLatestVersion: false, latestVersion: latestVersion });
                         setVersion(latestVersion);
-                        setInitialized(true);
+                        // setInitialized(true);
                     } else {
                         this.setState({ loading: false, isLatestVersion: true, latestVersion });
-                        setInitialized(true);
+                        // setInitialized(true);
                     }
 				}
 					

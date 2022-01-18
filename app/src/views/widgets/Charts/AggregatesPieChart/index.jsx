@@ -18,7 +18,7 @@ import { apiCallRequest } from "state/actions";
 
 //
 import ApiService from "services/Api";
-import { UtilitiesHelper } from "hoc/Helpers";
+import { UtilitiesHelper } from "utils/Helpers";
 
 
 //

@@ -176,7 +176,7 @@ class GoogleMapView extends React.Component {
 		let columns = defination ? defination.scope.columns : {};
 		let resolved_data = [];
 
-		if (Function.isFunction(defination.views.listing.googlemapview.resolveData)) {
+		if (Function.isFunction(defination?.views?.listing?.googlemapview?.resolveData)) {
 			defination.views.listing.googlemapview.resolveData(target_data, true).then(resolve => {
 				this.setState(state => ({
 					records: resolve,

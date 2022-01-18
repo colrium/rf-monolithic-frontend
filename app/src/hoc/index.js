@@ -1,3 +1,3 @@
 /** @format */
 
-export { default as withContext } from "./withContext";
+export { default as withStyles } from "./withStyles";

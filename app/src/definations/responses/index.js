@@ -19,7 +19,7 @@ import compose from "recompose/compose";
 import { connect } from "react-redux";
 import { withTheme } from '@mui/styles';
 import { Bar } from "react-chartjs-2";
-import { UtilitiesHelper } from "hoc/Helpers";
+import { UtilitiesHelper } from "utils/Helpers";
 
 const getRegions = () => {
 	let regions = {};
@@ -175,7 +175,7 @@ export default {
 				},
 				reference: {
 					name: "commissions",
-					service_query: { p: 1 },
+					service_query: { pagination: -1, p: 1 },
 					resolves: {
 						value: "_id",
 						display: {
@@ -216,7 +216,7 @@ export default {
 				},
 				reference: {
 					name: "commissions",
-					service_query: { p: 1 },
+					service_query: { pagination: -1, p: 1 },
 					resolves: {
 						value: "_id",
 						display: {
@@ -511,7 +511,7 @@ export default {
 				type: "object",
 				label: "Form value",
 				input: {
-					type: "hidden",
+					type: "object",
 					placeholder: "Response form value",
 					required: false,
 				},
@@ -577,7 +577,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
+					service_query: { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -589,7 +589,7 @@ export default {
 				},
 			},
 			response_date: {
-				type: "string",
+				type: "datetime",
 				label: "Response date",
 				input: {
 					type: "date",
@@ -621,7 +621,7 @@ export default {
 				},
 			},
 			submission_date: {
-				type: "string",
+				type: "datetime",
 				label: "Submission date",
 				icon: "event",
 				input: {
@@ -721,144 +721,54 @@ export default {
 		},
 	},
 	access: {
-		restricted: user => {
-			if (user) {
-				return false;
-			}
-			return true;
-		},
+		restricted: user => user?.role !== "admin" && user?.role !== "collector",
 		view: {
-			summary: user => {
-				if (user) {
-					return true;
-				}
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return true;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user && record) {
-					return true;
-				}
-				return false;
-			},
+			summary: user => user?.role === "admin" || user?.role === "collector",
+			all: user => user?.role === "admin" || user?.role === "collector",
+			single: (user) => user?.role === "admin" || user?.role === "collector",
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+			view: {
+				restricted: user => user?.role !== "admin" && user?.role !== "collector",
 				uri: entry => {
-					return "responses/view/" + entry?._id;
+					return (
+						"/responses/view/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"responses/view/" + entry?._id}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					return (user && user.role !== "admin");
-				},
-				uri: "responses/add",
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link to={"responses/add/"} {...props}>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Response
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
-				},
+				restricted: user => user?.role !== "admin",
+				uri: "/responses/add".toUriWithDashboardPrefix(),
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					return (user && user.role !== "admin");
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "responses/edit/" + entry?._id;
+					return (
+						"/responses/edit/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"responses/edit/" + entry?._id}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
-				restricted: user => {
-					return (user && user.role !== "admin");
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "responses/delete/" + entry?._id;
+					return ("/responses/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text") => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
 };

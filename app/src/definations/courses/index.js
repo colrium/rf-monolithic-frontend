@@ -116,7 +116,7 @@ export default {
 				},
 				reference: {
 					name: "attachments",
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -200,7 +200,7 @@ export default {
 				},
 				reference: {
 					name: "attachments",
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -255,7 +255,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "admin" },
+					service_query: { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "admin" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -275,7 +275,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
+					service_query: { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -322,179 +322,54 @@ export default {
 		},
 	},
 	access: {
-		restricted: user => {
-			if (user) {
-				return false;
-			}
-			return true;
-		},
+		restricted: user => user?.role !== "admin" && user?.role !== "collector",
 		view: {
-			summary: () => {
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return true;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user && record) {
-					return true;
-				}
-				return false;
-			},
+			summary:  user => user?.role === "admin" || user?.role === "collector",
+			all: user => user?.role === "admin" || user?.role === "collector",
+			single: (user) => user?.role === "admin" || user?.role === "collector",
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+			view: {
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return ("courses/view/" + entry?._id).toUriWithDashboardPrefix();
+					return (
+						"courses/view/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => {
-							return (
-								<Link
-									to={("courses/view/" + entry?._id).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="view"
-									>
-										<OpenInNewIcon />
-									</IconButton>
-								</Link>
-							);
-						},
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={("courses/view/" + entry?._id).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="view"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					return !(user && user.role === "admin");
-				},
+				restricted: user => user?.role !== "admin",
 				uri: "courses/add".toUriWithDashboardPrefix(),
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link
-									to={"courses/add/".toUriWithDashboardPrefix()}
-									{...props}
-								>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New Course
-									</Button>
-								</Link>
-							);
-						},
-						listing: () => {
-							return "";
-						},
-					},
-				},
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						if (user.role) {
-						}
-						return false;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return ("courses/edit/" + entry?._id).toUriWithDashboardPrefix();
+					return (
+						"courses/edit/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={("courses/edit/" + entry?._id).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="add"
-									>
-										<AddIcon />
-									</IconButton>
-								</Link>
-							);
-						},
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={("courses/edit/" + entry?._id).toUriWithDashboardPrefix()}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
 					return ("courses/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: () => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
 };

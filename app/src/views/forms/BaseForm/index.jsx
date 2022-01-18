@@ -48,7 +48,7 @@ import { change, reduxForm, reset } from "redux-form";
 import { withGlobals } from "contexts/Globals";
 
 //
-import { ServiceDataHelper, UtilitiesHelper } from "hoc/Helpers";
+import { ServiceDataHelper, UtilitiesHelper } from "utils/Helpers";
 
 
 

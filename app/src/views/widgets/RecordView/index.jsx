@@ -224,7 +224,7 @@ class RecordView extends React.Component {
 							{JSON.isJSON(defination.scope.dependants) ? (
 								<AppBar
 									position="static"
-
+									color="transparent"
 									elevation={0}
 								>
 									<Tabs

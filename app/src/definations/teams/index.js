@@ -154,7 +154,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
+					service_query: { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -206,7 +206,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
+					service_query: { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -357,147 +357,54 @@ export default {
 		},
 	},
 	access: {
-		restricted: user => {
-			if (user) {
-				return false;
-			}
-			return true;
-		},
+		restricted: user => user?.role !== "admin" && user?.role !== "collector",
 		view: {
-			summary: user => {
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return true;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user && record) {
-					return true;
-				}
-				return false;
-			},
+			summary: user => user?.role === "admin" || user?.role === "collector",
+			all: user => user?.role === "admin" || user?.role === "collector",
+			single: (user) => user?.role === "admin" || user?.role === "collector",
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+			view: {
+				restricted: user => user?.role !== "admin" && user?.role !== "collector",
 				uri: entry => {
-					return "teams/view/" + entry?._id;
+					return (
+						"/teams/view/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"teams/view/" + entry?._id}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					return user && user.role === "admin" ? false : true;
-				},
-				uri: "teams/add",
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link to={"teams/add/"} {...props}>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Team
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
-				},
+				restricted: user => user?.role !== "admin",
+				uri: "/teams/add".toUriWithDashboardPrefix(),
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "teams/edit/" + entry?._id;
+					return (
+						"/teams/edit/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"teams/edit/" + entry?._id}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "teams/delete/" + entry?._id;
+					return ("/teams/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text", onClick) => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
 };

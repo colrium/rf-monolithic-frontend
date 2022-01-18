@@ -181,7 +181,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "admin" },
+					service_query: { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "admin" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -238,164 +238,58 @@ export default {
 		dependencies: [],
 		dependants: {},
 	},
+
 	access: {
-		restricted: user => {
-			if (user) {
-				return !(user.isAdmin || user.isCustomer);
-			}
-			return true;
-		},
+		restricted: user => user?.role !== "admin" && user?.role !== "customer",
 		view: {
-			summary: user => {
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return user.isAdmin || user.isCustomer;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user) {
-					return user.isAdmin || user.isCustomer;
-				}
-				return false;
-			},
+			summary: user => user?.role === "admin" || user?.role === "customer",
+			all: user => user?.role === "admin" || user?.role === "customer",
+			single: (user) => user?.role === "admin" || user?.role === "customer",
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return !(user.isAdmin || user.isCustomer);
-					}
-					return true;
-				},
+			view: {
+				restricted: user => user?.role !== "admin" && user?.role !== "customer",
 				uri: entry => {
 					return (
-						"quoterequests/view/" + entry?._id
+						"/quoterequests/view/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"quoterequests/view/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
-				uri: "quoterequests/add",
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link
-									to={"quoterequests/add/".toUriWithDashboardPrefix()}
-									{...props}
-								>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Quote Request
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
-				},
+				restricted: user => user?.role !== "admin",
+				uri: "/quoterequests/add".toUriWithDashboardPrefix(),
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
 					return (
-						"quoterequests/edit/" + entry?._id
+						"/quoterequests/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"quoterequests/edit/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return (
-						"quoterequests/delete/" + entry?._id
-					).toUriWithDashboardPrefix();
+					return ("/quoterequests/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text") => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
+
+
 };

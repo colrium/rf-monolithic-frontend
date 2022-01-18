@@ -456,7 +456,6 @@ let theme = createTheme({
 	// 	},
 	// },
 	palette: {
-
 		primary: {
 			contrastText: inverseColor,
 			main: primaryColor,
@@ -472,6 +471,9 @@ let theme = createTheme({
 			main: inverseColor,
 			contrastText: defaultColor,
 		},
+		default: {
+			main: "inherit",
+		},
 		error: {
 			main: errorColor,
 		},
@@ -483,9 +485,10 @@ let theme = createTheme({
 			primary: "#575757",
 			secondary: "#737373",
 			disabled: "#999999",
-			inverse: inverseColor,
+			contrast: inverseColor,
+			contrastDark: Color(inverseColor).darken(0.2).hex(),
 		},
-		...defaultPallete
+		...defaultPallete,
 	},
 	typography: {
 		fontSize: 16,
@@ -503,7 +506,7 @@ let theme = createTheme({
 			"Segoe UI Emoji",
 			"Segoe UI Symbol",
 		].join(","),
-		fontFamily: 'Muli',
+		fontFamily: "Muli",
 		htmlFontSize: 16,
 		h1: {
 			fontWeight: 700,
@@ -567,15 +570,15 @@ let theme = createTheme({
 			lineHeight: "16px",
 		},
 	},
-	// appDrawer: {
-	// 	width: app.drawer.width,
-	// },
+	appDrawer: {
+		width: app.drawer.width,
+	},
 	// overrides: {
 	// 	MuiCssBaseline: {
 	// 		'@global': {
 	// 			'@font-face': [
 	// 				// avenirFont,
-	// 				// materialIconsFont,					
+	// 				// materialIconsFont,
 	// 				// muliRegularFont,
 	// 				// //muliItalicFont,
 	// 				// muliBlackFont,

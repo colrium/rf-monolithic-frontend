@@ -108,6 +108,7 @@ export const StaticDateInput = ({
 				}}
 				value={value || defaultValue || null}
 				renderInput={(params) => <TextField {...params} />}
+				fullWidth
 				{...rest}
 			/>
 		</LocalizationProvider>
@@ -146,6 +147,7 @@ export const DateTimeInput = ({
 				}}
 				value={value || defaultValue || null}
 				renderInput={(params) => <TextField {...params} />}
+				fullWidth
 				{...rest}
 			/>
 		</LocalizationProvider>

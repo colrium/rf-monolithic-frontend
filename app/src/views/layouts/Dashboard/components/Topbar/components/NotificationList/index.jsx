@@ -15,7 +15,7 @@ import { withGlobals } from "contexts/Globals";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { UtilitiesHelper } from "hoc/Helpers";
+import { UtilitiesHelper } from "utils/Helpers";
 
 // Component styles
 
@@ -73,7 +73,7 @@ class NotificationList extends Component {
 								{notifications.map(notification => (
 									<Link
 										key={notification._id}
-										to={definations.notifications.access.actions.view_single.uri(
+										to={definations.notifications.access.actions.view.uri(
 											notification._id
 										)}
 									>

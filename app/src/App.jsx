@@ -34,7 +34,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 import GlobalsProvider from "contexts/Globals";
-import { NetworkServicesProvider, PersistentFormsProvider } from "contexts";
+import { NetworkServicesProvider, ApiDataProvider, PersistentFormsProvider } from "contexts";
 import CookiesConsentDialog from 'views/widgets/CookiesConsentDialog';
 import {
 	setIdentity,
@@ -44,7 +44,7 @@ import {
 	setWindowSize,
 } from "state/actions";
 
-import Auth from "hoc/Auth";
+import Auth from "utils/Auth";
 
 import appStyle from "assets/jss/appStyle";
 import { theme } from "assets/jss/app-theme";
@@ -93,23 +93,20 @@ const App = (props) => {
 	// 			}
 
 	// 			return (
-	// 				<FirebaseAppProvider firebaseConfig={firebaseConfig}>
-	// 					<GlobalsProvider >
-
-	// 						<ThemeProvider theme={appTheme}>
-	// 							{/* <CssBaseline /> */}
-	// 							{/* <JssProvider jss={jss} generateClassName={generateClassName} registry={sheets} > */}
-	// 							<JssProvider jss={jss} registry={sheets} >
-	// 								<BrowserRouter forceRefresh={false}>
-	// 									<Routes />
-	// 								</BrowserRouter>
-	// 							</JssProvider>
-	// 							<CookiesConsentDialog />
-	// 							<ProgressDialog open={!initialized} hideBackdrop={false} />
-	// 						</ThemeProvider>
-
-	// 					</GlobalsProvider>
-	// 				</FirebaseAppProvider>
+	// 				<ThemeProvider theme={appTheme}>
+	// 	<NetworkServicesProvider >
+		// 		<PersistentFormsProvider>
+		// 			<ApiDataProvider>
+		// 				<JssProvider jss={jss} registry={sheets} >
+		// 					<BrowserRouter forceRefresh={false}>
+		// 						<Routes />
+		// 					</BrowserRouter>
+		// 				</JssProvider>
+		// 				<CookiesConsentDialog />
+		// 			</ApiDataProvider>
+		// 		</PersistentFormsProvider>
+		// 	</NetworkServicesProvider>
+		// </ThemeProvider>
 	// 			);
 	// 		}}
 	// 	</CacheBuster>
@@ -119,18 +116,15 @@ const App = (props) => {
 
 
 		<ThemeProvider theme={appTheme}>
-			{/* <CssBaseline /> */}
-			{/* <JssProvider jss={jss} generateClassName={generateClassName} registry={sheets} > */}
 			<NetworkServicesProvider >
 				<PersistentFormsProvider>
-				<JssProvider jss={jss} registry={sheets} >
-					<BrowserRouter forceRefresh={false}>
-						<Routes />
-					</BrowserRouter>
-				</JssProvider>
-				<CookiesConsentDialog />
+						<JssProvider jss={jss} registry={sheets} >
+							<BrowserRouter forceRefresh={false}>
+								<Routes />
+							</BrowserRouter>
+						</JssProvider>
+						<CookiesConsentDialog />
 				</PersistentFormsProvider>
-				{/* <ProgressDialog open={!initialized} hideBackdrop={false} /> */}
 			</NetworkServicesProvider>
 		</ThemeProvider>
 

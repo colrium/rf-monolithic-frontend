@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import Slide from '@mui/material/Slide';
 import { connect } from "react-redux";
-import { withTheme } from '@mui/styles';
+import { withTheme } from "@mui/styles";
 
 import compose from "recompose/compose";
 import GridContainer from "components/Grid/GridContainer";
@@ -167,7 +167,7 @@ function ComposeEmailDialog(props) {
 						onClick={() => {
 							handleDiscardEmail()
 						}}
-						color={"default"}
+						color={"warning"}
 					>
 						Discard Draft
 					</Button>
@@ -211,6 +211,7 @@ function ComposeEmailDialog(props) {
 									}}
 									required
 									validate
+									fullWidth
 								/>
 							</GridItem>
 
@@ -242,6 +243,7 @@ function ComposeEmailDialog(props) {
 									}}
 									required
 									validate
+									fullWidth
 								/>
 							</GridItem>
 							{hasCC && <GridItem xs={12}>
@@ -270,6 +272,7 @@ function ComposeEmailDialog(props) {
 											}
 										},
 									}}
+									fullWidth
 								/>
 							</GridItem>}
 
@@ -308,6 +311,7 @@ function ComposeEmailDialog(props) {
 											}
 										},
 									}}
+									fullWidth
 								/>
 							</GridItem>}
 
@@ -335,6 +339,7 @@ function ComposeEmailDialog(props) {
 									label={"Message"}
 									required
 									validate
+									fullWidth
 
 								/>
 							</GridItem>
@@ -345,7 +350,14 @@ function ComposeEmailDialog(props) {
 			</DialogContent>
 
 			<DialogActions>
-
+				<Button
+						onClick={() => {
+							handleDiscardEmail()
+						}}
+						color={"warning"}
+					>
+						Discard Draft
+				</Button>
 
 				<Button
 					onClick={() => handleSendEmail()}
@@ -360,11 +372,11 @@ function ComposeEmailDialog(props) {
 					{error.toString()}
 				</Alert>
 			</Snackbar>}
-			{alert && <Snackbar open={Boolean(alert)} autoHideDuration={5000} onClose={() => setAlert(false)}>
+			{/*alert && <Snackbar open={Boolean(alert)} autoHideDuration={5000} onClose={() => setAlert(false)}>
 				<Alert elevation={6} variant="filled" onClose={() => setAlert(false)} severity="success">
 					{alert.toString()}
 				</Alert>
-			</Snackbar>}
+			</Snackbar>*/}
 		</Dialog>
 	);
 }

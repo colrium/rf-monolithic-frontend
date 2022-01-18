@@ -19,7 +19,7 @@ import compose from "recompose/compose";
 import { withGlobals } from "contexts/Globals";
 import { appendNavHistory } from "state/actions/ui/nav";
 //
-import { UtilitiesHelper } from "hoc/Helpers";
+import { UtilitiesHelper } from "utils/Helpers";
 
 //Widgets
 import ContextDataForm from "views/forms/BaseForm";

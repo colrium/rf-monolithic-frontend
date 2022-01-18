@@ -201,7 +201,6 @@ function Header(props) {
 								primary={
 									<NavLink
 										to={"/dashboard"}
-										target="_blank"
 										color="inherit"
 									>
 										Dashboard
@@ -332,8 +331,6 @@ function Header(props) {
 										<Button
 											href={"/home".toUriWithDashboardPrefix()}
 											edge="end"
-
-											target="_blank"
 											color="accent"
 											className=" capitalize"
 										>
@@ -465,7 +462,6 @@ function Header(props) {
 										<Button
 											href={"/home".toUriWithDashboardPrefix()}
 											edge="end"
-											target="_blank"
 											className="capitalize"
 											color={"accent"}
 										>

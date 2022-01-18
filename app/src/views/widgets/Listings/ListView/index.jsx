@@ -181,7 +181,7 @@ class ListView extends React.Component {
 		let columns = defination ? defination.scope.columns : {};
 		let resolved_data = [];
 
-		if (Function.isFunction(defination.views.listing.listview.resolveData)) {
+		if (Function.isFunction(defination?.views?.listing?.listview?.resolveData)) {
 			defination.views.listing.listview.resolveData(target_data, auth.user, entryItemProps)
 				.then(resolve => {
 					this.setState(state => ({

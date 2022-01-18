@@ -23,7 +23,6 @@ import BaseForm from "views/forms/BaseForm";
 //
 // Component styles
 
-
 class Account extends Component {
 	state = {
 		excludedFields: [],

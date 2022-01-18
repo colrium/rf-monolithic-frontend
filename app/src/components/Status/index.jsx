@@ -8,32 +8,22 @@ import PropTypes from "prop-types";
 import React from "react";
 
 const sizeClasses = {
-	sm: 'h-4 w-4',
-	md: 'h-8 w-8',
-	lg: 'h-16 w-16',
-}
+	sm: "h-2 w-2",
+	md: "h-2 w-2",
+	lg: "h-4 w-4",
+};
 
 const Status = props => {
-	const {
-		className,
-		size,
-		color,
-		text,
-		text_color,
-		...rest
-	} = props;
+	const { className, size, color, text, text_color, ...rest } = props;
 	const rootClassName = classNames({
-		[`flex mx-auto my-4 rounded-full`]: true,
+		[`flex my-4 rounded-full items-center`]: true,
 		[className]: className,
 	});
 
-	const statusClassName = classNames(
-		{
-			[`mx-auto my-4 rounded-full h-4 w-4`]: true,
-			[sizeClasses[size]]: !!size,
-		},
-		className
-	);
+	const statusClassName = classNames({
+		[`my-4 mx-1 rounded-full h-2 w-2`]: true,
+		[sizeClasses[size]]: !!size,
+	});
 
 	return (
 		<span {...rest} className={rootClassName}>
@@ -44,9 +34,7 @@ const Status = props => {
 					boxShadow: "0 0 0 2px " + colors.hex.inverse,
 				}}
 			/>
-			<span style={{ color: text_color }}>
-				{text}
-			</span>
+			<span style={{ color: text_color }}>{text}</span>
 		</span>
 	);
 };

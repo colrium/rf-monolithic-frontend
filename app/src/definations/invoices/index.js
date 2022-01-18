@@ -155,7 +155,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "customer" },
+					service_query: { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "customer" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -405,156 +405,54 @@ export default {
 		},
 	},
 	access: {
-		restricted: user => {
-			if (user) {
-				return !(user.isAdmin || user.isCustomer);
-			}
-			return true;
-		},
+		restricted: user => user?.role !== "admin" || user?.role !== "customer",
 		view: {
-			summary: user => {
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return user.isAdmin || user.isCustomer;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user && !record) {
-					return user.isAdmin;
-				}
-				if (user && record) {
-					return (
-						user.isAdmin ||
-						(user.isCustomer && record.owner === user._id)
-					);
-				}
-				return false;
-			},
+			summary: user => user?.role === "admin" || user?.role === "customer",
+			all: user => user?.role === "admin" || user?.role === "customer",
+			single: (user) => user?.role === "admin" || user?.role === "customer",
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return !(user.isAdmin || user.isCustomer);
-					}
-					return true;
-				},
+			view: {
+				restricted: user => user?.role !== "admin" || user?.role !== "customer",
 				uri: entry => {
-					return "invoices/view/" + entry?._id;
+					return (
+						"invoices/view/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"invoices/view/" + entry?._id}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
-				uri: "invoices/add",
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link to={"invoices/add/"} {...props}>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Invoice
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
-				},
+				restricted: user => user?.role !== "admin",
+				uri: "invoices/add".toUriWithDashboardPrefix(),
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "invoices/edit/" + entry?._id;
+					return (
+						"invoices/edit/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"invoices/edit/" + entry?._id}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return "invoices/delete/" + entry?._id;
+					return ("invoices/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text") => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
 };

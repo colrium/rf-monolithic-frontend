@@ -150,7 +150,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
+					service_query: { pagination: -1, pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", role: "collector" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -171,7 +171,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar", },
+					service_query: { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", },
 					resolves: {
 						value: "_id",
 						display: {
@@ -192,7 +192,7 @@ export default {
 				},
 				reference: {
 					name: "attachments",
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -217,7 +217,7 @@ export default {
 				},
 				reference: {
 					name: "attachments",
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -270,154 +270,54 @@ export default {
 		dependants: [],
 	},
 	access: {
-		restricted: user => {
-			if (user) {
-				return false;
-			}
-			return true;
-		},
+		restricted: user => user?.role !== "admin",
 		view: {
-			summary: user => {
-				return false;
-			},
-			all: user => {
-				if (user) {
-					return true;
-				}
-				return false;
-			},
-			single: (user, record) => {
-				if (user && record) {
-					return true;
-				}
-				return false;
-			},
+			summary:  user => user?.role === "admin",
+			all: user => user?.role === "admin",
+			single: (user) => user?.role === "admin",
 		},
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
-				uri: entry => {
-					return ("formvalues/view/" + entry?._id).toUriWithDashboardPrefix();
-				},
-				link: {
-					inline: {
-						default: (entry, className) => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={"formvalues/view/" + entry?._id}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
-			},
-			create: {
-				restricted: user => {
-					return user ? false : true;
-				},
-				uri: "formvalues/add".toUriWithDashboardPrefix(),
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link
-									to={"formvalues/add/".toUriWithDashboardPrefix()}
-									{...props}
-								>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Event
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
-				},
-			},
-			update: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
-				uri: entry => {
-					return ("formvalues/edit/" + entry?._id).toUriWithDashboardPrefix();
-				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"formvalues/edit/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
-			},
-			delete: {
-				restricted: user => {
-					if (user) {
-						return false;
-					}
-					return true;
-				},
+			view: {
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
 					return (
-						"formvalues/delete/" + entry?._id
+						"formvalues/view/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text") => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
+			},
+			create: {
+				restricted: user => user?.role !== "admin",
+				uri: "formvalues/add".toUriWithDashboardPrefix(),
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
+			},
+			update: {
+				restricted: user => user?.role !== "admin",
+				uri: entry => {
+					return (
+						"formvalues/edit/" + entry?._id
+					).toUriWithDashboardPrefix();
 				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
+			},
+			delete: {
+				restricted: user => user?.role !== "admin",
+				uri: entry => {
+					return ("formvalues/delete/" + entry?._id).toUriWithDashboardPrefix();
+				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
+		
 	},
 };

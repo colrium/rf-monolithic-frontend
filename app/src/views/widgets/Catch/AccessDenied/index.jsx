@@ -16,15 +16,11 @@ class AccessDenied extends React.Component {
 
 		return (
 			<GridContainer
-				direction="row"
-				justify="center"
-				alignItems="center"
-				className="h-full"
+				className="items-center justify-center my-8"
 			>
-				<GridItem className="h-full" xs={12} md={8} lg={6}>
+				<GridItem  xs={12} >
 					<GridContainer
-						className="h-full"
-						direction="column"
+						className="min-h-full"
 						justify="center"
 						alignItems="center"
 					>
@@ -61,8 +57,6 @@ class AccessDenied extends React.Component {
 							<Link to={link}>
 								<Button
 									variant="text"
-
-
 								>
 									{linkText}
 								</Button>

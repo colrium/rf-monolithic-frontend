@@ -24,7 +24,7 @@ import Typography from "components/Typography";
 import { formats } from "config/data";
 import PropTypes from "prop-types";
 import React from "react";
-import { UtilitiesHelper } from "hoc/Helpers";
+import { UtilitiesHelper } from "utils/Helpers";
 
 
 class CustomCalendar extends React.Component {

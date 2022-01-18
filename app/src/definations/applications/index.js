@@ -11,16 +11,18 @@ import {
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import Button from "components/Button";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Link } from "react-router-dom";
-import { CountriesHelper, UtilitiesHelper } from "hoc/Helpers";
+import { CountriesHelper, UtilitiesHelper } from "utils/Helpers";
 import { useGlobals } from "contexts/Globals";
 import { useGooglePlaces, useGeoLocation } from "hooks";
+import { JSONViewDialog } from "components/JSONView";
 import { connect } from "react-redux";
 import { withTheme } from '@mui/styles';
+import { useSetState } from 'hooks';
 import compose from "recompose/compose";
 import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions";
 
@@ -31,13 +33,21 @@ const ke_regions = CountriesHelper.administrative_features_options("KE", 2, "Nai
 
 
 const ConvertToUserIconAction = (props) => {
-	const { application, layoutType, apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth } = props;
+	const { data:application, layoutType, apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth, ...rest } = props;
 	const { definations, sockets } = useGlobals();
 	const [staffID, setStaffID] = useState(String.uid(8, false, true));
 	const [loading, setLoading] = useState(false);
+	const [userAccountDialogOpen, setUserAccountDialogOpen] = useState(false);
 	const [error, setError] = useState(false);
 	const [initiated, setInitiated] = useState(false);
 	const [emailCacheTouched, setEmailCacheTouched] = useState(false);
+	const [state, setState, getState] = useSetState({
+		userAccountDialog: {
+			open: false,
+			src: JSON.isJSON(application?.user)? application?.user : {}
+		},
+		userAccount: JSON.isJSON(application?.user)? application?.user : false
+	})
 
 	const handleCreateApplicantUserAccount = (sendEmail = false) => {
 		setLoading(true);
@@ -59,11 +69,26 @@ const ConvertToUserIconAction = (props) => {
 			}
 		).then(res => {
 			const { data } = res.body;
+
+
 			if (sendEmail) {
 				setEmailingCache("recipient_address", data.email_address);
 				setEmailingCache("recipient_name", data.first_name);
 				setEmailingCache("subject", "Your Realfield user account");
-				setEmailingCache("content", "Hey " + data.first_name + ", \n\n\nHere are your unique login details.\n\n\nUsername: " + application.email_address + " \nPassword: " + (!String.isEmpty(data.staffID) ? data.staffID : staffID) + "\n\n\n When you get inside the app things are pretty self-explanatory and under the ‘Reading’ tab, you’ll find a stack of materials we’d like you to review over the next few days. You’ll see a Realfield Training Manual and a number of other great resources for you to review.\nThe training will consist of a number elements starting with a short quiz. Don’t worry, the purpose of the quiz is to give us an idea of where we need to provide additional support, it’s not designed to catch you out.\nFollowing the quiz, we’ll be scheduling a number of live sessions. These sessions are really important and designed to help us test our platform.  They will also help us test things like responsiveness and accuracy, and each of the live sessions will be time sensitive. For example, you may be given a number of hours or a couple of days to complete the training assignment.\nMany of you have been writing in with encouragement and questions, and we love it! If you have questions, want to offer feedback or need support, please continue to use the jobs@realfield.io address.\nAsante sana and have an amazing weekend!!\n\n\nRealfield People Ops");
+				setEmailingCache("content", `Hey ${data.first_name},\n\n\n
+				Here are your unique login details.\n\n\n
+				Username: ${application.email_address} \n
+				Password: ${(!String.isEmpty(data.staffID) ? data.staffID : staffID)} \n\n\n
+				When you login into app things are pretty self-explanatory and under the Reading tab, you'll find a stack of materials we'd like you to review over the next few days.\n
+				You'll see a Realfield Training Manual and a number of other great resources for you to review.\nThe training will consist of a number elements that might start with a short quiz. 
+				\nDon't worry, the purpose of the quiz is to give us an idea of where we need to provide additional support, it's not designed to catch you out.\n
+				Following the quiz, we'll be scheduling a number of live sessions. These sessions are really important and designed to help us test our platform.\n
+				They will also help us test things like responsiveness and accuracy, and each of the live sessions will be time sensitive. 
+				For example, you may be given a number of hours or a couple of days to complete the training assignment.\n
+				Many of you have been writing in with encouragement and questions, and we love it! If you have questions, 
+				want to offer feedback or need support, please continue to use the jobs@realfield.io address.\n
+				Asante sana and have an amazing week!!\n\n\n
+				Realfield People Ops`);
 				setEmailingCache("context", "Application");
 				setEmailingCache("record", application._id);
 				setEmailingCache("popup_open", true);
@@ -140,76 +165,47 @@ const ConvertToUserIconAction = (props) => {
 		});
 	}
 
-	const handleOnShowUser = () => {
-		let profileContent = '<div class="flex flex-col w-full">';
-		try {
-			let profObjectStr = application.user.replace(/<[^>]*>?/gm, '');
-			let profObject = JSON.parse(profObjectStr);
-			delete profObject["password"];
-			delete profObject["__v"];
-			delete profObject["preferences"];
-			delete profObject["login_attempts"];
-			delete profObject["last_login_attempt"];
-			delete profObject["account_verified"];
-			delete profObject["account_verifacation_code"];
-			delete profObject["account_verifacation_mode"];
-			delete profObject["password_reset_code"];
-			delete profObject["password_reset_code_expiration"];
-			delete profObject["provider"];
-			delete profObject["provider_account_id"];
-			delete profObject["provider_handle"];
-			delete profObject["provider_url"];
-			Object.entries(profObject).map(([key, value]) => {
-				profileContent = profileContent + ' <div class="flex flex-row w-full"><b>' + key.humanize() + ': </b> <span class="flex-grow mx-2">' + value + '</span></div>';
-			});
-			profileContent = profileContent + '</div>';
-		} catch (e) {
-
+	const handleOnShowUser = useCallback(() => {
+		const {userAccount} = getState()
+		let userAccountObj = userAccount;
+		if (JSON.isJSON(application?.user)) {
+			userAccountObj = application?.user
 		}
-		openDialog({
-			title: "User Account for  " + application.first_name + " " + application.last_name,
-			body: profileContent,
-			actions: {
-				cancel: {
-					text: "Dismiss",
-					color: "default",
-					onClick: () => {
-						closeDialog();
-						setError(false);
-						setLoading(false);
+		else if (JSON.isEmpty(userAccount) && String.isString(application?.user) && !String.isEmpty(application?.user)) {
+			//Fetch user Account
+		}
+		if (JSON.isJSON(userAccountObj)) {
+			try {
+				let profObject = JSON.fromJSON(userAccountObj);
+				delete profObject["password"];
+				delete profObject["__v"];
+				delete profObject["preferences"];
+				delete profObject["login_attempts"];
+				delete profObject["last_login_attempt"];
+				delete profObject["account_verified"];
+				delete profObject["account_verifacation_code"];
+				delete profObject["account_verifacation_mode"];
+				delete profObject["password_reset_code"];
+				delete profObject["password_reset_code_expiration"];
+				delete profObject["provider"];
+				delete profObject["provider_account_id"];
+				delete profObject["provider_handle"];
+				delete profObject["provider_url"];
+				setState({
+					userAccountDialog: {
+						open: true, 
+						src: profObject, 
+						title: `User Account for  ${application.first_name} ${application.last_name}`
 					},
-				},
-				send_mail: {
-					text: "Email",
-					color: "secondary",
-					onClick: () => {
-						closeDialog();
-					},
-				},
-				send_message: {
-					text: "Message",
-					color: "primary",
-					onClick: () => {
-						closeDialog();
-					},
-				},
-				revoke: {
-					text: "Revoke",
-					color: "warning",
-					onClick: () => {
-						closeDialog();
-					},
-				},
-				revoke_send_mail: {
-					text: "Revoke and Email",
-					color: "error",
-					onClick: () => {
-						closeDialog();
-					},
-				},
-			},
-		});
-	}
+					userAccount: profObject,
+				})
+			} catch (e) {
+
+			}
+		}
+			
+		
+	}, [application])
 
 	const checkStaffIDAvailability = () => {
 		setLoading(true);
@@ -285,12 +281,13 @@ const ConvertToUserIconAction = (props) => {
 	return (
 		<React.Fragment>
 			{loading && <CircularProgress size={16} color="secondary" />}
+			{ !loading && <JSONViewDialog {...state.userAccountDialog} onClose={()=>setState({userAccountDialog: {open: false, src: {}}})} />}
 			{(layoutType === "inline" && !loading) && <IconButton
-				color={application.user ? "secondary" : "inherit"}
-				aria-label="Create application user"
+				color={application?.user ? "secondary" : "inherit"}
+				aria-label="Translate to user"
 				onClick={() => {
 					if (initiated) {
-						if (!application.user) {
+						if (!application?.user && !(JSON.isJSON(state.userAccount) || !JSON.isEmpty(state.userAccount))) {
 							checkStaffIDAvailability();
 						}
 						else {
@@ -301,9 +298,10 @@ const ConvertToUserIconAction = (props) => {
 						setInitiated(true);
 					}
 				}}
+				{...rest}
 			>
-				{!application.user && <PersonAddOutlinedIcon fontSize="small" />}
-				{application.user && <AccountCircleOutlinedIcon fontSize="small" />}
+				{!application?.user && (!JSON.isJSON(state.userAccount) || JSON.isEmpty(state.userAccount)) && <PersonAddOutlinedIcon fontSize="inherit" />}
+				{!!application?.user && <AccountCircleOutlinedIcon fontSize="inherit" />}
 			</IconButton>}
 			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
 				<Alert elevation={6} variant="filled" onClose={() => setError(false)} severity="error">
@@ -366,7 +364,7 @@ export default {
 				},
 				reference: {
 					name: "vacancies",
-					service_query: { active: 1, below: Date.now() },
+					service_query: { pagination: -1, active: 1, below: Date.now() },
 					resolves: {
 						value: "_id",
 						display: {
@@ -471,7 +469,7 @@ export default {
 			},
 
 			dob: {
-				type: "string",
+				type: "date",
 				label: "Date of birth",
 				input: {
 					type: "date",
@@ -807,7 +805,7 @@ export default {
 				},
 				reference: {
 					name: "attachments",
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -841,7 +839,7 @@ export default {
 				},
 				reference: {
 					name: "attachments",
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -871,7 +869,7 @@ export default {
 				},
 				reference: {
 					name: "attachments",
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -931,187 +929,84 @@ export default {
 	},
 	access: {
 		restricted: user => {
-			if (user) {
-				return !(user.isAdmin || user.isCollector);
-			}
-			return true;
+			return user?.role !== "admin" && user?.role !== "collector";
 		},
 		view: {
 			summary: user => {
 				return false;
 			},
 			all: user => {
-				if (user) {
-					return user.isAdmin || user.isCollector;
-				}
-				return false;
+				
+				return user?.role === "admin" || user?.role === "collector";
 			},
 			single: (user, record) => {
 				if (user) {
-					if (user.isAdmin) {
+					if (user.role==="admin") {
 						return true;
 					}
 					if (record) {
-						return UtilitiesHelper.isOfType(record.user, "json")
-							? record.user._id === user._id
-							: record.user === user._id;
+						return record?.user?._id === user?._id || record?.user === user?._id;
 					}
 					return false;
 				}
 				return false;
 			},
 		},
+		
+
 		actions: {
-			view_single: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+			view: {
+				restricted: user => (user?.role !== "admin" && user?.role !== "collector"),
 				uri: entry => {
 					return "applications/view/" + entry?._id;
 				},
-				link: {
-					inline: {
-						default: (entry, className) => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"applications/view/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
 			create: {
-				restricted: user => {
-					return user ? !(user.isAdmin || user.isCollector) : true;
-				},
+				restricted: user => (user?.role !== "admin"),
 				uri: "applications/add".toUriWithDashboardPrefix(),
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link
-									to={"applications/add/".toUriWithDashboardPrefix()}
-									{...props}
-								>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Application
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
-				},
+				Icon: AddIcon,
+				label: "Add new",
+				className: "text-green-500",
+				isFreeAction: true,
 			},
 			update: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => (user?.role !== "admin"),
 				uri: entry => {
 					return (
 						"applications/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"applications/edit/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			create_application_user: {
-				restricted: user => {
-					if (user) {
-						return !user.isAdmin;
-					}
-					return true;
-				},
+				restricted: user => (user?.role !== "admin"),
 				uri: entry => {
 					return (
 						"applications/" + entry?._id + "/user/create"
 					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => { },
-						listing: (entry, className = "grey_text") => {
-							return (
-								<ConvertToUserIconActionComponent application={entry} />
-							);
-						},
-					},
-				},
+				Component: ConvertToUserIconActionComponent,
+				label: "User Account",
 			},
 			delete: {
 				restricted: user => {
 					if (user) {
-						return !user.isAdmin;
+						return false;
 					}
 					return true;
 				},
 				uri: entry => {
-					return (
-						"applications/delete/" + entry?._id
-					).toUriWithDashboardPrefix();
+					return ("answers/delete/" + entry?._id).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text") => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
 	},

@@ -287,12 +287,14 @@ export default {
 		MsTransform: "translateX(-50%)",
 		transform: "translateX(-50%)",
 	},
-	".ps__thumb-x": {
-		backgroundColor: "#707070 !important",
+	".ps__thumb-x, .ps__thumb-y": {
+		backgroundColor: `${colors.hex.secondary} !important`,
 	},
-	".ps__thumb-y": {
-		backgroundColor: "#707070 !important",
-	},
+	".ps .ps__rail-x:hover, .ps .ps__rail-y:hover, .ps .ps__rail-x:focus, .ps .ps__rail-y:focus, .ps .ps__rail-x.ps--clicking, .ps .ps__rail-y.ps--clicking":
+		{
+			backgroundColor: "transparent !important",
+			opacity: "1 !important",
+		},
 	".h-screen-1/4": {
 		height: "25vh !important",
 	},
@@ -319,28 +321,28 @@ export default {
 		flexGrow: 1,
 	},
 	".rule--field": {
-		"display": "flex",
-		"alignItems": "center",
+		display: "flex",
+		alignItems: "center",
 		flexGrow: 0.3,
 	},
 	".rule--operator": {
-		"display": "flex",
-		"alignItems": "center"
+		display: "flex",
+		alignItems: "center",
 	},
 	".rule--body": {
 		display: "flex",
 		"& .rule--value": {
-			"flexGrow": "1",
-			"display": "flex",
-			"justifyContent": "space-around",
+			flexGrow: "1",
+			display: "flex",
+			justifyContent: "space-around",
 			"& .rule--widget": {
-				"display": "flex",
-				"flexGrow": "1",
-				"flexDirection": "row",
-				"alignContent": "center",
-				"alignItems": "center",
+				display: "flex",
+				flexGrow: "1",
+				flexDirection: "row",
+				alignContent: "center",
+				alignItems: "center",
 				"& .widget--widget": {
-					"flexGrow": "1",
+					flexGrow: "1",
 				},
 			},
 		},
@@ -351,10 +353,12 @@ export default {
 	},
 
 	".bottom-to-top-fading-dark-bg": {
-		background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%) !important',
+		background:
+			"linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%) !important",
 	},
 	".bottom-to-top-fading-bg": {
-		background: 'linear-gradient(to top, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 90%, rgba(255,255,255,0) 100%) !important',
+		background:
+			"linear-gradient(to top, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 90%, rgba(255,255,255,0) 100%) !important",
 	},
 	".blur-bg-sm": {
 		backdropFilter: "blur(7px) !important",
@@ -365,7 +369,6 @@ export default {
 		backgroundColor: "rgba(" + colors.rgb.inverse + ", 0.32) !important",
 	},
 
-
 	/*".rule--body": {
 		display: "flex",
 		justifyContent: "space-around",
@@ -375,5 +378,4 @@ export default {
 	},*/
 	...muiGlobalStyles,
 	...color_based_styles,
-
 };

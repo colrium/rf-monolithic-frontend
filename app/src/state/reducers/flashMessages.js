@@ -1,7 +1,7 @@
 /** @format */
 
 import findIndex from "lodash/findIndex";
-import { UtilitiesHelper } from "hoc/Helpers";
+import { UtilitiesHelper } from "utils/Helpers";
 import { ADD_FLASH_MESSAGE, DELETE_FLASH_MESSAGE } from "../actions/types";
 
 export default (state = [], action = {}) => {

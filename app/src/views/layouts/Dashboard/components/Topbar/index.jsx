@@ -23,9 +23,9 @@ import ApiService from "services/Api";
 import { PersonOutlined as UserIcon } from "@mui/icons-material";
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import { logout, setCurrentUser } from "state/actions";
-import { ServiceDataHelper } from "hoc/Helpers";
+import { ServiceDataHelper } from "utils/Helpers";
 import { withGlobals } from "contexts/Globals";
-
+import { width as drawerWidth } from "config/ui/drawer";
 // Custom components
 import { NotificationList } from "./components";
 import { app } from "assets/jss/app-theme";
@@ -33,14 +33,12 @@ import { app } from "assets/jss/app-theme";
 import { createUpdateFirestoreDoc } from "services/Firebase";
 // Component styles
 
-
-
-
 class Topbar extends Component {
 	signal = true;
 	ignoreConnectionState = false;
 	searchRef = React.createRef();
 	state = {
+		drawerWidth: drawerWidth,
 		prominent: true,
 		notifications: [],
 		notificationsLimit: 5,
@@ -60,23 +58,21 @@ class Topbar extends Component {
 		userPresenceMenuAnchorEl: null,
 	};
 
-	constructor (props) {
+	constructor(props) {
 		super(props);
 		this.mounted = false;
 		const { sockets, auth, setCurrentUser } = this.props;
-		this.onCloseConnectionSnackbar = this.onCloseConnectionSnackbar.bind(
-			this
-		);
-		this.onCloseNotificationSnackbar = this.onCloseNotificationSnackbar.bind(
-			this
-		);
-		this.handleCloseNotifications = this.handleCloseNotifications.bind(
-			this
-		);
+		this.onCloseConnectionSnackbar =
+			this.onCloseConnectionSnackbar.bind(this);
+		this.onCloseNotificationSnackbar =
+			this.onCloseNotificationSnackbar.bind(this);
+		this.handleCloseNotifications =
+			this.handleCloseNotifications.bind(this);
 		this.handleSignOut = this.handleSignOut.bind(this);
 		this.onOpenUserPresenceMenu = this.onOpenUserPresenceMenu.bind(this);
 		this.onCloseUserPresenceMenu = this.onCloseUserPresenceMenu.bind(this);
-		this.onChangeUserPresenceMenu = this.onChangeUserPresenceMenu.bind(this);
+		this.onChangeUserPresenceMenu =
+			this.onChangeUserPresenceMenu.bind(this);
 		if (sockets.default) {
 			this.state.serverConnected = sockets.default.connected;
 		}
@@ -84,28 +80,27 @@ class Topbar extends Component {
 		this.initSocketActionsListener();
 	}
 
-	componentDidMount () {
+	componentDidMount() {
 		let { dashboard } = this.props;
 
 		this.signal = true;
 		this.mounted = true;
 		this.setState({ prominent: true });
 		//
-
 	}
 
-	componentWillUnmount () {
+	componentWillUnmount() {
 		this.signal = false;
 		this.mounted = false;
 		this.ignoreConnectionState = true;
 	}
 
-	getSnapshotBeforeUpdate (prevProps, prevState) {
+	getSnapshotBeforeUpdate(prevProps, prevState) {
 		this.mounted = false;
 		return null;
 	}
 
-	componentDidUpdate (prevProps, prevState, snapshot) {
+	componentDidUpdate(prevProps, prevState, snapshot) {
 		this.mounted = true;
 	}
 
@@ -140,7 +135,7 @@ class Topbar extends Component {
 		});
 	};
 
-	initSocketActionsListener () {
+	initSocketActionsListener() {
 		const { sockets, auth, setCurrentUser } = this.props;
 		if (sockets.default) {
 			sockets.default.on("connect", () => {
@@ -163,8 +158,8 @@ class Topbar extends Component {
 				}
 			});
 
-			sockets.default.on("reconnect_failed", (attemptNumber) => {
-				////			
+			sockets.default.on("reconnect_failed", attemptNumber => {
+				////
 				if (attemptNumber >= 10 && !this.ignoreConnectionState) {
 					this.setState({
 						connectionSnackBarOpened: false,
@@ -174,7 +169,6 @@ class Topbar extends Component {
 						connectionSnackBarMessage: "Connection Lost",
 					});
 				}
-
 			});
 
 			sockets.default.on("new_notification", notification => {
@@ -184,7 +178,9 @@ class Topbar extends Component {
 						!notification.read
 					) {
 						this.setState(prevState => ({
-							notifications: Array.isArray(prevState.notifications)
+							notifications: Array.isArray(
+								prevState.notifications
+							)
 								? prevState.notifications.unshift(notification)
 								: [notification],
 							notificationSnackBarOpen: true,
@@ -195,13 +191,17 @@ class Topbar extends Component {
 				}
 			});
 
-
-
 			sockets.default.on("update", ({ context, action }) => {
 				if (context.toLowerCase() === "notification") {
 					if (action.effects.notify === auth.user._id) {
 						this.setState(prevState => ({
-							notifications: Array.isArray(prevState.notifications) ? prevState.notifications.unshift(action.effects) : [action.effects],
+							notifications: Array.isArray(
+								prevState.notifications
+							)
+								? prevState.notifications.unshift(
+										action.effects
+								  )
+								: [action.effects],
 							notificationSnackBarOpen: true,
 							notificationSnackBarMessage: action.effects.body,
 						}));
@@ -221,14 +221,10 @@ class Topbar extends Component {
 					}
 				}*/
 			});
-
-
-
-
 		}
 	}
 
-	parseData (entry) {
+	parseData(entry) {
 		const { auth } = this.props;
 		let parsed_data = entry;
 		let columns = notificationsDefination.scope.columns;
@@ -256,48 +252,52 @@ class Topbar extends Component {
 		return parsed_data;
 	}
 
-	getNotifications () {
+	getNotifications() {
 		const { auth, definations } = this.props;
 
 		const { notificationsLimit } = this.state;
 
-		ApiService.getContextRequests("/notifications").getRecordsCount({ read: "0" }).then(res => {
-			if (this.mounted) {
-				this.setState(state => ({
-					notificationsCount: res.body.data.count,
-					load_error: false,
-					loading: false,
-				}));
-			}
-			else {
-				this.state.notificationsCount = res.body.data.count;
-				this.state.load_error = false;
-				this.state.loading = false;
-			}
-		})
+		ApiService.getContextRequests("/notifications")
+			.getRecordsCount({ read: "0" })
+			.then(res => {
+				if (this.mounted) {
+					this.setState(state => ({
+						notificationsCount: res.body.data.count,
+						load_error: false,
+						loading: false,
+					}));
+				} else {
+					this.state.notificationsCount = res.body.data.count;
+					this.state.load_error = false;
+					this.state.loading = false;
+				}
+			})
 			.catch(err => {
 				if (this.mounted) {
-					this.setState(state => ({ load_error: err, loading: false }));
-				}
-				else {
+					this.setState(state => ({
+						load_error: err,
+						loading: false,
+					}));
+				} else {
 					this.state.load_error = err;
 					this.state.loading = false;
 				}
 			});
 
-
-		ApiService.getContextRequests("/notifications").getRecords({
-			p: 1,
-			pagination: notificationsLimit,
-			desc: "date_created",
-		})
+		ApiService.getContextRequests("/notifications")
+			.getRecords({
+				p: 1,
+				pagination: notificationsLimit,
+				desc: "date_created",
+			})
 			.then(response => {
 				let raw_data = response.body.data;
-				let resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(
-					raw_data,
-					notificationsDefination.columns,
-					auth.user
-				);
+				let resolved_data =
+					ServiceDataHelper.resolveReferenceColumnsDisplays(
+						raw_data,
+						notificationsDefination.columns,
+						auth.user
+					);
 				let that = this;
 				let all_records = resolved_data.map(entry => {
 					return that.parseData(entry);
@@ -308,8 +308,7 @@ class Topbar extends Component {
 						load_error: false,
 						loading: false,
 					}));
-				}
-				else {
+				} else {
 					this.state.notifications = all_records;
 					this.state.load_error = false;
 					this.state.loading = false;
@@ -317,18 +316,18 @@ class Topbar extends Component {
 			})
 			.catch(err => {
 				if (this.mounted) {
-					this.setState(state => ({ load_error: err, loading: false }));
-				}
-				else {
+					this.setState(state => ({
+						load_error: err,
+						loading: false,
+					}));
+				} else {
 					this.state.load_error = err;
 					this.state.loading = false;
 				}
-
 			});
-
 	}
 
-	handleSignOut () {
+	handleSignOut() {
 		const { logout } = this.props;
 		logout();
 		ApiService.logout();
@@ -338,9 +337,10 @@ class Topbar extends Component {
 		const { auth, definations } = this.props;
 		this.setState({ notificationsEl: event.currentTarget }, () => {
 			if (this.state.notificationsCount > 0) {
-				ApiService.get("/notifications/mark/all/read").then(res => {
-					this.setState({ notificationsCount: 0 });
-				})
+				ApiService.get("/notifications/mark/all/read")
+					.then(res => {
+						this.setState({ notificationsCount: 0 });
+					})
 					.catch(e => {
 						this.setState({ notificationsCount: 0 });
 					});
@@ -348,25 +348,25 @@ class Topbar extends Component {
 		});
 	};
 
-	handleCloseNotifications () {
+	handleCloseNotifications() {
 		this.setState({
 			notificationsEl: null,
 		});
 	}
 
-	onCloseConnectionSnackbar () {
+	onCloseConnectionSnackbar() {
 		this.setState({
 			connectionSnackBarOpen: false,
 		});
 	}
 
-	onCloseNotificationSnackbar () {
+	onCloseNotificationSnackbar() {
 		this.setState({
 			notificationSnackBarOpen: false,
 		});
 	}
 
-	render () {
+	render() {
 		const {
 			theme,
 			className,
@@ -377,146 +377,132 @@ class Topbar extends Component {
 			nav,
 			communication: { messaging },
 			auth,
+			sx,
 			...rest
 		} = this.props;
-		const {
-			notifications,
-			notificationsCount,
-			notificationsEl,
-		} = this.state;
+		const { notifications, notificationsCount, notificationsEl } =
+			this.state;
 		const showNotifications = Boolean(notificationsEl);
 
 		const breadcrumbs = nav.entries;
 
 		return (
-			<Box className={ className } >
+			<Box className={className} sx={sx}>
 				<AppBar
+					sx={{
+						borderBottom: theme =>
+							`1px solid ${theme.palette.divider}`,
+						backgroundColor: theme =>
+							theme.palette.background.paper,
+						zIndex: theme => theme.zIndex.appBar,
 
-					sx={ {
-						borderBottom: (theme) => `1px solid ${ theme.palette.divider }`,
-						backgroundColor: (theme) => theme.palette.background.paper,
-						zIndex: (theme) => theme.zIndex.appBar,
 						flexGrow: 1,
-					} }
+					}}
 				>
 					<Toolbar
-						className={ classNames({
-							"flex": true,
-							"relative": true,
+						className={classNames({
+							flex: true,
+							relative: true,
 							"px-2": true,
-						}) }
-						sx={ {
-							height: (theme) => theme.spacing(8),
+						})}
+						sx={{
+							height: theme => theme.spacing(8),
 							transition: "height 100ms",
 							width: "100%",
-							transitionTimingFunction: "cubic-bezier(0.1, 0.7, 1.0, 0.1)",
+							transitionTimingFunction:
+								"cubic-bezier(0.1, 0.7, 1.0, 0.1)",
 							zIndex: 1300,
-							color: (theme) => theme.palette.text.primary,
-						} }
+							color: theme => theme.palette.text.primary,
+						}}
 					>
-
-
-						{ <IconButton
-							onClick={ onToggleSidebar }
-							variant="text"
-							sx={ {
-								alignSelf: "center",
-								marginLeft: "-4px",
-								color: (theme) => theme.palette.text.primary,
-								"&:hover": {
-									color: (theme) => theme.palette.primary.main + " !important",
-								},
-							} }
-						>
-							{ isSidebarOpen ? (
-								<CloseSideBarIcon />
-							) : (
-								<OpenSideBarIcon />
-							) }
-						</IconButton> }
-
-
+						{
+							<IconButton
+								onClick={onToggleSidebar}
+								variant="text"
+								sx={{
+									alignSelf: "center",
+									marginLeft: "4px",
+									marginRight: theme => theme.spacing(),
+									color: theme => theme.palette.text.primary,
+									"&:hover": {
+										color: theme =>
+											theme.palette.primary.main +
+											" !important",
+									},
+								}}
+							>
+								{isSidebarOpen ? (
+									<CloseSideBarIcon />
+								) : (
+									<OpenSideBarIcon />
+								)}
+							</IconButton>
+						}
 
 						<Link
-							className={ "inline-block text-left w-auto cursor-pointer" }
-							to={ "/home".toUriWithDashboardPrefix() }
+							className={
+								"inline-block text-left w-auto cursor-pointer"
+							}
+							to={"/home".toUriWithDashboardPrefix()}
 						>
 							<img
-								alt={ app.name + " logo cursor-pointer" }
-								className={ "cursor-pointer h-8" }
-								src={ app.logo }
+								alt={app.name + " logo cursor-pointer"}
+								className={"cursor-pointer h-6"}
+								src={app.logo}
 							/>
 						</Link>
 
+						<div
+							className={
+								"flex flex-grow justify-start flex-row-reverse items-center px-4"
+							}
+						>
 
-
-
-
-
-						<div className={ "flex flex-grow justify-start flex-row-reverse items-center px-4" }>
-							{/*auth.isAuthenticated && (
-								<Chip
-									avatar={auth.user.avatar ? (
-										<Avatar alt="Avatar" >
-											<LazyImage
-												src={ApiService.getAttachmentFileUrl(
-													auth.user.avatar
-												)}
-											/>
-										</Avatar>
-									) : (
-										<Avatar>
-											<UserIcon />
-										</Avatar>
-									)}
-									label={<Status
-											color={
-												auth.user.presence === "online"
-													? "#00796b"
-													: auth.user.presence === "away"
-													? "#b88d00"
-													: "#5C5C5C"
-											}
-											text={
-												auth.user.first_name +
-												" " +
-												auth.user.last_name
-											}
-									/>}	
-									onClick={this.onOpenUserPresenceMenu}
-								/>
-
-								
-							)*/}
-
-							{ auth.isAuthenticated && (
+							{auth.isAuthenticated && (
 								<Badge
 									variant="dot"
 									badgeContent=" "
-									className="mx-4"
-									anchorOrigin={ {
-										vertical: 'bottom',
-										horizontal: 'right',
-									} }
-									classes={ {
-										dot: this.state.serverConnected ? (auth.user.presence === "online" ? "bg-green-700" : (auth.user.presence == "away" ? "bg-orange-700" : "bg-gray-700")) : "bg-red-700"
-									} }
+									anchorOrigin={{
+										vertical: "bottom",
+										horizontal: "right",
+									}}
+									classes={{
+										dot: this.state.serverConnected
+											? auth.user.presence === "online"
+												? "bg-green-700"
+												: auth.user.presence == "away"
+												? "bg-orange-700"
+												: "bg-gray-700"
+											: "bg-red-700",
+									}}
 								>
-									{ auth.user.avatar ? (
-										<Avatar
-											alt="Avatar"
-											className={ " cursor-pointer" }
-											src={ ApiService.getAttachmentFileUrl(auth.user.avatar) }
-											onClick={ this.onOpenUserPresenceMenu }
-										/>
-									) : (
-										<Avatar className={ " cursor-pointer" } style={ { color: theme.palette.text.primary, background: theme.palette.action.selected } } onClick={ this.onOpenUserPresenceMenu }>
-											<UserIcon />
-										</Avatar>
-									) }
-
+									<IconButton
+										onClick={this.onOpenUserPresenceMenu}
+										size="small"
+										sx={{ ml: 2 }}
+									>
+										{auth.user.avatar ? (
+											<Avatar
+												alt={auth.user?.first_name}
+												className={`text-sm ${this.state.serverConnected ? auth.user.presence === "online" ? "bg-green-700" : auth.user.presence == "away" ? "bg-orange-700" : "bg-gray-700" : "bg-red-700"}`}
+												src={ApiService.getAttachmentFileUrl(auth.user?.avatar)}
+												sx={{ width: 32, height: 32 }}
+											/>
+										) : (
+											<Avatar
+												sx={{
+													color: theme.palette.text.primary,
+													background: theme.palette.action.selected,
+													width: 32, 
+													height: 32
+												}}
+											>
+												<UserIcon />
+											</Avatar>
+										)}
+									</IconButton>
 								</Badge>
-							) }
+							)}
 
 							{/*auth.isAuthenticated && (
 								<Status
@@ -536,90 +522,117 @@ class Topbar extends Component {
 								
 							)*/}
 
-							<Link className={ "cursor-pointer" } to={ "/messages".toUriWithDashboardPrefix() }>
+							<Link
+								className={"cursor-pointer md:mx-2"}
+								to={"/messages".toUriWithDashboardPrefix()}
+							>
 								<IconButton>
-									<Badge variant="dot" invisible={ Number.parseNumber(messaging.unread_count, 0) === 0 } badgeContent={ messaging.unread_count } color="primary">
+									<Badge
+										variant="dot"
+										invisible={
+											Number.parseNumber(
+												messaging.unread_count,
+												0
+											) === 0
+										}
+										badgeContent={messaging.unread_count}
+										color="primary"
+									>
 										<ForumOutlinedIcon />
 									</Badge>
 								</IconButton>
 							</Link>
 
-
 							<Menu
 								id="user-presence-menu"
-								anchorEl={ this.state.userPresenceMenuAnchorEl }
-								open={ this.state.userPresenceMenuOpen }
-								onClose={ this.onCloseUserPresenceMenu }
-								TransitionComponent={ Fade }
-								classes={ {
-									list: "pt-0"
-								} }
+								anchorEl={this.state.userPresenceMenuAnchorEl}
+								open={this.state.userPresenceMenuOpen}
+								onClose={this.onCloseUserPresenceMenu}
+								TransitionComponent={Fade}
+								classes={{
+									list: "pt-0",
+								}}
 								keepMounted
 							>
 								<MenuItem
-									classes={ {
-										root: "opacity-100 inverse-text " + (this.state.serverConnected ? (auth.user.presence === "online" ? "bg-green-700" : (auth.user.presence == "away" ? "bg-orange-700" : "bg-gray-700")) : "bg-red-700")
-									} }
+									classes={{
+										root:
+											"opacity-100 inverse-text " +
+											(this.state.serverConnected
+												? auth.user.presence ===
+												  "online"
+													? "bg-green-700"
+													: auth.user.presence ==
+													  "away"
+													? "bg-orange-700"
+													: "bg-gray-700"
+												: "bg-red-700"),
+									}}
 									disabled
 								>
-									<Typography color="inherit" variant="subtitle1">{ auth.user.first_name + " " + auth.user.last_name }</Typography>
+									<Typography
+										color="inherit"
+										variant="subtitle1"
+									>
+										{auth.user.first_name +
+											" " +
+											auth.user.last_name}
+									</Typography>
 								</MenuItem>
 								<MenuItem
-									onClick={ this.onChangeUserPresenceMenu(
+									onClick={this.onChangeUserPresenceMenu(
 										auth.user
 											? auth.user.presence === "online"
 												? "away"
 												: "online"
 											: "online"
-									) }
-									disabled={ !this.state.serverConnected }
+									)}
+									disabled={!this.state.serverConnected}
 								>
-									{ auth.user
+									{auth.user
 										? auth.user.presence === "online"
 											? "Set to away"
 											: "Set to online"
-										: "Set to online" }
+										: "Set to online"}
 								</MenuItem>
-								{ ["online", "away"].includes(
+								{["online", "away"].includes(
 									auth.user.presence
 								) && (
-										<MenuItem
-											onClick={ this.onChangeUserPresenceMenu(
-												"offline"
-											) }
-											disabled={ !this.state.serverConnected }
-										>
-											Set to offline
-										</MenuItem>
-									) }
+									<MenuItem
+										onClick={this.onChangeUserPresenceMenu(
+											"offline"
+										)}
+										disabled={!this.state.serverConnected}
+									>
+										Set to offline
+									</MenuItem>
+								)}
 								<MenuItem>
 									<Link
-										to={ "/account".toUriWithDashboardPrefix() }
-
+										to={"/account".toUriWithDashboardPrefix()}
 									>
 										My account
-									</Link>{ " " }
+									</Link>{" "}
 								</MenuItem>
-								<MenuItem onClick={ this.handleSignOut }
-								>
+								<MenuItem onClick={this.handleSignOut}>
 									Logout
 								</MenuItem>
 							</Menu>
 
 							<IconButton
-								className={ "" }
-								onClick={ this.handleShowNotifications }
+								className={"md:mx-2"}
+								onClick={this.handleShowNotifications}
 							>
 								<Badge
-									badgeContent={ notificationsCount }
+									badgeContent={notificationsCount}
 									color="secondary"
 									variant="dot"
 								>
 									<Icon
-										path={ mdiBellOutline }
+										path={mdiBellOutline}
 										title="Notification Icon"
-										size={ 1 }
-										color={ theme.palette.text.primary }
+										size={1}
+										color={theme.palette.text.primary}
 									/>
 								</Badge>
 							</IconButton>
@@ -627,55 +640,59 @@ class Topbar extends Component {
 					</Toolbar>
 				</AppBar>
 				<Popover
-					anchorEl={ notificationsEl }
-					anchorOrigin={ {
+					anchorEl={notificationsEl}
+					anchorOrigin={{
 						vertical: "bottom",
 						horizontal: "center",
-					} }
-					onClose={ this.handleCloseNotifications }
-					open={ showNotifications }
-					transformOrigin={ {
+					}}
+					onClose={this.handleCloseNotifications}
+					open={showNotifications}
+					transformOrigin={{
 						vertical: "top",
 						horizontal: "center",
-					} }
+					}}
 				>
 					<NotificationList
-						notifications={ notifications }
-						onSelect={ this.handleCloseNotifications }
+						notifications={notifications}
+						onSelect={this.handleCloseNotifications}
 					/>
 				</Popover>
 
-				{/* <Notification title="test notification"/> */ }
+				{/* <Notification title="test notification"/> */}
 
 				<Snackbar
-					anchorOrigin={ {
+					anchorOrigin={{
 						vertical: "top",
 						horizontal: "center",
-					} }
-					open={ this.state.connectionSnackBarOpen }
-					autoHideDuration={ this.state.connectionSnackBarColor === "error" ? null : 2000 }
-					onClose={ this.onCloseConnectionSnackbar }
+					}}
+					open={this.state.connectionSnackBarOpen}
+					autoHideDuration={
+						this.state.connectionSnackBarColor === "error"
+							? null
+							: 2000
+					}
+					onClose={this.onCloseConnectionSnackbar}
 				>
 					<SnackbarContent
-						onClose={ this.onCloseConnectionSnackbar }
-						color={ this.state.connectionSnackBarColor }
-						message={ this.state.connectionSnackBarMessage }
+						onClose={this.onCloseConnectionSnackbar}
+						color={this.state.connectionSnackBarColor}
+						message={this.state.connectionSnackBarMessage}
 					/>
 				</Snackbar>
 
 				<Snackbar
-					anchorOrigin={ {
+					anchorOrigin={{
 						vertical: "top",
 						horizontal: "right",
-					} }
-					open={ this.state.notificationSnackBarOpen }
-					autoHideDuration={ 7000 }
-					onClose={ this.onCloseNotificationSnackbar }
+					}}
+					open={this.state.notificationSnackBarOpen}
+					autoHideDuration={7000}
+					onClose={this.onCloseNotificationSnackbar}
 				>
 					<SnackbarContent
-						onClose={ this.onCloseNotificationSnackbar }
+						onClose={this.onCloseNotificationSnackbar}
 						color="inverse"
-						message={ this.state.notificationSnackBarMessage }
+						message={this.state.notificationSnackBarMessage}
 					/>
 				</Snackbar>
 			</Box>

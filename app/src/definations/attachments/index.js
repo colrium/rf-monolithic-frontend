@@ -7,13 +7,14 @@ import {
 	EditOutlined as EditIcon,
 	FolderOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,
+	FileDownloadOutlined as FileDownloadIcon,
 } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
 import Button from "components/Button";
 import * as definations from "definations";
 import React from "react";
 import { Link } from "react-router-dom";
-import { FilesHelper } from "hoc/Helpers";
+import { FilesHelper } from "utils/Helpers";
 
 export default {
 	name: "attachments",
@@ -51,7 +52,7 @@ export default {
 			},
 		},
 		listing: {
-			default: "listview",
+			default: "tableview",
 			/*listview: {
 				
 				primary: ["name"],
@@ -175,7 +176,7 @@ export default {
 						}
 						return defination_name;
 					},
-					service_query: {},
+					service_query: {pagination: -1, },
 					resolves: {
 						value: "_id",
 						display: {
@@ -365,7 +366,7 @@ export default {
 				},
 				reference: {
 					name: "users",
-					service_query: { sort: "first_name", fields: "first_name,last_name,email_address,avatar" },
+					service_query: { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar" },
 					resolves: {
 						value: "_id",
 						display: {
@@ -447,7 +448,7 @@ export default {
 			},
 		},
 		actions: {
-			view_single: {
+			view: {
 				restricted: user => {
 					if (user) {
 						return false;
@@ -459,75 +460,33 @@ export default {
 						"attachments/view/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className) => {
-							return (
-								<Link
-									to={(
-										"attachments/view/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="view"
-									>
-										<OpenInNewIcon />
-									</IconButton>
-								</Link>
-							);
-						},
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"attachments/view/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="view"
-									>
-										<OpenInNewIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: OpenInNewIcon,
+				label: "View",
+				className: "text-green-500",
 			},
-			create: {
-				restricted: user => {
-					return true;
+			download: {
+				restricted: (user) => {
+					return false;
 				},
-				uri: "attachments/add",
-				link: {
-					inline: {
-						default: props => {
-							return (
-								<Link
-									to={"attachments/add/".toUriWithDashboardPrefix()}
-									{...props}
-								>
-									<Button
-										color="primary"
-										variant="outlined"
-										aria-label="add"
-									>
-										<AddIcon className="float-left" /> New
-										Attachment
-									</Button>
-								</Link>
-							);
-						},
-						listing: props => {
-							return "";
-						},
-					},
+				uri: entry => {
+					return (
+						`attachments/download/${entry?._id || entry}`
+					).toUriApiPrefix();
 				},
+				onClick: (event, entry) => {
+					if (window) {
+						window.open(( `attachments/download/${entry?._id || entry}` ).toUriApiPrefix(), '_blank').focus();
+					}
+					
+				},
+				linkProps: {
+					target: "_black",
+				},
+				Icon: FileDownloadIcon,
+				label: "Download",
+				className: "text-purple-500",
 			},
+			
 			update: {
 				restricted: user => {
 					if (user) {
@@ -540,44 +499,9 @@ export default {
 						"attachments/edit/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"attachments/edit/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="add"
-									>
-										<AddIcon />
-									</IconButton>
-								</Link>
-							);
-						},
-						listing: (entry, className = "grey_text") => {
-							return (
-								<Link
-									to={(
-										"attachments/edit/" + entry?._id
-									).toUriWithDashboardPrefix()}
-									className={className ? className : ""}
-								>
-									<IconButton
-										color="inherit"
-										aria-label="edit"
-									>
-										<EditIcon fontSize="small" />
-									</IconButton>
-								</Link>
-							);
-						},
-					},
-				},
+				Icon: EditIcon,
+				label: "Edit",
+				className: "text-blue-500",
 			},
 			delete: {
 				restricted: user => {
@@ -591,23 +515,10 @@ export default {
 						"attachments/delete/" + entry?._id
 					).toUriWithDashboardPrefix();
 				},
-				link: {
-					inline: {
-						default: (id, className = "error_text") => { },
-						listing: (id, className = "error_text", onClick) => {
-							return (
-								<IconButton
-									color="inherit"
-									className={className ? className : ""}
-									aria-label="delete"
-									onClick={onClick}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							);
-						},
-					},
-				},
+				Icon: DeleteIcon,
+				className: "text-red-500",
+				label: "Delete",
+				confirmationRequired: true
 			},
 		},
 	},

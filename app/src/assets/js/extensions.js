@@ -1,8 +1,8 @@
 /** @format */
 
-import lodash, { debounce, throttle, isEqual } from "lodash";
+import lodash, { debounce, throttle, isEqual, get } from "lodash";
 import lodash_inflection from "lodash-inflection";
-import { dashboardBaseUri, landingPageBaseUri, orderFormBaseUri, surpressed_logs } from "config";
+import { dashboardBaseUri, landingPageBaseUri, baseUrls, surpressed_logs } from "config";
 
 lodash.mixin(lodash_inflection);
 
@@ -34,7 +34,6 @@ console.log = function surpressLogs(msg) {
 
 //Type Extensions
 // Warn if overriding existing method
-if (String.isString) {}
 
 String.isString = function (input) {
 	return input !== undefined && input !== null
@@ -132,13 +131,12 @@ String.prototype.toUriWithLandingPagePrefix = function () {
 	return uriWithBaseRoute;
 };
 
-String.prototype.toUriWithOrderFormPrefix = function () {
+String.prototype.toUriApiPrefix = function () {
 	let target = this;
-	let uriWithBaseRoute = orderFormBaseUri.startsWith("/")
-		? orderFormBaseUri
-		: "/" + orderFormBaseUri;
-	uriWithBaseRoute += orderFormBaseUri.endsWith("/")
-		? orderFormBaseUri.substring(0, orderFormBaseUri.length - 2)
+	let apiBaseUrl = baseUrls.api
+	let uriWithBaseRoute = apiBaseUrl;
+	uriWithBaseRoute += apiBaseUrl.endsWith("/")
+		? apiBaseUrl.substring(0, apiBaseUrl.length - 2)
 		: "";
 	uriWithBaseRoute += target.startsWith("/") ? target : "/" + target;
 	return uriWithBaseRoute;
@@ -213,21 +211,18 @@ String.isEmpty = function (target) {
 
 
 
-if (Boolean.isBoolean) {}
 Boolean.isBoolean = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === Boolean
 		: false;
 };
 
-if (Function.isFunction) {}
 Function.isFunction = function (input) {
 	return input !== undefined && input !== null
 		? input.constructor === Function || typeof input === "function"
 		: false;
 };
 
-if (Function.sleep) {}
 Function.sleep = function (milliseconds) {
 	const date = Date.now();
 	let currentDate = null;
@@ -275,10 +270,8 @@ Function.throttle = (func, wait, options) => {
 	};
 };
 
-if (Function.debounce) {}
 Function.debounce = debounce;
 
-if (Function.createThrottle) {}
 Function.createThrottle = function (max) {
 	if (typeof max !== 'number') {
 		throw new TypeError('`createThrottle` expects a valid Number')
@@ -682,7 +675,11 @@ Object.isFunctionalComponent = Component => {
 };
 
 Object.isReactComponent = Component => {
-	return Component.prototype && Component.prototype.render;
+	return (Component.prototype && Component.prototype.render) || Object.isFunctionalComponent(Component);
+};
+
+Object.isObject = function (input) {
+	return !!input && typeof input === "object";
 };
 
 //This is to ensure equating objects doesnt change original
@@ -910,7 +907,7 @@ JSON.isEmpty = function (target) {
 	return true;
 };
 
-JSON.getDeepPropertyValue = function (deepKey, target) {
+JSON.getDeepPropertyValue = function (deepKey, target, defaultValue=undefined) {
 	var value = undefined;
 	if (String.isString(deepKey) && !String.isEmpty(deepKey) && !JSON.isEmpty(target)) {
 		var deepKeyArr = deepKey.trim().split(".");
@@ -927,7 +924,7 @@ JSON.getDeepPropertyValue = function (deepKey, target) {
 				value = JSON.getDeepPropertyValue(nextDeepKey, obj);
 			}
 			else {
-				value = obj[deepKeyArr[i]];
+				value = obj[deepKeyArr[i]] || defaultValue;
 			}
 
 		}
@@ -954,6 +951,12 @@ JSON.setDeepPropertyValue = (deepKey, value, target = {}) => {
 
 	return newObj
 };
+
+
+if (JSON.get) {
+	console.warn("Overrinding existing property JSON.get")
+}
+JSON.get = get;
 
 Date.prototype.format = function (format) {
 	//PHP's date format function Javascript emulation
@@ -990,10 +993,10 @@ Date.prototype.format = function (format) {
 	i	Minutes with leading zeros	00 to 59
 	s	Seconds, with leading zeros	00 through 59
 	Timezone
-	e (unsuported)	Timezone identifier (added in PHP 5.1.0)	Examples: UTC, GMT, Atlantic/Azores
+	e (unsuported)	Timezone identifier	Examples: UTC, GMT, Atlantic/Azores
 	I	Whether or not the date is in daylights savings time	1 if Daylight Savings Time, 0 otherwise.
 	O	Difference to Greenwich time (GMT) in hours	Example: +0200
-	P	Difference to Greenwich time (GMT) with colon between hours and minutes (added in PHP 5.1.3)	Example: +02:00
+	P	Difference to Greenwich time (GMT) with colon between hours and minutes Example: +02:00
 	T	Timezone setting of this machine	Examples: EST, MDT …
 	Z	Timezone offset in seconds. The offset for timezones west of UTC is always negative, and for those east of UTC is always positive.	-43200 through 43200
 	Full Date/Time
@@ -1016,6 +1019,19 @@ Date.prototype.format = function (format) {
 	}
 	return returnStr;
 };
+
+Date.format = (input, format) => {
+	let result = input;
+	try {
+		let date = new Date(input);
+		result = date.format(format)
+	} catch (error) {
+		console.error("Date.format error", error)
+	}
+
+	// console.log("Date.format input", input, "result", result)
+	return result;
+}
 
 Date.replaceChars = {
 	shortMonths: [
@@ -1104,6 +1120,9 @@ Date.replaceChars = {
 	M: function () {
 		return Date.replaceChars.shortMonths[this.getMonth()];
 	},
+	MMM: function () {
+		return Date.replaceChars.shortMonths[this.getMonth()];
+	},
 	n: function () {
 		return this.getMonth() + 1;
 	},
@@ -1122,6 +1141,9 @@ Date.replaceChars = {
 		return d.getFullYear();
 	}, //Fixed now
 	Y: function () {
+		return this.getFullYear();
+	},
+	yyyy: function () {
 		return this.getFullYear();
 	},
 	y: function () {

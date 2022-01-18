@@ -32,17 +32,14 @@
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "@hookform/resolvers": "^2.8.2",
-    "@material-ui/core": "^4.12.3",
     "@material-ui/data-grid": "^4.0.0-alpha.35",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.60",
-    "@material-ui/pickers": "^3.3.10",
     "@mdi/js": "^6.2.95",
     "@mdi/react": "^1.5.0",
     "@mui/icons-material": "^5.0.3",
     "@mui/lab": "^5.0.0-alpha.50",
     "@mui/material": "^5.0.3",
     "@mui/styles": "^5.0.1",
+    "@mui/x-data-grid": "^5.2.1",
     "@react-page/core": "^0.30.0",
     "@react-page/react-page": "^0.16.4",
     "@reduxjs/toolkit": "^1.6.2",
@@ -63,6 +60,7 @@
     "classnames": "^2.3.1",
     "clsx": "^1.1.1",
     "color": "^4.0.1",
+    "date-fns": "^2.28.0",
     "downshift": "^6.1.7",
     "draft-js": "^0.11.7",
     "draft-js-export-html": "^1.4.1",
@@ -128,8 +126,10 @@
     "react-simple-maps": "^2.3.0",
     "react-slick": "^0.28.1",
     "react-swipeable-views": "^0.14.0",
+    "react-table": "^7.7.0",
     "react-use": "^17.3.1",
     "react-virtualized": "^9.22.3",
+    "react-virtualized-auto-sizer": "^1.0.6",
     "react-visibility-sensor": "^5.1.1",
     "react-window": "^1.8.6",
     "reactfire": "^4.2.0",
@@ -157,7 +157,7 @@
     "@babel/core": "^7.15.8",
     "@babel/node": "^7.15.8",
     "@babel/plugin-proposal-class-properties": "7.14.5",
-    "@babel/plugin-proposal-decorators": "^7.15.8",
+    "@babel/plugin-proposal-decorators": "^7.16.7",
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-es2015": "^7.0.0-beta.53",
     "@babel/preset-react": "7.14.5",
@@ -190,65 +190,6 @@
   },
   "resolutions": {
     "@material-ui/styles": "4.1.2"
-  },
-  "eslintConfig": {
-    "parser": "babel-eslint",
-    "env": {
-      "es6": true,
-      "node": true,
-      "browser": true
-    },
-    "parserOptions": {
-      "ecmaVersion": 6,
-      "sourceType": "module",
-      "ecmaFeatures": {
-        "jsx": true
-      }
-    },
-    "plugins": [
-      "react",
-      "prettier"
-    ],
-    "globals": {
-      "google": true
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended",
-      "prettier"
-    ],
-    "rules": {
-      "no-console": 0,
-      "no-extend-native": 0,
-      "react/display-name": 0,
-      "react/jsx-uses-react": "error",
-      "react/jsx-uses-vars": "error",
-      "array-bracket-newline": 0,
-      "function-call-argument-newline": 0,
-      "function-paren-newline": 0,
-      "max-params": 0,
-      "no-unreachable": 0,
-      "react/no-direct-mutation-state": 0,
-      "react-hooks/exhaustive-deps": 0,
-      "react/prop-types": 0,
-      "no-unused-vars": "off",
-      "no-dupe-keys": "error"
-    },
-    "settings": {
-      "react": {
-        "version": "detect"
-      }
-    }
-  },
-  "prettier": {
-    "singleQuote": false,
-    "tabWidth": 4,
-    "useTabs": true,
-    "bracketSpacing": true,
-    "arrowParens": "avoid",
-    "proseWrap": "never",
-    "insertPragma": true,
-    "trailingComma": "es5"
   },
   "lint-staged": {
     "*.+(js|jsx)": [

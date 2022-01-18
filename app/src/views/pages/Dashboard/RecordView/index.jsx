@@ -86,7 +86,7 @@ class Page extends React.Component {
 		const forbidden = this.state.loading
 			? false
 			: JSON.isJSON(this.state.record)
-				? this.defination.access.actions.view_single.restricted(auth.user)
+				? this.defination.access.actions.view.restricted(auth.user)
 				: true;
 		return (
 			<GridContainer >

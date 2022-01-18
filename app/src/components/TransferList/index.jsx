@@ -13,7 +13,7 @@ import Paper from "@mui/material/Paper";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { UtilitiesHelper } from "hoc/Helpers";
+import { UtilitiesHelper } from "utils/Helpers";
 
 
 

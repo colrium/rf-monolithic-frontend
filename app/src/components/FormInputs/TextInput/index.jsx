@@ -321,13 +321,14 @@ const Input = React.forwardRef((props, ref) => {
 					),
 				}}
 				InputLabelProps={InputLabelProps}
-				variant={variant ? variant : "outlined"}
+				variant={variant || "filled"}
 				defaultValue={inputValue}
 				disabled={inputDisabled}
 				error={inputError ? true : isInvalid}
 				helperText={inputError ? inputError : (isInvalid ? "Invalid" : helperText)}
 				type={inputType}
 				ref={ref}
+				fullWidth
 				{...rest}
 			/>
 		);
@@ -340,7 +341,7 @@ Input.defaultProps = {
 	margin: "dense",
 	size: "small",
 	type: "text",
-	variant: "outlined",
+	variant: "filled",
 	validate: true,
 	onChangeYield: "value"
 }

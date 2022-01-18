@@ -23,7 +23,7 @@ import ApiService from "services/Api";
 import { PersonOutlined as UserIcon } from "@mui/icons-material";
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import { logout, setCurrentUser } from "state/actions";
-import { ServiceDataHelper } from "hoc/Helpers";
+import { ServiceDataHelper } from "utils/Helpers";
 import { withGlobals } from "contexts/Globals";
 
 // Custom components
