@@ -21,7 +21,7 @@ module.exports = {
 		semi: ["error", "always"],
 		"prettier/prettier": "error",
 		"no-unused-vars": ["error", "local"],
-		"no-console": "off",
+		"no-console": "error",
 		"func-names": "off",
 		"no-process-exit": "off",
 		"object-shorthand": "off",
