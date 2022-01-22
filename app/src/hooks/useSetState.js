@@ -24,9 +24,11 @@ const useSetState = (initialState = {}) => {
 		const staleState = JSON.fromJSON(state.current);
 		if (JSON.isJSON(patch)) {
 			Object.assign(state.current, staleState, patch);
-			if (!Object.areEqual(staleState, state.current) && isMountedRef.current) {
+			if (!Object.areEqual(staleState, state.current)) {
 				prevState.current = staleState;
-				update();
+				if (isMountedRef.current) {
+					update();
+				}
 				if (Function.isFunction(cb)) {
 					cb(state.current)
 				}
@@ -38,9 +40,12 @@ const useSetState = (initialState = {}) => {
 					if (JSON.isJSON(patches[0])) {
 						Object.assign(state.current, staleState, patches[0]);
 					}
-					if (!Object.areEqual(staleState, state.current) && isMountedRef.current) {
+					if (!Object.areEqual(staleState, state.current)) {
 						prevState.current = staleState;
-						update();
+						if (isMountedRef.current) {
+							update();
+						}
+						
 						if (Function.isFunction(cb)) {
 							cb(state.current)
 						}

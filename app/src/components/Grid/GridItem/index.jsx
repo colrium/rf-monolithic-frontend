@@ -10,7 +10,13 @@ const GridItem = React.forwardRef((props, ref) => {
 		...rest
 	} = props;
 	return (
-		<Grid xs={12} className={`p-2 ${className ? className : ""}`} ref={ref} {...rest} item>
+		<Grid
+			xs={12}
+			sx={{ padding: theme => theme.spacing() }}
+			className={`${className ? className : ""}`}
+			ref={ref}
+			{...rest}
+			item>
 			{children}
 		</Grid>
 	);

@@ -4,11 +4,11 @@
     "useTabs": true,
     "bracketSpacing": true,
     "arrowParens": "avoid",
-    "proseWrap": "never",
+    "proseWrap": "preserve",
     "insertPragma": true,
     "trailingComma": "es5",
-    "bracketSameLine": true,
+    "bracketSameLine": false,
     "endOfLine": "lf",
     "quoteProps": "as-needed",
-    "jsxBracketSameLine": true
+    "jsxBracketSameLine": false
 }

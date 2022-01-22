@@ -170,7 +170,8 @@ const CardViewBody = React.memo(props => {
 											component="p"
 											variant="body2">
 											{" "}
-											Survey : {entry.survey.title} <br />
+											Survey : {entry.survey?.title}{" "}
+											<br />
 										</Typography>
 									) : (
 										""
@@ -183,9 +184,13 @@ const CardViewBody = React.memo(props => {
 										paragraph>
 										{" "}
 										From:{" "}
-										{new Date(entry.start_date).format(
-											"d M Y H:i:s A"
-										)}{" "}
+										{`${Date.format(
+											entry.start_date,
+											"d M Y"
+										)} ${Date.format(
+											entry.start_date,
+											"h:i:s a"
+										)}`}
 									</Typography>
 									<Typography
 										component="p"
@@ -194,9 +199,13 @@ const CardViewBody = React.memo(props => {
 										paragraph>
 										{" "}
 										To:{" "}
-										{new Date(entry.end_date).format(
-											"d M Y H:i:s A"
-										)}{" "}
+										{`${Date.format(
+											entry.end_date,
+											"d M Y"
+										)} ${Date.format(
+											entry.end_date,
+											"h:i:s a"
+										)}`}
 									</Typography>
 									<Typography
 										component="p"
@@ -904,11 +913,14 @@ export default {
 										variant="body2"
 										gutterBottom
 										paragraph>
-										{" "}
-										From:{" "}
-										{new Date(entry.start_date).format(
-											"d M Y H:i:s A"
-										)}{" "}
+										From:
+										{`${Date.format(
+											entry.start_date,
+											"d M Y"
+										)} ${Date.format(
+											entry.start_date,
+											"h:i:s a"
+										)}`}
 									</Typography>
 									<Typography
 										component="p"
@@ -917,7 +929,13 @@ export default {
 										paragraph>
 										{" "}
 										To:{" "}
-										{new Date(entry.end_date).toString()}
+										{`${Date.format(
+											entry.end_date,
+											"d M Y"
+										)} ${Date.format(
+											entry.end_date,
+											"h:i:s a"
+										)}`}
 									</Typography>
 									<Typography
 										component="p"
@@ -1009,22 +1027,28 @@ export default {
 											)}
 										&nbsp;
 									</Typography>
-									<Badge color="primary" variant="dot">
-										<Chip
-											size="small"
-											label={entry.status}
-										/>{" "}
-									</Badge>
+									{entry.status && (
+										<Status
+											color={status_colors[entry.status]}
+											text={status_names[entry.status]}
+										/>
+									)}
 								</React.Fragment>
 							),
-							//color: '#4a148c',
+							color: entry.status
+								? status_colors[entry.status]
+								: "#4a148c",
 							radius: distanceToMeters(
 								entry.focus_radius,
 								entry.focus_radius_metric
 							),
 							options: {
-								fillColor: "#4a148c",
-								strokeColor: "#4a148c",
+								fillColor: entry.status
+									? status_colors[entry.status]
+									: "#4a148c",
+								strokeColor: entry.status
+									? status_colors[entry.status]
+									: "#4a148c",
 							},
 						};
 					});

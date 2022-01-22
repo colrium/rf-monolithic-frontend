@@ -14,15 +14,8 @@ class EventRegister {
 		refs: {},
 		propagation: {},
 	};
-	static _domElement = null;
-	static _getCreateElement = (function () {
-		const targetElement = document.createElement("div");
-		return function () {
-			return targetElement;
-		};
-	})();
 
-	static addUnattachedEventListener(eventName, callback) {
+	static addEventListener(eventName, callback) {
 		if (String.isString(eventName) && Function.isFunction(callback)) {
 			if (!Array.isArray(EventRegister._Listeners.refs[eventName])) {
 				EventRegister._Listeners.refs[eventName] = [];
@@ -40,38 +33,6 @@ class EventRegister {
 			};
 		}
 		return false;
-	}
-
-	static addEventListener(eventName, handleEvent) {
-		if (String.isString(eventName) && Function.isFunction(handleEvent)) {
-			if (!EventRegister._domElement) {
-				EventRegister._domElement = EventRegister._getCreateElement();
-			}
-			if (!!EventRegister._domElement) {
-				EventRegister._domElement.addEventListener(
-					eventName,
-					handleEvent,
-					false
-				);
-				return {
-					id: null,
-					remove: () =>
-						EventRegister._domElement.removeEventListener(
-							eventName,
-							handleEvent,
-							false
-						),
-				};
-			} else {
-				return addUnattachedEventListener(eventName, handleEvent);
-			}
-		}
-		return {
-			id: null,
-			remove: () => {
-				//Do Nothing
-			},
-		};
 	}
 
 	static removeEventListener(listener) {

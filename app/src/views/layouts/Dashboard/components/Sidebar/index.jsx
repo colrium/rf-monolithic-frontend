@@ -13,21 +13,24 @@ import {
 	ListItemIcon,
 	ListItemText,
 	ListSubheader,
+	IconButton,
 } from "@mui/material";
 
-// Externals
+import CloseSideBarIcon from "@mui/icons-material/MenuOpen";
+import OpenSideBarIcon from "@mui/icons-material/Menu";
 import classNames from "classnames";
 import ScrollBars from "components/ScrollBars";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import Box from '@mui/material/Box';
+import Box from "@mui/material/Box";
 import { connect } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import compose from "recompose/compose";
 import { width as drawerWidth } from "config/ui/drawer";
 import { logout } from "state/actions/auth";
 import { UtilitiesHelper } from "utils/Helpers";
-import { withGlobals } from "contexts/Globals";
+import { app } from "assets/jss/app-theme";
+import { withNetworkServices } from "contexts/NetworkServices";
 // Component styles
 
 const AdapterLink = React.forwardRef((props, ref) => (
@@ -64,9 +67,12 @@ class Sidebar extends Component {
 	};
 
 	onChangeUserPresenceMenu = presence => event => {
-		const { auth, sockets } = this.props;
-		if (sockets.default && auth.isAuthenticated) {
-			sockets.default.emit("change-user-presence", {
+		const {
+			auth,
+			networkServices: { Sockets },
+		} = this.props;
+		if (Sockets && auth.isAuthenticated) {
+			Sockets.emit("change-user-presence", {
 				id: auth.user._id,
 				presence: presence,
 			});
@@ -124,7 +130,14 @@ class Sidebar extends Component {
 		return items_with_restrictions;
 	}
 	render() {
-		const { className, items, auth, onClickNavLink } = this.props;
+		const {
+			className,
+			items,
+			auth,
+			onClickNavLink,
+			onToggleSidebar,
+			open,
+		} = this.props;
 
 		return (
 			<Box
@@ -135,6 +148,41 @@ class Sidebar extends Component {
 					width: drawerWidth,
 				}}
 				component="nav">
+				{/* <Box className="flex flex-row items-center justify-center">
+					<IconButton
+						onClick={onToggleSidebar}
+						variant="text"
+						size=""
+						sx={{
+							alignSelf: "center",
+							marginLeft: "4px",
+							marginRight: theme => theme.spacing(2),
+							color: theme => theme.palette.background.paper,
+							"&:hover": {
+								color: theme =>
+									theme.palette.secondary.main +
+									" !important",
+							},
+						}}>
+						{open ? (
+							<CloseSideBarIcon fontSize="inherit" />
+						) : (
+							<OpenSideBarIcon />
+						)}
+					</IconButton>
+
+					<Link
+						className={
+							"inline-block text-left w-auto cursor-pointer"
+						}
+						to={"/home".toUriWithDashboardPrefix()}>
+						<img
+							alt={"Home"}
+							className={"cursor-pointer h-6"}
+							src={app.logo}
+						/>
+					</Link>
+				</Box> */}
 				<ScrollBars className={"overflow-x-hidden overflow-y-scroll"}>
 					<List component="div" disablePadding className="px-0 pb-12">
 						{this.applyItemsRestrictions().map((item_link, index) =>
@@ -307,6 +355,7 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 });
 
-export default withGlobals(
-	compose(connect(mapStateToProps, { logout }))(Sidebar)
-);
+export default compose(
+	connect(mapStateToProps, { logout }),
+	withNetworkServices
+)(Sidebar);

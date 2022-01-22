@@ -1,0 +1,46 @@
+/** @format */
+
+module.exports = {
+	env: {
+		browser: true,
+		es2021: true,
+	},
+	parserOptions: {
+		ecmaFeatures: {
+			jsx: true,
+		},
+		ecmaVersion: "latest",
+		sourceType: "module",
+	},
+	extends: ["airbnb", "prettier"],
+	plugins: ["prettier"],
+	rules: {
+		indent: ["error", 4],
+		"linebreak-style": ["error", "unix"],
+		quotes: ["error", "double"],
+		semi: ["error", "always"],
+		"prettier/prettier": "error",
+		"no-unused-vars": ["error", "local"],
+		"no-console": "off",
+		"func-names": "off",
+		"no-process-exit": "off",
+		"object-shorthand": "off",
+		"class-methods-use-this": "off",
+		"function-paren-newline": [
+			"error",
+			{
+				minItems: 3,
+			},
+		],
+		"array-bracket-newline": ["error", "consistent"],
+		"function-call-argument-newline": ["error", "consistent"],
+		"array-bracket-spacing": ["error", "always"],
+		"no-var": "error",
+		"object-curly-spacing": [
+			"error",
+			"always",
+			{ objectsInObjects: false },
+		],
+		"function-call-argument-newline": ["error", "consistent"],
+	},
+};

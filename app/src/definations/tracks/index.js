@@ -254,33 +254,36 @@ export default {
 									position.longitude +
 									(position.timestamp
 										? " (Timestamp: " +
-										position.timestamp +
-										")"
+										  position.timestamp +
+										  ")"
 										: "") +
 									(entry.user
 										? " (User: " +
-										entry.user.first_name +
-										" " +
-										entry.user.last_name +
-										")"
+										  entry.user.first_name +
+										  " " +
+										  entry.user.last_name +
+										  ")"
 										: "")
 								);
 							}),
 
-							color: "#8C189B",
+							color:
+								entry.time_type === "live"
+									? "#0600ab"
+									: "#FF0000",
 							title:
 								(entry.start_time
 									? " Start Time: " +
-									new Date(entry.start_time).format(
-										"d M Y H:i:s A"
-									)
+									  new Date(entry.start_time).format(
+											"d M Y H:i:s A"
+									  )
 									: "") +
 								(entry.user
 									? " (User: " +
-									entry.user.first_name +
-									" " +
-									entry.user.last_name +
-									")"
+									  entry.user.first_name +
+									  " " +
+									  entry.user.last_name +
+									  ")"
 									: ""),
 							infoWindow: (
 								<React.Fragment>
@@ -288,18 +291,13 @@ export default {
 										component="h5"
 										variant="subtitle2"
 										color="primary"
-										bold
-									>
+										bold>
 										Track -{" "}
 										{entry.time_type === "live"
 											? "Live"
 											: "Roam"}
 									</Typography>
-									<Typography
-										component="div"
-										variant="body2"
-
-									>
+									<Typography component="div" variant="body2">
 										{" "}
 										{entry.user && (
 											<Chip
@@ -334,9 +332,7 @@ export default {
 									{entry.start_time && (
 										<Typography
 											component="p"
-											variant="body2"
-
-										>
+											variant="body2">
 											{" "}
 											Start Time:{" "}
 											{new Date(entry.start_time).format(
@@ -348,9 +344,7 @@ export default {
 									{entry.context && (
 										<Typography
 											component="p"
-											variant="body2"
-
-										>
+											variant="body2">
 											{" "}
 											Context : {entry.context}
 										</Typography>
@@ -359,9 +353,7 @@ export default {
 										entry.commission && (
 											<Typography
 												component="p"
-												variant="body2"
-
-											>
+												variant="body2">
 												{" "}
 												Commission :{" "}
 												{entry.commission._id}

@@ -52,7 +52,7 @@ function TablePaginationActions(props) {
 
 	const handleBackButtonClick = event => {
 		if (Function.isFunction(onPageChange)) {
-			onChangePage(event, page - 1);
+			onPageChange(event, page - 1);
 		}
 	};
 
@@ -1198,12 +1198,10 @@ class ListingView extends React.Component {
 				<GridContainer className="p-1 m-0">
 					{showSorter && view !== "googlemapview" && (
 						<GridItem xs={12} className="p-0 m-0 mb-2">
-							<Paper>
 								<QueryBuilder
 									onChange={this.handleOnQueryBuilderChange}
 									{...queryBuilderProps}
 								/>
-							</Paper>
 						</GridItem>
 					)}
 

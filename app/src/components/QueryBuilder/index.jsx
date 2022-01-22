@@ -100,14 +100,10 @@ const FieldsSelectComponent = memo(props => {
 	}, [items]);
 
 	const handleOnChange = useCallback(newValue => {
-		console.log("handleOnChange newValue", newValue)
 		if (Function.isFunction(setField)) {
 			Promise.all([setField(newValue)]).catch(err => {});
 		}
 	}, [items]);
-	console.log("options", options)
-	console.log("value", value)
-	console.log("rest", rest)
 	return (
 		<SelectInput
 			options={options}
@@ -552,7 +548,7 @@ const QueryBuilder = memo(props => {
 						</Menu>
 					</GridContainer>
 				</AccordionSummary>
-				<AccordionDetails>
+				<AccordionDetails elevation={0}>
 					<Query
 						{...internalValue.config}
 						value={internalValue.tree}

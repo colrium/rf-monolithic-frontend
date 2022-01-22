@@ -20,9 +20,11 @@ const PersistentFormsProvider = (props) => {
 
 	useEffect(() => {
 		const subscription = EventRegister.on("form-changed", persist)
+		console.log("subscription", subscription);
 		return () => {
-			EventRegister.off(subscription)
-		}
+			// EventRegister.off(subscription)
+			subscription.remove();
+		};
 	}, [])
 
 	return (

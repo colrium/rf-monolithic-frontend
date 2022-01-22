@@ -397,8 +397,7 @@ class Topbar extends Component {
 						zIndex: theme => theme.zIndex.appBar,
 
 						flexGrow: 1,
-					}}
-				>
+					}}>
 					<Toolbar
 						className={classNames({
 							flex: true,
@@ -413,38 +412,33 @@ class Topbar extends Component {
 								"cubic-bezier(0.1, 0.7, 1.0, 0.1)",
 							zIndex: 1300,
 							color: theme => theme.palette.text.primary,
-						}}
-					>
-						{
-							<IconButton
-								onClick={onToggleSidebar}
-								variant="text"
-								sx={{
-									alignSelf: "center",
-									marginLeft: "4px",
-									marginRight: theme => theme.spacing(),
-									color: theme => theme.palette.text.primary,
-									"&:hover": {
-										color: theme =>
-											theme.palette.primary.main +
-											" !important",
-									},
-								}}
-							>
-								{isSidebarOpen ? (
-									<CloseSideBarIcon />
-								) : (
-									<OpenSideBarIcon />
-								)}
-							</IconButton>
-						}
+						}}>
+						<IconButton
+							onClick={onToggleSidebar}
+							variant="text"
+							sx={{
+								alignSelf: "center",
+								marginLeft: "4px",
+								marginRight: theme => theme.spacing(),
+								color: theme => theme.palette.text.primary,
+								"&:hover": {
+									color: theme =>
+										theme.palette.primary.main +
+										" !important",
+								},
+							}}>
+							{isSidebarOpen ? (
+								<CloseSideBarIcon />
+							) : (
+								<OpenSideBarIcon />
+							)}
+						</IconButton>
 
 						<Link
 							className={
 								"inline-block text-left w-auto cursor-pointer"
 							}
-							to={"/home".toUriWithDashboardPrefix()}
-						>
+							to={"/home".toUriWithDashboardPrefix()}>
 							<img
 								alt={app.name + " logo cursor-pointer"}
 								className={"cursor-pointer h-6"}
@@ -455,9 +449,7 @@ class Topbar extends Component {
 						<div
 							className={
 								"flex flex-grow justify-start flex-row-reverse items-center px-4"
-							}
-						>
-
+							}>
 							{auth.isAuthenticated && (
 								<Badge
 									variant="dot"
@@ -474,29 +466,42 @@ class Topbar extends Component {
 												? "bg-orange-700"
 												: "bg-gray-700"
 											: "bg-red-700",
-									}}
-								>
+									}}>
 									<IconButton
 										onClick={this.onOpenUserPresenceMenu}
 										size="small"
-										sx={{ ml: 2 }}
-									>
+										sx={{ ml: 2 }}>
 										{auth.user.avatar ? (
 											<Avatar
 												alt={auth.user?.first_name}
-												className={`text-sm ${this.state.serverConnected ? auth.user.presence === "online" ? "bg-green-700" : auth.user.presence == "away" ? "bg-orange-700" : "bg-gray-700" : "bg-red-700"}`}
-												src={ApiService.getAttachmentFileUrl(auth.user?.avatar)}
+												className={`text-sm ${
+													this.state.serverConnected
+														? auth.user.presence ===
+														  "online"
+															? "bg-green-700"
+															: auth.user
+																	.presence ==
+															  "away"
+															? "bg-orange-700"
+															: "bg-gray-700"
+														: "bg-red-700"
+												}`}
+												src={ApiService.getAttachmentFileUrl(
+													auth.user?.avatar
+												)}
 												sx={{ width: 32, height: 32 }}
 											/>
 										) : (
 											<Avatar
 												sx={{
-													color: theme.palette.text.primary,
-													background: theme.palette.action.selected,
-													width: 32, 
-													height: 32
-												}}
-											>
+													color: theme.palette.text
+														.primary,
+													background:
+														theme.palette.action
+															.selected,
+													width: 32,
+													height: 32,
+												}}>
 												<UserIcon />
 											</Avatar>
 										)}
@@ -524,8 +529,7 @@ class Topbar extends Component {
 
 							<Link
 								className={"cursor-pointer md:mx-2"}
-								to={"/messages".toUriWithDashboardPrefix()}
-							>
+								to={"/messages".toUriWithDashboardPrefix()}>
 								<IconButton>
 									<Badge
 										variant="dot"
@@ -536,8 +540,7 @@ class Topbar extends Component {
 											) === 0
 										}
 										badgeContent={messaging.unread_count}
-										color="primary"
-									>
+										color="primary">
 										<ForumOutlinedIcon />
 									</Badge>
 								</IconButton>
@@ -552,8 +555,7 @@ class Topbar extends Component {
 								classes={{
 									list: "pt-0",
 								}}
-								keepMounted
-							>
+								keepMounted>
 								<MenuItem
 									classes={{
 										root:
@@ -568,12 +570,10 @@ class Topbar extends Component {
 													: "bg-gray-700"
 												: "bg-red-700"),
 									}}
-									disabled
-								>
+									disabled>
 									<Typography
 										color="inherit"
-										variant="subtitle1"
-									>
+										variant="subtitle1">
 										{auth.user.first_name +
 											" " +
 											auth.user.last_name}
@@ -587,8 +587,7 @@ class Topbar extends Component {
 												: "online"
 											: "online"
 									)}
-									disabled={!this.state.serverConnected}
-								>
+									disabled={!this.state.serverConnected}>
 									{auth.user
 										? auth.user.presence === "online"
 											? "Set to away"
@@ -602,15 +601,13 @@ class Topbar extends Component {
 										onClick={this.onChangeUserPresenceMenu(
 											"offline"
 										)}
-										disabled={!this.state.serverConnected}
-									>
+										disabled={!this.state.serverConnected}>
 										Set to offline
 									</MenuItem>
 								)}
 								<MenuItem>
 									<Link
-										to={"/account".toUriWithDashboardPrefix()}
-									>
+										to={"/account".toUriWithDashboardPrefix()}>
 										My account
 									</Link>{" "}
 								</MenuItem>
@@ -621,13 +618,11 @@ class Topbar extends Component {
 
 							<IconButton
 								className={"md:mx-2"}
-								onClick={this.handleShowNotifications}
-							>
+								onClick={this.handleShowNotifications}>
 								<Badge
 									badgeContent={notificationsCount}
 									color="secondary"
-									variant="dot"
-								>
+									variant="dot">
 									<Icon
 										path={mdiBellOutline}
 										title="Notification Icon"
@@ -650,8 +645,7 @@ class Topbar extends Component {
 					transformOrigin={{
 						vertical: "top",
 						horizontal: "center",
-					}}
-				>
+					}}>
 					<NotificationList
 						notifications={notifications}
 						onSelect={this.handleCloseNotifications}
@@ -671,8 +665,7 @@ class Topbar extends Component {
 							? null
 							: 2000
 					}
-					onClose={this.onCloseConnectionSnackbar}
-				>
+					onClose={this.onCloseConnectionSnackbar}>
 					<SnackbarContent
 						onClose={this.onCloseConnectionSnackbar}
 						color={this.state.connectionSnackBarColor}
@@ -687,8 +680,7 @@ class Topbar extends Component {
 					}}
 					open={this.state.notificationSnackBarOpen}
 					autoHideDuration={7000}
-					onClose={this.onCloseNotificationSnackbar}
-				>
+					onClose={this.onCloseNotificationSnackbar}>
 					<SnackbarContent
 						onClose={this.onCloseNotificationSnackbar}
 						color="inverse"

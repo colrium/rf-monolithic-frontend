@@ -1,11 +1,9 @@
-// Material helpers
 /** @format */
 
-// Material helpers
 import { Drawer } from "@mui/material";
 
 import { app } from "assets/jss/app-theme";
-// Externals
+
 import classNames from "classnames";
 
 import PropTypes from "prop-types";
@@ -84,11 +82,9 @@ class Dashboard extends Component {
 			<div className={"p-0 relative"}>
 				{dashboard.appbar_displayed && (
 					<Topbar
-						className={classNames(
-							`fixed w-full top-0 left-0 right-0`
-						)}
 						isSidebarOpen={drawerOpen}
 						onToggleSidebar={this.handleToggleOpen}
+						className="fixed left-0 right-0"
 						sx={{
 							zIndex: theme =>
 								window?.innerWidth > 768
@@ -116,7 +112,7 @@ class Dashboard extends Component {
 									window?.innerWidth <= 768
 										? theme.spacing(2)
 										: theme.spacing(10),
-
+								borderWidth: 0,
 								overflowX: "hidden",
 							},
 						}}
@@ -128,7 +124,9 @@ class Dashboard extends Component {
 								: "temporary"
 						}>
 						<Sidebar
+							open={drawerOpen}
 							items={sidebar_items}
+							onToggleSidebar={this.handleToggleOpen}
 							onClickNavLink={item => {
 								if (window?.innerWidth <= 768) {
 									this.handleClose();
@@ -148,11 +146,18 @@ class Dashboard extends Component {
 							window?.innerWidth > 768 && this.state.drawerOpen
 								? drawerWidth
 								: "auto",
-						top: theme => theme.spacing(3),
-						// ml: { md: `${this.state.drawerWidth}px` },
 					}}
-					className={"relative mt-20"}>
-					<GridContainer className={"p-0"}>
+					className={"relative m-0 p-0"}>
+					{/* <Box
+						className={"p-0 h-80"}
+						sx={{
+							backgroundColor: theme =>
+								theme.palette.primary?.main,
+							// height: theme => theme.spacing(25),
+						}}
+					/> */}
+
+					<GridContainer className={"absolute top-20 left-0 right-0"}>
 						<GridItem xs={12}>{children}</GridItem>
 					</GridContainer>
 					<ActionDialog />
@@ -165,29 +170,24 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-
 	className: PropTypes.string,
 	children: PropTypes.node,
 	title: PropTypes.string,
-	sidebar_items: PropTypes.array
+	sidebar_items: PropTypes.array,
 };
 Dashboard.defaultProps = {
 	title: "",
-	sidebar_items: []
+	sidebar_items: [],
 };
 
 const mapStateToProps = state => ({
 	auth: state.auth,
 	nav: state.nav,
 	dashboard: state.dashboard,
-	device: state.device
+	device: state.device,
 });
 
 export default compose(
-
 	withTheme,
-	connect(
-		mapStateToProps,
-		{ setDashboardSearchbarDisplayed }
-	)
+	connect(mapStateToProps, { setDashboardSearchbarDisplayed })
 )(Dashboard);

@@ -31,8 +31,30 @@ class NetworkServices extends React.Component/* React.PureComponent */ {
 		this.handleOnLogout = this.handleOnLogout.bind(this);
 
 
-		this.onLoginListener = EventRegister.addEventListener('login', this.handleOnLogin);
-		this.onLogoutListener = EventRegister.addEventListener('logout', this.handleOnLogout);
+		this.onLoginListener = EventRegister.on('login', this.handleOnLogin);
+		this.onLogoutListener = EventRegister.on('logout', this.handleOnLogout);
+
+		EventRegister.on("test", event =>
+			console.log("test-1 event.type", event.type)
+		);
+		EventRegister.on("test", event =>
+			console.log("test-2 event.type", event.type)
+		);
+		EventRegister.on("test", event =>
+			console.log("test-3 event.type", event.type)
+		);
+		EventRegister.on("test", event => {
+			console.log("test-4 event.type", event.type);
+			if (event.type === "setTimeout") {
+				event.stopPropagation();
+			}
+		});
+		EventRegister.on("test", event =>
+			console.log("test-5 event.type", event.type)
+		);
+
+		console.log("this.onLoginListener", this.onLoginListener);
+
 		const { auth: { isAuthenticated, user } } = this.props;
 		if (isAuthenticated && !JSON.isEmpty(user)) {
 			this.initializeFirebaseMessaging(user);
@@ -60,14 +82,19 @@ class NetworkServices extends React.Component/* React.PureComponent */ {
 		if (Function.isFunction(fetchInbox)) {
 			fetchInbox();
 		}
-
-		console.log()
+		setTimeout(() => {
+			EventRegister.emit("test", { type: "setTimeout" });
+		}, 5000);
+		EventRegister.emit("test", { type: "normal" });
+		
 	}
 
 	componentWillUnmount() {
 		this._isMounted = false;
 		// this.unsubscribeFcMessagingOnMessage();
 		// this.unsubscribeFcFirestoreUserOnSnapshot();
+
+		
 		if (this.onLoginListener) {
 			EventRegister.removeEventListener(this.onLoginListener);
 		}

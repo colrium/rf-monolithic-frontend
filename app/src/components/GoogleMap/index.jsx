@@ -1,5 +1,5 @@
 /** @format */
-
+/*global google*/
 import React, { useRef, useCallback, useMemo } from "react";
 import ReactDOMServer from "react-dom/server";
 import PropTypes from "prop-types";
@@ -61,6 +61,13 @@ const GoogleMap = React.forwardRef((props, ref) => {
 
 	const geoLocation = useGeolocation();
 	const windowSize = useWindowSize();
+	const googlemapRef = useRef(null);
+	const infoWindowRef = useRef(null);
+	const infoWindowTimeoutRef = useRef(null);
+	const circlesRef = useRef([]);
+	const polylinesRef = useRef([]);
+	const geojsonsRef = useRef([]);
+	const markersRef = useRef([]);
 	const centerCoords = useMemo(() => {
 		return {
 			lat:
@@ -80,34 +87,31 @@ const GoogleMap = React.forwardRef((props, ref) => {
 		};
 	}, [center]);
 
-	const [googlemap, google, mapRef] = useGoogleMaps({
-		center: centerCoords,
-		zoom: zoom || defaultZoom,
-		styles: styleMode === "dark" ? dark : light,
-	});
 
-	const googlemapRef = useRef(googlemap);
-	const infoWindowRef = useRef(null);
-	const infoWindowTimeoutRef = useRef(null);
-	const circlesRef = useRef([]);
-	const polylinesRef = useRef([]);
-	const geojsonsRef = useRef([]);
-	const markersRef = useRef([]);
+	
+
+
+	
 
 	const showInfoWindow = useCallback(
 		(content, position, options = {}) => {
-			if (!infoWindowRef.current) {
+			if (!infoWindowRef.current && !!google) {
 				infoWindowRef.current = new google.maps.InfoWindow({
 					content: "",
 				});
 			}
-			infoWindowRef.current.setContent(content);
-			infoWindowRef.current.setPosition(position);
-			infoWindowRef.current.setOptions({ ...options });
-			infoWindowRef.current.open(googlemapRef.current);
+			if (!!infoWindowRef.current) {
+				infoWindowRef.current.setContent(content);
+				infoWindowRef.current.setPosition(position);
+				infoWindowRef.current.setOptions({ ...options });
+				infoWindowRef.current.open(googlemapRef.current);
+			}
+				
 		},
-		[google]
+		[]
 	);
+
+	
 
 	const closeInfoWindow = useCallback(() => {
 		if (infoWindowRef.current) {
@@ -130,8 +134,39 @@ const GoogleMap = React.forwardRef((props, ref) => {
 			}
 			return bounds;
 		},
-		[google]
+		[]
 	);
+
+
+	const applyEntrySelection = useCallback((type, index) => {
+		
+		if (!!googlemapRef.current) {
+			let elementBounds = null;
+			if (type === "polyline" && !!polylinesRef.current[index]) {
+				// elementBounds = getPolylineBounds(polylinesRef.current[index] );
+				if (!!google) {
+					new google.maps.event.trigger(
+						polylinesRef.current[index],
+						"click"
+					);
+				}
+					
+				// console.log("applyEntrySelection elementBounds", elementBounds);
+				// 
+			}
+			else if (type === "circle" && !!circlesRef.current[index]) {
+				if (!!google) {
+					new google.maps.event.trigger(
+						circlesRef.current[index],
+						"click"
+					);
+				}
+			}
+			if (elementBounds) {
+				googlemapRef.current.fitBounds(elementBounds);
+			}			
+		}
+	}, []);
 
 	const applyCircles = useCallback(() => {
 		if (Array.isArray(circlesRef.current)) {
@@ -149,43 +184,24 @@ const GoogleMap = React.forwardRef((props, ref) => {
 			});
 			circlesRef.current = [];
 		}
+		
 		if (Array.isArray(circles) && !!google) {
-			circlesRef.current = circles
-				.sort((a, b) => b.radius - a.radius)
-				.map((newCircle, index) => {
-					const { infoWindow, ...circleProps } = newCircle;
+			let entriesZindexes = circles.sort((a, b) => b.radius - a.radius).reduce((currentZindexes, current, index) => {
+				currentZindexes[index] = index + 1;
+				return currentZindexes;
+			}, {});
+			circlesRef.current = circles.map((newCircle, index) => {
+					const { infoWindow, ...elementProps } = newCircle;
 					let mapElement = new google.maps.Circle({
-						...circleProps,
+						...elementProps,
 						options: {
-							fillColor:
-								selectedEntryType == "circle" &&
-								selectedEntry === index
-									? colors.hex.accent
-									: circleProps.fillColor
-									? circleProps.fillColor
-									: colors.hex.accent,
-							strokeColor: circleProps.color
-								? circleProps.color
-								: colors.hex.accent,
-							strokeOpacity:
-								selectedEntryType == "circle" &&
-								selectedEntry === index
-									? 1
-									: selectedEntryType != "circle"
-									? circleProps.opacity
-									: 0.2,
-							fillOpacity:
-								selectedEntryType == "circle" &&
-								selectedEntry === index
-									? 0.1
-									: 0.01,
-							strokeWeight:
-								selectedEntryType == "circle" &&
-								selectedEntry === index
-									? 4
-									: selectedEntryType != "circle"
-									? circleProps.strokeWeight
-									: 1,
+							fillColor: elementProps.color || colors.hex.default,
+							strokeColor:
+								elementProps.color || colors.hex.default,
+							strokeOpacity: elementProps.opacity || 0.2,
+							fillOpacity: 0.1,
+							strokeWeight: elementProps.strokeWeight || 1,
+							zIndex: entriesZindexes[index],
 						},
 					});
 					mapElement.setMap(googlemapRef.current);
@@ -195,6 +211,21 @@ const GoogleMap = React.forwardRef((props, ref) => {
 						"click",
 						function (event) {
 							if (!!googlemapRef.current) {
+								mapElement.setOptions({ fillOpacity: 0.5 });
+								infoWindowTimeoutRef.current = setTimeout(
+									() =>
+										showInfoWindow(
+											infoWindow
+												? ReactDOMServer.renderToStaticMarkup(
+														infoWindow
+												  )
+												: elementProps.title
+												? elementProps.title
+												: "",
+											mapElement.center
+										),
+									100
+								);
 								googlemapRef.current.fitBounds(
 									mapElement.getBounds()
 								);
@@ -213,8 +244,8 @@ const GoogleMap = React.forwardRef((props, ref) => {
 											? ReactDOMServer.renderToStaticMarkup(
 													infoWindow
 											  )
-											: circleProps.title
-											? circleProps.title
+											: elementProps.title
+											? elementProps.title
 											: "",
 										mapElement.center
 									),
@@ -226,7 +257,9 @@ const GoogleMap = React.forwardRef((props, ref) => {
 						mapElement,
 						"mouseout",
 						function (event) {
-							mapElement.setOptions({ fillOpacity: 0.01 });
+							mapElement.setOptions({
+								fillOpacity: 0.01,
+							});
 							closeInfoWindow();
 						}
 					);
@@ -244,7 +277,7 @@ const GoogleMap = React.forwardRef((props, ref) => {
 				);
 			}
 		}
-	}, [circles, selectedEntryType, selectedEntry, google]);
+	}, [circles]);
 
 	const applyPolylines = useCallback(() => {
 		if (Array.isArray(polylinesRef.current)) {
@@ -265,50 +298,32 @@ const GoogleMap = React.forwardRef((props, ref) => {
 		if (Array.isArray(polylines) && !!google) {
 			polylinesRef.current = polylines.map((element, index) => {
 				const { infoWindow, ...elementProps } = element;
-				if (
-					Array.isArray(elementProps.path) &&
-					elementProps.path.length > 0
-				) {
-					let polylineMapMarker = new google.maps.Marker({
-						position: elementProps.path[0],
-						title: elementProps.title,
-						fillColor: "#000000",
-						//icon: polylineMarkerImage,
-					});
-					polylineMapMarker.setMap(googlemapRef.current);
-				}
+				// if (
+				// 	Array.isArray(elementProps.path) &&
+				// 	elementProps.path.length > 0
+				// ) {
+				// 	let polylineMapMarker = new google.maps.Marker({
+				// 		position: elementProps.path[0],
+				// 		title: elementProps.title,
+				// 		fillColor: "#000000",
+				// 		//icon: polylineMarkerImage,
+				// 	});
+				// 	polylineMapMarker.setMap(googlemapRef.current);
+				// }
 				let mapElement = new google.maps.Polyline({
 					options: {
 						fillColor:
-							selectedEntryType == "polyline" &&
-							selectedEntry === index
-								? elementProps.fillColor
-									? elementProps.fillColor
-									: colors.hex.accent
-								: colors.hex.default,
+							elementProps.fillColor ||
+							elementProps.color ||
+							colors.hex.default,
 						strokeColor:
-							selectedEntryType == "polyline" &&
-							selectedEntry === index
-								? elementProps.color
-									? elementProps.color
-									: colors.hex.accent
-								: colors.hex.default,
+							elementProps.strokeColor ||
+							elementProps.color ||
+							colors.hex.default,
 						strokeOpacity: 1,
 						fillOpacity: 1,
-						strokeWeight:
-							selectedEntryType == "polyline" &&
-							selectedEntry === index
-								? 1.5
-								: selectedEntryType != "polyline"
-								? elementProps.strokeWeight
-								: 1.5,
-						zIndex:
-							selectedEntryType == "polyline" &&
-							selectedEntry === index
-								? 999
-								: selectedEntryType != "polyline"
-								? elementProps.strokeWeight
-								: 1,
+						strokeWeight: 1.5,
+						zIndex: 1,
 					},
 					...elementProps,
 				});
@@ -318,15 +333,11 @@ const GoogleMap = React.forwardRef((props, ref) => {
 					"click",
 					function (event) {
 						mapElement.setOptions({
-							fillColor: elementProps.fillColor
-								? elementProps.fillColor
-								: colors.hex.accent,
-							strokeColor: elementProps.color
-								? elementProps.color
-								: colors.hex.accent,
 							strokeOpacity: 1,
-							fillOpacity: 0.8,
-							strokeWeight: 4,
+							fillOpacity: 1,
+							strokeWeight: 5,
+							fillColor: colors.hex.accent,
+							strokeColor: colors.hex.accent,
 						});
 
 						if (!!googlemapRef.current) {
@@ -341,15 +352,20 @@ const GoogleMap = React.forwardRef((props, ref) => {
 								: elementProps.title
 								? elementProps.title
 								: "") +
-								("<br/> Crow fleight distance from Start: " +
-									crowFleightDistanceinKm(
-										event.latLng.lat(),
-										event.latLng.lng(),
-										elementProps.path[0].lat,
-										elementProps.path[0].lng
-									).toFixed(2) +
-									" Km"),
-							event.latLng
+								(event?.latLng
+									? "<br/> Crow fleight distance from Start: " +
+									  crowFleightDistanceinKm(
+											event.latLng.lat(),
+											event.latLng.lng(),
+											elementProps.path[0].lat,
+											elementProps.path[0].lng
+									  ).toFixed(2) +
+									  " Km"
+									: ""),
+							event?.latLng ||
+								mapElement?.latLngs[
+									mapElement?.latLngs?.length - 1
+								]
 						);
 					}
 				);
@@ -358,14 +374,25 @@ const GoogleMap = React.forwardRef((props, ref) => {
 					mapElement,
 					"mouseout",
 					function (event) {
-						mapElement.setOptions({ fillOpacity: 1 });
+						mapElement.setOptions({
+							fillOpacity: 1,
+							strokeWeight: 1.5,
+							fillColor:
+								elementProps.fillColor ||
+								elementProps.color ||
+								colors.hex.default,
+							strokeColor:
+								elementProps.strokeColor ||
+								elementProps.color ||
+								colors.hex.default,
+						});
 						closeInfoWindow();
 					}
 				);
 				return mapElement;
 			});
 		}
-	}, [polylines, selectedEntryType, selectedEntry, google]);
+	}, [polylines]);
 
 	const applyMarkers = useCallback(() => {
 		if (Array.isArray(markersRef.current)) {
@@ -411,8 +438,8 @@ const GoogleMap = React.forwardRef((props, ref) => {
 											? ReactDOMServer.renderToStaticMarkup(
 													infoWindow
 											  )
-											: circleProps.title
-											? circleProps.title
+											: elementProps.title
+											? elementProps.title
 											: "",
 										mapElement.center
 									),
@@ -431,33 +458,64 @@ const GoogleMap = React.forwardRef((props, ref) => {
 				return mapElement;
 			});
 		}
-	}, [markers, selectedEntryType, selectedEntry, google]);
+	}, [markers]);
 
 	const applyGeojsons = useCallback(() => {}, [
 		geojsons,
 		selectedEntryType,
 		selectedEntry,
-		google,
 	]);
 
-	const applyGoogleMap = useCallback(newGooglemap => {
-		googlemapRef.current = newGooglemap;
+	const applyGoogleMap = useCallback(
+		newGooglemap => {
+			googlemapRef.current = newGooglemap;
 
-		if (Array.isArray(circlesRef.current)) {
-			circlesRef.current.forEach(element => {
-				element.setMap(googlemapRef.current);
-			});
-		}
-		if (Array.isArray(polylinesRef.current)) {
-			polylinesRef.current.forEach(element => {
-				element.setMap(googlemapRef.current);
-			});
-		}
-	}, []);
+			if (Array.isArray(circlesRef.current)) {
+				circlesRef.current.forEach(element => {
+					element.setMap(googlemapRef.current);
+				});
+			}
+			if (Array.isArray(polylinesRef.current)) {
+				polylinesRef.current.forEach(element => {
+					element.setMap(googlemapRef.current);
+				});
+			}
+			if (Array.isArray(markersRef.current)) {
+				markersRef.current.forEach(element => {
+					element.setMap(googlemapRef.current);
+				});
+			}
+		},
+		[selectedEntryType, selectedEntry]
+	);
 
-	useDidUpdate(() => {
-		applyGoogleMap(googlemap);
-	}, [googlemap]);
+	// useDidUpdate(() => {
+	// 	applyGoogleMap(googlemap);
+	// }, [googlemap]);
+
+	const handleOnMapLoad = useCallback(
+		googlemap => {
+			googlemapRef.current = googlemap;
+			// google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
+			// console.log("useDidMount JSON.stringify(geoLocation, null, 2)", JSON.stringify(geoLocation, null, 2))
+			if (Function.isFunction(onMapLoad)) {
+				onMapLoad(googlemap);
+			}
+			applyCircles();
+			applyPolylines();
+			applyMarkers();
+			applyGeojsons();
+			
+		},
+		[onMapLoad]
+	);
+
+	const mapRef = useGoogleMaps({
+		center: centerCoords,
+		zoom: zoom || defaultZoom,
+		styles: styleMode === "dark" ? dark : light,
+		onMapLoad: handleOnMapLoad,
+	});
 
 	useDidUpdate(() => {
 		applyCircles();
@@ -471,19 +529,16 @@ const GoogleMap = React.forwardRef((props, ref) => {
 		applyMarkers();
 	}, [markers]);
 
-	useDidMount(() => {
-		if (googlemap) {
-			google.maps.event.trigger(googlemap, "center_changed");
-			if (Function.isFunction(onMapLoad)) {
-				onMapLoad(googlemap);
-			}
-		}
+	useDidUpdate(() => {
+		applyGeojsons();
+	}, [geojsons]);
 
-		// console.log("useDidMount JSON.stringify(geoLocation, null, 2)", JSON.stringify(geoLocation, null, 2))
-		// console.log("useDidMount googlemap", googlemap)
-		applyCircles();
-		applyPolylines();
-		applyMarkers();
+	useDidUpdate(() => {
+		applyEntrySelection(selectedEntryType, selectedEntry);
+	}, [selectedEntryType, selectedEntry]);
+
+	useDidMount(() => {
+		
 	});
 
 	useWillUnmount(() => {
@@ -491,11 +546,13 @@ const GoogleMap = React.forwardRef((props, ref) => {
 		infoWindowTimeoutRef.current = null;
 	});
 
+
+
 	return (
 		<div
 			ref={mapRef}
 			className={classNames({
-				"m-0 mb-4 p-0 relative": true,
+				"m-0 p-0 relative": true,
 				[className]: !!className,
 			})}
 			style={{
@@ -505,7 +562,7 @@ const GoogleMap = React.forwardRef((props, ref) => {
 });
 
 GoogleMap.defaultProps = {
-	height: 900,
+	height: 1200,
 	styleMode: "light",
 };
 
