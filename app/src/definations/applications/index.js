@@ -28,7 +28,6 @@ import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, open
 
 let currentDate = new Date();
 
-const ke_regions = CountriesHelper.administrative_features_options("KE", 2, "Nairobi");
 
 
 
@@ -80,12 +79,12 @@ const ConvertToUserIconAction = (props) => {
 				Username: ${application.email_address} \n
 				Password: ${(!String.isEmpty(data.staffID) ? data.staffID : staffID)} \n\n\n
 				When you login into app things are pretty self-explanatory and under the Reading tab, you'll find a stack of materials we'd like you to review over the next few days.\n
-				You'll see a Realfield Training Manual and a number of other great resources for you to review.\nThe training will consist of a number elements that might start with a short quiz. 
+				You'll see a Realfield Training Manual and a number of other great resources for you to review.\nThe training will consist of a number elements that might start with a short quiz.
 				\nDon't worry, the purpose of the quiz is to give us an idea of where we need to provide additional support, it's not designed to catch you out.\n
 				Following the quiz, we'll be scheduling a number of live sessions. These sessions are really important and designed to help us test our platform.\n
-				They will also help us test things like responsiveness and accuracy, and each of the live sessions will be time sensitive. 
+				They will also help us test things like responsiveness and accuracy, and each of the live sessions will be time sensitive.
 				For example, you may be given a number of hours or a couple of days to complete the training assignment.\n
-				Many of you have been writing in with encouragement and questions, and we love it! If you have questions, 
+				Many of you have been writing in with encouragement and questions, and we love it! If you have questions,
 				want to offer feedback or need support, please continue to use the jobs@realfield.io address.\n
 				Asante sana and have an amazing week!!\n\n\n
 				Realfield People Ops`);
@@ -193,8 +192,8 @@ const ConvertToUserIconAction = (props) => {
 				delete profObject["provider_url"];
 				setState({
 					userAccountDialog: {
-						open: true, 
-						src: profObject, 
+						open: true,
+						src: profObject,
 						title: `User Account for  ${application.first_name} ${application.last_name}`
 					},
 					userAccount: profObject,
@@ -203,8 +202,8 @@ const ConvertToUserIconAction = (props) => {
 
 			}
 		}
-			
-		
+
+
 	}, [application])
 
 	const checkStaffIDAvailability = () => {
@@ -399,7 +398,7 @@ export default {
 					type: "text",
 					default: "",
 					required: false,
-				},		
+				},
 			},*/
 
 			first_name: {
@@ -536,7 +535,7 @@ export default {
 				possibilities: async (values, user) => {
 					//
 					if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
-						return await CountriesHelper.administrative_features_options(values.country, 1).then(data => { return data }).catch(err => { return {} });
+						// return await CountriesHelper.administrative_features_options(values.country, 1).then(data => { return data }).catch(err => { return {} });
 					}
 					return {};
 
@@ -562,13 +561,13 @@ export default {
 					}
 				},
 				possibilities: async (values, user) => {
-					if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_1)) {
-						return await CountriesHelper.administrative_features_options(values.country, 2, values.administrative_level_1).then(data => {
-							return data;
-						}).catch(err => {
-							return {};
-						});
-					}
+					// if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_1)) {
+					// 	return await CountriesHelper.administrative_features_options(values.country, 2, values.administrative_level_1).then(data => {
+					// 		return data;
+					// 	}).catch(err => {
+					// 		return {};
+					// 	});
+					// }
 					return {};
 
 				}
@@ -590,13 +589,13 @@ export default {
 
 				},
 				possibilities: async (values, user) => {
-					if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_2)) {
-						return await CountriesHelper.administrative_features_options(values.country, 3, values.administrative_level_2).then(data => {
-							return data;
-						}).catch(err => {
-							return {};
-						});
-					}
+					// if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_2)) {
+					// 	return await CountriesHelper.administrative_features_options(values.country, 3, values.administrative_level_2).then(data => {
+					// 		return data;
+					// 	}).catch(err => {
+					// 		return {};
+					// 	});
+					// }
 					return {};
 
 				}
@@ -617,9 +616,9 @@ export default {
 				},
 				possibilities: async (values, user) => {
 					//
-					if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
-						return await CountriesHelper.administrative_features_options(values.country, 1).then(data => { return data }).catch(err => { return {} });
-					}
+					// if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
+					// 	return await CountriesHelper.administrative_features_options(values.country, 1).then(data => { return data }).catch(err => { return {} });
+					// }
 					return {};
 
 				}
@@ -644,13 +643,13 @@ export default {
 					}
 				},
 				possibilities: async (values, user) => {
-					if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.region)) {
-						return await CountriesHelper.administrative_features_options(values.country, 2, values.region).then(data => {
-							return data;
-						}).catch(err => {
-							return {};
-						});
-					}
+					// if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.region)) {
+					// 	return await CountriesHelper.administrative_features_options(values.country, 2, values.region).then(data => {
+					// 		return data;
+					// 	}).catch(err => {
+					// 		return {};
+					// 	});
+					// }
 					return {};
 
 				}
@@ -672,13 +671,13 @@ export default {
 
 				},
 				possibilities: async (values, user) => {
-					if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.subcounty)) {
-						return await CountriesHelper.administrative_features_options(values.country, 3, values.subcounty).then(data => {
-							return data;
-						}).catch(err => {
-							return {};
-						});
-					}
+					// if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.subcounty)) {
+					// 	return await CountriesHelper.administrative_features_options(values.country, 3, values.subcounty).then(data => {
+					// 		return data;
+					// 	}).catch(err => {
+					// 		return {};
+					// 	});
+					// }
 					return {};
 
 				}
@@ -936,7 +935,7 @@ export default {
 				return false;
 			},
 			all: user => {
-				
+
 				return user?.role === "admin" || user?.role === "collector";
 			},
 			single: (user, record) => {
@@ -952,7 +951,7 @@ export default {
 				return false;
 			},
 		},
-		
+
 
 		actions: {
 			view: {

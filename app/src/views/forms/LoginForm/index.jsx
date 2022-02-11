@@ -499,14 +499,7 @@ const LoginForm = (props) => {
 
 						<GridContainer>
 							<GridItem xs={12} md={6}>
-								{(!state.forgotPassword && !state.resettingPassword) && (
-									<CheckboxInput
-										value={state.rememberMe}
-										onChange={handleClickRememberMe}
-										color="primary"
-										label="Remember me"
-									/>
-								)}
+
 							</GridItem>
 							<GridItem xs={12} md={6} className="m-0 p-0">
 
@@ -561,7 +554,7 @@ const LoginForm = (props) => {
 								{/*!state.forgotPassword && !state.resettingPassword  && <Link to={"/register"} className="transparent">
 										<Button
 											color="text.secondary"
-											
+
 											size="md"
 											href="/register"
 										>

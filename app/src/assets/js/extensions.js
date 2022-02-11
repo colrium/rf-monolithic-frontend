@@ -105,6 +105,24 @@ String.uuid = function () {
 	);
 };
 
+String.containsUrl = function (target) {
+
+	return new RegExp(
+		"([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?"
+	).test(target)
+}
+String.getContainedUrl = function (target) {
+	let containedUrl = target.match(
+		new RegExp(
+			"([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?"
+		)
+	)
+	if (!Array.isArray(containedUrl)) {
+		containedUrl = []
+	}
+	return containedUrl
+}
+
 String.prototype.truncate = function (size, ellipsis = "...") {
 	let target = this;
 	if (target.length > size) {
@@ -943,20 +961,27 @@ JSON.getDeepPropertyValue = function (deepKey, target, defaultValue=undefined) {
 };
 
 JSON.setDeepPropertyValue = (deepKey, value, target = {}) => {
-	const [head, ...rest] = deepKey.trim().split('.');
 	let newObj = JSON.fromJSON(target);
-	if (!JSON.isJSON(newObj)) {
-		newObj = {};
-	}
-	if (rest.length > 0) {
-		if (!JSON.isJSON(newObj[head])) {
-			newObj[head] = {}
+
+	if (!String.isEmpty(deepKey)) {
+		const [head, ...rest] = deepKey.trim().split(".")
+		if (!JSON.isJSON(newObj)) {
+			newObj = {}
 		}
-		newObj[head] = JSON.setDeepPropertyValue(rest.join('.'), value, newObj[head])
+		if (rest.length > 0) {
+			if (!JSON.isJSON(newObj[head])) {
+				newObj[head] = {}
+			}
+			newObj[head] = JSON.setDeepPropertyValue(
+				rest.join("."),
+				value,
+				newObj[head]
+			)
+		} else {
+			newObj[head] = value
+		}
 	}
-	else {
-		newObj[head] = value;
-	}
+
 
 	return newObj
 };
@@ -1259,10 +1284,10 @@ Date.replaceChars = {
 	since: function () {
 		let startTime = this.getTime();
 		let endTime = performance.now();
-		var timeDiff = endTime - startTime; //in ms 
-		// strip the ms 
+		var timeDiff = endTime - startTime; //in ms
+		// strip the ms
 		timeDiff /= 1000;
-		// get seconds 
+		// get seconds
 		let seconds = Math.round(timeDiff);
 
 		function secondsToDHms (secs) {
@@ -1335,109 +1360,9 @@ Date.prototype.minusMilliSeconds = function (ms) {
 };
 
 
-
-/*Date.difference = function(date1, date2 = new Date()) {
-	
-	if (Number.isNumber(date1)) {
-		try {
-			date1 = new Date(date1);
-		} catch (e) {
-			
-		}
-	}
-	if (Number.isNumber(date2)) {
-		try {
-			date2 = new Date(date2);
-		} catch (e) {
-			
-		}
-	}
-	
-	var intervals = {
-		years: 0,
-		months: 0,
-		weeks: 0,
-		days: 0,
-		hours: 0,
-		minutes: 0,
-		seconds: 0,
-		milliseconds: 0,
-		direction: "forward",
-		description: "",
-	}
-
-	if ((date1 instanceof Date) && (date2 instanceof Date)) {
-		var years = 0;
-		var months = 0;
-		var weeks = 0;
-		var days = 0;
-		var hours = 0;
-		var minutes = 0;
-		var seconds = 0;
-		var milliseconds = 0;
-		var direction = date2.getTime() >= date1.getTime()? "forward" : "reverse";
-		var description = "";
-
-		var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-		if (date2.getFullYear() % 4 === 0) {
-			daysInMonth[1] = 29;
-		}
-		
-		
-		
-		years = Math.abs((date2.getFullYear() - date1.getFullYear()));
-
-		//months = date2.getDate() - date1.getMonth();
-
-		months = (years === 0? (date2.getMonth() - date1.getMonth()) : (( 11 - date1.getMonth()) +  (11 - date2.getMonth())));
-		if (years > 0 && date1.getMonth() < 6) {
-			months = (11 - date1.getMonth()) + date2.getMonth();
-		}
-		days = (months === 0? (date2.getDate() - date1.getDate()) : (( daysInMonth[date1.getMonth()] - date1.getDate()) + (daysInMonth[date2.getMonth()] - date2.getDate())));
-		
-		weeks = Math.floor((days >= 7? (days/7) : 0));
-		days = weeks > 0? (days - (weeks*7)) : days;
-		hours = ((days === 0? (date2.getHours() - date1.getHours()) : (( 23 - date1.getHours()) + (23 - date2.getHours()))));
-		minutes = ((hours === 0? (date2.getMinutes() - date1.getMinutes()) : (( 59 - date1.getMinutes()) + (59 - date2.getMinutes()))));
-		seconds = ((minutes === 0? (date2.getSeconds() - date1.getSeconds()) : (( 59 - date1.getSeconds()) + (59 - date2.getSeconds()))));
-		milliseconds = ((seconds === 0? (date2.getMilliseconds() - date1.getMilliseconds()) : (( 999 - date1.getMilliseconds()) + (599 - date1.getMilliseconds()))));
-
-		if (years > 0) {
-			description = years+" years";
-			if (years === 1) {
-				description = "last year";
-				if (months > 0) {
-					description = date1.toLocaleString;
-				}
-			}
-			
-		}
-		else  if (months > 0) {
-
-		}
-		
-			
-
-
-		intervals.years = years;
-		intervals.months = months;
-		intervals.weeks = weeks;
-		intervals.days = days;
-		intervals.hours = hours;
-		intervals.minutes = minutes;
-		intervals.seconds = seconds;
-		intervals.milliseconds = milliseconds;
-		intervals.direction = direction;
-		intervals.description = description;
-	}
-		
-
-	return intervals;
-};*/
-
 Date.difference = function (date1, date2 = new Date()) {
-	date1 = Date.from(date1);
-	date2 = Date.from(date2);
+	date1 = Date.parseFrom(date1)
+	date2 = Date.parseFrom(date2)
 
 	let difference = {
 		value: 0,
@@ -1529,7 +1454,40 @@ Date.isDate = function (target) {
 	return target && Object.prototype.toString.call(target) === "[object Date]" && !isNaN(target);
 };
 
-Date.from = function (input, defaultDate = null) {
+
+Date.timeago = function (nd, s, suffs={}) {
+	let suffixes = { past: " ago", future: " from now", ...suffs }
+	var o = {
+		second: 1000,
+		minute: 60 * 1000,
+		hour: 60 * 1000 * 60,
+		day: 24 * 60 * 1000 * 60,
+		week: 7 * 24 * 60 * 1000 * 60,
+		month: 30 * 24 * 60 * 1000 * 60,
+		year: 365 * 24 * 60 * 1000 * 60,
+	}
+	var r = Math.round,
+		dir = suffixes.ago,
+		pl = function (v, n) {
+			return s === undefined
+				? n + " " + v + (n > 1 ? "s" : "") + dir
+				: n + v.substring(0, 1)
+		},
+		ts = Date.now() - new Date(nd).getTime(),
+		ii
+	if (ts < 0) {
+		ts *= -1
+		dir = suffixes.future
+	}
+	for (var i in o) {
+		if (r(ts) < o[i]) return pl(ii || "m", r(ts / (o[ii] || 1)))
+		ii = i
+	}
+	return pl(i, r(ts / o[i]))
+}
+
+
+Date.parseFrom = function (input, defaultDate = null) {
 	let date = defaultDate;
 	if (!!input) {
 		if (Date.isDate(input)) {
@@ -1545,3 +1503,55 @@ Date.from = function (input, defaultDate = null) {
 	// console.log("Date.from date", date);
 	return date;
 };
+
+
+Date.prose = function (input = null, showTime=true, ) {
+	let date = new Date()
+	let dateProse = null;
+	if (!!input) {
+		if (Date.isDate(input)) {
+			date = input
+		}
+		try {
+			let ms = Date.parse(input)
+			date = new Date(ms)
+			let difference = Date.difference(date)
+			if (
+				difference.years > 0 ||
+				difference.months > 0 ||
+				difference.weeks > 0
+			) {
+				dateProse = `${Date.format(date, "F d, Y")}${
+					showTime ? Date.format(date, " h:i a") : ""
+				}`
+			} else if (difference.days > 1) {
+				dateProse = `${Date.format(date, "l")}${
+					showTime ? Date.format(date, " h:i a") : ""
+				}`
+			} else if (difference.days === 1) {
+				dateProse = `Yesterday${
+					showTime ? Date.format(date, " h:i a") : ""
+				}`
+			} else {
+
+				if (date.format("Y M d") !== new Date().format("Y M d")) {
+					// console.log("prose date ", date)
+					// console.log("prose difference ", difference)
+					dateProse = `Yesterday${
+						showTime ? Date.format(date, " h:i a") : ""
+					}`
+				}
+				else {
+					dateProse = `Today${
+						showTime ? Date.format(date, " h:i a") : ""
+					}`
+				}
+
+			}
+		} catch (e) {
+			console.error("Date.from error", e)
+		}
+	}
+
+	return dateProse
+}

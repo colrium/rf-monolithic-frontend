@@ -550,11 +550,11 @@ class ServiceData {
 					if (Utilities.isOfType(resolves, "function")) {
 						resolves = resolves(entries[i], user);
 					}
-					
+
 					if (column in entries[i]) {
 						if (entries[i][column]) {
 							entries[i][column] = { value: entries[i][column][resolves.value], display_value: this.resolveReferenceColumnDisplay(column, entries[i], resolves, user, secondary_prefix, secondary_suffix) };
-							
+
 						}
 						else{
 							entries[i][column] = {value: null, display_value: "" };
@@ -1122,50 +1122,6 @@ class CountriesData {
 		return names;
 	}
 
-	static administrative_features_options(country, level = 1, value = false) {
-		return new Promise((resolve, reject) => {
-			let features = {};
-			if (String.isString(country)) {
-				country = country.trim();
-				let country_name = false;
-				if (["ke", "kenya", "254", "+254"].includes(country.toLowerCase())) {
-					country_name = "kenya";
-				}
-				else if (["ug", "uganda", "253", "+253"].includes(country.toLowerCase())) {
-					country_name = "uganda";
-				}
-				else if (["tz", "tanzania", "255", "+255"].includes(country.toLowerCase())) {
-					country_name = "tanzania";
-				}
-				if (country_name && (level == 1 || (level > 1 && level < 4 && value))) {
-					ApiService.isolated( {cache: true, headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}} ).get(`https://realfield.nyc3.cdn.digitaloceanspaces.com/public/geodata/${country_name}/features/administrative/level-${level}/index.json`).then(response => response.data).then(data => {
-						let lower_level = level - 1
-						if (Array.isArray(data)) {
-							data.map(entry => {
-								if (((level > 1 && level < 4 && value) && String.isString(value) && String.isString(entry[("level-" + lower_level)]) && entry[("level-" + lower_level)].toLowerCase() === value.toLowerCase()) || level == 1) {
-									features[entry.name] = entry.name;
-								}
-							})
-						}
-						resolve(features);
-					}).catch(err => {
-						reject(err);
-					});
-
-				}
-				else {
-					reject("Invalid parameters country: " + country + ", level:" + level + ", value:" + value);
-				}
-
-			}
-			else {
-				reject("Invalid country: " + country);
-			}
-
-
-		});
-
-	}
 }
 
 class FormValidation {

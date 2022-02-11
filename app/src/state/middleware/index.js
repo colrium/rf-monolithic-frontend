@@ -10,9 +10,11 @@ const logger = createLogger({});
 
 let middleWare = null;
 if (logRedux) {
-	middleWare = applyMiddleware(thunk, api,  logger);
+	middleWare = applyMiddleware(thunk, api, logger)
+	// middleWare = applyMiddleware(thunk, logger)
 } else {
-	middleWare = applyMiddleware(thunk, api );
+	middleWare = applyMiddleware(thunk, api)
+	// middleWare = applyMiddleware(thunk)
 }
 
 export default middleWare;

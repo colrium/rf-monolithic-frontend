@@ -1,73 +1,37 @@
 /** @format */
-import io from "socket.io-client";
+import io from "socket.io-client"
 import { appName, baseUrls, environment, client_id, client_secret } from "config";
-import store from "state/store";
 
 const SocketsSingleton = (function () {
 	var instance;
 
 
 	function createInstance() {
-		const { auth } = store.getState();
 		let socket_url = baseUrls.api;
-		let options = {
-			secure: false,
-			agent: appName + ' mobile',
-			transportOptions: {
-				polling: {
-					extraHeaders: {
-						"x-client-id": client_id,
-						"x-client-secret": client_secret,
-						'Access-Control-Allow-Credentials': 'omit'
-					}
-				}
-			},
-			rememberUpgrade: true,
-			rejectUnauthorized: false,
-			'reconnection': true,
-			'reconnectionDelay': 500,
-			'reconnectionAttempts': Infinity,
-			'transports': ['websocket', 'polling'],
-			extraHeaders: {
-				"x-client-id": client_id,
-				"x-client-secret": client_secret,
-			}
-		};
+		let options = {};
 
 		if (environment === "production") {
-			options.secure = true;
+			// options.secure = true;
 		}
-		// make sure socket is 
-		var socket = io(socket_url, options);
-		socket.on('reconnect_attempt', () => {
+		// make sure socket is
+		var socket = io(socket_url, options)
+		var existingSocketId = null
+		socket.on('connect', () => {
 			////
-			socket.io.opts.transportOptions = {
-				polling: {
-					extraHeaders: {
-						"x-client-id": client_id,
-						"x-client-secret": client_secret,
-					}
-				}
-			};
-			socket.io.opts.extraHeaders = {
-				"x-client-id": client_id,
-				"x-client-secret": client_secret,
-			};
+			console.log("socket.id", socket)
 		});
-
 		return socket;
 	}
 
 	return {
 		getInstance: function () {
 			if (!instance) {
-				instance = createInstance();
+				instance = createInstance()
 			}
-			return instance;
-		}
-	};
+			return instance
+		},
+		createInstance,
+	}
 })();
 const socket = SocketsSingleton.getInstance();
-export {
-	socket as default
-}
+export { socket as default}

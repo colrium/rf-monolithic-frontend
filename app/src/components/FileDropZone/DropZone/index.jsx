@@ -44,6 +44,7 @@ const DropZone = React.forwardRef((props, ref) => {
         onDrop,
         onDropRejected,
         value,
+		defaultValue,
         upload,
         filesLimit,
         uploadData,
@@ -62,11 +63,19 @@ const DropZone = React.forwardRef((props, ref) => {
     } = props;
 
     const [state, setState, getState] = useSetState({
-        fileObjects: [],
-    });
+		fileObjects: [],
+		value: value || defaultValue,
+	})
 
     const isMultiple = useMemo(() => filesLimit > 1, [filesLimit]);
-    const showDragDrop = Array.isArray(state.value) ? state.value.length < filesLimit : filesLimit === 1 && ((String.isString(state.value) ? state.value.trim().length > 0 : false) || JSON.isJSON(state.value));
+    const showDragDrop = Array.isArray(state.value)
+		? state.value.length < filesLimit
+		: true &&
+		  ((String.isString(state.value)
+				? state.value.trim().length > 0 && filesLimit === 1
+				: true) ||
+				Array.isArray(state.value) ||
+				!state.value)
 
 	const fileInputRef = useRef(null);
 
@@ -114,7 +123,7 @@ const DropZone = React.forwardRef((props, ref) => {
                         await getAttachment(attachments[i]).then(resAttachment => {
                             newFileObjects = newFileObjects.concat([{ attachment: resAttachment }]);
                         }).catch(err => {
-                            
+
                             if (isMultiple) {
                                 new_value = [];
                                 if (Array.isArray(attachments)) {
@@ -166,7 +175,7 @@ const DropZone = React.forwardRef((props, ref) => {
             }
 
             message += (message.length > 0 ? "<br />" : "") + `File ${file.name} successfully uploaded. `;
-            count++; // 
+            count++; //
             if (count === files.length) {
                 // display message when the last one fires
                 // setState({
@@ -185,7 +194,7 @@ const DropZone = React.forwardRef((props, ref) => {
         const { fileObjects } = getState();
         let fileObjectIndex = fileObjects.indexOf(fileObject);
 
-        
+
 
         setState(prevState => ({
             fileObjects: prevState.fileObjects.remove(fileObjectIndex),
@@ -345,18 +354,18 @@ const DropZone = React.forwardRef((props, ref) => {
             Promise.all([onChange(newValue)]).then(result => {
                 //
             }).catch(error => {
-                
+
             });
         }
 	}, [onChange]);
-	
+
 	const handleOnFocus = useCallback((triggerClick=true) => {
 		if (triggerClick && !!fileInputRef.current) {
 			fileInputRef.current.click()
         }
         onFocus();
 	}, [onFocus]);
-	
+
 	const handleOnBlur = useCallback(Function.debounce((event) => {
 		if (Function.isFunction(onBlur)) {
 			onBlur(event);
@@ -364,18 +373,18 @@ const DropZone = React.forwardRef((props, ref) => {
     }, 350), [onBlur]);
 
     const handleOnInputChange = useCallback(Function.debounce((event) => {
-        
+
         const fileList = event.target?.files || [];
         if (fileList.length > 0) {
             let filesArray = [];
             for (let i = 0; i < fileList.length; i++) {
                 filesArray.push(fileList[i]);
             }
-            
+
             handleOnDrop(filesArray);
             event.target.value = "";
         }
-        
+
     }, 350), []);
 
     useDidUpdate(() => {
@@ -389,13 +398,13 @@ const DropZone = React.forwardRef((props, ref) => {
 
         })
 	}, [])
-	
+
 	const [dropAreaBond, dropAreaState] = useDropArea({
     	onFiles: handleOnDrop,
     	onUri: uri => console.log('dropArea uri', uri),
     	onText: text => console.log('dropArea text', text),
     });
-    
+
     useDidUpdate(() => {
         if (dropAreaState?.over) {
             handleOnFocus(false);
@@ -406,98 +415,117 @@ const DropZone = React.forwardRef((props, ref) => {
     }, [dropAreaState.over]);
 
 
-	
+
     return (
-        <ClickAwayListener onClickAway={handleOnBlur}>
-            <Box
-                className={`${className ? className : ""}`}
-                {...dropAreaBond}
-                onClick={handleOnFocus}
-            >
-			<GridContainer className = { "h-full w-full p-0 px-4 py-2" } >
+		<ClickAwayListener onClickAway={handleOnBlur}>
+			<Box
+				className={`${
+					className ? className : ""
+				} cursor-pointer min-h-20 `}
+				{...dropAreaBond}
+				onClick={handleOnFocus}
+			>
+				<GridContainer className={"h-full w-full p-0 px-4 py-2"}>
+					<GridItem xs={12}>
+						{showDragDrop && (
+							<GridContainer
+								direction="column"
+								justify="center"
+								alignItems="center"
+							>
+								<Typography
+									className={"m-4 text-8xl"}
+									color={
+										dropAreaState?.over
+											? "primary"
+											: "text.secondary"
+									}
+									fullWidth
+									paragraph
+								>
+									{String.isString(dropzoneIcon) && (
+										<Icon> {dropzoneIcon} </Icon>
+									)}
+									{React.isValidElement(dropzoneIcon) &&
+										dropzoneIcon}
+								</Typography>
 
-				<GridItem xs={12} >
-					{ showDragDrop && <GridContainer
-                    	direction="column"
-                    	justify="center"
-                    	alignItems="center"
-                    >
-                    <Typography
-                    	className={ "m-4 text-8xl" }
-                    	color = { dropAreaState?.over? "primary" : "text.secondary" }
-                    	fullWidth
-						paragraph
-					>
-							{String.isString(dropzoneIcon) && (<Icon > {dropzoneIcon} </Icon>)}
-							{React.isValidElement(dropzoneIcon) && dropzoneIcon}
-					</Typography>
+								<FormHelperText>
+									{" "}
+									{dropzoneText}{" "}
+								</FormHelperText>
+							</GridContainer>
+						)}
 
-                    <FormHelperText > { dropzoneText } </FormHelperText>
+						{showPreviews && (
+							<PreviewList
+								className="p-0"
+								fileObjects={state.fileObjects}
+								handleRemove={handleRemove}
+								showFileNames={showFileNamesInPreview}
+								disabled={disabled}
+								title={label}
+							/>
+						)}
+					</GridItem>
+					<input
+						{...rest}
+						onChange={handleOnInputChange}
+						type="file"
+						className="hidden"
+						ref={fileInputRef}
+					/>
+				</GridContainer>
 
-                    </GridContainer>}
-
-					{showPreviews && (
-						<PreviewList className="p-0"
-                            fileObjects = { state.fileObjects }
-                            handleRemove = { handleRemove }
-                            showFileNames = { showFileNamesInPreview }
-                            disabled = { disabled }
-                            title = { label }
-                        />
-                    )}
-				</GridItem>
-                    <input {...rest} onChange={handleOnInputChange} type="file" className="hidden" ref={fileInputRef}/>
-            </GridContainer>
-
-			{/* <FormHelperText error={Boolean(error)}> {helperText} </FormHelperText> */}
-			{showAlerts && (
-				<Snackbar
-					anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                    }}
-                    open = { state.openSnackBar }
-                    autoHideDuration = { 6000 }
-					onClose={onCloseSnackbar}
-				>
-					<MuiAlert
+				{/* <FormHelperText error={Boolean(error)}> {helperText} </FormHelperText> */}
+				{showAlerts && (
+					<Snackbar
+						anchorOrigin={{
+							vertical: "bottom",
+							horizontal: "right",
+						}}
+						open={state.openSnackBar}
+						autoHideDuration={6000}
 						onClose={onCloseSnackbar}
-                        color = { state.snackbarColor || "secondary" }
-						sx={{ width: '100%' }}
 					>
-						{state.snackbarMessage || ""} </MuiAlert>
-                </Snackbar>
-            )}
-                
-            </Box>
-        </ClickAwayListener>
-    )
+						<MuiAlert
+							onClose={onCloseSnackbar}
+							color={state.snackbarColor || "secondary"}
+							sx={{ width: "100%" }}
+						>
+							{state.snackbarMessage || ""}{" "}
+						</MuiAlert>
+					</Snackbar>
+				)}
+			</Box>
+		</ClickAwayListener>
+	)
 })
 
 
 DropZone.defaultProps = {
-    acceptedFiles: ["image/*", "video/*", "audio/*", "application/*"],
-    variant: "filled",
-    filesLimit: 3,
-    type: "text",
-    maxFileSize: 3000000,
-    readOnly: false,
-    disabled: false,
-    dropzoneText: "Click to select file \n or \n Drag and drop a file here",
-    dropzoneIcon: < CloudUploadIcon / > ,
-    showPreviews: true,
-    showPreviewsInDropzone: false,
-    showFileNamesInPreview: true,
-    showAlerts: true,
-    upload: true,
-    uploadData: {},
-    defaultColor: "grey",
-    activeColor: "primarydark",
-    onChange: () => {},
-    onDrop: () => {},
-    onDropRejected: () => {},
-    onDelete: () => {},
-};
+	acceptedFiles: ["image/*", "video/*", "audio/*", "application/*"],
+	variant: "filled",
+	filesLimit: 3,
+	type: "text",
+	maxFileSize: 3000000,
+	readOnly: false,
+	disabled: false,
+	dropzoneText: "Click to select file \n or \n Drag and drop a file here",
+	dropzoneIcon: <CloudUploadIcon fontSize="inherit" />,
+	showPreviews: true,
+	showPreviewsInDropzone: false,
+	showFileNamesInPreview: true,
+	showAlerts: true,
+	upload: true,
+	uploadData: {},
+	defaultColor: "grey",
+	activeColor: "primarydark",
+	onChange: () => {},
+	onDrop: () => {},
+	onDropRejected: () => {},
+	onDelete: () => {},
+}
 DropZone.propTypes = {
 
     className: PropTypes.string,

@@ -12,7 +12,6 @@ const Image = styled.img`
 	display: block;
 	width: 100%;
 	height: 100%;
-	// Add a smooth animation on loading
 	@keyframes loaded {
 		0% {
 			opacity: 0.1;
@@ -26,10 +25,9 @@ const Image = styled.img`
 		animation: loaded 300ms ease-in-out;
 	}
 	&.has-error {
-		// fallback to placeholder image on error
-		content: url(${placeHolder});
+		content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAD0lEQVR42mNkwAIYh7IgAAVVAAuInjI5AAAAAElFTkSuQmCC");
 	}
-`;
+`
 
 const LazyImage = (props) => {
 	const {src, alt, onClick, lightbox, className, fallbackSrc = "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/icons/file-error.svg", ...rest } = props;
@@ -50,7 +48,7 @@ const LazyImage = (props) => {
 	};
 
 	return (
-		<div className={className ? className : "inline-block"}>
+		<div className={className ? className : ""}>
 			{lightbox && lightboxOpen && (
 				<LightBox
 					src={imageSrc}
@@ -63,15 +61,17 @@ const LazyImage = (props) => {
 				ref={imageRef}
 				src={imageSrc}
 				onClick={event => {
+
 					if (Function.isFunction(onClick)) {
 						onClick(event);
 					} else {
+						event.preventDefault()
 						setLightboxOpen(true);
 					}
 				}}
 				className={
 					(lightbox ? "cursor-pointer " : "cursor-auto") +
-					" w-full h-full"
+					className ? className :  " w-full h-full"
 				}
 				{...rest}
 			/>
@@ -83,4 +83,4 @@ LazyImage.defaultProps = {
 	lightbox: true,
 };
 
-export default LazyImage;
+export default React.memo(LazyImage);

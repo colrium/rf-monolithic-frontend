@@ -361,11 +361,14 @@ const ApiSingleton = (function () {
 	}
 
 	function getAttachmentFileUrl(attachment) {
-		return endpoint("/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment));
-		//return ("https://api.realfield.io/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment));
+		// return endpoint("/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment));
+		return (
+			"https://api.realfield.io/attachments/download/" +
+			(JSON.isJSON(attachment) && "_id" in attachment
+				? attachment._id
+				: attachment)
+		)
 	}
-
-
 
 	function createInstance(config = {}) {
 		// if (!instance_initialized) {
@@ -381,7 +384,7 @@ const ApiSingleton = (function () {
 		// 				instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(access_token) } });
 		// 			}
 		// 			else {
-		// 				//Refresh 
+		// 				//Refresh
 		// 				instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
 		// 			}
 		// 		}
@@ -417,53 +420,77 @@ const ApiSingleton = (function () {
 		// 	instance_initialized = true;
 		// }
 
-		const { cache, interceptors, ...options } = JSON.merge(default_options, config, instance_options);
+		const { cache, interceptors, ...options } = JSON.merge(
+			default_options,
+			config,
+			instance_options
+		)
 
-		let newInstance = axios.create((cache ? (Boolean.isBoolean(cache) ? { ...options, adapter: axios_cache.adapter } : (cache.adapter ? { ...options, ...cache } : { ...options })) : { ...options }));
+		let newInstance = axios.create(
+			cache
+				? Boolean.isBoolean(cache)
+					? { ...options, adapter: axios_cache.adapter }
+					: cache.adapter
+					? { ...options, ...cache }
+					: { ...options }
+				: { ...options }
+		)
 
-		EventRegister.on('api-request-attempt', (config) => {
-			const { cancelOnTimeout, cancelUUID, cancelToken, cancelTokenSource, timeout } = config;
-			let timeoutAction = undefined;
+		EventRegister.on("api-request-attempt", config => {
+			const {
+				cancelOnTimeout,
+				cancelUUID,
+				cancelToken,
+				cancelTokenSource,
+				timeout,
+			} = config
+			let timeoutAction = undefined
 			//
-			let cancellableOnTimeout = cancelOnTimeout > 0 && Function.isFunction(cancelTokenSource?.cancel);
+			let cancellableOnTimeout =
+				cancelOnTimeout > 0 &&
+				Function.isFunction(cancelTokenSource?.cancel)
 			if (cancellableOnTimeout) {
-				const timeoutMs = Number.parseNumber(timeout, 30000);
-				let onRequestError = null;
-				let onRequestComplete = null;
+				const timeoutMs = Number.parseNumber(timeout, 30000)
+				let onRequestError = null
+				let onRequestComplete = null
 
 				const removeRequestListeners = () => {
 					if (!!onRequestError) {
-						EventRegister.removeEventListener(onRequestError);
+						EventRegister.removeEventListener(onRequestError)
 					}
 					if (!!onRequestComplete) {
-						EventRegister.removeEventListener(onRequestComplete);
+						EventRegister.removeEventListener(onRequestComplete)
 					}
 				}
-				onRequestError = EventRegister.on('api-request-error', (error) => {
-					//
-					if (cancelUUID === data?.config?.cancelUUID) {
-						clearTimeout(timeoutAction);
-						removeRequestListeners();
+				onRequestError = EventRegister.on(
+					"api-request-error",
+					error => {
+						//
+						if (cancelUUID === data?.config?.cancelUUID) {
+							clearTimeout(timeoutAction)
+							removeRequestListeners()
+						}
 					}
-				});
-				onRequestComplete = EventRegister.on('api-request-complete', (data) => {
-					//
-					if (cancelUUID === data?.config?.cancelUUID) {
-						clearTimeout(timeoutAction);
-						removeRequestListeners();
+				)
+				onRequestComplete = EventRegister.on(
+					"api-request-complete",
+					data => {
+						//
+						if (cancelUUID === data?.config?.cancelUUID) {
+							clearTimeout(timeoutAction)
+							removeRequestListeners()
+						}
 					}
-				});
+				)
 
 				timeoutAction = setTimeout(() => {
-					EventRegister.emit("api-request-timeout", config);
-					cancelTokenSource.cancel();
-					removeRequestListeners();
-				}, timeoutMs);
-
-
+					EventRegister.emit("api-request-timeout", config)
+					cancelTokenSource.cancel()
+					removeRequestListeners()
+				}, timeoutMs)
 			}
-		});
-		//Custom interceptors to ensure authorization is kept and responses are formatted accordingly. PS: NO DUPLICATES HERE. One's for request. One's for Response.   
+		})
+		//Custom interceptors to ensure authorization is kept and responses are formatted accordingly. PS: NO DUPLICATES HERE. One's for request. One's for Response.
 		function onErrorHandler(error) {
 			//console.warn("onErrorHandler error", error);
 			let errobj = {
@@ -472,7 +499,7 @@ const ApiSingleton = (function () {
 				message: "Request Failed",
 				body: null,
 				code: 400,
-			};
+			}
 			if (error.response) {
 				errobj = {
 					...error,
@@ -481,12 +508,21 @@ const ApiSingleton = (function () {
 					msg: error.response.statusText,
 					message: error.response.statusText,
 					body: error.response.data,
-
-				};
+				}
 				if (error.response.data) {
-					if (error.response.data.message || error.response.data.msg || error.response.data.error) {
-						errobj.msg = error.response.data.message || error.response.data.msg || error.response.data.error;
-						errobj.message = error.response.data.message || error.response.data.msg || error.response.data.error;
+					if (
+						error.response.data.message ||
+						error.response.data.msg ||
+						error.response.data.error
+					) {
+						errobj.msg =
+							error.response.data.message ||
+							error.response.data.msg ||
+							error.response.data.error
+						errobj.message =
+							error.response.data.message ||
+							error.response.data.msg ||
+							error.response.data.error
 					}
 				}
 			} else if (error.request) {
@@ -496,17 +532,21 @@ const ApiSingleton = (function () {
 					msg: "Request Failed. " + error.message,
 					message: "Request Failed. " + error.message,
 					body: null,
-
-				};
+				}
 			}
-			EventRegister.emit('api-request-error', errobj);
+			EventRegister.emit("api-request-error", errobj)
 
-			return Promise.reject(errobj);
+			return Promise.reject(errobj)
 		}
 
 		function onSuccessHandler(response) {
-			const { data: { message, msg, ...body }, status, headers, ...rest } = response;
-			let res_message = message || msg || "Success";
+			const {
+				data: { message, msg, ...body },
+				status,
+				headers,
+				...rest
+			} = response
+			let res_message = message || msg || "Success"
 
 			let res = {
 				...rest,
@@ -515,76 +555,97 @@ const ApiSingleton = (function () {
 				code: status,
 				status: status,
 				headers: headers,
-			};
-			EventRegister.emit('api-request-complete', res);
-			return Promise.resolve(res);
+			}
+			EventRegister.emit("api-request-complete", res)
+			return Promise.resolve(res)
 		}
 
 		function onRequestAttemptHandler(config) {
-			let cancelToken = axios.CancelToken;
-			let cancelOnTimeout = config?.timeout ?? 0 > 0;
+			let cancelToken = axios.CancelToken
+			let cancelOnTimeout = config?.timeout ?? 0 > 0
 			if (!!config.cancelToken) {
-				cancelToken = config.cancelToken;
+				cancelToken = config.cancelToken
 			}
 			if (cancelOnTimeout) {
-				config.cancelOnTimeout = cancelOnTimeout;
-				config.cancelToken = cancelToken?.source()?.token;
-				config.cancelUUID = String.uuid();
-				config.cancelTokenSource = cancelToken?.source();
+				config.cancelOnTimeout = cancelOnTimeout
+				config.cancelToken = cancelToken?.source()?.token
+				config.cancelUUID = String.uuid()
+				config.cancelTokenSource = cancelToken?.source()
 			}
 
-			config.headers = { ...config.headers, ...getAuthorizationHeader(access_token) }
-			EventRegister.emit('api-request-attempt', config);
-			return config;
+			config.headers = {
+				...config.headers,
+				...getAuthorizationHeader(access_token),
+			}
+			EventRegister.emit("api-request-attempt", config)
+			return config
 		}
-		newInstance.interceptors.request.use(function (config) {
-			return onRequestAttemptHandler(config)
-		}, function (error) {
-			return onErrorHandler(error);
-		});
-		newInstance.interceptors.response.use(function (res) {
+		newInstance.interceptors.request.use(
+			function (config) {
+				return onRequestAttemptHandler(config)
+			},
+			function (error) {
+				return onErrorHandler(error)
+			}
+		)
+		newInstance.interceptors.response.use(
+			function (res) {
+				return onSuccessHandler(res)
+			},
+			function (error) {
+				return onErrorHandler(error)
+			}
+		)
 
-			return onSuccessHandler(res)
-		}, function (error) {
-			return onErrorHandler(error);
-		});
+		newInstance.getAttachmentFileUrl = getAttachmentFileUrl
+		newInstance.upload = (data, params = {}) =>
+			newInstance.post("/attachments/upload", data, params)
+		newInstance.isolated = (config = {}) => createIsolatedInstance(config)
+		newInstance.endpoint = (uri = "/") => endpoint(uri)
+		newInstance.isAccessTokenValid = token => isAccessTokenValid(token)
+		newInstance.getAuthCookies = () => getAuthCookies()
+		newInstance.getAccessToken = () => getAccessToken()
+		newInstance.setAccessToken = token => setAccessToken(token)
+		newInstance.accessTokenSetAndValid = () => accessTokenSetAndValid()
+		newInstance.getAuthorizationHeader = () => getAuthorizationHeader()
+		newInstance.getContextRequests = (
+			service_uri = "/",
+			scope_instance = false
+		) => getContextRequests(service_uri, scope_instance)
+		newInstance.isUserAuthenticated = () => isUserAuthenticated()
+		newInstance.login = (data, get_profile = true) =>
+			login(data, get_profile)
+		newInstance.logout = () => logout()
+		newInstance.logoutAll = () => logoutAll()
+		newInstance.logoutOthers = () => logoutOthers()
+		newInstance.profile = params =>
+			newInstance.get("profile", { params: params })
+		newInstance.update_profile = data => newInstance.post("profile", data)
+		newInstance.signup = data => newInstance.post("signup", data)
+		newInstance.forgotPassword = data =>
+			newInstance.post("forgot-password", data)
+		newInstance.forgot_password = data =>
+			newInstance.post("forgot-password", data)
+		newInstance.resetPassword = data =>
+			newInstance.post("reset-password", data)
+		newInstance.reset_password = data =>
+			newInstance.post("reset-password", data)
+		newInstance.verifyAccount = data =>
+			newInstance.post("verify-account", data)
+		newInstance.verify_account = data =>
+			newInstance.post("verify-account", data)
+		newInstance.getAccessToken = params =>
+			newInstance.get("token", { params: params })
+		newInstance.get_access_token = params =>
+			newInstance.get("token", { params: params })
+		newInstance.refreshAuthToken = data =>
+			newInstance.post("refresh-token", data)
+		newInstance.refresh_auth_token = data =>
+			newInstance.post("refresh-token", data)
 
+		instance = newInstance
 
-
-		newInstance.getAttachmentFileUrl = getAttachmentFileUrl;
-		newInstance.upload = (data, params = {}) => newInstance.post("/attachments/upload", data, params);
-		newInstance.isolated = (config = {}) => createIsolatedInstance(config);
-		newInstance.endpoint = (uri = "/") => endpoint(uri);
-		newInstance.isAccessTokenValid = (token) => isAccessTokenValid(token);
-		newInstance.getAuthCookies = () => getAuthCookies();
-		newInstance.getAccessToken = () => getAccessToken();
-		newInstance.setAccessToken = (token) => setAccessToken(token);
-		newInstance.accessTokenSetAndValid = () => accessTokenSetAndValid();
-		newInstance.getAuthorizationHeader = () => getAuthorizationHeader();
-		newInstance.getContextRequests = (service_uri = "/", scope_instance = false) => getContextRequests(service_uri, scope_instance);
-		newInstance.isUserAuthenticated = () => isUserAuthenticated();
-		newInstance.login = (data, get_profile = true) => login(data, get_profile);
-		newInstance.logout = () => logout();
-		newInstance.logoutAll = () => logoutAll();
-		newInstance.logoutOthers = () => logoutOthers();
-		newInstance.profile = (params) => newInstance.get("profile", { params: params });
-		newInstance.update_profile = (data) => newInstance.post("profile", data);
-		newInstance.signup = (data) => newInstance.post("signup", data);
-		newInstance.forgotPassword = (data) => newInstance.post("forgot-password", data);
-		newInstance.forgot_password = (data) => newInstance.post("forgot-password", data);
-		newInstance.resetPassword = (data) => newInstance.post("reset-password", data);
-		newInstance.reset_password = (data) => newInstance.post("reset-password", data);
-		newInstance.verifyAccount = (data) => newInstance.post("verify-account", data);
-		newInstance.verify_account = (data) => newInstance.post("verify-account", data);
-		newInstance.getAccessToken = (params) => newInstance.get("token", { params: params });
-		newInstance.get_access_token = (params) => newInstance.get("token", { params: params });
-		newInstance.refreshAuthToken = (data) => newInstance.post("refresh-token", data);
-		newInstance.refresh_auth_token = (data) => newInstance.post("refresh-token", data);
-
-
-		instance = newInstance;
-
-		return newInstance;
+		return newInstance
 	}
 
 

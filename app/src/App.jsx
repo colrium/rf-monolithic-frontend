@@ -3,25 +3,11 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import {
-	deviceDetect,
-	isMobile,
-	isMobileOnly,
-	isTablet,
-	isBrowser,
-	isSmartTV,
-	isWearable,
-	mobileVendor,
-	mobileModel,
-} from "react-device-detect";
 
 import CacheBuster from 'hoc/CacheBuster';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import { FirebaseAppProvider, FirestoreProvider } from 'reactfire';
-
-import CssBaseline from "@mui/material/CssBaseline";
 import ProgressDialog from "components/ProgressDialog";
 
 import { create as createJss } from "jss";
@@ -33,57 +19,48 @@ import NestedJSS from "jss-plugin-nested";
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 
-import GlobalsProvider from "contexts/Globals";
-import { NetworkServicesProvider, ApiDataProvider, PersistentFormsProvider } from "contexts";
-import CookiesConsentDialog from 'views/widgets/CookiesConsentDialog';
+
 import {
-	setIdentity,
-	setOperatingSystem,
-	setBrowser,
-	setScreenSize,
-	setWindowSize,
-} from "state/actions";
+	NetworkServicesProvider,
+} from "contexts"
+import CookiesConsentDialog from "views/widgets/CookiesConsentDialog"
 
-import Auth from "utils/Auth";
+import Auth from "utils/Auth"
 
-import appStyle from "assets/jss/appStyle";
-import { theme } from "assets/jss/app-theme";
+import appStyle from "assets/jss/appStyle"
+import { theme } from "assets/jss/app-theme"
 //
-import Routes from "routes";
-import { firebase as firebaseConfig } from "config";
+import Routes from "routes"
+import "assets/css/tui-calendar.min.css"
+import "react-awesome-query-builder/lib/css/styles.css"
+import "react-virtualized/styles.css"
 
-
-import "assets/scss/style.scss?v=1.4.0";
-import "assets/css/tui-calendar.min.css";
-import 'react-awesome-query-builder/lib/css/styles.css';
-import 'react-virtualized/styles.css';
-//import 'react-awesome-query-builder/lib/css/compact_styles.css';
-
-const jss = createJss();
-jss.use(VendorPrefixer(), NestedJSS());
-//const generateClassName = createGenerateClassName();
+const jss = createJss()
+jss.use(VendorPrefixer(), NestedJSS())
 
 const setupJss = () => {
-	jss.setup(preset());
-	const sheetsRegistry = new SheetsRegistry();
+	jss.setup(preset())
+	const sheetsRegistry = new SheetsRegistry()
 	const globalStyleSheet = jss
 		.createStyleSheet({ "@global": { ...appStyle } })
-		.attach();
-	sheetsRegistry.add(globalStyleSheet);
-	return sheetsRegistry;
-};
+		.attach()
+	sheetsRegistry.add(globalStyleSheet)
+	return sheetsRegistry
+}
 
-const sheets = setupJss();
+const sheets = setupJss()
 
-
-const App = (props) => {
-	const { app: { preferences, initialized } } = props;
-	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+const App = props => {
+	const {
+		app: { preferences, initialized },
+	} = props
+	const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
 	const appTheme = React.useMemo(() => {
-		let computedTheme = theme;
-		computedTheme.palette.mode = prefersDarkMode || preferences.theme === "dark" ? "dark" : "light";
-		return createTheme(computedTheme);
-	}, [prefersDarkMode, preferences.theme]);
+		let computedTheme = theme
+		computedTheme.palette.mode =
+			prefersDarkMode || preferences.theme === "dark" ? "dark" : "light"
+		return createTheme(computedTheme)
+	}, [prefersDarkMode, preferences.theme])
 	// return (
 	// 	<CacheBuster>
 	// 		{({ loading, isLatestVersion, refreshCacheAndReload }) => {
@@ -95,43 +72,33 @@ const App = (props) => {
 	// 			return (
 	// 				<ThemeProvider theme={appTheme}>
 	// 	<NetworkServicesProvider >
-		// 		<PersistentFormsProvider>
-		// 			<ApiDataProvider>
-		// 				<JssProvider jss={jss} registry={sheets} >
-		// 					<BrowserRouter forceRefresh={false}>
-		// 						<Routes />
-		// 					</BrowserRouter>
-		// 				</JssProvider>
-		// 				<CookiesConsentDialog />
-		// 			</ApiDataProvider>
-		// 		</PersistentFormsProvider>
-		// 	</NetworkServicesProvider>
-		// </ThemeProvider>
+	// 			<ApiDataProvider>
+	// 				<JssProvider jss={jss} registry={sheets} >
+	// 					<BrowserRouter forceRefresh={false}>
+	// 						<Routes />
+	// 					</BrowserRouter>
+	// 				</JssProvider>
+	// 				<CookiesConsentDialog />
+	// 			</ApiDataProvider>
+	// 	</NetworkServicesProvider>
+	// </ThemeProvider>
 	// 			);
 	// 		}}
 	// 	</CacheBuster>
 	// );
 
 	return (
-
-
 		<ThemeProvider theme={appTheme}>
-			<NetworkServicesProvider >
-				<PersistentFormsProvider>
-						<JssProvider jss={jss} registry={sheets} >
-							<BrowserRouter forceRefresh={false}>
-								<Routes />
-							</BrowserRouter>
-						</JssProvider>
-						<CookiesConsentDialog />
-				</PersistentFormsProvider>
+			<NetworkServicesProvider>
+					<JssProvider jss={jss} registry={sheets}>
+						<BrowserRouter forceRefresh={false}>
+							<Routes />
+						</BrowserRouter>
+					</JssProvider>
+					<CookiesConsentDialog />
 			</NetworkServicesProvider>
 		</ThemeProvider>
-
-
-
-	);
-
+	)
 }
 
 const mapStateToProps = state => ({

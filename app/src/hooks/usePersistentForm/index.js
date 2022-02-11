@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect, useRef, forwardRef } from "react";
+import { useCallback, useMemo, useRef, forwardRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Alert from '@mui/material/Alert';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,6 +7,7 @@ import { addForm, setForm, removeForm } from "state/actions";
 import ErrorMessage from "./ErrorMessage";
 import Field from "./Field";
 import TextField from "./TextField";
+import FilePicker from "./FilePicker"
 import RadioGroup from "./RadioGroup";
 import Select from "./Select";
 import Autocomplete from "./Autocomplete";
@@ -55,6 +56,7 @@ const usePersistentForm = (config = DEFAULT_CONFIG) => {
         persistOnChange,
         ...options
     } = { ...DEFAULT_CONFIG, ...config };
+	const dispatch = useDispatch()
     const { forms } = useSelector(storeState => ({ ...storeState, forms: (storeState?.forms || {}) }));
     const stateValues = useMemo(() => (JSON.isJSON(forms[name]) ? forms[name] : {}), [forms]);
 
@@ -84,7 +86,10 @@ const usePersistentForm = (config = DEFAULT_CONFIG) => {
         }
     }, []);
 
-
+	const persistFormValues = async form_data => {
+		let persist_values = { ...form_data, persist_timestamp: new Date() }
+		dispatch(setForm(persist_values))
+	}
 
     const validateForm = useCallback(Function.debounce(async (changes) => {
         let { change } = changes;
@@ -98,24 +103,26 @@ const usePersistentForm = (config = DEFAULT_CONFIG) => {
         let nextStateValue = JSON.setDeepPropertyValue(fieldName, newFieldValue, stateValuesRef.current);
         nextStateValue.name = name;
         stateValuesRef.current = nextStateValue;
-
+		persistFormValues(nextStateValue)
         EventRegister.emit('form-changed', { form: nextStateValue, change: { field: fieldName, prevValue: prevFieldValue } });
     }, []);
 
-    useEffect(() => {
 
-        const subscription = watch(handleOnWatchedValue);
-        const formChange = EventRegister.on('form-changed', validateForm);
-        return () => {
-            subscription.unsubscribe();
-            EventRegister.off(formChange);
-        }
-    }, []);
 
 
     useDidMount(() => {
         initializeForm()
+		const subscription = watch(handleOnWatchedValue)
+		const formChange = EventRegister.on("form-changed", validateForm)
+		return () => {
+			subscription.unsubscribe()
+			EventRegister.off(formChange)
+		}
     });
+
+	useWillUnmount(() => {
+		persistFormValues()
+	})
 
 
     const handleOnSubmit = useCallback(() => {
@@ -183,6 +190,15 @@ const usePersistentForm = (config = DEFAULT_CONFIG) => {
         )
     }), [control])
 
+	const ControlFilePicker = useCallback(
+		forwardRef((params, ref) => {
+			return <FilePicker control={control} ref={ref} {...params} />
+		}),
+		[control]
+	)
+
+
+
     return {
         submit: handleOnSubmit,
         ErrorMessage: ErrorMessageComponent,
@@ -191,6 +207,7 @@ const usePersistentForm = (config = DEFAULT_CONFIG) => {
         RadioGroup: ControlRadioGroup,
         Select: ControlSelect,
         Autocomplete: ControlAutocomplete,
+		FilePicker: ControlFilePicker,
         Controller,
         values: stateValues,
         control, handleSubmit, watch, setValue, getValues, trigger, formState, ...rest

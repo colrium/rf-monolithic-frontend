@@ -22,7 +22,7 @@ const FileDropZone = React.forwardRef((props, ref) => {
 		...rest
 	} = props;
 
-	// 
+	//
 
 	return (
 		<TextField
@@ -30,7 +30,7 @@ const FileDropZone = React.forwardRef((props, ref) => {
 				inputComponent: Dropzone,
 				inputProps: {
 					...rest,
-					className: 'cursor-pointer'
+
 				}
 			}}
 			className={`${className ? className : ""} cursor-pointer`}
