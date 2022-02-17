@@ -34,7 +34,7 @@ import { withNetworkServices } from "contexts/NetworkServices";
 // Component styles
 
 const AdapterLink = React.forwardRef((props, ref) => (
-	<NavLink innerRef={ref} {...props} />
+	<NavLink ref={ref} {...props} />
 ));
 
 class Sidebar extends Component {
@@ -73,7 +73,7 @@ class Sidebar extends Component {
 		} = this.props;
 		if (Sockets && auth.isAuthenticated) {
 			Sockets.emit("change-user-presence", {
-				id: auth.user._id,
+				id: auth.user?._id,
 				presence: presence,
 			});
 		}
@@ -95,8 +95,8 @@ class Sidebar extends Component {
 						allowed_item_links.push(item_link);
 					} else if (
 						(Array.isArray(item_link.restricted) &&
-							item_link.restricted.includes(auth.user.role)) ||
-						item_link.restricted === auth.user.role
+							item_link.restricted.includes(auth.user?.role)) ||
+						item_link.restricted === auth.user?.role
 					) {
 						allowed_item_links.push(item_link);
 					} else if (
@@ -116,8 +116,8 @@ class Sidebar extends Component {
 				items_with_restrictions.push(item);
 			} else if (
 				(Array.isArray(item.restricted) &&
-					item.restricted.includes(auth.user.role)) ||
-				item.restricted === auth.user.role
+					item.restricted.includes(auth.user?.role)) ||
+				item.restricted === auth.user?.role
 			) {
 				items_with_restrictions.push(item);
 			} else if (
@@ -205,9 +205,6 @@ class Sidebar extends Component {
 										{item_link.links.map(
 											(link_obj, link_index) => (
 												<ListItem
-													activeClassName={
-														"bg-black bg-opacity-10"
-													}
 													className={
 														"pointer transition-all hover:bg-black hover:bg-opacity-5"
 													}
@@ -284,7 +281,6 @@ class Sidebar extends Component {
 								</div>
 							) : (
 								<ListItem
-									activeClassName={"bg-black bg-opacity-10"}
 									sx={{
 										color: theme =>
 											theme.palette.text.contrast,

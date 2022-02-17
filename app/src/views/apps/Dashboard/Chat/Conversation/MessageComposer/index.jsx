@@ -8,7 +8,6 @@ import { useTheme } from "@mui/material/styles"
 import IconButton from "@mui/material/IconButton"
 import Paper from "@mui/material/Paper"
 import Box from "@mui/material/Box"
-import Backdrop from "@mui/material/Backdrop"
 import CloseIcon from "@mui/icons-material/Close"
 import SpeedDial from "@mui/material/SpeedDial"
 import ImageIcon from "@mui/icons-material/Image"
@@ -21,15 +20,8 @@ import AttachFileIcon from "@mui/icons-material/AttachFile"
 import ClickAwayListener from "@mui/material/ClickAwayListener"
 import EmojiPicker from "emoji-picker-react"
 import LinkPreview from "components/LinkPreview"
-import {
-	useDidMount,
-	useDidUpdate,
-	useWillUnmount,
-	useSetState,
-	usePersistentForm,
-} from "hooks"
+import { useDidMount, useDidUpdate, useWillUnmount, useSetState, usePersistentForm } from "hooks"
 import { useStartTyping } from "react-use"
-
 
 const messageTypes = {
 	image: {
@@ -45,8 +37,7 @@ const messageTypes = {
 		},
 		filePickerProps: {
 			acceptedFiles: ["image/*"],
-			dropzoneText:
-				"Click to select file or  Drag and drop your image file here",
+			dropzoneText: "Click to select file or  Drag and drop your image file here",
 			dropzoneIcon: <ImageIcon fontSize="inherit" />,
 		},
 	},
@@ -62,8 +53,7 @@ const messageTypes = {
 		},
 		filePickerProps: {
 			acceptedFiles: ["video/*"],
-			dropzoneText:
-				"Click to select file or  Drag and drop your video file here",
+			dropzoneText: "Click to select file or  Drag and drop your video file here",
 			dropzoneIcon: <VideocamIcon fontSize="inherit" />,
 		},
 	},
@@ -79,8 +69,7 @@ const messageTypes = {
 		},
 		filePickerProps: {
 			acceptedFiles: ["audio/*"],
-			dropzoneText:
-				"Click to select file or  Drag and drop your audio file here",
+			dropzoneText: "Click to select file or  Drag and drop your audio file here",
 			dropzoneIcon: <HeadphonesIcon fontSize="inherit" />,
 		},
 	},
@@ -103,34 +92,26 @@ const messageTypes = {
 }
 
 const MessageComposer = React.forwardRef((props, ref) => {
-	const {
-		onSubmit,
-		conversation,
-		replyFor,
-		...rest
-	} = props
+	const { onSubmit, conversation, replyFor, ...rest } = props
 	const theme = useTheme()
 	const dispatch = useDispatch()
 	const auth = useSelector(state => state.auth)
 	const { isAuthenticated, user } = auth
-	const { handleSubmit, TextField, FilePicker, values, setValue, reset } =
-		usePersistentForm({
-			name: `compose-message-${
-				conversation?.uuid || conversation?._id || String.uuid()
-			}`,
-			defaultValues: {
-				content: "",
-				attachments: [],
-				type: "text",
-				is_reply: false,
-				sender: auth.user,
-				reply_for: null,
-				type: "text",
-				content: "",
-				conversation: conversation?._id,
-				conversation_uuid: conversation?.uuid,
-			},
-		})
+	const { handleSubmit, TextField, FilePicker, values, setValue, resetValues } = usePersistentForm({
+		name: `compose-message-${!String.isEmpty(conversation?.uuid) ? conversation?.uuid : "new"}`,
+		defaultValues: {
+			content: "",
+			attachments: [],
+			type: "text",
+			is_reply: false,
+			sender: auth.user,
+			reply_for: null,
+			type: "text",
+			content: "",
+			conversation: conversation?._id,
+			conversation_uuid: conversation?.uuid,
+		},
+	})
 	const inputRef = useRef(null)
 	const [state, setState, getState] = useSetState({
 		emojiPickerOpen: false,
@@ -138,20 +119,19 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		typePickerOpen: false,
 	})
 
-	const onEmojiClick = useCallback((event, emojiObject) => {
-		const cursor = inputRef.current.selectionStart
-		const text =
-			values.content.slice(0, cursor) +
-			emojiObject.emoji +
-			values.content.slice(cursor)
+	const onEmojiClick = useCallback(
+		(event, emojiObject) => {
+			const cursor = inputRef.current.selectionStart
+			const text = values.content.slice(0, cursor) + emojiObject.emoji + values.content.slice(cursor)
 			inputRef.current.value = text
 			setValue(`content`, `${text}`)
-
-	}, [values])
+		},
+		[values]
+	)
 
 	const handleTypePickerOpen = () => {
-		setState({ typePickerOpen: true, filePickerOpen: false})
-	};
+		setState({ typePickerOpen: true, filePickerOpen: false })
+	}
 
 	const handleTypePickerClose = () => {
 		setState({ typePickerOpen: false })
@@ -162,86 +142,61 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		setValue("type", messageType)
 	}
 
-	const handleOnSubmit = useCallback(
-		() => {
+	const handleOnSubmit = useCallback(() => {
+		let content = inputRef.current.value || ""
+		content = content.trim()
+		let form_values = {
+			...values,
+			sender: auth.user?._id,
+			conversation: conversation?._id || conversation,
+			conversation_uuid: conversation?.uuid || conversation,
+			content: content,
+		}
+		if (["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && Array.isEmpty(form_values.attachments)) {
+			form_values.type = "text"
+			setValue("type", "text")
+		}
+		const submittable =
+			(form_values.type === "text" && !String.isEmpty(content)) ||
+			(["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && !Array.isEmpty(form_values.attachments))
 
-				let content = inputRef.current.value || ""
-				content = content.trim()
-				let form_values = {
-					...values,
-					sender: auth.user?._id,
-					conversation: conversation?._id || conversation,
-					conversation_uuid: conversation?.uuid || conversation,
-					content: content
-				}
-				if (
-					["image", "audio", "video", "file"].indexOf(
-						form_values.type
-					) !== -1 &&
-					Array.isEmpty(form_values.attachments)
-				) {
-					form_values.type = "text"
-					setValue("type", "text")
-				}
-				const submittable =
-					(form_values.type === "text" && !String.isEmpty(content)) ||
-					(["image", "audio", "video", "file"].indexOf(
-						form_values.type
-					) !== -1 &&
-						!Array.isEmpty(form_values.attachments))
-				delete form_values.persist_timestamp
+		if (Function.isFunction(onSubmit) && submittable) {
+			try {
+				onSubmit(form_values)
+				// if (!!inputRef.current) {
+				// 	inputRef.current.value = ""
+				// }
 
-				if (Function.isFunction(onSubmit) && submittable) {
-					try {
-						onSubmit(form_values)
-						if (!!inputRef.current) {
-							inputRef.current.value = ""
-						}
-
-						reset()
-					} catch (error) {
-
-					}
-
-				}
-
-		},
-		[values, onSubmit, conversation, auth]
-	)
-
-	const handleOnContentInputKeyDown = useCallback(
-		event => {
-			if (
-				event.key === "Enter" &&
-				!event.altKey &&
-				!event.ctrlKey &&
-				!event.shiftKey
-			) {
-				console.log("event", event)
-				event.preventDefault()
-				handleOnSubmit()
+				resetValues()
+			} catch (error) {
+				resetValues()
 			}
-		},
-		[]
-	)
+		}
+	}, [values, onSubmit, conversation, auth])
+
+	const handleOnContentInputKeyDown = useCallback(event => {
+		if (event.key === "Enter" && !event.altKey && !event.ctrlKey && !event.shiftKey) {
+			event.preventDefault()
+			handleOnSubmit()
+		} else if (!String.isEmpty(event?.target?.value)) {
+			console.log("event?.target?.value", event?.target?.value)
+		}
+	}, [])
 
 	const autoFocusContentInput = useCallback(() => {
 		if (!!inputRef.current) {
 			inputRef.current.focus()
 			if (typeof inputRef.current.selectionStart == "number") {
-				inputRef.current.selectionStart =
-					inputRef.current.selectionEnd =
-						inputRef.current.value.length
+				inputRef.current.selectionStart = inputRef.current.selectionEnd = inputRef.current.value.length
 			} else if (typeof inputRef.current.createTextRange != "undefined") {
 				let range = inputRef.current.createTextRange()
 				range.collapse(false)
 				range.select()
 			}
 		}
-
 	}, [])
 
-	useDidMount(()=>{
+	useDidMount(() => {
 		autoFocusContentInput()
 	})
 
@@ -254,40 +209,24 @@ const MessageComposer = React.forwardRef((props, ref) => {
 					<Paper
 						id="file-picker"
 						className={` m-1 p-4 absolute transform -top-4 -translate-y-full right-4 transition-all ${
-							state.filePickerOpen &&
-							["image", "audio", "video", "file"].indexOf(
-								values.type
-							) !== -1
+							state.filePickerOpen && ["image", "audio", "video", "file"].indexOf(values.type) !== -1
 								? "scale-y-100"
 								: "hidden scale-y-0"
 						}`}
 						elevation={4}
 					>
 						<Grid container>
-							<Grid
-								item
-								xs={12}
-								className="flex flex-row items-center mb-2"
-							>
+							<Grid item xs={12} className="flex flex-row items-center mb-2">
 								<Box
 									className=" mx-2 rounded-full flex items-center justify-center w-8 h-8"
 									sx={{
-										backgroundColor:
-											theme.palette.background.default,
+										backgroundColor: theme.palette.background.default,
 									}}
 								>
 									{messageTypes[values.type]?.icon}
 								</Box>
-								<Typography className="flex-1">
-									{messageTypes[values.type]?.label}
-								</Typography>
-								<IconButton
-									onClick={() =>
-										setState({ filePickerOpen: false })
-									}
-									color="error"
-									className="text-sm"
-								>
+								<Typography className="flex-1">{messageTypes[values.type]?.label}</Typography>
+								<IconButton onClick={() => setState({ filePickerOpen: false })} color="error" className="text-sm">
 									<CloseIcon fontSize="inherit" />
 								</IconButton>
 							</Grid>
@@ -296,19 +235,15 @@ const MessageComposer = React.forwardRef((props, ref) => {
 									name={`attachments`}
 									label=""
 									defaultValue={values?.attachments || []}
-									onChange={new_value =>
-										setValue(`attachments`, new_value)
-									}
+									onChange={new_value => setValue(`attachments`, new_value)}
 									variant={"outlined"}
 									filesLimit={20}
 									rules={{
 										validate: {
-											isNotEmpty: v =>
-												!Array.isEmpty(v) || "Required",
+											isNotEmpty: v => !Array.isEmpty(v) || "Required",
 										},
 									}}
-									{...messageTypes[values.type]
-										?.filePickerProps}
+									{...messageTypes[values.type]?.filePickerProps}
 								/>
 							</Grid>
 						</Grid>
@@ -330,20 +265,12 @@ const MessageComposer = React.forwardRef((props, ref) => {
 								<LinkPreview
 									width="100%"
 									descriptionLength={100}
-									url={
-										String.getContainedUrl(
-											values.content
-										)[0]
-									}
+									url={String.getContainedUrl(values.content)[0]}
 									openInNewTab
 								/>
 							</Grid>
 						)}
-						<Grid
-							item
-							xs={12}
-							className="flex flex-row items-center"
-						>
+						<Grid item xs={12} className="flex flex-row items-center">
 							<ClickAwayListener
 								onClickAway={() =>
 									setState(prevState => ({
@@ -356,25 +283,18 @@ const MessageComposer = React.forwardRef((props, ref) => {
 										sx={{ m: 1 }}
 										id="emoji-picker"
 										className={`absolute transform -top-4 -translate-y-full transition-all ${
-											state.emojiPickerOpen
-												? "scale-y-100"
-												: "hidden scale-y-0"
+											state.emojiPickerOpen ? "scale-y-100" : "hidden scale-y-0"
 										}`}
 										elevation={4}
 									>
-										<EmojiPicker
-											onEmojiClick={onEmojiClick}
-											disableAutoFocus={true}
-											native
-										/>
+										<EmojiPicker onEmojiClick={onEmojiClick} disableAutoFocus={true} native />
 									</Paper>
 
 									<IconButton
 										aria-describedby={"emoji-picker"}
 										onClick={event =>
 											setState(prevState => ({
-												emojiPickerOpen:
-													!prevState.emojiPickerOpen,
+												emojiPickerOpen: !prevState.emojiPickerOpen,
 											}))
 										}
 									>
@@ -386,13 +306,13 @@ const MessageComposer = React.forwardRef((props, ref) => {
 								<TextField
 									label=""
 									name={`content`}
-									defaultValue={values?.content}
 									placeholder="Enter your message"
 									inputRef={inputRef}
 									variant={"outlined"}
 									inputProps={{
 										onKeyDown: handleOnContentInputKeyDown,
 									}}
+									autoFocus
 									multiline
 									minRows={4}
 									maxRows={8}
@@ -409,37 +329,32 @@ const MessageComposer = React.forwardRef((props, ref) => {
 											// right: 16,
 											"& .MuiSpeedDial-actions": {
 												position: "absolute",
-												transform: `translateY(-${theme.spacing(
-													10
-												)})`,
+												transform: `translateY(-${theme.spacing(10)})`,
 											},
+										}}
+										FabProps={{
+											color: "inherit",
+											size: "medium",
+											component: IconButton,
+											className: "shadow-none bg-transparent hover:bg-gray-900 hover:bg-opacity-5",
 										}}
 										icon={<AttachFileIcon />}
 										onClose={handleTypePickerClose}
 										onOpen={handleTypePickerOpen}
 										open={state.typePickerOpen}
 									>
-										{Object.entries(messageTypes).map(
-											([
-												messageType,
-												messageTypeProps,
-											]) => (
-												<SpeedDialAction
-													key={`message-type-${messageType}`}
-													icon={messageTypeProps.icon}
-													tooltipTitle={
-														messageTypeProps.label
-													}
-													tooltipOpen
-													onClick={handleOnPickType(
-														messageType
-													)}
-													sx={{
-														...messageTypeProps.actionStyle,
-													}}
-												/>
-											)
-										)}
+										{Object.entries(messageTypes).map(([messageType, messageTypeProps]) => (
+											<SpeedDialAction
+												key={`message-type-${messageType}`}
+												icon={messageTypeProps.icon}
+												tooltipTitle={messageTypeProps.label}
+												tooltipOpen
+												onClick={handleOnPickType(messageType)}
+												sx={{
+													...messageTypeProps.actionStyle,
+												}}
+											/>
+										))}
 									</SpeedDial>
 								</div>
 							</div>

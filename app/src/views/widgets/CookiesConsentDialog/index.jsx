@@ -19,7 +19,7 @@ const CookiesConsentDialog = (props) => {
 
 
 	return (
-		<Backdrop open={Boolean(!app.onboarded)} style={{ zIndex: 9999999999999 }}>
+		!app.onboarded && <Backdrop open={true} style={{ zIndex: 9999999999999 }}>
 			<div className={"p-8 w-screen fixed bottom-0 left-0"}>
 				<SnackbarContent
 					message={app.settings.legal["cookies-consent"]}

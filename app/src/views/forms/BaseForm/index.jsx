@@ -369,8 +369,8 @@ class BaseForm extends React.Component {
 						let service_key = field.reference.name;
 						let service_query = field.reference.service_query;
 						let service = definations[service_key] ? ApiService.getContextRequests(definations[service_key]?.endpoint) : false;
-						
-						
+
+
 
 						let execute_service_call = service && service_query && this.state.last_field_changed !== name && this.ref_input_types.includes(field.input.type);
 
@@ -1198,7 +1198,7 @@ class BaseForm extends React.Component {
 				return (
 					<TableCell key={"field_" + name} >
 						<Typography> {field.label}</Typography>
-						<Skeleton variant="rect" width={"100%"} height={50} />					
+						<Skeleton variant="rect" width={"100%"} height={50} />
 					</TableCell>
 				);
 			} else {

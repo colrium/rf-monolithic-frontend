@@ -27,10 +27,10 @@ export default class Auth {
 						refresh_token: refresh_token,
 					};
 				}
-				
+
 			}
 			this.access_token_valid = this.isAccessTokenValid();
-			
+
 			Auth.instance = this;
 			return this;
 		}

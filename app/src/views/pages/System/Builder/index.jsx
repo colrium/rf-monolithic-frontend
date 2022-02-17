@@ -27,8 +27,8 @@ class Page extends React.Component {
 
 	constructor(props) {
 		super(props);
-		const { componentProps } = props;
-		this.context = componentProps.context;
+		const { context } = props
+		this.context = context;
 	}
 
 	componentDidMount() {

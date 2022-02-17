@@ -1,7 +1,7 @@
 /** @format */
 
 import {
-	
+
 	SET_MESSAGING_CACHE,
 	REMOVE_MESSAGING_CACHE,
 	CLEAR_MESSAGING_CACHE,
@@ -31,9 +31,9 @@ const initialState = {
 		recipient_address: "",
 		recipient_name: "",
 		"cc": [],
-		"bcc": [],		
+		"bcc": [],
 		subject: "",
-		content: "",		
+		content: "",
 		context: null,
 		record: null,
 	},

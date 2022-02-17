@@ -305,7 +305,7 @@ function Chat(props) {
 				let newContacts = JSON.parse(JSON.stringify(currentContacts));
 				let user_id = user;
 				if (JSON.isJSON(user)) {
-					user_id = user._id;
+					user_id = user?._id;
 				}
 				newContacts.forEach(function (contact) {
 					if (user_id === contact._id) {
@@ -322,7 +322,7 @@ function Chat(props) {
 				let newChats = JSON.parse(JSON.stringify(currentChats));
 				let user_id = user;
 				if (JSON.isJSON(user)) {
-					user_id = user._id;
+					user_id = user?._id;
 				}
 				newChats.forEach(function (chat) {
 					if (chat.type === "individual") {
@@ -419,7 +419,7 @@ function Chat(props) {
 				: conversation;
 			let newMessage = {
 				...draft,
-				sender: auth.user._id,
+				sender: auth.user?._id,
 				conversation: conversation_id,
 				created_on: new Date(),
 			};
@@ -542,7 +542,7 @@ function Chat(props) {
 					if (JSON.isJSON(chat.owner)) {
 						chat_owner_id = chat.owner._id;
 					}
-					if (chat_owner_id !== auth.user._id) {
+					if (chat_owner_id !== auth.user?._id) {
 						newIndividualConversationsRecipients.push(
 							chat_owner_id
 						);
@@ -662,8 +662,8 @@ function Chat(props) {
 					)}
 					{active_conversation &&
 						(active_conversation.type == "individual" ? (
-							(auth.user._id === active_conversation.owner._id ||
-								auth.user._id === active_conversation.owner) &&
+							(auth.user?._id === active_conversation.owner._id ||
+								auth.user?._id === active_conversation.owner) &&
 							Array.isArray(active_conversation.participants) &&
 							active_conversation.participants.length > 0 &&
 							active_conversation.participants[0].avatar ? (
@@ -718,9 +718,9 @@ function Chat(props) {
 							className={"capitalize flex-grow"}
 						>
 							{active_conversation.type == "individual"
-								? (auth.user._id ===
+								? (auth.user?._id ===
 										active_conversation.owner._id ||
-										auth.user._id ===
+										auth.user?._id ===
 											active_conversation.owner) &&
 								  Array.isArray(
 										active_conversation.participants
@@ -1166,10 +1166,10 @@ function Chat(props) {
 												if (
 													chat.state.last_message
 														.sender ===
-														auth.user._id ||
+														auth.user?._id ||
 													chat.state.last_message
 														.sender._id ===
-														auth.user._id
+														auth.user?._id
 												) {
 													last_message_sender_name =
 														"You";
@@ -1208,7 +1208,7 @@ function Chat(props) {
 														"deleted-for-sender" &&
 														(chat.state.last_message
 															.sender._id ===
-															auth.user._id ||
+															auth.user?._id ||
 															chat.state
 																.last_message
 																.sender ===
@@ -1228,7 +1228,7 @@ function Chat(props) {
 														chat.owner._id;
 												}
 												if (
-													auth.user._id ===
+													auth.user?._id ===
 													chat_owner_id
 												) {
 													if (
@@ -1717,11 +1717,11 @@ function Chat(props) {
 									<MoreIcon />
 								</IconButton>*/}
 
-							{/*<IconButton 
-									color="inherit" 
+							{/*<IconButton
+									color="inherit"
 									aria-label="Search"
 									edge="end"
-									
+
 								>
 									<SearchIcon />
 								</IconButton>*/}
@@ -1907,7 +1907,7 @@ function Chat(props) {
 											}
 
 											/*if (cursor === (active_conversation_messages.length - 1)) {
-									
+
 								}*/
 
 											if (
@@ -1918,7 +1918,7 @@ function Chat(props) {
 													(activeChatMessage.state ===
 														"deleted-for-sender" &&
 														(activeChatMessage.sender ===
-															auth.user._id ||
+															auth.user?._id ||
 															activeChatMessage
 																.sender._id ===
 																auth.user
@@ -1935,9 +1935,9 @@ function Chat(props) {
 															"flex p-0 py-1 " +
 															(activeChatMessage
 																.sender._id ===
-																auth.user._id ||
+																auth.user?._id ||
 															activeChatMessage.sender ===
-																auth.user._id
+																auth.user?._id
 																? "flex-row-reverse"
 																: "flex-row")
 														}
@@ -2424,7 +2424,7 @@ function Chat(props) {
 							</ScrollBars>
 						)}
 
-						{(auth.user.isAdmin ||
+						{(auth.user?.isAdmin ||
 							contactactable_contacts_ids.includes(
 								active_conversation.owner
 							) ||
@@ -2781,8 +2781,8 @@ function Chat(props) {
 				)}
 
 				{contextMenu.type === "message" &&
-					contextMenu.entry.sender._id !== auth.user._id &&
-					contextMenu.entry.sender !== auth.user._id && (
+					contextMenu.entry.sender._id !== auth.user?._id &&
+					contextMenu.entry.sender !== auth.user?._id && (
 						<MenuItem
 							onClick={event => {
 								handleContextClose(event);
@@ -2803,8 +2803,8 @@ function Chat(props) {
 						</MenuItem>
 					)}
 				{contextMenu.type === "message" &&
-					(contextMenu.entry.sender._id === auth.user._id ||
-						contextMenu.entry.sender === auth.user._id) && (
+					(contextMenu.entry.sender._id === auth.user?._id ||
+						contextMenu.entry.sender === auth.user?._id) && (
 						<MenuItem
 							onClick={event => {
 								handleContextClose(event);
@@ -2815,9 +2815,9 @@ function Chat(props) {
 										contextMenu.entry.deletions
 									)
 										? contextMenu.entry.deletions.concat([
-												auth.user._id,
+												auth.user?._id,
 										  ])
-										: [auth.user._id],
+										: [auth.user?._id],
 								});
 								Sockets.emit("delete-message-for-user", {
 									message: contextMenu.entry,
@@ -2830,8 +2830,8 @@ function Chat(props) {
 					)}
 
 				{contextMenu.type === "message" &&
-					(contextMenu.entry.sender._id === auth.user._id ||
-						contextMenu.entry.sender === auth.user._id) && (
+					(contextMenu.entry.sender._id === auth.user?._id ||
+						contextMenu.entry.sender === auth.user?._id) && (
 						<MenuItem
 							onClick={event => {
 								handleContextClose(event);

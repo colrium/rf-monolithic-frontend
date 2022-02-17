@@ -120,7 +120,7 @@ const Stage = (props) => {
                             variant={"filled"}
                             options={{ KE: "Kenya", }}
                             required
-                        /> 
+                        />
                     </GridItem>*/}
 
                 </GridContainer>

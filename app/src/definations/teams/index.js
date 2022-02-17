@@ -61,7 +61,7 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -89,7 +89,7 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -115,7 +115,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return user.role === "collector";
+							return user?.role === "collector";
 						}
 						return false;
 					},
@@ -126,14 +126,14 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "lead" in values) {
 									return typeof values.lead === "object" &&
-										values.lead._id === user._id
+										values.lead._id === user?._id
 										? false
-										: values.lead === user._id
+										: values.lead === user?._id
 											? false
 											: true;
 								}
@@ -167,7 +167,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return user.role !== "admin";
+							return user?.role !== "admin";
 						}
 						return false;
 					},
@@ -178,14 +178,14 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "lead" in values) {
 									return typeof values.lead === "object" &&
-										values.lead._id === user._id
+										values.lead._id === user?._id
 										? false
-										: values.lead === user._id
+										: values.lead === user?._id
 											? false
 											: true;
 								}
@@ -219,7 +219,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return user.role !== "admin";
+							return user?.role !== "admin";
 						}
 						return false;
 					},
@@ -230,14 +230,14 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "lead" in values) {
 									return typeof values.lead === "object" &&
-										values.lead._id === user._id
+										values.lead._id === user?._id
 										? false
-										: values.lead === user._id
+										: values.lead === user?._id
 											? false
 											: true;
 								}
@@ -258,7 +258,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return user.role !== "admin";
+							return user?.role !== "admin";
 						}
 						return false;
 					},
@@ -269,14 +269,14 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "lead" in values) {
 									return typeof values.lead === "object" &&
-										values.lead._id === user._id
+										values.lead._id === user?._id
 										? false
-										: values.lead === user._id
+										: values.lead === user?._id
 											? false
 											: true;
 								}
@@ -315,7 +315,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return user.role !== "admin";
+							return user?.role !== "admin";
 						}
 						return false;
 					},
@@ -326,7 +326,7 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -405,6 +405,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

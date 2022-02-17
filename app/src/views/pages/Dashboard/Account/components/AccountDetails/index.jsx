@@ -53,7 +53,7 @@ class Account extends Component {
 
 		let initialValues = auth.user;
 
-		this.state.user_id = auth.user._id;
+		this.state.user_id = auth.user?._id;
 		this.state.excludedFields = excludedFields;
 		this.state.formValues = initialValues;
 

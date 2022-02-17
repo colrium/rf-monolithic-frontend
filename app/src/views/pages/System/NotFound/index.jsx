@@ -23,9 +23,7 @@ class Page extends React.Component {
 
 		return (
 			<GridContainer
-				direction="row"
-				justify="center"
-				alignItems="center"
+				className="flex flex-row justify-center items-center"
 				style={{ height: "80vh" }}
 			>
 				<GridItem xs={12} md={8} lg={6}>

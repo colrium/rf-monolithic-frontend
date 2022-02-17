@@ -4,24 +4,26 @@ import {
     FORMS_SET,
 } from "state/actions/types";
 
-export function addForm(payload) {
+export function addForm(name, payload) {
     return {
         type: FORMS_ADD,
+		name,
         payload,
     };
 }
 
 
-export function setForm(payload) {
+export function setForm(name, payload) {
     return {
         type: FORMS_SET,
+		name,
         payload,
     };
 }
 
-export function removeForm(payload) {
+export function removeForm(name) {
     return {
-        type: FORMS_REMOVE,
-        payload,
-    };
+		type: FORMS_REMOVE,
+		name,
+	}
 }

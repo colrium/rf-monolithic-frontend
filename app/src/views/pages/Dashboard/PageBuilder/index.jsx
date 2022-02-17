@@ -14,7 +14,13 @@ import * as services from "services";
 
 
 const Page = (props) => {
-	const { componentProps, classes, setDashboardAppBarDisplayed, setDashboardDrawerDisplayed, setDashboardFooterDisplayed, } = props;
+	const {
+		context,
+		classes,
+		setDashboardAppBarDisplayed,
+		setDashboardDrawerDisplayed,
+		setDashboardFooterDisplayed,
+	} = props
 
 	const [query, setQuery] = useState({});
 	const [context, setContext] = useState(undefined);
@@ -26,18 +32,18 @@ const Page = (props) => {
 	useEffect(() => {
 		if (geolocation && googlePlaces.geocode) {
 			googlePlaces.geocode({location: geolocation}, "administrative_area_level_2", {short_name: true, evaluation: "modeValueOnly"}).then(res => {
-				
+
 			})
 		}
-		
+
 	}, [geolocation]);*/
-	
+
 
 	useEffect(() => {
 		document.title = app.title("Page Builder");
-		setContext(componentProps.context);
-		setDefination(definations[componentProps.context]);
-		setContext(services[componentProps.context]);
+		setContext(context);
+		setDefination(definations[context]);
+		setContext(services[context]);
 		let urlQuery = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function(result, each, n, every) {
 			let [key, value] = decodeURI(each).split("=");
 			result[key] = value;
@@ -58,7 +64,7 @@ const Page = (props) => {
 		}
 	}, [query]);
 
-	
+
 
 		return (
 			<GridContainer className="m-0 p-0">
@@ -70,7 +76,7 @@ const Page = (props) => {
 				</GridItem>
 			</GridContainer>
 		);
-	
+
 }
 
 const mapStateToProps = state => ({

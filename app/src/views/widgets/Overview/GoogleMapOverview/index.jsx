@@ -464,12 +464,12 @@ class GoogleMapOverview extends React.Component {
 
 	getclientPositionMarkerIcon = user => {
 		let computed_icon = JSON.isJSON(user)
-			? ((String.isString(user.icon)
-					? user.icon.startsWith(user.gender)
-						? user.icon
-						: user.gender
-					: String.isString(user.gender)
-					? user.gender.trim().toLowerCase()
+			? ((String.isString(user?.icon)
+					? user?.icon.startsWith(user?.gender)
+						? user?.icon
+						: user?.gender
+					: String.isString(user?.gender)
+					? user?.gender.trim().toLowerCase()
 					: "male"): "male")
 			: "male";
 
@@ -578,10 +578,10 @@ class GoogleMapOverview extends React.Component {
 								onClick={this.handleOnToggleShowClients}
 								style={{backgroundColor: "rgba(0,0,0,0.05)"}}
 							>
-								<Icon 
+								<Icon
 									path={show_client_positions? mdiMapMarkerMultiple : mdiMapMarkerMultipleOutline}
 									title="Clients Locations"
-									size={0.8}   
+									size={0.8}
 									color={theme.palette.text.primary}
 								/>
 							</IconButton>*/}
@@ -760,17 +760,17 @@ class GoogleMapOverview extends React.Component {
 										let show_entry = true;
 										if (index > 0) {
 											if (
-												client.user._id ===
+												client.user?._id ===
 												clients_positions[
 													Object.keys(
 														clients_positions
 													)[index - 1]
-												].user._id
+												].user?._id
 											) {
 												show_entry = false;
 											}
 										} else {
-											/*if (googleMap) {		
+											/*if (googleMap) {
 												googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
 												googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(15);
 											}*/
@@ -803,9 +803,9 @@ class GoogleMapOverview extends React.Component {
 														}
 														secondary={
 															String.isString(
-																client.user.role
+																client.user?.role
 															)
-																? client.user.role.humanize()
+																? client.user?.role.humanize()
 																: ""
 														}
 													/>

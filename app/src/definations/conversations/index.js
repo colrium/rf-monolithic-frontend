@@ -65,7 +65,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -86,7 +86,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -107,7 +107,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -134,7 +134,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -168,7 +168,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -190,7 +190,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -217,7 +217,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -239,7 +239,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -271,7 +271,7 @@ export default {
 	access: {
 		restricted: user => {
 			if (user) {
-				return !(user.isAdmin || user.isCustomer);
+				return !(user?.isAdmin || user?.isCustomer);
 			}
 			return true;
 		},
@@ -281,13 +281,13 @@ export default {
 			},
 			all: user => {
 				if (user) {
-					return user.isAdmin || user.isCustomer;
+					return user?.isAdmin || user?.isCustomer;
 				}
 				return false;
 			},
 			single: (user, record) => {
 				if (user) {
-					return user.isAdmin || user.isCustomer;
+					return user?.isAdmin || user?.isCustomer;
 				}
 				return false;
 			},

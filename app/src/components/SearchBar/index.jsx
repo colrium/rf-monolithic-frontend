@@ -63,10 +63,10 @@ const SearchBar = (props) => {
 				return entry.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1;
 			});
 		}
-		setSuggetions(newSuggestions);	
+		setSuggetions(newSuggestions);
 		setSuggetionsOpen(true);
-		
-		
+
+
 	}, [inputValue]);*/
 
 
@@ -206,7 +206,7 @@ SearchBar.defaultProps = {
 
 /*SearchBar.propTypes = {
 	cancelOnEscape: PropTypes.bool,
-	
+
 	className: PropTypes.string,
 	closeIcon: PropTypes.node,
 	disabled: PropTypes.bool,

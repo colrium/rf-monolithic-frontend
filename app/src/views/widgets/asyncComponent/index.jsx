@@ -2,21 +2,14 @@
 
 import React, { Suspense, lazy } from "react";
 import ProgressIndicator from "components/ProgressIndicator";
-import { withRouter } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const asyncComponent = (importComponent) => {
-	class AsyncComponent extends React.Component {
-		constructor(props) {
-			super(props);
-			const {location} = props;
-			const component = lazy(() => importComponent());
-			this.state = { component: component };
-		}
+	const AsyncComponent = () => {
+			const location = useLocation()
+			const Component = lazy(() => importComponent())
 
-		
 
-		render() {
-			const Component = this.state.component;
 			return (
 				<Suspense
 					fallback={
@@ -31,10 +24,10 @@ const asyncComponent = (importComponent) => {
 					<Component {...this.props} />
 				</Suspense>
 			);
-		}
+
 	}
 
-	return withRouter(AsyncComponent);
+	return React.memo(AsyncComponent);
 }
 
 export default asyncComponent;

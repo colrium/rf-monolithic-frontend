@@ -114,7 +114,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin
+							return !user?.isAdmin
 						}
 						return true;
 					},
@@ -131,8 +131,8 @@ export default {
 				reference: {
 					name: "users",
 					service_query: (values, user) => {
-						if (user && user.role !== "admin") {
-							return { _id: user._id };
+						if (user && user?.role !== "admin") {
+							return { _id: user?._id };
 						}
 						return {};
 					},
@@ -151,7 +151,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return (user.role !== "admin");
+							return (user?.role !== "admin");
 						}
 						return true;
 					},
@@ -175,7 +175,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						return !(user && user.role === "admin");
+						return !(user && user?.role === "admin");
 					},
 				},
 			},
@@ -237,7 +237,7 @@ export default {
 			},
 			create: {
 				restricted: user => {
-					return !(user && user.role === "admin");
+					return !(user && user?.role === "admin");
 				},
 				uri: "answers/add".toUriWithDashboardPrefix(),
 				Icon: AddIcon,
@@ -248,7 +248,7 @@ export default {
 			update: {
 				restricted: user => {
 					if (user) {
-						if (user.role) {
+						if (user?.role) {
 						}
 						return false;
 					}

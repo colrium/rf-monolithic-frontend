@@ -122,10 +122,10 @@ class Topbar extends Component {
 	onChangeUserPresenceMenu = presence => event => {
 		const { auth, sockets, setCurrentUser } = this.props;
 		if (sockets.default && auth.isAuthenticated) {
-			//createUpdateFirestoreDoc("users", auth.user._id, {presence: presence});
+			//createUpdateFirestoreDoc("users", auth.user?._id, {presence: presence});
 			setCurrentUser({ ...auth.user, presence: presence });
 			sockets.default.emit("change-user-presence", {
-				id: auth.user._id,
+				id: auth.user?._id,
 				presence: presence,
 			});
 		}
@@ -174,7 +174,7 @@ class Topbar extends Component {
 			sockets.default.on("new_notification", notification => {
 				if (auth.isAuthenticated && "_id" in auth.user) {
 					if (
-						notification.notify === auth.user._id &&
+						notification.notify === auth.user?._id &&
 						!notification.read
 					) {
 						this.setState(prevState => ({
@@ -193,7 +193,7 @@ class Topbar extends Component {
 
 			sockets.default.on("update", ({ context, action }) => {
 				if (context.toLowerCase() === "notification") {
-					if (action.effects.notify === auth.user._id) {
+					if (action.effects.notify === auth.user?._id) {
 						this.setState(prevState => ({
 							notifications: Array.isArray(
 								prevState.notifications
@@ -213,8 +213,8 @@ class Topbar extends Component {
 					"_id" in auth.user
 				) {
 					if (
-						action.record === auth.user._id &&
-						action.catalyst !== auth.user._id
+						action.record === auth.user?._id &&
+						action.catalyst !== auth.user?._id
 					) {
 						let updated_user = { ...auth.user, ...action.effects };
 						setCurrentUser(updated_user);
@@ -460,9 +460,9 @@ class Topbar extends Component {
 									}}
 									classes={{
 										dot: this.state.serverConnected
-											? auth.user.presence === "online"
+											? auth.user?.presence === "online"
 												? "bg-green-700"
-												: auth.user.presence == "away"
+												: auth.user?.presence == "away"
 												? "bg-orange-700"
 												: "bg-gray-700"
 											: "bg-red-700",
@@ -471,12 +471,12 @@ class Topbar extends Component {
 										onClick={this.onOpenUserPresenceMenu}
 										size="small"
 										sx={{ ml: 2 }}>
-										{auth.user.avatar ? (
+										{auth.user?.avatar ? (
 											<Avatar
 												alt={auth.user?.first_name}
 												className={`text-sm ${
 													this.state.serverConnected
-														? auth.user.presence ===
+														? auth.user?.presence ===
 														  "online"
 															? "bg-green-700"
 															: auth.user
@@ -512,19 +512,19 @@ class Topbar extends Component {
 							{/*auth.isAuthenticated && (
 								<Status
 											color={
-												auth.user.presence === "online"
+												auth.user?.presence === "online"
 													? "#00796b"
-													: auth.user.presence === "away"
+													: auth.user?.presence === "away"
 													? "#b88d00"
 													: "#5C5C5C"
 											}
 											text={
-												auth.user.first_name +
+												auth.user?.first_name +
 												" " +
-												auth.user.last_name
+												auth.user?.last_name
 											}
 								/>
-								
+
 							)*/}
 
 							<Link
@@ -555,16 +555,16 @@ class Topbar extends Component {
 								classes={{
 									list: "pt-0",
 								}}
-								keepMounted>
+								>
 								<MenuItem
 									classes={{
 										root:
 											"opacity-100 inverse-text " +
 											(this.state.serverConnected
-												? auth.user.presence ===
+												? auth.user?.presence ===
 												  "online"
 													? "bg-green-700"
-													: auth.user.presence ==
+													: auth.user?.presence ==
 													  "away"
 													? "bg-orange-700"
 													: "bg-gray-700"
@@ -574,28 +574,28 @@ class Topbar extends Component {
 									<Typography
 										color="inherit"
 										variant="subtitle1">
-										{auth.user.first_name +
+										{auth.user?.first_name +
 											" " +
-											auth.user.last_name}
+											auth.user?.last_name}
 									</Typography>
 								</MenuItem>
 								<MenuItem
 									onClick={this.onChangeUserPresenceMenu(
 										auth.user
-											? auth.user.presence === "online"
+											? auth.user?.presence === "online"
 												? "away"
 												: "online"
 											: "online"
 									)}
 									disabled={!this.state.serverConnected}>
 									{auth.user
-										? auth.user.presence === "online"
+										? auth.user?.presence === "online"
 											? "Set to away"
 											: "Set to online"
 										: "Set to online"}
 								</MenuItem>
 								{["online", "away"].includes(
-									auth.user.presence
+									auth.user?.presence
 								) && (
 									<MenuItem
 										onClick={this.onChangeUserPresenceMenu(

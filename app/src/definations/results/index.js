@@ -62,8 +62,8 @@ export default {
 				reference: {
 					name: "users",
 					service_query: (values, user) => {
-						if (user && user.role !== "admin") {
-							return { sort: "first_name", fields: "first_name,last_name,email_address,avatar", _id: user._id };
+						if (user && user?.role !== "admin") {
+							return { sort: "first_name", fields: "first_name,last_name,email_address,avatar", _id: user?._id };
 						}
 						return { sort: "first_name", fields: "first_name,last_name,email_address,avatar", };
 					},
@@ -82,7 +82,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return (user.role !== "admin");
+							return (user?.role !== "admin");
 						}
 						return true;
 					},
@@ -117,7 +117,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin
+							return !user?.isAdmin
 						}
 						return true;
 					},
@@ -138,7 +138,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						return !(user && user.role === "admin");
+						return !(user && user?.role === "admin");
 					},
 				},
 			},
@@ -155,7 +155,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						return !(user && user.role === "admin");
+						return !(user && user?.role === "admin");
 					},
 				},
 			},
@@ -172,7 +172,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						return !(user && user.role === "admin");
+						return !(user && user?.role === "admin");
 					},
 				},
 			},
@@ -236,6 +236,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

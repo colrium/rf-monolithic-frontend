@@ -102,11 +102,11 @@ const ClientInfoWindow = ({ user, track, position, history, ...rest }) => {
 		<GridContainer style={{ maxWidth: 300 }}>
 			<GridItem xs={12} className={"flex flex-row items-center"}>
 				{
-					user.avatar ? (
+					user?.avatar ? (
 						<Avatar
 							className="bg-transparent mr-4"
-							alt={user.first_name}
-							src={ApiService.getAttachmentFileUrl(user.avatar)}
+							alt={user?.first_name}
+							src={ApiService.getAttachmentFileUrl(user?.avatar)}
 						/>
 					) : (
 						<Avatar className="bg-transparent  mr-4">
@@ -115,7 +115,7 @@ const ClientInfoWindow = ({ user, track, position, history, ...rest }) => {
 					)
 				}
 				<Typography variant="h5" >
-					{user.first_name}
+					{user?.first_name}
 				</Typography>
 			</GridItem>
 
@@ -131,7 +131,7 @@ const ClientInfoWindow = ({ user, track, position, history, ...rest }) => {
 					variant="body1"
 
 				>
-					{user.gender ? user.gender : "Unspecified"}
+					{user?.gender ? user?.gender : "Unspecified"}
 				</Typography>
 			</GridItem>
 
@@ -147,7 +147,7 @@ const ClientInfoWindow = ({ user, track, position, history, ...rest }) => {
 					variant="body1"
 
 				>
-					{user.course ? user.course : "Unspecified"}
+					{user?.course ? user?.course : "Unspecified"}
 				</Typography>
 			</GridItem>
 
@@ -163,7 +163,7 @@ const ClientInfoWindow = ({ user, track, position, history, ...rest }) => {
 					variant="body1"
 
 				>
-					{user.noof_completed_tasks ? user.noof_completed_tasks : "0"}
+					{user?.noof_completed_tasks ? user?.noof_completed_tasks : "0"}
 				</Typography>
 			</GridItem>
 
@@ -179,7 +179,7 @@ const ClientInfoWindow = ({ user, track, position, history, ...rest }) => {
 					variant="body1"
 
 				>
-					{user.noof_uncompleted_tasks ? user.noof_uncompleted_tasks : "0"}
+					{user?.noof_uncompleted_tasks ? user?.noof_uncompleted_tasks : "0"}
 				</Typography>
 			</GridItem>
 			<GridItem xs={12} className={"flex flex-col"}>
@@ -190,12 +190,12 @@ const ClientInfoWindow = ({ user, track, position, history, ...rest }) => {
 				>
 					Rating
 				</Typography>
-				<Rating name="read-only" value={user.rating ? user.rating : 4} readOnly />
+				<Rating name="read-only" value={user?.rating ? user?.rating : 4} readOnly />
 			</GridItem>
 
 
 			<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
-				<Button href={("/messages?with=" + user.email_address).toUriWithDashboardPrefix()} style={{ background: "#8C189B", color: "#FFFFFF" }}>Message Me</Button>
+				<Button href={("/messages?with=" + user?.email_address).toUriWithDashboardPrefix()} style={{ background: "#8C189B", color: "#FFFFFF" }}>Message Me</Button>
 			</GridItem>
 		</GridContainer>
 	)
@@ -348,7 +348,7 @@ export default compose(
 		else {
 			mapMarkers = [];
 		}
-			
+
 	};
 
 	const applyMapPolylines = (newPolylines) => {
@@ -369,7 +369,7 @@ export default compose(
 		}
 		else {
 			mapPolylines = [];
-		}			
+		}
 	};
 
 	const applyMapCircles = (newCircles) => {
@@ -396,18 +396,18 @@ export default compose(
 				newMapCircle.setMap(getCurrentMap());
 
 				google.maps.event.addListener(newMapCircle, 'click', function (event) {
-					
+
 				});
-				
+
 				return newMapCircle;
 			});
 		}
 		else {
 			mapCircles = [];
-		}			
+		}
 	};
 
-	useEffect(() => {				
+	useEffect(() => {
 		applyMapMarkers((Array.isArray(markers)? markers : []));
 	}, [, _map]);
 
@@ -439,7 +439,7 @@ export default compose(
 
 	let { user } = auth;
 
-	if (!JSON.isJSON(user) || (JSON.isJSON(user) && !user._id)) {
+	if (!JSON.isJSON(user) || (JSON.isJSON(user) && !user?._id)) {
 		user = { _id: null };
 	}
 
@@ -447,7 +447,7 @@ export default compose(
 
 
 	const getclientPositionHeadingMarkerIcon = (user, position) => {
-		let computed_gender = (JSON.isJSON(user) ? (String.isString(user.gender) ? user.gender.trim().toLowerCase() : "male") : "male");
+		let computed_gender = (JSON.isJSON(user) ? (String.isString(user?.gender) ? user?.gender.trim().toLowerCase() : "male") : "male");
 		let computed_heading = JSON.isJSON(position) ? Number.parseNumber(position.heading, 360) : 360;
 
 
@@ -487,7 +487,7 @@ export default compose(
 			const lng2 = target_region.longitude;
 
 			return crowFleightDistanceinKm(lat1, lng1, lat2, lng2);
-		}			
+		}
 	}*/
 
 	const handleOnPressMarker = (socketId, data) => async event => {
@@ -589,7 +589,7 @@ export default compose(
 							regionBoundsClients[socketId].position = position;
 							regionBoundsClients[socketId].marker = new google.maps.Marker({
 								position: { lat: position.latitude, lng: position.longitude },
-								title: user.first_name + " " + user.last_name,
+								title: user?.first_name + " " + user?.last_name,
 								icon: { url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) },
 								onClick: handleOnPressMarker(socketId, data),
 								duration: 250,
@@ -606,7 +606,7 @@ export default compose(
 				if (!regionBoundsClients[socketId].marker) {
 					regionBoundsClients[socketId].marker = new google.maps.Marker({
 						position: { lat: position.latitude, lng: position.longitude },
-						title: user.first_name + " " + user.last_name,
+						title: user?.first_name + " " + user?.last_name,
 						icon: { url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) },
 						onClick: handleOnPressMarker(socketId, data),
 						duration: 250,
@@ -675,7 +675,7 @@ export default compose(
 
 			_clientsPositions = Object.entries(_clientsPositions).reduce((accumulator, [socketId, clientData], index) => {
 				if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-					if (clientData.user !== user._id) {
+					if (clientData.user !== user?._id) {
 						accumulator[socketId] = clientData;
 					}
 				}
@@ -684,11 +684,11 @@ export default compose(
 
 			/*regionBoundsClients = Object.entries(regionBoundsClients).reduce((accumulator, [socketId, clientData], index) => {
 				if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-					if (clientData.user !== user._id) {
+					if (clientData.user !== user?._id) {
 						accumulator[socketId] = clientData;
 					}
 				}
-				return accumulator;						
+				return accumulator;
 			}, {});*/
 
 			_clientsPositions[socketId] = data;
@@ -705,7 +705,7 @@ export default compose(
 		let clients_positions_user_ids = []
 		_clientsPositions = Object.entries(clients_positions).reduce((accumulator, [socketId, clientData], index) => {
 			if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-				if (!clients_positions_user_ids.includes(user._id)) {
+				if (!clients_positions_user_ids.includes(user?._id)) {
 					accumulator[socketId] = clientData;
 				}
 			}
@@ -783,7 +783,7 @@ export default compose(
 						if (!marker) {
 							marker = new google.maps.Marker({
 								position: { lat: position.latitude, lng: position.longitude },
-								title: user.first_name + " " + user.last_name,
+								title: user?.first_name + " " + user?.last_name,
 								icon: { url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) },
 								onClick: handleOnPressMarker(socketId, clientData),
 								duration: 250,
@@ -825,15 +825,15 @@ export default compose(
 
 
 
-	/*useEffect(() => {		
+	/*useEffect(() => {
 		//
 		if (selectedEntryType && (Number.isNumber(selectedEntry) || String.isString(selectedEntry))) {
 			let googlemap = false;
 			if (_map) {
 				googlemap = _map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
 			}
-			
-			
+
+
 			if (selectedEntryType === "polyline" && polylines[selectedEntry]) {
 				let LatLngList = polylines[selectedEntry].path;
 				//  Create a new viewpoint bound
@@ -849,7 +849,7 @@ export default compose(
 			}
 
 			if (selectedEntryType === "circle" && circles[selectedEntry]) {
-				
+
 				let selectedCircle = new google.maps.Circle({
 					...circles[selectedEntry],
 				});
@@ -860,12 +860,12 @@ export default compose(
 				if (googlemap) {
 					googlemap.fitBounds(bounds);
 				}
-				
+
 			}
 
 		}
 		setSelectedItem({type: selectedEntryType, id: selectedEntry});
-		
+
 	}, [selectedEntry, selectedEntryType, _map, polylines, circles, markers]);*/
 
 
@@ -1060,7 +1060,7 @@ export default compose(
 						(typeof google !== undefined && JSON.isJSON(position) && JSON.isJSON(user)) && (
 								<Marker
 									position={{lat: position.latitude, lng: position.longitude }}
-									title={user.first_name+" "+user.last_name}
+									title={user?.first_name+" "+user?.last_name}
 									key={"client-marker-" + index}
 									icon={{url: client_user_male_icon, scaledSize: { width: 32, height: 32 }, rotation: position.heading } }
 									onClick={handleOnPressMarker(socketId, { position: position, user: user, ...rest })}

@@ -1,21 +1,20 @@
 /** @format */
 
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Route, useLocation, useNavigate } from "react-router-dom"
 import ApiService from "services/Api";
-import { Route } from "react-router-dom";
 import { clearDataCache, clearBlobCache, } from "state/actions";
+import {useDidMount, useDidUpdate} from "hooks"
+import {withProps} from "hoc"
+import { app } from "assets/jss/app-theme"
 
-const CustomRoute = props => {
-	/*const [state, setState] = useState(props);
-	useEffect(() => {
-		setState(props);
-	}, [props]);*/
+const CustomRoute = React.forwardRef((props, ref) => {
 
 	const {
-		component: Component,
+		component,
+		element,
 		componentProps,
 		authRestrict,
 		auth,
@@ -23,78 +22,66 @@ const CustomRoute = props => {
 		clearDataCache,
 		clearBlobCache,
 		entryPaths,
+		title,
+		path,
+		pathname,
 		...rest
-	} = props;
+	} = props
 
-
-
-
-
-	if (entry) {
-		let { location } = rest;
-		let current_path = location ? location.pathname : false;
-		if (ApiService.isUserAuthenticated(true)) {
-			if (current_path != entryPaths.authenticated) {
-				return (
-					<Redirect
-						exact
-						to={{ pathname: entryPaths.authenticated }}
-					/>
-				);
-			}
-			return;
-
+	const location = useLocation()
+	const navigate = useNavigate()
+	const routeElement = useMemo(() => {
+		let elem = React.isValidElement(element)? element : null
+		if (!elem && !!Component) {
+			let Component = withProps({...componentProps})(Element)
+			elem = <Component {...componentProps} />
 		}
-		else {
-			if (current_path != entryPaths.unauthenticated) {
-				return (
-					<Redirect
-						exact
-						to={{ pathname: entryPaths.unauthenticated }}
-					/>
-				);
-			}
-			return;
+		if (!React.isValidElement(elem)) {
+			console.error("Invalid route element", elem)
 		}
-	} else if (authRestrict) {
-		if (auth.isAuthenticated && auth.user?._id) {
-			return (
-				<Route
-					{...rest}
-					render={props => (
-						<Component
-							{...props}
-							componentProps={
-								componentProps ? componentProps : {}
-							}
-						/>
-					)}
-				/>
-			);
-		} else {
-			const { path } = rest;
-			clearDataCache();
-			clearBlobCache();
-			if (path !== "login") {
-				return <Redirect to={{ pathname: "/login" }} />;
+		return elem;
+	}, [Component, element])
+
+
+	useDidMount(()=>{
+		if (entry) {
+			let { location } = rest
+			let current_path = location ? location.pathname : false
+			if (ApiService.isUserAuthenticated(true)) {
+				if (current_path != entryPaths.authenticated) {
+					navigate(entryPaths.authenticated)
+				}
+
 			} else {
-				return <Route />;
+				if (current_path != entryPaths.unauthenticated) {
+					navigate(entryPaths.unauthenticated)
+				}
+
+			}
+		} else if (!auth.isAuthenticated || String.isEmpty(auth.user?._id)) {
+			const { path } = rest
+			clearDataCache()
+			clearBlobCache()
+			if (path !== "/auth/login") {
+				navigate("/auth/login")
 			}
 		}
-	} else {
-		return (
-			<Route
-				{...rest}
-				render={props => (
-					<Component
-						{...props}
-						componentProps={componentProps ? componentProps : {}}
-					/>
-				)}
-			/>
-		);
-	}
-};
+		else if (
+			!String.isEmpty(title) &&
+			((!String.isEmpty(path) &&
+				location.pathname.replaceAll("/", "") ===
+					path.replaceAll("/", "")) ||
+				(!String.isEmpty(pathname) &&
+					location.pathname.replaceAll("/", "") ===
+						pathname.replaceAll("/", "")))
+		) {
+			document.title = app.title(title)
+		}
+	})
+
+	console.log("routeElement", routeElement)
+	return <Route {...rest} element={routeElement} />
+});
 const mapStateToProps = state => ({
 	auth: state.auth,
 });

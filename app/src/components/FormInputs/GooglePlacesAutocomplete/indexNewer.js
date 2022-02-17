@@ -110,7 +110,7 @@ const GooglePlacesAutocomplete = (props) => {
                 //setTextFieldValue(results.mode());
             });
         }
-    	
+
     }, geolocation && googlePlaces.scriptLoaded && googlePlaces.geocode && googlePlaces.regions.includes(type));*/
 
 
@@ -129,7 +129,7 @@ const GooglePlacesAutocomplete = (props) => {
                 reject("Geocode was not successful. Geocoder is Missing");
             }
             autocompleteGeocoder.current.geocode({ ...options, [targetType]: targetValue }, function (results, status) {
-                //	
+                //
                 if (status == 'OK') {
                     let resultValue = undefined;
                     let resultsNewAutoCompleteOptions = [];
@@ -328,7 +328,7 @@ const GooglePlacesAutocomplete = (props) => {
             onInputChange={(event, newTextFieldValue) => {
                 //
                 setTextFieldValue(newTextFieldValue);
-                //placesPrediction.execute(newTextFieldValue);			
+                //placesPrediction.execute(newTextFieldValue);
             }}
             inputValue={textFieldValue}
             renderInput={({ inputProps: { className, value, onChange: inputOnChange, ...inputPropsParams }, ...params }) => {

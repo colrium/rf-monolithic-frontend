@@ -13,6 +13,9 @@ const Field = (props) => {
         options: new Map(),
         loading: false,
     })
+
+	const formState = control._formState
+
     const resolveOptions = useCallback((targetOptions) => {
         let resolvedOptions = new Map();
         if (JSON.isJSON(targetOptions)) {
@@ -46,7 +49,7 @@ const Field = (props) => {
                     options: resOptions,
                 });
             })
-            
+
         }
     });
 
@@ -64,35 +67,64 @@ const Field = (props) => {
                 setState({
                     options: resOptions,
                 });
-            });            
+            });
         }
     }, [options]);
+
+	const handleOnChange = useCallback(
+		defaultOnChange => e => {
+			if (Function.isFunction(defaultOnChange)) {
+				defaultOnChange(e)
+			}
+			if (Function.isFunction(onChange)) {
+				onChange(e)
+			}
+		},
+		[onChange]
+	)
 
 
     const renderField = useCallback((params) => {
         if (Function.isFunction(render)) {
             return render(params)
         }
-        const { field: { onChange: fieldOnChange, required: fieldRequired, label: fieldLabel, ...fieldParams }, fieldState: { isTouched, invalid, isDirty, error }, formState: { isSubmitting } } = params;
+        const { field: { onChange: fieldOnChange, required: fieldRequired, label: fieldLabel,  ...fieldParams }, fieldState: { isTouched, invalid, isDirty, error }, formState: { isSubmitting } } = params;
 
         return (
-            <FormControl component="fieldset" {...formControlProps}>
-                <FormLabel component="legend" required={fieldRequired} {...formLabelProps}>{label}</FormLabel>
-                <RadioGroup
-                    onChange={onChange || fieldOnChange}
-                    {...fieldParams}
-                    {...rest}
-                >
-                    {[...state.options.keys()].map((key, index) => (
-                        JSON.isJSON(state.options.get(key)) ? (
-                            <FormControlLabel value={key} control={<Radio {...radioProps} />} {...state.options.get(key)} key={`radio-group-${name}-${index}`} />
-                        ) : (
-                            <FormControlLabel value={key} control={<Radio  {...radioProps} />} label={state.options.get(key)} key={`radio-group-${name}-${index}`} />
-                        )
-                    ))}                    
-                </RadioGroup>
-            </FormControl>
-        );
+			<FormControl component="fieldset" {...formControlProps}>
+				<FormLabel
+					component="legend"
+					required={fieldRequired}
+					{...formLabelProps}
+				>
+					{label}
+				</FormLabel>
+				<RadioGroup
+					onChange={handleOnChange(fieldOnChange)}
+					{...rest}
+					disabled={disabled || formState.isSubmitting}
+					{...fieldParams}
+				>
+					{[...state.options.keys()].map((key, index) =>
+						JSON.isJSON(state.options.get(key)) ? (
+							<FormControlLabel
+								value={key}
+								control={<Radio {...radioProps} />}
+								{...state.options.get(key)}
+								key={`radio-group-${name}-${index}`}
+							/>
+						) : (
+							<FormControlLabel
+								value={key}
+								control={<Radio {...radioProps} />}
+								label={state.options.get(key)}
+								key={`radio-group-${name}-${index}`}
+							/>
+						)
+					)}
+				</RadioGroup>
+			</FormControl>
+		)
     }, [render, rest]);
 
     return (

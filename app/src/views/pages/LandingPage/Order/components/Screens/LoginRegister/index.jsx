@@ -5,7 +5,7 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
 
-import LoginForm from "views/forms/LoginForm";
+import LoginForm from "views/forms/Auth/Login";
 
 class Step extends React.Component {
 	render() {

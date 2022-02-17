@@ -39,17 +39,17 @@ const VirtualizedGrid = (props) => {
         const scrollBottom = scrollHeight - (scrollTop + bottomPos);
         if (scrollBottom > 0 && scrollBottom <= itemHeight && Function.isFunction(onScrollToEnd)) {
             onScrollToEnd({ topOffset, leftOffset, clientHeight, clientWidth, scrollHeight, scrollLeft, scrollTop })
-            
+
         }
 
     }, [onScrollToEnd, itemHeight, itemWidth] )
-    
+
     const renderCell = useCallback( ( { rowIndex, columnIndex, ...rest } ) => {
         if( Function.isFunction( cellRenderer ) ) {
             let index = columnIndex + ( rowIndex * columnCount )
             return cellRenderer( {rowIndex, columnIndex, ...rest, index })
         }
-        
+
     }, [columnCount, cellRenderer])
 
     /* return (

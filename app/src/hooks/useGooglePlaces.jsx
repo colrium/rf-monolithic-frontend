@@ -30,7 +30,7 @@ const useGooglePlaces = () => {
 				political: "address",
 				locality: "address",
 				administrative_area_level_1: "address",
-				administrative_area_level_2: "address",				
+				administrative_area_level_2: "address",
 				country: "address",
 				postal_code: "address",
 			});
@@ -39,7 +39,7 @@ const useGooglePlaces = () => {
 	const geolocation = useGeoLocation();
 	const throttledAction =Function.createThrottle(1);
 
-	const geocode = (query={location: geolocation}, type="address", options=defaultGeocodeOptions) => {		
+	const geocode = (query={location: geolocation}, type="address", options=defaultGeocodeOptions) => {
 		return new Promise(function(resolve, reject) {
 			options = {...defaultGeocodeOptions, ...options};
 			const {nameType, evaluation} = options;
@@ -52,7 +52,7 @@ const useGooglePlaces = () => {
 			if (!autocompleteGeocoder.current) {
 				reject("Geocode was not successful. Geocoder is Missing");
 			}
-			autocompleteGeocoder.current.geocode( {...query}, function(results, status) {			
+			autocompleteGeocoder.current.geocode( {...query}, function(results, status) {
 				let evaluated_results = [];
 				if (status == 'OK') {
                     if (Array.isArray(results) && results.length > 0){
@@ -77,9 +77,9 @@ const useGooglePlaces = () => {
 	                            let address_components = result.address_components;
 	                            for (var i = 0; i < address_components.length; i++) {
 	                                if (Array.isArray(address_components[i].types) && address_components[i].types.includes(type)) {
-	                                    resultStr = resultStr+(resultStr.length > 0? " ": "")+address_components[i][nameType]; 
+	                                    resultStr = resultStr+(resultStr.length > 0? " ": "")+address_components[i][nameType];
 	                                }
-	                                
+
 	                            }
 	                            result.value = String.isEmpty(resultStr)? undefined : resultStr;
 	                        }
@@ -94,14 +94,14 @@ const useGooglePlaces = () => {
 									evaluated_results.push(result);
 								}
 							}
-								
+
                     	});
                     }
 					evaluated_results = evaluated_results.unique();
 					if (evaluation === "modeValueOnly") {
 						evaluated_results = evaluated_results.mode();
 					}
-                    
+
                     resolve(evaluated_results);
                 } else {
 					reject("Geocode was not successful." + status);
@@ -109,14 +109,14 @@ const useGooglePlaces = () => {
 			});
 
 		});
-			
+
 	};
 
 	const fetch = useMemo(() => Function.throttle((request, callback) => {
 		autocompleteService.current.getPlacePredictions(request, callback);
 	}, 200), []);
 
-	const getPlacePredictions =  (keyword, type=undefined, query={}) => { 
+	const getPlacePredictions =  (keyword, type=undefined, query={}) => {
         return new Promise((resolve, reject) => {
         	if (!autocompleteService.current && window.google) {
 				autocompleteService.current = new window.google.maps.places.AutocompleteService();
@@ -124,7 +124,7 @@ const useGooglePlaces = () => {
 			if (!autocompleteService.current) {
 				reject("Places Autocomplete service is unavailable");
 			}
-			
+
 			fetch({ input: keyword, ...(regions.includes(type)? {regions:[type]} : {}), ...query }, (results) => {
 				/*let parsedOptions = [];
 
@@ -140,14 +140,14 @@ const useGooglePlaces = () => {
 						if (!appended_values.includes(response.value)) {
 							new_options.push({value: response.value, ...response.option});
 							appended_values.push(response.value);
-						}						
+						}
 					});
 					resolve(new_options);
 				}).catch((error) => {
 					reject(error);
 				});*/
 				resolve(results);
-			});        	
+			});
         });
     };
 

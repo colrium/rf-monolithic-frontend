@@ -1,59 +1,92 @@
 import React, { useCallback } from "react";
 import { Controller } from "react-hook-form";
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import AutoComplete from "components/AutoComplete"
+import {
+	CircularProgress,
+	IconButton,
+	InputAdornment,
+	TextField,
+	InputBase,
+	FormHelperText,
+	Stack,
+} from "@mui/material"
 
-const Field = (props) => {
-    const { name, control, defaultValue, rules, shouldUnregister, onChange, disabled, render, renderInput, label, variant, ...rest } = props;
+const Field = React.forwardRef((props, ref) => {
+	const {
+		name,
+		control,
+		defaultValue,
+		value,
+		rules,
+		shouldUnregister,
+		onChange,
+		disabled,
+		render,
+		helperText,
+		...rest
+	} = props
 
-    const renderField = useCallback((params) => {
-        if (Function.isFunction(render)) {
-            return render(params)
-        }
-        const { field: { onChange: fieldOnChange, ...fieldParams }, fieldState: { isTouched, invalid, isDirty, error }, formState: { isSubmitting } } = params;
-        return (
-            <Autocomplete
-                {...fieldParams}
-                onChange={onChange || fieldOnChange}
-                disabled={disabled || isSubmitting}
+	const formState = control._formState
+	const handleOnChange = useCallback(
+		defaultOnChange => e => {
+			if (Function.isFunction(defaultOnChange)) {
+				defaultOnChange(e)
+			}
+			if (Function.isFunction(onChange)) {
+				onChange(e)
+			}
 
-                renderInput={(renderInputParams) => {
-                    if (Function.isFunction(renderInput)) {
-                        if (renderInput.length === 0) {
-                            return renderInput();
-                        }
-                        else if (renderInput.length === 1) {
-                            return renderInput(renderInputParams)
-                        }
-                        else if (renderInput.length === 2) {
-                            return renderInput(renderInputParams, params)
-                        }
-                    }
-                    return (
-                        <TextField
-                            error={error || invalid}
-                            label={label}
-                            variant={variant || "standard"}
-                            {...renderInputParams}
+		},
+		[onChange]
+	)
 
-                        />
-                    )
-                }}
-                {...rest}
-            />
-        );
-    }, [render, rest]);
+	const renderField = useCallback(
+		params => {
+			if (Function.isFunction(render)) {
+				return render(params)
+			}
+			const {
+				field: { onChange: fieldOnChange, ...fieldParams },
+				fieldState: { isTouched, invalid, isDirty, error },
+			} = params
+			return (
+				<AutoComplete
+					onChange={handleOnChange(fieldOnChange)}
+					disabled={disabled || formState.isSubmitting}
+					error={invalid}
+					helperText={
+						<Stack className="w-full">
+							{!!error?.message && (
+								<FormHelperText component="div" error>
+									{error?.message}
+								</FormHelperText>
+							)}
+							{!!helperText && (
+								<FormHelperText component="div" error={false}>
+									{helperText}
+								</FormHelperText>
+							)}
+						</Stack>
+					}
+					{...rest}
+					{...fieldParams}
+					ref={ref}
+				/>
+			)
+		},
+		[render]
+	)
 
-    return (
-        <Controller
-            name={name}
-            control={control}
-            defaultValue={defaultValue}
-            rules={rules}
-            shouldUnregister={shouldUnregister}
-            render={renderField}
-        />
-    )
-}
+	return (
+		<Controller
+			name={name}
+			control={control}
+			defaultValue={defaultValue}
+			rules={rules}
+			shouldUnregister={shouldUnregister}
+			render={renderField}
+		/>
+	)
+})
 
 export default React.memo(Field);

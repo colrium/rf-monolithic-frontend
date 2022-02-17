@@ -536,18 +536,18 @@ const CardViewBody = React.memo(props => {
 												)}
 
 												{/*Object.size(value) <= 20? (
-															
+
 															) : (
-															<HorizontalBar 
+															<HorizontalBar
 																data={{
-																	labels: Object.keys(value), 
+																	labels: Object.keys(value),
 																	datasets: [{
-																		label: key, 
-																		data:  Object.values(value), 
-																		backgroundColor: "#00AF41", 
+																		label: key,
+																		data:  Object.values(value),
+																		backgroundColor: "#00AF41",
 																		hoverBackgroundColor: "#76C4D5",
 																	}]
-																}} 
+																}}
 															/>)*/}
 											</GridItem>
 										</GridContainer>
@@ -1072,13 +1072,13 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1116,7 +1116,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1253,7 +1253,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1291,7 +1291,7 @@ export default {
 							return true;
 						}
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1333,7 +1333,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1341,7 +1341,7 @@ export default {
 				reference: {
 					name: "users",
 					service_query: {
-						pagination: -1, 
+						pagination: -1,
 						sort: "first_name",
 						fields: "first_name,last_name,email_address,avatar",
 						role: "collector",
@@ -1386,7 +1386,7 @@ export default {
 							return true;
 						}
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1394,7 +1394,7 @@ export default {
 				reference: {
 					name: "users",
 					service_query: {
-						pagination: -1, 
+						pagination: -1,
 						sort: "first_name",
 						fields: "first_name,last_name,email_address,avatar",
 						role: "collector",
@@ -1423,7 +1423,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 
 						return true;
@@ -1473,7 +1473,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1503,7 +1503,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1524,7 +1524,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1568,7 +1568,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1590,7 +1590,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1612,7 +1612,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -1658,7 +1658,7 @@ export default {
 	access: {
 		restricted: user => {
 			/*if (user) {
-				return !(user.isAdmin || user.isCollector);
+				return !(user?.isAdmin || user?.isCollector);
 			}
 			return true;
 			*/
@@ -1670,14 +1670,14 @@ export default {
 			},
 			all: user => {
 				/*if (user) {
-					return user.isAdmin || user.isCollector;
+					return user?.isAdmin || user?.isCollector;
 				}
 				return false;*/
 				return !JSON.isEmpty(user);
 			},
 			single: (user, record) => {
 				/*if (user) {
-					return user.isAdmin || user.isCollector;
+					return user?.isAdmin || user?.isCollector;
 				}
 				return false;*/
 				return !JSON.isEmpty(user);
@@ -1727,6 +1727,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

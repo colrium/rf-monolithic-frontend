@@ -54,7 +54,7 @@ export default {
 		listing: {
 			default: "tableview",
 			/*listview: {
-				
+
 				primary: ["name"],
 				secondary: ["size", "description", "context"],
 			},*/
@@ -133,7 +133,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return user.role !== "admin";
+							return user?.role !== "admin";
 						}
 						return false;
 					},
@@ -405,7 +405,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						return !(user && user.role === "admin");
+						return !(user && user?.role === "admin");
 					},
 				},
 			},
@@ -477,7 +477,7 @@ export default {
 					if (window) {
 						window.open(( `attachments/download/${entry?._id || entry}` ).toUriApiPrefix(), '_blank').focus();
 					}
-					
+
 				},
 				linkProps: {
 					target: "_black",
@@ -486,7 +486,7 @@ export default {
 				label: "Download",
 				className: "text-purple-500",
 			},
-			
+
 			update: {
 				restricted: user => {
 					if (user) {

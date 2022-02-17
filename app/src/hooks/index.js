@@ -27,5 +27,6 @@ export { default as usePersistentForm } from "./usePersistentForm";
 export { default as useIntersectionObserver } from "./useIntersectionObserver";
 export { default as useVisibility } from "./useVisibility";
 export { default as useMark } from "./useMark";
-export { default as useCustomEventListener } from "./useCustomEventListener";
+export { default as useDeepMemo } from "./useDeepMemo"
+
 export * from "./useGoogleMaps";

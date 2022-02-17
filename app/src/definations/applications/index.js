@@ -755,7 +755,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -778,7 +778,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -940,7 +940,7 @@ export default {
 			},
 			single: (user, record) => {
 				if (user) {
-					if (user.role==="admin") {
+					if (user?.role==="admin") {
 						return true;
 					}
 					if (record) {

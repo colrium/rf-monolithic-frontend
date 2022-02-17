@@ -1,329 +1,228 @@
 /** @format */
 
-import { Icon } from "@mui/material";
+import { Icon } from "@mui/material"
 
-import AccessErrorIcon from "@mui/icons-material/WarningRounded";
-import Skeleton from '@mui/material/Skeleton';
-import { colors } from "assets/jss/app-theme";
-import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import AccessErrorIcon from "@mui/icons-material/WarningRounded"
 //
-import PropTypes from "prop-types";
-import React from "react";
-//Redux imports
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import compose from "recompose/compose";
-import { withGlobals } from "contexts/Globals";
-import { appendNavHistory } from "state/actions/ui/nav";
+import Skeleton from "@mui/material/Skeleton"
+import Button from "components/Button"
 //
-import { UtilitiesHelper } from "utils/Helpers";
+import GridContainer from "components/Grid/GridContainer"
+import GridItem from "components/Grid/GridItem"
+import ProgressIndicator from "components/ProgressIndicator"
+import Typography from "components/Typography"
+//
+import * as definations from "definations"
+import React, { useCallback } from "react"
+import { connect } from "react-redux"
+import { Link, useParams, useNavigate } from "react-router-dom"
+import compose from "recompose/compose"
+import ApiService from "services/Api"
+//
+import ContextDataForm from "views/forms/BaseForm"
+import { useDidMount, useSetState, useDidUpdate } from "hooks"
 
-//Widgets
-import ContextDataForm from "views/forms/BaseForm";
-import ApiService from "services/Api";
-//
-
-class Page extends React.Component {
-	state = {
-		title: "",
-		main_title: "New",
-		main_subtitle: "Record",
-		record: null,
-		record_id: null,
+const Page = props => {
+	const { context, auth, nav } = props
+	const params = useParams()
+	const defination = definations[context]
+	const service = ApiService.getContextRequests(defination?.endpoint)
+	const id = params.id
+	const [state, setState] = useSetState({
 		loading: true,
-	};
-	defination = null;
-	service = null;
-	record_id = null;
+		load_error: false,
+		record: null,
+	})
+	const navigate = useNavigate()
+	const last_location = Array.isArray(nav.entries)
+		? nav.entries.length > 1
+			? nav.entries[nav.entries.length - 2].uri
+			: false
+		: false
+	const forbidden = state.loading
+		? false
+		: JSON.isJSON(state.record)
+		? defination.access.actions.update.restricted(auth.user)
+		: defination.access.actions.create.restricted(auth.user)
 
-	constructor(props) {
-		super(props);
-		const {
-			componentProps,
-			match: { params },
-			definations,
-		} = props;
-		this.context = componentProps.context;
-		this.defination = definations[componentProps.context];
-		this.service = ApiService.getContextRequests(this.defination?.endpoint);
+	const getRecord = useCallback(() => {
+		service
+			.getRecordById(id, { p: 1 })
+			.then(res => {
+				setState({ record: res.body.data, loading: false })
+			})
+			.catch(err => {
+				setState({ loading: false, load_error: err })
+			})
+	}, [id, service])
 
-		if ("id" in params) {
-			this.record_id = params.id;
-		}
-
-		this.handleFormSuccess = this.handleFormSuccess.bind(this);
-	}
-
-	componentDidMount() {
-		const { auth, location, appendNavHistory } = this.props;
-		if (appendNavHistory && location && this.defination) {
-			appendNavHistory({
-				name:
-					UtilitiesHelper.singularize(this.defination.name) +
-					"_" +
-					(this.record_id ? this.record_id : "new"),
-				uri: location.pathname,
-				title:
-					(this.record_id ? "Update" : "New") +
-					" " +
-					UtilitiesHelper.singularize(
-						typeof this.defination.label === "function"
-							? this.defination.label(auth.user)
-							: this.defination.label
-					),
-				view: null,
-				color: this.defination.color
-					? this.defination.color
-					: colors.hex.primary,
-				scrollTop: 0,
-			});
-		}
-
-		if (this.record_id) {
-			this.getRecord();
-		} else {
-			this.setState(state => ({ loading: false }));
-		}
-	}
-
-	handleFormSuccess(record) {
-		const { history } = this.props;
+	const handleFormSuccess = (record) => {
 		if (JSON.isJSON(record)) {
-			history.push(
+			navigate(
 				(
-					this.defination.name +
-					"/view/" +
-					record._id
+					`/${defination.name}/view/${record._id}`
 				).toUriWithDashboardPrefix()
-			);
+			)
 		}
 	}
 
-	async getRecord() {
-		let response = await this.service.getRecordById(this.record_id);
-		if (response.err) {
-			if (response.err.code === 404) {
-				this.props.history.push("/not-found");
-			} else {
-				this.setState(state => ({
-					load_error: response.err,
-					loading: false,
-				}));
-			}
-		} else {
-			let record = response.body.data;
-			this.setState(state => ({
-				record_id: this.record_id,
-				record: record,
-				loading: false,
-			}));
-		}
-	}
+	useDidMount(() => {
+		getRecord()
+	})
+	useDidUpdate(() => {
+		getRecord()
+	}, [id, service])
 
-	render() {
-		const { auth, nav } = this.props;
+	return (
+		<GridContainer>
+			<GridItem xs={12}>
+				{state.loading ? (
+					<GridContainer justify="center" alignItems="center">
+						<Skeleton
+							variant="rect"
+							width={"100%"}
+							height={"100%"}
+						/>
+					</GridContainer>
+				) : (
+					<GridContainer className="p-0 m-0">
+						{state.load_error ? (
+							<GridContainer>
+								<GridItem xs={12}>
+									<Typography
+										color="error"
+										variant="h1"
+										fullWidth
+									>
+										<Icon fontSize="large">error</Icon>
+									</Typography>
+								</GridItem>
+								<GridItem xs={12}>
+									<Typography
+										color="error"
+										variant="body1"
+										fullWidth
+									>
+										An error occured.
+										<br />
+										Status Code : {state.load_error.code}
+										<br />
+										{state.load_error.msg}
+									</Typography>
+								</GridItem>
+							</GridContainer>
+						) : (
+							<GridContainer>
+								{forbidden && (
+									<GridContainer
+										className={"min-h-screen"}
+										direction="column"
+										justify="center"
+										alignItems="center"
+									>
+										<GridItem xs={12}>
+											<Typography
+												color="error"
+												variant="h1"
+												fullWidth
+											>
+												<AccessErrorIcon />
+											</Typography>
+										</GridItem>
+										<GridItem xs={12}>
+											<Typography
+												color="grey"
+												variant="h3"
+												fullWidth
+											>
+												Access Denied!
+											</Typography>
+										</GridItem>
 
-		const last_location = Array.isArray(nav.entries)
-			? nav.entries.length > 1
-				? nav.entries[nav.entries.length - 2].uri
-				: false
-			: false;
-		const forbidden = this.state.loading
-			? false
-			: JSON.isJSON(this.state.record)
-				? this.defination.access.actions.update.restricted(auth.user)
-				: this.defination.access.actions.create.restricted(auth.user);
-		return (
-			<GridContainer>
-				<GridItem xs={12}>
-					{this.state.loading ? (
-						<GridContainer
-							justify="center"
-							alignItems="center"
-						>
-							<Skeleton
-								variant="rect"
-								width={"100%"}
-								height={"100%"}
-							/>
-						</GridContainer>
-					) : (
-						<GridContainer className="p-0 m-0">
-							{this.state.load_error ? (
-								<GridContainer>
-									<GridItem xs={12}>
-										<Typography
-											color="error"
-											variant="h1"
-											fullWidth
-										>
-											<Icon fontSize="large">error</Icon>
-										</Typography>
-									</GridItem>
-									<GridItem xs={12}>
-										<Typography
-											color="error"
-											variant="body1"
-											fullWidth
-										>
-											An error occured.
-											<br />
-											Status Code :{" "}
-											{this.state.load_error.code}
-											<br />
-											{this.state.load_error.msg}
-										</Typography>
-									</GridItem>
-								</GridContainer>
-							) : (
-								<GridContainer>
-									{forbidden && (
-										<GridContainer
-											className={"min-h-screen"}
-											direction="column"
-											justify="center"
-											alignItems="center"
-										>
-											<GridItem xs={12}>
-												<Typography
-													color="error"
-													variant="h1"
-																										fullWidth
+										<GridItem xs={12}>
+											<Typography
+												variant="body1"
+												fullWidth
+											>
+												Sorry! Access to this resource
+												is prohibitted since you lack
+												required priviledges. <br />{" "}
+												Please contact the system
+												administrator for further
+												details.
+											</Typography>
+										</GridItem>
+
+										<GridItem xs={12}>
+											<Typography
+												color="error"
+												variant="body1"
+												fullWidth
+											>
+												<Link
+													to={"home".toUriWithDashboardPrefix()}
 												>
-													<AccessErrorIcon
-													/>
-												</Typography>
-											</GridItem>
-											<GridItem xs={12}>
-												<Typography
-													color="grey"
-													variant="h3"
-																										fullWidth
-												>
-													Access Denied!
-												</Typography>
-											</GridItem>
-
-											<GridItem xs={12}>
-												<Typography
-
-													variant="body1"
-																										fullWidth
-												>
-													Sorry! Access to this
-													resource is prohibitted
-													since you lack required
-													priviledges. <br /> Please
-													contact the system
-													administrator for further
-													details.
-												</Typography>
-											</GridItem>
-
-											<GridItem xs={12}>
-												<Typography
-													color="error"
-													variant="body1"
-																										fullWidth
-												>
-													<Link
-														to={"home".toUriWithDashboardPrefix()}
-													>
+													{" "}
+													<Button variant="text">
 														{" "}
-														<Button
-															variant="text"
-														>
+														Home{" "}
+													</Button>{" "}
+												</Link>
+												{last_location && (
+													<Link to={last_location}>
+														{" "}
+														<Button variant="text">
 															{" "}
-															Home{" "}
+															Back{" "}
 														</Button>{" "}
 													</Link>
-													{last_location && (
-														<Link
-															to={last_location}
-														>
-															{" "}
-															<Button
-																variant="text"
+												)}
+											</Typography>
+										</GridItem>
+									</GridContainer>
+								)}
 
-
-															>
-																{" "}
-																Back{" "}
-															</Button>{" "}
-														</Link>
-													)}
-												</Typography>
-											</GridItem>
-										</GridContainer>
-									)}
-
-									{!forbidden && (
-										<GridContainer className="p-0 m-0">
-											<GridItem
-												className="p-0 m-0"
-												xs={12}
-											>
-												<ContextDataForm
-													record={
-														this.state.record
-															? this.state.record
-																._id
-															: null
-													}
-													initialValues={
-														this.state.record
-													}
-													defination={this.defination}
-													service={this.service}
-													onSubmitSuccess={
-														this.handleFormSuccess
-													}
-													form={
-														this.defination &&
-															"name" in
-															this.defination
-															? (this.state
-																.record_id
-																? this.state
-																	.record_id
+								{!forbidden && (
+									<GridContainer className="p-0 m-0">
+										<GridItem className="p-0 m-0" xs={12}>
+											<ContextDataForm
+												record={
+													state.record
+														? state.record._id
+														: null
+												}
+												initialValues={state.record}
+												defination={defination}
+												service={service}
+												onSubmitSuccess={
+													handleFormSuccess
+												}
+												form={
+													defination &&
+													"name" in defination
+														? (state.record_id
+																? state.record_id
 																: "new") +
-															"_" +
-															UtilitiesHelper.singularize(
-																this
-																	.defination
-																	.name
-															).toLowerCase() +
-															"_form"
-															: "record_form"
-													}
-												/>
-											</GridItem>
-										</GridContainer>
-									)}
-								</GridContainer>
-							)}
-						</GridContainer>
-					)}
-				</GridItem>
-			</GridContainer>
-		);
-	}
+														  "_" +
+														  defination.name.singularize().toLowerCase() +
+														  "_form"
+														: "record_form"
+												}
+											/>
+										</GridItem>
+									</GridContainer>
+								)}
+							</GridContainer>
+						)}
+					</GridContainer>
+				)}
+			</GridItem>
+		</GridContainer>
+	)
 }
-
-Page.propTypes = {
-
-};
-
 const mapStateToProps = state => ({
 	auth: state.auth,
 	nav: state.nav,
-});
+})
 
-export default withGlobals(
-	compose(
-		connect(mapStateToProps, { appendNavHistory })
-	)(Page)
-);
+export default compose(connect(mapStateToProps, {}))(Page)

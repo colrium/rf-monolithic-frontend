@@ -104,65 +104,7 @@ class EventRegister {
 		return !removeError
 	}
 
-	static async _emitEventPrev(eventName, data = {}) {
-		if (Array.isArray(EventRegister._Listeners.refs[eventName])) {
-			EventRegister._Listeners.propagation[eventName] = {
-				index: EventRegister._Listeners.refs[eventName].length - 1,
-				data: data,
-				stopped: false,
-			}
-			const eventRefs = [...EventRegister._Listeners.refs[eventName]]
 
-			const propagate = (eventName, data = {}) => {
-				while (
-					!EventRegister._Listeners.propagation[eventName]?.stopped &&
-					EventRegister._Listeners.propagation[eventName].index >=
-						0 &&
-					EventRegister._Listeners.propagation[eventName].index <
-						EventRegister._Listeners.refs[eventName].length
-				) {
-					let index =
-						EventRegister._Listeners.propagation[eventName].index
-					const refCallback =
-						EventRegister._Listeners.refs[eventName][index]
-							?.callback
-					const refId =
-						EventRegister._Listeners.refs[eventName][index]?.id
-					const refuuid =
-						EventRegister._Listeners.refs[eventName][index]?.id
-
-					if (Function.isFunction(refCallback)) {
-						Promise.all([
-							refCallback({
-								...data,
-								stopPropagation: () => {
-									if (
-										!EventRegister._Listeners.propagation[
-											eventName
-										]?.stopped
-									) {
-										EventRegister._Listeners.propagation[
-											eventName
-										].stopped = true
-									}
-								},
-								proceedPropagation: () => {
-									EventRegister._Listeners.propagation[
-										eventName
-									].stopped = false
-									propagate(eventName, data)
-								},
-							}),
-						])
-						EventRegister._Listeners.propagation[eventName].index =
-							EventRegister._Listeners.propagation[eventName]
-								.index - 1
-					}
-				}
-			}
-			let result = propagate(eventName, data)
-		}
-	}
 
 	static async emitEvent(eventName, data = {}) {
 		try {
@@ -197,8 +139,7 @@ class EventRegister {
 						if (Function.isFunction(refCallback)) {
 							Promise.all([
 								refCallback({
-									...data,
-
+									detail: data,
 									stopPropagation: () => {
 										if (
 											!EventRegister._Listeners

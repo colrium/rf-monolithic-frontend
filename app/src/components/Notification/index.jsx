@@ -62,7 +62,7 @@ class Notification extends React.Component {
 		else{
 			return { ...prevState }
 		}
-		
+
 	}*/
 
 	/*componentDidMount(){
@@ -76,7 +76,7 @@ class Notification extends React.Component {
 	}
 
 	componentWillUnmount(){
-		
+
 	}*/
 
 	onCloseSnackbar() {

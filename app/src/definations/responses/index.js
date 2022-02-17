@@ -166,7 +166,7 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -207,7 +207,7 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -302,7 +302,7 @@ export default {
 						}
 
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 
 						return false;
@@ -338,7 +338,7 @@ export default {
 							}
 						}
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -385,7 +385,7 @@ export default {
 							}
 						}
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -501,7 +501,7 @@ export default {
 							}
 						}
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -521,7 +521,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 
 						return true;
@@ -543,7 +543,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 
 						return true;
@@ -557,7 +557,7 @@ export default {
 					type: "select",
 					default: (values, user) => {
 						if (user) {
-							return user._id;
+							return user?._id;
 						}
 						return false;
 					},
@@ -569,7 +569,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 
 						return true;
@@ -597,7 +597,7 @@ export default {
 					required: true,
 					props: (values, user) => {
 						if (user) {
-							return user.isAdmin
+							return user?.isAdmin
 								? { maxDate: new Date() }
 								: { maxDate: new Date() };
 						}
@@ -614,7 +614,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -635,7 +635,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 					},
 				},
@@ -665,7 +665,7 @@ export default {
 							}
 						}
 						if (user) {
-							return user.role !== "admin";
+							return user?.role !== "admin";
 						}
 						return true;
 					},
@@ -689,7 +689,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return user.role !== "admin";
+							return user?.role !== "admin";
 						}
 						return true;
 					},
@@ -769,6 +769,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

@@ -18,7 +18,7 @@ import Box from "@mui/material/Box"
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline"
 import RefreshIcon from "@mui/icons-material/Refresh"
 import CloseIcon from "@mui/icons-material/Close"
-import { Redirect, Switch, Route } from "react-router-dom"
+import { Routes, Route, useSearchParams, useLocation } from "react-router-dom"
 import Avatar from "@mui/material/Avatar"
 import Fab from "@mui/material/Fab"
 import GridItem from "components/Grid/GridItem"
@@ -29,21 +29,10 @@ import Conversation from "./Conversation"
 
 import { useNetworkServices } from "contexts"
 import * as definations from "definations"
-import { useLocation, useHistory } from "react-router-dom"
 import { connect, useDispatch, useSelector } from "react-redux"
 import { withTheme } from "@mui/styles"
 import compose from "recompose/compose"
-import {
-	apiCallRequest,
-	setMessagingCache,
-	setActiveConversation,
-	sendMessage,
-	fetchMessages,
-	updateMessage,
-	fetchContacts,
-	fetchInbox,
-	createConversation,
-} from "state/actions"
+import { apiCallRequest, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation, getIndexOfConversation } from "state/actions"
 import { EventRegister } from "utils"
 
 import { useDidMount, useWillUnmount } from "hooks"
@@ -98,26 +87,18 @@ function Chat(props) {
 	const conversationBottomRef = useRef()
 	const conversationRef = useRef(null)
 	const location = useLocation()
-	const history = useHistory()
+	const [locationSearchParams, setLocationSearchParams] = useSearchParams()
 	const dispatch = useDispatch()
 	const preferences = useSelector(state => state?.app?.preferences)
 	const { Sockets, Api: ApiService } = useNetworkServices()
-	const {
-		conversations,
-		fetching_inbox,
-		active_conversation,
-	} = messaging
+	const { conversations, fetching_inbox, active_conversation } = messaging
 
 	const [query, setQuery] = useState({ desc: "created_on" })
 	const [contactsQuery, setContactsQuery] = useState({ desc: "created_on" })
 	const [loadingContacts, setLoadingContacts] = useState(true)
 	const [draft, setDraft] = useState({})
-	const [
-		individualConversationsRecipients,
-		setIndividualConversationsRecipients,
-	] = useState([])
-	const [activeConversationRecipients, setActiveConversationRecipients] =
-		useState([])
+	const [individualConversationsRecipients, setIndividualConversationsRecipients] = useState([])
+	const [activeConversationRecipients, setActiveConversationRecipients] = useState([])
 	const [error, setError] = useState(false)
 	const [contacts, setContacts] = useState([])
 	const [contactsDrawerOpen, setContactsDrawerOpen] = useState(false)
@@ -126,30 +107,13 @@ function Chat(props) {
 		mouseX: null,
 		mouseY: null,
 	})
-	const [loadingActiveChatMessages, setLoadingActiveChatMessages] =
-		useState(false)
-	const [locationHasWith, setLocationHasWith] = useState(false)
+	const [loadingActiveChatMessages, setLoadingActiveChatMessages] = useState(false)
+	const [locationHasWith, setLocationHasWith] = useState(!!locationSearchParams.get("with"))
 	const [firstLoad, setFirstLoad] = useState(true)
 	const [searchKeyword, setSearchKeyword] = useState(false)
 
-	const active_conversation_index = useMemo(() => {
-		let index = -1
-		if (
-			Array.isArray(conversations) &&
-			String.isString(active_conversation) &&
-			!String.isEmpty(active_conversation)
-		) {
-			index = conversations.findIndex(
-				conversation =>
-					conversation.uuid === active_conversation ||
-					conversation._id === active_conversation
-			)
-		}
-		conversationRef.current = conversations[index]
-		return index
-	}, [active_conversation])
-
-
+	const active_conversation_index = getIndexOfConversation(conversations, active_conversation)
+	const current_active_convesation = conversations[active_conversation_index]
 
 	const scrollToBottomOfConversation = useCallback(() => {
 		if (conversationBottomRef.current) {
@@ -269,7 +233,7 @@ function Chat(props) {
 				let newContacts = JSON.parse(JSON.stringify(currentContacts))
 				let user_id = user
 				if (JSON.isJSON(user)) {
-					user_id = user._id
+					user_id = user?._id
 				}
 				newContacts.forEach(function (contact) {
 					if (user_id === contact._id) {
@@ -287,7 +251,7 @@ function Chat(props) {
 					let newChats = JSON.parse(JSON.stringify(currentChats))
 					let user_id = user
 					if (JSON.isJSON(user)) {
-						user_id = user._id
+						user_id = user?._id
 					}
 					newChats.forEach(function (chat) {
 						if (chat.type === "individual") {
@@ -300,10 +264,7 @@ function Chat(props) {
 									chat.owner.presence = presence
 								}
 							} else {
-								if (
-									Array.isArray(chat.recipients) &&
-									chat.recipients.length > 0
-								) {
+								if (Array.isArray(chat.recipients) && chat.recipients.length > 0) {
 									if (JSON.isJSON(chat.recipients[0])) {
 										chat.recipients[0].presence = presence
 									}
@@ -338,14 +299,9 @@ function Chat(props) {
 
 	const handleOnConversationCreated = conversation => {}
 
-	const getConversationMessages = (
-		conversation,
-		query = { desc: "created_on", p: "1", page: 1, pagination: 10 }
-	) => {
+	const getConversationMessages = (conversation, query = { desc: "created_on", p: "1", page: 1, pagination: 10 }) => {
 		if (conversation) {
-			let conversation_id = conversation._id
-				? conversation._id
-				: conversation
+			let conversation_id = conversation._id ? conversation._id : conversation
 			setLoadingActiveChatMessages(true)
 			dispatch(setMessagingCache("active_conversation_messages", []))
 			setError(false)
@@ -380,12 +336,10 @@ function Chat(props) {
 
 	const handleOnSendMessage = (messageToSend, conversation) => {
 		if (conversation) {
-			let conversation_id = conversation._id
-				? conversation._id
-				: conversation
+			let conversation_id = conversation._id ? conversation._id : conversation
 			let newMessage = {
 				...draft,
-				sender: auth.user._id,
+				sender: auth.user?._id,
 				conversation: conversation_id,
 				created_on: new Date(),
 			}
@@ -397,15 +351,7 @@ function Chat(props) {
 				}
 			}
 
-			if (
-				!String.isEmpty(newMessage.content) ||
-				(["audio", "file", "video", "image"].includes(
-					newMessage.type
-				) &&
-					(Array.isArray(newMessage.attachments)
-						? newMessage.attachments.length > 0
-						: false))
-			) {
+			if (!String.isEmpty(newMessage.content) || (["audio", "file", "video", "image"].includes(newMessage.type) && (Array.isArray(newMessage.attachments) ? newMessage.attachments.length > 0 : false))) {
 				sendMessage(newMessage)
 
 				if (textInputRef.current) {
@@ -430,22 +376,14 @@ function Chat(props) {
 	const handleMessageInputKeyDown = conversation => event => {
 		if (event.key === "Enter" && conversation) {
 			event.preventDefault()
-			let conversation_id = conversation._id
-				? conversation._id
-				: conversation
+			let conversation_id = conversation._id ? conversation._id : conversation
 			let newMessageValue = event.target.value
 			if (String.isString(newMessageValue)) {
 				newMessageValue = newMessageValue.trim()
 			} else {
 				newMessageValue = ""
 			}
-			if (
-				!String.isEmpty(newMessageValue) ||
-				(["audio", "file", "video", "image"].includes(draft.type) &&
-					(Array.isArray(draft.attachments)
-						? draft.attachments.length > 0
-						: false))
-			) {
+			if (!String.isEmpty(newMessageValue) || (["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? draft.attachments.length > 0 : false))) {
 				Sockets.emit("stopped-typing-message", {
 					conversation: conversation_id,
 					user: auth.user,
@@ -471,31 +409,24 @@ function Chat(props) {
 		updateMessage(message)
 	}
 
-	useEffect(() => {
-		scrollToBottomOfConversation()
+	useDidMount(() => {
+		if (current_active_convesation) {
+			fetchMessages(current_active_convesation)
+		}
 	}, [])
 
 	useEffect(() => {
-		if (conversationRef.current && firstLoad) {
-			fetchMessages(conversationRef.current)
-			setFirstLoad(false)
-		}
-	}, [conversationRef.current, firstLoad])
-
-	useEffect(() => {
-		if (location && !locationHasWith) {
-			let params = new URLSearchParams(location.search)
-			const withRecipient = params.get("with")
+		if (location) {
+			const withRecipient = locationSearchParams.get("with")
 			if (!String.isEmpty(withRecipient)) {
 				if (withRecipient.indexOf("@") !== -1) {
 					setContactsQuery({ email_address: withRecipient.trim() })
 				} else {
 					setContactsQuery({ _id: withRecipient.trim() })
 				}
-				setLocationHasWith(true)
 			}
 		}
-	}, [location, locationHasWith])
+	}, [location])
 
 	useEffect(() => {}, [contactsQuery])
 
@@ -508,29 +439,20 @@ function Chat(props) {
 					if (JSON.isJSON(chat.owner)) {
 						chat_owner_id = chat.owner._id
 					}
-					if (chat_owner_id !== auth.user._id) {
+					if (chat_owner_id !== auth.user?._id) {
 						newIndividualConversationsRecipients.push(chat_owner_id)
 					} else {
-						if (
-							Array.isArray(chat.recipients) &&
-							chat.recipients.length > 0
-						) {
+						if (Array.isArray(chat.recipients) && chat.recipients.length > 0) {
 							if (JSON.isJSON(chat.recipients[0])) {
-								newIndividualConversationsRecipients.push(
-									chat.recipients[0]._id
-								)
+								newIndividualConversationsRecipients.push(chat.recipients[0]._id)
 							} else {
-								newIndividualConversationsRecipients.push(
-									chat.recipients[0]
-								)
+								newIndividualConversationsRecipients.push(chat.recipients[0])
 							}
 						}
 					}
 				}
 			})
-			setIndividualConversationsRecipients(
-				newIndividualConversationsRecipients
-			)
+			setIndividualConversationsRecipients(newIndividualConversationsRecipients)
 		}
 	}, [conversations])
 
@@ -548,23 +470,11 @@ function Chat(props) {
 		Sockets.on("message-sent", handleOnMessageSent);*/
 		Sockets.on("messages-deleted-for-user", handleOnMessageDeletedForUser)
 		Sockets.on("messages-deleted-for-all", handleOnMessageDeletedForAll)
-		Sockets.on(
-			"message-marked-as-received",
-			handleOnMessageStateChangedBySocketAction
-		)
-		Sockets.on(
-			"message-received",
-			handleOnMessageStateChangedBySocketAction
-		)
-		Sockets.on(
-			"message-marked-as-read",
-			handleOnMessageStateChangedBySocketAction
-		)
+		Sockets.on("message-marked-as-received", handleOnMessageStateChangedBySocketAction)
+		Sockets.on("message-received", handleOnMessageStateChangedBySocketAction)
+		Sockets.on("message-marked-as-read", handleOnMessageStateChangedBySocketAction)
 		Sockets.on("message-read", handleOnMessageStateChangedBySocketAction)
-		Sockets.on(
-			"delete-conversation-for-user-error",
-			handleSocketActionError
-		)
+		Sockets.on("delete-conversation-for-user-error", handleSocketActionError)
 		Sockets.on("delete-message-for-user-error", handleSocketActionError)
 		Sockets.on("delete-message-for-all-error", handleSocketActionError)
 	})
@@ -577,22 +487,10 @@ function Chat(props) {
 		Sockets.off("message-sent", handleOnMessageSent);*/
 		Sockets.off("messages-deleted-for-user", handleOnMessageDeletedForUser)
 		Sockets.off("messages-deleted-for-all", handleOnMessageDeletedForAll)
-		Sockets.off(
-			"delete-conversation-for-user-error",
-			handleSocketActionError
-		)
-		Sockets.off(
-			"message-marked-as-received",
-			handleOnMessageStateChangedBySocketAction
-		)
-		Sockets.off(
-			"message-received",
-			handleOnMessageStateChangedBySocketAction
-		)
-		Sockets.off(
-			"message-marked-as-read",
-			handleOnMessageStateChangedBySocketAction
-		)
+		Sockets.off("delete-conversation-for-user-error", handleSocketActionError)
+		Sockets.off("message-marked-as-received", handleOnMessageStateChangedBySocketAction)
+		Sockets.off("message-received", handleOnMessageStateChangedBySocketAction)
+		Sockets.off("message-marked-as-read", handleOnMessageStateChangedBySocketAction)
 		Sockets.off("message-read", handleOnMessageStateChangedBySocketAction)
 		Sockets.off("delete-message-for-user-error", handleSocketActionError)
 		Sockets.off("delete-message-for-all-error", handleSocketActionError)
@@ -624,8 +522,8 @@ function Chat(props) {
 					{active_conversation_index !== -1 && (
 						<IconButton
 							onClick={() => {
-								if (history && locationHasWith) {
-									history.push(history.location.pathname)
+								if (locationHasWith) {
+									setSearchParams({})
 								}
 								dispatch(setActiveConversation(null))
 							}}
@@ -637,120 +535,54 @@ function Chat(props) {
 							<ArrowBackIcon />
 						</IconButton>
 					)}
-					{!!conversationRef.current &&
-						(conversationRef.current.type == "individual" ? (
-							(auth.user._id ===
-								conversationRef.current.owner._id ||
-								auth.user._id ===
-									conversationRef.current.owner) &&
-							Array.isArray(
-								conversationRef.current.participants
-							) &&
-							conversationRef.current.participants.length > 0 &&
-							conversationRef.current.participants[0].avatar ? (
-								<Avatar
-									className={"mr-6 w-6 h-6"}
-									src={ApiService.getAttachmentFileUrl(
-										conversationRef.current.participants[0]
-											.avatar
-									)}
-								/>
-							) : conversationRef.current.started_by &&
-							  conversationRef.current.started_by.avatar ? (
-								<Avatar
-									className={"mr-6 w-6 h-6"}
-									src={ApiService.getAttachmentFileUrl(
-										conversationRef.current.started_by
-											.avatar
-									)}
-								/>
+					{!!current_active_convesation &&
+						(current_active_convesation.type == "individual" ? (
+							(auth.user?._id === current_active_convesation.owner._id || auth.user?._id === current_active_convesation.owner) &&
+							Array.isArray(current_active_convesation.participants) &&
+							current_active_convesation.participants.length > 0 &&
+							current_active_convesation.participants[0].avatar ? (
+								<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(current_active_convesation.participants[0].avatar)} />
+							) : current_active_convesation.started_by && current_active_convesation.started_by.avatar ? (
+								<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(current_active_convesation.started_by.avatar)} />
 							) : (
-								<Avatar
-									className={
-										"mr-2 w-6 h-6 bg-transparent accent-text"
-									}
-								>
+								<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}>
 									<PersonIcon />
 								</Avatar>
 							)
-						) : conversationRef.current.group_avatar ? (
-							<Avatar
-								className={"mr-6"}
-								src={ApiService.getAttachmentFileUrl(
-									conversationRef.current.group_avatar
-								)}
-							/>
+						) : current_active_convesation.group_avatar ? (
+							<Avatar className={"mr-6"} src={ApiService.getAttachmentFileUrl(current_active_convesation.group_avatar)} />
 						) : (
-							<Avatar
-								className={
-									"mr-6 w-6 h-6 bg-transparent accent-text"
-								}
-							>
-								{" "}
-								{conversationRef.current.type === "group" ? (
-									<PeopleIcon />
-								) : (
-									<PersonIcon />
-								)}
-							</Avatar>
+							<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {current_active_convesation.type === "group" ? <PeopleIcon /> : <PersonIcon />}</Avatar>
 						))}
-					{!!conversationRef.current && (
-						<Typography
-							variant="h6"
-							className={"capitalize flex-grow"}
-						>
-							{conversationRef.current.type == "individual"
-								? (auth.user._id ===
-										conversationRef.current.owner._id ||
-										auth.user._id ===
-											conversationRef.current.owner) &&
-								  Array.isArray(
-										conversationRef.current.participants
-								  ) &&
-								  conversationRef.current.participants.length >
-										0
-									? conversationRef.current.participants[0]
-											.first_name +
-									  " " +
-									  conversationRef.current.participants[0]
-											.last_name
-									: conversationRef.current.started_by
-									? conversationRef.current.started_by
-											.first_name +
-									  " " +
-									  conversationRef.current.started_by
-											.last_name
+					{!!current_active_convesation && (
+						<Typography variant="h6" className={"capitalize flex-grow"}>
+							{current_active_convesation.type == "individual"
+								? (auth.user?._id === current_active_convesation.owner._id || auth.user?._id === current_active_convesation.owner) && Array.isArray(current_active_convesation.participants) && current_active_convesation.participants.length > 0
+									? current_active_convesation.participants[0].first_name + " " + current_active_convesation.participants[0].last_name
+									: current_active_convesation.started_by
+									? current_active_convesation.started_by.first_name + " " + current_active_convesation.started_by.last_name
 									: ""
-								: conversationRef.current.type == "group"
-								? conversationRef.current.group_name
+								: current_active_convesation.type == "group"
+								? current_active_convesation.group_name
 								: "Realfield"}
 						</Typography>
 					)}
 
-					{!conversationRef.current && (
-						<Typography
-							variant="h6"
-							className={"capitalize flex-grow"}
-						>
+					{!current_active_convesation && (
+						<Typography variant="h6" className={"capitalize flex-grow"}>
 							Conversations
 						</Typography>
 					)}
 
-					{!conversationRef.current && !contactsDrawerOpen && (
-						<IconButton
-							onClick={() => setContactsDrawerOpen(true)}
-							className={"mr-2"}
-							edge="end"
-							color="inherit"
-							aria-label="Contacts"
-						>
+					{!current_active_convesation && !contactsDrawerOpen && (
+						<IconButton onClick={() => setContactsDrawerOpen(true)} className={"mr-2"} edge="end" color="inherit" aria-label="Contacts">
 							<ContactsIcon />
 						</IconButton>
 					)}
 				</Toolbar>
 			</AppBar>
 
-			{!conversationRef.current && (
+			{!current_active_convesation && (
 				<GridItem md={12} className={"p-0 relative h-screen"}>
 					<Box
 						sx={{
@@ -760,25 +592,10 @@ function Chat(props) {
 						}}
 					>
 						<Conversations
-							onConversationClick={(
-								event,
-								index,
-								conversation
-							) => {
-								dispatch(
-									setActiveConversation(conversation.uuid)
-								)
+							onConversationClick={(event, index, conversation) => {
+								dispatch(setActiveConversation(conversation.uuid))
 							}}
-							onConversationContextMenu={(
-								event,
-								index,
-								conversation
-							) =>
-								handleContextOpen(
-									"conversation",
-									conversation
-								)(event)
-							}
+							onConversationContextMenu={(event, index, conversation) => handleContextOpen("conversation", conversation)(event)}
 						/>
 					</Box>
 
@@ -791,26 +608,12 @@ function Chat(props) {
 						}}
 					>
 						<Toolbar className={`relative`}>
-							<IconButton
-								edge="start"
-								color="inherit"
-								aria-label="Refresh"
-								onClick={handleRefresh}
-							>
+							<IconButton edge="start" color="inherit" aria-label="Refresh" onClick={handleRefresh}>
 								<RefreshIcon />
 							</IconButton>
 
-							<Fab
-								color="primary"
-								aria-label="add"
-								className={`absolute left-2/4 -top-2/4 -translate-x-2/4 -translate-y-2/4`}
-								onClick={() =>
-									setContactsDrawerOpen(!contactsDrawerOpen)
-								}
-							>
-								{!contactsDrawerOpen && (
-									<ChatBubbleOutlineIcon />
-								)}
+							<Fab color="primary" aria-label="add" className={`absolute left-2/4 -top-2/4 -translate-x-2/4 -translate-y-2/4`} onClick={() => setContactsDrawerOpen(!contactsDrawerOpen)}>
+								{!contactsDrawerOpen && <ChatBubbleOutlineIcon />}
 								{contactsDrawerOpen && <CloseIcon />}
 							</Fab>
 
@@ -833,49 +636,26 @@ function Chat(props) {
 				</GridItem>
 			)}
 
-			{!!conversationRef.current && (
+			{!!current_active_convesation && (
 				<GridItem md={12} className={"p-0 block relative flex flex-col h-screen"}>
 					<Box
 						sx={{
 							paddingTop: 0,
 							paddingBottom: 0,
 							backgroundColor: theme => theme.palette.divider,
-							backgroundImage: `url("/img/${
-								preferences?.theme?.theme === "dark"
-									? "chat-bg-dark.jpg"
-									: "chat-bg.jpg"
-							}") !important`,
+							backgroundImage: `url("/img/${preferences?.theme === "dark" ? "chat-bg-dark.jpg" : "chat-bg.jpg"}") !important`,
 						}}
 					>
-						<Conversation
-							onMessageClick={(event, index, message) => {}}
-							onMessageContextMenu={(event, index, message) =>
-								handleContextOpen("message", message)(event)
-							}
-							data={conversationRef.current}
-							canShowMessageComposer
-						/>
+						<Conversation onMessageClick={(event, index, message) => {}} onMessageContextMenu={(event, index, message) => handleContextOpen("message", message)(event)} data={current_active_convesation} canShowMessageComposer />
 					</Box>
 				</GridItem>
 			)}
 
-			<Menu
-				keepMounted
-				open={contextMenu.mouseY !== null}
-				onClose={handleContextClose}
-				anchorReference="anchorPosition"
-				anchorPosition={
-					contextMenu.mouseY !== null && contextMenu.mouseX !== null
-						? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-						: undefined
-				}
-			>
+			<Menu keepMounted open={contextMenu.mouseY !== null} onClose={handleContextClose} anchorReference="anchorPosition" anchorPosition={contextMenu.mouseY !== null && contextMenu.mouseX !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}>
 				{contextMenu.type === "conversation" && (
 					<MenuItem
 						onClick={event => {
-							dispatch(
-								setActiveConversation(contextMenu?.entry?.uuid)
-							)
+							dispatch(setActiveConversation(contextMenu?.entry?.uuid))
 							handleContextClose(event)
 						}}
 					>
@@ -903,87 +683,68 @@ function Chat(props) {
 					</MenuItem>
 				)}
 
-				{contextMenu.type === "message" &&
-					contextMenu.entry.sender._id !== auth.user._id &&
-					contextMenu.entry.sender !== auth.user._id && (
-						<MenuItem
-							onClick={event => {
-								handleContextClose(event)
-								setDraft({
-									is_reply: true,
-									sender: auth.user,
-									reply_for: contextMenu.entry,
-									content: "",
-									conversation: conversationRef.current._id,
-								})
-								if (textInputRef.current) {
-									textInputRef.current.value = ""
-									textInputRef.current.focus()
-								}
-							}}
-						>
-							Reply Message
-						</MenuItem>
-					)}
-				{contextMenu.type === "message" &&
-					(contextMenu.entry.sender._id === auth.user._id ||
-						contextMenu.entry.sender === auth.user._id) && (
-						<MenuItem
-							onClick={event => {
-								handleContextClose(event)
-								updateMessage({
-									...contextMenu.entry,
-									state: "deleted-for-sender",
-									deletions: Array.isArray(
-										contextMenu.entry.deletions
-									)
-										? contextMenu.entry.deletions.concat([
-												auth.user._id,
-										  ])
-										: [auth.user._id],
-								})
-								Sockets.emit("delete-message-for-user", {
-									message: contextMenu.entry,
-									user: auth.user,
-								})
-							}}
-						>
-							Delete For Me
-						</MenuItem>
-					)}
+				{contextMenu.type === "message" && contextMenu.entry.sender._id !== auth.user?._id && contextMenu.entry.sender !== auth.user?._id && (
+					<MenuItem
+						onClick={event => {
+							handleContextClose(event)
+							setDraft({
+								is_reply: true,
+								sender: auth.user,
+								reply_for: contextMenu.entry,
+								content: "",
+								conversation: current_active_convesation._id,
+							})
+							if (textInputRef.current) {
+								textInputRef.current.value = ""
+								textInputRef.current.focus()
+							}
+						}}
+					>
+						Reply Message
+					</MenuItem>
+				)}
+				{contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user?._id || contextMenu.entry.sender === auth.user?._id) && (
+					<MenuItem
+						onClick={event => {
+							handleContextClose(event)
+							updateMessage({
+								...contextMenu.entry,
+								state: "deleted-for-sender",
+								deletions: Array.isArray(contextMenu.entry.deletions) ? contextMenu.entry.deletions.concat([auth.user?._id]) : [auth.user?._id],
+							})
+							Sockets.emit("delete-message-for-user", {
+								message: contextMenu.entry,
+								user: auth.user,
+							})
+						}}
+					>
+						Delete For Me
+					</MenuItem>
+				)}
 
-				{contextMenu.type === "message" &&
-					(contextMenu.entry.sender._id === auth.user._id ||
-						contextMenu.entry.sender === auth.user._id) && (
-						<MenuItem
-							onClick={event => {
-								handleContextClose(event)
+				{contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user?._id || contextMenu.entry.sender === auth.user?._id) && (
+					<MenuItem
+						onClick={event => {
+							handleContextClose(event)
 
-								updateMessage({
-									...contextMenu.entry,
-									state: "deleted-for-all",
-									deletions:
-										conversationRef.current.recipients.concat(
-											[conversationRef.current.owner]
-										),
-								})
-								Sockets.emit("delete-message-for-all", {
-									message: contextMenu.entry,
-									user: auth.user,
-								})
-							}}
-						>
-							Delete For All
-						</MenuItem>
-					)}
+							updateMessage({
+								...contextMenu.entry,
+								state: "deleted-for-all",
+								deletions: current_active_convesation.recipients.concat([current_active_convesation.owner]),
+							})
+							Sockets.emit("delete-message-for-all", {
+								message: contextMenu.entry,
+								user: auth.user,
+							})
+						}}
+					>
+						Delete For All
+					</MenuItem>
+				)}
 			</Menu>
 
 			{error && (
-				<Snackbar
-					open={Boolean(error)}
-					autoHideDuration={10000}
-					onClose={() => setError(false)}
-				>
+				<Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
 					<Alert onClose={() => setError(false)} severity="error">
 						{error}
 					</Alert>

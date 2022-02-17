@@ -24,7 +24,7 @@ function CustomBadge(props) {
 }
 
 /* CustomBadge.propTypes = {
-  
+
   color: PropTypes.string,
   textColor: PropTypes.string,
   position: PropTypes.oneOf([

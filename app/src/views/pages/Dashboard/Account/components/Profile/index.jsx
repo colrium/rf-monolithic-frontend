@@ -22,7 +22,7 @@ const icon_names = ["female", "female_1", "female_2", "female_3", "female_4", "f
 
 const Profile = (props) => {
 	const { auth, updateCurrentUser } = props;
-	const [avatarSrc, { ref: imageRef }] = useLazyImage(ApiService.getAttachmentFileUrl(auth.user.avatar), ApiService.endpoint(`/public/img/avatars/${auth.user.icon}.png`));
+	const [avatarSrc, { ref: imageRef }] = useLazyImage(ApiService.getAttachmentFileUrl(auth.user?.avatar), ApiService.endpoint(`/public/img/avatars/${auth.user?.icon}.png`));
 
 
 
@@ -38,34 +38,34 @@ const Profile = (props) => {
 							/>
 
 							<h1 className="text-3xl pt-8 lg:pt-0">
-								{auth.user.first_name + " " + auth.user.last_name}
+								{auth.user?.first_name + " " + auth.user?.last_name}
 							</h1>
 							<p className="text-sm">
 								<Status
 									color={
-										auth.user.presence === "online"
+										auth.user?.presence === "online"
 											? "#00796b"
-											: auth.user.presence === "away"
+											: auth.user?.presence === "away"
 												? "#b88d00"
 												: "#5C5C5C"
 									}
-									text={auth.user.presence}
+									text={auth.user?.presence}
 								/>
 							</p>
 							<div className="mx-auto lg:mx-0 w-4/5 pt-3 border-b-2 border-grey-500 opacity-25"></div>
 							<p className="flex items-center justify-center lg:justify-start">
 								<UserRoleIcon className="mr-4" />{" "}
-								{auth.user.role}
+								{auth.user?.role}
 							</p>
 
 							<p className="flex items-center justify-center lg:justify-start">
 								<EmailIcon className="mr-4" />{" "}
-								{auth.user.email_address}
+								{auth.user?.email_address}
 							</p>
 
 							<p className="flex items-center justify-center lg:justify-start">
 								<PhoneIcon className="mr-4" />{" "}
-								{auth.user.phone_number}
+								{auth.user?.phone_number}
 							</p>
 						</div>
 					</Card>
@@ -87,7 +87,7 @@ const Profile = (props) => {
 					</GridItem>
 					<GridItem xs={12} className={"inline-flex flex-wrap flex-row items-center"}>
 						{icon_names.map((icon_name) => (
-							auth.user.icon === icon_name ? (
+							auth.user?.icon === icon_name ? (
 								<Avatar className={"m-2 h-20 w-20 border-2 border-green-600"} src={ApiService.endpoint(`/public/img/avatars/${icon_name}.png`)} key={icon_name} alt={icon_name} />
 							) : (
 								<Avatar

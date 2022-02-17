@@ -67,7 +67,7 @@ export default {
 											variant="body2"
 
 										>
-											{isPopulated ? (entry.user.first_name + " " + entry.user.last_name) : entry.user}
+											{isPopulated ? (entry.user?.first_name + " " + entry.user?.last_name) : entry.user}
 										</Typography>}
 										{entry.time_type ? (
 											<Status
@@ -158,11 +158,11 @@ export default {
 								<Chip
 									size="small"
 									avatar={
-										entry.user.avatar ? (
+										entry.user?.avatar ? (
 											<Avatar
-												alt={entry.user.first_name}
+												alt={entry.user?.first_name}
 												src={ApiService.getAttachmentFileUrl(
-													entry.user.avatar
+													entry.user?.avatar
 												)}
 											/>
 										) : (
@@ -172,9 +172,9 @@ export default {
 										)
 									}
 									label={
-										entry.user.first_name +
+										entry.user?.first_name +
 										" " +
-										entry.user.last_name
+										entry.user?.last_name
 									}
 								/>
 							) : (
@@ -216,9 +216,9 @@ export default {
 							id: entry?._id,
 							calendarId: "tracks",
 							title: entry.user
-								? entry.user.first_name +
+								? entry.user?.first_name +
 								" " +
-								entry.user.last_name
+								entry.user?.last_name
 								: entry.context,
 							body:
 								"<b>Type</b> <br />" +
@@ -259,9 +259,9 @@ export default {
 										: "") +
 									(entry.user
 										? " (User: " +
-										  entry.user.first_name +
+										  entry.user?.first_name +
 										  " " +
-										  entry.user.last_name +
+										  entry.user?.last_name +
 										  ")"
 										: "")
 								);
@@ -280,9 +280,9 @@ export default {
 									: "") +
 								(entry.user
 									? " (User: " +
-									  entry.user.first_name +
+									  entry.user?.first_name +
 									  " " +
-									  entry.user.last_name +
+									  entry.user?.last_name +
 									  ")"
 									: ""),
 							infoWindow: (
@@ -303,7 +303,7 @@ export default {
 											<Chip
 												size="small"
 												avatar={
-													entry.user.avatar ? (
+													entry.user?.avatar ? (
 														<Avatar
 															alt={
 																entry.user
@@ -321,9 +321,9 @@ export default {
 													)
 												}
 												label={
-													entry.user.first_name +
+													entry.user?.first_name +
 													" " +
-													entry.user.last_name
+													entry.user?.last_name
 												}
 											/>
 										)}{" "}
@@ -543,7 +543,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -618,7 +618,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -641,7 +641,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -760,6 +760,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

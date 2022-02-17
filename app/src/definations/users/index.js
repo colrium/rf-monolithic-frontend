@@ -38,10 +38,10 @@ const EmailUserAction = (props) => {
 			setEmailingCache("recipient_address", data.email_address);
 			setEmailingCache("recipient_name", data.first_name);
 			setEmailingCache("subject", "");
-			setEmailingCache("content", "Hey " + data.first_name + ", \n\n\n\n\n" + auth.user.first_name + "\nRealfield.io");
+			setEmailingCache("content", "Hey " + data.first_name + ", \n\n\n\n\n" + auth.user?.first_name + "\nRealfield.io");
 			setEmailingCache("popup_open", true);
 		}
-			
+
 	}, [data] );
 
 
@@ -455,7 +455,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -475,7 +475,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -500,7 +500,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -554,7 +554,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -574,7 +574,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -593,7 +593,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -620,7 +620,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -640,7 +640,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -739,7 +739,7 @@ export default {
 				label: "Edit",
 				className: "text-blue-500",
 			},
-			
+
 			email_user: {
 				restricted: user => user?.role !== "admin",
 				uri: entry => {
@@ -760,7 +760,7 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
-	
+
 };

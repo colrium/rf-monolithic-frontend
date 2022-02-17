@@ -318,7 +318,7 @@ const GlobalsProvider = props => {
 
 			Promise.all([deepMergePreferences]).then(results => {
 				let newPreferences = results[0];
-				//								
+				//
 				setPreferences(newPreferences);
 			}).catch(e => {
 				//Do nothing.
@@ -342,7 +342,7 @@ const GlobalsProvider = props => {
 		// Socket Emitions
 		defaultSocket.emit("get-settings", { user: auth_user });
 		if (isAuthenticated && !JSON.isEmpty(auth_user)) {
-			/*defaultSocket.on("reconnect", () => {						
+			/*defaultSocket.on("reconnect", () => {
 				defaultSocket.emit("set-identity", auth_user._id);
 				defaultSocket.emit("get-settings", auth_user._id);
 				defaultSocket.emit("get-inbox", auth_user);
@@ -576,7 +576,7 @@ const GlobalsProvider = props => {
 						setCurrentUser({...auth_user, ...docSnapshotData});
 					}
 				}
-					
+
 			});*/
 
 			if (window) {

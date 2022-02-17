@@ -209,12 +209,12 @@ const api = ({ dispatch, getState }) => next => action => {
 							if (!exists) {
 								newCache.push(res.body);
 							}
-							
+
 						}
 						else{
 							newCache.push(res.body);
 						}
-						
+
 						dispatch(setDataCache(key, newCache));
 						*/
 					}

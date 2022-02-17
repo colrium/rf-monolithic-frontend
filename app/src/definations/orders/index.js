@@ -172,7 +172,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -180,7 +180,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -287,7 +287,7 @@ export default {
 					};
 
 					if (user) {
-						if (user.role === "admin") {
+						if (user?.role === "admin") {
 							return all_possibilities;
 						}
 						if (entry) {
@@ -332,7 +332,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -420,6 +420,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

@@ -215,7 +215,7 @@ const Stage = (props) => {
         if (!loading) {
 
         }
-        // 
+        //
     }, [containerMeasurements, sm, md, lg, xs, xl]);
 
     useDidMount(() => {

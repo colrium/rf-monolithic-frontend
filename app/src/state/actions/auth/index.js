@@ -39,7 +39,7 @@ export function updateCurrentUser(user) {
 				return false;
 			});
 		}
-			
+
 	}
 }
 
@@ -49,12 +49,12 @@ export function logout() {
             throw err;
         });
 	};
-	
+
 }
 
 export function login(data) {
 	return dispatch => {
-		return ApiService.login(data).then(res => {			
+		return ApiService.login(data).then(res => {
 			return res;
 		}).catch(err => {
             throw err;

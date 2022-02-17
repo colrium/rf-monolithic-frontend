@@ -6,18 +6,11 @@ import debounce from 'lodash/debounce';
 import {useSetState, useDidMount, useDidUpdate, useMark} from "hooks";
 import {useUpdate} from 'react-use';
 
-const AutocompleteTextField = (props) => {
-	return (
-		<TextField
-			{...props}
-		/>
-	)
-}
+
 
 
 function CustomAutocomplete(props) {
-	const { className, disabled, isMulti, loading, onChange, label, required, variant, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, onOpen, onClose, touched, invalid, isClearable, error, value, options, freeSolo, ...rest } = props
-	let formattedData = { options: [], value: [] }
+	const { className, disabled, multiple, loading, onChange, label, required, variant, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, onOpen, onClose, touched, invalid, isClearable, error, value, options, freeSolo, ...rest } = props
 
 	const [state, setState, getState] = useSetState({
 		open: false,
@@ -50,7 +43,7 @@ function CustomAutocomplete(props) {
 				setState({error: error?.toString? error.toString() : JSON.stringify(error)});
 			}
 		}
-		
+
 		if (JSON.isJSON(targetOptions)) {
 			parsedOptions = Object.entries(targetOptions).reduce((currentValue, [value, label])=> currentValue.concat([{value, label}]), [])
 		}
@@ -71,20 +64,12 @@ function CustomAutocomplete(props) {
 
 			parsedValue = optionsRef.current.reduce((currentParsedValue, entry) => {
 					// console.log("parseInputValue entry", entry)
-						if (JSON.isJSON(entry)) {						
+						if (JSON.isJSON(entry)) {
 							let entryValues = Object.values(entry);
 							targetValues.map(targetValueEntry => {
-								// if (!JSON.isJSON(targetValueEntry)) {								
-								// 	let valueOptionIndex = entryValues.indexOf(targetValueEntry)
-								// 	// console.log("parseInputValue targetValueEntry", targetValueEntry, "entryValues", entryValues)
-								// 	if (valueOptionIndex !== -1) {
-								// 		currentParsedValue.push(entry)
-								// 	}
-								// }
-								// else if (Object.areEqual(entry, targetValueEntry) || entryValues.indexOf(targetValueEntry) !== -1) {
 								if (Object.areEqual(entry, targetValueEntry) || entryValues.indexOf(targetValueEntry) !== -1) {
 									currentParsedValue.push(entry)
-								}														
+								}
 							});
 						}
 						else {
@@ -96,8 +81,8 @@ function CustomAutocomplete(props) {
 						}
 						return currentParsedValue
 			}, []);
-			
-			if (!isMulti) {
+
+			if (!multiple) {
 				if (parsedValue.length > 0) {
 					parsedValue = parsedValue[0]
 				}
@@ -105,57 +90,15 @@ function CustomAutocomplete(props) {
 					parsedValue = optionsRef.current[0] || null
 				}
 			}
-			
+
 			resolve(parsedValue);
 
 		})
-			
 
-	}, [isMulti]);
 
-	const inputValueValid = useCallback(input_value => {
-		return new Promise(async (resolve, reject) => {
-			let excludedValidators = Array.isArray(excludeValidation) ? excludeValidation : (String.isString(excludeValidation) ? excludeValidation.replaceAll(" ", "").toLowerCase().split(",") : [])
-			let valid = true;
-			let validationError = "";
-			if (validate) {
-				if (valid && required && !excludedValidators.includes("required")) {
-					if (!input_value) {
-						valid = false;
-						validationError = label + " is required";
-					}
-					else if ((Array.isArray(input_value) && input_value.length > 0) || (String.isString(input_value) && input_value.length > 0)) {
-						valid = true;
-						validationError = "";
+	}, [multiple]);
 
-					} else {
-						valid = true;
-						validationError = "";
-					}
-				}
 
-				if (valid && Function.isFunction(validator) && !excludedValidators.includes("validator")) {
-					try {
-						validationError = await validator(input_value);
-					} catch (err) {
-						validationError = " validity cannot be determined.";
-					};
-					valid = !String.isString(validationError);
-				}
-			}
-			if (valid !== !isInvalid && Function.isFunction(onValidityChange)) {
-				onValidityChange(valid);
-			}
-			if (valid) {
-				resolve(valid);
-			}
-			else{
-				reject(validationError)
-			}
-		})
-
-			
-	}, [label, onValidityChange, excludeValidation, validator]);
 
 	const handleOnOpen = useCallback(() => {
 		if (Function.isFunction(onOpen)) {
@@ -163,20 +106,28 @@ function CustomAutocomplete(props) {
 		}
 	}, [onOpen]);
 
-	const handleOnChange = useCallback((event, newValue, reason) => {				
+	const handleOnChange = useCallback((event, newValue, reason) => {
 		if (Function.isFunction(onChange)) {
-			if (onChange.length > 1) {				
+			if (onChange.length > 1) {
 				onChange(event, newValue, reason)
 			}
 			else{
-				let onChangeValue = isMulti? []: (newValue?.value || newValue);
-				if (isMulti) {
-					
+				let onChangeValue = newValue?.value || newValue
+
+				if (multiple) {
+					onChangeValue = Array.isArray(value)
+						? value.concat([newValue?.value || newValue])
+						: [newValue?.value || newValue]
+					valueRef.current = Array.isArray(valueRef.current)
+						? valueRef.current.concat([newValue])
+						: [newValue]
+				} else {
+					valueRef.current = newValue
 				}
 				onChange(onChangeValue)
 			}
 		}
-	}, [onChange, isMulti]);
+	}, [onChange, multiple, value]);
 
 	const handleOnClose = useCallback(() => {
 		const {open} = getState()
@@ -188,7 +139,7 @@ function CustomAutocomplete(props) {
 		}
 	}, [onClose]);
 
-	
+
 
 	useDidUpdate(() => {
 		parseInputOptions(options).then(parsedOptions => {
@@ -196,7 +147,7 @@ function CustomAutocomplete(props) {
 			update();
 			setState({error: false})
 			parseInputValue(value).then(parsedValue => {
-				valueRef.current = parsedValue;	
+				valueRef.current = parsedValue;
 				update()
 			}).catch(error=> {
 				setState({error: error?.toString? error.toString() : JSON.stringify(error)})
@@ -206,35 +157,35 @@ function CustomAutocomplete(props) {
 
 	useDidUpdate(() => {
 		parseInputValue(value).then(parsedValue => {
-			valueRef.current = parsedValue;	
+			valueRef.current = parsedValue;
 			update()
 		});
 	}, [value]);
 
 	useDidMount(() => {
 		parseInputOptions(options).then(parsedOptions => {
-			optionsRef.current = parsedOptions;	
+			optionsRef.current = parsedOptions;
 			update()
 			parseInputValue(value).then(parsedValue => {
-				valueRef.current = parsedValue;	
+				valueRef.current = parsedValue;
 				update()
 			}).catch(error=> {
 				setState({error: error?.toString? error.toString() : JSON.stringify(error)})
 			})
-			
+
 		}).catch(error=> {
 			setState({error: error?.toString? error.toString() : JSON.stringify(error)})
 		})
-			
+
 	});
 
 	const inputRequired = useMemo(() => {
 		if (required) {
-			return ((freeSolo && String.isEmpty(valueRef.current)) || ((!isMulti && !valueRef.current) || (isMulti && Array.isArray(valueRef.current) && valueRef.current.length === 0)))
+			return ((freeSolo && String.isEmpty(valueRef.current)) || ((!multiple && !valueRef.current) || (multiple && Array.isArray(valueRef.current) && valueRef.current.length === 0)))
 		}
 		return false;
-		
-	}, [required, freeSolo, isMulti])
+
+	}, [required, freeSolo, multiple])
 
 	let debouncedFreeSoloOnChange;
 
@@ -244,7 +195,7 @@ function CustomAutocomplete(props) {
 	return (
 		<Autocomplete
 			className={"flex-1 my-0" + (className ? (" " + className) : "")}
-			multiple={isMulti}
+			multiple={multiple}
 			margin={margin}
 			size={size}
 			filterSelectedOptions={true}
@@ -280,7 +231,7 @@ function CustomAutocomplete(props) {
 						{...params}
 						InputLabelProps={{
 							...params.InputLabelProps,
-							shrink: isMulti && valueRef.current.length > 0 ? true : (JSON.isJSON(params.InputLabelProps) ? params.InputLabelProps.shrink : state.open),
+							shrink: multiple && valueRef.current.length > 0 ? true : (JSON.isJSON(params.InputLabelProps) ? params.InputLabelProps.shrink : state.open),
 						}}
 						inputProps={{
 							...params.inputProps,
@@ -296,7 +247,7 @@ function CustomAutocomplete(props) {
 											try {
 												let inputOptionsStr = JSON.stringify(optionsRef.current);
 												valueRef.current = new_value
-												
+
 												params.inputProps.onBlur(event);
 											} catch (err) {
 
@@ -321,12 +272,12 @@ function CustomAutocomplete(props) {
 								</React.Fragment>
 							),
 						}}
-						error={Boolean(error || state.error || state.invalid || invalid)}
-						helperText={error || state.error || (invalid || state.invalid ? "Invalid" : helperText)}
+						error={Boolean(error)}
+						helperText={helperText}
 						onFocus={() => setState({open: true})}
 						onBlur={() => setState({open: false})}
 						required={required}
-						disabled={disabled || state.disabled}
+						disabled={disabled}
 					/>
 				);
 			}}
@@ -340,14 +291,14 @@ function CustomAutocomplete(props) {
 			options={optionsRef.current}
 			loading={state.loading || loading}
 			freeSolo={freeSolo}
-			
+
 		/>
 	);
 }
 
 
 CustomAutocomplete.defaultProps = {
-	isMulti: false,
+	multiple: false,
 	isClearable: true,
 	variant: "filled",
 	label: "Select",

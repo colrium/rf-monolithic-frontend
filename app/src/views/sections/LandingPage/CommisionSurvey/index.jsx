@@ -11,7 +11,7 @@ import { connect } from "react-redux";
 import { withTheme } from '@mui/styles';
 
 
-import SignupForm from "views/forms/SignupForm";
+import SignupForm from "views/forms/Auth/Signup";
 import { useGlobals } from "contexts/Globals";
 import { closeDialog, openDialog } from "state/actions";
 import compose from "recompose/compose";

@@ -62,74 +62,55 @@ class Dashboard extends Component {
 			indexUri,
 			contexts,
 		} = this.props;
-		const title =
-			nav.entries.length > 0
-				? nav.entries[nav.entries.length - 1].title
-				: "Dashboard";
-		const breadcrumbs = nav.entries;
-		const { drawerOpen } = this.state;
-		const shiftTopbar =
-			dashboard.drawer_displayed &&
-			drawerOpen &&
-			window?.innerWidth > 768;
-		const shiftContent =
-			dashboard.drawer_displayed &&
-			drawerOpen &&
-			window?.innerWidth > 768;
 
-		document.title = app.title(title);
+		const breadcrumbs = nav.entries
+		const { drawerOpen } = this.state
+		const shiftTopbar = dashboard.drawer_displayed && drawerOpen && window?.innerWidth > 768
+		const shiftContent = dashboard.drawer_displayed && drawerOpen && window?.innerWidth > 768
+
 		return (
-			<div className={"p-0 relative"}>
+			<Box
+				sx={{
+					backgroundColor: theme => theme.palette.background.default,
+					color: theme => theme.palette.text.primary,
+				}}
+				className={"p-0 relative min-h-screen"}
+			>
 				{dashboard.appbar_displayed && (
 					<Topbar
 						isSidebarOpen={drawerOpen}
 						onToggleSidebar={this.handleToggleOpen}
 						className="fixed left-0 right-0"
 						sx={{
-							zIndex: theme =>
-								window?.innerWidth > 768
-									? theme.zIndex.drawer + 1
-									: theme.zIndex.drawer - 1,
+							zIndex: theme => (window?.innerWidth > 768 ? theme.zIndex.drawer + 1 : theme.zIndex.drawer - 1),
 						}}
-						title={title}
 					/>
 				)}
 				{dashboard.drawer_displayed && (
 					<Drawer
-						anchor={
-							dashboard.layout_direction == "rtl"
-								? "right"
-								: "left"
-						}
+						anchor={dashboard.layout_direction == "rtl" ? "right" : "left"}
 						sx={{
 							flexShrink: 0,
 							[`& .MuiDrawer-paper`]: {
 								width: drawerWidth,
 								boxSizing: "border-box",
-								backgroundColor: theme =>
-									theme.palette.primary.main,
-								paddingTop: theme =>
-									window?.innerWidth <= 768
-										? theme.spacing(2)
-										: theme.spacing(10),
+								backgroundColor: theme => theme.palette.primary.main,
+								paddingTop: theme => (window?.innerWidth <= 768 ? theme.spacing(2) : theme.spacing(10)),
 								borderWidth: 0,
 								overflowX: "hidden",
 							},
 						}}
 						onClose={this.handleClose}
 						open={drawerOpen}
-						variant={
-							window?.innerWidth > 768
-								? "persistent"
-								: "temporary"
-						}>
+						variant={window?.innerWidth > 768 ? "persistent" : "temporary"}
+					>
 						<Sidebar
 							open={drawerOpen}
 							items={sidebar_items}
 							onToggleSidebar={this.handleToggleOpen}
 							onClickNavLink={item => {
 								if (window?.innerWidth <= 768) {
-									this.handleClose();
+									this.handleClose()
 								}
 							}}
 						/>
@@ -138,16 +119,11 @@ class Dashboard extends Component {
 				<Box
 					component="main"
 					sx={{
-						width:
-							window?.innerWidth > 768 && this.state.drawerOpen
-								? `calc(100% - ${drawerWidth}px)`
-								: `100%`,
-						left:
-							window?.innerWidth > 768 && this.state.drawerOpen
-								? drawerWidth
-								: "auto",
+						width: window?.innerWidth > 768 && this.state.drawerOpen ? `calc(100% - ${drawerWidth}px)` : `100%`,
+						left: window?.innerWidth > 768 && this.state.drawerOpen ? drawerWidth : "auto",
 					}}
-					className={"relative m-0 p-0"}>
+					className={"relative m-0 p-0"}
+				>
 					{/* <Box
 						className={"p-0 h-80"}
 						sx={{
@@ -157,15 +133,21 @@ class Dashboard extends Component {
 						}}
 					/> */}
 
-					<GridContainer className={"absolute top-20 left-0 right-0"}>
+					<GridContainer
+						sx={{
+							backgroundColor: theme => theme.palette.background.default,
+							color: theme => theme.palette.text.primary,
+						}}
+						className={"absolute top-20 left-0 right-0"}
+					>
 						<GridItem xs={12}>{children}</GridItem>
 					</GridContainer>
 					<ActionDialog />
 					<ComposeEmailDialog />
 					{dashboard.footer_displayed && <Footer />}
 				</Box>
-			</div>
-		);
+			</Box>
+		)
 	}
 }
 

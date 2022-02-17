@@ -31,36 +31,35 @@ export const getIndexOfMessage = (entries, target) => {
 	return index
 }
 
-export const concatMessages = (entries, targets) => {
-	let allEntries = Array.isArray(entries)? [...entries] : []
+export const concatMessages = (entries, targets, sort = "desc") => {
+	let allEntries = Array.isArray(entries) ? [...entries] : []
 
-
-		if (Array.isArray(targets)) {
-			let targetsEntries = targets.reduce(
-				(prevAllEntries, target) => {
-					let index = getIndexOfMessage(allEntries, target)
-					if (index === -1) {
-						prevAllEntries.push(target)
-					}
-					else {
-						allEntries[index] = JSON.merge(allEntries[index], target)
-					}
-					return prevAllEntries
-				},
-				[]
-			)
-			allEntries = allEntries.concat(targetsEntries).sort((a, b) => {
-				if (a.timestamp && b.timestamp) {
-					return (
-						Date.parseFrom(a.timestamp) -
-						Date.parseFrom(b.timestamp)
-					)
-				}
-				else {
-					return -1
-				}
-			})
+	if (Array.isArray(targets)) {
+		targets.map(target => {
+			let index = getIndexOfMessage(allEntries, target)
+			if (index === -1) {
+				allEntries.push(target)
+			} else {
+				allEntries[index] = JSON.merge(allEntries[index], target)
+			}
+		})
+	} else if (JSON.isJSON(targets)) {
+		let indexOfTarget = getIndexOfMessage(allEntries, targets)
+		if (indexOfTarget === -1) {
+			allEntries.push(targets)
+		} else {
+			allEntries[indexOfTarget] = JSON.merge(allEntries[indexOfTarget], targets)
 		}
+	}
+	if (sort === "desc") {
+		allEntries = allEntries.sort((a, b) => {
+			return Date.parseFrom(a.timestamp || a.created_on) - Date.parseFrom(b.timestamp || b.created_on)
+		})
+	} else if (sort === "asc") {
+		allEntries = allEntries.sort((a, b) => {
+			return Date.parseFrom(b.timestamp || b.created_on) - Date.parseFrom(a.timestamp || a.created_on)
+		})
+	}
 
 	return allEntries
 }

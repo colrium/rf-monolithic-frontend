@@ -165,7 +165,7 @@ const SectionComponent = (props) => {
 													className={classes?.subtitle+" font-bold"}
 													variant="body1"
 												>
-													Pioneering the remote collection of ethical, accurate and reliable face-to-face and primary data across Africa and frontier markets, real time. 
+													Pioneering the remote collection of ethical, accurate and reliable face-to-face and primary data across Africa and frontier markets, real time.
 												</Typography>*/}
 										<Typography
 											className={classes?.subtitle + " font-bold"}

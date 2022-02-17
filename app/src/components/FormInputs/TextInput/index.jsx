@@ -137,11 +137,6 @@ const Input = React.forwardRef((props, ref) => {
 
 
 
-	useEffect(() => {
-		if (!inputTouched) {
-			setInputTouched(true);
-		}
-	}, [inputValue, inputTouched]);
 
 	useEffect(() => {
 		if (!inputTouched) {
@@ -167,7 +162,7 @@ const Input = React.forwardRef((props, ref) => {
 			inputValueValid(new_value);
 			if (Function.isFunction(onChange)) {
 				let changed = onChange(onChangeYield === "value" ? new_value : event);
-				//Promise.all([changed]).catch(e => console.error("Caught onChange error", e));					
+				//Promise.all([changed]).catch(e => console.error("Caught onChange error", e));
 			}
 			setInputValue(new_value);
 		}
@@ -215,28 +210,28 @@ const Input = React.forwardRef((props, ref) => {
 		let throttledCallsTotal = 0;
 		const throttleExample = Function.throttle(() => {
 			throttledCalls = throttledCalls + 1;
-			
-			
+
+
 
 		}, 5000);
 		let debouncedCalls = 0;
 		const debounceExample = Function.debounce(() => {
 			debouncedCalls = debouncedCalls + 1;
-			
-				
+
+
 		}, 5000);
-		
-		let throttledCallInterval = setInterval(()=> {			
-			throttledCallsTotal = throttledCallsTotal + 1;			
+
+		let throttledCallInterval = setInterval(()=> {
+			throttledCallsTotal = throttledCallsTotal + 1;
 			throttleExample();
 		}, 1000);
-		
-		let debouncedCallInterval = setInterval(()=> {			
+
+		let debouncedCallInterval = setInterval(()=> {
 			debouncedCallsTotal = debouncedCallsTotal + 1;
 			debounceExample();
-					
+
 		}, 1000);
-		
+
 
 		return () => {
 			clearInterval(debouncedCallInterval);
@@ -255,7 +250,7 @@ const Input = React.forwardRef((props, ref) => {
 				onChange={handleOnChange}
 				onFocus={handleOnFocus}
 				onBlur={handleOnBlur}
-				defaultValue={inputValue}
+				defaultValue={state.inputValue}
 				disabled={inputDisabled}
 				error={inputError ? true : isInvalid}
 				type={inputType}

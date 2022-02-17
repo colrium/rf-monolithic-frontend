@@ -22,12 +22,12 @@ const useGoogleMaps = (options = {}, apiKey = null) => {
 					onMapLoad(map);
 				});
 			}
-            
+
             // setState({
 			// 	map: map,
 			// });
         }
-        
+
     }, [google, ref]);
 
     return ref;

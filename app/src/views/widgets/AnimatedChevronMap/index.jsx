@@ -21,7 +21,7 @@ const useStyles = makeStyles( theme => ( {
 		},
 		"&.active": {
 			"& polygon": {
-				/* transformOrigin: "center center", 
+				/* transformOrigin: "center center",
 				animation: "pointBlinkAnim 0.1s",
 				animationDelay: "0.15s",
 				animationIterationCount: "4",*/

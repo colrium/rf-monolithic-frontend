@@ -1,20 +1,20 @@
 /** @format */
 
 import Hidden from "@mui/material/Hidden";
-
-import { app, colors } from "assets/jss/app-theme";
+import Box from "@mui/material/Box"
+import { app } from "assets/jss/app-theme";
 import classNames from "classnames";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
 import { makeStyles } from '@mui/styles';
-import LoginForm from "views/forms/LoginForm";
 import AnimatedChevronMap from "views/widgets/AnimatedChevronMap";
 import { intercom } from "config";
 import Intercom from "react-intercom";
-import { Link } from "react-router-dom";
-import { useDidUpdate, useVisibility, useDidMount, useSetState } from "hooks"
+import { Link, useLocation, Outlet } from "react-router-dom"
+import { useTheme } from "@mui/material/styles"
+import {  useDidMount, useDidUpdate } from "hooks"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: theme.spacing(2),
 	},
 	info_wrapper: {
-		background: theme.palette.secondary.light,
+		background: theme.palette.secondary,
 	},
 	info_container: {
 		color: theme.palette.text.primary,
@@ -48,18 +48,25 @@ const useStyles = makeStyles((theme) => ({
 	info_map_container: {
 		padding: "0 10%",
 	},
-	form_container: {
-		height: "100%",
-		width: "100%",
-	},
 }));
 
-const Login = (props) => {
-	const classes = useStyles();
-	useDidMount(() => {
-		document.title = app.title("Login");
-	});
+const pathTitles = {
+	"/auth/login": app.title("Login"),
+	"/auth/forgot-password": app.title("Forgot password"),
+	"/auth/reset-password": app.title("Reset Password"),
+}
 
+const AuthPage = (props) => {
+	const classes = useStyles();
+	const location = useLocation()
+
+	useDidMount(() => {
+		document.title = pathTitles[location.pathname] || app.title("")
+	});
+	useDidUpdate(()=>{
+		document.title = pathTitles[location.pathname] || app.title("")
+	}, [location])
+	const theme = useTheme();
 	const onLogin = () => {
 		window.location.href = "/".toUriWithDashboardPrefix(); //relative to domain
 	}
@@ -76,7 +83,8 @@ const Login = (props) => {
 							lg={8}
 							className={"p-20"}
 							sx={{
-								backgroundColor: theme => theme.palette.secondary.main
+								backgroundColor: theme =>
+									theme.palette.secondary.light,
 							}}
 						>
 							<GridContainer
@@ -90,14 +98,15 @@ const Login = (props) => {
 								>
 									<GridItem
 										xs={12}
-										className={
-											classes?.info_map_container
-										}
+										className={classes?.info_map_container}
 									>
 										<AnimatedChevronMap
-											mapcolor={colors.hex.inverse}
+											mapcolor={
+												theme.palette.background.paper
+											}
 											popUpStyle={{
-												background: "linear-gradient(to right, #8C189B, #6a0f75)",
+												background:
+													"linear-gradient(to right, #8C189B, #6a0f75)",
 											}}
 										/>
 									</GridItem>
@@ -110,8 +119,6 @@ const Login = (props) => {
 											realfield.io
 										</Typography>
 									</GridItem>
-
-
 								</GridContainer>
 							</GridContainer>
 						</GridItem>
@@ -122,38 +129,38 @@ const Login = (props) => {
 						sm={12}
 						md={5}
 						lg={4}
-						className={classes?.form_wrapper}
+						className={"flex flex-col items-center justify-center"}
 					>
-						<GridContainer
-							className={classes?.form_container}
-							direction="row"
-							justify="center"
-							alignItems="center"
+						<Box
+							className={"p-4 flex flex-col items-center"}
+							sx={
+								{
+									// backgroundColor: theme => theme.palette.background.paper,
+								}
+							}
 						>
-							<GridItem xs={12}>
-								<Link to={"/home".toUriWithLandingPagePrefix()}>
-
-									<img
-										alt={app.name + " logo"}
-										className={classNames(
-											classes?.login_logo,
-											"center"
-										)}
-										src={app.logo}
-									/>
-								</Link>
-							</GridItem>
-							<GridItem xs={12}>
-								<LoginForm onLogin={onLogin} />
-							</GridItem>
-						</GridContainer>
+							<Link
+								to={"/home".toUriWithLandingPagePrefix()}
+								className={"pb-20"}
+							>
+								<img
+									alt={app.name + " logo"}
+									className={classNames(
+										classes?.login_logo,
+										"center"
+									)}
+									src={app.logo}
+								/>
+							</Link>
+							<Outlet />
+						</Box>
 					</GridItem>
 				</GridContainer>
 			</GridContainer>
 			<Intercom appID={intercom.app.id} {...intercom.app.user} />
 		</div>
-	);
+	)
 
 }
 
-export default ((Login));
+export default AuthPage

@@ -393,4 +393,3 @@ export default compose(
 	connect(mapStateToProps, { apiCallRequest, setEmailingCache, clearEmailingCache }),
 	withTheme,
 )((ComposeEmailDialog));
-

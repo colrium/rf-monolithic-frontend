@@ -117,7 +117,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return !(user.isAdmin || user.isCustomer);
+							return !(user?.isAdmin || user?.isCustomer);
 						}
 						return true;
 					},
@@ -164,7 +164,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return !(user.isAdmin || user.isCustomer);
+							return !(user?.isAdmin || user?.isCustomer);
 						}
 						return true;
 					},
@@ -198,7 +198,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							return !(user.isAdmin || user.isCustomer);
+							return !(user?.isAdmin || user?.isCustomer);
 						}
 						return true;
 					},
@@ -301,8 +301,8 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 
-	
+
 };

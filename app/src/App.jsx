@@ -55,47 +55,37 @@ const App = props => {
 		app: { preferences, initialized },
 	} = props
 	const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
-	const appTheme = React.useMemo(() => {
-		let computedTheme = theme
-		computedTheme.palette.mode =
+	const getAppTheme = React.useCallback(() => {
+		let themeMode =
 			prefersDarkMode || preferences.theme === "dark" ? "dark" : "light"
+		let computedTheme = theme
+		computedTheme.palette.mode = themeMode
+		computedTheme.palette.background = {
+			default: themeMode === "dark" ? "#2b2b2b" : "#f5f5f5",
+			paper: themeMode === "dark" ? "#121212" : "#ffffff",
+		}
+
+		computedTheme.palette.text = {
+			primary: themeMode === "dark" ? "#ffffff" : "#1a1a1a",
+			contrast: themeMode === "dark" ? "#1a1a1a" : "#ffffff",
+			contrastDark: themeMode === "dark" ? "#ffffff" : "#141414",
+			secondary: themeMode === "dark" ? "#d4d4d4" : "#737373",
+			disabled: "#999999",
+		}
 		return createTheme(computedTheme)
 	}, [prefersDarkMode, preferences.theme])
-	// return (
-	// 	<CacheBuster>
-	// 		{({ loading, isLatestVersion, refreshCacheAndReload }) => {
-	// 			if (loading) return null;
-	// 			if (!loading && !isLatestVersion) {
-	// 				refreshCacheAndReload();
-	// 			}
 
-	// 			return (
-	// 				<ThemeProvider theme={appTheme}>
-	// 	<NetworkServicesProvider >
-	// 			<ApiDataProvider>
-	// 				<JssProvider jss={jss} registry={sheets} >
-	// 					<BrowserRouter forceRefresh={false}>
-	// 						<Routes />
-	// 					</BrowserRouter>
-	// 				</JssProvider>
-	// 				<CookiesConsentDialog />
-	// 			</ApiDataProvider>
-	// 	</NetworkServicesProvider>
-	// </ThemeProvider>
-	// 			);
-	// 		}}
-	// 	</CacheBuster>
-	// );
+	console.log("getAppTheme()", getAppTheme())
 
 	return (
-		<ThemeProvider theme={appTheme}>
+		<ThemeProvider theme={getAppTheme()}>
 			<NetworkServicesProvider>
-					<JssProvider jss={jss} registry={sheets}>
-						<BrowserRouter forceRefresh={false}>
-							<Routes />
-						</BrowserRouter>
-					</JssProvider>
-					<CookiesConsentDialog />
+				<JssProvider jss={jss} registry={sheets}>
+					<BrowserRouter>
+						<Routes />
+					</BrowserRouter>
+				</JssProvider>
+				<CookiesConsentDialog />
 			</NetworkServicesProvider>
 		</ThemeProvider>
 	)

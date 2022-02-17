@@ -31,7 +31,7 @@ const Stages = (props) => {
             const stageField = register("stage");
             setValue(`stage`, stagekeys[0])
         }
-        
+
     });
 
     const { component: StageComponent, ...stageProps } = stages[stage] ? stages[stage] : stages[stagekeys[0]];

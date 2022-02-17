@@ -48,7 +48,7 @@ class Page extends React.Component {
 	constructor(props) {
 		super(props);
 		const { auth } = props;
-		if (auth.user.isAdmin) {
+		if (auth.user?.isAdmin) {
 			this.state.counts_overview_contexts = {
 				surveys: {
 					type: "count",

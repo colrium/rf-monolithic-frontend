@@ -41,7 +41,7 @@ const Fielder = (props) => {
         <Card elevation={5} sx={{ /* maxWidth: "20%" */ }}  className={"m-1 block relative"} {...rest}>
             {/* <CardHeader
                 title={(first_name || "").replaceAll(" ", "").humanize().truncate(30)}
-                
+
                 className={"h-12"}
             /> */}
             <CardMedia

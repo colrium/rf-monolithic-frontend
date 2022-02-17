@@ -128,7 +128,7 @@ const SectionComponent = (props) => {
 
 				</GridItem>
 
-				{/*<GridItem xs={12} className="p-0 py-8 mt-4" id="ethical-principles">					
+				{/*<GridItem xs={12} className="p-0 py-8 mt-4" id="ethical-principles">
 						<Typography variant="h3" className="primary-text w-full text-center" paragraph>
 							Realfield is ethical data. Real time.
 						</Typography>

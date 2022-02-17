@@ -1,149 +1,57 @@
 /** @format */
 
-import React from "react";
-import { connect } from "react-redux";
-import { items as drawer_items } from "config/ui/drawer";
-import ScrollBars from "components/ScrollBars"
+import React, { useEffect } from "react"
+import { Route, useLocation, useNavigate } from "react-router-dom"
+import { connect } from "react-redux"
+import { items as drawer_items } from "config/ui/drawer"
 import { withGlobals } from "contexts/Globals"
+import { Outlet, useSearchParams } from "react-router-dom"
+import { app } from "assets/jss/app-theme"
 
-import DashboardRoutes from "routes/Dashboard"
-import LandingPageRoutes from "routes/LandingPageRoutes"
+import { Dashboard as DashboardLayout, LandingPage as LandingPageLayout } from "views/layouts"
 
-import {
-	Dashboard as DashboardLayout,
-	LandingPage as LandingPageLayout,
-} from "views/layouts"
-import {
-	apiCallRequest,
-	setDataCache,
-	setSettings,
-	setPreferences,
-	setInitialized,
-	setCurrentUser,
-	setDashboardAppBarDisplayed,
-	setDashboardDrawerDisplayed,
-	setDashboardFooterDisplayed,
-} from "state/actions"
+const Fairing = props => {
+	const { layout, auth } = props
 
-class Fairing extends React.Component {
-	constructor(props) {
-		super(props)
-		const {
-			nav,
-			componentProps,
-			match: { params },
-		} = props
-		this.layout = componentProps.layout
-		this.layoutProps = componentProps.layoutProps
-		this.routing = componentProps.routing
-
-		this.state = {
-			routes_key: props.location.key,
-			error: false,
-			errorInfo: null,
+	const navigate = useNavigate()
+	const location = useLocation()
+	useEffect(() => {
+		if (layout === "dashboard" && (!auth.isAuthenticated || String.isEmpty(auth.user?._id))) {
+			const pathname = location.pathname
+			navigate(`/auth/login?navigateTo=${pathname}`)
+		} else if (layout === "landingpage" && location.pathname === "/") {
+			navigate(`/page/home`)
 		}
-		//this.initSocketsEvents();
+	}, [layout, auth])
 
-		this.contexts = [
-			"events",
-			"notifications",
-			"surveys",
-			"queries",
-			"commissions",
-			"responses",
-			"teams",
-			"tracks",
-			"invoices",
-			"payments",
-			"orders",
-			"orderitems",
-			"retailitems",
-			"coupons",
-			"currencies",
-			"fulfilments",
-			"vacancies",
-			"applications",
-			"users",
-			"forms",
-			"attachments",
-			"actionlogs",
-			"responses",
-			"posts",
-			"demorequests",
-			"quoterequests",
-			"courses",
-			"quizes",
-			"questions",
-			"answers",
-			"results",
-		]
-		this.indexUri = Array.isArray(nav.entries)
-			? nav.entries.length > 0
-				? nav.entries[nav.entries.length - 1].uri
-				: "/home".toUriWithDashboardPrefix()
-			: "/home".toUriWithDashboardPrefix()
-	}
-
-	render() {
-		const {
-			nav,
-			layout,
-			setDashboardAppBarDisplayed,
-			setDashboardDrawerDisplayed,
-			setDashboardFooterDisplayed,
-		} = this.props
-
-		if (this.layout == "dashboard") {
-			//setDashboardAppBarDisplayed(true);
-			//setDashboardDrawerDisplayed(true);
-			//setDashboardFooterDisplayed(true);
-
-			/* return (
-				<ScrollBars className="h-screen w-screen overflow-auto">
-					<DashboardLayout sidebar_items={drawer_items}>
-						<DashboardRoutes
-							indexUri={this.indexUri}
-							contexts={this.contexts}
-							key={"routes" + this.state.routes_key}
-						/>
-					</DashboardLayout>
-				</ScrollBars>
-			) */
-			return (
-					<DashboardLayout sidebar_items={drawer_items}>
-						<DashboardRoutes
-							indexUri={this.indexUri}
-							contexts={this.contexts}
-							key={"routes" + this.state.routes_key}
-						/>
-					</DashboardLayout>
-			)
-		} else {
-			return (
-				<LandingPageLayout {...this.layoutProps}>
-					<LandingPageRoutes />
-				</LandingPageLayout>
-			)
+	useEffect(() => {
+		if (layout == "dashboard") {
+			let windowTitle = location.pathname
+				.replaceAll("".toUriWithLandingPagePrefix(), "")
+				.replaceAll("".toUriWithDashboardPrefix(), "")
+			document.title = app.title(windowTitle.humanize())
 		}
+
+		// console.log("windowTitle", windowTitle)
+	}, [location, layout])
+
+	if (layout == "dashboard") {
+		return (
+			<DashboardLayout sidebar_items={drawer_items}>
+				<Outlet />
+			</DashboardLayout>
+		)
+	} else {
+		return (
+			<LandingPageLayout>
+				<Outlet />
+			</LandingPageLayout>
+		)
 	}
 }
 const mapStateToProps = state => ({
-
-	api: state.api,
-	app: state.app,
 	auth: state.auth,
-	cache: state.cache,
 	nav: state.nav,
-});
+})
 
-export default withGlobals(connect(mapStateToProps, {
-	apiCallRequest,
-	setDataCache,
-	setSettings,
-	setPreferences,
-	setInitialized,
-	setCurrentUser,
-	setDashboardAppBarDisplayed,
-	setDashboardDrawerDisplayed,
-	setDashboardFooterDisplayed,
-})(Fairing));
+export default withGlobals(connect(mapStateToProps, {})(Fairing))

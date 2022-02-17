@@ -37,9 +37,9 @@ class Page extends React.Component {
 
 	constructor(props) {
 		super(props);
-		const { componentProps } = props;
-		this.context = componentProps.context;
-		this.defination = definations[componentProps.context];
+		const { context } = props
+		this.context = context;
+		this.defination = definations[context];
 		this.service = ApiService.getContextRequests(this.defination?.endpoint);
 		let urlQuery = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function (result, each, n, every) {
 			let [key, value] = decodeURI(each).split("=");
@@ -106,7 +106,7 @@ class Page extends React.Component {
 
 							<GridItem xs={12} className={"flex items-center"}>
 								<Typography
-									
+
 									variant="body1"
 								>
 									Sorry! Access to this resource has been
@@ -122,7 +122,7 @@ class Page extends React.Component {
 									>
 										<Button
 											variant="text"
-											
+
 																					>
 											Home
 										</Button>

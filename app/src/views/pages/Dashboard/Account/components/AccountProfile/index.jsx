@@ -34,14 +34,14 @@ class AccountProfile extends Component {
 		super(props);
 		const { auth } = props;
 
-		if (auth.user.avatar) {
+		if (auth.user?.avatar) {
 			this.state.formValues = {
-				avatar: auth.user.avatar,
-				documents: auth.user.douments,
+				avatar: auth.user?.avatar,
+				documents: auth.user?.douments,
 			};
 		}
 
-		this.state.user_id = auth.user._id;
+		this.state.user_id = auth.user?._id;
 		this.handleProfileFormSubmit = this.handleProfileFormSubmit.bind(this);
 	}
 	componentDidMount() {

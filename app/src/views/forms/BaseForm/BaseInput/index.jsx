@@ -30,7 +30,7 @@ const InputField = (props) => {
 const BaseInput = (props) => {
     const {name, placeholder, value, options, defaultValue, onChange, data, blueprint,  ...rest} = props || {};
 
-    
+
     const {Api} = useNetworkServices()
 
     const [state, setState, getState] = useSetState({
@@ -40,21 +40,21 @@ const BaseInput = (props) => {
 
 
     const loadFieldValuePosibilities = useCallback(() => {
-        
+
     }, [blueprint]);
 
     const applyChangeEffects = useCallback(() => {
-        
+
     }, [blueprint])
 
 
     const applyBlueprint = useCallback(() => {
-        
+
     }, [blueprint]);
 
 
     useDidUpdate(() => {
-        
+
     }, [blueprint])
 
     return (

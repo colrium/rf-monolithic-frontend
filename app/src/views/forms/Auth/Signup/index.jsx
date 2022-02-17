@@ -319,7 +319,7 @@ class SignupForm extends React.Component {
 				</Snackbar>
 				{/*<Typography
 					className={"my-4"}
-					
+
 										variant="h5"
 				>
 					{title? title : (this.state.verifingAccount ?  "Confirm Email Address" : "Create account")}
@@ -689,7 +689,6 @@ class SignupForm extends React.Component {
 										<GridItem xs={12} className={"p-0"}>
 											<Typography
 												className={"my-1"}
-												color="accent"
 																								variant="body2"
 											>
 												{"Submiting. Please Wait..."}
@@ -709,7 +708,7 @@ class SignupForm extends React.Component {
 								{"Back to Login"}
 							</Button>
 						</Link>
-					</GridItem>											
+					</GridItem>
 				</GridContainer>*/}
 			</div>
 		);

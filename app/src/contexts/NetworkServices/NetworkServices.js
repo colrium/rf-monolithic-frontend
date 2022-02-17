@@ -100,10 +100,10 @@ class NetworkServices extends React.Component {
 		// this.unsubscribeFcFirestoreUserOnSnapshot();
 
 		if (this.onLoginListener) {
-			EventRegister.removeEventListener(this.onLoginListener)
+			this.onLoginListener.remove()
 		}
 		if (this.onLogoutListener) {
-			EventRegister.removeEventListener(this.onLogoutListener)
+			this.onLogoutListener.remove()
 		}
 		Sockets.off("identity-set")
 		Sockets.off("presence-changed")
@@ -140,8 +140,8 @@ class NetworkServices extends React.Component {
 		})
 		this.state.Sockets.on("authenticated", async () => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				this.state.Sockets.emit("set-identity", user._id)
-				this.state.Sockets.emit("get-settings", user._id)
+				this.state.Sockets.emit("set-identity", user?._id)
+				this.state.Sockets.emit("get-settings", user?._id)
 				this.state.Sockets.emit("get-inbox", user)
 			}
 		})
@@ -179,7 +179,8 @@ class NetworkServices extends React.Component {
 
 	handleSocketsDisconnected() {}
 
-	handleOnLogin({ profile }) {
+	handleOnLogin(event) {
+		const { profile } = event?.detail || {}
 		const { fetchInbox } = this.props
 		//
 		if (!JSON.isEmpty(profile)) {
@@ -192,10 +193,10 @@ class NetworkServices extends React.Component {
 		}
 	}
 
-	handleOnLogout({ user, token }) {
+	handleOnLogout(event) {
 		const { fcmToken } = this.state
 		//
-
+		const { user, token } = event?.detail || {}
 		this.removeTokenFromDatabase(fcmToken, user)
 		if (this.state.Sockets && this.state.Sockets.connected) {
 			this.state.Sockets.emit("logout", user)
@@ -214,7 +215,7 @@ class NetworkServices extends React.Component {
 	initializeFirebaseMessaging(user) {
 		const { setCurrentUser } = this.props
 		const userId =
-			!JSON.isEmpty(user) && !String.isEmpty(user._id) ? user._id : false
+			!JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
 		if (!this.state?.Firebase?.initialized) {
 			return false
 		}
@@ -266,7 +267,7 @@ class NetworkServices extends React.Component {
 
 			this.unsubscribeFcFirestoreUserOnSnapshot = getFirestoreDoc(
 				"users",
-				user._id
+				user?._id
 			).then(function (docSnapshot) {
 				//
 				if (docSnapshot) {
@@ -305,7 +306,7 @@ class NetworkServices extends React.Component {
 
 	async saveTokenToDatabase(token, user) {
 		const userId =
-			!JSON.isEmpty(user) && !String.isEmpty(user._id) ? user._id : false
+			!JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
 		if (
 			userId &&
 			!String.isEmpty(token) &&
@@ -316,7 +317,7 @@ class NetworkServices extends React.Component {
 					if (hasPermission) {
 						// Assume user is already signed in
 						////
-						const userId = user._id
+						const userId = user?._id
 						// Add the token to the users datastore
 						////
 						let tokens = await getFirestoreDoc(
@@ -384,7 +385,7 @@ class NetworkServices extends React.Component {
 
 	async removeTokenFromDatabase(token, user) {
 		const userId =
-			!JSON.isEmpty(user) && !String.isEmpty(user._id) ? user._id : false
+			!JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
 		if (
 			userId &&
 			!String.isEmpty(token) &&
@@ -450,8 +451,8 @@ class NetworkServices extends React.Component {
 							.catch(err => {
 								let tokens = []
 								let token_existed = false
-								if (Array.isArray(user.tokens)) {
-									tokens = user.tokens.filter(token_entry => {
+								if (Array.isArray(user?.tokens)) {
+									tokens = user?.tokens.filter(token_entry => {
 										if (
 											token_entry === token &&
 											!token_existed

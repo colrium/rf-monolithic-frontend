@@ -26,7 +26,7 @@ const Stage = (props) => {
         changeStageValue(name, event.target.value);
     }, []);
 
-    const submit = useCallback((formValues) => {        
+    const submit = useCallback((formValues) => {
         // let next_complete_stages = Array.isArray(complete_stagesRef.current) ? complete_stagesRef.current : [];
         // let indexOfStage = next_complete_stages.indexOf(stage);
         // if (next_complete_stages.indexOf(stage) === -1) {
@@ -57,8 +57,8 @@ const Stage = (props) => {
                             label="Project Name"
                             placeholder="This is the Project Title"
                             {...register(`stages.${stage}.project_name`, {
-                                required: "Project Name is required.",                                
-                            })}  
+                                required: "Project Name is required.",
+                            })}
                             onChange={handleOnTextfieldChange(`stages.${stage}.project_name`)}
                             variant={"filled"}
                             required
@@ -70,7 +70,7 @@ const Stage = (props) => {
                         <TextField
                             label="Project Summary"
                             {...register(`stages.${stage}.project_summary`, {
-                                required: "Project Summary is required.",                                
+                                required: "Project Summary is required.",
                             })}
                             onChange={handleOnTextfieldChange(`stages.${stage}.project_summary`)}
                             helperText={"Please give us a short description of your project"}
@@ -86,7 +86,7 @@ const Stage = (props) => {
                         <TextField
                             label="Project Objectives"
                             {...register(`stages.${stage}.project_objectives`, {
-                                required: "Project Objectives is required.",                                
+                                required: "Project Objectives is required.",
                             })}
                             onChange={handleOnTextfieldChange(`stages.${stage}.project_objectives`)}
                             helperText={"Please give us a short description of your project"}

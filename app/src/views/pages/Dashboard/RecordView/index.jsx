@@ -13,232 +13,190 @@ import ProgressIndicator from "components/ProgressIndicator";
 import Typography from "components/Typography";
 //
 import * as definations from "definations";
-import React from "react";
+import React, {useCallback} from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom"
 import compose from "recompose/compose";
 import ApiService from "services/Api";
 //
-
-import { appendNavHistory } from "state/actions/ui/nav";
-//Widgets
 import RecordView from "views/widgets/RecordView";
+import {useDidMount, useSetState, useDidUpdate } from "hooks"
 
-class Page extends React.Component {
-	state = {
+const  Page = props => {
+	const {context, auth, nav} = props
+	const params = useParams()
+	const defination = definations[context]
+	const service = ApiService.getContextRequests(defination?.endpoint)
+	const id = params.id
+	const [state, setState] = useSetState({
 		loading: true,
 		load_error: false,
 		record: null,
-	};
-	defination = null;
-	service = null;
+	})
+	const last_location = Array.isArray(nav.entries)
+		? nav.entries.length > 1
+			? nav.entries[nav.entries.length - 2].uri
+			: false
+		: false
+	const forbidden = state.loading
+		? false
+		: JSON.isJSON(state.record)
+		? defination.access.actions.view.restricted(auth.user)
+		: true
 
-	constructor(props) {
-		super(props);
-		const {
-			componentProps,
-			match: { params },
-		} = props;
-		this.context = componentProps.context;
-		this.defination = definations[componentProps.context];
-		this.service = ApiService.getContextRequests(this.defination?.endpoint);
-		this.id = params.id;
-	}
 
-	componentDidMount() {
-		const { auth, location, appendNavHistory } = this.props;
-		if (appendNavHistory && location && this.defination) {
-			appendNavHistory({
-				name: this.defination.name.singularize() + "_" + this.id,
-				uri: location.pathname,
-				title: Function.isFunction(this.defination.label)
-					? this.defination.label(auth.user).singularize()
-					: this.defination.label.singularize(),
-				view: null,
-				color: this.defination.color
-					? this.defination.color
-					: colors.hex.primary,
-				scrollTop: 0,
-			});
-		}
-		this.getRecord();
-	}
-
-	getRecord() {
-		this.service
-			.getRecordById(this.id, { p: 1 })
+	const getRecord = useCallback(() => {
+		service
+			.getRecordById(id, { p: 1 })
 			.then(res => {
-				this.setState({ record: res.body.data, loading: false });
+				setState({ record: res.body.data, loading: false })
 			})
 			.catch(err => {
-				this.setState({ loading: false, load_error: err });
-			});
-	}
+				setState({ loading: false, load_error: err })
+			})
+	}, [id, service])
 
-	render() {
-		const { auth, nav } = this.props;
 
-		const last_location = Array.isArray(nav.entries)
-			? nav.entries.length > 1
-				? nav.entries[nav.entries.length - 2].uri
-				: false
-			: false;
-		const forbidden = this.state.loading
-			? false
-			: JSON.isJSON(this.state.record)
-				? this.defination.access.actions.view.restricted(auth.user)
-				: true;
-		return (
-			<GridContainer >
-				<GridItem xs={12}>
-					{this.state.loading ? (
-						<GridContainer
-							justify="center"
-							alignItems="center"
-						>
-							<GridItem xs={1}>
-								<ProgressIndicator
-									size={24}
-									thickness={4}
-									color="secondary"
-									disableShrink
-								/>
-							</GridItem>
-						</GridContainer>
-					) : (
-						<GridContainer className="p-0 m-0">
-							{this.state.load_error ? (
-								<GridContainer>
-									<GridItem xs={12}>
-										<Typography
-											color="error"
-											variant="h1"
-																						fullWidth
-										>
-											<Icon fontSize="large">error</Icon>
-										</Typography>
-									</GridItem>
-									<GridItem xs={12}>
-										<Typography
-											color="error"
-											variant="body1"
-																						fullWidth
-										>
-											An error occured.
-											<br />
-											Status Code :{" "}
-											{this.state.load_error.code}
-											<br />
-											{this.state.load_error.msg}
-										</Typography>
-									</GridItem>
-								</GridContainer>
-							) : (
-								<GridContainer>
-									{forbidden && (
-										<GridContainer
-											direction="column"
-											justify="center"
-											alignItems="center"
-										>
-											<GridItem xs={12}>
-												<Typography
-													color="error"
-													variant="h1"
-																										fullWidth
+	useDidMount(()=>{
+		getRecord()
+	})
+	useDidUpdate(() => {
+		getRecord()
+	}, [id, service])
+
+	return (
+		<GridContainer>
+			<GridItem xs={12}>
+				{state.loading ? (
+					<GridContainer justify="center" alignItems="center">
+						<GridItem xs={1}>
+							<ProgressIndicator
+								size={24}
+								thickness={4}
+								color="secondary"
+								disableShrink
+							/>
+						</GridItem>
+					</GridContainer>
+				) : (
+					<GridContainer className="p-0 m-0">
+						{state.load_error ? (
+							<GridContainer>
+								<GridItem xs={12}>
+									<Typography
+										color="error"
+										variant="h1"
+										fullWidth
+									>
+										<Icon fontSize="large">error</Icon>
+									</Typography>
+								</GridItem>
+								<GridItem xs={12}>
+									<Typography
+										color="error"
+										variant="body1"
+										fullWidth
+									>
+										An error occured.
+										<br />
+										Status Code :{" "}
+										{state.load_error.code}
+										<br />
+										{state.load_error.msg}
+									</Typography>
+								</GridItem>
+							</GridContainer>
+						) : (
+							<GridContainer>
+								{forbidden && (
+									<GridContainer
+										direction="column"
+										justify="center"
+										alignItems="center"
+									>
+										<GridItem xs={12}>
+											<Typography
+												color="error"
+												variant="h1"
+												fullWidth
+											>
+												<AccessErrorIcon />
+											</Typography>
+										</GridItem>
+										<GridItem xs={12}>
+											<Typography
+												color="grey"
+												variant="h3"
+												fullWidth
+											>
+												Access Denied!
+											</Typography>
+										</GridItem>
+
+										<GridItem xs={12}>
+											<Typography
+												variant="body1"
+												fullWidth
+											>
+												Sorry! Access to this resource
+												is prohibitted since you lack
+												required priviledges. <br />{" "}
+												Please contact the system
+												administrator for further
+												details.
+											</Typography>
+										</GridItem>
+
+										<GridItem xs={12}>
+											<Typography
+												color="error"
+												variant="body1"
+												fullWidth
+											>
+												<Link
+													to={"home".toUriWithDashboardPrefix()}
 												>
-													<AccessErrorIcon />
-												</Typography>
-											</GridItem>
-											<GridItem xs={12}>
-												<Typography
-													color="grey"
-													variant="h3"
-																										fullWidth
-												>
-													Access Denied!
-												</Typography>
-											</GridItem>
-
-											<GridItem xs={12}>
-												<Typography
-
-													variant="body1"
-																										fullWidth
-												>
-													Sorry! Access to this
-													resource is prohibitted
-													since you lack required
-													priviledges. <br /> Please
-													contact the system
-													administrator for further
-													details.
-												</Typography>
-											</GridItem>
-
-											<GridItem xs={12}>
-												<Typography
-													color="error"
-													variant="body1"
-																										fullWidth
-												>
-													<Link
-														to={"home".toUriWithDashboardPrefix()}
-													>
+													{" "}
+													<Button variant="text">
 														{" "}
-														<Button
-															variant="text"
-														>
+														Home{" "}
+													</Button>{" "}
+												</Link>
+												{last_location && (
+													<Link to={last_location}>
+														{" "}
+														<Button variant="text">
 															{" "}
-															Home{" "}
+															Back{" "}
 														</Button>{" "}
 													</Link>
-													{last_location && (
-														<Link
-															to={last_location}
-														>
-															{" "}
-															<Button
-																variant="text"
-															>
-																{" "}
-																Back{" "}
-															</Button>{" "}
-														</Link>
-													)}
-												</Typography>
-											</GridItem>
-										</GridContainer>
-									)}
-
-									{!forbidden && (
-										<GridContainer className="p-0 m-0">
-											<GridItem
-												className="p-0 m-0"
-												xs={12}
-											>
-												{this.state.record && (
-													<RecordView
-														defination={
-															this.defination
-														}
-														service={this.service}
-														record={
-															this.state.record
-														}
-													/>
 												)}
-											</GridItem>
-										</GridContainer>
-									)}
-								</GridContainer>
-							)}
-						</GridContainer>
-					)}
-				</GridItem>
-			</GridContainer>
-		);
-	}
+											</Typography>
+										</GridItem>
+									</GridContainer>
+								)}
+
+								{!forbidden && (
+									<GridContainer className="p-0 m-0">
+										<GridItem className="p-0 m-0" xs={12}>
+											{state.record && (
+												<RecordView
+													defination={defination}
+													service={service}
+													record={state.record}
+												/>
+											)}
+										</GridItem>
+									</GridContainer>
+								)}
+							</GridContainer>
+						)}
+					</GridContainer>
+				)}
+			</GridItem>
+		</GridContainer>
+	)
+
 }
 const mapStateToProps = state => ({
 	auth: state.auth,
@@ -246,6 +204,5 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-
-	connect(mapStateToProps, { appendNavHistory })
+	connect(mapStateToProps, {  })
 )(Page);

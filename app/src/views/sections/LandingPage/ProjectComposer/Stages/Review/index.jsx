@@ -39,7 +39,7 @@ const Stage = (props) => {
 
     const geojsonUtils = useGeojson();
 
-    
+
 
     useDidMount(() => {
         // register(`stages.${stage}`, {
@@ -61,7 +61,7 @@ const Stage = (props) => {
     }, []);
 
 
-    const submit = useCallback((formValues) => {        
+    const submit = useCallback((formValues) => {
         if (Function.isFunction(onSubmit)) {
             onSubmit(formValues);
         }

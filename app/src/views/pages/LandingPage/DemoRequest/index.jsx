@@ -60,4 +60,3 @@ const mapStateToProps = (state, ownProps) => ({
 export default (
 	compose(connect(mapStateToProps, {}), withTheme)(Page)
 );
-

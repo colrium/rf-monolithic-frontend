@@ -60,7 +60,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin
+							return !user?.isAdmin
 						}
 						return true;
 					},
@@ -81,7 +81,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin
+							return !user?.isAdmin
 						}
 						return true;
 					},
@@ -104,7 +104,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin
+							return !user?.isAdmin
 						}
 						return true;
 					},
@@ -125,7 +125,7 @@ export default {
 						maxDate: new Date().setFullYear(currentDate.getFullYear() + 1),
 						format: "DD/MM/YYYY",
 						margin: "dense",
-						/*InputProps: { 
+						/*InputProps: {
 							classes : {
 								root: "inverse",
 							}
@@ -138,7 +138,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return (user.role !== "admin");
+							return (user?.role !== "admin");
 						}
 						return true;
 					},
@@ -213,6 +213,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

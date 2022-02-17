@@ -294,6 +294,15 @@ export default function TableComponent(props) {
 		[headers]
 	);
 
+	const handleOnPageChange = useCallback(
+		(...args) => {
+			if (Function.isFunction(onPageChange)) {
+
+			}
+		},
+		[onPageChange]
+	)
+
 	return (
 		<Box sx={{ width: "100%" }}>
 			<JSONViewDialog
@@ -334,7 +343,8 @@ export default function TableComponent(props) {
 						aria-labelledby="tableTitle"
 						size={dense ? "small" : "medium"}
 						aria-label={title}
-						stickyHeader>
+						stickyHeader
+					>
 						<DataTableHead
 							headers={headers}
 							order={order}
@@ -347,7 +357,8 @@ export default function TableComponent(props) {
 								<TableRow>
 									<TableCell
 										className={"p-4 text-center"}
-										colSpan={headers?.length || 1}>
+										colSpan={headers?.length || 1}
+									>
 										<CircularProgress
 											size={24}
 											color="accent"
@@ -361,11 +372,13 @@ export default function TableComponent(props) {
 									<TableRow>
 										<TableCell
 											className={"p-4 text-center"}
-											colSpan={headers?.length || 1}>
+											colSpan={headers?.length || 1}
+										>
 											<Stack
 												className="p-0 m-0"
 												justify="center"
-												alignItems="center">
+												alignItems="center"
+											>
 												<img
 													alt="Empty list"
 													className={"h-32 w-32"}
@@ -376,7 +389,8 @@ export default function TableComponent(props) {
 												<Typography
 													className={"m-4 capitalize"}
 													variant="h3"
-													fullWidth>
+													fullWidth
+												>
 													Noting
 												</Typography>
 											</Stack>
@@ -386,14 +400,15 @@ export default function TableComponent(props) {
 							{Array.isArray(rows) &&
 								rows.length > 0 &&
 								rows.map((row, index) => {
-									var isItemSelected = isSelected(row);
+									var isItemSelected = isSelected(row)
 									return (
 										<Fragment
-											key={row[identifier] || index}>
+											key={row[identifier] || index}
+										>
 											<TableRow
 												hover={isSelectible(row)}
 												onClick={event => {
-													if (disableRowClick) return;
+													if (disableRowClick) return
 													if (collapsible) {
 														handleCollapseIconClick(
 															event,
@@ -403,13 +418,13 @@ export default function TableComponent(props) {
 																	identifier
 																] || undefined
 															]
-														);
+														)
 													}
 													if (handleRowClick) {
 														handleRowClick(
 															event,
 															row
-														);
+														)
 													}
 												}}
 												role="checkbox"
@@ -424,7 +439,8 @@ export default function TableComponent(props) {
 													cursor: isSelectible(row)
 														? "pointer"
 														: "auto",
-												}}>
+												}}
+											>
 												{headers.map(header => {
 													if (header.arrayAttribute) {
 														return (
@@ -447,12 +463,12 @@ export default function TableComponent(props) {
 																	formatContent
 																}
 															/>
-														);
+														)
 													}
 													return getCellDom(
 														header,
 														row
-													);
+													)
 												})}
 											</TableRow>
 											{collapsible && (
@@ -465,15 +481,15 @@ export default function TableComponent(props) {
 																	.light,
 																0.9
 															),
-													}}>
+													}}
+												>
 													<TableCell
 														style={{
 															paddingBottom: 0,
 															paddingTop: 0,
 														}}
-														colSpan={
-															headers.length
-														}>
+														colSpan={headers.length}
+													>
 														<Collapse
 															in={
 																openRows[
@@ -485,7 +501,8 @@ export default function TableComponent(props) {
 															}
 															timeout="auto"
 															mountOnEnter
-															unmountOnExit>
+															unmountOnExit
+														>
 															<Box margin={1}>
 																{collapseContent ? (
 																	collapseContent[
@@ -494,7 +511,8 @@ export default function TableComponent(props) {
 																) : (
 																	<Table
 																		size="small"
-																		aria-label="details">
+																		aria-label="details"
+																	>
 																		<TableHead>
 																			<TableRow>
 																				{collapseHeaders.map(
@@ -502,7 +520,8 @@ export default function TableComponent(props) {
 																						<TableCell
 																							key={getKey(
 																								head
-																							)}>
+																							)}
+																						>
 																							{
 																								head.label
 																							}
@@ -530,7 +549,7 @@ export default function TableComponent(props) {
 												</TableRow>
 											)}
 										</Fragment>
-									);
+									)
 								})}
 							{/* {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
@@ -547,7 +566,7 @@ export default function TableComponent(props) {
 						count={totalCount || 0}
 						rowsPerPage={rowsPerPage}
 						page={page}
-						onPageChange={onPageChange}
+						onPageChange={handleOnPageChange}
 						onRowsPerPageChange={onRowsPerPageChange}
 					/>
 				)}
@@ -562,7 +581,8 @@ export default function TableComponent(props) {
 									left: state.contextMenu.mouseX,
 							  }
 							: undefined
-					}>
+					}
+				>
 					<MenuItem onClick={handleCloseContextMenu}>Copy</MenuItem>
 					<MenuItem onClick={handleCloseContextMenu}>Print</MenuItem>
 					<MenuItem onClick={handleCloseContextMenu}>
@@ -581,7 +601,7 @@ export default function TableComponent(props) {
 				</Backdrop> */}
 			</Paper>
 		</Box>
-	);
+	)
 }
 
 TableComponent.defaultProps = {

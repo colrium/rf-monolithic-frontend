@@ -19,7 +19,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { withTheme } from '@mui/styles';
-import { withRouter, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import NavLink from "routes/NavLink";
 
 
@@ -158,7 +158,7 @@ function Header(props) {
 								<NavLink
 									to={"/home#products".toUriWithLandingPagePrefix()}
 									color="inherit"
-									activeStyle={{ 
+									activeStyle={{
 										color: theme.palette.primary.main,
 									}}
 								>
@@ -188,7 +188,7 @@ function Header(props) {
 							<ListItem button>
 								<ListItemText
 									primary={
-										<NavLink to={"/login"} color="inherit">
+										<NavLink to={"/auth/login"} color="inherit">
 											Login
 										</NavLink>
 									}
@@ -234,31 +234,35 @@ function Header(props) {
 	return (
 		<div id="back-to-top-anchor">
 			<Hidden smDown>
-
 				<ElevationScroll {...props}>
 					<AppBar
 						className={
-							trigger ? "shadow-xl blur-bg-sm  md:px-32 transition-all" : "shadow-none md:px-32 relative transition-all"
+							trigger
+								? "shadow-xl blur-bg-sm  md:px-32 transition-all"
+								: "shadow-none md:px-32 relative transition-all"
 						}
 						sx={{
 							// WebkitTransition: "all 200ms",
 							// transition: "all 200ms",
 							color: theme => theme.palette.text.secondary,
-							backgroundColor: theme => theme.palette.background.default
+							backgroundColor: theme =>
+								theme.palette.background.default,
 						}}
 					>
-						{app.settings.general["landing-page-routing"] === "pages" ? (
+						{app.settings.general["landing-page-routing"] ===
+						"pages" ? (
 							<Toolbar className={"p-0"}>
-
 								<NavLink
 									className="mx-2"
 									to={"/home".toUriWithLandingPagePrefix()}
 									color="inherit"
 								>
-									<Button className="justify-center p-0" >
+									<Button className="justify-center p-0">
 										{
 											<img
-												src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")}
+												src={
+													"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg"
+												}
 												className="h-10"
 												alt="logo"
 											/>
@@ -271,7 +275,9 @@ function Header(props) {
 									color="inherit"
 									className="mx-2"
 									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
+										borderBottom:
+											"2px solid " +
+											theme.palette.primary.main,
 									}}
 								>
 									<Button
@@ -286,7 +292,7 @@ function Header(props) {
 										to={"/products".toUriWithLandingPagePrefix()}
 										color="inherit"
 										className="mx-2"
-										activeStyle={{ 
+										activeStyle={{
 											borderBottom: "2px solid "+theme.palette.primary.main,
 										}}
 									>
@@ -303,7 +309,9 @@ function Header(props) {
 									color="inherit"
 									className="mx-2"
 									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
+										borderBottom:
+											"2px solid " +
+											theme.palette.primary.main,
 									}}
 								>
 									<Button
@@ -317,34 +325,51 @@ function Header(props) {
 
 								{(!auth.isAuthenticated ||
 									Object.size(auth.user) === 0) && (
+									<NavLink
+										to={"/auth/login"}
+										color="inherit"
+										activeStyle={{
+											borderBottom:
+												"2px solid " +
+												theme.palette.primary.main,
+										}}
+									>
 										<Button
-											href="/login"
-											edge="end"
-											color="accent"
+											color="inherit"
 											className=" capitalize"
 										>
 											Login
 										</Button>
-									)}
+									</NavLink>
+								)}
 								{auth.isAuthenticated &&
 									Object.size(auth.user) > 0 && (
-										<Button
-											href={"/home".toUriWithDashboardPrefix()}
-											edge="end"
-											color="accent"
-											className=" capitalize"
+										<NavLink
+											to={"/home".toUriWithDashboardPrefix()}
+											color="inherit"
+											activeStyle={{
+												borderBottom:
+													"2px solid " +
+													theme.palette.primary.main,
+											}}
 										>
-											Dashboard
-										</Button>
+											<Button
+												edge="end"
+												color="accent"
+												className=" capitalize"
+											>
+												Dashboard
+											</Button>
+										</NavLink>
 									)}
-
 
 								<NavLink
 									to={"/jobs".toUriWithLandingPagePrefix()}
 									color="inherit"
-
 									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
+										borderBottom:
+											"2px solid " +
+											theme.palette.primary.main,
 									}}
 								>
 									<Fab
@@ -382,7 +407,9 @@ function Header(props) {
 									<Button className="px-0">
 										{
 											<img
-												src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")}
+												src={
+													"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg"
+												}
 												className="h-8"
 												alt="logo"
 											/>
@@ -396,9 +423,10 @@ function Header(props) {
 									color="inherit"
 									className="mr-4"
 									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
+										borderBottom:
+											"2px solid " +
+											theme.palette.primary.main,
 									}}
-
 								>
 									<Button
 										edge="end"
@@ -412,7 +440,7 @@ function Header(props) {
 										to={"/home#products".toUriWithLandingPagePrefix()}
 										color="inherit"
 										className="mr-4"
-										activeStyle={{ 
+										activeStyle={{
 											borderBottom: "2px solid "+theme.palette.primary.main,
 										}}
 									>
@@ -429,7 +457,9 @@ function Header(props) {
 									color="inherit"
 									className="mr-4"
 									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
+										borderBottom:
+											"2px solid " +
+											theme.palette.primary.main,
 										color: `${theme.palette.primary.main} !important`,
 									}}
 								>
@@ -445,37 +475,52 @@ function Header(props) {
 
 								{(!auth.isAuthenticated ||
 									Object.size(auth.user) === 0) && (
+									<NavLink
+										to={"/auth/login"}
+										color="inherit"
+										activeStyle={{
+											borderBottom:
+												"2px solid " +
+												theme.palette.primary.main,
+										}}
+									>
 										<Button
-											href="/login"
-											edge="end"
 											color="inherit"
 											className=" capitalize"
-											sx={{
-												color: (theme) => (`${theme.palette.accent.main}`)
-											}}
 										>
 											Login
 										</Button>
-									)}
+									</NavLink>
+								)}
 								{auth.isAuthenticated &&
 									Object.size(auth.user) > 0 && (
-										<Button
-											href={"/home".toUriWithDashboardPrefix()}
-											edge="end"
-											className="capitalize"
-											color={"accent"}
+										<NavLink
+											to={"/home".toUriWithDashboardPrefix()}
+											color="inherit"
+											activeStyle={{
+												borderBottom:
+													"2px solid " +
+													theme.palette.primary.main,
+											}}
 										>
-											Dashboard
-										</Button>
+											<Button
+												edge="end"
+												className="capitalize"
+												color={"accent"}
+											>
+												Dashboard
+											</Button>
+										</NavLink>
 									)}
-
 
 								<NavLink
 									to={"/jobs".toUriWithLandingPagePrefix()}
 									color="inherit"
-									activeStyle={{
-										//borderBottom: "2px solid "+theme.palette.primary.main,
-									}}
+									activeStyle={
+										{
+											//borderBottom: "2px solid "+theme.palette.primary.main,
+										}
+									}
 								>
 									<Fab
 										color="primary"
@@ -504,7 +549,6 @@ function Header(props) {
 						)}
 					</AppBar>
 				</ElevationScroll>
-
 			</Hidden>
 
 			<Hidden mdUp>
@@ -528,7 +572,9 @@ function Header(props) {
 								<Button color="inherit">
 									{
 										<img
-											src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")}
+											src={
+												"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg"
+											}
 											className="h-6"
 											alt="logo"
 										/>
@@ -561,7 +607,7 @@ function Header(props) {
 				</SwipeableDrawer>
 			</Hidden>
 		</div>
-	);
+	)
 }
 
 const mapStateToProps = state => ({
@@ -570,4 +616,4 @@ const mapStateToProps = state => ({
 	app: state.app,
 });
 
-export default compose(connect(mapStateToProps, {}), withTheme, withRouter)(Header);
+export default compose(connect(mapStateToProps, {}), withTheme)(Header);

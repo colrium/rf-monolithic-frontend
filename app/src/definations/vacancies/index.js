@@ -74,7 +74,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -94,7 +94,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -142,7 +142,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -164,7 +164,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -185,7 +185,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -238,7 +238,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -258,7 +258,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -278,7 +278,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -298,7 +298,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -380,6 +380,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

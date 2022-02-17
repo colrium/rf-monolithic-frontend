@@ -67,7 +67,7 @@ export default {
 							return values.context !== "order";
 						}
 						if (user) {
-							return !user.isAdmin;
+							return !user?.isAdmin;
 						}
 						return true;
 					},
@@ -83,7 +83,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -91,7 +91,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -137,7 +137,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -145,7 +145,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -284,6 +284,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

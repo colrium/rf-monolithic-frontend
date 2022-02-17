@@ -1,11 +1,10 @@
 /** @format */
 
 import React from "react";
-import { withRouter } from "react-router-dom";
 import SwitchProgress from "./SwitchProgress";
 
-const Switch = withRouter(props => {
+const Switch = props => {
 	return <SwitchProgress>{props.children}</SwitchProgress>;
-});
+};
 
 export default Switch;

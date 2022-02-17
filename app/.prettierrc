@@ -5,11 +5,12 @@
     "bracketSpacing": true,
 	"arrowParens": "avoid",
     "semi": false,
-    "proseWrap": "preserve",
+    "proseWrap": "never",
     "insertPragma": true,
     "trailingComma": "es5",
     "bracketSameLine": false,
     "endOfLine": "lf",
     "quoteProps": "as-needed",
-    "jsxBracketSameLine": false
+    "jsxBracketSameLine": false,
+	"printWidth": 140
 }

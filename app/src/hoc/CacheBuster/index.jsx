@@ -27,8 +27,8 @@ class CacheBuster extends React.Component {
 			loading: true,
 			isLatestVersion: false,
 			latestVersion: app.version,
-			refreshCacheAndReload: () => {			
-				
+			refreshCacheAndReload: () => {
+
 				try {
 					if (Function.isFunction(localStorage?.clear)) {
 						localStorage.clear();
@@ -46,7 +46,7 @@ class CacheBuster extends React.Component {
 				} catch (e) {
 					console.error("Error clearing cached data: ", e);
 				}
-				
+
 			}
 		};
 	}
@@ -63,7 +63,7 @@ class CacheBuster extends React.Component {
 					return data;
 				}).catch(err => {
 					return {version: "0.0.0"};
-				});			
+				});
 				return responseJSON;
 			})
 			.then((meta) => {
@@ -73,7 +73,7 @@ class CacheBuster extends React.Component {
 				if (currentVersion === "0.0.0") {
 					setVersion(latestVersion);
                     this.setState({ loading: false, isLatestVersion: false, latestVersion: latestVersion });
-                    
+
                     // setInitialized(true);
                 }
 				else {
@@ -87,7 +87,7 @@ class CacheBuster extends React.Component {
                         // setInitialized(true);
                     }
 				}
-					
+
 			}).catch(e => {
             this.setState({ loading: false, isLatestVersion: true });
         });
@@ -99,7 +99,7 @@ class CacheBuster extends React.Component {
 }
 
 
-const mapStateToProps = state => ({		
+const mapStateToProps = state => ({
 	app: state.app,
 	auth: state.auth,
 });

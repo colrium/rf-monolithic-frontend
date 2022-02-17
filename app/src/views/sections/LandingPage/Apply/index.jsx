@@ -41,7 +41,7 @@ const SectionComponent = (props) => {
 									interest in becoming a Real Fielder. All
 									applications will be reviewed and you will be
 									contacted by our Team with further details.
-									Thanks! We look forward to working with you!! If you have any questions feel free to contact jobs at <a href="mailto:jobs@realfield.io" className="underline">jobs@realfield.io</a>. 
+									Thanks! We look forward to working with you!! If you have any questions feel free to contact jobs at <a href="mailto:jobs@realfield.io" className="underline">jobs@realfield.io</a>.
 								</Typography>*/}
 
 							<Typography variant="subtitle2">

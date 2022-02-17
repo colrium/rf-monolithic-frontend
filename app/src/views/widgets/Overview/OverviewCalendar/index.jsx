@@ -29,12 +29,12 @@ class OverviewCalendar extends React.Component {
 			<GridContainer className="p-0 m-0">
 				<Calendar
 					title={
-						auth.user.role === "admin"
+						auth.user?.role === "admin"
 							? "Schedules, Tasks & Events"
 							: "My Calendar"
 					}
 					subtitle={
-						auth.user.role === "admin" ? "Calendar" : "Events"
+						auth.user?.role === "admin" ? "Calendar" : "Events"
 					}
 				/>
 			</GridContainer>

@@ -1,110 +1,158 @@
-import { useCallback, useMemo, useRef, forwardRef } from "react";
-import { useForm, Controller } from "react-hook-form";
-import Alert from '@mui/material/Alert';
+import { useCallback, useMemo, useRef, forwardRef, useEffect } from "react";
+import { useForm as useReactHookForm, Controller } from "react-hook-form";
+import Typography from "@mui/material/Typography"
+import Alert from "@mui/material/Alert"
 import { useSelector, useDispatch } from 'react-redux';
 import { useLatest } from 'react-use';
-import { addForm, setForm, removeForm } from "state/actions";
+import { setForm, removeForm } from "state/actions";
 import ErrorMessage from "./ErrorMessage";
 import Field from "./Field";
 import TextField from "./TextField";
 import FilePicker from "./FilePicker"
 import RadioGroup from "./RadioGroup";
+import Checkbox from "./Checkbox";
 import Select from "./Select";
 import Autocomplete from "./Autocomplete";
 import { useDidMount, useDidUpdate, useWillUnmount } from "hooks";
 import { EventRegister } from "utils";
 
 const DEFAULT_CONFIG = {
-    name: "default",
-    mode: 'all',
-    reValidateMode: 'onChange',
-    resolver: undefined,
-    context: undefined,
-    criteriaMode: "firstError",
-    shouldFocusError: true,
-    shouldUnregister: false,
-    shouldUseNativeValidation: false,
-    delayError: undefined,
-    initialValues: {},
-    onSubmit: values => { },
-    watch: true,
-    exclude: [],
-    include: [],
+	name: "default",
+	mode: "all",
+	reValidateMode: "onChange",
+	resolver: undefined,
+	context: undefined,
+	criteriaMode: "firstError",
+	shouldFocusError: true,
+	shouldUnregister: false,
+	shouldUseNativeValidation: false,
+	delayError: undefined,
+	defaultValues: {},
+	watch: true,
+	volatile: false,
+	exclude: [],
+	include: [],
 }
 
 
 
 
 
-const usePersistentForm = (config = DEFAULT_CONFIG) => {
+const useForm = (config = DEFAULT_CONFIG) => {
     const {
-        name,
-        mode,
-        reValidateMode,
-        criteriaMode,
-        resolver,
-        context,
-        shouldFocusError,
-        shouldUnregister,
-        shouldUseNativeValidation,
-        delayError,
-        defaultValues,
-        onSubmit,
-        watch: watchFields,
-        exclude,
-        validate,
-        persistOnChange,
-        ...options
-    } = { ...DEFAULT_CONFIG, ...config };
+		name,
+		mode,
+		reValidateMode,
+		criteriaMode,
+		resolver,
+		context,
+		shouldFocusError,
+		shouldUnregister,
+		shouldUseNativeValidation,
+		delayError,
+		defaultValues,
+		onSubmit,
+		onSubmitError,
+		watch: watchFields,
+		exclude,
+		validate,
+		volatile,
+		persistOnChange,
+		...options
+	} = { ...DEFAULT_CONFIG, ...config }
 	const dispatch = useDispatch()
     const { forms } = useSelector(storeState => ({ ...storeState, forms: (storeState?.forms || {}) }));
-    const stateValues = useMemo(() => (JSON.isJSON(forms[name]) ? forms[name] : {}), [forms]);
+    const persistedValues = useMemo(() => forms[name]?.values , [forms])
 
-    const stateValuesRef = useLatest(stateValues)
+    const persistedValuesRef = useLatest(persistedValues)
     const subscriptionRef = useLatest(null)
 
-    const { control, handleSubmit, watch, setValue, getValues, trigger, formState, ...rest } = useForm({
-        mode: "onChange",
-        reValidateMode: "onChange",
-        defaultValues: stateValues || defaultValues || initialValues || {},
-        resolver: resolver,
-        context: context,
-        criteriaMode: criteriaMode,
-        shouldFocusError: shouldFocusError,
-        shouldUnregister: shouldUnregister,
-        shouldUseNativeValidation: shouldUseNativeValidation,
-        delayError: delayError,
-        // shouldUseNativeValidation: true,
-        ...options
-    });
+    const {
+		control,
+		handleSubmit,
+		watch,
+		setValue,
+		getValues,
+		trigger,
+		reset,
+		resetField,
+		formState,
+		...rest
+	} = useReactHookForm({
+		mode: mode || "onSubmit",
+		reValidateMode: reValidateMode || "onChange",
+		defaultValues: persistedValues || defaultValues || {},
+		resolver: resolver,
+		context: context,
+		criteriaMode: criteriaMode,
+		shouldFocusError: shouldFocusError,
+		shouldUnregister: shouldUnregister,
+		shouldUseNativeValidation: shouldUseNativeValidation,
+		delayError: delayError,
+		// shouldUseNativeValidation: true,
+		...options,
+	})
 
     const { errors } = formState;
 
+	const persistFormValues = useCallback(
+		async form_data => {
+			const persist_values = JSON.merge(getValues(), {...form_data});
+			if (!volatile) {
+				dispatch(
+					setForm(name, {
+						values: persist_values,
+						persist_timestamp: new Date(),
+					})
+				)
+			}
+		},
+		[volatile, name]
+	)
+
+
     const initializeForm = useCallback(() => {
-        if (!forms[name]) {
-            EventRegister.emit('form-changed', { name, ...getValues() });
-        }
+        if (!forms[name] && !volatile) {
+			EventRegister.emit("form-changed", { name, values: getValues() })
+		}
     }, []);
 
-	const persistFormValues = async form_data => {
-		let persist_values = { ...form_data, persist_timestamp: new Date() }
-		dispatch(setForm(persist_values))
-	}
-
-    const validateForm = useCallback(Function.debounce(async (changes) => {
-        let { change } = changes;
-        trigger(change?.field);
-    }, 550), [])
 
 
-    const handleOnWatchedValue = useCallback((data, { name: fieldName }) => {
-        let prevFieldValue = JSON.getDeepPropertyValue(fieldName, stateValuesRef.current);
-        let newFieldValue = JSON.getDeepPropertyValue(fieldName, data);
-        let nextStateValue = JSON.setDeepPropertyValue(fieldName, newFieldValue, stateValuesRef.current);
-        nextStateValue.name = name;
-        stateValuesRef.current = nextStateValue;
-		persistFormValues(nextStateValue)
-        EventRegister.emit('form-changed', { form: nextStateValue, change: { field: fieldName, prevValue: prevFieldValue } });
+
+    const validateForm = useCallback(
+		Function.debounce(async (validationData, triggerMode = "change") => {
+			if (
+				triggerMode === "change" &&
+				(mode === "onChange" || reValidateMode === "onChange")
+			) {
+				let { change } = validationData || {}
+				trigger(change?.field)
+			}
+		}, 550),
+		[mode, reValidateMode]
+	)
+
+
+    const handleOnWatchedValue = useCallback((data, { name: fieldName, values, type }) => {
+			let prevFieldValue = JSON.getDeepPropertyValue(
+				fieldName,
+				persistedValuesRef.current
+			)
+			let newFieldValue = JSON.getDeepPropertyValue(fieldName, data)
+			let nextStateValue = JSON.setDeepPropertyValue(
+				fieldName,
+				newFieldValue,
+				persistedValuesRef.current
+			)
+			persistedValuesRef.current = nextStateValue
+			EventRegister.emit("form-changed", {
+				name: name,
+				values: nextStateValue,
+				change: { field: fieldName, prevValue: prevFieldValue },
+				type: type
+			})
+
     }, []);
 
 
@@ -112,22 +160,55 @@ const usePersistentForm = (config = DEFAULT_CONFIG) => {
 
     useDidMount(() => {
         initializeForm()
-		const subscription = watch(handleOnWatchedValue)
-		const formChange = EventRegister.on("form-changed", validateForm)
-		return () => {
-			subscription.unsubscribe()
-			EventRegister.off(formChange)
-		}
+
+			const subscription = watch(handleOnWatchedValue)
+			const formChange = EventRegister.on("form-changed", ({detail:formData}) => {
+				validateForm(formData, formData.type)
+				persistFormValues(formData.values)
+			})
+			return () => {
+				subscription.unsubscribe()
+				formChange.remove()
+			}
+
     });
 
 	useWillUnmount(() => {
-		persistFormValues()
+		persistFormValues(getValues())
 	})
 
 
-    const handleOnSubmit = useCallback(() => {
-        handleSubmit(onSubmit(stateValuesRef.current))
-    }, [])
+    const resetValues = useCallback(() => {
+		reset(
+			{ ...defaultValues },
+			{
+				keepErrors: false,
+				keepDirty: false,
+				keepIsSubmitted: false,
+				keepTouched: false,
+				keepIsValid: true,
+				keepSubmitCount: false,
+			}
+		)
+		// persistFormValues({ ...defaultValues })
+	}, [])
+
+	const submitForm = useCallback(
+		(e = undefined) => {
+			if (Function.isFunction(e?.preventDefault)) {
+				e.preventDefault()
+			}
+			const onSubmitHandler = Function.isFunction(onSubmit)
+				? onSubmit
+				: (vals, e) => console.warn("onSubmit ", vals, e)
+			const onSubmitErrorHandler = Function.isFunction(onSubmitError)
+				? onSubmitError
+				: (vals, e) => console.error("onSubmitError ", vals, e)
+
+			handleSubmit(onSubmitHandler, onSubmitErrorHandler)()
+		},
+		[onSubmit, onSubmitError]
+	)
 
     const ControlField = useCallback(forwardRef((params, ref) => {
         return (
@@ -151,14 +232,8 @@ const usePersistentForm = (config = DEFAULT_CONFIG) => {
     }), [errors])
 
     const ControlTextField = useCallback(forwardRef((params, ref) => {
-        return (
-            <TextField
-                control={control}
-                ref={ref}
-                {...params}
-            />
-        )
-    }), [control])
+        return <TextField control={control} {...params} ref={ref} />
+    }), [control, errors])
 
     const ControlRadioGroup = useCallback(forwardRef((params, ref) => {
         return (
@@ -180,6 +255,13 @@ const usePersistentForm = (config = DEFAULT_CONFIG) => {
         )
     }), [control])
 
+	const ControlCheckbox = useCallback(
+		forwardRef((params, ref) => {
+			return <Checkbox control={control} ref={ref} {...params} />
+		}),
+		[control]
+	)
+
     const ControlAutocomplete = useCallback(forwardRef((params, ref) => {
         return (
             <Autocomplete
@@ -200,18 +282,30 @@ const usePersistentForm = (config = DEFAULT_CONFIG) => {
 
 
     return {
-        submit: handleOnSubmit,
-        ErrorMessage: ErrorMessageComponent,
-        Field: ControlField,
-        TextField: ControlTextField,
-        RadioGroup: ControlRadioGroup,
-        Select: ControlSelect,
-        Autocomplete: ControlAutocomplete,
+		submit: submitForm,
+		ErrorMessage: ErrorMessageComponent,
+		Field: ControlField,
+		TextField: ControlTextField,
+		RadioGroup: ControlRadioGroup,
+		Select: ControlSelect,
+		Autocomplete: ControlAutocomplete,
 		FilePicker: ControlFilePicker,
-        Controller,
-        values: stateValues,
-        control, handleSubmit, watch, setValue, getValues, trigger, formState, ...rest
-    };
+		Checkbox: ControlCheckbox,
+		Controller,
+		values: getValues(),
+		persistedValues,
+		resetValues,
+		reset,
+		control,
+		handleSubmit,
+		watch,
+		setValue,
+		getValues,
+		trigger,
+		formState,
+		resetField,
+		...rest,
+	}
 }
 
-export default usePersistentForm;
+export default useForm;

@@ -202,6 +202,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

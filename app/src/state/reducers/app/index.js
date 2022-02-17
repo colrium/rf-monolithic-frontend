@@ -177,7 +177,7 @@ const initialState={
 				"icon": "map-outline",
 				"color": "#040087",
 				"contexts": ["commissions", "responses", "tracks", "surveys"],
-				"context": "tracks", 
+				"context": "tracks",
 				"type": "static", //or dynamic
 				"width": "12", //1 to 12
 				"defaultCenter": false, // Or {latitude: 0, longitude: 0}
@@ -190,7 +190,7 @@ const initialState={
 				"icon": "chart-arc",
 				"color": "#040087",
 				"contexts": [],
-				"context": "commissions", 
+				"context": "commissions",
 				"type": "static", //or dynamic
 				"width": "6", //1 to 12
 				"defaultView": "pie", // Or bar
@@ -213,13 +213,13 @@ const initialState={
 				"color": "#bf7300",
 				"position": "3",
 				"contexts": [],
-				"context": "events", 
+				"context": "events",
 				"width": "12", //1 to 12
 				"defaultView": "calendar", // Or list or table or map
 			},
 		}*/
 
-	},//user settings	
+	},//user settings
 };
 
 

@@ -30,7 +30,7 @@ export const items = [
 				text: "Calendar",
 				route: "/calendar".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !(user.isAdmin || user.isCollector);
+					return !(user?.isAdmin || user?.isCollector);
 				},
 			},
 		],
@@ -45,7 +45,7 @@ export const items = [
 				text: definations.surveys.label,
 				route: "/surveys".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !(user.isAdmin || user.isCustomer);
+					return !(user?.isAdmin || user?.isCustomer);
 				},
 			},
 			{
@@ -53,7 +53,7 @@ export const items = [
 				text: definations.queries.label,
 				route: "/queries".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !(user.isAdmin || user.isCustomer);
+					return !(user?.isAdmin || user?.isCustomer);
 				},
 			},
 			{
@@ -67,7 +67,7 @@ export const items = [
 		text: "Training",
 		section: true,
 		restricted: user => {
-			return !user.isAdmin;
+			return !user?.isAdmin;
 		},
 		links: [
 			{
@@ -103,8 +103,8 @@ export const items = [
 		text: definations.commissions.label,
 		section: true,
 		restricted: user => {
-			//return !(user.isAdmin || user.isCollector);
-			return !(user.isAdmin || user.isCollector || user.isCustomer);
+			//return !(user?.isAdmin || user?.isCollector);
+			return !(user?.isAdmin || user?.isCollector || user?.isCustomer);
 		},
 		links: [
 			{
@@ -112,7 +112,7 @@ export const items = [
 				text: definations.commissions.label,
 				route: "/commissions".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !(user.isAdmin || user.isCollector || user.isCustomer);
+					return !(user?.isAdmin || user?.isCollector || user?.isCustomer);
 				},
 			},
 			{
@@ -120,7 +120,7 @@ export const items = [
 				text: definations.teams.label,
 				route: "/teams".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !(user.isAdmin || user.isCollector);
+					return !(user?.isAdmin || user?.isCollector);
 				},
 			},
 			{
@@ -135,7 +135,7 @@ export const items = [
 		text: "Financial",
 		section: true,
 		restricted: user => {
-			return !(user.isAdmin || user.isCustomer);
+			return !(user?.isAdmin || user?.isCustomer);
 		},
 		links: [
 			{
@@ -143,7 +143,7 @@ export const items = [
 				text: definations.invoices.label,
 				route: "/invoices".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !(user.isAdmin || user.isCustomer);
+					return !(user?.isAdmin || user?.isCustomer);
 				},
 			},
 			{
@@ -151,7 +151,7 @@ export const items = [
 				text: definations.payments.label,
 				route: "/payments".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !(user.isAdmin || user.isCustomer);
+					return !(user?.isAdmin || user?.isCustomer);
 				},
 			},
 		],
@@ -161,7 +161,7 @@ export const items = [
 		text: "Orders",
 		section: true,
 		restricted: user => {
-			return !user.isCustomer;
+			return !user?.isCustomer;
 		},
 		links: [
 			{
@@ -169,7 +169,7 @@ export const items = [
 				text: "My " + definations.orders.label,
 				route: "/orders".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isCustomer;
+					return !user?.isCustomer;
 				},
 			},
 
@@ -178,7 +178,7 @@ export const items = [
 				text: "Order " + definations.fulfilments.label,
 				route: "/fulfilments".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isCustomer;
+					return !user?.isCustomer;
 				},
 			},
 
@@ -187,7 +187,7 @@ export const items = [
 				text: "My " + definations.coupons.label,
 				route: "/coupons".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isCustomer;
+					return !user?.isCustomer;
 				},
 			},
 		],
@@ -196,7 +196,7 @@ export const items = [
 		text: "Retail",
 		section: true,
 		restricted: user => {
-			return !user.isAdmin;
+			return !user?.isAdmin;
 		},
 		links: [
 			{
@@ -204,7 +204,7 @@ export const items = [
 				text: definations.retailitems.label,
 				route: "/retailitems".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isAdmin;
+					return !user?.isAdmin;
 				},
 			},
 
@@ -213,7 +213,7 @@ export const items = [
 				text: definations.orders.label,
 				route: "/orders".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isAdmin;
+					return !user?.isAdmin;
 				},
 			},
 
@@ -222,7 +222,7 @@ export const items = [
 				text: "Order " + definations.fulfilments.label,
 				route: "/fulfilments".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isAdmin;
+					return !user?.isAdmin;
 				},
 			},
 
@@ -231,7 +231,7 @@ export const items = [
 				text: definations.demorequests.label,
 				route: "/demorequests".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isAdmin;
+					return !user?.isAdmin;
 				},
 			},
 
@@ -240,7 +240,7 @@ export const items = [
 				text: definations.quoterequests.label,
 				route: "/quoterequests".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isAdmin;
+					return !user?.isAdmin;
 				},
 			},
 
@@ -249,7 +249,7 @@ export const items = [
 				text: definations.coupons.label,
 				route: "/coupons".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isAdmin;
+					return !user?.isAdmin;
 				},
 			},
 
@@ -258,7 +258,7 @@ export const items = [
 				text: definations.currencies.label,
 				route: "/currencies".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isAdmin;
+					return !user?.isAdmin;
 				},
 			},
 		],
@@ -268,7 +268,7 @@ export const items = [
 		text: "Recruitment",
 		section: true,
 		restricted: user => {
-			return !user.isAdmin;
+			return !user?.isAdmin;
 		},
 		links: [
 			{
@@ -299,7 +299,7 @@ export const items = [
 				text: definations.posts.label,
 				route: "/posts".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isAdmin;
+					return !user?.isAdmin;
 				},
 			},
 			{
@@ -307,7 +307,7 @@ export const items = [
 				text: definations.actionlogs.label,
 				route: "/actionlogs".toUriWithDashboardPrefix(),
 				restricted: user => {
-					return !user.isAdmin;
+					return !user?.isAdmin;
 				},
 			},
 		],
@@ -335,7 +335,7 @@ export const items = [
 		text: "Administration",
 		section: true,
 		restricted: user => {
-			return !user.isAdmin;
+			return !user?.isAdmin;
 		},
 		links: [
 			{

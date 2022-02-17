@@ -28,29 +28,29 @@ function sanitizeUser(user) {
 			delete parsedUser.__v;
 			delete parsedUser.last_login_attempt;
 
-			
-			const isOwner = Array.isArray(user.role)
-				? user.role.includes("owner")
-				: user.role == "owner";
-			const isDebugger = Array.isArray(user.role)
-				? user.role.includes("debugger")
-				: user.role == "debugger";
-			const isSuperAdmin = Array.isArray(user.role)
-				? user.role.includes("superadmin")
-				: user.role == "superadmin";
+
+			const isOwner = Array.isArray(user?.role)
+				? user?.role.includes("owner")
+				: user?.role == "owner";
+			const isDebugger = Array.isArray(user?.role)
+				? user?.role.includes("debugger")
+				: user?.role == "debugger";
+			const isSuperAdmin = Array.isArray(user?.role)
+				? user?.role.includes("superadmin")
+				: user?.role == "superadmin";
 			const isAdmin =
 				isOwner ||
 				isDebugger ||
 				isSuperAdmin ||
-				(Array.isArray(user.role)
-					? user.role.includes("admin")
-					: user.role == "admin");
-			const isCustomer = Array.isArray(user.role)
-				? user.role.includes("customer")
-				: user.role == "customer";
-			const isCollector = Array.isArray(user.role)
-				? user.role.includes("collector")
-				: user.role == "collector";
+				(Array.isArray(user?.role)
+					? user?.role.includes("admin")
+					: user?.role == "admin");
+			const isCustomer = Array.isArray(user?.role)
+				? user?.role.includes("customer")
+				: user?.role == "customer";
+			const isCollector = Array.isArray(user?.role)
+				? user?.role.includes("collector")
+				: user?.role == "collector";
 
 			if (isOwner) {
 				parsedUser.isOwner = isOwner;

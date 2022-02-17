@@ -87,20 +87,20 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 				header.data.forEach((item, index) => {
 					const value = JSON.getDeepPropertyValue(item.attribute, data) || "";
 					content = content.replace( `{{${index}}}`, formatContent(item, value) );
-					
-						
+
+
 				});
 			} else {
 				content = "";
 				header.data.forEach((item, index) => {
 					const value = JSON.getDeepPropertyValue(item.attribute, data) || "";
-					
+
 						content += formatContent(item, value);
 						if (index !== header.data.length - 1) {
 							content += ", ";
 						}
-					
-						
+
+
 				});
 			}
 
@@ -110,7 +110,7 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 		if (header.html) {
 			content = header.html;
 			return content.replace(`{{0}}`, JSON.getDeepPropertyValue(header.attribute, data));
-			
+
 		}
 		else if (header.object || !!header.reference) {
 			return Function.isFunction(header?.resolveReferenceText) ? header.resolveReferenceText(JSON.getDeepPropertyValue(header.attribute, data), header) : JSON.getDeepPropertyValue(header.attribute, data);
@@ -123,7 +123,7 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 		return content;
 	}, [key, data, header]);
 
-	
+
 	const headerClassName = useMemo(() => {
 		if (header && Function.isFunction(header.className)) {
 			return header.className(data, header);
@@ -133,7 +133,7 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 		}
 		return "";
 	}, [header, data])
-	
+
 
 
 	if (header.collapse) {
@@ -162,7 +162,7 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 					</Tooltip>
 				</TableCell>
 			);
-		} 
+		}
 		else if (header.boolean) {
 			return (
 				<TableCell
@@ -177,7 +177,7 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 					/> */}
 				</TableCell>
 			);
-		} 
+		}
 		else if (header.checkbox) {
 			return (
 				<TableCell
@@ -192,7 +192,7 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 					/>
 				</TableCell>
 			);
-		} 
+		}
 		else if (header.component) {
 			return (
 				<TableCell
@@ -231,7 +231,7 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 				/>
 			);
 		}
-		else if (header.actions) {			
+		else if (header.actions) {
 			return (
 				<TableCell
 					key={key}
@@ -247,7 +247,7 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 					{header.actions.map(({id, icon, Icon, Component, hideCondition, linkProps, disableCondition, onClick, uri, color, tooltip, label, ...action}, actionIndex) => (!hideCondition || (Function.isFunction(hideCondition) &&
 						!hideCondition(data))) && (
 							<span key={`${actionIndex}`}>
-								{!!Component && <Component 
+								{!!Component && <Component
 									style={{
 												color:
 													disableCondition &&
@@ -255,14 +255,14 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 														? grey[400]
 														: color || "currentColor",
 											}}
-									size={"small"} 
-									{...action} 
+									size={"small"}
+									{...action}
 									data={data} />}
 								{!Component && (!!Icon || !!icon) && <Tooltip key={id} title={tooltip || label}>
 								<span>
 								{!!uri && <Link to={Function.isFunction(uri)? uri(data) : uri} {...linkProps}>
 										<IconButton
-											aria-label={id}																						
+											aria-label={id}
 											style={{
 												color:
 													(disableCondition &&
@@ -284,8 +284,8 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 								</Link>}
 								{!uri && <IconButton
 											aria-label={id}
-											onClick={event => {	
-												event.stopPropagation()										
+											onClick={event => {
+												event.stopPropagation()
 												if (Function.isFunction(onClick)){
 													onClick(event, data)
 												}
@@ -305,9 +305,9 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 											{!!Icon? <Icon fontSize={"inherit"} /> : icon}
 										</IconButton>}
 									</span>
-								
+
 								</Tooltip>}
-								
+
 							</span>
 						)
 					)}
@@ -321,48 +321,48 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 					key={key}
 					className={`relative ${headerClassName}`}
 					align={header.numeric ? "right" : "left"}
-					
+
 					sx={{
 						width: header.width || "auto",
 						minWidth: header.minWidth || "auto",
 						maxWidth: header.maxWidth || "auto",
-						'& .cell-actions-box': { 
-							visibility: 'hidden', 
-							opacity: 0, 
+						'& .cell-actions-box': {
+							visibility: 'hidden',
+							opacity: 0,
 						},
-						'&:hover .cell-actions-box': { 
+						'&:hover .cell-actions-box': {
 							visibility: 'visible',
-							opacity: 1,  							
+							opacity: 1,
 						},
 					}}
 					ref={ref}
 				>
-					
+
 					<Box className="relative" onClick={onClick}>
 						{(JSON.isJSON(content) || Array.isArray(content)) && !React.isValidElement(content)? <JSONView src={content} view="decorated" showTabs={false} collapsed/> : content}
-						<Box 
+						<Box
 							className="absolute flex items-center justify-center transition-all cell-actions-box "
 							sx={{
-								top: "auto", 
+								top: "auto",
 								right: 0,
 								bottom: 0,
 								backgroundColor: "transparent"
 							}}
 						>
-							
-							{!disableCopyToClipboard && !!content && !React.isValidElement(content) && <CopyToClipboardButton 
+
+							{!disableCopyToClipboard && !!content && !React.isValidElement(content) && <CopyToClipboardButton
 								sx={{
 									backgroundColor: theme => theme.palette.background.paper,
-									'&:hover': { 
+									'&:hover': {
 										color: theme => theme.palette.background.paper,
-										backgroundColor: theme => theme.palette.accent.main,  							
+										backgroundColor: theme => theme.palette.accent.main,
 									},
-								}} 
-								color="accent" 
-								size="small" 
-								fontSize="inherit" 
-								className="copy-cell-value text-xs mx-1" 
-								value={!Function.isFunction(header?.resolveReferenceText) && (JSON.isJSON(content) || Array.isArray(content))? JSON.stringify(content, null, 4) : `${truncateSize > 0 && String.isString(data[header.attribute]) && data[header.attribute].length > truncateSize? data[header.attribute] : content}`} 
+								}}
+								color="accent"
+								size="small"
+								fontSize="inherit"
+								className="copy-cell-value text-xs mx-1"
+								value={!Function.isFunction(header?.resolveReferenceText) && (JSON.isJSON(content) || Array.isArray(content))? JSON.stringify(content, null, 4) : `${truncateSize > 0 && String.isString(data[header.attribute]) && data[header.attribute].length > truncateSize? data[header.attribute] : content}`}
 
 							/>}
 						</Box>
@@ -370,8 +370,8 @@ export const DataTableCell = React.forwardRef((props, ref) => {
 				</TableCell>
 			);
 		}
-		
-			
+
+
 });
 
 export default DataTableCell;

@@ -88,9 +88,9 @@ const GooglePlacesAutocomplete = (props) => {
 	});
 
 	const handleInput = (e) => {
-		// Update the keyword of the input element		
+		// Update the keyword of the input element
 		// let newValue = e?.target?.value ? e.target.value : "";
-		// 
+		//
 		if (e) {
 			setKeyword(e.target.value);
 		}
@@ -98,11 +98,11 @@ const GooglePlacesAutocomplete = (props) => {
 	};
 
 	const handleOnSelect = useCallback((option, event) => {
-		
+
 		selectSuggestion(option);
 	}, []);
 
-	
+
 
 	return (
 		<AutoComplete
@@ -171,7 +171,7 @@ const GooglePlacesAutocomplete = (props) => {
 				let main_text = option.structured_formatting?.main_text || option.label || option.description || "";
 				let secondary_text = option.structured_formatting?.secondary_text || "";;
 
-				
+
 
 				return (
 					<Grid container alignItems="center">

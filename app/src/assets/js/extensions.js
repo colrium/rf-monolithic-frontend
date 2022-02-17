@@ -1555,3 +1555,16 @@ Date.prose = function (input = null, showTime=true, ) {
 
 	return dateProse
 }
+
+
+Event.isEvent = (a) => {
+	let txt,
+		es = false
+	txt = Object.prototype.toString.call(a).split("").reverse().join("")
+	es = txt.indexOf("]tnevE") == 0 ? true : false // Firefox, Opera, Safari, Chrome
+	if (!es) {
+		txt = a.constructor.toString().split("").reverse().join("")
+		es = txt.indexOf("]tnevE") == 0 ? true : false // MSIE
+	}
+	return es
+}

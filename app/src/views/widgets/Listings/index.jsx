@@ -162,7 +162,7 @@ class ListingView extends React.Component {
 		const { defination, query, cache, app } = props;
 		this.state.defination = defination;
 		this.state.service = ApiService.getContextRequests(defination.endpoint);
-		this.state.query = {					
+		this.state.query = {
 					p: 1,
 					pagination: query?.rpp || query?.pagination || app?.preferences?.data?.pagination || 50,
 					page: query?.pg || query?.page || 1,
@@ -368,7 +368,7 @@ class ListingView extends React.Component {
 									p: 1,
 									pagination: query?.rpp || query?.pagination || app?.preferences?.data?.pagination || 50,
 									page: query?.pg || query?.page || 1,
-									...query,									
+									...query,
 								},
 								views: views,
 								view: view ? view : default_view,
@@ -392,7 +392,7 @@ class ListingView extends React.Component {
 								p: 1,
 								pagination: query?.rpp || query?.pagination || app?.preferences?.data?.pagination || 50,
 								page: query?.pg || query?.page || 1,
-								...query,									
+								...query,
 							},
 							views: views,
 							view: view ? view : default_view,

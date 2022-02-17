@@ -32,7 +32,7 @@ const VirtualizedCollection = (props) => {
     }, [data, columnCount, gutterSize, itemWidth, itemHeight]);
 
     const handleOnScroll = useCallback(({ scrollLeft, scrollTop }) => {
-        
+
     }, [onScrollToEnd, height, width])
 
     return (

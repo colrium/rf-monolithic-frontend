@@ -51,8 +51,8 @@ const Message = React.forwardRef((props, ref) => {
 	const messageDeleted = useMemo(
 		() =>
 			(data.state === "deleted-for-sender" &&
-				(data.sender === auth.user._id ||
-					data.sender._id === auth.user._id)) ||
+				(data.sender === auth.user?._id ||
+					data.sender._id === auth.user?._id)) ||
 			data.state === "deleted-for-all",
 		[data]
 	)
@@ -172,19 +172,26 @@ const Message = React.forwardRef((props, ref) => {
 						? "flex-row-reverse"
 						: "flex-row"
 				}`}
-				sx={{
-					// height: "fit-content !important",
-				}}
+				sx={
+					{
+						// height: "fit-content !important",
+					}
+				}
 			>
 				<Box
 					className={
 						"flex flex-col  px-4 py-1  " +
-						(data.sender._id === auth.user._id ||
-						data.sender === auth.user._id
-							? "bg-green-200 rounded-l-xl rounded-br-2xl rounded-tr-none"
-							: "bg-white rounded-r-2xl rounded-bl-2xl rounded-tl-none")
+						(data.sender._id === auth.user?._id ||
+						data.sender === auth.user?._id
+							? "rounded-l-xl rounded-tr-2xl rounded-br-none"
+							: "rounded-r-2xl rounded-bl-2xl rounded-tl-none")
 					}
 					sx={{
+						backgroundColor: theme =>
+							data.sender?._id === auth.user?._id ||
+							data.sender === auth.user?._id
+								? theme.palette.teal.lighten_3
+								: theme.palette.background.paper,
 						maxWidth: maxContentWidth,
 						height: "fit-content !important",
 					}}
@@ -210,14 +217,6 @@ const Message = React.forwardRef((props, ref) => {
 											data.sender.last_name}
 									</Typography>
 								)}
-							{/* <IconButton
-								aria-label="Toggle Menu"
-								onClick={handleOnContextMenu}
-								className={"text-sm absolute right-8 top-2"}
-								size="small"
-							>
-								<ExpandMoreIcon fontSize="inherit" />
-							</IconButton> */}
 						</div>
 					)}
 					{!messageDeleted &&
@@ -408,7 +407,7 @@ const Message = React.forwardRef((props, ref) => {
 							<Box
 								component="div"
 								sx={{
-									color: theme.palette.text.disabled,
+									color: theme.palette.text.secondary,
 								}}
 								className="flex flex-row items-center justify-end text-sm w-full"
 							>
@@ -424,25 +423,25 @@ const Message = React.forwardRef((props, ref) => {
 									)}`}
 								</Typography>
 								{data.state === "pending" &&
-									(data.sender._id === auth.user._id ||
-										data.sender === auth.user._id) && (
+									(data.sender._id === auth.user?._id ||
+										data.sender === auth.user?._id) && (
 										<ScheduleIcon
 											className={"ml-2 text-xs"}
 											fontSize="small"
 										/>
 									)}
 								{data.state === "sent" &&
-									(data.sender._id === auth.user._id ||
-										data.sender === auth.user._id) && (
+									(data.sender._id === auth.user?._id ||
+										data.sender === auth.user?._id) && (
 										<DoneIcon
-											className={"ml-2 text-xs"}
+											className={"ml-2 text-xs "}
 											fontSize="small"
 										/>
 									)}
 								{(data.state === "partially-received" ||
 									data.state === "received") &&
-									(data.sender._id === auth.user._id ||
-										data.sender === auth.user._id) && (
+									(data.sender._id === auth.user?._id ||
+										data.sender === auth.user?._id) && (
 										<DoneAllIcon
 											className={"ml-2 text-xs"}
 											fontSize="small"
@@ -450,11 +449,12 @@ const Message = React.forwardRef((props, ref) => {
 									)}
 								{(data.state === "partially-read" ||
 									data.state === "read") &&
-									(data.sender._id === auth.user._id ||
-										data.sender === auth.user._id) && (
+									(data.sender._id === auth.user?._id ||
+										data.sender === auth.user?._id) && (
 										<DoneAllIcon
-											className={"ml-2 text-xs"}
-											color={"blue.darken_4"}
+											className={
+												"ml-2 text-xs text-blue-500"
+											}
 											fontSize="small"
 										/>
 									)}

@@ -108,7 +108,7 @@ function Widget(props) {
 				options_total: cart.options_total,
 				discount: 0,
 				tax: 0,
-				customer: auth.user._id,
+				customer: auth.user?._id,
 				status: "awaiting_payment",
 				apply_coupon: false,
 				coupon: null,

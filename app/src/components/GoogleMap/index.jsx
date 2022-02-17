@@ -88,10 +88,10 @@ const GoogleMap = React.forwardRef((props, ref) => {
 	}, [center]);
 
 
-	
 
 
-	
+
+
 
 	const showInfoWindow = useCallback(
 		(content, position, options = {}) => {
@@ -106,12 +106,12 @@ const GoogleMap = React.forwardRef((props, ref) => {
 				infoWindowRef.current.setOptions({ ...options });
 				infoWindowRef.current.open(googlemapRef.current);
 			}
-				
+
 		},
 		[]
 	);
 
-	
+
 
 	const closeInfoWindow = useCallback(() => {
 		if (infoWindowRef.current) {
@@ -139,7 +139,7 @@ const GoogleMap = React.forwardRef((props, ref) => {
 
 
 	const applyEntrySelection = useCallback((type, index) => {
-		
+
 		if (!!googlemapRef.current) {
 			let elementBounds = null;
 			if (type === "polyline" && !!polylinesRef.current[index]) {
@@ -150,9 +150,9 @@ const GoogleMap = React.forwardRef((props, ref) => {
 						"click"
 					);
 				}
-					
+
 				// console.log("applyEntrySelection elementBounds", elementBounds);
-				// 
+				//
 			}
 			else if (type === "circle" && !!circlesRef.current[index]) {
 				if (!!google) {
@@ -164,7 +164,7 @@ const GoogleMap = React.forwardRef((props, ref) => {
 			}
 			if (elementBounds) {
 				googlemapRef.current.fitBounds(elementBounds);
-			}			
+			}
 		}
 	}, []);
 
@@ -184,7 +184,7 @@ const GoogleMap = React.forwardRef((props, ref) => {
 			});
 			circlesRef.current = [];
 		}
-		
+
 		if (Array.isArray(circles) && !!google) {
 			let entriesZindexes = circles.sort((a, b) => b.radius - a.radius).reduce((currentZindexes, current, index) => {
 				currentZindexes[index] = index + 1;
@@ -505,7 +505,7 @@ const GoogleMap = React.forwardRef((props, ref) => {
 			applyPolylines();
 			applyMarkers();
 			applyGeojsons();
-			
+
 		},
 		[onMapLoad]
 	);
@@ -538,7 +538,7 @@ const GoogleMap = React.forwardRef((props, ref) => {
 	}, [selectedEntryType, selectedEntry]);
 
 	useDidMount(() => {
-		
+
 	});
 
 	useWillUnmount(() => {

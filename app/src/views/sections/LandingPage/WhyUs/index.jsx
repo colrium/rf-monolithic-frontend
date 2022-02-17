@@ -77,7 +77,7 @@ const SectionComponent = (props) => {
 									<li className={"mb-4"}><b>Real time </b>data supply through our API or directly downloadable</li>
 									<li className={"mb-4"}><b>Accessible </b>pricing</li>
 									<li className={"mb-4"}><b>Ethical </b>sourcing</li>
-								</ol>								
+								</ol>
 							</GridItem>*/}
 					</GridContainer>
 

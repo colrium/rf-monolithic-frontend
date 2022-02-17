@@ -97,7 +97,7 @@ export const ReadableJSONView = React.memo(
 							title={key.humanize()}
 							showTabs={false}
 						/>
-					
+
 				);
 			},
 			[humanize]
@@ -192,7 +192,7 @@ const JSONView = props => {
 	const [state, setState, getState] = useSetState({
 		view: view,
 	});
-	
+
 
 	const handleViewChange = (event, newValue) => {
 		setState({ view: newValue });
@@ -281,7 +281,7 @@ export const JSONViewDialog = props => {
 			onClose();
 		}
 	}, [onClose]);
-	
+
 	return (
 		<Dialog onClose={handleClose} fullScreen={state.fullScreen} open={open} {...rest}>
 			<DialogTitle>
@@ -290,7 +290,7 @@ export const JSONViewDialog = props => {
 						{title}
 					</Typography>
 				)}
-				
+
 			</DialogTitle>
 			<DialogContent className="p-0">
 				<JSONView
@@ -314,20 +314,20 @@ export const JSONViewDialog = props => {
 					fontSize="inherit"
 					value={JSON.stringify(src, null, 4)}
 				/>
-				<IconButton 
-					color={"indigo"} 
-					className={"mx-1"} 
-					size="small" 
+				<IconButton
+					color={"indigo"}
+					className={"mx-1"}
+					size="small"
 					onClick={() => setState(prevState => ({fullScreen: !prevState.fullScreen }))}
 					aria-label={`${state.fullScreen? "Exit Fullscreen" : "Enter Fullscreen"}`}
 					title={`${state.fullScreen? "Exit Fullscreen" : "Enter Fullscreen"}`}
 				>
 					{state.fullScreen? <FullscreenExitIcon fontSize="inherit" /> : <FullscreenIcon fontSize="inherit" />}
 				</IconButton>
-				<Button 
-					color={"error"} 
-					className={"mx-1"} 
-					onClick={handleClose} 
+				<Button
+					color={"error"}
+					className={"mx-1"}
+					onClick={handleClose}
 					aria-label={`Close Dialog`}
 					title={`Close Dialog`}
 					autoFocus

@@ -4,16 +4,18 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import React from "react";
+import React, { useCallback, useEffect } from "react"
 import { connect } from "react-redux";
-import { appendNavHistory } from "state/actions/ui/nav";
-import DefaultPreferences from "views/widgets/Preferences/Default";
-import PasswordPreferences from "views/widgets/Preferences/Password";
-import DataPreferences from "views/widgets/Preferences/Data";
-import NotificationsPreferences from "views/widgets/Preferences/Notifications";
-import SubscriptionsPreferences from "views/widgets/Preferences/Subscriptions";
-import CookiesPreferences from "views/widgets/Preferences/Cookies";
-
+import { appendNavHistory } from "state/actions"
+import DefaultPreferences from "./Default"
+import PasswordPreferences from "./Password"
+import DataPreferences from "./Data"
+import NotificationsPreferences from "./Notifications";
+import SubscriptionsPreferences from "./Subscriptions"
+import CookiesPreferences from "./Cookies"
+import {useWindowSize} from 'react-use';
+import {  useSetState } from "hooks"
+import { useLocation } from "react-router-dom";
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -36,8 +38,12 @@ function TabPanel(props) {
 	);
 }
 
-class Page extends React.Component {
-	state = {
+const Page = (props) => {
+	const { appendNavHistory, navHistory } = props
+	const location = useLocation()
+	const {width} = useWindowSize();
+	const tabs_orientation = width >= 960 ? "vertical" : "horizontal"
+	const [state, setState] = useSetState({
 		active_tab: "default",
 		tabs: {
 			default: "Default",
@@ -47,120 +53,103 @@ class Page extends React.Component {
 			cookies: "Cookies",
 			subscriptions: "Subscriptions",
 		},
-	};
+	})
 
-	constructor(props) {
-		super(props);
-		const { nav } = this.props;
-		for (var i = 0; i < nav.entries.length; i++) {
-			if (nav.entries[i].name === "preferences") {
-				this.state.active_tab = nav.entries[i].view
-					? nav.entries[i].view
-					: "default";
-			}
-		}
-		this.handleOnTabChange = this.handleOnTabChange.bind(this);
-	}
+	const handleOnTabChange = useCallback((event, newValue) => {
+		setState({ active_tab: newValue })
 
-	componentDidMount() {
-		const { location, appendNavHistory } = this.props;
-		if (appendNavHistory && location) {
-			appendNavHistory({
-				name: "preferences",
-				uri: location.pathname,
-				title: "Preferences",
-				view: this.state.active_tab,
-			});
-		}
-	}
-
-	handleOnTabChange(event, newValue) {
-		this.setState({ active_tab: newValue });
-		const { location, appendNavHistory } = this.props;
 		if (appendNavHistory && location) {
 			appendNavHistory({
 				name: "preferences",
 				uri: location.pathname,
 				title: "Preferences",
 				view: newValue,
-			});
+			})
 		}
-	}
+	}, [])
 
-	render() {
-		const {
-			device: { window_size },
-		} = this.props;
-		let tabs_orientation = "horizontal";
-		if (JSON.isJSON(window_size)) {
-			tabs_orientation =
-				window_size.width >= 960 ? "vertical" : "horizontal";
+
+
+	useEffect(() =>{
+		console.log("navHistory", navHistory)
+		if (appendNavHistory && location) {
+			appendNavHistory({
+				name: "preferences",
+				uri: location.pathname,
+				title: "Preferences",
+				view: state.active_tab,
+			})
 		}
-		return (
-			<GridContainer className="px-2 pt-8">
-				<GridItem
-					xs={12}
-					md={tabs_orientation === "vertical" ? 3 : 12}
-					lg={tabs_orientation === "vertical" ? 2 : 12}
-				>
-					<Tabs
-						orientation={tabs_orientation}
-						variant="scrollable"
-						indicatorColor="primary"
-						textColor="primary"
-						value={this.state.active_tab}
-						onChange={this.handleOnTabChange}
-						aria-label="Preferences tabs"
-						className="border-0"
-					>
-						{Object.entries(this.state.tabs).map(
-							([name, value], cursor) => (
-								<Tab
-									label={value}
-									value={name}
-									id={"preferences-tab-" + name}
-									aria-controls={
-										"preferences-tabpanel-" + name
-									}
-									key={"preferences-tab-" + cursor}
-								/>
-							)
-						)}
-					</Tabs>
-				</GridItem>
+	}, [])
 
-				<GridItem
-					xs={12}
-					md={tabs_orientation === "vertical" ? 9 : 12}
-					lg={tabs_orientation === "vertical" ? 10 : 12}
+
+
+	return (
+		<GridContainer className="px-2 pt-8">
+			<GridItem
+				xs={12}
+				md={tabs_orientation === "vertical" ? 3 : 12}
+				lg={tabs_orientation === "vertical" ? 2 : 12}
+			>
+				<Tabs
+					orientation={tabs_orientation}
+					variant="scrollable"
+					indicatorColor="primary"
+					textColor="primary"
+					value={state.active_tab}
+					onChange={handleOnTabChange}
+					aria-label="Preferences tabs"
+					className="border-0"
 				>
-					{Object.entries(this.state.tabs).map(
+					{Object.entries(state.tabs).map(
 						([name, value], cursor) => (
-							<TabPanel
-								value={this.state.active_tab}
-								index={name}
-								key={"preferences-tabpanel-" + cursor}
-							>
-								{name === "default" && <DefaultPreferences />}
-								{name === "password" && <PasswordPreferences />}
-								{name === "data" && <DataPreferences />}
-								{name === "notifications" && <NotificationsPreferences />}
-								{name === "subscriptions" && <SubscriptionsPreferences />}
-								{name === "cookies" && <CookiesPreferences />}
-
-							</TabPanel>
+							<Tab
+								label={value}
+								value={name}
+								id={"preferences-tab-" + name}
+								aria-controls={"preferences-tabpanel-" + name}
+								key={"preferences-tab-" + cursor}
+							/>
 						)
 					)}
-				</GridItem>
-			</GridContainer>
-		);
-	}
+				</Tabs>
+			</GridItem>
+
+			<GridItem
+				xs={12}
+				md={tabs_orientation === "vertical" ? 9 : 12}
+				lg={tabs_orientation === "vertical" ? 10 : 12}
+			>
+				{Object.entries(state.tabs).map(
+					([name, value], cursor) => (
+						<TabPanel
+							value={state.active_tab}
+							index={name}
+							key={"preferences-tabpanel-" + cursor}
+						>
+							{name === "default" && <DefaultPreferences />}
+							{name === "password" && <PasswordPreferences />}
+							{name === "data" && <DataPreferences />}
+							{name === "notifications" && (
+								<NotificationsPreferences />
+							)}
+							{name === "subscriptions" && (
+								<SubscriptionsPreferences />
+							)}
+							{name === "cookies" && <CookiesPreferences />}
+						</TabPanel>
+					)
+				)}
+			</GridItem>
+		</GridContainer>
+	)
 }
 
 const mapStateToProps = state => ({
 	auth: state.auth,
-	nav: state.nav,
-	device: state.device,
-});
+	navHistory: state.nav,
+})
 
-export default connect(mapStateToProps, { appendNavHistory })((Page));
+export default connect(mapStateToProps, { appendNavHistory })(
+	Page
+)

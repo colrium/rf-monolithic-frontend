@@ -63,7 +63,7 @@ const TableView = props => {
 	});
 	let columnsRef = React.useRef([]);
 	const {data, pagination, error, get, updateOne, updateMany, deleteOne, deleteMany, } = useApiData(defination?.name)
-	
+
 	const isActionRestricted = useCallback((check, rowData={}) => {
 		let actionRestricted = false;
 		if (Function.isFunction(check)) {
@@ -118,7 +118,7 @@ const TableView = props => {
 			let freeActions = [];
 			let actions = [];
 			let tableviewActionsArr = []
-			
+
 				if (Function.isFunction(defination?.access?.actions?.tableview)) {
 					tableviewActionsArr = defination.access.actions.tableview(auth.user)
 				}
@@ -129,7 +129,7 @@ const TableView = props => {
 					Object.entries(defination.access.actions).map(([actionKey, actionValue], actionIndex) => {
 						let actionInitiallyRestricted = true;
 						let actionRestrictedCallback = false;
-						if (Function.isFunction(actionValue?.restricted)) {						
+						if (Function.isFunction(actionValue?.restricted)) {
 							if (actionValue.restricted.length === 1) {
 								actionInitiallyRestricted = actionValue.restricted(auth.user)
 							}
@@ -142,7 +142,7 @@ const TableView = props => {
 						}
 						if (!actionInitiallyRestricted) {
 							const actionIcon = actionValue?.icon || actionValue?.link?.inline?.listing
-							if (!actionValue?.isFreeAction) {								
+							if (!actionValue?.isFreeAction) {
 								tableviewActionsArr.push({
 									...actionValue,
 									id: actionKey,
@@ -163,11 +163,11 @@ const TableView = props => {
 									hideCondition: (row) => isActionRestricted(actionRestrictedCallback, row),
 								});
 							}
-							
+
 						}
 					})
 
-						
+
 				}
 				if (Array.isArray(tableviewActionsArr) && tableviewActionsArr.length > 0) {
 					actions = tableviewActionsArr.reduce((actionsArr, action) => {
@@ -189,8 +189,8 @@ const TableView = props => {
 						actions: actions,
 					});
 				}
-				
-			
+
+
 			columnsArr.push({
 				key: "_id",
 				attribute: "_id",
@@ -202,7 +202,7 @@ const TableView = props => {
 					if (Function.isFunction(value.label)) {
 						labelValue = value.label(auth?.user);
 					}
-					
+
 					columnsArrValue.push({
 						key: key,
 						attribute: key,
@@ -263,7 +263,7 @@ const TableView = props => {
 				columnsArr
 			);
 		}
-		
+
 		columnsRef.current = columnsArr
 		// setState({
 		// 	columns: columnsArr,
@@ -299,7 +299,7 @@ const TableView = props => {
 							loading: false,
 						});
 					});
-			
+
 		} else {
 			setState({
 				records: [],
@@ -318,11 +318,11 @@ const TableView = props => {
 		loadData();
 	}, [query]);
 
-	
+
 
 	// console.log(" data", data)
 	// console.log(" pagination", pagination)
-	
+
 
 	return (
 		<GridContainer className={"p-0"}>

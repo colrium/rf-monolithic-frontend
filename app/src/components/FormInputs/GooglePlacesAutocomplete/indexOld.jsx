@@ -392,7 +392,7 @@ function LocationInput(props) {
 		}
 		else {
 			/*if (inputValue) {
-				if (type === "coordinates" && JSON.isJSON(value)) {					
+				if (type === "coordinates" && JSON.isJSON(value)) {
 					if (("lat" in value || "latitude" in value) && ("lng" in value || "longitude" in value)) {
 						targetValue = {
 							lat: (value.lat? value.lat : value.latitude),
@@ -400,7 +400,7 @@ function LocationInput(props) {
 						};
 					}
 				}
-				
+
 				parseValueToType(targetValue, targetTypes[type], placeholderType? placeholderType : (targetTypes[type]==="address"? targetTypes[type] : "formatted_address")).then(parsedTypeValue => {
 					if (String.isString(parsedTypeValue)) {
 						setTextFieldValue(parsedTypeValue);
@@ -415,13 +415,13 @@ function LocationInput(props) {
 
 								setAutocompleteOptions(newAutocompleteOptions);
 								setAutocompleteValue(newAutocompleteValue);
-							
+
 						});
-						
+
 					}
-						
+
 				}).catch(parseErr => {
-					
+
 					setTextFieldValue("");
 				});
 			}*/
@@ -430,7 +430,7 @@ function LocationInput(props) {
 	}, [inputValue, inputTouched, type]);
 
 	/*useEffect(() => {
-		
+
 		if (targetTypes[type] && value) {
 			if (!autocompleteService.current && window.google) {
 				autocompleteService.current = new window.google.maps.places.AutocompleteService();
@@ -454,11 +454,11 @@ function LocationInput(props) {
 			let targetValue = value;
 			if (Array.isArray(value)) {
 				 //ToDo:-
-				
-					
+
+
 			}
 			else {
-				if (type === "coordinates" && JSON.isJSON(value)) {					
+				if (type === "coordinates" && JSON.isJSON(value)) {
 					if (("lat" in value || "latitude" in value) && ("lng" in value || "longitude" in value)) {
 						targetValue = {
 							lat: (value.lat? value.lat : value.latitude),
@@ -481,17 +481,17 @@ function LocationInput(props) {
 
 								setAutocompleteOptions(newAutocompleteOptions);
 								setAutocompleteValue(newAutocompleteValue);
-							
+
 						});
-						
+
 					}
-						
+
 				}).catch(parseErr => {
-					
+
 					setTextFieldValue("");
 				});
 			}
-						
+
 		}
 	}, [value, type, placeholderType]);*/
 

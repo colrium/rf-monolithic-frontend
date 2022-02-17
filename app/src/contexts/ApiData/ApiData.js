@@ -609,7 +609,7 @@ class ApiData extends React.PureComponent {
 
 			if (defination && isAuthenticated) {
 				if (defination.name === "users") {
-					if (action.result._id === user._id) {
+					if (action.result._id === user?._id) {
 						setCurrentUser(action.result);
 					}
 				}
@@ -627,7 +627,7 @@ class ApiData extends React.PureComponent {
 			let defination = definations[JSON.keyOf(models, context)];
 			if (defination && isAuthenticated) {
 				if (defination.name === "users") {
-					if (action.result._id === user._id) {
+					if (action.result._id === user?._id) {
 						// setCurrentUser(action.result);
 
 						//Logout

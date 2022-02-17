@@ -111,11 +111,11 @@ const ClientInfoWindow = ({ user, track, position, history, app, ...rest }) => {
 			<GridContainer style={{ maxWidth: 300 }}>
 				<GridItem xs={12} className={"flex flex-row items-center"}>
 					{
-						user.avatar ? (
+						user?.avatar ? (
 							<Avatar
 								className="bg-transparent mr-4"
-								alt={user.first_name}
-								src={ApiService.getAttachmentFileUrl(user.avatar)}
+								alt={user?.first_name}
+								src={ApiService.getAttachmentFileUrl(user?.avatar)}
 							/>
 						) : (
 							<Avatar className="bg-transparent  mr-4">
@@ -124,7 +124,7 @@ const ClientInfoWindow = ({ user, track, position, history, app, ...rest }) => {
 						)
 					}
 					<Typography variant="h5" >
-						{user.first_name}
+						{user?.first_name}
 					</Typography>
 				</GridItem>
 
@@ -140,7 +140,7 @@ const ClientInfoWindow = ({ user, track, position, history, app, ...rest }) => {
 						variant="body1"
 
 					>
-						{user.gender ? user.gender : "Unspecified"}
+						{user?.gender ? user?.gender : "Unspecified"}
 					</Typography>
 				</GridItem>
 
@@ -156,7 +156,7 @@ const ClientInfoWindow = ({ user, track, position, history, app, ...rest }) => {
 						variant="body1"
 
 					>
-						{user.course ? user.course : "Unspecified"}
+						{user?.course ? user?.course : "Unspecified"}
 					</Typography>
 				</GridItem>
 
@@ -172,7 +172,7 @@ const ClientInfoWindow = ({ user, track, position, history, app, ...rest }) => {
 						variant="body1"
 
 					>
-						{user.noof_completed_tasks ? user.noof_completed_tasks : "0"}
+						{user?.noof_completed_tasks ? user?.noof_completed_tasks : "0"}
 					</Typography>
 				</GridItem>
 
@@ -188,7 +188,7 @@ const ClientInfoWindow = ({ user, track, position, history, app, ...rest }) => {
 						variant="body1"
 
 					>
-						{user.noof_uncompleted_tasks ? user.noof_uncompleted_tasks : "0"}
+						{user?.noof_uncompleted_tasks ? user?.noof_uncompleted_tasks : "0"}
 					</Typography>
 				</GridItem>
 				<GridItem xs={12} className={"flex flex-col"}>
@@ -199,12 +199,12 @@ const ClientInfoWindow = ({ user, track, position, history, app, ...rest }) => {
 					>
 						Rating
 					</Typography>
-					<Rating name="read-only" value={user.rating ? user.rating : 4} readOnly />
+					<Rating name="read-only" value={user?.rating ? user?.rating : 4} readOnly />
 				</GridItem>
 
 
 				<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
-					<Button href={("/messages?with=" + user.email_address).toUriWithDashboardPrefix()} style={{ background: "#8C189B", color: "#FFFFFF" }}>Message Me</Button>
+					<Button href={("/messages?with=" + user?.email_address).toUriWithDashboardPrefix()} style={{ background: "#8C189B", color: "#FFFFFF" }}>Message Me</Button>
 				</GridItem>
 			</GridContainer>
 		</ThemeProvider>
@@ -358,7 +358,7 @@ export default compose(
 
 	let { user } = auth;
 
-	if (!JSON.isJSON(user) || (JSON.isJSON(user) && !user._id)) {
+	if (!JSON.isJSON(user) || (JSON.isJSON(user) && !user?._id)) {
 		user = { _id: null };
 	}
 
@@ -366,7 +366,7 @@ export default compose(
 
 
 	const getclientPositionHeadingMarkerIcon = (user, position) => {
-		let computed_icon = JSON.isJSON(user) ? (String.isString(user.icon) ? (user.icon.startsWith(user.gender) ? user.icon : user.gender) : ((String.isString(user.gender) ? user.gender.trim().toLowerCase() : "male")) : "male") : "male";
+		let computed_icon = JSON.isJSON(user) ? (String.isString(user?.icon) ? (user?.icon.startsWith(user?.gender) ? user?.icon : user?.gender) : ((String.isString(user?.gender) ? user?.gender.trim().toLowerCase() : "male")) : "male") : "male";
 
 if (!computed_icon) {
 	computed_icon = "male";
@@ -380,7 +380,7 @@ if (process.env.NODE_ENV === "development") {
 
 
 return `${process.env.PUBLIC_URL}/img/avatars/${computed_icon}.png`
-		
+
 	}
 
 /*const getRegionWidth = (target_region = null) => {
@@ -392,7 +392,7 @@ return `${process.env.PUBLIC_URL}/img/avatars/${computed_icon}.png`
 		const lng2 = target_region.longitude;
 
 		return crowFleightDistanceinKm(lat1, lng1, lat2, lng2);
-	}			
+	}
 }*/
 
 const handleOnPressMarker = (socketId, data) => async event => {
@@ -480,7 +480,7 @@ const animateClientMarkerToPosition = (marker, { socketId, user, position }) => 
 const handleOnClientPositionChange = useCallback(({ socketId, ...data }) => {
 	let { user, position, track } = data;
 	if (!JSON.isEmpty(user) && !JSON.isEmpty(position)) {
-		let clientInList = auth.user.isAdmin || (Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user._id) : false);
+		let clientInList = auth.user?.isAdmin || (Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user?._id) : false);
 		if (clientInList) {
 			let currentMap = getActualGoogleMapInstance();
 
@@ -496,7 +496,7 @@ const handleOnClientPositionChange = useCallback(({ socketId, ...data }) => {
 							regionBoundsClients[socketId].position = position;
 							regionBoundsClients[socketId].marker = new google.maps.Marker({
 								position: { lat: position.latitude, lng: position.longitude },
-								title: user.first_name + " " + user.last_name,
+								title: user?.first_name + " " + user?.last_name,
 								icon: { url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) },
 								onClick: handleOnPressMarker(socketId, data),
 								duration: 250,
@@ -513,7 +513,7 @@ const handleOnClientPositionChange = useCallback(({ socketId, ...data }) => {
 				if (!regionBoundsClients[socketId].marker) {
 					regionBoundsClients[socketId].marker = new google.maps.Marker({
 						position: { lat: position.latitude, lng: position.longitude },
-						title: user.first_name + " " + user.last_name,
+						title: user?.first_name + " " + user?.last_name,
 						icon: { url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) },
 						onClick: handleOnPressMarker(socketId, data),
 						duration: 250,
@@ -607,7 +607,7 @@ const handleOnNewClientPosition = useCallback(async ({ socketId, ...data }) => {
 
 		_clientsPositions = Object.entries(_clientsPositions).reduce((accumulator, [socketId, clientData], index) => {
 			if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-				let appendClientToList = clientData.user !== user._id && (auth.user.isAdmin || (Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user._id) : false));
+				let appendClientToList = clientData.user !== user?._id && (auth.user?.isAdmin || (Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user?._id) : false));
 
 				if (appendClientToList) {
 					accumulator[socketId] = clientData;
@@ -618,13 +618,13 @@ const handleOnNewClientPosition = useCallback(async ({ socketId, ...data }) => {
 
 		/*regionBoundsClients = Object.entries(regionBoundsClients).reduce((accumulator, [socketId, clientData], index) => {
 			if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-				if (clientData.user !== user._id) {
+				if (clientData.user !== user?._id) {
 					accumulator[socketId] = clientData;
 				}
 			}
-			return accumulator;						
+			return accumulator;
 		}, {});*/
-		let appendClientToList = auth.user.isAdmin || (Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user._id) : false);
+		let appendClientToList = auth.user?.isAdmin || (Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user?._id) : false);
 		if (appendClientToList) {
 			_clientsPositions[socketId] = data;
 			if (Function.isFunction(onClientPositionAvailable)) {
@@ -640,8 +640,8 @@ const handleOnClientsPositions = useCallback(async (clients_positions) => {
 	let clients_positions_user_ids = []
 	_clientsPositions = Object.entries(clients_positions).reduce((accumulator, [socketId, clientData], index) => {
 		if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-			if (!clients_positions_user_ids.includes(user._id)) {
-				let appendClientToList = auth.user.isAdmin || (Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user._id) : false);
+			if (!clients_positions_user_ids.includes(user?._id)) {
+				let appendClientToList = auth.user?.isAdmin || (Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user?._id) : false);
 
 				if (appendClientToList) {
 					accumulator[socketId] = clientData;
@@ -722,7 +722,7 @@ const prepareMapBoundsClientsMarkers = useCallback((mapBounds) => {
 					if (!marker) {
 						marker = new google.maps.Marker({
 							position: { lat: position.latitude, lng: position.longitude },
-							title: user.first_name + " " + user.last_name,
+							title: user?.first_name + " " + user?.last_name,
 							icon: { url: getclientPositionHeadingMarkerIcon(user, position), scaledSize: new google.maps.Size(30, 30) },
 							onClick: handleOnPressMarker(socketId, clientData),
 							duration: 250,
@@ -1066,8 +1066,8 @@ return (
 );
 
 
-		
-	
+
+
 }));
 
 /*export default compose(

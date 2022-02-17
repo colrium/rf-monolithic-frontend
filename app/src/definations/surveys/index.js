@@ -130,15 +130,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -175,15 +175,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -204,7 +204,7 @@ export default {
 				restricted: {
 					display: (entry, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -224,7 +224,7 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							}
 						}
@@ -273,15 +273,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.isAdmin) {
+							if (user?.isAdmin) {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -318,15 +318,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -363,15 +363,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -416,15 +416,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -460,15 +460,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -506,15 +506,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -549,15 +549,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -599,15 +599,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -651,15 +651,15 @@ export default {
 							}
 						}
 						if (user) {
-							if (user.isAdmin) {
+							if (user?.isAdmin) {
 								return false;
 							} else {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -718,7 +718,7 @@ export default {
 					};
 
 					if (user) {
-						if (user.isAdmin) {
+						if (user?.isAdmin) {
 							return default_possibilities;
 						} else {
 							let possibilities = {
@@ -744,7 +744,7 @@ export default {
 					},
 					input: (values, user) => {
 						if (user) {
-							if (user.role === "admin") {
+							if (user?.role === "admin") {
 								return false;
 							} else {
 								//Cannot change if status is
@@ -760,9 +760,9 @@ export default {
 								if (values && "customer" in values) {
 									return typeof values.customer ===
 										"object" &&
-										values.customer._id === user._id
+										values.customer._id === user?._id
 										? false
-										: values.customer === user._id
+										: values.customer === user?._id
 											? false
 											: true;
 								}
@@ -848,6 +848,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

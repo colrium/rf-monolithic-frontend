@@ -110,7 +110,7 @@ class Password extends Component {
 					<BaseForm
 						defination={this.defination}
 						onSubmit={this.handlePasswordFormSubmit}
-						form={auth.user._id + "_password_form"}
+						form={auth.user?._id + "_password_form"}
 						submit_btn_text="Update Password"
 						show_discard={false}
 						show_title={false}

@@ -436,7 +436,7 @@ const ApiSingleton = (function () {
 				: { ...options }
 		)
 
-		EventRegister.on("api-request-attempt", config => {
+		EventRegister.on("api-request-attempt", ({detail:config}) => {
 			const {
 				cancelOnTimeout,
 				cancelUUID,
@@ -456,15 +456,15 @@ const ApiSingleton = (function () {
 
 				const removeRequestListeners = () => {
 					if (!!onRequestError) {
-						EventRegister.removeEventListener(onRequestError)
+						onRequestError.remove()
 					}
 					if (!!onRequestComplete) {
-						EventRegister.removeEventListener(onRequestComplete)
+						onRequestComplete.remove()
 					}
 				}
 				onRequestError = EventRegister.on(
 					"api-request-error",
-					error => {
+					({detail:error}) => {
 						//
 						if (cancelUUID === data?.config?.cancelUUID) {
 							clearTimeout(timeoutAction)
@@ -474,7 +474,7 @@ const ApiSingleton = (function () {
 				)
 				onRequestComplete = EventRegister.on(
 					"api-request-complete",
-					data => {
+					({detail:data}) => {
 						//
 						if (cancelUUID === data?.config?.cancelUUID) {
 							clearTimeout(timeoutAction)

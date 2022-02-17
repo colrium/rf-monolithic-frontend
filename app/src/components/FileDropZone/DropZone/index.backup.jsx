@@ -116,7 +116,7 @@ const CustomDropZone = React.forwardRef((props, ref) => {
                         await getAttachment(attachments[i]).then(resAttachment => {
                             newFileObjects = newFileObjects.concat([{ attachment: resAttachment }]);
                         }).catch(err => {
-                            
+
                             if (isMultiple) {
                                 new_value = [];
                                 if (Array.isArray(attachments)) {
@@ -168,7 +168,7 @@ const CustomDropZone = React.forwardRef((props, ref) => {
             }
 
             message += (message.length > 0 ? "<br />" : "") + `File ${file.name} successfully uploaded. `;
-            count++; // 
+            count++; //
             if (count === files.length) {
                 // display message when the last one fires
                 // setState({
@@ -187,7 +187,7 @@ const CustomDropZone = React.forwardRef((props, ref) => {
         const { fileObjects } = getState();
         let fileObjectIndex = fileObjects.indexOf(fileObject);
 
-        
+
 
         setState(prevState => ({
             fileObjects: prevState.fileObjects.remove(fileObjectIndex),
@@ -347,7 +347,7 @@ const CustomDropZone = React.forwardRef((props, ref) => {
             Promise.all([onChange(newValue)]).then(result => {
                 //
             }).catch(error => {
-                
+
             });
         }
     }, [onChange]);
@@ -358,7 +358,7 @@ const CustomDropZone = React.forwardRef((props, ref) => {
 
     useDidMount(() => {
         getAttachments().then(res => {
-            
+
             setState(res)
         }).catch({
 

@@ -67,13 +67,13 @@ export default function Orders(props) {
       key: "customer",
       data: [
         {
-          attribute: "user.name",
+          attribute: "user?.name",
         },
         {
-          attribute: "user.email",
+          attribute: "user?.email",
         },
         {
-          attribute: "user.phone",
+          attribute: "user?.phone",
         },
       ],
       html: `

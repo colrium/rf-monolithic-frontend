@@ -35,8 +35,6 @@ import {
 
 import Color from "color";
 
-import { createMuiTheme } from "@mui/material/styles";
-
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
 
@@ -439,33 +437,20 @@ let defaultPallete = {
 };
 
 let theme = createTheme({
-	// props: {
-	// 	MuiTypography: {
-	// 		variantMapping: {
-	// 			h1: 'h1',
-	// 			h2: 'h2',
-	// 			h3: 'h3',
-	// 			h4: 'h4',
-	// 			h5: 'h5',
-	// 			h6: 'h6',
-	// 			subtitle1: 'h5',
-	// 			subtitle2: 'h5',
-	// 			body1: 'span',
-	// 			body2: 'span',
-	// 		},
-	// 	},
-	// },
 	palette: {
 		primary: {
 			contrastText: inverseColor,
 			main: primaryColor,
 		},
 		secondary: {
+			contrastText: inverseColor,
 			main: secondaryColor,
+			light: Color(secondaryColor).lighten(0.3).hex(),
 		},
 		accent: {
 			main: accentColor,
 			contrastText: inverseColor,
+			light: Color(accentColor).lighten(0.3).hex(),
 		},
 		inverse: {
 			main: inverseColor,
@@ -474,20 +459,20 @@ let theme = createTheme({
 		default: {
 			main: "inherit",
 		},
-		error: {
-			main: errorColor,
-		},
-		background: {
-			default: "#F7F7F7",
-			paper: "#FFFFFF",
-		},
-		text: {
-			primary: "#575757",
-			secondary: "#737373",
-			disabled: "#999999",
-			contrast: inverseColor,
-			contrastDark: Color(inverseColor).darken(0.2).hex(),
-		},
+		// error: {
+		// 	main: errorColor,
+		// },
+		// background: {
+		// 	default: "#F7F7F7",
+		// 	paper: "#FFFFFF",
+		// },
+		// text: {
+		// 	primary: "#575757",
+		// 	secondary: "#737373",
+		// 	disabled: "#999999",
+		// 	contrast: inverseColor,
+		// 	contrastDark: Color(inverseColor).darken(0.2).hex(),
+		// },
 		...defaultPallete,
 	},
 	typography: {
@@ -573,66 +558,7 @@ let theme = createTheme({
 	appDrawer: {
 		width: app.drawer.width,
 	},
-	// overrides: {
-	// 	MuiCssBaseline: {
-	// 		'@global': {
-	// 			'@font-face': [
-	// 				// avenirFont,
-	// 				// materialIconsFont,
-	// 				// muliRegularFont,
-	// 				// //muliItalicFont,
-	// 				// muliBlackFont,
-	// 				// //muliBlackItalicFont,
-	// 				// muliBoldFont,
-	// 				// //muliBoldItalicFont,
-	// 				// muliExtraBoldFont,
-	// 				// //muliExtraBoldItalicFont,
-	// 				// muliExtraLightFont,
-	// 				// //muliExtraLightItalicFont,
-	// 				// muliLightFont,
-	// 				//muliLightItalicFont,
-	// 			],
-	// 		},
-	// 	},
-	// 	MuiButtonBase: {
-	// 		disableRipple: true, // No more ripple, on the whole application 💣!
-	// 	},
-	// 	MuiInputBase: {
-	// 		legend: {
-	// 			display: "inline-block",
-	// 		},
-	// 	},
-	// 	MuiFormControl: {
-	// 		root: {
-	// 			width: "100%",
-	// 		},
-	// 	},
-	// 	MUIDataTable: {
-	// 		paper: {
-	// 			boxShadow: "none",
-	// 			border: "1px solid #c7c7c7",
-	// 		},
-	// 		responsiveScroll: {
-	// 			maxHeight: "100%",
-	// 		},
-	// 	},
-	// 	MUIDataTableToolbar: {
-	// 		titleText: {
-	// 			color: primaryDarkColor,
-	// 		},
-	// 	},
-	// 	MUIDataTableBodyCell: {
-	// 		root: {
-	// 			borderBottom: "0px solid transparent",
-	// 		},
-	// 	},
-	// 	MUIDataTableBodyRow: {
-	// 		root: {
-	// 			borderBottom: "1px solid #c9c9c9",
-	// 		},
-	// 	},
-	// },
-});
+})
 
 
 const alignments = {

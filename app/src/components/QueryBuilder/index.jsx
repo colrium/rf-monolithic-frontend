@@ -47,7 +47,7 @@ const SelectWidgetComponent = memo(props => {
 		value,
 	} = props;
 
-	
+
 	const [options, setOptions] = useState({});
 	useEffect(() => {
 		let new_options = {};
@@ -86,7 +86,7 @@ const SelectWidgetComponent = memo(props => {
 const FieldsSelectComponent = memo(props => {
 	const { items, label, setField, placeholder, readonly, max, min, value, selectedKey, ...rest } =
 		props;
-	
+
 	const options = useMemo(() => {
 		let new_options = {};
 		if (Array.isArray(items)) {

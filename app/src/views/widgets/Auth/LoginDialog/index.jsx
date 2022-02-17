@@ -12,7 +12,7 @@ import Typography from "components/Typography";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-import LoginForm from "views/forms/LoginForm";
+import LoginForm from "views/forms/Auth/Login";
 
 function Widget(props) {
 	const { auth, open, onLogin, onCancel, title, className } = props;

@@ -63,7 +63,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -97,7 +97,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -116,7 +116,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -135,7 +135,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -154,7 +154,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -185,7 +185,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -250,6 +250,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };

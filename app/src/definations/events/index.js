@@ -129,7 +129,7 @@ export default {
 											<Chip
 												size="small"
 												avatar={
-													entry.user.avatar ? (
+													entry.user?.avatar ? (
 														<Avatar
 															alt={
 																entry.user
@@ -143,9 +143,9 @@ export default {
 													) : null
 												}
 												label={
-													entry.user.first_name +
+													entry.user?.first_name +
 													" " +
-													entry.user.last_name
+													entry.user?.last_name
 												}
 											/>
 										)}
@@ -231,7 +231,7 @@ export default {
 						return false;
 					},
 					input: (values, user) => {
-						if (user && user.role === "admin") {
+						if (user && user?.role === "admin") {
 							return false;
 						}
 						return true;
@@ -305,8 +305,8 @@ export default {
 				reference: {
 					name: "users",
 					service_query: (values, user) => {
-						if (user && user.role !== "admin") {
-							return { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", _id: user._id };
+						if (user && user?.role !== "admin") {
+							return { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", _id: user?._id };
 						}
 						return { pagination: -1, sort: "first_name", fields: "first_name,last_name,email_address,avatar", };
 					},
@@ -456,6 +456,6 @@ export default {
 				confirmationRequired: true
 			},
 		},
-		
+
 	},
 };
