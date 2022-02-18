@@ -1,9 +1,9 @@
 /** @format */
 
-import React, { useCallback, useRef, useEffect } from "react"
+import React, { useCallback, useRef, useReducer } from "react"
 import Box from "@mui/material/Box"
 import Grid from "@mui/material/Grid"
-import InfiniteLoader from "react-window-infinite-loader"
+
 import ForumOutlinedIcon from "@mui/icons-material/ForumOutlined"
 import Typography from "@mui/material/Typography"
 import { useSelector, useDispatch } from "react-redux"
@@ -11,7 +11,7 @@ import { useTheme } from "@mui/material/styles"
 import { sendMessage } from "state/actions"
 import Message from "./Message"
 import MessageComposer from "./MessageComposer"
-import { useDidMount, useDidUpdate, useSetState } from "hooks"
+import { useDidMount, useDidUpdate, useSetState, useDeepMemo } from "hooks"
 import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer"
 import List from "react-virtualized/dist/commonjs/List"
 
@@ -31,15 +31,30 @@ const Conversation = props => {
 	const theme = useTheme()
 	const dispatch = useDispatch()
 	const { isAuthenticated, user } = useSelector(state => state.auth)
-	const containerRef = useRef()
-	const listRef = useRef()
+	const preferences = useSelector(state => state.app?.preferences || {})
+	const containerRef = useRef(null)
+	const listRef = useRef(null)
 	const maxMessageWidthRef = useRef(100)
-	const fontSizeRef = useRef(14)
-	const lineHeightRef = useRef(14)
+	const fontSizeRef = useRef(18)
+	const lineHeightRef = useRef(18)
 	const noOfMessagesRef = useRef(data.messages?.length || 0)
 	const scrollToBottomRef = useRef(true)
-	const messageHeightRef = useRef(14 * 4)
+	const messageHeightRef = useRef(18 * 4)
 	const heightsRef = useRef([])
+
+	let messages = useDeepMemo(() => {
+		let messagesArr = []
+		if (Array.isArray(data?.messages)) {
+			messagesArr = data?.messages.filter(
+				message =>
+					message?.conversation?._id === data._id ||
+					message?.conversation === data._id ||
+					(!!data.uuid && message?.conversation_uuid && message?.conversation_uuid === data.uuid)
+			)
+		}
+		console.log("messagesArr", messagesArr)
+		return messagesArr
+	}, [data])
 
 	const [state, setState, getState] = useSetState({
 		loading: false,
@@ -139,9 +154,9 @@ const Conversation = props => {
 	)
 
 	const getHeights = useCallback(() => {
-		let heights = []
+		let heightsArr = []
 		if (Array.isArray(data?.messages)) {
-			heights = data.messages.reduce((currentHeights, message, messageIndex) => {
+			heightsArr = data.messages.reduce((currentHeights, message, messageIndex) => {
 				let messageHeight = messageHeightRef.current
 				if (String.isString(message.content) && !String.isEmpty(message.content)) {
 					if (String.containsUrl(message.content)) {
@@ -167,8 +182,8 @@ const Conversation = props => {
 				return currentHeights
 			}, [])
 		}
-		return heights
-	}, [data, messageSize])
+		return heightsArr
+	}, [data.messages, messageSize])
 
 	useDidUpdate(() => {
 		if (noOfMessagesRef.current !== data.messages?.length) {
@@ -179,10 +194,6 @@ const Conversation = props => {
 			messages: getMessages(),
 		})
 	}, [data.messages])
-
-	useDidUpdate(() => {
-		console.log("scrollToBottomRef.current", scrollToBottomRef.current)
-	}, [scrollToBottomRef.current])
 
 	const getRowHeight = useCallback(({ index }) => {
 		return heightsRef.current[index]
@@ -293,7 +304,18 @@ const Conversation = props => {
 	})
 
 	return (
-		<Box className={`relative h-screen flex flex-col bg-transparent text-base ${className} `} ref={containerRef}>
+		<Box
+			className={`relative  flex flex-col bg-transparent text-base ${className} `}
+			sx={{
+				paddingTop: 0,
+				paddingBottom: 0,
+				backgroundColor: theme => theme.palette.divider,
+				backgroundImage: `url("/img/${preferences?.theme === "dark" ? "chat-bg-dark.jpg" : "chat-bg.jpg"}") !important`,
+				height: theme => `calc(100vh - ${theme.spacing(25)})`,
+				maxHeight: theme => `calc(100vh - ${theme.spacing(25)})`,
+			}}
+			ref={containerRef}
+		>
 			<div className="flex-grow">
 				<AutoSizer>
 					{({ height, width }) => (

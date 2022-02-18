@@ -26,41 +26,34 @@ import Paper from "@mui/material/Paper"
 import IconButton from "@mui/material/IconButton"
 import Conversations from "./Conversations"
 import Conversation from "./Conversation"
+import Header from "./Header"
 
 import { useNetworkServices } from "contexts"
 import * as definations from "definations"
 import { connect, useDispatch, useSelector } from "react-redux"
 import { withTheme } from "@mui/styles"
 import compose from "recompose/compose"
-import { apiCallRequest, setMessagingCache, setActiveConversation, sendMessage, fetchMessages, updateMessage, fetchContacts, fetchInbox, createConversation, getIndexOfConversation } from "state/actions"
+import {
+	apiCallRequest,
+	setMessagingCache,
+	setActiveConversation,
+	sendMessage,
+	fetchMessages,
+	updateMessage,
+	fetchContacts,
+	fetchInbox,
+	createConversation,
+	getIndexOfConversation,
+} from "state/actions"
 import { EventRegister } from "utils"
 
-import { useDidMount, useWillUnmount } from "hooks"
+import { useDidMount, useSetState } from "hooks"
 
 const drawerWidth = 240
 
 function Alert(props) {
 	return <MuiAlert elevation={6} variant="filled" {...props} />
 }
-
-const AlwaysScrollToBottom = React.forwardRef((props, ref) => {
-	const scrollIntoView = useCallback(() => {
-		if (ref.current) {
-			ref.current.scrollIntoView({ behavior: "smooth" })
-		}
-	}, [ref.current])
-
-	useEffect(() => {
-		/*Sockets.on("message-sent", scrollIntoView);
-		Sockets.on("new-message", scrollIntoView);*/
-		//scrollIntoView();
-		return () => {
-			/*Sockets.off("message-sent", scrollIntoView);
-			Sockets.off("new-message", scrollIntoView);*/
-		}
-	}, [])
-	return <div ref={ref} />
-})
 
 function Chat(props) {
 	const {
@@ -82,44 +75,60 @@ function Chat(props) {
 		...rest
 	} = props
 
-	const textInputRef = React.createRef()
-	const messagesWrapperRef = React.createRef()
-	const conversationBottomRef = useRef()
-	const conversationRef = useRef(null)
-	const location = useLocation()
-	const [locationSearchParams, setLocationSearchParams] = useSearchParams()
+	const conversationTypingUsersRef = useRef({})
 	const dispatch = useDispatch()
 	const preferences = useSelector(state => state?.app?.preferences)
 	const { Sockets, Api: ApiService } = useNetworkServices()
-	const { conversations, fetching_inbox, active_conversation } = messaging
+	const { conversations, active_conversation } = messaging
 
-	const [query, setQuery] = useState({ desc: "created_on" })
-	const [contactsQuery, setContactsQuery] = useState({ desc: "created_on" })
-	const [loadingContacts, setLoadingContacts] = useState(true)
-	const [draft, setDraft] = useState({})
-	const [individualConversationsRecipients, setIndividualConversationsRecipients] = useState([])
-	const [activeConversationRecipients, setActiveConversationRecipients] = useState([])
 	const [error, setError] = useState(false)
-	const [contacts, setContacts] = useState([])
 	const [contactsDrawerOpen, setContactsDrawerOpen] = useState(false)
-	const [attachmentDialOpen, setAttachmentDialOpen] = useState(false)
 	const [contextMenu, setContextMenu] = useState({
 		mouseX: null,
 		mouseY: null,
 	})
-	const [loadingActiveChatMessages, setLoadingActiveChatMessages] = useState(false)
-	const [locationHasWith, setLocationHasWith] = useState(!!locationSearchParams.get("with"))
-	const [firstLoad, setFirstLoad] = useState(true)
-	const [searchKeyword, setSearchKeyword] = useState(false)
+
+	const [state, setState, getState] = useSetState({
+		typing: {},
+	})
 
 	const active_conversation_index = getIndexOfConversation(conversations, active_conversation)
 	const current_active_convesation = conversations[active_conversation_index]
 
-	const scrollToBottomOfConversation = useCallback(() => {
-		if (conversationBottomRef.current) {
-			conversationBottomRef.current.scrollIntoView()
-		}
-	}, [conversationBottomRef])
+	const handleOnUserStartedTyping = useCallback(
+		event => {
+			const { user, conversation } = event.detail
+			const { typing } = getState()
+			let nextTyping = { ...typing }
+			if (!Array.isArray(nextTyping[conversation])) {
+				nextTyping[conversation] = []
+			}
+			if (nextTyping[conversation].indexOf(user) === -1) {
+				nextTyping[conversation].push(user)
+			}
+			setState({
+				typing: nextTyping,
+			})
+		},
+		[active_conversation]
+	)
+
+	const handleOnUserStoppedTyping = useCallback(
+		event => {
+			const { user, conversation } = event.detail
+			const { typing } = getState()
+			let nextTyping = { ...typing }
+
+			if (!Array.isArray(nextTyping[conversation])) {
+				nextTyping[conversation] = []
+			}
+			nextTyping[conversation] = nextTyping[conversation].filter(entry => entry !== user)
+			setState({
+				typing: nextTyping,
+			})
+		},
+		[active_conversation]
+	)
 
 	const handleContextOpen = (type, entry) => event => {
 		event.preventDefault()
@@ -158,10 +167,6 @@ function Chat(props) {
 				}
 			})
 		)
-		Sockets.emit("archive-conversation", {
-			conversation: conversation,
-			user: auth.user,
-		})
 	}
 
 	const handleDeleteConversation = conversation => {
@@ -186,227 +191,10 @@ function Chat(props) {
 				}
 			})
 		)
-
-		Sockets.emit("delete-conversation-for-user", {
-			conversation: conversation,
-			user: auth.user,
-		})
-	}
-
-	const handleNewChat = recipients => {
-		if (recipients) {
-			let recipients_ids = []
-			recipients = Array.isArray(recipients) ? recipients : [recipients]
-
-			recipients.map(recipient => {
-				if (JSON.isJSON(recipient) && "_id" in recipient) {
-					recipients_ids.push(recipient._id)
-				} else if (!String.isEmpty(recipient)) {
-					recipients_ids.push(recipient)
-				}
-			})
-
-			createConversation({ recipients: recipients })
-				.then(new_conversation => {
-					setDraft({
-						is_reply: false,
-						sender: auth.user,
-						reply_for: null,
-						type: "text",
-						content: "",
-						conversation: new_conversation._id,
-					})
-				})
-				.catch(err => {})
-
-			setContactsDrawerOpen(false)
-		}
 	}
 
 	const handleRefresh = () => {
 		fetchInbox()
-	}
-
-	const handlePresenceChanged = ({ user, presence }) => {
-		setContacts(currentContacts => {
-			try {
-				let newContacts = JSON.parse(JSON.stringify(currentContacts))
-				let user_id = user
-				if (JSON.isJSON(user)) {
-					user_id = user?._id
-				}
-				newContacts.forEach(function (contact) {
-					if (user_id === contact._id) {
-						contact.presence = presence
-					}
-				})
-				return newContacts
-			} catch (err) {
-				return currentContacts
-			}
-		})
-		dispatch(
-			setMessagingCache("conversations", currentChats => {
-				try {
-					let newChats = JSON.parse(JSON.stringify(currentChats))
-					let user_id = user
-					if (JSON.isJSON(user)) {
-						user_id = user?._id
-					}
-					newChats.forEach(function (chat) {
-						if (chat.type === "individual") {
-							let chat_owner_id = chat.owner
-							if (JSON.isJSON(chat.owner)) {
-								chat_owner_id = chat.owner._id
-							}
-							if (chat_owner_id === user_id) {
-								if (JSON.isJSON(chat.owner)) {
-									chat.owner.presence = presence
-								}
-							} else {
-								if (Array.isArray(chat.recipients) && chat.recipients.length > 0) {
-									if (JSON.isJSON(chat.recipients[0])) {
-										chat.recipients[0].presence = presence
-									}
-								}
-							}
-						}
-					})
-					return newChats
-				} catch (err) {
-					return currentChats
-				}
-			})
-		)
-	}
-
-	const handleOnChangeDraftType = type => {
-		setDraft(currentDraft => {
-			try {
-				let newDraft = JSON.parse(JSON.stringify(currentDraft))
-				newDraft.type = type
-				return newDraft
-			} catch (err) {
-				return currentDraft
-			}
-		})
-	}
-
-	const handleOnConversationMessages = ({ conversation, messages }) => {
-		setLoadingActiveChatMessages(false)
-		dispatch(setMessagingCache("active_conversation_messages", messages))
-	}
-
-	const handleOnConversationCreated = conversation => {}
-
-	const getConversationMessages = (conversation, query = { desc: "created_on", p: "1", page: 1, pagination: 10 }) => {
-		if (conversation) {
-			let conversation_id = conversation._id ? conversation._id : conversation
-			setLoadingActiveChatMessages(true)
-			dispatch(setMessagingCache("active_conversation_messages", []))
-			setError(false)
-			apiCallRequest(definations.messages.name, {
-				uri: definations.messages.endpoint,
-				type: "records",
-				params: { conversation: conversation_id, ...query },
-				data: {},
-				cache: false,
-			})
-				.then(data => {
-					//
-					setError(false)
-				})
-				.catch(e => {
-					let errorMsg = e
-					if (JSON.isJSON(e)) {
-						if ("msg" in e) {
-							errorMsg = e.msg
-						} else {
-							errorMsg = JSON.stringify(e)
-						}
-					}
-
-					setError(errorMsg)
-				})
-			//Sockets.emit("get-conversation-messages", {conversation: conversation._id, user: auth.user});
-		} else {
-			setLoadingActiveChatMessages(false)
-		}
-	}
-
-	const handleOnSendMessage = (messageToSend, conversation) => {
-		if (conversation) {
-			let conversation_id = conversation._id ? conversation._id : conversation
-			let newMessage = {
-				...draft,
-				sender: auth.user?._id,
-				conversation: conversation_id,
-				created_on: new Date(),
-			}
-			if (messageToSend) {
-				if (JSON.isJSON(messageToSend)) {
-					newMessage = JSON.merge(messageToSend, newMessage)
-				} else if (String.isString(messageToSend)) {
-					newMessage.content = messageToSend.trim()
-				}
-			}
-
-			if (!String.isEmpty(newMessage.content) || (["audio", "file", "video", "image"].includes(newMessage.type) && (Array.isArray(newMessage.attachments) ? newMessage.attachments.length > 0 : false))) {
-				sendMessage(newMessage)
-
-				if (textInputRef.current) {
-					textInputRef.current.value = ""
-					textInputRef.current.focus()
-				}
-
-				scrollToBottomOfConversation()
-
-				setDraft({
-					is_reply: false,
-					sender: auth.user,
-					reply_for: null,
-					type: "text",
-					content: "",
-					conversation: conversation_id,
-				})
-			}
-		}
-	}
-
-	const handleMessageInputKeyDown = conversation => event => {
-		if (event.key === "Enter" && conversation) {
-			event.preventDefault()
-			let conversation_id = conversation._id ? conversation._id : conversation
-			let newMessageValue = event.target.value
-			if (String.isString(newMessageValue)) {
-				newMessageValue = newMessageValue.trim()
-			} else {
-				newMessageValue = ""
-			}
-			if (!String.isEmpty(newMessageValue) || (["audio", "file", "video", "image"].includes(draft.type) && (Array.isArray(draft.attachments) ? draft.attachments.length > 0 : false))) {
-				Sockets.emit("stopped-typing-message", {
-					conversation: conversation_id,
-					user: auth.user,
-				})
-				handleOnSendMessage(newMessageValue, conversation)
-			}
-		}
-	}
-
-	const handleSocketActionError = error => {
-		setError("Something went wrong!. " + error)
-	}
-
-	const handleOnMessageDeletedForUser = ({ message, user }) => {
-		updateMessage(message)
-	}
-
-	const handleOnMessageDeletedForAll = ({ message, user }) => {
-		updateMessage(message)
-	}
-
-	const handleOnMessageStateChangedBySocketAction = ({ message, user }) => {
-		updateMessage(message)
 	}
 
 	useDidMount(() => {
@@ -415,87 +203,14 @@ function Chat(props) {
 		}
 	}, [])
 
-	useEffect(() => {
-		if (location) {
-			const withRecipient = locationSearchParams.get("with")
-			if (!String.isEmpty(withRecipient)) {
-				if (withRecipient.indexOf("@") !== -1) {
-					setContactsQuery({ email_address: withRecipient.trim() })
-				} else {
-					setContactsQuery({ _id: withRecipient.trim() })
-				}
-			}
-		}
-	}, [location])
-
-	useEffect(() => {}, [contactsQuery])
-
-	useEffect(() => {
-		if (Array.isArray(conversations)) {
-			let newIndividualConversationsRecipients = []
-			conversations.map(chat => {
-				if (chat.type === "individual") {
-					let chat_owner_id = chat.owner
-					if (JSON.isJSON(chat.owner)) {
-						chat_owner_id = chat.owner._id
-					}
-					if (chat_owner_id !== auth.user?._id) {
-						newIndividualConversationsRecipients.push(chat_owner_id)
-					} else {
-						if (Array.isArray(chat.recipients) && chat.recipients.length > 0) {
-							if (JSON.isJSON(chat.recipients[0])) {
-								newIndividualConversationsRecipients.push(chat.recipients[0]._id)
-							} else {
-								newIndividualConversationsRecipients.push(chat.recipients[0])
-							}
-						}
-					}
-				}
-			})
-			setIndividualConversationsRecipients(newIndividualConversationsRecipients)
-		}
-	}, [conversations])
-
 	useDidMount(() => {
-		fetchInbox()
-	})
+		const onStartTypingListener = EventRegister.on("compose-message-started", handleOnUserStartedTyping)
+		const onStopTypingListener = EventRegister.on("compose-message-stopped", handleOnUserStoppedTyping)
 
-	useDidMount(() => {
-		Sockets.on("presence-changed", handlePresenceChanged)
-		Sockets.on("user-changed-presence", handlePresenceChanged)
-		//Sockets.on("message-typing-started", handleOnUserStartedTypingMessage);
-		//Sockets.on("message-typing-stopped", handleOnUserStoppedTypingMessage);
-		//Sockets.on("conversation-messages", handleOnConversationMessages);
-		/*Sockets.on("new-message", handleOnNewMessage);
-		Sockets.on("message-sent", handleOnMessageSent);*/
-		Sockets.on("messages-deleted-for-user", handleOnMessageDeletedForUser)
-		Sockets.on("messages-deleted-for-all", handleOnMessageDeletedForAll)
-		Sockets.on("message-marked-as-received", handleOnMessageStateChangedBySocketAction)
-		Sockets.on("message-received", handleOnMessageStateChangedBySocketAction)
-		Sockets.on("message-marked-as-read", handleOnMessageStateChangedBySocketAction)
-		Sockets.on("message-read", handleOnMessageStateChangedBySocketAction)
-		Sockets.on("delete-conversation-for-user-error", handleSocketActionError)
-		Sockets.on("delete-message-for-user-error", handleSocketActionError)
-		Sockets.on("delete-message-for-all-error", handleSocketActionError)
-	})
-
-	useWillUnmount(() => {
-		Sockets.off("presence-changed", handlePresenceChanged)
-		Sockets.off("user-changed-presence", handlePresenceChanged)
-		//Sockets.off("conversation-messages", handleOnConversationMessages);
-		/*Sockets.off("new-message", handleOnNewMessage);
-		Sockets.off("message-sent", handleOnMessageSent);*/
-		Sockets.off("messages-deleted-for-user", handleOnMessageDeletedForUser)
-		Sockets.off("messages-deleted-for-all", handleOnMessageDeletedForAll)
-		Sockets.off("delete-conversation-for-user-error", handleSocketActionError)
-		Sockets.off("message-marked-as-received", handleOnMessageStateChangedBySocketAction)
-		Sockets.off("message-received", handleOnMessageStateChangedBySocketAction)
-		Sockets.off("message-marked-as-read", handleOnMessageStateChangedBySocketAction)
-		Sockets.off("message-read", handleOnMessageStateChangedBySocketAction)
-		Sockets.off("delete-message-for-user-error", handleSocketActionError)
-		Sockets.off("delete-message-for-all-error", handleSocketActionError)
-		Sockets.off("create-conversation-error", handleSocketActionError)
-		EventRegister.emit("clear-selections")
+		return () => {
+			onStartTypingListener.remove()
+			onStopTypingListener.remove()
+		}
 	})
 
 	return (
@@ -517,73 +232,17 @@ function Chat(props) {
 				}
 			}}
 		>
-			<AppBar position="relative" className={""}>
-				<Toolbar>
-					{active_conversation_index !== -1 && (
-						<IconButton
-							onClick={() => {
-								if (locationHasWith) {
-									setSearchParams({})
-								}
-								dispatch(setActiveConversation(null))
-							}}
-							className={"mr-2"}
-							edge="start"
-							color="inherit"
-							aria-label="back-to-conversations"
-						>
-							<ArrowBackIcon />
-						</IconButton>
-					)}
-					{!!current_active_convesation &&
-						(current_active_convesation.type == "individual" ? (
-							(auth.user?._id === current_active_convesation.owner._id || auth.user?._id === current_active_convesation.owner) &&
-							Array.isArray(current_active_convesation.participants) &&
-							current_active_convesation.participants.length > 0 &&
-							current_active_convesation.participants[0].avatar ? (
-								<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(current_active_convesation.participants[0].avatar)} />
-							) : current_active_convesation.started_by && current_active_convesation.started_by.avatar ? (
-								<Avatar className={"mr-6 w-6 h-6"} src={ApiService.getAttachmentFileUrl(current_active_convesation.started_by.avatar)} />
-							) : (
-								<Avatar className={"mr-2 w-6 h-6 bg-transparent accent-text"}>
-									<PersonIcon />
-								</Avatar>
-							)
-						) : current_active_convesation.group_avatar ? (
-							<Avatar className={"mr-6"} src={ApiService.getAttachmentFileUrl(current_active_convesation.group_avatar)} />
-						) : (
-							<Avatar className={"mr-6 w-6 h-6 bg-transparent accent-text"}> {current_active_convesation.type === "group" ? <PeopleIcon /> : <PersonIcon />}</Avatar>
-						))}
-					{!!current_active_convesation && (
-						<Typography variant="h6" className={"capitalize flex-grow"}>
-							{current_active_convesation.type == "individual"
-								? (auth.user?._id === current_active_convesation.owner._id || auth.user?._id === current_active_convesation.owner) && Array.isArray(current_active_convesation.participants) && current_active_convesation.participants.length > 0
-									? current_active_convesation.participants[0].first_name + " " + current_active_convesation.participants[0].last_name
-									: current_active_convesation.started_by
-									? current_active_convesation.started_by.first_name + " " + current_active_convesation.started_by.last_name
-									: ""
-								: current_active_convesation.type == "group"
-								? current_active_convesation.group_name
-								: "Realfield"}
-						</Typography>
-					)}
-
-					{!current_active_convesation && (
-						<Typography variant="h6" className={"capitalize flex-grow"}>
-							Conversations
-						</Typography>
-					)}
-
-					{!current_active_convesation && !contactsDrawerOpen && (
-						<IconButton onClick={() => setContactsDrawerOpen(true)} className={"mr-2"} edge="end" color="inherit" aria-label="Contacts">
-							<ContactsIcon />
-						</IconButton>
-					)}
-				</Toolbar>
-			</AppBar>
+			<Header typing={state.typing} />
 
 			{!current_active_convesation && (
-				<GridItem md={12} className={"p-0 relative h-screen"}>
+				<GridItem
+					md={12}
+					className={"p-0 relative"}
+					sx={{
+						height: theme => `calc(100vh - ${theme.spacing(25)})`,
+						maxHeight: theme => `calc(100vh - ${theme.spacing(25)})`,
+					}}
+				>
 					<Box
 						sx={{
 							height: theme => `calc(100% - ${theme.spacing(8)})`,
@@ -595,7 +254,10 @@ function Chat(props) {
 							onConversationClick={(event, index, conversation) => {
 								dispatch(setActiveConversation(conversation.uuid))
 							}}
-							onConversationContextMenu={(event, index, conversation) => handleContextOpen("conversation", conversation)(event)}
+							onConversationContextMenu={(event, index, conversation) =>
+								handleContextOpen("conversation", conversation)(event)
+							}
+							typing={state.typing}
 						/>
 					</Box>
 
@@ -612,7 +274,12 @@ function Chat(props) {
 								<RefreshIcon />
 							</IconButton>
 
-							<Fab color="primary" aria-label="add" className={`absolute left-2/4 -top-2/4 -translate-x-2/4 -translate-y-2/4`} onClick={() => setContactsDrawerOpen(!contactsDrawerOpen)}>
+							<Fab
+								color="primary"
+								aria-label="add"
+								className={`absolute left-2/4 -top-2/4 -translate-x-2/4 -translate-y-2/4`}
+								onClick={() => setContactsDrawerOpen(!contactsDrawerOpen)}
+							>
 								{!contactsDrawerOpen && <ChatBubbleOutlineIcon />}
 								{contactsDrawerOpen && <CloseIcon />}
 							</Fab>
@@ -635,23 +302,29 @@ function Chat(props) {
 					</AppBar>
 				</GridItem>
 			)}
-
 			{!!current_active_convesation && (
-				<GridItem md={12} className={"p-0 block relative flex flex-col h-screen"}>
-					<Box
-						sx={{
-							paddingTop: 0,
-							paddingBottom: 0,
-							backgroundColor: theme => theme.palette.divider,
-							backgroundImage: `url("/img/${preferences?.theme === "dark" ? "chat-bg-dark.jpg" : "chat-bg.jpg"}") !important`,
-						}}
-					>
-						<Conversation onMessageClick={(event, index, message) => {}} onMessageContextMenu={(event, index, message) => handleContextOpen("message", message)(event)} data={current_active_convesation} canShowMessageComposer />
+				<GridItem md={12} className={"p-0 block relative flex flex-col"}>
+					<Box>
+						<Conversation
+							onMessageClick={(event, index, message) => {}}
+							onMessageContextMenu={(event, index, message) => handleContextOpen("message", message)(event)}
+							data={current_active_convesation}
+							canShowMessageComposer
+						/>
 					</Box>
 				</GridItem>
 			)}
-
-			<Menu keepMounted open={contextMenu.mouseY !== null} onClose={handleContextClose} anchorReference="anchorPosition" anchorPosition={contextMenu.mouseY !== null && contextMenu.mouseX !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}>
+			<Menu
+				keepMounted
+				open={contextMenu.mouseY !== null}
+				onClose={handleContextClose}
+				anchorReference="anchorPosition"
+				anchorPosition={
+					contextMenu.mouseY !== null && contextMenu.mouseX !== null
+						? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+						: undefined
+				}
+			>
 				{contextMenu.type === "conversation" && (
 					<MenuItem
 						onClick={event => {
@@ -683,66 +356,60 @@ function Chat(props) {
 					</MenuItem>
 				)}
 
-				{contextMenu.type === "message" && contextMenu.entry.sender._id !== auth.user?._id && contextMenu.entry.sender !== auth.user?._id && (
-					<MenuItem
-						onClick={event => {
-							handleContextClose(event)
-							setDraft({
-								is_reply: true,
-								sender: auth.user,
-								reply_for: contextMenu.entry,
-								content: "",
-								conversation: current_active_convesation._id,
-							})
-							if (textInputRef.current) {
-								textInputRef.current.value = ""
-								textInputRef.current.focus()
-							}
-						}}
-					>
-						Reply Message
-					</MenuItem>
-				)}
-				{contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user?._id || contextMenu.entry.sender === auth.user?._id) && (
-					<MenuItem
-						onClick={event => {
-							handleContextClose(event)
-							updateMessage({
-								...contextMenu.entry,
-								state: "deleted-for-sender",
-								deletions: Array.isArray(contextMenu.entry.deletions) ? contextMenu.entry.deletions.concat([auth.user?._id]) : [auth.user?._id],
-							})
-							Sockets.emit("delete-message-for-user", {
-								message: contextMenu.entry,
-								user: auth.user,
-							})
-						}}
-					>
-						Delete For Me
-					</MenuItem>
-				)}
+				{contextMenu.type === "message" &&
+					contextMenu.entry.sender._id !== auth.user?._id &&
+					contextMenu.entry.sender !== auth.user?._id && (
+						<MenuItem
+							onClick={event => {
+								handleContextClose(event)
+							}}
+						>
+							Reply Message
+						</MenuItem>
+					)}
+				{contextMenu.type === "message" &&
+					(contextMenu.entry.sender._id === auth.user?._id || contextMenu.entry.sender === auth.user?._id) && (
+						<MenuItem
+							onClick={event => {
+								handleContextClose(event)
+								updateMessage({
+									...contextMenu.entry,
+									state: "deleted-for-sender",
+									deletions: Array.isArray(contextMenu.entry.deletions)
+										? contextMenu.entry.deletions.concat([auth.user?._id])
+										: [auth.user?._id],
+								})
+								Sockets.emit("delete-message-for-user", {
+									message: contextMenu.entry,
+									user: auth.user,
+								})
+							}}
+						>
+							Delete For Me
+						</MenuItem>
+					)}
 
-				{contextMenu.type === "message" && (contextMenu.entry.sender._id === auth.user?._id || contextMenu.entry.sender === auth.user?._id) && (
-					<MenuItem
-						onClick={event => {
-							handleContextClose(event)
+				{contextMenu.type === "message" &&
+					(contextMenu.entry.sender._id === auth.user?._id || contextMenu.entry.sender === auth.user?._id) && (
+						<MenuItem
+							onClick={event => {
+								handleContextClose(event)
 
-							updateMessage({
-								...contextMenu.entry,
-								state: "deleted-for-all",
-								deletions: current_active_convesation.recipients.concat([current_active_convesation.owner]),
-							})
-							Sockets.emit("delete-message-for-all", {
-								message: contextMenu.entry,
-								user: auth.user,
-							})
-						}}
-					>
-						Delete For All
-					</MenuItem>
-				)}
+								updateMessage({
+									...contextMenu.entry,
+									state: "deleted-for-all",
+									deletions: current_active_convesation.recipients.concat([current_active_convesation.owner]),
+								})
+								Sockets.emit("delete-message-for-all", {
+									message: contextMenu.entry,
+									user: auth.user,
+								})
+							}}
+						>
+							Delete For All
+						</MenuItem>
+					)}
 			</Menu>
-
 			{error && (
 				<Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
 					<Alert onClose={() => setError(false)} severity="error">

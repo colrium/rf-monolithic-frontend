@@ -75,8 +75,6 @@ const App = props => {
 		return createTheme(computedTheme)
 	}, [prefersDarkMode, preferences.theme])
 
-	console.log("getAppTheme()", getAppTheme())
-
 	return (
 		<ThemeProvider theme={getAppTheme()}>
 			<NetworkServicesProvider>

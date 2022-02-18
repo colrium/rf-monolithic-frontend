@@ -22,6 +22,19 @@ class EventRegister {
 		}
 	})()
 
+	static removeEventListener(listener) {
+		let id = listener?.id || listener
+		if (String.isString(id)) {
+			const idArr = id.split("@@@")
+			const eventName = idArr[0]
+			const eventUUID = idArr[1]
+			if (Array.isArray(EventRegister._Listeners.refs[eventName])) {
+				EventRegister._Listeners.refs[eventName] = EventRegister._Listeners.refs[eventName].filter(ref => ref.uuid !== eventUUID)
+			}
+		}
+		return
+	}
+
 	static addUnattachedEventListener(eventName, callback) {
 		if (String.isString(eventName) && Function.isFunction(callback)) {
 			if (!Array.isArray(EventRegister._Listeners.refs[eventName])) {
@@ -36,7 +49,9 @@ class EventRegister {
 			})
 			return {
 				id: eventId,
-				remove: () => EventRegister.removeEventListener(eventId),
+				remove: () => {
+					EventRegister.removeEventListener(eventId)
+				},
 			}
 		}
 		return {
@@ -53,19 +68,10 @@ class EventRegister {
 				EventRegister._domElement = EventRegister._getCreateElement()
 			}
 			if (!!EventRegister._domElement) {
-				EventRegister._domElement.addEventListener(
-					eventName,
-					handleEvent,
-					false
-				)
+				EventRegister._domElement.addEventListener(eventName, handleEvent, false)
 				return {
 					id: null,
-					remove: () =>
-						EventRegister._domElement.removeEventListener(
-							eventName,
-							handleEvent,
-							false
-						),
+					remove: () => EventRegister._domElement.removeEventListener(eventName, handleEvent, false),
 				}
 			} else {
 				return addUnattachedEventListener(eventName, handleEvent)
@@ -79,22 +85,6 @@ class EventRegister {
 		}
 	}
 
-	static removeEventListener(listener) {
-		let id = listener?.id || listener
-		if (String.isString(id)) {
-			const idArr = id.split("@@@")
-			const eventName = idArr[0]
-			const eventUUID = idArr[1]
-			if (Array.isArray(EventRegister._Listeners.refs[eventName])) {
-				EventRegister._Listeners.refs[eventName] =
-					EventRegister._Listeners.refs[eventName].filter(
-						ref => ref.uuid !== eventUUID
-					)
-			}
-		}
-		return
-	}
-
 	static removeAllListeners() {
 		let removeError = false
 		Object.keys(EventRegister._Listeners.refs).forEach(_id => {
@@ -103,8 +93,6 @@ class EventRegister {
 		})
 		return !removeError
 	}
-
-
 
 	static async emitEvent(eventName, data = {}) {
 		try {
@@ -118,51 +106,32 @@ class EventRegister {
 
 				const propagate = (eventName, data = {}) => {
 					while (
-						!EventRegister._Listeners.propagation[eventName]
-							?.stopped &&
-						EventRegister._Listeners.propagation[eventName].index >=
-							0 &&
-						EventRegister._Listeners.propagation[eventName].index <
-							EventRegister._Listeners.refs[eventName].length
+						!EventRegister._Listeners.propagation[eventName]?.stopped &&
+						EventRegister._Listeners.propagation[eventName].index >= 0 &&
+						EventRegister._Listeners.propagation[eventName].index < EventRegister._Listeners.refs[eventName].length
 					) {
-						let index =
-							EventRegister._Listeners.propagation[eventName]
-								.index
-						const refCallback =
-							EventRegister._Listeners.refs[eventName][index]
-								?.callback
-						const refId =
-							EventRegister._Listeners.refs[eventName][index]?.id
-						const refuuid =
-							EventRegister._Listeners.refs[eventName][index]?.id
+						let index = EventRegister._Listeners.propagation[eventName].index
+						const refCallback = EventRegister._Listeners.refs[eventName][index]?.callback
+						const refId = EventRegister._Listeners.refs[eventName][index]?.id
+						const refuuid = EventRegister._Listeners.refs[eventName][index]?.id
 
 						if (Function.isFunction(refCallback)) {
 							Promise.all([
 								refCallback({
 									detail: data,
 									stopPropagation: () => {
-										if (
-											!EventRegister._Listeners
-												.propagation[eventName]?.stopped
-										) {
-											EventRegister._Listeners.propagation[
-												eventName
-											].stopped = true
+										if (!EventRegister._Listeners.propagation[eventName]?.stopped) {
+											EventRegister._Listeners.propagation[eventName].stopped = true
 										}
 									},
 									proceedPropagation: () => {
-										EventRegister._Listeners.propagation[
-											eventName
-										].stopped = false
+										EventRegister._Listeners.propagation[eventName].stopped = false
 										propagate(eventName, data)
 									},
 								}),
 							])
-							EventRegister._Listeners.propagation[
-								eventName
-							].index =
-								EventRegister._Listeners.propagation[eventName]
-									.index - 1
+							EventRegister._Listeners.propagation[eventName].index =
+								EventRegister._Listeners.propagation[eventName].index - 1
 						}
 					}
 				}

@@ -1,7 +1,7 @@
 /** @format */
 
-import React, { useCallback, useRef, useMemo } from "react"
-import Grid from '@mui/material/Grid';
+import React, { useCallback, useRef, useEffect } from "react"
+import Grid from "@mui/material/Grid"
 import { useSelector, useDispatch } from "react-redux"
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon"
 import { useTheme } from "@mui/material/styles"
@@ -21,19 +21,18 @@ import ClickAwayListener from "@mui/material/ClickAwayListener"
 import EmojiPicker from "emoji-picker-react"
 import LinkPreview from "components/LinkPreview"
 import { useDidMount, useDidUpdate, useWillUnmount, useSetState, usePersistentForm } from "hooks"
-import { useStartTyping } from "react-use"
+import { EventRegister } from "utils"
 
 const messageTypes = {
 	image: {
 		icon: <ImageIcon fontSize="inherit" />,
 		label: "Image",
 		value: "image",
+		color: "red",
 		actionStyle: {
-			"& .MuiSpeedDialAction-fab": {
-				backgroundColor: theme => theme.palette.red.main,
-				color: theme => theme.palette.background.paper,
-				fontSize: theme => theme.spacing(2.5),
-			},
+			backgroundColor: theme => theme.palette.red,
+			color: theme => theme.palette.background.paper,
+			fontSize: theme => theme.spacing(2.5),
 		},
 		filePickerProps: {
 			acceptedFiles: ["image/*"],
@@ -44,12 +43,11 @@ const messageTypes = {
 	video: {
 		icon: <VideocamIcon fontSize="inherit" />,
 		label: "Video",
+		color: "teal",
 		actionStyle: {
-			"& .MuiSpeedDialAction-fab": {
-				backgroundColor: theme => theme.palette.teal.main,
-				color: theme => theme.palette.background.paper,
-				fontSize: theme => theme.spacing(2.5),
-			},
+			backgroundColor: theme => theme.palette.teal.main,
+			color: theme => theme.palette.background.paper,
+			fontSize: theme => theme.spacing(2.5),
 		},
 		filePickerProps: {
 			acceptedFiles: ["video/*"],
@@ -60,12 +58,11 @@ const messageTypes = {
 	audio: {
 		icon: <HeadphonesIcon fontSize="inherit" />,
 		label: "Audio",
+		color: "blue",
 		actionStyle: {
-			"& .MuiSpeedDialAction-fab": {
-				backgroundColor: theme => theme.palette.blue?.main,
-				color: theme => theme.palette.background.paper,
-				fontSize: theme => theme.spacing(2.5),
-			},
+			backgroundColor: theme => theme.palette.blue?.main,
+			color: theme => theme.palette.background.paper,
+			fontSize: theme => theme.spacing(2.5),
 		},
 		filePickerProps: {
 			acceptedFiles: ["audio/*"],
@@ -76,12 +73,11 @@ const messageTypes = {
 	file: {
 		icon: <InsertDriveFileIcon fontSize="inherit" />,
 		label: "File",
+		color: "purple",
 		actionStyle: {
-			"& .MuiSpeedDialAction-fab": {
-				backgroundColor: theme => theme.palette.purple.main,
-				color: theme => theme.palette.background.paper,
-				fontSize: theme => theme.spacing(2.5),
-			},
+			backgroundColor: theme => theme.palette.purple.main,
+			color: theme => theme.palette.background.paper,
+			fontSize: theme => theme.spacing(2.5),
 		},
 		filePickerProps: {
 			acceptedFiles: ["application/*"],
@@ -113,6 +109,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		},
 	})
 	const inputRef = useRef(null)
+	const isTypingRef = useRef(false)
 	const [state, setState, getState] = useSetState({
 		emojiPickerOpen: false,
 		filePickerOpen: false,
@@ -178,8 +175,6 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		if (event.key === "Enter" && !event.altKey && !event.ctrlKey && !event.shiftKey) {
 			event.preventDefault()
 			handleOnSubmit()
-		} else if (!String.isEmpty(event?.target?.value)) {
-			console.log("event?.target?.value", event?.target?.value)
 		}
 	}, [])
 
@@ -192,6 +187,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 				let range = inputRef.current.createTextRange()
 				range.collapse(false)
 				range.select()
+				inputRef.current.focus()
 			}
 		}
 	}, [])
@@ -200,7 +196,23 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		autoFocusContentInput()
 	})
 
-	useStartTyping(() => console.log("Started typing..."))
+	useDidUpdate(() => {
+		if (!String.isEmpty(values.content) || !Array.isEmpty(values.attachments)) {
+			if (!isTypingRef.current) {
+				isTypingRef.current = true
+				EventRegister.emit("compose-message-started", {
+					conversation: conversation?._id || conversation,
+					user: auth.user._id,
+				})
+			}
+		} else if (isTypingRef.current) {
+			isTypingRef.current = false
+			EventRegister.emit("compose-message-stopped", {
+				conversation: conversation?._id || conversation,
+				user: auth.user._id,
+			})
+		}
+	}, [values.content])
 
 	return (
 		<Grid {...rest} container ref={ref}>
@@ -208,7 +220,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 				<Grid item xs={12} className="">
 					<Paper
 						id="file-picker"
-						className={` m-1 p-4 absolute transform -top-4 -translate-y-full right-4 transition-all ${
+						className={` m-1 p-4 absolute transform -top-4 -translate-y-full right-4 left-0 transition-all ${
 							state.filePickerOpen && ["image", "audio", "video", "file"].indexOf(values.type) !== -1
 								? "scale-y-100"
 								: "hidden scale-y-0"
@@ -233,14 +245,11 @@ const MessageComposer = React.forwardRef((props, ref) => {
 							<Grid item xs={12}>
 								<FilePicker
 									name={`attachments`}
-									label=""
-									defaultValue={values?.attachments || []}
-									onChange={new_value => setValue(`attachments`, new_value)}
 									variant={"outlined"}
 									filesLimit={20}
 									rules={{
 										validate: {
-											isNotEmpty: v => !Array.isEmpty(v) || "Required",
+											// isNotEmpty: v => !Array.isEmpty(v) || `${messageTypes[values.type]?.label} is Required`,
 										},
 									}}
 									{...messageTypes[values.type]?.filePickerProps}
@@ -260,6 +269,44 @@ const MessageComposer = React.forwardRef((props, ref) => {
 					}}
 				>
 					<Grid container>
+						{state.typePickerOpen && (
+							<Grid item xs={12} className="mb-4 flex flex-row ">
+								<Box className="m-4 flex flex-row flex-grow">
+									{Object.entries(messageTypes).map(([messageType, messageTypeProps]) => (
+										<Box
+											className="flex flex-col flex-1 mx-4 items-center justify-center"
+											key={`message-type-${messageType}`}
+										>
+											<IconButton color={messageTypeProps.color} onClick={handleOnPickType(messageType)}>
+												{messageTypeProps.icon}
+											</IconButton>
+
+											<Typography>{messageTypeProps.label}</Typography>
+										</Box>
+									))}
+								</Box>
+								<Box>
+									<IconButton color={"error"} size="small" onClick={() => setState({ typePickerOpen: false })}>
+										<CloseIcon fontSize="inherit" />
+									</IconButton>
+								</Box>
+							</Grid>
+						)}
+						{!Array.isEmpty(values.attachments) && !state.filePickerOpen && !state.typePickerOpen && (
+							<Grid item xs={12} className="mb-4">
+								<FilePicker
+									name={`attachments`}
+									variant={"outlined"}
+									filesLimit={values.attachments.length}
+									rules={{
+										validate: {
+											// isNotEmpty: v => !Array.isEmpty(v) || `${messageTypes[values.type]?.label} is Required`,
+										},
+									}}
+									{...messageTypes[values.type]?.filePickerProps}
+								/>
+							</Grid>
+						)}
 						{String.containsUrl(values.content) && (
 							<Grid item xs={12} className="mb-4">
 								<LinkPreview
@@ -270,6 +317,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 								/>
 							</Grid>
 						)}
+
 						<Grid item xs={12} className="flex flex-row items-center">
 							<ClickAwayListener
 								onClickAway={() =>
@@ -312,7 +360,6 @@ const MessageComposer = React.forwardRef((props, ref) => {
 									inputProps={{
 										onKeyDown: handleOnContentInputKeyDown,
 									}}
-									autoFocus
 									multiline
 									minRows={4}
 									maxRows={8}
@@ -320,7 +367,11 @@ const MessageComposer = React.forwardRef((props, ref) => {
 								/>
 							</div>
 							<div>
-								<div className="relative">
+								<IconButton ariaLabel={"Add Attachment"} onClick={handleTypePickerOpen}>
+									<AttachFileIcon />
+								</IconButton>
+								{/* <div className="relative">
+
 									<SpeedDial
 										ariaLabel="Add Attachment"
 										sx={{
@@ -356,7 +407,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 											/>
 										))}
 									</SpeedDial>
-								</div>
+								</div> */}
 							</div>
 						</Grid>
 					</Grid>

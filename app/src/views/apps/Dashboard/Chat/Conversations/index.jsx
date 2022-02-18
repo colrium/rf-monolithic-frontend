@@ -25,13 +25,7 @@ import { useDidMount, useWillUnmount, useSetState } from "hooks"
 import Conversation from "./Conversation"
 
 const Conversations = props => {
-	const {
-		fetchData,
-		className,
-		onConversationClick,
-		onConversationContextMenu,
-		...rest
-	} = props
+	const { fetchData, className, onConversationClick, onConversationContextMenu, typing, ...rest } = props
 	const theme = useTheme()
 	const dispatch = useDispatch()
 	const { isAuthenticated, user } = useSelector(state => state.auth)
