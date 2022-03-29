@@ -1,42 +1,34 @@
 // Externals
-import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React, { useCallback, useRef } from "react"
+import { useGeolocation } from "react-use"
+import { app } from "assets/jss/app-theme"
+import { intercom } from "config"
+import { Typography, Divider } from "@mui/material"
+import { useClientPositions } from "hooks"
+import Intercom from "react-intercom"
 
-// Component styles
-const styles = theme => ({
-	root: {
-		padding: theme.spacing(4),
-	},
-	company: {
-		marginTop: theme.spacing(2),
-		marginBottom: theme.spacing(0.5),
-	},
-});
+const Footer = props => {
+	const { className, showIntercom } = props
+	const [clientPositions] = useClientPositions()
 
-class Footer extends Component {
-	render() {
-		const { className } = this.props;
-
-		return (
-			<div
-				className={
-					"p-4 " +
-					(className ? " " + className : "")
-				}
-			>
-				{/*<Divider />
-				<Typography className="mt-2 mb-1" variant="body1">
-					&copy; {app.name}. {new Date().format("Y")}
-				</Typography>
-				<Typography variant="caption">{app.description}</Typography>
-				<Intercom appID={intercom.app.id} {...intercom.app.user} />*/}
-			</div>
-		);
-	}
+	return (
+		<footer
+			className={`p-4 mt-20 w-full absolute bottom-0 text-xs flex flex-col justify-end items-end pr-32 ${className ? className : ""}`}
+		>
+			<Divider />
+			<Typography className={`mt-2 mb-1 text-xs`} variant="body-2">
+				&copy; {app.name}. {new Date().format("Y")}
+			</Typography>
+			<Typography variant="body-2" className={`text-xs`}>
+				{app.description}
+			</Typography>
+			{showIntercom && <Intercom appID={intercom.app.id} {...intercom.app.user} />}
+		</footer>
+	)
 }
 
-Footer.propTypes = {
-	className: PropTypes.string,
-};
+Footer.defaultProps = {
+	showIntercom: true,
+}
 
 export default Footer;

@@ -41,113 +41,59 @@ class Sidebar extends Component {
 	state = {
 		userPresenceMenuAnchorEl: null,
 		userPresenceMenuOpen: false,
-	};
-
-	constructor(props) {
-		super(props);
-		this.onOpenUserPresenceMenu = this.onOpenUserPresenceMenu.bind(this);
-		this.onCloseUserPresenceMenu = this.onCloseUserPresenceMenu.bind(this);
-		this.onChangeUserPresenceMenu =
-			this.onChangeUserPresenceMenu.bind(this);
 	}
 
-	onOpenUserPresenceMenu = event => {
-		const userPresenceMenuAnchorEl = event.currentTarget;
-		this.setState({
-			userPresenceMenuAnchorEl: userPresenceMenuAnchorEl,
-			userPresenceMenuOpen: true,
-		});
-	};
+	constructor(props) {
+		super(props)
+	}
 
-	onCloseUserPresenceMenu = () => {
-		this.setState({
-			userPresenceMenuAnchorEl: null,
-			userPresenceMenuOpen: false,
-		});
-	};
-
-	onChangeUserPresenceMenu = presence => event => {
-		const {
-			auth,
-			networkServices: { Sockets },
-		} = this.props;
-		if (Sockets && auth.isAuthenticated) {
-			Sockets.emit("change-user-presence", {
-				id: auth.user?._id,
-				presence: presence,
-			});
-		}
-		this.setState({
-			userPresenceMenuAnchorEl: null,
-			userPresenceMenuOpen: false,
-		});
-	};
 
 	applyItemsRestrictions() {
-		const { auth, items } = this.props;
-		let items_with_restrictions = [];
+		const { auth, items } = this.props
+		let items_with_restrictions = []
 		//iterate
 		items.map((item, index) => {
 			if (item.section) {
-				let allowed_item_links = [];
+				let allowed_item_links = []
 				item.links.map((item_link, item_link_index) => {
 					if (!item_link.restricted) {
-						allowed_item_links.push(item_link);
+						allowed_item_links.push(item_link)
 					} else if (
-						(Array.isArray(item_link.restricted) &&
-							item_link.restricted.includes(auth.user?.role)) ||
+						(Array.isArray(item_link.restricted) && item_link.restricted.includes(auth.user?.role)) ||
 						item_link.restricted === auth.user?.role
 					) {
-						allowed_item_links.push(item_link);
-					} else if (
-						UtilitiesHelper.isOfType(
-							item_link.restricted,
-							"function"
-						) &&
-						!item_link.restricted(auth.user)
-					) {
-						allowed_item_links.push(item_link);
+						allowed_item_links.push(item_link)
+					} else if (UtilitiesHelper.isOfType(item_link.restricted, "function") && !item_link.restricted(auth.user)) {
+						allowed_item_links.push(item_link)
 					}
-				});
+				})
 				//reassign links after link valifa
-				item.links = allowed_item_links;
+				item.links = allowed_item_links
 			}
 			if (!item.restricted) {
-				items_with_restrictions.push(item);
+				items_with_restrictions.push(item)
 			} else if (
-				(Array.isArray(item.restricted) &&
-					item.restricted.includes(auth.user?.role)) ||
+				(Array.isArray(item.restricted) && item.restricted.includes(auth.user?.role)) ||
 				item.restricted === auth.user?.role
 			) {
-				items_with_restrictions.push(item);
-			} else if (
-				UtilitiesHelper.isOfType(item.restricted, "function") &&
-				!item.restricted(auth.user)
-			) {
-				items_with_restrictions.push(item);
+				items_with_restrictions.push(item)
+			} else if (UtilitiesHelper.isOfType(item.restricted, "function") && !item.restricted(auth.user)) {
+				items_with_restrictions.push(item)
 			}
-		});
-		return items_with_restrictions;
+		})
+		return items_with_restrictions
 	}
 	render() {
-		const {
-			className,
-			items,
-			auth,
-			onClickNavLink,
-			onToggleSidebar,
-			open,
-		} = this.props;
+		const { className, items, auth, onClickNavLink, onToggleSidebar, open } = this.props
 
 		return (
 			<Box
-				className={`${
-					className ? className : ""
-				}  flex flex-col h-full `}
+				className={`${className ? className : ""}  flex flex-col h-full `}
 				sx={{
 					width: drawerWidth,
 				}}
-				component="nav">
+				component="nav"
+			>
 				{/* <Box className="flex flex-row items-center justify-center">
 					<IconButton
 						onClick={onToggleSidebar}
@@ -194,124 +140,80 @@ class Sidebar extends Component {
 										subheader={
 											<ListSubheader
 												sx={{
-													color: theme =>
-														theme.palette.text
-															.contrastDark,
+													color: theme => theme.palette.text.contrastDark,
 												}}
-												disableSticky>
+												disableSticky
+											>
 												{item_link.text}
 											</ListSubheader>
-										}>
-										{item_link.links.map(
-											(link_obj, link_index) => (
-												<ListItem
-													className={
-														"pointer transition-all hover:bg-black hover:bg-opacity-5"
+										}
+									>
+										{item_link.links.map((link_obj, link_index) => (
+											<ListItem
+												className={"pointer transition-all hover:bg-black hover:bg-opacity-5"}
+												sx={{
+													color: theme => theme.palette.text.contrast,
+												}}
+												component={AdapterLink}
+												to={link_obj.route}
+												onClick={event => {
+													if (Function.isFunction(onClickNavLink)) {
+														onClickNavLink(link_obj)
 													}
-													sx={{
-														color: theme =>
-															theme.palette.text
-																.contrast,
-													}}
-													component={AdapterLink}
-													to={link_obj.route}
-													onClick={event => {
-														if (
-															Function.isFunction(
-																onClickNavLink
-															)
-														) {
-															onClickNavLink(
-																link_obj
-															);
-														}
-													}}
-													key={
-														"drawer_item_" +
-														index +
-														"_" +
-														link_index
-													}>
-													{!!link_obj.icon && (
-														<ListItemIcon
-															className={classNames(
-																{
-																	"text-current": true,
-																	[link_obj.color
-																		? link_obj.color +
-																		  "_text"
-																		: ""]:
-																		!!link_obj.color,
-																}
-															)}
-															color="inherit">
-															{typeof link_obj.icon ===
-															"string" ? (
-																<Icon>
-																	{
-																		link_obj.icon
-																	}
-																</Icon>
-															) : (
-																link_obj.icon
-															)}
-														</ListItemIcon>
-													)}
-													{!!link_obj.text && (
-														<ListItemText
-															primaryTypographyProps={{
-																className:
-																	classNames({
-																		"text-current": true,
-																		[item_link?.color +
-																		"_text"]:
-																			!!item_link?.color,
-																	}),
-															}}
-															primary={
-																link_obj.text
-															}
-														/>
-													)}
-												</ListItem>
-											)
-										)}
+												}}
+												key={"drawer_item_" + index + "_" + link_index}
+											>
+												{!!link_obj.icon && (
+													<ListItemIcon
+														className={classNames({
+															"text-current": true,
+															[link_obj.color ? link_obj.color + "_text" : ""]: !!link_obj.color,
+														})}
+														color="inherit"
+													>
+														{typeof link_obj.icon === "string" ? <Icon>{link_obj.icon}</Icon> : link_obj.icon}
+													</ListItemIcon>
+												)}
+												{!!link_obj.text && (
+													<ListItemText
+														primaryTypographyProps={{
+															className: classNames({
+																"text-current": true,
+																[item_link?.color + "_text"]: !!item_link?.color,
+															}),
+														}}
+														primary={link_obj.text}
+													/>
+												)}
+											</ListItem>
+										))}
 									</List>
 									{/* <Divider /> */}
 								</div>
 							) : (
 								<ListItem
 									sx={{
-										color: theme =>
-											theme.palette.text.contrast,
+										color: theme => theme.palette.text.contrast,
 									}}
-									className={
-										"pointer transition-all hover:bg-black hover:bg-opacity-5"
-									}
+									className={"pointer transition-all hover:bg-black hover:bg-opacity-5"}
 									component={AdapterLink}
 									onClick={event => {
-										if (
-											Function.isFunction(onClickNavLink)
-										) {
-											onClickNavLink(item_link);
+										if (Function.isFunction(onClickNavLink)) {
+											onClickNavLink(item_link)
 										}
 									}}
 									to={item_link.route}
-									key={"drawer_item_" + index}>
+									key={"drawer_item_" + index}
+								>
 									{item_link.icon ? (
 										<ListItemIcon
 											className={classNames({
 												"text-current": true,
-												[item_link?.color + "_text"]:
-													!!item_link?.color,
+												[item_link?.color + "_text"]: !!item_link?.color,
 											})}
-											color="inherit">
-											{typeof item_link.icon ===
-											"string" ? (
-												<Icon>{item_link.icon}</Icon>
-											) : (
-												item_link.icon
-											)}
+											color="inherit"
+										>
+											{typeof item_link.icon === "string" ? <Icon>{item_link.icon}</Icon> : item_link.icon}
 										</ListItemIcon>
 									) : (
 										""
@@ -321,9 +223,7 @@ class Sidebar extends Component {
 											primaryTypographyProps={{
 												className: classNames({
 													"text-current": true,
-													[item_link?.color +
-													"_text"]:
-														!!item_link?.color,
+													[item_link?.color + "_text"]: !!item_link?.color,
 												}),
 											}}
 											primary={item_link.text}
@@ -337,7 +237,7 @@ class Sidebar extends Component {
 					</List>
 				</ScrollBars>
 			</Box>
-		);
+		)
 	}
 }
 

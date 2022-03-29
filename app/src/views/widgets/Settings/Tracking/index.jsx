@@ -1,11 +1,11 @@
 import React, { /*useEffect,*/ useState } from "react";
 import { connect } from "react-redux";
-import { useGlobals } from "contexts/Globals";
+import { useNetworkServices } from "contexts/NetworkServices"
 
-import Typography from "@mui/material/Typography";
-import { CheckboxInput, RadioInput, TextInput, SelectInput } from "components/FormInputs";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Typography from "@mui/material/Typography"
+import { CheckboxInput, RadioInput, TextInput, SelectInput } from "components/FormInputs"
+import GridContainer from "components/Grid/GridContainer"
+import GridItem from "components/Grid/GridItem"
 
 function Widget(props) {
 	/*let [state, setState] = useState(props);
@@ -13,29 +13,15 @@ function Widget(props) {
 		setState(props);
 	}, [props]);*/
 
-	let [alerts, setAlerts] = useState({});
-	let [loading, setLoading] = useState({});
-	let [errors, setErrors] = useState({});
+	let [alerts, setAlerts] = useState({})
+	let [loading, setLoading] = useState({})
+	let [errors, setErrors] = useState({})
 
+	let {
+		app: { settings },
+	} = props
 
-	let { app: { settings } } = props;
-	const { updateSettings } = useGlobals();
-
-	let context_settings = settings.tracking;
-
-	const handleOnChange = name => async value => {
-		setLoading({ ...loading, [name]: true });
-		setErrors({ ...errors, [name]: false });
-		let new_value = { ...context_settings, [name]: value };
-		updateSettings("tracking", new_value).then(new_settings => {
-			setLoading({ ...loading, [name]: false });
-			setAlerts({ [name]: name.humanize() + " saved", });
-		}).catch(e => {
-			setLoading({ ...loading, [name]: false });
-			setErrors({ ...errors, [name]: e.msg });
-		});
-	};
-
+	let context_settings = settings.tracking
 
 	return (
 		<GridContainer className="px-2">
@@ -43,7 +29,7 @@ function Widget(props) {
 				<Typography variant="h3"> Location Tracking settings</Typography>
 			</GridItem>
 
-			<GridItem xs={12} className="mb-4">
+			{/* <GridItem xs={12} className="mb-4">
 				<RadioInput
 					name="interval-type"
 					label="Interval type"
@@ -139,9 +125,9 @@ function Widget(props) {
 					disabled={loading["enforce-onlocation-actions"]}
 					error={errors["enforce-onlocation-actions"]}
 				/>
-			</GridItem>
+			</GridItem> */}
 		</GridContainer>
-	);
+	)
 }
 
 const mapStateToProps = state => ({

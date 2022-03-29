@@ -14,49 +14,38 @@ import compose from "recompose/compose";
 import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions";
 import IconButton from "@mui/material/IconButton";
 import { withTheme } from '@mui/styles';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import { useGlobals } from "contexts/Globals";
-import { connect } from "react-redux";
-import Typography from "components/Typography";
-import Avatar from "components/Avatar";
-import ApiService from "services/Api";
+import MailOutlineIcon from "@mui/icons-material/MailOutline"
+import { connect } from "react-redux"
+import Typography from "components/Typography"
+import Avatar from "components/Avatar"
+import ApiService from "services/Api"
 
 const presences = {
 	online: { label: "Online", color: "#4caf50" },
 	away: { label: "Away", color: "#ffab00" },
 	offline: { label: "Offline", color: "#4caf50" },
-};
+}
 
-
-
-const EmailUserAction = (props) => {
-	const { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth, cache, data, ...rest } = props;
+const EmailUserAction = props => {
+	const { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth, cache, data, ...rest } = props
 
 	const handleOnClick = useCallback(() => {
 		if (!!data && !!data?._id) {
-			clearEmailingCache();
-			setEmailingCache("recipient_address", data.email_address);
-			setEmailingCache("recipient_name", data.first_name);
-			setEmailingCache("subject", "");
-			setEmailingCache("content", "Hey " + data.first_name + ", \n\n\n\n\n" + auth.user?.first_name + "\nRealfield.io");
-			setEmailingCache("popup_open", true);
+			clearEmailingCache()
+			setEmailingCache("recipient_address", data.email_address)
+			setEmailingCache("recipient_name", data.first_name)
+			setEmailingCache("subject", "")
+			setEmailingCache("content", "Hey " + data.first_name + ", \n\n\n\n\n" + auth.user?.first_name + "\nRealfield.io")
+			setEmailingCache("popup_open", true)
 		}
-
-	}, [data] );
-
+	}, [data])
 
 	return (
-		<IconButton
-				color={"secondary"}
-				aria-label="Send Email"
-				{...rest}
-				onClick={handleOnClick}
-			>
-				<MailOutlineIcon fontSize="inherit" />
+		<IconButton color={"secondary"} aria-label="Send Email" {...rest} onClick={handleOnClick}>
+			<MailOutlineIcon fontSize="inherit" />
 		</IconButton>
 	)
-
-};
+}
 
 EmailUserAction.defaultProps = {
 	layoutType: "inline",
@@ -65,12 +54,12 @@ EmailUserAction.defaultProps = {
 const mapStateToProps = state => ({
 	auth: state.auth,
 	cache: state.cache,
-});
+})
 
 const EmailUserActionComponent = compose(
 	connect(mapStateToProps, { setEmailingCache, clearEmailingCache, closeDialog, openDialog }),
-	withTheme,
-)(EmailUserAction);
+	withTheme
+)(EmailUserAction)
 
 export default {
 	name: "users",
@@ -79,7 +68,7 @@ export default {
 	color: "#01579b",
 	model: "User",
 	endpoint: "/users",
-	cache: false,
+	cache: true,
 	views: {
 		single: {
 			default: "cardview",
@@ -110,57 +99,45 @@ export default {
 			listview: {
 				avatar: false,
 				resolveData: async (entries, user = null, isPopulated = true) => {
-					let resolved_data = [];
+					let resolved_data = []
 					if (Array.isArray(entries)) {
 						resolved_data = entries.map((entry, index) => {
 							return {
 								id: entry?._id,
-								icon: isPopulated && entry.avatar ? null : (<EntryIcon />),
-								avatar: (isPopulated && entry.avatar ? (
-									<Avatar
-										alt={entry.first_name}
-										src={ApiService.getAttachmentFileUrl(entry.avatar)}
-									/>
-								) : null),
-								title: (<Typography
-									className={"truncate"}
-									component="p"
-									variant="body1"
-
-								>
-									{entry.first_name + " " + entry.last_name}
-								</Typography>),
+								icon: isPopulated && entry.avatar ? null : <EntryIcon />,
+								avatar:
+									isPopulated && entry.avatar ? (
+										<Avatar alt={entry.first_name} src={ApiService.getAttachmentFileUrl(entry.avatar)} />
+									) : null,
+								title: (
+									<Typography className={"truncate"} component="p" variant="body1">
+										{entry.first_name + " " + entry.last_name}
+									</Typography>
+								),
 								body: (
 									<React.Fragment>
-										{entry.email_address && <Typography
-											component="p"
-											className={"truncate"}
-											variant="body2"
+										{entry.email_address && (
+											<Typography component="p" className={"truncate"} variant="body2">
+												{entry.email_address}
+											</Typography>
+										)}
 
-										>
-											{entry.email_address}
-										</Typography>}
-
-										{entry.role && <Typography
-											component="p"
-											variant="body2"
-
-										>
-											{entry.role}
-										</Typography>}
-
-
+										{entry.role && (
+											<Typography component="p" variant="body2">
+												{entry.role}
+											</Typography>
+										)}
 									</React.Fragment>
 								),
-							};
-						});
+							}
+						})
 					}
-					return resolved_data;
+					return resolved_data
 				},
 			},
 			tableview: {
 				avatar: entry => {
-					return;
+					return
 				},
 				title: ["first_name", "last_name"],
 			},
@@ -369,8 +346,7 @@ export default {
 					props: {
 						acceptedFiles: ["image/*"],
 						filesLimit: 1,
-						dropzoneText:
-							"Click to select or drag n drop image file here",
+						dropzoneText: "Click to select or drag n drop image file here",
 					},
 				},
 				reference: {
@@ -417,10 +393,10 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return true;
+						return true
 					},
 					input: (values, user) => {
-						return false;
+						return false
 					},
 				},
 			},
@@ -434,10 +410,10 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return true;
+						return true
 					},
 					input: (values, user) => {
-						return false;
+						return false
 					},
 				},
 			},
@@ -452,13 +428,13 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user && user?.role === "admin") {
-							return false;
+							return false
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -472,13 +448,13 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user && user?.role === "admin") {
-							return false;
+							return false
 						}
-						return true;
+						return true
 					},
 				},
 				possibilities: {
@@ -497,13 +473,13 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user && user?.role === "admin") {
-							return false;
+							return false
 						}
-						return true;
+						return true
 					},
 				},
 				possibilities: {
@@ -551,13 +527,13 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user && user?.role === "admin") {
-							return false;
+							return false
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -571,13 +547,13 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user && user?.role === "admin") {
-							return false;
+							return false
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -590,13 +566,13 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user && user?.role === "admin") {
-							return false;
+							return false
 						}
-						return true;
+						return true
 					},
 				},
 				possibilities: {
@@ -617,13 +593,13 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user && user?.role === "admin") {
-							return false;
+							return false
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -706,15 +682,13 @@ export default {
 		view: {
 			summary: user => user?.role === "admin",
 			all: user => user?.role === "admin",
-			single: (user) => user?.role === "admin",
+			single: user => user?.role === "admin",
 		},
 		actions: {
 			view: {
 				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return (
-						"/users/view/" + entry?._id
-					).toUriWithDashboardPrefix();
+					return ("/users/view/" + entry?._id).toUriWithDashboardPrefix()
 				},
 				Icon: OpenInNewIcon,
 				label: "View",
@@ -731,9 +705,7 @@ export default {
 			update: {
 				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return (
-						"/users/edit/" + entry?._id
-					).toUriWithDashboardPrefix();
+					return ("/users/edit/" + entry?._id).toUriWithDashboardPrefix()
 				},
 				Icon: EditIcon,
 				label: "Edit",
@@ -743,7 +715,7 @@ export default {
 			email_user: {
 				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return ("/").toUriWithDashboardPrefix();
+					return "/".toUriWithDashboardPrefix()
 				},
 				Component: EmailUserActionComponent,
 				className: "purple-text",
@@ -752,15 +724,13 @@ export default {
 			delete: {
 				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return ("/users/delete/" + entry?._id).toUriWithDashboardPrefix();
+					return ("/users/delete/" + entry?._id).toUriWithDashboardPrefix()
 				},
 				Icon: DeleteIcon,
 				className: "text-red-500",
 				label: "Delete",
-				confirmationRequired: true
+				confirmationRequired: true,
 			},
 		},
-
 	},
-
-};
+}

@@ -1,9 +1,8 @@
 /** @format */
 
 import React, { useCallback, useRef } from "react"
-import { FixedSizeList } from "react-window"
-import InfiniteLoader from "react-window-infinite-loader"
-import AutoSizer from "react-virtualized-auto-sizer"
+import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer"
+import List from "react-virtualized/dist/commonjs/List"
 import { useSelector, useDispatch } from "react-redux"
 import InboxIcon from "@mui/icons-material/Inbox"
 import { useTheme } from "@mui/material/styles"
@@ -29,9 +28,9 @@ const Conversations = props => {
 	const theme = useTheme()
 	const dispatch = useDispatch()
 	const { isAuthenticated, user } = useSelector(state => state.auth)
-	const conversations = useSelector(
-		state => state.communication.messaging.conversations
-	)
+	const listRef = useRef(null)
+
+	const conversations = useSelector(state => state.communication.messaging.conversations)
 	const [state, setState, getState] = useSetState({
 		loading: Boolean(fetchData),
 		selected: -1,
@@ -50,6 +49,7 @@ const Conversations = props => {
 			if (Function.isFunction(onConversationClick)) {
 				onConversationClick(event, index, conversations[index])
 			}
+			dispatch(setActiveConversation(conversations[index]))
 		},
 		[onConversationClick, conversations]
 	)
@@ -91,15 +91,12 @@ const Conversations = props => {
 			itemSizeRef.current = itemSize
 		}
 
-		onUnselectEventRef.current = EventRegister.on(
-			"clear-conversation-selection",
-			event => {
-				console.log("clear-conversation-selection called event", event)
-				setState({
-					focused: -1,
-				})
-			}
-		)
+		onUnselectEventRef.current = EventRegister.on("clear-conversation-selection", event => {
+			console.log("clear-conversation-selection called event", event)
+			setState({
+				focused: -1,
+			})
+		})
 	})
 
 	useWillUnmount(() => {
@@ -108,71 +105,49 @@ const Conversations = props => {
 		}
 	})
 
-	if (!conversations?.length || conversations?.length === 0) {
+	const noRowsRenderer = useCallback(() => {
 		return (
-			<Grid
-				container
-				spacing={2}
-				className="flex flex-col items-center justify-center h-full"
-			>
-				<Grid
-					item
-					md={12}
-					className={
-						"flex flex-col items-center relative p-0 px-4 my-4 justify-center h-full"
-					}
-				>
+			<Grid container spacing={2} className="flex flex-col items-center justify-center h-full">
+				<Grid item md={12} className={"flex flex-col items-center relative p-0 px-4 my-4 justify-center h-full"}>
 					<Typography
 						variant="subtitle1"
 						color="textSecondary"
 						className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center"
 						sx={{
 							color: theme => theme.palette.text.disabled,
-							backgroundColor: theme =>
-								theme.palette.background.paper,
+							backgroundColor: theme => theme.palette.background.paper,
 						}}
 					>
 						<InboxIcon fontSize="inherit" />
 					</Typography>
-					<Typography
-						variant="body2"
-						color="textSecondary"
-						className="mx-0"
-						sx={{ color: theme => theme.palette.text.disabled }}
-					>
+					<Typography variant="body2" color="textSecondary" className="mx-0" sx={{ color: theme => theme.palette.text.disabled }}>
 						You don't have any conversations yet
 					</Typography>
 				</Grid>
 			</Grid>
 		)
-	} else {
-		return (
-			<InfiniteLoader
-				isItemLoaded={() => true}
-				itemCount={conversations?.length}
-				loadMoreItems={loadMoreConversations}
-				className={`py-16 ${className}`}
-			>
-				{({ onItemsRendered, ref }) => (
-					<AutoSizer>
-						{({ height, width }) => (
-							<FixedSizeList
-								height={height}
-								itemCount={conversations?.length}
-								itemSize={itemSizeRef.current}
-								onItemsRendered={onItemsRendered}
-								width={width}
-								{...rest}
-								ref={ref}
-							>
-								{itemProps => rowRenderer(itemProps)}
-							</FixedSizeList>
-						)}
-					</AutoSizer>
-				)}
-			</InfiniteLoader>
-		)
-	}
+	}, [])
+
+	const getRowHeight = useCallback(({ index }) => {
+		return itemSizeRef.current
+	}, [])
+
+	return (
+		<AutoSizer className={`w-full relative ${className ? className : ""}`}>
+			{({ height, width }) => (
+				<List
+					rowCount={conversations?.length}
+					rowHeight={getRowHeight}
+					height={height}
+					width={width}
+					rowRenderer={rowRenderer}
+					noRowsRenderer={noRowsRenderer}
+					{...rest}
+					ref={listRef}
+				/>
+			)}
+		</AutoSizer>
+	)
 }
 
 export default React.memo(Conversations)

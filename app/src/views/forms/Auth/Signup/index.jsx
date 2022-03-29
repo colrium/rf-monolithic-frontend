@@ -14,13 +14,11 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import { baseUrls, environment } from "config";
 
-import { CountriesHelper } from "utils/Helpers";
-import { withGlobals } from "contexts/Globals";
-import ApiService from "services/Api";
-import { GooglePlacesAutocomplete } from "components/FormInputs";
+import { CountriesHelper } from "utils/Helpers"
+import ApiService from "services/Api"
+import { GooglePlacesAutocomplete } from "components/FormInputs"
 
-
-import { TextInput, RadioInput, SelectInput } from "components/FormInputs";
+import { TextInput, RadioInput, SelectInput } from "components/FormInputs"
 
 const styles = theme => ({
 	root: {
@@ -55,8 +53,7 @@ const styles = theme => ({
 		//height: "56px",
 		margin: "auto",
 		willChange: "box-shadow, transform",
-		transition:
-			"box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+		transition: "box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
 		"& .material-icons": {
 			color: colors.hex.inverse,
 		},
@@ -125,7 +122,7 @@ const styles = theme => ({
 		alignItems: "center",
 		padding: theme.spacing(),
 	},
-});
+})
 
 class SignupForm extends React.Component {
 	state = {
@@ -151,63 +148,61 @@ class SignupForm extends React.Component {
 		signuperror: false,
 		verifingAccount: false,
 		alert: false,
-	};
+	}
 	constructor(props) {
-		super(props);
-		const { role } = props;
+		super(props)
+		const { role } = props
 		if (role) {
-			this.state.form_values.role = role;
+			this.state.form_values.role = role
 		}
-		this.handleSignupSubmit = this.handleSignupSubmit.bind(this);
-		this.handleChange = this.handleChange.bind(this);
-		this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
+		this.handleSignupSubmit = this.handleSignupSubmit.bind(this)
+		this.handleChange = this.handleChange.bind(this)
+		this.handleSnackbarClose = this.handleSnackbarClose.bind(this)
 	}
 
 	componentDidMount() {
-		let uriQueries = (
-			window.location.search.match(
-				new RegExp("([^?=&]+)(=([^&]*))?", "g")
-			) || []
-		).reduce(function (result, each, n, every) {
-			let [key, value] = each.split("=");
-			result[key] = value;
-			return result;
-		}, {});
-
-		if (
-			("e" in uriQueries || "email" in uriQueries) &&
-			("c" in uriQueries || "code" in uriQueries)
+		let uriQueries = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function (
+			result,
+			each,
+			n,
+			every
 		) {
-			let email = "e" in uriQueries ? uriQueries.e : uriQueries.email;
-			let code = "c" in uriQueries ? uriQueries.c : uriQueries.code;
+			let [key, value] = each.split("=")
+			result[key] = value
+			return result
+		},
+		{})
+
+		if (("e" in uriQueries || "email" in uriQueries) && ("c" in uriQueries || "code" in uriQueries)) {
+			let email = "e" in uriQueries ? uriQueries.e : uriQueries.email
+			let code = "c" in uriQueries ? uriQueries.c : uriQueries.code
 			this.setState(prevState => ({
 				verifingAccount: true,
 				form_values: {
 					...prevState.form_values,
 					email_address: email,
 					account_verifacation_code: code,
-					cb: ""
-
+					cb: "",
 				},
-			}));
+			}))
+		} else if (window) {
 		}
-		else if (window) { } {
+		{
 			this.setState(prevState => ({
 				form_values: {
 					...prevState.form_values,
-					cb: window.location.href
+					cb: window.location.href,
 				},
-			}));
+			}))
 		}
 	}
 
 	handleChange = name => value => {
-		this.setState(prevState => ({ form_values: { ...prevState.form_values, [name]: value } }));
-	};
-
+		this.setState(prevState => ({ form_values: { ...prevState.form_values, [name]: value } }))
+	}
 
 	handleVerifyAccount() {
-		this.setState(state => ({ verifingAccount: !state.verifingAccount }));
+		this.setState(state => ({ verifingAccount: !state.verifingAccount }))
 	}
 
 	handleSnackbarClose() {
@@ -216,20 +211,20 @@ class SignupForm extends React.Component {
 			submitting: false,
 			signupsuccess: false,
 			signuperror: false,
-		}));
+		}))
 	}
 
 	async handleSignupSubmit(event) {
-		event.preventDefault();
+		event.preventDefault()
 		//
-		let that = this;
+		let that = this
 
 		if (this.state.verifingAccount) {
 			let formData = {
 				code: this.state.form_values.account_verifacation_code,
 				email: this.state.form_values.email_address,
-			};
-			let response = await ApiService.verifyAccount(formData);
+			}
+			let response = await ApiService.verifyAccount(formData)
 			if (response.err) {
 				that.setState(state => ({
 					submitting: false,
@@ -237,7 +232,7 @@ class SignupForm extends React.Component {
 					signupsuccess: false,
 					verifingAccount: true,
 					alert: response.err.msg,
-				}));
+				}))
 			} else {
 				that.setState(prevState => ({
 					submitting: false,
@@ -246,43 +241,49 @@ class SignupForm extends React.Component {
 					verifingAccount: false,
 					form_values: {
 						...prevState.form_values,
-						cb: window ? window.location.href : ""
+						cb: window ? window.location.href : "",
 					},
 					alert: response.body.message,
-				}));
+				}))
 			}
 		} else {
-			let formData = this.state.form_values;
-			ApiService.signup(formData).then(response => {
-				that.setState(state => ({
-					verifingAccount: true,
-					submitting: false,
-					signuperror: false,
-					signupsuccess: true,
-					alert: response.body.message,
-				}));
-			}).catch(err => {
-				that.setState(state => ({
-					submitting: false,
-					signuperror: true,
-					signupsuccess: false,
-					alert: err.msg,
-				}));
-			})
-
+			let formData = this.state.form_values
+			ApiService.signup(formData)
+				.then(response => {
+					that.setState(state => ({
+						verifingAccount: true,
+						submitting: false,
+						signuperror: false,
+						signupsuccess: true,
+						alert: response.body.message,
+					}))
+				})
+				.catch(err => {
+					that.setState(state => ({
+						submitting: false,
+						signuperror: true,
+						signupsuccess: false,
+						alert: err.msg,
+					}))
+				})
 		}
 	}
 
 	render() {
-		const { classes, services: { users: usersService }, role, title } = this.props;
+		const {
+			classes,
+			services: { users: usersService },
+			role,
+			title,
+		} = this.props
 		const loginBtnClassname = classNames({
 			[classes?.submitBtn]: true,
 			[classes?.btnSubmitting]: this.state.btnSubmitting,
 			[classes?.signupSuccess]: this.state.signupsuccess,
 			[classes?.signupError]: this.state.signuperror,
-		});
-		const countries = CountriesHelper.names();
-		const allCountries = CountriesHelper.allNames();
+		})
+		const countries = CountriesHelper.names()
+		const allCountries = CountriesHelper.allNames()
 		return (
 			<div className={classes?.root}>
 				<Snackbar
@@ -296,23 +297,10 @@ class SignupForm extends React.Component {
 				>
 					<SnackbarContent
 						onClose={this.handleSnackbarClose}
-						color={
-							this.state.signuperror
-								? "error"
-								: this.state.signupsuccess
-									? "success"
-									: "inverse"
-						}
+						color={this.state.signuperror ? "error" : this.state.signupsuccess ? "success" : "inverse"}
 						message={
 							<span>
-								<b>
-									{this.state.signuperror
-										? ""
-										: this.state.signupsuccess
-											? ""
-											: ""}
-								</b>{" "}
-								{this.state.alert}
+								<b>{this.state.signuperror ? "" : this.state.signupsuccess ? "" : ""}</b> {this.state.alert}
 							</span>
 						}
 					/>
@@ -345,7 +333,7 @@ class SignupForm extends React.Component {
 										InputProps={{
 											classes: {
 												input: "inverse",
-											}
+											},
 										}}
 										fullWidth
 										required
@@ -355,19 +343,19 @@ class SignupForm extends React.Component {
 							</GridContainer>
 						) : (
 							<GridContainer className="p-0">
-
-
-								{!role && <GridContainer className="p-0">
-									<RadioInput
-										label={"How would you like to work with us?"}
-										defaultValue={this.state.form_values.role}
-										onChange={this.handleChange("role")}
-										options={{ customer: "I am a Customer", collector: "I want to be a collector" }}
-										disabled={this.state.submitting}
-										required
-										validate
-									/>
-								</GridContainer>}
+								{!role && (
+									<GridContainer className="p-0">
+										<RadioInput
+											label={"How would you like to work with us?"}
+											defaultValue={this.state.form_values.role}
+											onChange={this.handleChange("role")}
+											options={{ customer: "I am a Customer", collector: "I want to be a collector" }}
+											disabled={this.state.submitting}
+											required
+											validate
+										/>
+									</GridContainer>
+								)}
 								<GridContainer className="p-0">
 									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
 										<TextInput
@@ -381,7 +369,7 @@ class SignupForm extends React.Component {
 											InputProps={{
 												classes: {
 													input: "inverse",
-												}
+												},
 											}}
 											fullWidth
 											required
@@ -400,7 +388,7 @@ class SignupForm extends React.Component {
 											InputProps={{
 												classes: {
 													input: "inverse",
-												}
+												},
 											}}
 											fullWidth
 											required
@@ -409,147 +397,158 @@ class SignupForm extends React.Component {
 									</GridItem>
 								</GridContainer>
 
-								{role === "collector" && <GridContainer className="p-0">
-									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
-										<TextInput
-											type="email"
-											defaultValue={this.state.form_values.email_address}
-											onChange={this.handleChange("email_address")}
-											variant="filled"
-											label="Email Address"
-											margin="dense"
-											disabled={this.state.submitting}
-											InputProps={{
-												classes: {
-													input: "inverse",
-												}
-											}}
-											fullWidth
-											required
-											validate
-											validator={async (value) => {
-												let exists = await usersService.getRecordsCount({ "email_address": value }).then(res => {
-													return res.body.data.count > 0;
-												}).catch(err => {
-													return false;
-												});
-												return exists ? "This email is already registered!" : false;
-											}}
-										/>
+								{role === "collector" && (
+									<GridContainer className="p-0">
+										<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
+											<TextInput
+												type="email"
+												defaultValue={this.state.form_values.email_address}
+												onChange={this.handleChange("email_address")}
+												variant="filled"
+												label="Email Address"
+												margin="dense"
+												disabled={this.state.submitting}
+												InputProps={{
+													classes: {
+														input: "inverse",
+													},
+												}}
+												fullWidth
+												required
+												validate
+												validator={async value => {
+													let exists = await usersService
+														.getRecordsCount({ email_address: value })
+														.then(res => {
+															return res.body.data.count > 0
+														})
+														.catch(err => {
+															return false
+														})
+													return exists ? "This email is already registered!" : false
+												}}
+											/>
+										</GridItem>
+										<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
+											<TextInput
+												type="phone"
+												defaultValue={this.state.form_values.phone}
+												onChange={this.handleChange("phone")}
+												variant="filled"
+												label="Phone"
+												margin="dense"
+												disabled={this.state.submitting}
+												InputProps={{
+													classes: {
+														input: "inverse",
+													},
+												}}
+												fullWidth
+												required
+												validate
+											/>
+										</GridItem>
+									</GridContainer>
+								)}
 
-									</GridItem>
-									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
-										<TextInput
-											type="phone"
-											defaultValue={this.state.form_values.phone}
-											onChange={this.handleChange("phone")}
-											variant="filled"
-											label="Phone"
-											margin="dense"
-											disabled={this.state.submitting}
-											InputProps={{
-												classes: {
-													input: "inverse",
-												}
-											}}
-											fullWidth
-											required
-											validate
-										/>
-									</GridItem>
-								</GridContainer>}
+								{role !== "collector" && (
+									<GridContainer className="p-0">
+										<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
+											<TextInput
+												type="email"
+												defaultValue={this.state.form_values.email_address}
+												onChange={this.handleChange("email_address")}
+												variant="filled"
+												label="Email Address"
+												margin="dense"
+												disabled={this.state.submitting}
+												InputProps={{
+													classes: {
+														input: "inverse",
+													},
+												}}
+												fullWidth
+												required
+												validate
+												validator={async value => {
+													let exists = await usersService
+														.getRecordsCount({ email_address: value })
+														.then(res => {
+															return res.body.data.count > 0
+														})
+														.catch(err => {
+															return false
+														})
+													return exists ? "This email is already registered!" : false
+												}}
+											/>
+										</GridItem>
 
-								{role !== "collector" && <GridContainer className="p-0">
+										<GridItem xs={12} sm={12} md={6} className="flex flex-col justify-center px-1 py-1">
+											<SelectInput
+												type={"country"}
+												label="Country"
+												classes={{
+													inputRoot: "inverse",
+												}}
+												options={CountriesHelper.allNames()}
+												variant="filled"
+												value={this.state.form_values.country}
+												onChange={this.handleChange("country")}
+												placeholder={"Select your Country"}
+												disabled={this.state.submitting}
+												required
+												validate
+											/>
+										</GridItem>
+									</GridContainer>
+								)}
 
-									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
-										<TextInput
-											type="email"
-											defaultValue={this.state.form_values.email_address}
-											onChange={this.handleChange("email_address")}
-											variant="filled"
-											label="Email Address"
-											margin="dense"
-											disabled={this.state.submitting}
-											InputProps={{
-												classes: {
-													input: "inverse",
-												}
-											}}
-											fullWidth
-											required
-											validate
-											validator={async (value) => {
-												let exists = await usersService.getRecordsCount({ "email_address": value }).then(res => {
-													return res.body.data.count > 0;
-												}).catch(err => {
-													return false;
-												});
-												return exists ? "This email is already registered!" : false;
-											}}
-										/>
-									</GridItem>
-
-									<GridItem xs={12} sm={12} md={6} className="flex flex-col justify-center px-1 py-1">
-										<SelectInput
-											type={"country"}
-											label="Country"
-											classes={{
-												inputRoot: "inverse",
-											}}
-											options={CountriesHelper.allNames()}
-											variant="filled"
-											value={this.state.form_values.country}
-											onChange={this.handleChange("country")}
-											placeholder={"Select your Country"}
-											disabled={this.state.submitting}
-											required
-											validate
-										/>
-									</GridItem>
-								</GridContainer>}
-
-								{role === "collector" && <GridContainer className="p-0">
-									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
-										<TextInput
-											type="password"
-											defaultValue={this.state.form_values.password}
-											onChange={this.handleChange("password")}
-											variant="filled"
-											label="Password"
-											margin="dense"
-											disabled={this.state.submitting}
-											InputProps={{
-												classes: {
-													input: "inverse",
-												}
-											}}
-											fullWidth
-											required
-											validate
-										/>
-
-									</GridItem>
-									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
-										<TextInput
-											type="password"
-											defaultValue={this.state.form_values.repeat_password}
-											onChange={this.handleChange("repeat_password")}
-											variant="filled"
-											label="Repeat Password"
-											margin="dense"
-											disabled={this.state.submitting}
-											InputProps={{
-												classes: {
-													input: "inverse",
-												}
-											}}
-											fullWidth
-											required
-											validate
-											validator={(value) => { return value === this.state.password ? false : "Passwords dont match" }}
-										/>
-									</GridItem>
-								</GridContainer>}
+								{role === "collector" && (
+									<GridContainer className="p-0">
+										<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
+											<TextInput
+												type="password"
+												defaultValue={this.state.form_values.password}
+												onChange={this.handleChange("password")}
+												variant="filled"
+												label="Password"
+												margin="dense"
+												disabled={this.state.submitting}
+												InputProps={{
+													classes: {
+														input: "inverse",
+													},
+												}}
+												fullWidth
+												required
+												validate
+											/>
+										</GridItem>
+										<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
+											<TextInput
+												type="password"
+												defaultValue={this.state.form_values.repeat_password}
+												onChange={this.handleChange("repeat_password")}
+												variant="filled"
+												label="Repeat Password"
+												margin="dense"
+												disabled={this.state.submitting}
+												InputProps={{
+													classes: {
+														input: "inverse",
+													},
+												}}
+												fullWidth
+												required
+												validate
+												validator={value => {
+													return value === this.state.password ? false : "Passwords dont match"
+												}}
+											/>
+										</GridItem>
+									</GridContainer>
+								)}
 
 								<GridContainer className="p-0">
 									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
@@ -564,7 +563,7 @@ class SignupForm extends React.Component {
 											InputProps={{
 												classes: {
 													input: "inverse",
-												}
+												},
 											}}
 											fullWidth
 											required
@@ -583,7 +582,7 @@ class SignupForm extends React.Component {
 											InputProps={{
 												classes: {
 													input: "inverse",
-												}
+												},
 											}}
 											classes={{
 												inputRoot: "inverse",
@@ -595,106 +594,96 @@ class SignupForm extends React.Component {
 									</GridItem>
 								</GridContainer>
 
-								{role === "collector" && <GridContainer className="p-0">
+								{role === "collector" && (
+									<GridContainer className="p-0">
+										<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
+											<GooglePlacesAutocomplete
+												type="administrative_area_level_1"
+												defaultValue={this.state.form_values.region}
+												onChange={this.handleChange("region")}
+												variant="filled"
+												label="Region"
+												margin="dense"
+												classes={{
+													inputRoot: "inverse",
+												}}
+												disabled={this.state.submitting}
+												query={{
+													componentRestrictions: !String.isEmpty(this.state.form_values.country)
+														? { country: this.state.form_values.country.toLowerCase() }
+														: {},
+												}}
+												fullWidth
+												required
+												validate
+											/>
+										</GridItem>
 
-									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
-										<GooglePlacesAutocomplete
-											type="administrative_area_level_1"
-											defaultValue={this.state.form_values.region}
-											onChange={this.handleChange("region")}
-											variant="filled"
-											label="Region"
-											margin="dense"
-											classes={{
-												inputRoot: "inverse",
-											}}
-											disabled={this.state.submitting}
+										<GridItem xs={12} sm={12} md={6} className="flex flex-col justify-center px-1 py-1">
+											<GooglePlacesAutocomplete
+												type={"country"}
+												label="Country"
+												classes={{
+													inputRoot: "inverse",
+												}}
+												variant="filled"
+												value={this.state.form_values.country}
+												onChange={this.handleChange("country")}
+												short_name
+												placeholder={"Select your Country"}
+												disabled={this.state.submitting}
+												validate
+											/>
+										</GridItem>
+									</GridContainer>
+								)}
 
-											query={{
-												componentRestrictions: !String.isEmpty(this.state.form_values.country) ? { country: this.state.form_values.country.toLowerCase() } : {}
-											}}
-											fullWidth
-											required
-											validate
-										/>
-									</GridItem>
-
-									<GridItem xs={12} sm={12} md={6} className="flex flex-col justify-center px-1 py-1">
-										<GooglePlacesAutocomplete
-											type={"country"}
-											label="Country"
-											classes={{
-												inputRoot: "inverse",
-											}}
-											variant="filled"
-											value={this.state.form_values.country}
-											onChange={this.handleChange("country")}
-											short_name
-											placeholder={"Select your Country"}
-											disabled={this.state.submitting}
-											validate
-										/>
-									</GridItem>
-								</GridContainer>}
-
-								{this.state.form_values.role === "customer" && <GridContainer className="p-0">
-
-									<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
-										<RadioInput
-											options={{
-												quote: "Quote",
-												demo: "Demo",
-											}}
-											defaultValue={this.state.form_values.interest}
-											onChange={this.handleChange("interest")}
-											label="Interest"
-											margin="dense"
-											disabled={this.state.submitting}
-											fullWidth
-											required
-											validate
-										/>
-									</GridItem>
-								</GridContainer>}
-
-
+								{this.state.form_values.role === "customer" && (
+									<GridContainer className="p-0">
+										<GridItem xs={12} sm={12} md={6} className="px-1 py-1">
+											<RadioInput
+												options={{
+													quote: "Quote",
+													demo: "Demo",
+												}}
+												defaultValue={this.state.form_values.interest}
+												onChange={this.handleChange("interest")}
+												label="Interest"
+												margin="dense"
+												disabled={this.state.submitting}
+												fullWidth
+												required
+												validate
+											/>
+										</GridItem>
+									</GridContainer>
+								)}
 							</GridContainer>
 						)}
 
 						<GridContainer className="p-0 py-6">
-							<GridItem
-								xs={12}
-								sm={12}
-								md={12}
-								className={classNames(classes?.submitBtnWrapper)}
-							>
-
-								{!this.state.submitting && <Button
-									color={"primary"}
-									className={loginBtnClassname}
-									type="submit"
-									disabled={this.state.submitting}
-									loading={this.state.submitting}
-								>
-									{this.state.verifingAccount ? "Confirm Email Address" : "All Done "}
-								</Button>}
+							<GridItem xs={12} sm={12} md={12} className={classNames(classes?.submitBtnWrapper)}>
+								{!this.state.submitting && (
+									<Button
+										color={"primary"}
+										className={loginBtnClassname}
+										type="submit"
+										disabled={this.state.submitting}
+										loading={this.state.submitting}
+									>
+										{this.state.verifingAccount ? "Confirm Email Address" : "All Done "}
+									</Button>
+								)}
 								{this.state.submitting && (
 									<GridContainer className={"p-0"}>
 										<GridItem xs={12} className={"flex items-center justify-center"}>
-											<CircularProgress
-												size={24}
-												className={"accent-text"}
-											/>
+											<CircularProgress size={24} className={"accent-text"} />
 										</GridItem>
 										<GridItem xs={12} className={"p-0"}>
-											<Typography
-												className={"my-1"}
-																								variant="body2"
-											>
+											<Typography className={"my-1"} variant="body2">
 												{"Submiting. Please Wait..."}
 											</Typography>
 										</GridItem>
-
 									</GridContainer>
 								)}
 							</GridItem>
@@ -711,12 +700,10 @@ class SignupForm extends React.Component {
 					</GridItem>
 				</GridContainer>*/}
 			</div>
-		);
+		)
 	}
 }
 
-SignupForm.propTypes = {
+SignupForm.propTypes = {}
 
-};
-
-export default withGlobals(((SignupForm)));
+export default SignupForm

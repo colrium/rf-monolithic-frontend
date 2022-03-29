@@ -44,12 +44,15 @@ import DashboardRecordForm from "views/pages/Dashboard/RecordForm"
 import DashboardRecordsListing from "views/pages/Dashboard/RecordsListing"
 import DashboardRecordView from "views/pages/Dashboard/RecordView"
 import DashboardAccount from "views/pages/Dashboard/Account"
-import DashboardMessages from "views/pages/Dashboard/Messages"
-import DashboardHome from "views/pages/Dashboard/Home"
+import DashboardMessaging from "views/pages/Dashboard/Messaging"
 
-const RouteComponentPlaceHolder = () => (
-	<ProgressIndicator type="logo" size={200} />
-);
+import DashboardHome from "views/pages/Dashboard/Home"
+import ChatApp from "views/apps/Dashboard/Chat"
+import ChatContacts from "views/apps/Dashboard/Chat/Contacts"
+import ChatConversations from "views/apps/Dashboard/Chat/Conversations"
+import ChatSidebar from "views/apps/Dashboard/Chat/Sidebar"
+
+const RouteComponentPlaceHolder = () => <ProgressIndicator type="logo" size={200} />
 const contexts = [
 	"events",
 	"notifications",
@@ -99,124 +102,37 @@ const RoutesComponent = () => {
 					/>
 				}
 			>
-				<Route
-					path={"/*".toUriWithLandingPagePrefix()}
-					element={<NotFound />}
-				/>
-				<Route
-					exact
-					path={"/home".toUriWithLandingPagePrefix()}
-					element={<LandingHomePage />}
-				/>
+				<Route path={"/*".toUriWithLandingPagePrefix()} element={<NotFound />} />
+				<Route exact path={"/home".toUriWithLandingPagePrefix()} element={<LandingHomePage />} />
 
-				<Route
-					exact
-					path={"/recruitment".toUriWithLandingPagePrefix()}
-					element={<LandingRecruitmentPage />}
-				/>
-				<Route
-					exact
-					path={"/jobs".toUriWithLandingPagePrefix()}
-					element={<LandingRecruitmentPage />}
-				/>
-				<Route
-					exact
-					path={"/apply".toUriWithLandingPagePrefix()}
-					element={<LandingApplyPage />}
-				/>
-				<Route
-					exact
-					path={"/order".toUriWithLandingPagePrefix()}
-					element={<LandingOrder />}
-				/>
-				<Route
-					exact
-					path={"/catalog".toUriWithLandingPagePrefix()}
-					element={<LandingCatalog />}
-				/>
-				<Route
-					exact
-					path={"/catalog/:id".toUriWithLandingPagePrefix()}
-					element={<LandingCatalogItem />}
-				/>
-				<Route
-					exact
-					path={"/request-quote".toUriWithLandingPagePrefix()}
-					element={<LandingOrder />}
-				/>
-				<Route
-					exact
-					path={"/faqs".toUriWithLandingPagePrefix()}
-					element={<LandingFAQs />}
-				/>
-				<Route
-					exact
-					path={"/about-us".toUriWithLandingPagePrefix()}
-					element={<LandingAboutUs />}
-				/>
+				<Route exact path={"/recruitment".toUriWithLandingPagePrefix()} element={<LandingRecruitmentPage />} />
+				<Route exact path={"/jobs".toUriWithLandingPagePrefix()} element={<LandingRecruitmentPage />} />
+				<Route exact path={"/apply".toUriWithLandingPagePrefix()} element={<LandingApplyPage />} />
+				<Route exact path={"/order".toUriWithLandingPagePrefix()} element={<LandingOrder />} />
+				<Route exact path={"/catalog".toUriWithLandingPagePrefix()} element={<LandingCatalog />} />
+				<Route exact path={"/catalog/:id".toUriWithLandingPagePrefix()} element={<LandingCatalogItem />} />
+				<Route exact path={"/request-quote".toUriWithLandingPagePrefix()} element={<LandingOrder />} />
+				<Route exact path={"/faqs".toUriWithLandingPagePrefix()} element={<LandingFAQs />} />
+				<Route exact path={"/about-us".toUriWithLandingPagePrefix()} element={<LandingAboutUs />} />
 
-				<Route
-					exact
-					path={"/why-us".toUriWithLandingPagePrefix()}
-					element={<LandingWhyUs />}
-				/>
+				<Route exact path={"/why-us".toUriWithLandingPagePrefix()} element={<LandingWhyUs />} />
 
-				<Route
-					exact
-					path={"/cart".toUriWithLandingPagePrefix()}
-					element={<LandingCart />}
-				/>
-				<Route
-					exact
-					path={"/checkout".toUriWithLandingPagePrefix()}
-					element={<LandingCheckout />}
-				/>
-				<Route
-					exact
-					path={"/privacy-policy".toUriWithLandingPagePrefix()}
-					element={<LandingPrivacyPolicy />}
-				/>
-				<Route
-					exact
-					path={"/ethical-principles".toUriWithLandingPagePrefix()}
-					element={<LandingEthicalPrinciples />}
-				/>
-				<Route
-					exact
-					path={"/thankyou".toUriWithLandingPagePrefix()}
-					element={<LandingThankyou />}
-				/>
-				<Route
-					exact
-					path={"/request-demo".toUriWithLandingPagePrefix()}
-					element={<LandingDemoRequest />}
-				/>
-				<Route
-					exact
-					path={"/start-project".toUriWithLandingPagePrefix()}
-					element={<LandingProjectComposer />}
-				/>
-				<Route
-					path={"*".toUriWithLandingPagePrefix()}
-					element={<NotFound />}
-				/>
+				<Route exact path={"/cart".toUriWithLandingPagePrefix()} element={<LandingCart />} />
+				<Route exact path={"/checkout".toUriWithLandingPagePrefix()} element={<LandingCheckout />} />
+				<Route exact path={"/privacy-policy".toUriWithLandingPagePrefix()} element={<LandingPrivacyPolicy />} />
+				<Route exact path={"/ethical-principles".toUriWithLandingPagePrefix()} element={<LandingEthicalPrinciples />} />
+				<Route exact path={"/thankyou".toUriWithLandingPagePrefix()} element={<LandingThankyou />} />
+				<Route exact path={"/request-demo".toUriWithLandingPagePrefix()} element={<LandingDemoRequest />} />
+				<Route exact path={"/start-project".toUriWithLandingPagePrefix()} element={<LandingProjectComposer />} />
+				<Route path={"*".toUriWithLandingPagePrefix()} element={<NotFound />} />
 			</Route>
 
 			<Route path="/auth" element={<AuthPage />}>
 				<Route index path={"/auth/login"} element={<LoginForm />} />
 				<Route path={"/auth/signin"} element={<LoginForm />} />
-				<Route
-					path={"/auth/forgot-password"}
-					element={<ForgotPasswordForm />}
-				/>
-				<Route
-					path={"/auth/recover-account"}
-					element={<ForgotPasswordForm />}
-				/>
-				<Route
-					path={"/auth/reset-password"}
-					element={<ResetPasswordForm />}
-				/>
+				<Route path={"/auth/forgot-password"} element={<ForgotPasswordForm />} />
+				<Route path={"/auth/recover-account"} element={<ForgotPasswordForm />} />
+				<Route path={"/auth/reset-password"} element={<ResetPasswordForm />} />
 				<Route path={"/auth/signup/:role"} element={<SignupForm />} />
 				<Route path={"/auth/register/:role"} element={<SignupForm />} />
 			</Route>
@@ -233,34 +149,17 @@ const RoutesComponent = () => {
 					/>
 				}
 			>
-				<Route
-					path={"/home".toUriWithDashboardPrefix()}
-					element={<DashboardHome />}
-				/>
-				<Route
-					exact
-					path={"/calendar".toUriWithDashboardPrefix()}
-					element={<DashboardRecordsListing context="events" />}
-				/>
+				<Route path={"/home".toUriWithDashboardPrefix()} element={<DashboardHome />} />
+				<Route exact path={"/calendar".toUriWithDashboardPrefix()} element={<DashboardRecordsListing context="events" />} />
 
-				<Route
-					exact
-					path={"/messages".toUriWithDashboardPrefix()}
-					element={<DashboardMessages />}
-				/>
+				<Route exact path={"/messaging".toUriWithDashboardPrefix()} element={<ChatApp />}>
+					<Route index path={"/messaging/conversations".toUriWithDashboardPrefix()} element={<ChatConversations />} />
+					<Route index path={"/messaging/contacts".toUriWithDashboardPrefix()} element={<ChatContacts />} />
+					<Route index path={"/messaging/".toUriWithDashboardPrefix()} element={<ChatConversations />} />
+					<Route index path={"/messaging/*".toUriWithDashboardPrefix()} element={<ChatConversations />} />
+				</Route>
 
-				<Route
-					exact
-					path={"/chat".toUriWithDashboardPrefix()}
-					element={<DashboardMessages />}
-				/>
-
-				<Route
-					exact
-					path={"/chats".toUriWithDashboardPrefix()}
-					element={<DashboardMessages />}
-				/>
-
+				<Route exact path={"/messages".toUriWithDashboardPrefix()} element={<DashboardMessaging />} />
 				{contexts.map((context, cursor) => (
 					<Route
 						exact
@@ -294,23 +193,11 @@ const RoutesComponent = () => {
 					/>
 				))}
 
-				<Route
-					path={"/account".toUriWithDashboardPrefix()}
-					element={<DashboardAccount />}
-				/>
-				<Route
-					path={"/preferences".toUriWithDashboardPrefix()}
-					element={<DashboardPreferences />}
-				/>
-				<Route
-					path={"/settings".toUriWithDashboardPrefix()}
-					element={<DashboardSettings />}
-				/>
+				<Route path={"/account".toUriWithDashboardPrefix()} element={<DashboardAccount />} />
+				<Route path={"/preferences".toUriWithDashboardPrefix()} element={<DashboardPreferences />} />
+				<Route path={"/settings".toUriWithDashboardPrefix()} element={<DashboardSettings />} />
 
-				<Route
-					path={"/*".toUriWithDashboardPrefix()}
-					element={<NotFound />}
-				/>
+				<Route path={"/*".toUriWithDashboardPrefix()} element={<NotFound />} />
 			</Route>
 			<Route
 				path={"*"}
@@ -329,6 +216,5 @@ const RoutesComponent = () => {
 			</Route>
 		</Routes>
 	)
-
 }
 export default RoutesComponent

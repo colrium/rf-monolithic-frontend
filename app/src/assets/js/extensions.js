@@ -2,10 +2,10 @@
 
 import lodash, { debounce, throttle, isEqual, get } from "lodash";
 import lodash_inflection from "lodash-inflection";
-import { dashboardBaseUri, landingPageBaseUri, baseUrls, surpressed_logs } from "config";
+const { v4: uuidv4 } = require("uuid")
+import { dashboardBaseUri, landingPageBaseUri, baseUrls, surpressed_logs } from "config"
 
-lodash.mixin(lodash_inflection);
-
+lodash.mixin(lodash_inflection)
 
 /*const console_warn = console.warn;
 console.warn = function surpressWarnings(msg) {
@@ -36,86 +36,66 @@ console.log = function surpressLogs(msg) {
 // Warn if overriding existing method
 
 String.isString = function (input) {
-	return input !== undefined && input !== null
-		? input.constructor === String
-		: false;
-};
-
-
-
-String.capitalize = (targetStr) => {
-	//let targetStr = this;
-	const words = targetStr.trim().toLowerCase().split(" ");
-
-	const result = words.map((word) => {
-		if (word.length > 1) {
-			return word[0].toUpperCase() + word.substring(1);
-		}
-		return word.toUpperCase()
-
-	}).join(" ");
-	return result;
+	return input !== undefined && input !== null ? input.constructor === String : false
 }
 
+String.capitalize = targetStr => {
+	//let targetStr = this;
+	const words = targetStr.trim().toLowerCase().split(" ")
+
+	const result = words
+		.map(word => {
+			if (word.length > 1) {
+				return word[0].toUpperCase() + word.substring(1)
+			}
+			return word.toUpperCase()
+		})
+		.join(" ")
+	return result
+}
 
 String.prototype.replaceAll = function (search, replacement) {
-	var target = this;
-	return target.replace(new RegExp(search, "g"), replacement);
-};
+	var target = this
+	return target.replace(new RegExp(search, "g"), replacement)
+}
 
 String.toDate = function (input) {
-
 	try {
-		let ms = Date.parse(input);
-		return new Date(ms);
+		let ms = Date.parse(input)
+		return new Date(ms)
 	} catch (e) {
-		return null;
+		return null
 	}
-	return null;
-};
+	return null
+}
 
 String.uid = function (len, numeric, all_caps) {
-	let buf = [];
-	let chars =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	let charlen = chars.length;
+	let buf = []
+	let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+	let charlen = chars.length
 	if (numeric) {
-		chars = "0123456789";
-		charlen = chars.length;
+		chars = "0123456789"
+		charlen = chars.length
 	} else if (all_caps) {
-		chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		charlen = chars.length;
+		chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+		charlen = chars.length
 	}
 
 	for (var i = 0; i < len; ++i) {
-		buf.push(chars[Number.getRandomInt(0, charlen - 1)]);
+		buf.push(chars[Number.getRandomInt(0, charlen - 1)])
 	}
 
-	return buf.join("");
-};
+	return buf.join("")
+}
 
-String.uuid = function () {
-	return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-		/[xy]/g,
-		function (c) {
-			var r = (Math.random() * 16) | 0,
-				v = c == "x" ? r : (r & 0x3) | 0x8;
-			return v.toString(16);
-		}
-	);
-};
+String.uuid = uuidv4
 
 String.containsUrl = function (target) {
-
-	return new RegExp(
-		"([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?"
-	).test(target)
+	return new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?").test(target)
 }
 String.getContainedUrl = function (target) {
 	let containedUrl = target.match(
-		new RegExp(
-			"([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?"
-		)
+		new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_])?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?")
 	)
 	if (!Array.isArray(containedUrl)) {
 		containedUrl = []

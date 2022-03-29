@@ -22,19 +22,17 @@ export default function setActiveConversation(conversation) {
 
 
 		if (auth.isAuthenticated && index_of_conversation !== -1) {
-			if (conversation !== active_conversation) {
+			if (
+				conversations[index_of_conversation].uuid !== active_conversation &&
+				conversations[index_of_conversation]._id !== active_conversation
+			) {
 				dispatch(
 					setMessagingCache(
 						"active_conversation",
-						conversations[index_of_conversation].uuid
+						conversations[index_of_conversation].uuid || conversations[index_of_conversation]._id
 					)
 				)
-				dispatch(
-					fetchMessages(
-						conversations[index_of_conversation],
-						{}
-					)
-				)
+				dispatch(fetchMessages(conversations[index_of_conversation], {}))
 			}
 		} else {
 			dispatch(setMessagingCache("active_conversation", null))

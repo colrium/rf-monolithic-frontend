@@ -16,21 +16,65 @@ import {
 import {useSetState} from "hooks"
 
 const Field = React.forwardRef((props, ref) => {
-    const { name, control, defaultValue, value, rules, shouldUnregister, helperText, onChange, disabled, render, type, inputRef, InputProps, ...rest } = props;
+    const {
+		name,
+		control,
+		defaultValue,
+		value,
+		rules,
+		shouldUnregister,
+		helperText,
+		onChange,
+		onFocus,
+		onBlur,
+		disabled,
+		render,
+		type,
+		inputRef,
+		InputProps,
+		...rest
+	} = props
 	const [state, setState, getState] = useSetState({
-		showPassword: false
+		showPassword: false,
 	})
 	const formState = control._formState
-	const handleOnChange = useCallback(defaultOnChange => e => {
-		if (Function.isFunction(onChange)) {
-			onChange(e)
-		}
-		if (Function.isFunction(defaultOnChange)) {
-			defaultOnChange(e)
-		}
-	}, [onChange])
+	const handleOnChange = useCallback(
+		defaultOnChange => e => {
+			if (Function.isFunction(defaultOnChange)) {
+				defaultOnChange(e)
+			}
+			if (Function.isFunction(onChange)) {
+				onChange(e)
+			}
+		},
+		[onChange]
+	)
 
-    const renderField = useCallback(
+	const handleOnFocus = useCallback(
+		defaultOnFocus => e => {
+			if (Function.isFunction(defaultOnFocus)) {
+				defaultOnFocus(e)
+			}
+			if (Function.isFunction(onFocus)) {
+				onFocus(e)
+			}
+		},
+		[onFocus]
+	)
+
+	const handleOnBlur = useCallback(
+		defaultOnBlur => e => {
+			if (Function.isFunction(defaultOnBlur)) {
+				defaultOnBlur(e)
+			}
+			if (Function.isFunction(onBlur)) {
+				onBlur(e)
+			}
+		},
+		[onBlur]
+	)
+
+	const renderField = useCallback(
 		params => {
 			if (Function.isFunction(props.render)) {
 				return props.render(params)
@@ -38,6 +82,8 @@ const Field = React.forwardRef((props, ref) => {
 			const {
 				field: {
 					onChange: fieldOnChange,
+					onFocus: fieldOnFocus,
+					onBlur: fieldOnBlur,
 					value: fieldValue,
 					ref: fieldRef,
 					...fieldParams
@@ -45,47 +91,35 @@ const Field = React.forwardRef((props, ref) => {
 				fieldState: { isTouched, invalid, isDirty, error },
 			} = params
 
-			const {showPassword} = getState()
-
 			//
 			return (
 				<TextField
 					{...fieldParams}
-					type={showPassword ? "text" : props.type}
+					type={state.showPassword ? "text" : props.type}
 					value={fieldValue}
 					onChange={handleOnChange(fieldOnChange)}
+					onFocus={handleOnFocus(fieldOnFocus)}
+					onBlur={handleOnBlur(fieldOnBlur)}
 					disabled={disabled || formState.isSubmitting}
 					error={invalid}
 					InputProps={{
 						...props.InputProps,
 						endAdornment:
-							(props.type === "password" ||
-								props.loading ||
-								(props.InputProps &&
-									props.InputProps.endAdornment)) &&
+							(props.type === "password" || props.loading || (props.InputProps && props.InputProps.endAdornment)) &&
 							(!props.InputProps?.endAdornment ? (
 								<InputAdornment position="end">
-									{props.loading && (
-										<CircularProgress
-											size={"1rem"}
-											color="inherit"
-										/>
-									)}
+									{props.loading && <CircularProgress size={"1rem"} color="inherit" />}
 									{props.type === "password" && (
 										<IconButton
 											aria-label="Toggle password visibility"
 											color="inherit"
 											onClick={() =>
 												setState(prevState => ({
-													showPassword:
-														props.type ===
-														"password"
-															? !prevState.showPassword
-															: false,
+													showPassword: props.type === "password" ? !prevState.showPassword : false,
 												}))
 											}
 										>
-											{showPassword ? (
+											{state.showPassword ? (
 												<HidePasswordIcon fontSize="small" />
 											) : (
 												<ShowPasswordIcon fontSize="small" />
@@ -96,27 +130,18 @@ const Field = React.forwardRef((props, ref) => {
 							) : (
 								<div className="flex flex-row">
 									<InputAdornment position="end">
-										{props.loading && (
-											<CircularProgress
-												size={"1rem"}
-												color="inherit"
-											/>
-										)}
+										{props.loading && <CircularProgress size={"1rem"} color="inherit" />}
 										{props.type === "password" && (
 											<IconButton
 												aria-label="Toggle password visibility"
 												color="inherit"
 												onClick={e => {
 													setState(prevState => ({
-														showPassword:
-															props.type ===
-															"password"
-																? !prevState.showPassword
-																: false,
+														showPassword: props.type === "password" ? !prevState.showPassword : false,
 													}))
 												}}
 											>
-												{showPassword ? (
+												{state.showPassword ? (
 													<HidePasswordIcon fontSize="small" />
 												) : (
 													<ShowPasswordIcon fontSize="small" />
@@ -124,8 +149,7 @@ const Field = React.forwardRef((props, ref) => {
 											</IconButton>
 										)}
 									</InputAdornment>
-									{props.InputProps &&
-										props.InputProps.endAdornment}
+									{props.InputProps && props.InputProps.endAdornment}
 								</div>
 							)),
 					}}
@@ -151,7 +175,7 @@ const Field = React.forwardRef((props, ref) => {
 				/>
 			)
 		},
-		[ props]
+		[props, state]
 	)
 
     return (

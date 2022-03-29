@@ -646,5 +646,3 @@ export default compose(
 	connect(mapStateToProps, {}),
 
 )(CustomGoogleMap);
-
-//export default connect(mapStateToProps, {})((withGlobals(CustomGoogleMap)));

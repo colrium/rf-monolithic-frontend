@@ -54,19 +54,11 @@ export const firebaseWebPushCertificate = "BCRs2cCvL59gp6AyJybuna4N7migtv4c6O6Tw
 
 
 export const baseUrls = {
-	domain:
-		environment == "development"
-			? "realfield.local"
-			: process.env.REACT_APP_DOMAIN,
-	host:
-		environment == "development"
-			? "realfield.local"
-			: process.env.REACT_APP_API_HOST, // This is for development and experimentation purposes only to cater for docker loadbalancer/proxy scenarios. Its considered unsecure to set or accept requests with a HOST header/parameter.
-	api:
-		environment == "development"
-			? "http://api.realfield.local"
-			: process.env.REACT_APP_API_ENDPOINT,
-};
+	domain: environment == "development" ? "realfield.local" : process.env.REACT_APP_DOMAIN,
+	host: environment == "development" ? "realfield.local" : process.env.REACT_APP_API_HOST, // This is for development and experimentation purposes only to cater for docker loadbalancer/proxy scenarios. Its considered unsecure to set or accept requests with a HOST header/parameter.
+	api: environment == "development" ? "http://api.realfield.local" : process.env.REACT_APP_API_ENDPOINT,
+	api_socket_io: environment == "development" ? "ws://api.realfield.local" : "wss://api.realfield.io",
+}
 
 
 

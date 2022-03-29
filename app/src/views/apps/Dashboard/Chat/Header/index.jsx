@@ -31,12 +31,11 @@ import { withTheme } from "@mui/styles"
 import compose from "recompose/compose"
 import { setActiveConversation } from "state/actions"
 import { getIndexOfConversation } from "state/actions/communication/utils"
+import { useDidMount, useDidUpdate, useSetState } from "hooks"
 import { EventRegister } from "utils"
 
-import { useDidMount, useDidUpdate, useSetState } from "hooks"
-
 const Header = props => {
-	const { typing } = props
+	const { onClickSecondaryAction } = props
 	const dispatch = useDispatch()
 	const auth = useSelector(state => state.auth)
 	const conversations = useSelector(state => state?.communication?.messaging?.conversations || [])
@@ -46,6 +45,14 @@ const Header = props => {
 	const [locationSearchParams, setLocationSearchParams] = useSearchParams()
 	const indexOfActiveConversation = getIndexOfConversation(conversations, active_conversation)
 	const activeConversation = conversations[indexOfActiveConversation]
+	const typingRef = useRef([])
+
+	const [state, setState, getState] = useSetState({
+		title: "Inbox",
+		subtitle: "",
+		avatar: null,
+		typing: [],
+	})
 
 	const getTitle = useCallback(() => {
 		let title = "Inbox"
@@ -85,30 +92,29 @@ const Header = props => {
 
 	const getSubtitle = useCallback(() => {
 		let subtitle = ""
-		console.log("typing", typing)
-		if (!!activeConversation && !Array.isEmpty(typing[activeConversation._id])) {
+		const typing = typingRef.current || []
+		if (!!activeConversation && !Array.isEmpty(typing)) {
 			let typingFirstNames = []
 
 			if (Array.isArray(activeConversation.participants)) {
 				typingFirstNames = activeConversation.participants.reduce((currentNames, participant) => {
-					if (typing[activeConversation._id].indexOf(participant?._id) !== -1) {
+					if (typing.indexOf(participant?._id) !== -1) {
 						currentNames.push(participant.first_name)
 					}
 					return currentNames
 				}, [])
 			}
-			if (typing[activeConversation._id].indexOf(activeConversation.started_by?._id) !== -1) {
+			if (typing.indexOf(activeConversation.started_by?._id) !== -1) {
 				typingFirstNames.push(activeConversation.started_by.first_name)
 			}
 
-			console.log("typingFirstNames", typingFirstNames)
 			if (typingFirstNames.length > 0) {
 				subtitle = `${typingFirstNames.join(",")} typing ....`
 			}
 		}
 
 		return subtitle
-	}, [activeConversation, auth, typing])
+	}, [activeConversation, auth])
 
 	const getAvatar = useCallback(() => {
 		let avatar = null
@@ -116,15 +122,53 @@ const Header = props => {
 		return avatar
 	}, [activeConversation, auth])
 
-	const [state, setState] = useSetState({
-		title: getTitle(),
-		subtitle: getSubtitle(),
-		avatar: getAvatar(),
+	const handleOnUserStartedTyping = useCallback(
+		event => {
+			const { user, conversation } = event.detail || {}
+			if (conversation === activeConversation?.uuid) {
+				typingRef.current = !Array.isArray(typingRef.current)
+					? [user]
+					: typingRef.current.filter(entry => entry !== user).concat([user])
+				setState({
+					title: getTitle(),
+					subtitle: getSubtitle(),
+					avatar: getAvatar(),
+				})
+			}
+		},
+		[activeConversation]
+	)
+
+	const handleOnUserStoppedTyping = useCallback(
+		event => {
+			const { user, conversation } = event.detail || {}
+			if (conversation === activeConversation?.uuid) {
+				typingRef.current = !Array.isArray(typingRef.current) ? [] : typingRef.current.filter(entry => entry !== user)
+				setState({
+					title: getTitle(),
+					subtitle: getSubtitle(),
+					avatar: getAvatar(),
+				})
+			}
+		},
+		[activeConversation]
+	)
+
+	useDidMount(() => {
+		setState({ title: getTitle(), subtitle: getSubtitle(), avatar: getAvatar() })
+
+		const onComposeMessagingStartedListener = EventRegister.on("compose-message-started", handleOnUserStartedTyping)
+		const onComposeMessagingStoppedListener = EventRegister.on("compose-message-stopped", handleOnUserStoppedTyping)
+
+		return () => {
+			onComposeMessagingStartedListener.remove()
+			onComposeMessagingStoppedListener.remove()
+		}
 	})
 
 	useDidUpdate(() => {
 		setState({ title: getTitle(), subtitle: getSubtitle(), avatar: getAvatar() })
-	}, [activeConversation, typing])
+	}, [activeConversation])
 
 	return (
 		<AppBar position="relative" className={""}>
@@ -179,7 +223,7 @@ const Header = props => {
 				</Box>
 
 				{!activeConversation && (
-					<IconButton className={"mr-2"} edge="end" color="inherit" aria-label="Contacts">
+					<IconButton className={"mr-2"} onClick={onClickSecondaryAction} edge="end" color="inherit" aria-label="Contacts">
 						<ContactsIcon />
 					</IconButton>
 				)}

@@ -11,7 +11,6 @@ export default function fetchInbox(params = {}, persist = true) {
 				messaging: { conversations },
 			},
 		} = getState()
-		console.log("fetchInbox called")
 		let inbox = []
 		if (auth.isAuthenticated) {
 			dispatch(setMessagingCache("fetching_inbox", true))

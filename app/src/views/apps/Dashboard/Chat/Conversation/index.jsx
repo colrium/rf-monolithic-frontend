@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useCallback, useRef, useReducer } from "react"
+import React, { useCallback, useRef, useLayoutEffect } from "react"
 import Box from "@mui/material/Box"
 import Grid from "@mui/material/Grid"
 
@@ -10,10 +10,13 @@ import { useSelector, useDispatch } from "react-redux"
 import { useTheme } from "@mui/material/styles"
 import { sendMessage } from "state/actions"
 import Message from "./Message"
+import Header from "./Header"
 import MessageComposer from "./MessageComposer"
-import { useDidMount, useDidUpdate, useSetState, useDeepMemo } from "hooks"
-import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer"
-import List from "react-virtualized/dist/commonjs/List"
+import TypingIndicator from "./TypingIndicator"
+import { useDidMount, useDidUpdate, useSetState, useDeepMemo, useMark } from "hooks"
+import { CellMeasurer, List, AutoSizer, CellMeasurerCache } from "react-virtualized"
+import { EventRegister } from "utils"
+import { useWindowSize } from "react-use"
 
 const Conversation = props => {
 	const {
@@ -28,20 +31,31 @@ const Conversation = props => {
 		selected,
 		...rest
 	} = props
+	const windowSize = useWindowSize()
 	const theme = useTheme()
 	const dispatch = useDispatch()
 	const { isAuthenticated, user } = useSelector(state => state.auth)
 	const preferences = useSelector(state => state.app?.preferences || {})
+	const canvasRef = useRef(null)
 	const containerRef = useRef(null)
 	const listRef = useRef(null)
-	const maxMessageWidthRef = useRef(100)
-	const fontSizeRef = useRef(18)
-	const lineHeightRef = useRef(18)
+	const maxMessageWidthRef = useRef(windowSize.width * 0.45)
+	const fontSizeRef = useRef(
+		'400 16px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'
+	)
+	const heightsRef = useRef([])
+	const lineHeightRef = useRef(16)
 	const noOfMessagesRef = useRef(data.messages?.length || 0)
 	const scrollToBottomRef = useRef(true)
-	const messageHeightRef = useRef(18 * 4)
-	const heightsRef = useRef([])
-
+	const scrollToTopRef = useRef(false)
+	const messageHeightRef = useRef(32)
+	const messageHeaderHeightRef = useRef(48)
+	const messageMediaHeightRef = useRef(18 * 6)
+	const messageLinkHeightRef = useRef(18 * 4)
+	const cellMeasurerCache = new CellMeasurerCache({
+		defaultHeight: 30,
+		fixedWidth: true,
+	})
 	let messages = useDeepMemo(() => {
 		let messagesArr = []
 		if (Array.isArray(data?.messages)) {
@@ -52,7 +66,6 @@ const Conversation = props => {
 					(!!data.uuid && message?.conversation_uuid && message?.conversation_uuid === data.uuid)
 			)
 		}
-		console.log("messagesArr", messagesArr)
 		return messagesArr
 	}, [data])
 
@@ -60,82 +73,9 @@ const Conversation = props => {
 		loading: false,
 		selected: -1,
 		focused: -1,
-		messages: [],
 		dateIndexes: [],
+		typing: [],
 	})
-
-	const getCanvasContextWrappedLines = (ctx, text, maxWidth) => {
-		var words = text.split(" ")
-		var lines = []
-		var currentLine = words[0]
-
-		for (var i = 1; i < words.length; i++) {
-			var word = words[i]
-			var width = ctx.measureText(currentLine + " " + word).width
-			if (width < maxWidth) {
-				currentLine += " " + word
-			} else {
-				lines.push(currentLine)
-				currentLine = word
-			}
-		}
-		lines.push(currentLine)
-		return lines
-	}
-
-	const getTextWidth = (text, font) => {
-		// re-use canvas object for better performance
-		const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"))
-		const context = canvas.getContext("2d")
-		context.font = font
-		const metrics = context.measureText(text)
-		return metrics.width
-	}
-
-	const getTextHeight = (text, font) => {
-		// re-use canvas object for better performance
-		const canvas = getTextHeight.canvas || (getTextHeight.canvas = document.createElement("canvas"))
-		// canvas.width = maxMessageWidthRef.current
-		const context = canvas.getContext("2d")
-		context.font = font
-		const maxWidth = maxMessageWidthRef.current - lineHeightRef.current * 2.5
-		const wrappedLinesArr = getCanvasContextWrappedLines(context, text, maxWidth)
-
-		return wrappedLinesArr.length * lineHeightRef.current
-	}
-
-	const getCssStyle = (element, styleProp) => {
-		// return window.getComputedStyle(element, null).getPropertyValue(styleProp)
-		let propValue = null
-		if (window.getComputedStyle) {
-			propValue = window.getComputedStyle(element, null).getPropertyValue(styleProp)
-		} else if (element.currentStyle) {
-			propValue = element.currentStyle[styleProp]
-		}
-
-		return propValue
-	}
-
-	const getCanvasFontSize = (el = document.body) => {
-		const fontWeight = getCssStyle(el, "font-weight") || "normal"
-		const fontSize = getCssStyle(el, "font-size") || "14px"
-		const fontFamily = getCssStyle(el, "font-family") || "Times New Roman"
-
-		return `${fontWeight} ${fontSize} ${fontFamily}`
-	}
-
-	const getMessages = useCallback(() => {
-		let messages = []
-		if (Array.isArray(data?.messages)) {
-			messages = data?.messages.filter(
-				message =>
-					message?.conversation?._id === data._id ||
-					message?.conversation === data._id ||
-					(!!data.uuid && message?.conversation_uuid && message?.conversation_uuid === data.uuid)
-			)
-		}
-		return messages
-	}, [data])
 
 	const messageNeedsDateHeader = useCallback(
 		index => {
@@ -153,50 +93,17 @@ const Conversation = props => {
 		[data]
 	)
 
-	const getHeights = useCallback(() => {
-		let heightsArr = []
-		if (Array.isArray(data?.messages)) {
-			heightsArr = data.messages.reduce((currentHeights, message, messageIndex) => {
-				let messageHeight = messageHeightRef.current
-				if (String.isString(message.content) && !String.isEmpty(message.content)) {
-					if (String.containsUrl(message.content)) {
-						messageHeight = messageHeight + 100
-					}
-					const contentTextHeight = getTextHeight(message.content, fontSizeRef.current)
-
-					messageHeight = messageHeight + contentTextHeight
-				}
-				if (messageNeedsDateHeader(messageIndex)) {
-					messageHeight = messageHeight + lineHeightRef.current * 2
-				}
-				if (message.type === "image") {
-					if (message.attachments?.length > 0) {
-						if (message.attachments?.length > 2) {
-							messageHeight = messageHeight + lineHeightRef.current * 40
-						} else {
-							messageHeight = messageHeight + lineHeightRef.current * 20
-						}
-					}
-				}
-				currentHeights.push(messageHeight)
-				return currentHeights
-			}, [])
-		}
-		return heightsArr
-	}, [data.messages, messageSize])
-
 	useDidUpdate(() => {
 		if (noOfMessagesRef.current !== data.messages?.length) {
 			noOfMessagesRef.current = data.messages?.length
 		}
-		heightsRef.current = getHeights()
-		setState({
-			messages: getMessages(),
-		})
 	}, [data.messages])
 
 	const getRowHeight = useCallback(({ index }) => {
-		return heightsRef.current[index]
+		if (index < messages.length) {
+			return heightsRef.current[index]
+		}
+		return messageHeightRef.current * 2
 	}, [])
 
 	const handleOnMessageClick = useCallback(
@@ -243,29 +150,52 @@ const Conversation = props => {
 	}, [])
 
 	const handleOnScroll = useCallback(({ clientHeight, scrollHeight, scrollTop }) => {
+		const first_message_height = heightsRef.current[0]
 		const last_message_height = heightsRef.current[heightsRef.current.length - 1]
 		scrollToBottomRef.current =
 			Math.round(scrollHeight - scrollTop) - Math.round(clientHeight) <= (last_message_height || messageHeightRef.current)
+		if (!scrollToBottomRef.current) {
+			scrollToTopRef.current = scrollTop <= (first_message_height || messageHeightRef.current)
+		} else {
+			scrollToTopRef.current = false
+		}
 	}, [])
 
-	const rowRenderer = useCallback(({ data: indexData, index, ...rowProps }) => {
-		const { selected, focused, messages } = getState()
-		// return <div {...rowProps}>Message {index}</div>
-		return (
-			<Message
-				conversation={data}
-				data={messages[index]}
-				onClick={handleOnMessageClick(index)}
-				onContextMenu={handleOnMessageContextMenu(index)}
-				selected={index === selected}
-				focused={index === focused}
-				className=""
-				maxContentWidth={maxMessageWidthRef.current}
-				showDateHeader={messageNeedsDateHeader(index)}
-				{...rowProps}
-			/>
-		)
-	}, [])
+	const rowRenderer = useCallback(
+		({ data: indexData, index, isScrolling, key, parent, style }) => {
+			const { selected, focused } = getState()
+			return (
+				<CellMeasurer cache={cellMeasurerCache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
+					{({ measure, registerChild }) =>
+						index < messages.length ? (
+							<Message
+								className={`${index == messages.length - 1 ? "border-b-8 border-transparent" : ""}`}
+								conversation={data}
+								data={messages[index]}
+								onClick={handleOnMessageClick(index)}
+								onContextMenu={handleOnMessageContextMenu(index)}
+								selected={index === selected}
+								focused={index === focused}
+								showDateHeader={messageNeedsDateHeader(index)}
+								prevMessage={messages[index - 1]}
+								nextMessage={messages[index + 1]}
+								mediaSize={messageMediaHeightRef.current}
+								headerHeight={messageHeaderHeightRef.current}
+								linkHeight={messageLinkHeightRef.current}
+								ref={registerChild}
+								style={style}
+								onLoad={measure}
+							/>
+						) : (
+							<TypingIndicator className={"absolute left-0 pb-8 pt-4"} style={style} ref={registerChild} onLoad={measure} />
+						)
+					}
+				</CellMeasurer>
+			)
+			// return <div {...rowProps}>Message {index}</div>
+		},
+		[messages]
+	)
 
 	const noRowsRenderer = useCallback(() => {
 		return (
@@ -290,49 +220,76 @@ const Conversation = props => {
 		)
 	}, [])
 
+	const handleOnUserStartedTyping = useCallback(
+		event => {
+			const { user, conversation } = event.detail || {}
+			if (conversation === data._id || conversation === data.uuid) {
+				scrollToBottomRef.current = true
+				setState(prevState => ({
+					typing: !Array.isArray(prevState.typing) ? [user] : prevState.typing.filter(entry => entry !== user).concat([user]),
+				}))
+			}
+		},
+		[data]
+	)
+
+	const handleOnUserStoppedTyping = useCallback(
+		event => {
+			const { user, conversation } = event.detail || {}
+			if (conversation === data._id || conversation === data.uuid) {
+				setState(prevState => ({
+					typing: !Array.isArray(prevState.typing) ? [] : prevState.typing.filter(entry => entry !== user),
+				}))
+			}
+		},
+		[data]
+	)
+
 	useDidMount(() => {
-		if (!!containerRef.current) {
-			maxMessageWidthRef.current = Math.round(containerRef.current.getBoundingClientRect().width * 0.45)
-			fontSizeRef.current = getCanvasFontSize(containerRef.current)
-			lineHeightRef.current = getTextWidth("A", fontSizeRef.current) * 1.75
-			messageHeightRef.current = lineHeightRef.current * 4
-			heightsRef.current = getHeights()
-			setState({
-				messages: getMessages(),
-			})
+		const onComposeMessagingStartedListener = EventRegister.on("compose-message-started", handleOnUserStartedTyping)
+		const onComposeMessagingStoppedListener = EventRegister.on("compose-message-stopped", handleOnUserStoppedTyping)
+
+		return () => {
+			onComposeMessagingStartedListener.remove()
+			onComposeMessagingStoppedListener.remove()
 		}
 	})
 
 	return (
 		<Box
-			className={`relative  flex flex-col bg-transparent text-base ${className} `}
+			className={`relative flex flex-col bg-transparent text-base ${className} `}
 			sx={{
 				paddingTop: 0,
 				paddingBottom: 0,
-				backgroundColor: theme => theme.palette.divider,
+				backgroundColor: theme => `${theme.palette.action.disabledBackground} !important`,
 				backgroundImage: `url("/img/${preferences?.theme === "dark" ? "chat-bg-dark.jpg" : "chat-bg.jpg"}") !important`,
-				height: theme => `calc(100vh - ${theme.spacing(25)})`,
-				maxHeight: theme => `calc(100vh - ${theme.spacing(25)})`,
+				height: theme => `calc(100vh - ${theme.spacing(14)})`,
+				maxHeight: theme => `calc(100vh - ${theme.spacing(14)})`,
 			}}
 			ref={containerRef}
 		>
-			<div className="flex-grow">
+			<Header conversation={data} typing={state.typing} />
+			<div className={`flex-grow relative border-b-8 border-transparent`}>
 				<AutoSizer>
 					{({ height, width }) => (
 						<List
-							rowCount={state.messages.length}
+							rowCount={!Array.isEmpty(state.typing) ? messages.length + 1 : messages.length}
 							onScroll={handleOnScroll}
-							rowHeight={getRowHeight}
+							deferredMeasurementCache={cellMeasurerCache}
+							rowHeight={cellMeasurerCache.rowHeight}
 							width={width}
 							height={height}
 							rowRenderer={rowRenderer}
 							noRowsRenderer={noRowsRenderer}
-							scrollToIndex={scrollToBottomRef.current ? state.messages.length - 1 : -1}
+							scrollToIndex={
+								scrollToBottomRef.current ? (!Array.isEmpty(state.typing) ? messages.length : messages.length - 1) : -1
+							}
 							{...rest}
 							ref={listRef}
 						/>
 					)}
 				</AutoSizer>
+				{/*!Array.isEmpty(state.typing) && <TypingIndicator className={"absolute bottom-0 left-0"} />*/}
 			</div>
 
 			<MessageComposer onSubmit={handleOnMessageComposerSubmit} className="" conversation={data} />

@@ -29,7 +29,7 @@ function useDeepCompareMemoize(value) {
 }
 
 const useDeepMemo = (cb, deps) => {
-	return useMemo(cb, useDeepCompareMemoize(deps))
+	return useMemo(() => cb(deps), [useDeepCompareMemoize(deps)])
 }
 
 export default useDeepMemo

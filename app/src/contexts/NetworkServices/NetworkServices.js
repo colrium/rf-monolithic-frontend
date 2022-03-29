@@ -1,18 +1,11 @@
 import React from 'react';
 import Api from "services/Api";
-import Sockets from "services/Sockets";
+import SocketIO from "services/SocketIO"
 import socketIoClient from "socket.io-client"
 import { initializeApp } from "firebase/app"
 import { getMessaging } from "firebase/messaging"
 // import { getFirestore } from "firebase/firestore";
-import {
-	getFirestore,
-	collection,
-	doc,
-	setDoc,
-	getDocs,
-	getDoc,
-} from "firebase/firestore/lite"
+import { getFirestore, collection, doc, setDoc, getDocs, getDoc } from "firebase/firestore/lite"
 // import "firebase/messaging";
 // import "firebase/firestore";
 import { firebase as firebaseConfig, firebaseWebPushCertificate } from "config"
@@ -20,7 +13,7 @@ import { onBackgroundMessage } from "firebase/messaging/sw"
 import { onMessage } from "firebase/messaging"
 import { connect } from "react-redux"
 import * as definations from "definations"
-import { setAuthenticated, setCurrentUser, setToken } from "state/actions/auth"
+import { setAuthenticated, setCurrentUser, setToken } from "state/actions"
 import { fetchInbox, appendMessage } from "state/actions/communication"
 import { setSettings } from "state/actions/app"
 import { EventRegister } from "utils"
@@ -32,17 +25,14 @@ class NetworkServices extends React.Component {
 	constructor(props) {
 		super(props)
 		this._isMounted = false
-		this.initializeFirebaseMessaging =
-			this.initializeFirebaseMessaging.bind(this)
+		this.initializeFirebaseMessaging = this.initializeFirebaseMessaging.bind(this)
 		this.checkMessagingPermission = this.checkMessagingPermission.bind(this)
 		this.saveTokenToDatabase = this.saveTokenToDatabase.bind(this)
 		this.onFirebaseMessageHandler = this.onFirebaseMessageHandler.bind(this)
-		this.onFirebaseBackgroundMessageHandler =
-			this.onFirebaseBackgroundMessageHandler.bind(this)
+		this.onFirebaseBackgroundMessageHandler = this.onFirebaseBackgroundMessageHandler.bind(this)
 		this.handleSocketsConnected = this.handleSocketsConnected.bind(this)
 		this.handleSocketsReconnected = this.handleSocketsReconnected.bind(this)
-		this.handleSocketsDisconnected =
-			this.handleSocketsDisconnected.bind(this)
+		this.handleSocketsDisconnected = this.handleSocketsDisconnected.bind(this)
 		this.initializeSockets = this.initializeSockets.bind(this)
 		this.handleOnLogin = this.handleOnLogin.bind(this)
 		this.handleOnLogout = this.handleOnLogout.bind(this)
@@ -50,17 +40,11 @@ class NetworkServices extends React.Component {
 		this.onLoginListener = EventRegister.on("login", this.handleOnLogin)
 		this.onLogoutListener = EventRegister.on("logout", this.handleOnLogout)
 
-
-
-
-
-
 		//const {auth} = this.props;
 
 		////
 		this.state = {
 			Api: Api,
-			Sockets: Sockets,
 			Firebase: {
 				initialized: false,
 				token: null,
@@ -76,20 +60,18 @@ class NetworkServices extends React.Component {
 			this.initializeFirebaseMessaging(user)
 		}
 
-		setTimeout(() => {
-			console.log("Sockets.connected", this.state.Sockets.connected)
-		}, 5000)
 		EventRegister.emit("test", { type: "normal" })
 	}
 
 	componentDidMount() {
 		this._isMounted = true
-		const { fetchInbox } = this.props
+		const {
+			auth: { isAuthenticated, user },
+			fetchInbox,
+		} = this.props
 		this.initializeSockets()
-		this.state.Sockets.on("connect", this.handleSocketsConnected)
-		// Sockets.on("reconnect", this.handleSocketsReconnected)
-		this.state.Sockets.on("disconnect", this.handleSocketsDisconnected)
-		if (Function.isFunction(fetchInbox)) {
+
+		if (isAuthenticated) {
 			fetchInbox()
 		}
 	}
@@ -105,9 +87,20 @@ class NetworkServices extends React.Component {
 		if (this.onLogoutListener) {
 			this.onLogoutListener.remove()
 		}
-		Sockets.off("identity-set")
-		Sockets.off("presence-changed")
-		Sockets.off("settings")
+		SocketIO.off("identity-set")
+		SocketIO.off("presence-changed")
+		SocketIO.off("settings")
+	}
+
+	initializeEventRegister() {
+		const {
+			auth: { isAuthenticated, user },
+			setCurrentUser,
+			setSettings,
+		} = this.props
+		SocketIO.on("connect", this.handleSocketsConnected)
+		SocketIO.on("reconnect", this.handleSocketsConnected)
+		SocketIO.on("disconnect", this.handleSocketsDisconnected)
 	}
 
 	initializeSockets() {
@@ -116,78 +109,77 @@ class NetworkServices extends React.Component {
 			setCurrentUser,
 			setSettings,
 		} = this.props
-		this.state.Sockets.on("identity-set", async profile => {
-			////
-			setCurrentUser(profile)
-		})
-
-		this.state.Sockets.on(
-			"presence-changed",
-			async ({ user, presence }) => {
-				////
-				setCurrentUser(user)
-			}
-		)
-
-		this.state.Sockets.on("settings", async settings => {
-			setSettings(settings)
-		})
-		this.state.Sockets.on("unauthorized", () => {
-			console.log(
-				"on unauthorized Api.getAccessToken()",
-				Api.getAccessToken()
-			)
-		})
-		this.state.Sockets.on("authenticated", async () => {
-			if (isAuthenticated && !JSON.isEmpty(user)) {
-				this.state.Sockets.emit("set-identity", user?._id)
-				this.state.Sockets.emit("get-settings", user?._id)
-				this.state.Sockets.emit("get-inbox", user)
-			}
-		})
-		this.state.Sockets.on("authenticate", async ({}) => {
-			const {
-				auth: { isAuthenticated, user },
-			} = this.props
-			if (isAuthenticated && !JSON.isEmpty(user)) {
-				console.log("Api.getAccessToken()", Api.getAccessToken())
-			}
-		})
-
-		this.state.Sockets.onAny((event, ...args) => {
-			console.log(`got ${event}`)
-		})
-
-
+		if (!SocketIO.connected) {
+			setCurrentUser({ ...user, presence: "offline", prev_presence: user?.presence === "away" ? "offline" : "online" })
+		}
+		SocketIO.on("connect", this.handleSocketsConnected)
+		SocketIO.on("reconnect", this.handleSocketsConnected)
+		SocketIO.on("disconnect", this.handleSocketsDisconnected)
 	}
 
 	handleSocketsConnected() {
 		const {
 			auth: { isAuthenticated, user },
-			fetchInbox,
+			setCurrentUser,
+			setSettings,
 		} = this.props
-		console.log("Api.getAccessToken()", Api.getAccessToken())
 		if (isAuthenticated && !JSON.isEmpty(user)) {
-			// this.state.Sockets.emit("authentication", {
-			// 	username: "John",
-			// 	password: "secret",
-			// })
+			SocketIO.on("presence-changed", ({ presence }) => {
+				////
+				setCurrentUser({ ...user, presence: presence })
+			})
+			SocketIO.on("user-changed-presence", data => {
+				////
+				if (data.user?._id === user._id || data.user === user._id) {
+					setCurrentUser({ ...user, presence: data.presence })
+				}
+			})
+
+			SocketIO.on("settings", settings => {
+				setSettings(settings)
+			})
+			SocketIO.on("inbox", inbox => {
+				console.log("inbox", inbox)
+			})
+			SocketIO.emit("get-settings", user?._id)
+			SocketIO.on("authorized", ({ user }) => {
+				const token = Api.getAccessToken()
+				SocketIO.auth = { token: token.access_token }
+			})
+			SocketIO.on("unauthorized", ({}) => {
+				const token = Api.getAccessToken()
+				SocketIO.emit("authorization", { token: token.access_token })
+			})
+			SocketIO.on("authorization-failed", ({}) => {
+				// EventRegister.emit("logout")
+			})
 		}
 	}
 
 	handleSocketsReconnected() {}
 
-	handleSocketsDisconnected() {}
+	handleSocketsDisconnected() {
+		// SocketIO.off("unauthorized")
+		// SocketIO.off("authorization-failed")
+		// SocketIO.off("inbox")
+		// SocketIO.off("authorized")
+		// SocketIO.off("presence-changed")
+		// SocketIO.off("user-changed-presence")
+	}
 
 	handleOnLogin(event) {
-		const { profile } = event?.detail || {}
-		const { fetchInbox } = this.props
+		const { profile, token } = event?.detail || {}
+		const { fetchInbox, setAuthenticated, setCurrentUser } = this.props
 		//
-		if (!JSON.isEmpty(profile)) {
-			// this.initializeFirebaseMessaging(profile);
-			if (Sockets && Sockets.connected) {
-				Sockets.emit("set-identity", profile._id)
-				Sockets.emit("get-settings", profile._id)
+
+		if (!JSON.isEmpty(profile) && !JSON.isEmpty(token)) {
+			setCurrentUser(profile)
+			setAuthenticated(true)
+			this.initializeFirebaseMessaging(profile)
+
+			if (SocketIO && SocketIO.connected) {
+				SocketIO.emit("authorization", { token: token.access_token })
+				SocketIO.emit("get-preferences", profile._id)
 			}
 			fetchInbox()
 		}
@@ -198,8 +190,8 @@ class NetworkServices extends React.Component {
 		//
 		const { user, token } = event?.detail || {}
 		this.removeTokenFromDatabase(fcmToken, user)
-		if (this.state.Sockets && this.state.Sockets.connected) {
-			this.state.Sockets.emit("logout", user)
+		if (SocketIO && SocketIO.connected) {
+			SocketIO.emit("logout", user)
 		}
 	}
 
@@ -214,8 +206,7 @@ class NetworkServices extends React.Component {
 
 	initializeFirebaseMessaging(user) {
 		const { setCurrentUser } = this.props
-		const userId =
-			!JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
+		const userId = !JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
 		if (!this.state?.Firebase?.initialized) {
 			return false
 		}
@@ -247,28 +238,23 @@ class NetworkServices extends React.Component {
 						// if(Platform.OS == 'ios') { this.state.Firebase.messaging.getAPNSToken().then(token => { return saveTokenToDatabase(token); }); }
 
 						// Listen to token changes
-						return this.state.Firebase.messaging.onTokenRefresh(
-							newToken => {
-								if (this._isMounted) {
-									this.setState({ fcmToken: newToken })
-								} else {
-									this.state = {
-										...this.state,
-										fcmToken: newToken,
-									}
+						return this.state.Firebase.messaging.onTokenRefresh(newToken => {
+							if (this._isMounted) {
+								this.setState({ fcmToken: newToken })
+							} else {
+								this.state = {
+									...this.state,
+									fcmToken: newToken,
 								}
 							}
-						)
+						})
 					}
 				})
 				.catch(err => {
 					//
 				})
 
-			this.unsubscribeFcFirestoreUserOnSnapshot = getFirestoreDoc(
-				"users",
-				user?._id
-			).then(function (docSnapshot) {
+			this.unsubscribeFcFirestoreUserOnSnapshot = getFirestoreDoc("users", user?._id).then(function (docSnapshot) {
 				//
 				if (docSnapshot) {
 					let docSnapshotData = docSnapshot.data()
@@ -280,10 +266,7 @@ class NetworkServices extends React.Component {
 
 			// onBackgroundMessage(this.state.Firebase.messaging, this.onFirebaseBackgroundMessageHandler);
 			// this.state.Firebase.messaging.setBackgroundMessageHandler(this.onFirebaseBackgroundMessageHandler);
-			this.unsubscribeFcMessagingOnMessage = onMessage(
-				this.state.Firebase.messaging,
-				this.onFirebaseMessageHandler
-			)
+			this.unsubscribeFcMessagingOnMessage = onMessage(this.state.Firebase.messaging, this.onFirebaseMessageHandler)
 		} else {
 			return
 		}
@@ -293,25 +276,16 @@ class NetworkServices extends React.Component {
 		if (!this.state.Firebase?.initialized) {
 			return false
 		}
-		const authStatus =
-			await this.state.Firebase.messaging.requestPermission()
+		const authStatus = await this.state.Firebase.messaging.requestPermission()
 		const enabled =
-			authStatus ===
-				this.state.Firebase?.messaging?.AuthorizationStatus
-					?.AUTHORIZED ||
-			authStatus ===
-				this.Firebase?.messaging?.AuthorizationStatus?.PROVISIONAL
+			authStatus === this.state.Firebase?.messaging?.AuthorizationStatus?.AUTHORIZED ||
+			authStatus === this.Firebase?.messaging?.AuthorizationStatus?.PROVISIONAL
 		return enabled
 	}
 
 	async saveTokenToDatabase(token, user) {
-		const userId =
-			!JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
-		if (
-			userId &&
-			!String.isEmpty(token) &&
-			this.state.Firebase.initialized
-		) {
+		const userId = !JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
+		if (userId && !String.isEmpty(token) && this.state.Firebase.initialized) {
 			return await this.checkMessagingPermission()
 				.then(async hasPermission => {
 					if (hasPermission) {
@@ -320,10 +294,7 @@ class NetworkServices extends React.Component {
 						const userId = user?._id
 						// Add the token to the users datastore
 						////
-						let tokens = await getFirestoreDoc(
-							"users",
-							userId
-						).then(async querySnapshot => {
+						let tokens = await getFirestoreDoc("users", userId).then(async querySnapshot => {
 							let tokens = [token]
 							let saveToken = true
 
@@ -334,22 +305,15 @@ class NetworkServices extends React.Component {
 								////
 
 								if (querySnapshotDoc) {
-									if (
-										Array.isArray(querySnapshotDoc.tokens)
-									) {
+									if (Array.isArray(querySnapshotDoc.tokens)) {
 										let token_exists = false
-										querySnapshotDoc.tokens.map(
-											token_entry => {
-												if (
-													token_entry === token &&
-													!token_exists
-												) {
-													token_exists = true
-												} else {
-													tokens.push(token_entry)
-												}
+										querySnapshotDoc.tokens.map(token_entry => {
+											if (token_entry === token && !token_exists) {
+												token_exists = true
+											} else {
+												tokens.push(token_entry)
 											}
-										)
+										})
 										saveToken = !token_exists
 									}
 								} else {
@@ -384,13 +348,8 @@ class NetworkServices extends React.Component {
 	}
 
 	async removeTokenFromDatabase(token, user) {
-		const userId =
-			!JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
-		if (
-			userId &&
-			!String.isEmpty(token) &&
-			this.state.Firebase.initialized
-		) {
+		const userId = !JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
+		if (userId && !String.isEmpty(token) && this.state.Firebase.initialized) {
 			return await this.checkMessagingPermission()
 				.then(async hasPermission => {
 					if (hasPermission) {
@@ -411,24 +370,15 @@ class NetworkServices extends React.Component {
 									//
 
 									if (querySnapshotDoc) {
-										if (
-											Array.isArray(
-												querySnapshotDoc.tokens
-											)
-										) {
+										if (Array.isArray(querySnapshotDoc.tokens)) {
 											let token_exists = false
-											querySnapshotDoc.tokens.map(
-												token_entry => {
-													if (
-														token_entry === token &&
-														!token_exists
-													) {
-														token_exists = true
-													} else {
-														tokens.push(token_entry)
-													}
+											querySnapshotDoc.tokens.map(token_entry => {
+												if (token_entry === token && !token_exists) {
+													token_exists = true
+												} else {
+													tokens.push(token_entry)
 												}
-											)
+											})
 											removeToken = token_exists
 										}
 									} else {
@@ -453,10 +403,7 @@ class NetworkServices extends React.Component {
 								let token_existed = false
 								if (Array.isArray(user?.tokens)) {
 									tokens = user?.tokens.filter(token_entry => {
-										if (
-											token_entry === token &&
-											!token_existed
-										) {
+										if (token_entry === token && !token_existed) {
 											token_existed = true
 										}
 										return token_entry !== token
@@ -491,16 +438,8 @@ class NetworkServices extends React.Component {
 		if (isAuthenticated) {
 			////);
 			const { data } = payload
-			if (
-				data.event_name === "new-message" ||
-				data.event_name === "message-sent"
-			) {
-				if (data.event_name === "new-message") {
-					appendMessage(data._id, true)
-				} else {
-					//updateMessage(data._id);
-					appendMessage(data._id, false)
-				}
+			if (data.event_name === "new-message" || data.event_name === "message-sent") {
+				appendMessage(data._id, false)
 			}
 		}
 	}
@@ -513,22 +452,14 @@ class NetworkServices extends React.Component {
 		////);
 		if (isAuthenticated) {
 			const { data } = payload
-			if (
-				data.event_name === "new-message" ||
-				data.event_name === "message-sent"
-			) {
-				if (data.event_name === "new-message") {
-					appendMessage(data._id)
-				} else {
-					//updateMessage(data._id);
-					appendMessage(data._id)
-				}
+			if (data.event_name === "new-message" || data.event_name === "message-sent") {
+				appendMessage(data._id)
 			}
 		}
 	}
 	render() {
 		const { children } = this.props
-		return children({ ...this.state, definations: definations })
+		return children({ ...this.state, SocketIO: SocketIO, definations: definations })
 	}
 }
 
@@ -539,6 +470,7 @@ const mapStateToProps = state => ({
 
 export default compose(
 	connect(mapStateToProps, {
+		setAuthenticated,
 		setCurrentUser,
 		appendMessage,
 		setSettings,

@@ -29,7 +29,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 	const [searchParams, setSearchParams] = useSearchParams()
 	const dispatch = useDispatch()
 	const auth = useSelector(state => state.auth);
-	const navigateTo = searchParams.get("navigateTo") || "/dashboard/home"
+	const navigateTo = searchParams.get("navigateTo") || "/home".toUriWithDashboardPrefix()
 
 	const [state, setState] = useSetState({
 		submitting: false,
@@ -38,62 +38,57 @@ const AuthForm = React.forwardRef((props, ref) => {
 		showCode: true,
 	})
 
+	const { submit, TextField, values, setValue, resetValues, formState } = usePersistentForm({
+		name: `login-auth-form`,
+		mode: "onChange",
+		reValidateMode: "onChange",
+		// volatile: true,
+		defaultValues: {
+			username: username || "",
+			password: password || "",
+		},
+		onSubmit: async (formData, e) => {
+			return await dispatch(login(formData))
+				.then(({ access_token, profile }) => {
+					setState(state => ({
+						submitting: false,
+						error: false,
+						alert: "Login successful.",
+					}))
+					if (Function.isFunction(onLogin)) {
+						onLogin(profile)
+					}
 
-	const { submit, TextField, values, setValue, resetValues, formState } =
-		usePersistentForm({
-			name: `login-auth-form`,
-			mode: "onChange",
-			reValidateMode: "onChange",
-			// volatile: true,
-			defaultValues: {
-				username: username || "",
-				password: password || "",
-			},
-			onSubmit: async (formData, e) => {
-				return await dispatch(login(formData))
-					.then(({ access_token, profile }) => {
-						setState(state => ({
-							submitting: false,
-							error: false,
-							alert: "Login successful.",
-						}))
-						if (Function.isFunction(onLogin)) {
-							onLogin(profile)
-						}
-
-						if (Function.isFunction(onSubmitSuccess)) {
-							onSubmitSuccess(res)
-						}
-						if (Function.isFunction(onLogin)) {
-							onLogin(auth?.user)
-						}
-						resetValues()
-						navigate(navigateTo)
+					if (Function.isFunction(onSubmitSuccess)) {
+						onSubmitSuccess(res)
+					}
+					if (Function.isFunction(onLogin)) {
+						onLogin(auth?.user)
+					}
+					resetValues()
+					navigate(navigateTo)
+				})
+				.catch(err => {
+					console.log("err", err)
+					setState({
+						submitting: false,
+						error: err.msg,
+						alert: false,
 					})
-					.catch(err => {
-						console.log("err", err)
-						setState({
-							submitting: false,
-							error: err.msg,
-							alert: false,
-						})
-						if (Function.isFunction(onSubmitError)) {
-							onSubmitError(err)
-						}
-					})
-			},
-		})
+					if (Function.isFunction(onSubmitError)) {
+						onSubmitError(err)
+					}
+				})
+		},
+	})
 
 	useDidMount(() => {
-
-		console.log("navigateTo", navigateTo)
 		if (auth?.isAuthenticated && !JSON.isEmpty(auth?.user)) {
 			if (Function.isFunction(onLogin)) {
 				onLogin(auth?.user)
 			}
 			resetValues()
 			navigate(navigateTo)
-
 		}
 	})
 

@@ -28,5 +28,9 @@ export { default as useIntersectionObserver } from "./useIntersectionObserver";
 export { default as useVisibility } from "./useVisibility";
 export { default as useMark } from "./useMark";
 export { default as useDeepMemo } from "./useDeepMemo"
+export { default as useEventListener } from "./useEventListener"
+export { default as useEventDispatcher } from "./useEventDispatcher"
+export { default as useEvent } from "./useEvent"
+export { default as useClientPositions } from "./useClientPositions"
 
 export * from "./useGoogleMaps";

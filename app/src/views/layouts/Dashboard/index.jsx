@@ -1,175 +1,132 @@
 /** @format */
+import React from "react"
 
-import { Drawer } from "@mui/material";
+import { Drawer } from "@mui/material"
+import { useTheme } from "@mui/material/styles"
+import useMediaQuery from "@mui/material/useMediaQuery"
+import { app } from "assets/jss/app-theme"
 
-import { app } from "assets/jss/app-theme";
+import { useNetworkServices } from "contexts"
+import { useSelector } from "react-redux"
+import Box from "@mui/material/Box"
+import { Footer, Sidebar, Topbar } from "./components"
 
-import classNames from "classnames";
+import { width as drawerWidth } from "config/ui/drawer"
+import GridContainer from "components/Grid/GridContainer"
+import GridItem from "components/Grid/GridItem"
+import ActionDialog from "components/ActionDialog"
+import ComposeEmailDialog from "components/ComposeEmailDialog"
+import { useSetState, useDidMount, useDidUpdate } from "hooks"
+import { Outlet, useSearchParams } from "react-router-dom"
 
-import PropTypes from "prop-types";
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import compose from "recompose/compose";
-import Box from "@mui/material/Box";
-import { Footer, Sidebar, Topbar } from "./components";
-import { withTheme } from "@mui/styles";
-import { width as drawerWidth } from "config/ui/drawer";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import ActionDialog from "components/ActionDialog";
-import ComposeEmailDialog from "components/ComposeEmailDialog";
-import { setDashboardSearchbarDisplayed } from "state/actions";
+const Dashboard = props => {
+	const { sidebar_items } = props
+	const { SocketIO } = useNetworkServices()
+	const nav = useSelector(state => state.nav)
+	const dashboard = useSelector(state => state.dashboard)
+	const auth = useSelector(state => state.auth)
+	const breadcrumbs = [...nav.entries]
 
-class Dashboard extends Component {
-	constructor(props) {
-		super(props);
-		const { device } = this.props;
-		const drawerType =
-			window?.innerWidth > 768 ? "persistent" : "temporary";
+	const theme = useTheme()
+	const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"))
+	const [state, setState] = useSetState({
+		drawerOpen: true,
+	})
+	const shiftTopbar = isLargeScreen
+	const shiftContent = isLargeScreen
 
-		this.state = {
-			drawerWidth: drawerWidth,
-			drawerType: drawerType,
-			drawerOpen: drawerType === "persistent",
-		};
-	}
-
-	componentDidMount() {
-		const { setDashboardSearchbarDisplayed } = this.props;
-		//
-		setDashboardSearchbarDisplayed(true);
-	}
-
-	handleClose = () => {
-		this.setState({ drawerOpen: false, drawerWidth: 0 });
-	};
-
-	handleToggleOpen = () => {
-		this.setState(prevState => ({
-			drawerOpen: !prevState.drawerOpen,
-			drawerWidth: !prevState.drawerOpen ? drawerWidth : 0,
-		}));
-	};
-
-	render() {
-		const {
-			auth,
-			nav,
-			dashboard,
-			children,
-			sidebar_items,
-			theme,
-			indexUri,
-			contexts,
-		} = this.props;
-
-		const breadcrumbs = nav.entries
-		const { drawerOpen } = this.state
-		const shiftTopbar = dashboard.drawer_displayed && drawerOpen && window?.innerWidth > 768
-		const shiftContent = dashboard.drawer_displayed && drawerOpen && window?.innerWidth > 768
-
-		return (
-			<Box
-				sx={{
-					backgroundColor: theme => theme.palette.background.default,
-					color: theme => theme.palette.text.primary,
-				}}
-				className={"p-0 relative min-h-screen"}
-			>
-				{dashboard.appbar_displayed && (
-					<Topbar
-						isSidebarOpen={drawerOpen}
-						onToggleSidebar={this.handleToggleOpen}
-						className="fixed left-0 right-0"
-						sx={{
-							zIndex: theme => (window?.innerWidth > 768 ? theme.zIndex.drawer + 1 : theme.zIndex.drawer - 1),
+	return (
+		<Box
+			sx={{
+				backgroundColor: theme.palette.background.default,
+				color: theme.palette.text.primary,
+			}}
+			className={"p-0 relative min-h-screen"}
+		>
+			{dashboard.appbar_displayed && (
+				<Topbar
+					component="header"
+					isSidebarOpen={state.drawerOpen}
+					onToggleSidebar={() => setState(prevState => ({ drawerOpen: !prevState.drawerOpen }))}
+					className="fixed left-0 right-0"
+					sx={{
+						zIndex: isLargeScreen ? theme.zIndex.drawer + 1 : theme.zIndex.drawer - 1,
+					}}
+				/>
+			)}
+			{dashboard.drawer_displayed && (
+				<Drawer
+					anchor={dashboard.layout_direction == "rtl" ? "right" : "left"}
+					sx={{
+						flexShrink: 0,
+						[`& .MuiDrawer-paper`]: {
+							width: drawerWidth,
+							boxSizing: "border-box",
+							backgroundColor: theme.palette.primary.main,
+							paddingTop: isLargeScreen ? theme.spacing(10) : theme.spacing(2),
+							borderWidth: 0,
+							overflowX: "hidden",
+						},
+					}}
+					onClose={() => setState({ drawerOpen: false })}
+					open={state.drawerOpen}
+					variant={isLargeScreen ? "persistent" : "temporary"}
+				>
+					<Sidebar
+						open={state.drawerOpen}
+						items={sidebar_items}
+						onToggleSidebar={() =>
+							setState(prevState => {
+								drawerOpen: !prevState.drawerOpen
+							})
+						}
+						onClickNavLink={item => {
+							if (!isLargeScreen) {
+								setState({ drawerOpen: false })
+							}
 						}}
 					/>
-				)}
-				{dashboard.drawer_displayed && (
-					<Drawer
-						anchor={dashboard.layout_direction == "rtl" ? "right" : "left"}
-						sx={{
-							flexShrink: 0,
-							[`& .MuiDrawer-paper`]: {
-								width: drawerWidth,
-								boxSizing: "border-box",
-								backgroundColor: theme => theme.palette.primary.main,
-								paddingTop: theme => (window?.innerWidth <= 768 ? theme.spacing(2) : theme.spacing(10)),
-								borderWidth: 0,
-								overflowX: "hidden",
-							},
-						}}
-						onClose={this.handleClose}
-						open={drawerOpen}
-						variant={window?.innerWidth > 768 ? "persistent" : "temporary"}
-					>
-						<Sidebar
-							open={drawerOpen}
-							items={sidebar_items}
-							onToggleSidebar={this.handleToggleOpen}
-							onClickNavLink={item => {
-								if (window?.innerWidth <= 768) {
-									this.handleClose()
-								}
-							}}
-						/>
-					</Drawer>
-				)}
-				<Box
-					component="main"
-					sx={{
-						width: window?.innerWidth > 768 && this.state.drawerOpen ? `calc(100% - ${drawerWidth}px)` : `100%`,
-						left: window?.innerWidth > 768 && this.state.drawerOpen ? drawerWidth : "auto",
-					}}
-					className={"relative m-0 p-0"}
-				>
-					{/* <Box
+				</Drawer>
+			)}
+			<Box
+				component="main"
+				sx={{
+					width: isLargeScreen && state.drawerOpen ? `calc(100% - ${drawerWidth}px)` : `100%`,
+					left: isLargeScreen && state.drawerOpen ? drawerWidth : "auto",
+				}}
+				className={"relative m-0 p-0"}
+			>
+				{/* <Box
 						className={"p-0 h-80"}
 						sx={{
 							backgroundColor: theme =>
 								theme.palette.primary?.main,
-							// height: theme => theme.spacing(25),
+							// height: theme.spacing(25),
 						}}
 					/> */}
 
-					<GridContainer
-						sx={{
-							backgroundColor: theme => theme.palette.background.default,
-							color: theme => theme.palette.text.primary,
-						}}
-						className={"absolute top-20 left-0 right-0"}
-					>
-						<GridItem xs={12}>{children}</GridItem>
-					</GridContainer>
-					<ActionDialog />
-					<ComposeEmailDialog />
-					{dashboard.footer_displayed && <Footer />}
-				</Box>
+				<GridContainer
+					sx={{
+						backgroundColor: theme.palette.background.default,
+						color: theme.palette.text.primary,
+					}}
+					className={"absolute top-20 left-0 right-0"}
+				>
+					<GridItem xs={12}>
+						<Outlet />
+					</GridItem>
+				</GridContainer>
+				<ActionDialog />
+				<ComposeEmailDialog />
 			</Box>
-		)
-	}
+			<Footer />
+		</Box>
+	)
 }
 
-Dashboard.propTypes = {
-	className: PropTypes.string,
-	children: PropTypes.node,
-	title: PropTypes.string,
-	sidebar_items: PropTypes.array,
-};
 Dashboard.defaultProps = {
 	title: "",
 	sidebar_items: [],
-};
+}
 
-const mapStateToProps = state => ({
-	auth: state.auth,
-	nav: state.nav,
-	dashboard: state.dashboard,
-	device: state.device,
-});
-
-export default compose(
-	withTheme,
-	connect(mapStateToProps, { setDashboardSearchbarDisplayed })
-)(Dashboard);
+export default Dashboard

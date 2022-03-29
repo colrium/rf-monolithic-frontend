@@ -15,24 +15,17 @@ import Typography from "components/Typography";
 import React, { useEffect, useState } from "react";
 
 import { connect } from "react-redux";
-import { withGlobals } from "contexts/Globals";
-import { closeDialog, emptyCart, openDialog, removeFromCart, setCartNote, setCheckoutData, setOrder } from "state/actions";
+import { withNetworkServices } from "contexts/NetworkServices"
+import { closeDialog, emptyCart, openDialog, removeFromCart, setCartNote, setCheckoutData, setOrder } from "state/actions"
 
-import LoginDialog from "views/widgets/Auth/LoginDialog";
-import ApiService from "services/Api";
-
+import LoginDialog from "views/widgets/Auth/LoginDialog"
+import ApiService from "services/Api"
 
 function Widget(props) {
-	let [state, setState] = useState(props);
-	useEffect(() => {
-		setState(props);
-	}, [props]);
-
 	let {
 		cart,
 		order,
 		auth,
-		sockets,
 		removeFromCart,
 		setCartNote,
 		setOrder,
@@ -42,10 +35,10 @@ function Widget(props) {
 		openDialog,
 		onProceedToCheckout,
 		className,
-	} = state;
-	let [loading, setLoading] = useState(false);
-	let [error, setError] = useState(false);
-	let [loginDialogOpen, setLoginDialogOpen] = useState(false);
+	} = props
+	let [loading, setLoading] = useState(false)
+	let [error, setError] = useState(false)
+	let [loginDialogOpen, setLoginDialogOpen] = useState(false)
 
 	function confirmRemoveFromCart(entry) {
 		openDialog({
@@ -61,12 +54,12 @@ function Widget(props) {
 					text: "Remove",
 					color: "error",
 					onClick: () => {
-						closeDialog();
-						removeFromCart(entry);
+						closeDialog()
+						removeFromCart(entry)
 					},
 				},
 			},
-		});
+		})
 	}
 
 	function confirmEmptyCart() {
@@ -83,22 +76,20 @@ function Widget(props) {
 					text: "Empty",
 					color: "error",
 					onClick: () => {
-						closeDialog();
-						emptyCart();
+						closeDialog()
+						emptyCart()
 					},
 				},
 			},
-		});
+		})
 	}
 
 	function proceedToCheckout() {
 		if (auth.isAuthenticated) {
-			let currency = null;
+			let currency = null
 			if (Array.isArray(cart.entries)) {
 				if (cart.entries.length > 0) {
-					currency = cart.entries[0].item.currency
-						? cart.entries[0].item.currency._id
-						: null;
+					currency = cart.entries[0].item.currency ? cart.entries[0].item.currency._id : null
 				}
 			}
 
@@ -120,9 +111,9 @@ function Widget(props) {
 						cost: entry.item.cost,
 						options: entry.options ? entry.options : {},
 						options_cost: entry.options_cost,
-					};
+					}
 				}),
-			};
+			}
 
 			if (order) {
 				let gateway_params_data = {
@@ -133,31 +124,29 @@ function Widget(props) {
 					reference: order.reference,
 					made_by: order.customer._id,
 					account: "realfield",
-					phone: order.customer.phone_number
-						? order.customer.phone_number
-						: "",
+					phone: order.customer.phone_number ? order.customer.phone_number : "",
 					email: order.customer.email_address,
 					mpesa: order.customer.country === "KE" ? "1" : "0",
-					p1: sockets.default ? sockets.default.socketId : "",
-				};
+					// p1: SocketIO ? SocketIO.socketId : "",
+				}
 
 				ApiService.get("/payments/gateway", gateway_params_data)
 					.then(res => {
-						setLoading(false);
-						let gateway_params = res.body.data;
-						setCheckoutData(gateway_params);
+						setLoading(false)
+						let gateway_params = res.body.data
+						setCheckoutData(gateway_params)
 						if (Function.isFunction(onProceedToCheckout)) {
-							onProceedToCheckout();
+							onProceedToCheckout()
 						}
 					})
 					.catch(e => {
-						setLoading(false);
-					});
+						setLoading(false)
+					})
 			} else {
 				ApiService.post("retail/orders/make", make_order_data)
 					.then(res => {
-						let made_order = res.body.data;
-						setOrder(made_order);
+						let made_order = res.body.data
+						setOrder(made_order)
 						let gateway_params_data = {
 							context: "order",
 							order: made_order._id,
@@ -166,65 +155,54 @@ function Widget(props) {
 							reference: made_order.reference,
 							made_by: made_order.customer._id,
 							account: "realfield",
-							phone: made_order.customer.phone_number
-								? made_order.customer.phone_number
-								: "",
+							phone: made_order.customer.phone_number ? made_order.customer.phone_number : "",
 							email: made_order.customer.email_address,
-							mpesa:
-								made_order.customer.country === "KE"
-									? "1"
-									: "0",
-							p1: sockets.default ? sockets.default.socketId : "",
-						};
+							mpesa: made_order.customer.country === "KE" ? "1" : "0",
+							// p1: SocketIO ? SocketIO.socketId : "",
+						}
 
-						ApiService.get("/payments/gateway", gateway_params_data).then(res => {
-							setLoading(false);
-							let gateway_params = res.body.data;
-							setCheckoutData(gateway_params);
-							if (Function.isFunction(onProceedToCheckout)) {
-								onProceedToCheckout();
-							}
-						})
+						ApiService.get("/payments/gateway", gateway_params_data)
+							.then(res => {
+								setLoading(false)
+								let gateway_params = res.body.data
+								setCheckoutData(gateway_params)
+								if (Function.isFunction(onProceedToCheckout)) {
+									onProceedToCheckout()
+								}
+							})
 							.catch(e => {
-								setLoading(false);
-							});
-					}).catch(e => {
-						setLoading(false);
-					});
+								setLoading(false)
+							})
+					})
+					.catch(e => {
+						setLoading(false)
+					})
 			}
 		} else {
-			setLoginDialogOpen(true);
+			setLoginDialogOpen(true)
 		}
 	}
 
 	function setOrderNote(note) {
 		if (order) {
-			let updatedOrder = JSON.updateJSON(order, { notes: note });
-			ApiService.put(("retail/orders/" + order._id), updatedOrder)
+			let updatedOrder = JSON.updateJSON(order, { notes: note })
+			ApiService.put("retail/orders/" + order._id, updatedOrder)
 				.then(res => {
-					setOrder(updatedOrder);
-					setCartNote(note);
+					setOrder(updatedOrder)
+					setCartNote(note)
 				})
 				.catch(e => {
-					setLoading(false);
-				});
+					setLoading(false)
+				})
 		}
 	}
 
 	if (cart.entries.length > 0) {
 		return (
-			<GridContainer
-				className={"px-4" + (className ? " " + className : "")}
-			>
+			<GridContainer className={"px-4" + (className ? " " + className : "")}>
 				<GridItem xs={12} sm={12} className="mb-4">
 					<Typography variant="h4"> Cart </Typography>
-					<Button
-						color="warning"
-						className="mt-2 w-auto"
-						onClick={confirmEmptyCart}
-
-
-					>
+					<Button color="warning" className="mt-2 w-auto" onClick={confirmEmptyCart}>
 						{" "}
 						Remove all{" "}
 					</Button>
@@ -232,26 +210,20 @@ function Widget(props) {
 				<GridItem xs={12} className="p-0 m-0">
 					<List className="w-full">
 						{cart.entries.map((entry, index) => {
-							let { item } = entry;
+							let { item } = entry
 							if (!JSON.isJSON(item)) {
-								item = {};
+								item = {}
 							}
 							return (
-								<ListItem
-									alignItems="flex-start"
-									className="inverse mb-2 rounded"
-									key={"cart-item-" + index}
-								>
+								<ListItem alignItems="flex-start" className="inverse mb-2 rounded" key={"cart-item-" + index}>
 									<ListItemAvatar>
 										<Avatar>
 											<LazyImage
 												alt={item.name}
 												src={
 													item.featured_image
-														? ApiService.getAttachmentFileUrl(
-															item.featured_image
-														)
-														: ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-chevron.svg")
+														? ApiService.getAttachmentFileUrl(item.featured_image)
+														: "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-chevron.svg"
 												}
 											/>
 										</Avatar>
@@ -260,63 +232,28 @@ function Widget(props) {
 										primary={item.name}
 										secondary={
 											<GridContainer className="p-0">
-												<GridItem
-													xs={12}
-													className="m-0 p-0"
-												>
-													<Typography
-														component="span"
-														variant="body2"
-														className="w-full "
-														color="grey"
-													>
+												<GridItem xs={12} className="m-0 p-0">
+													<Typography component="span" variant="body2" className="w-full " color="grey">
 														{" "}
 														{item.description}{" "}
 													</Typography>
 												</GridItem>
-												<GridItem
-													xs={12}
-													className="m-0 mt-2 p-0"
-												>
-													<Typography
-														component="span"
-														variant="body2"
-														className="inline"
-
-													>
+												<GridItem xs={12} className="m-0 mt-2 p-0">
+													<Typography component="span" variant="body2" className="inline">
 														{" "}
 														Cost: {item.cost}{" "}
 													</Typography>
 												</GridItem>
-												<GridItem
-													xs={12}
-													className="m-0 mt-2 p-0"
-												>
-													<Typography
-														component="span"
-														variant="body2"
-														className="inline"
-
-													>
+												<GridItem xs={12} className="m-0 mt-2 p-0">
+													<Typography component="span" variant="body2" className="inline">
 														{" "}
-														Options:{" "}
-														{
-															entry.options_cost
-														}{" "}
+														Options: {entry.options_cost}{" "}
 													</Typography>
 												</GridItem>
-												<GridItem
-													xs={12}
-													className="m-0 mt-2 p-0"
-												>
+												<GridItem xs={12} className="m-0 mt-2 p-0">
 													<Button
 														color="warning"
-
-														onClick={event =>
-															confirmRemoveFromCart(
-																entry
-															)
-														}
+														onClick={event => confirmRemoveFromCart(entry)}
 														disabled={loading}
 													>
 														{" "}
@@ -327,7 +264,7 @@ function Widget(props) {
 										}
 									/>
 								</ListItem>
-							);
+							)
 						})}
 					</List>
 				</GridItem>
@@ -347,39 +284,16 @@ function Widget(props) {
 							/>
 						</GridItem>
 
-						<GridItem
-							xs={12}
-							sm={12}
-							md={6}
-							className="mb-4 flex flex-col"
-						>
-							<Typography
-								component="span"
-								variant="h2"
-								className="text-right"
-
-							>
-								<span className="text-gray-500 mr-2 text-base">
-									{cart.currency}
-								</span>
+						<GridItem xs={12} sm={12} md={6} className="mb-4 flex flex-col">
+							<Typography component="span" variant="h2" className="text-right">
+								<span className="text-gray-500 mr-2 text-base">{cart.currency}</span>
 								<span className="text-3xl">{cart.total}</span>
 							</Typography>
 
-							<Typography
-								component="span"
-								variant="h4"
-								className="text-right"
-
-							>
-								<span className="text-gray-400 mr-4 text-xs">
-									Options:{" "}
-								</span>
-								<span className="text-gray-500 mr-2 text-xs">
-									{cart.currency}
-								</span>
-								<span className="text-sm">
-									{cart.options_total}
-								</span>
+							<Typography component="span" variant="h4" className="text-right">
+								<span className="text-gray-400 mr-4 text-xs">Options: </span>
+								<span className="text-gray-500 mr-2 text-xs">{cart.currency}</span>
+								<span className="text-sm">{cart.options_total}</span>
 							</Typography>
 						</GridItem>
 					</GridContainer>
@@ -390,7 +304,7 @@ function Widget(props) {
 								color="primary"
 								className=" w-auto"
 								onClick={e => {
-									proceedToCheckout();
+									proceedToCheckout()
 								}}
 								right
 							>
@@ -399,45 +313,31 @@ function Widget(props) {
 							</Button>
 						</GridItem>
 						<GridItem xs={12} sm={12} className="mb-4">
-							<Typography
-								component="span"
-								variant="body2"
-								className="w-full text-right text-gray-700"
-							>
+							<Typography component="span" variant="body2" className="w-full text-right text-gray-700">
 								{" "}
 								Shipping & taxes calculated at checkout{" "}
 							</Typography>
 						</GridItem>
 					</GridContainer>
-					<LoginDialog
-						open={loginDialogOpen}
-						onLogin={proceedToCheckout}
-						title="Login to Proceed"
-					/>
+					<LoginDialog open={loginDialogOpen} onLogin={proceedToCheckout} title="Login to Proceed" />
 				</GridItem>
 			</GridContainer>
-		);
+		)
 	} else {
 		return (
-			<GridContainer
-				className={"px-4" + (className ? " " + className : "")}
-			>
+			<GridContainer className={"px-4" + (className ? " " + className : "")}>
 				<GridItem xs={12} className="p-0 m-0 my-20 text-center">
 					<CartIcon className="text-6xl m-auto text-gray-500" />
 				</GridItem>
 
 				<GridItem xs={12} className="p-0 m-0">
-					<Typography
-						component="span"
-						variant="subtitle1"
-						className="w-full text-center text-gray-500"
-					>
+					<Typography component="span" variant="subtitle1" className="w-full text-center text-gray-500">
 						{" "}
 						Your Cart is empty{" "}
 					</Typography>
 				</GridItem>
 			</GridContainer>
-		);
+		)
 	}
 }
 
@@ -445,16 +345,14 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 	cart: state.ecommerce.cart,
 	order: state.ecommerce.order,
-});
+})
 
-export default withGlobals(
-	connect(mapStateToProps, {
-		removeFromCart,
-		setCartNote,
-		setOrder,
-		emptyCart,
-		setCheckoutData,
-		closeDialog,
-		openDialog,
-	})((Widget))
-);
+export default connect(mapStateToProps, {
+	removeFromCart,
+	setCartNote,
+	setOrder,
+	emptyCart,
+	setCheckoutData,
+	closeDialog,
+	openDialog,
+})(Widget)

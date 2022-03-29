@@ -20,9 +20,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 
-import {
-	NetworkServicesProvider,
-} from "contexts"
+import { NetworkServicesProvider, CacheDatabaseProvider } from "contexts"
 import CookiesConsentDialog from "views/widgets/CookiesConsentDialog"
 
 import Auth from "utils/Auth"
@@ -41,9 +39,7 @@ jss.use(VendorPrefixer(), NestedJSS())
 const setupJss = () => {
 	jss.setup(preset())
 	const sheetsRegistry = new SheetsRegistry()
-	const globalStyleSheet = jss
-		.createStyleSheet({ "@global": { ...appStyle } })
-		.attach()
+	const globalStyleSheet = jss.createStyleSheet({ "@global": { ...appStyle } }).attach()
 	sheetsRegistry.add(globalStyleSheet)
 	return sheetsRegistry
 }
@@ -56,8 +52,7 @@ const App = props => {
 	} = props
 	const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
 	const getAppTheme = React.useCallback(() => {
-		let themeMode =
-			prefersDarkMode || preferences.theme === "dark" ? "dark" : "light"
+		let themeMode = prefersDarkMode || preferences.theme === "dark" ? "dark" : "light"
 		let computedTheme = theme
 		computedTheme.palette.mode = themeMode
 		computedTheme.palette.background = {
@@ -79,9 +74,11 @@ const App = props => {
 		<ThemeProvider theme={getAppTheme()}>
 			<NetworkServicesProvider>
 				<JssProvider jss={jss} registry={sheets}>
-					<BrowserRouter>
-						<Routes />
-					</BrowserRouter>
+					<CacheDatabaseProvider>
+						<BrowserRouter>
+							<Routes />
+						</BrowserRouter>
+					</CacheDatabaseProvider>
 				</JssProvider>
 				<CookiesConsentDialog />
 			</NetworkServicesProvider>

@@ -206,225 +206,159 @@ const ApiSingleton = (function () {
 					let resObj = {
 						token: getAccessToken(),
 						profile: instance_user,
-					};
+					}
 					if (get_profile && isUserAuthenticated(false)) {
-						axios.get(endpoint("/profile")).then(profile_res => {
-							let profile = profile_res.body.data;
-							//store.dispatch(setCurrentUser(profile));
-							resObj.profile = profile;
-							EventRegister.emit('login', resObj);
-							resolve(resObj);
-						}).catch(err => {
-							reject(err);
-						});
-					}
-					else {
-						EventRegister.emit('login', resObj);
-						resolve(resObj);
-					}
+						axios
+							.get(endpoint("/profile"))
+							.then(profile_res => {
+								let profile = profile_res.body?.data || profile_res.data?.data
 
-				}
-				else {
-					const { device } = store.getState();
-					instance.post("login", JSON.merge(data, { client_id: client_id, client_secret: client_secret, grant_type: "password", agent: device })).then(async res => {
-						const res_access_token = Object.toJSON(res.body.data);
-						let resObj = {
-							access_token: res_access_token,
-							profile: false,
-						};
-						setAccessToken(res_access_token);
-						let profile = await axios.get(endpoint("/profile"), { headers: { ...getAuthorizationHeader(res_access_token) } }).then(profile_res => {
-							return profile_res.data.data;
-						}).catch(err => {
+								if (!JSON.isEmpty(profile)) {
+									resObj.profile = profile
+									EventRegister.emit("login", resObj)
+									resolve(resObj)
+								} else {
+									resolve(resObj)
+								}
+							})
+							.catch(err => {
+								reject(err)
+							})
+					} else {
+						EventRegister.emit("login", resObj)
+						resolve(resObj)
+					}
+				} else {
+					instance
+						.post("login", JSON.merge(data, { client_id: client_id, client_secret: client_secret, grant_type: "password" }))
+						.then(async res => {
+							console.log("login res", res)
+
+							const { profile, token, ...rest } = res.body?.data || res.data?.data || {}
+							let resObj = {
+								token: token || rest,
+								profile: profile,
+							}
+							setAccessToken(token)
+							if (JSON.isJSON(profile) && !JSON.isEmpty(profile)) {
+								resObj.profile = await axios
+									.get(endpoint("/profile"), { headers: { ...getAuthorizationHeader(token) } })
+									.then(profile_res => {
+										return profile_res.body?.data || profile_res.data?.data
+									})
+									.catch(err => {
+										console.error(err)
+									})
+							}
+							if (!JSON.isEmpty(resObj.profile) && !JSON.isEmpty(resObj.token)) {
+								EventRegister.emit("login", resObj)
+								resolve(resObj)
+							} else {
+								reject({ message: "Incomplete result", ...resObj })
+							}
+						})
+						.catch(err => {
 							console.error(err)
-							// reject(err);
-						});
-						if (JSON.isJSON(profile)) {
-							//store.dispatch(setCurrentUser(profile));
-							resObj.profile = profile;
-						}
-						EventRegister.emit('login', resObj);
-						if (get_profile) {
-
-						}
-						else {
-							// EventRegister.emit('login', resObj);
-						}
-						resolve(resObj);
-					}).catch(err => {
-						console.error(err)
-						reject(err);
-					});
-
+							reject(err)
+						})
 				}
-			}
-			else {
+			} else {
 				let errObj = {
 					msg: "Login Request Failed. Invalid Request service instance",
 					message: "Login Request Failed. Invalid Request service instance",
 					body: null,
 					code: 400,
-				};
-				reject(errObj);
+				}
+				reject(errObj)
 			}
-
-
-		});
+		})
 	}
 
 	function logout() {
 		return new Promise((resolve, reject) => {
-			let current_access_token = getAccessToken();
-			setAccessToken(null);
+			let current_access_token = getAccessToken()
+			setAccessToken(null)
 
-			// store.dispatch(clearAppState());
-
-			EventRegister.emit('logout', { token: current_access_token, user: null });
-			if (instance && current_access_token) {
-
-				instance.get("logout", { params: { access_token: current_access_token } }).then(res => {
-					resolve(res)
-				}).catch(err => {
-					//resolve any way
-					resolve({ ...err, error: true });
-				})
-			}
-			else {
-				resolve({});
-			}
-		});
-
+			EventRegister.emit("logout", { token: current_access_token, user: null })
+			resolve({})
+		})
 	}
 
 	function logoutAll() {
 		return new Promise((resolve, reject) => {
-			let current_access_token = getAccessToken();
-			setAccessToken(null);
-			EventRegister.emit('logout', { token: current_access_token, user: null });
+			let current_access_token = getAccessToken()
+			setAccessToken(null)
+			EventRegister.emit("logout", { token: current_access_token, user: null })
 
-			if (instance && current_access_token) {
-				instance.get("logout/all", { params: { access_token: current_access_token } }).then(res => {
-					resolve(res);
-				}).catch(err => {
-					//resolve any way
-					resolve({ ...err, error: true });
-				})
-			}
-
-			resolve({});
-		});
-
+			resolve({})
+		})
 	}
 
 	function logoutOthers() {
 		return new Promise((resolve, reject) => {
-			let current_access_token = getAccessToken();
-			setAccessToken(null);
-
 			if (instance && current_access_token) {
-				instance.get("logout/others", { params: { access_token: current_access_token } }).then(res => {
-					resolve(res);
-				}).catch(err => {
-					//resolve any way
-					resolve({ ...err, error: true });
-				})
+				instance
+					.get("logout/others", { params: { access_token: current_access_token } })
+					.then(res => {
+						resolve(res)
+					})
+					.catch(err => {
+						//resolve any way
+						resolve({ ...err, error: true })
+					})
 			}
 
-			resolve({});
-		});
-
+			resolve({})
+		})
 	}
 
 	function getContextRequests(service_uri = "/", scope_instance = false) {
-		scope_instance = scope_instance || instance;
-		let context_uri = String.isString(service_uri) ? (service_uri.trim().endsWith("/") ? service_uri.trim().substring(0, service_uri.trim().length) : service_uri.trim()) : undefined;
+		scope_instance = scope_instance || instance
+		let context_uri = String.isString(service_uri)
+			? service_uri.trim().endsWith("/")
+				? service_uri.trim().substring(0, service_uri.trim().length)
+				: service_uri.trim()
+			: undefined
 		if (scope_instance && !String.isEmpty(context_uri)) {
 			return {
 				getRecords: (params = {}) => scope_instance.get(context_uri, { params: params }),
-				getRecordsCount: (params = {}) => scope_instance.get((context_uri + "/count"), { params: params }),
-				getAggregatesCount: (params = {}) => scope_instance.get((context_uri + "/count/aggregates"), { params: params }),
-				getRecordById: (id, params = {}) => scope_instance.get((context_uri + "/" + id), { params: params }),
-				create: (data, params = {}) => scope_instance.post((context_uri), data, { params: params }),
-				update: (id, data, params = {}) => scope_instance.post((context_uri + "/" + id), data, { params: params }),
-				deleteRecordById: (id, params = {}) => scope_instance.delete((context_uri + "/" + id), { params: params }),
+				getRecordsCount: (params = {}) => scope_instance.get(context_uri + "/count", { params: params }),
+				getAggregatesCount: (params = {}) => scope_instance.get(context_uri + "/count/aggregates", { params: params }),
+				getRecordById: (id, params = {}) => scope_instance.get(context_uri + "/" + id, { params: params }),
+				create: (data, params = {}) => scope_instance.post(context_uri, data, { params: params }),
+				update: (id, data, params = {}) => scope_instance.post(context_uri + "/" + id, data, { params: params }),
+				deleteRecordById: (id, params = {}) => scope_instance.delete(context_uri + "/" + id, { params: params }),
 			}
 		}
-		return {};
+		return {}
 	}
 
 	function createIsolatedInstance(config = {}) {
-		const { cache, ...options } = JSON.merge(default_options, instance_options, config);
-		let isolatedInstance = axios.create((cache ? (Boolean.isBoolean(cache) ? { ...options, adapter: axios_cache.adapter } : (cache.adapter ? { ...options, ...cache } : { ...options })) : { ...options }));
+		const { cache, ...options } = JSON.merge(default_options, instance_options, config)
+		let isolatedInstance = axios.create(
+			cache
+				? Boolean.isBoolean(cache)
+					? { ...options, adapter: axios_cache.adapter }
+					: cache.adapter
+					? { ...options, ...cache }
+					: { ...options }
+				: { ...options }
+		)
 		//Do not apply interceptors here unless you know. They make the other ins
 
-		return isolatedInstance;
+		return isolatedInstance
 	}
 
 	function getAttachmentFileUrl(attachment) {
-		// return endpoint("/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment));
-		return (
-			"https://api.realfield.io/attachments/download/" +
-			(JSON.isJSON(attachment) && "_id" in attachment
-				? attachment._id
-				: attachment)
-		)
+		return endpoint("/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment))
+		// return (
+		// 	"https://api.realfield.io/attachments/download/" +
+		// 	(JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment)
+		// )
 	}
 
 	function createInstance(config = {}) {
-		// if (!instance_initialized) {
-		// 	const { auth: { isAuthenticated, user } } = store.getState();
-		// 	instance_authenticated = isAuthenticated;
-		// 	instance_user = user;
-		// 	//
-		// 	if (isAuthenticated) {
-		// 		var access_token = getAccessToken();
-		// 		//
-		// 		if (access_token) {
-		// 			if (isAccessTokenValid(access_token)) {
-		// 				instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(access_token) } });
-		// 			}
-		// 			else {
-		// 				//Refresh
-		// 				instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
-		// 			}
-		// 		}
-		// 		else {
-		// 			instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
-		// 		}
-		// 	}
-		// 	else {
-		// 		instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
-		// 	}
-
-		// 	let watchAuthenticatedState = watch(store.getState, 'auth.isAuthenticated', Object.areEqual);
-		// 	store.subscribe(watchAuthenticatedState((newVal, oldVal, objectPath) => {
-		// 		instance_authenticated = newVal;
-		// 		if (newVal) {
-		// 			var access_token = getAccessToken();
-		// 			if (isAccessTokenValid(access_token)) {
-		// 				instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(access_token) } });
-		// 			}
-		// 		}
-		// 		else {
-		// 			instance_options = JSON.merge(instance_options, { headers: { ...getAuthorizationHeader(null) } });
-		// 		}
-		// 		//
-		// 	}));
-
-		// 	let watchUserState = watch(store.getState, 'auth.user', Object.areEqual);
-
-		// 	store.subscribe(watchUserState((newVal, oldVal, objectPath) => {
-		// 		instance_user = newVal;
-		// 		//
-		// 	}));
-		// 	instance_initialized = true;
-		// }
-
-		const { cache, interceptors, ...options } = JSON.merge(
-			default_options,
-			config,
-			instance_options
-		)
+		const { cache, interceptors, ...options } = JSON.merge(default_options, config, instance_options)
 
 		let newInstance = axios.create(
 			cache
@@ -436,19 +370,11 @@ const ApiSingleton = (function () {
 				: { ...options }
 		)
 
-		EventRegister.on("api-request-attempt", ({detail:config}) => {
-			const {
-				cancelOnTimeout,
-				cancelUUID,
-				cancelToken,
-				cancelTokenSource,
-				timeout,
-			} = config
+		EventRegister.on("api-request-attempt", ({ detail: config }) => {
+			const { cancelOnTimeout, cancelUUID, cancelToken, cancelTokenSource, timeout } = config
 			let timeoutAction = undefined
 			//
-			let cancellableOnTimeout =
-				cancelOnTimeout > 0 &&
-				Function.isFunction(cancelTokenSource?.cancel)
+			let cancellableOnTimeout = cancelOnTimeout > 0 && Function.isFunction(cancelTokenSource?.cancel)
 			if (cancellableOnTimeout) {
 				const timeoutMs = Number.parseNumber(timeout, 30000)
 				let onRequestError = null
@@ -462,26 +388,20 @@ const ApiSingleton = (function () {
 						onRequestComplete.remove()
 					}
 				}
-				onRequestError = EventRegister.on(
-					"api-request-error",
-					({detail:error}) => {
-						//
-						if (cancelUUID === data?.config?.cancelUUID) {
-							clearTimeout(timeoutAction)
-							removeRequestListeners()
-						}
+				onRequestError = EventRegister.on("api-request-error", ({ detail: error }) => {
+					//
+					if (cancelUUID === data?.config?.cancelUUID) {
+						clearTimeout(timeoutAction)
+						removeRequestListeners()
 					}
-				)
-				onRequestComplete = EventRegister.on(
-					"api-request-complete",
-					({detail:data}) => {
-						//
-						if (cancelUUID === data?.config?.cancelUUID) {
-							clearTimeout(timeoutAction)
-							removeRequestListeners()
-						}
+				})
+				onRequestComplete = EventRegister.on("api-request-complete", ({ detail: data }) => {
+					//
+					if (cancelUUID === data?.config?.cancelUUID) {
+						clearTimeout(timeoutAction)
+						removeRequestListeners()
 					}
-				)
+				})
 
 				timeoutAction = setTimeout(() => {
 					EventRegister.emit("api-request-timeout", config)
@@ -510,19 +430,9 @@ const ApiSingleton = (function () {
 					body: error.response.data,
 				}
 				if (error.response.data) {
-					if (
-						error.response.data.message ||
-						error.response.data.msg ||
-						error.response.data.error
-					) {
-						errobj.msg =
-							error.response.data.message ||
-							error.response.data.msg ||
-							error.response.data.error
-						errobj.message =
-							error.response.data.message ||
-							error.response.data.msg ||
-							error.response.data.error
+					if (error.response.data.message || error.response.data.msg || error.response.data.error) {
+						errobj.msg = error.response.data.message || error.response.data.msg || error.response.data.error
+						errobj.message = error.response.data.message || error.response.data.msg || error.response.data.error
 					}
 				}
 			} else if (error.request) {
@@ -535,7 +445,9 @@ const ApiSingleton = (function () {
 				}
 			}
 			EventRegister.emit("api-request-error", errobj)
-
+			if (errobj?.code === 401) {
+				EventRegister.emit("logout", errobj)
+			}
 			return Promise.reject(errobj)
 		}
 
@@ -598,8 +510,7 @@ const ApiSingleton = (function () {
 		)
 
 		newInstance.getAttachmentFileUrl = getAttachmentFileUrl
-		newInstance.upload = (data, params = {}) =>
-			newInstance.post("/attachments/upload", data, params)
+		newInstance.upload = (data, params = {}) => newInstance.post("/attachments/upload", data, params)
 		newInstance.isolated = (config = {}) => createIsolatedInstance(config)
 		newInstance.endpoint = (uri = "/") => endpoint(uri)
 		newInstance.isAccessTokenValid = token => isAccessTokenValid(token)
@@ -608,40 +519,24 @@ const ApiSingleton = (function () {
 		newInstance.setAccessToken = token => setAccessToken(token)
 		newInstance.accessTokenSetAndValid = () => accessTokenSetAndValid()
 		newInstance.getAuthorizationHeader = () => getAuthorizationHeader()
-		newInstance.getContextRequests = (
-			service_uri = "/",
-			scope_instance = false
-		) => getContextRequests(service_uri, scope_instance)
+		newInstance.getContextRequests = (service_uri = "/", scope_instance = false) => getContextRequests(service_uri, scope_instance)
 		newInstance.isUserAuthenticated = () => isUserAuthenticated()
-		newInstance.login = (data, get_profile = true) =>
-			login(data, get_profile)
+		newInstance.login = (data, get_profile = true) => login(data, get_profile)
 		newInstance.logout = () => logout()
 		newInstance.logoutAll = () => logoutAll()
 		newInstance.logoutOthers = () => logoutOthers()
-		newInstance.profile = params =>
-			newInstance.get("profile", { params: params })
+		newInstance.profile = params => newInstance.get("profile", { params: params })
 		newInstance.update_profile = data => newInstance.post("profile", data)
 		newInstance.signup = data => newInstance.post("signup", data)
-		newInstance.forgotPassword = data =>
-			newInstance.post("forgot-password", data)
-		newInstance.forgot_password = data =>
-			newInstance.post("forgot-password", data)
-		newInstance.resetPassword = data =>
-			newInstance.post("reset-password", data)
-		newInstance.reset_password = data =>
-			newInstance.post("reset-password", data)
-		newInstance.verifyAccount = data =>
-			newInstance.post("verify-account", data)
-		newInstance.verify_account = data =>
-			newInstance.post("verify-account", data)
-		newInstance.getAccessToken = params =>
-			newInstance.get("token", { params: params })
-		newInstance.get_access_token = params =>
-			newInstance.get("token", { params: params })
-		newInstance.refreshAuthToken = data =>
-			newInstance.post("refresh-token", data)
-		newInstance.refresh_auth_token = data =>
-			newInstance.post("refresh-token", data)
+		newInstance.forgotPassword = data => newInstance.post("forgot-password", data)
+		newInstance.forgot_password = data => newInstance.post("forgot-password", data)
+		newInstance.resetPassword = data => newInstance.post("reset-password", data)
+		newInstance.reset_password = data => newInstance.post("reset-password", data)
+		newInstance.verifyAccount = data => newInstance.post("verify-account", data)
+		newInstance.verify_account = data => newInstance.post("verify-account", data)
+		newInstance.get_access_token = params => newInstance.get("token", { params: params })
+		newInstance.refreshAuthToken = data => newInstance.post("refresh-token", data)
+		newInstance.refresh_auth_token = data => newInstance.post("refresh-token", data)
 
 		instance = newInstance
 

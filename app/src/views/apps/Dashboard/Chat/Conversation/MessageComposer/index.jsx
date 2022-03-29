@@ -20,7 +20,10 @@ import AttachFileIcon from "@mui/icons-material/AttachFile"
 import ClickAwayListener from "@mui/material/ClickAwayListener"
 import EmojiPicker from "emoji-picker-react"
 import LinkPreview from "components/LinkPreview"
-import { useDidMount, useDidUpdate, useWillUnmount, useSetState, usePersistentForm } from "hooks"
+import { useDidMount, useDidUpdate, useSetState, usePersistentForm } from "hooks"
+
+import { getIndexOfConversation } from "state/actions"
+
 import { EventRegister } from "utils"
 
 const messageTypes = {
@@ -88,11 +91,18 @@ const messageTypes = {
 }
 
 const MessageComposer = React.forwardRef((props, ref) => {
-	const { onSubmit, conversation, replyFor, ...rest } = props
+	const { onSubmit, replyFor, ...rest } = props
 	const theme = useTheme()
 	const dispatch = useDispatch()
 	const auth = useSelector(state => state.auth)
+	const active_conversation = useSelector(state => state.communication?.messaging?.active_conversation)
+	const conversations = useSelector(state => state.communication?.messaging?.conversations)
+
+	const indexOfConversation = getIndexOfConversation(conversations, active_conversation)
+	const conversation = conversations[indexOfConversation]
 	const { isAuthenticated, user } = auth
+
+	console.log("MessageComposer active_conversation", active_conversation)
 	const { handleSubmit, TextField, FilePicker, values, setValue, resetValues } = usePersistentForm({
 		name: `compose-message-${!String.isEmpty(conversation?.uuid) ? conversation?.uuid : "new"}`,
 		defaultValues: {
@@ -200,17 +210,11 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		if (!String.isEmpty(values.content) || !Array.isEmpty(values.attachments)) {
 			if (!isTypingRef.current) {
 				isTypingRef.current = true
-				EventRegister.emit("compose-message-started", {
-					conversation: conversation?._id || conversation,
-					user: auth.user._id,
-				})
+				EventRegister.emit("compose-message-started", { conversation: conversation.uuid, user: auth.user._id })
 			}
 		} else if (isTypingRef.current) {
 			isTypingRef.current = false
-			EventRegister.emit("compose-message-stopped", {
-				conversation: conversation?._id || conversation,
-				user: auth.user._id,
-			})
+			EventRegister.emit("compose-message-stopped", { conversation: conversation.uuid, user: auth.user._id })
 		}
 	}, [values.content])
 

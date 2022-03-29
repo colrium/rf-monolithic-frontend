@@ -8,59 +8,50 @@ import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
-import { withGlobals } from "contexts/Globals";
-import PropTypes from "prop-types";
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { withTheme } from '@mui/styles';
-import compose from "recompose/compose";
-import { apiCallRequest } from "state/actions";
-
+import Typography from "components/Typography"
+import PropTypes from "prop-types"
+import React, { Component } from "react"
+import { connect } from "react-redux"
+import { withTheme } from "@mui/styles"
+import compose from "recompose/compose"
+import { apiCallRequest } from "state/actions"
+import * as definations from "definations"
 
 //
-
 
 class Overview extends Component {
 	state = {
 		counts: {},
 		aggregates: {},
-	};
+	}
 
 	constructor(props) {
-		super(props);
-		const { contexts, definations, cache } = this.props;
-
+		super(props)
+		const { contexts, cache } = this.props
 	}
 
 	componentDidMount() {
-		const { contexts, definations } = this.props;
+		const { contexts } = this.props
 		Object.entries(contexts).map(([context, { title, type, icon, description, query, value, ...rest }]) => {
 			if (definations[context]) {
 				if (["count", "aggregates"].includes(type) && !value) {
-					this.loadData(context, type, JSON.isJSON(query) ? query : {});
+					this.loadData(context, type, JSON.isJSON(query) ? query : {})
 				}
 			}
-		});
-
+		})
 	}
 
-
-
 	loadData(context, type, query) {
-		const { definations, apiCallRequest } = this.props;
-		let contextDefination = definations[context];
+		const { apiCallRequest } = this.props
+		let contextDefination = definations[context]
 		if (contextDefination) {
-			apiCallRequest(
-				contextDefination.name + (type !== "records" ? ("_" + type) : ""),
-				{
-					uri: contextDefination.endpoint,
-					type: type,
-					params: JSON.isJSON(query) ? query : {},
-					data: {},
-					cache: true,
-				},
-			)/*.then(count => {
+			apiCallRequest(contextDefination.name + (type !== "records" ? "_" + type : ""), {
+				uri: contextDefination.endpoint,
+				type: type,
+				params: JSON.isJSON(query) ? query : {},
+				data: {},
+				cache: true,
+			}) /*.then(count => {
 				this.setState(prevState=>({
 					counts: {
 						...prevState.counts,
@@ -71,104 +62,115 @@ class Overview extends Component {
 		}
 	}
 
-
 	render() {
-		const { className, auth, definations, cache, contexts, theme, wrapperSize } = this.props;
-		const rootClassName = classNames(className);
+		const { className, auth, cache, contexts, theme, wrapperSize } = this.props
+		const rootClassName = classNames(className)
 		const defaultValues = {
 			count: 0,
 			aggregates: {},
-		};
-		let views_data = {};
+		}
+		let views_data = {}
 
 		if (JSON.isJSON(contexts)) {
 			Object.entries(contexts).map(([context, { title, type, icon, description, query, value, ...rest }]) => {
 				if (definations[context]) {
 					if (JSON.isJSON(cache.data) && !value) {
-						if ((context + "_" + type) in cache.data) {
+						if (context + "_" + type in cache.data) {
 							views_data[context] = {
 								...rest,
 								type: type,
 								title: title ? title : definations[context].label,
-								description: description ? description : ((type == "count" ? "Total " : "") + definations[context].label),
+								description: description ? description : (type == "count" ? "Total " : "") + definations[context].label,
 								icon: icon ? icon : definations[context].icon,
 								query: JSON.isJSON(query) ? query : {},
-								value: cache.data[(context + "_" + type)],
+								value: cache.data[context + "_" + type],
 							}
-						}
-						else {
+						} else {
 							views_data[context] = {
 								...rest,
 								type: type,
 								title: title ? title : definations[context].label,
-								description: description ? description : ((type == "count" ? "Total " : "") + definations[context].label),
+								description: description ? description : (type == "count" ? "Total " : "") + definations[context].label,
 								icon: icon ? icon : definations[context].icon,
 								query: JSON.isJSON(query) ? query : {},
 								value: defaultValues[type],
 							}
 						}
-					}
-					else if (value) {
+					} else if (value) {
 						views_data[context] = {
 							...rest,
 							type: type,
 							title: title ? title : definations[context].label,
-							description: description ? description : ((type == "count" ? "Total " : "") + definations[context].label),
+							description: description ? description : (type == "count" ? "Total " : "") + definations[context].label,
 							icon: icon ? icon : definations[context].icon,
 							query: JSON.isJSON(query) ? query : {},
 							value: value,
 						}
-					}
-					else {
+					} else {
 						views_data[context] = {
 							...rest,
 							type: type,
 							title: title ? title : definations[context].label,
-							description: description ? description : ((type == "count" ? "Total " : "") + definations[context].label),
+							description: description ? description : (type == "count" ? "Total " : "") + definations[context].label,
 							icon: icon ? icon : definations[context].icon,
 							query: JSON.isJSON(query) ? query : {},
 							value: defaultValues[type],
 						}
 					}
 				}
-
-			});
-
+			})
 		}
 
 		return (
 			<GridContainer className="p-0 m-0" className={rootClassName}>
-				{Object.entries(views_data).map(([context, { title, type, icon, description, size, query, value, resolveValue, view, ...rest }], cursor) => (
-					<GridItem xs={12} md={size ? size : (wrapperSize >= 8 ? 3 : 6)} key={context + "-numbers"}>
-						<Card elevation={1} style={{ backgroundColor: theme.palette.background.paper }}>
-							<CardHeader
-								title={<Typography variant="h5" style={{ color: theme.palette.text.disabled, fontWeight: "500" }}>
-									{Function.isFunction(title) ? title(value) : title}
-								</Typography>}
-							/>
+				{Object.entries(views_data).map(
+					([context, { title, type, icon, description, size, query, value, resolveValue, view, ...rest }], cursor) => (
+						<GridItem xs={12} md={size ? size : wrapperSize >= 8 ? 3 : 6} key={context + "-numbers"}>
+							<Card elevation={1} style={{ backgroundColor: theme.palette.background.paper }}>
+								<CardHeader
+									title={
+										<Typography variant="h5" style={{ color: theme.palette.text.disabled, fontWeight: "500" }}>
+											{Function.isFunction(title) ? title(value) : title}
+										</Typography>
+									}
+								/>
 
-							<CardContent className="p-0 m-0">
-								<GridContainer className="p-0 m-0">
-									<GridItem xs={12} className="flex items-center justify-center">
-										{type === "count" && <Typography variant="h2" style={{ color: theme.palette.accent.main, fontWeight: "700", fontSize: "2rem" }}> {value} </Typography>}
-										{(type === "aggregates" && !view && Function.isFunction(resolveValue)) && <Typography variant="h2" style={{ color: theme.palette.accent.main, fontWeight: "700", fontSize: "2rem" }}> {resolveValue(value)} </Typography>}
-									</GridItem>
-								</GridContainer>
+								<CardContent className="p-0 m-0">
+									<GridContainer className="p-0 m-0">
+										<GridItem xs={12} className="flex items-center justify-center">
+											{type === "count" && (
+												<Typography
+													variant="h2"
+													style={{ color: theme.palette.accent.main, fontWeight: "700", fontSize: "2rem" }}
+												>
+													{" "}
+													{value}{" "}
+												</Typography>
+											)}
+											{type === "aggregates" && !view && Function.isFunction(resolveValue) && (
+												<Typography
+													variant="h2"
+													style={{ color: theme.palette.accent.main, fontWeight: "700", fontSize: "2rem" }}
+												>
+													{" "}
+													{resolveValue(value)}{" "}
+												</Typography>
+											)}
+										</GridItem>
+									</GridContainer>
+								</CardContent>
 
-							</CardContent>
-
-							<CardActions>
-								<Typography variant="body2" style={{ color: theme.palette.text.default }}>
-									{Function.isFunction(description) ? description(value) : description}
-								</Typography>
-
-							</CardActions>
-
-						</Card>
-					</GridItem>
-				))}
+								<CardActions>
+									<Typography variant="body2" style={{ color: theme.palette.text.default }}>
+										{Function.isFunction(description) ? description(value) : description}
+									</Typography>
+								</CardActions>
+							</Card>
+						</GridItem>
+					)
+				)}
 			</GridContainer>
-		);
+		)
 	}
 }
 
@@ -178,7 +180,7 @@ Overview.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	showGraphs: PropTypes.bool,
 	wrapperSize: PropTypes.number,
-};
+}
 
 Overview.defaultProps = {
 	showGraphs: true,
@@ -214,53 +216,46 @@ Overview.defaultProps = {
 				group: "gender",
 				role: "collector",
 			},
-			title: (value) => {
-				let new_value = "";
+			title: value => {
+				let new_value = ""
 				if (Array.isArray(value)) {
 					value.map(entry => {
 						if (entry._id) {
-							new_value = new_value + (new_value.length > 0 ? " / " : "") + entry._id.humanize();
+							new_value = new_value + (new_value.length > 0 ? " / " : "") + entry._id.humanize()
 						}
-					});
+					})
 				}
-				return new_value;
+				return new_value
 			},
-			description: (value) => {
-				let new_value = "";
+			description: value => {
+				let new_value = ""
 				if (Array.isArray(value)) {
 					value.map(entry => {
 						if (entry._id) {
-							new_value = new_value + (new_value.length > 0 ? " / " : "") + entry._id.humanize();
+							new_value = new_value + (new_value.length > 0 ? " / " : "") + entry._id.humanize()
 						}
-
-					});
+					})
 				}
-				return "Total " + new_value;
+				return "Total " + new_value
 			},
-			resolveValue: (value) => {
-				let new_value = "";
+			resolveValue: value => {
+				let new_value = ""
 				if (Array.isArray(value)) {
 					value.map(entry => {
 						if (entry._id && entry.count) {
-							new_value = new_value + (new_value.length > 0 ? " / " : "") + entry.count;
+							new_value = new_value + (new_value.length > 0 ? " / " : "") + entry.count
 						}
-
-					});
+					})
 				}
-				return new_value;
+				return new_value
 			},
-		}
+		},
 	},
-};
+}
 
 const mapStateToProps = state => ({
 	auth: state.auth,
 	cache: state.cache,
-});
+})
 
-export default withGlobals(compose(
-
-	connect(mapStateToProps, { apiCallRequest }),
-	withTheme,
-	withGlobals
-)(Overview));
+export default compose(connect(mapStateToProps, { apiCallRequest }), withTheme)(Overview)

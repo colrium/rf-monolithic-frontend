@@ -17,67 +17,73 @@ import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Link } from "react-router-dom";
 import { CountriesHelper, UtilitiesHelper } from "utils/Helpers";
-import { useGlobals } from "contexts/Globals";
-import { useGooglePlaces, useGeoLocation } from "hooks";
-import { JSONViewDialog } from "components/JSONView";
-import { connect } from "react-redux";
-import { withTheme } from '@mui/styles';
-import { useSetState } from 'hooks';
-import compose from "recompose/compose";
-import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions";
 
-let currentDate = new Date();
+import { useGooglePlaces, useGeoLocation } from "hooks"
+import { JSONViewDialog } from "components/JSONView"
+import { connect } from "react-redux"
+import { withTheme } from "@mui/styles"
+import { useSetState } from "hooks"
+import compose from "recompose/compose"
+import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions"
 
+let currentDate = new Date()
 
-
-
-const ConvertToUserIconAction = (props) => {
-	const { data:application, layoutType, apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog, auth, ...rest } = props;
-	const { definations, sockets } = useGlobals();
-	const [staffID, setStaffID] = useState(String.uid(8, false, true));
-	const [loading, setLoading] = useState(false);
-	const [userAccountDialogOpen, setUserAccountDialogOpen] = useState(false);
-	const [error, setError] = useState(false);
-	const [initiated, setInitiated] = useState(false);
-	const [emailCacheTouched, setEmailCacheTouched] = useState(false);
+const ConvertToUserIconAction = props => {
+	const {
+		data: application,
+		layoutType,
+		apiCallRequest,
+		setEmailingCache,
+		clearEmailingCache,
+		closeDialog,
+		openDialog,
+		auth,
+		...rest
+	} = props
+	const [staffID, setStaffID] = useState(String.uid(8, false, true))
+	const [loading, setLoading] = useState(false)
+	const [userAccountDialogOpen, setUserAccountDialogOpen] = useState(false)
+	const [error, setError] = useState(false)
+	const [initiated, setInitiated] = useState(false)
+	const [emailCacheTouched, setEmailCacheTouched] = useState(false)
 	const [state, setState, getState] = useSetState({
 		userAccountDialog: {
 			open: false,
-			src: JSON.isJSON(application?.user)? application?.user : {}
+			src: JSON.isJSON(application?.user) ? application?.user : {},
 		},
-		userAccount: JSON.isJSON(application?.user)? application?.user : false
+		userAccount: JSON.isJSON(application?.user) ? application?.user : false,
 	})
 
 	const handleCreateApplicantUserAccount = (sendEmail = false) => {
-		setLoading(true);
-		setError(false);
-		let accountDetails = JSON.fromJSON(application);
-		delete accountDetails["_id"];
-		delete accountDetails["entry"];
-		accountDetails.staff_id = staffID;
-		accountDetails.password = staffID;
-		accountDetails.status = "active";
-		apiCallRequest("applications",
-			{
-				uri: "/recruitment/applications/" + application._id + "/create-user",
-				type: "create",
-				params: { p: "1" },
-				data: accountDetails,
-				cache: true,
-				silent: true,
-			}
-		).then(res => {
-			const { data } = res.body;
+		setLoading(true)
+		setError(false)
+		let accountDetails = JSON.fromJSON(application)
+		delete accountDetails["_id"]
+		delete accountDetails["entry"]
+		accountDetails.staff_id = staffID
+		accountDetails.password = staffID
+		accountDetails.status = "active"
+		apiCallRequest("applications", {
+			uri: "/recruitment/applications/" + application._id + "/create-user",
+			type: "create",
+			params: { p: "1" },
+			data: accountDetails,
+			cache: true,
+			silent: true,
+		})
+			.then(res => {
+				const { data } = res.body
 
-
-			if (sendEmail) {
-				setEmailingCache("recipient_address", data.email_address);
-				setEmailingCache("recipient_name", data.first_name);
-				setEmailingCache("subject", "Your Realfield user account");
-				setEmailingCache("content", `Hey ${data.first_name},\n\n\n
+				if (sendEmail) {
+					setEmailingCache("recipient_address", data.email_address)
+					setEmailingCache("recipient_name", data.first_name)
+					setEmailingCache("subject", "Your Realfield user account")
+					setEmailingCache(
+						"content",
+						`Hey ${data.first_name},\n\n\n
 				Here are your unique login details.\n\n\n
 				Username: ${application.email_address} \n
-				Password: ${(!String.isEmpty(data.staffID) ? data.staffID : staffID)} \n\n\n
+				Password: ${!String.isEmpty(data.staffID) ? data.staffID : staffID} \n\n\n
 				When you login into app things are pretty self-explanatory and under the Reading tab, you'll find a stack of materials we'd like you to review over the next few days.\n
 				You'll see a Realfield Training Manual and a number of other great resources for you to review.\nThe training will consist of a number elements that might start with a short quiz.
 				\nDon't worry, the purpose of the quiz is to give us an idea of where we need to provide additional support, it's not designed to catch you out.\n
@@ -87,230 +93,221 @@ const ConvertToUserIconAction = (props) => {
 				Many of you have been writing in with encouragement and questions, and we love it! If you have questions,
 				want to offer feedback or need support, please continue to use the jobs@realfield.io address.\n
 				Asante sana and have an amazing week!!\n\n\n
-				Realfield People Ops`);
-				setEmailingCache("context", "Application");
-				setEmailingCache("record", application._id);
-				setEmailingCache("popup_open", true);
-				setEmailCacheTouched(true);
-
-			}
-
-			setError(false);
-			setLoading(false);
-		}).catch(e => {
-
-
-			let errMsg = e;
-			if (JSON.isJSON(e)) {
-				if (String.isString(e.error)) {
-					errMsg = e.error;
+				Realfield People Ops`
+					)
+					setEmailingCache("context", "Application")
+					setEmailingCache("record", application._id)
+					setEmailingCache("popup_open", true)
+					setEmailCacheTouched(true)
 				}
-				else if (String.isString(e.message)) {
-					errMsg = e.message;
+
+				setError(false)
+				setLoading(false)
+			})
+			.catch(e => {
+				let errMsg = e
+				if (JSON.isJSON(e)) {
+					if (String.isString(e.error)) {
+						errMsg = e.error
+					} else if (String.isString(e.message)) {
+						errMsg = e.message
+					} else if (String.isString(e.msg)) {
+						errMsg = e.msg
+					} else {
+						errMsg = JSON.stringify(e)
+					}
+				} else {
+					errMsg = e.toString()
 				}
-				else if (String.isString(e.msg)) {
-					errMsg = e.msg;
-				}
-				else {
-					errMsg = JSON.stringify(e);
-				}
-			}
-			else {
-				errMsg = e.toString();
-			}
-			setError(errMsg);
-			setLoading(false);
-		});
+				setError(errMsg)
+				setLoading(false)
+			})
 	}
 
 	const handleOnCreateUserAccountConfirm = () => {
 		openDialog({
 			title: "Add " + application.first_name + " " + application.last_name + " as a new user?",
 			body:
-				"A new user account will be created for <b> " + application.first_name + " " + application.last_name + "</b> with the staff ID: <b>" + staffID + "</b> and the following credentials.<br /><br /> <b> Username:</b>" + application.email_address + " <br /> <b>Password:</b>" + staffID,
+				"A new user account will be created for <b> " +
+				application.first_name +
+				" " +
+				application.last_name +
+				"</b> with the staff ID: <b>" +
+				staffID +
+				"</b> and the following credentials.<br /><br /> <b> Username:</b>" +
+				application.email_address +
+				" <br /> <b>Password:</b>" +
+				staffID,
 			actions: {
 				cancel: {
 					text: "Cancel",
 					color: "default",
 					onClick: () => {
-						closeDialog();
-						setError(false);
-						setLoading(false);
+						closeDialog()
+						setError(false)
+						setLoading(false)
 					},
 				},
 				create: {
 					text: "Create",
 					color: "secondarys",
 					onClick: () => {
-						closeDialog();
-						handleCreateApplicantUserAccount(false);
-
+						closeDialog()
+						handleCreateApplicantUserAccount(false)
 					},
 				},
 				create_send_mail: {
 					text: "Create and send Email",
 					color: "primary",
 					onClick: () => {
-						closeDialog();
+						closeDialog()
 						try {
-							handleCreateApplicantUserAccount(true);
+							handleCreateApplicantUserAccount(true)
 						} catch (err) {
 							console.error("try handleCreateApplicantUserAccount err", err)
 						}
-
 					},
 				},
 			},
-		});
+		})
 	}
 
 	const handleOnShowUser = useCallback(() => {
-		const {userAccount} = getState()
-		let userAccountObj = userAccount;
+		const { userAccount } = getState()
+		let userAccountObj = userAccount
 		if (JSON.isJSON(application?.user)) {
 			userAccountObj = application?.user
-		}
-		else if (JSON.isEmpty(userAccount) && String.isString(application?.user) && !String.isEmpty(application?.user)) {
+		} else if (JSON.isEmpty(userAccount) && String.isString(application?.user) && !String.isEmpty(application?.user)) {
 			//Fetch user Account
 		}
 		if (JSON.isJSON(userAccountObj)) {
 			try {
-				let profObject = JSON.fromJSON(userAccountObj);
-				delete profObject["password"];
-				delete profObject["__v"];
-				delete profObject["preferences"];
-				delete profObject["login_attempts"];
-				delete profObject["last_login_attempt"];
-				delete profObject["account_verified"];
-				delete profObject["account_verifacation_code"];
-				delete profObject["account_verifacation_mode"];
-				delete profObject["password_reset_code"];
-				delete profObject["password_reset_code_expiration"];
-				delete profObject["provider"];
-				delete profObject["provider_account_id"];
-				delete profObject["provider_handle"];
-				delete profObject["provider_url"];
+				let profObject = JSON.fromJSON(userAccountObj)
+				delete profObject["password"]
+				delete profObject["__v"]
+				delete profObject["preferences"]
+				delete profObject["login_attempts"]
+				delete profObject["last_login_attempt"]
+				delete profObject["account_verified"]
+				delete profObject["account_verifacation_code"]
+				delete profObject["account_verifacation_mode"]
+				delete profObject["password_reset_code"]
+				delete profObject["password_reset_code_expiration"]
+				delete profObject["provider"]
+				delete profObject["provider_account_id"]
+				delete profObject["provider_handle"]
+				delete profObject["provider_url"]
 				setState({
 					userAccountDialog: {
 						open: true,
 						src: profObject,
-						title: `User Account for  ${application.first_name} ${application.last_name}`
+						title: `User Account for  ${application.first_name} ${application.last_name}`,
 					},
 					userAccount: profObject,
 				})
-			} catch (e) {
-
-			}
+			} catch (e) {}
 		}
-
-
 	}, [application])
 
 	const checkStaffIDAvailability = () => {
-		setLoading(true);
-		setError(false);
-		apiCallRequest("users",
-			{
-				uri: "/users",
-				type: "records",
-				params: { p: "1", staff_id: staffID },
-				data: {},
-				cache: false,
-				silent: true,
-			}
-		).then(res => {
-			const { data } = res.body;
-			if (Array.isArray(data)) {
-				if (data.length > 0) {
-					let staff_id = String.uid(8, false, true);
-					setStaffID(staff_id);
+		setLoading(true)
+		setError(false)
+		apiCallRequest("users", {
+			uri: "/users",
+			type: "records",
+			params: { p: "1", staff_id: staffID },
+			data: {},
+			cache: false,
+			silent: true,
+		})
+			.then(res => {
+				const { data } = res.body
+				if (Array.isArray(data)) {
+					if (data.length > 0) {
+						let staff_id = String.uid(8, false, true)
+						setStaffID(staff_id)
+					} else {
+						handleOnCreateUserAccountConfirm()
+					}
 				}
-				else {
-					handleOnCreateUserAccountConfirm();
+			})
+			.catch(e => {
+				let errMsg = e
+				if (JSON.isJSON(e)) {
+					if (String.isString(e.error)) {
+						errMsg = e.error
+					} else if (String.isString(e.message)) {
+						errMsg = e.message
+					} else if (String.isString(e.msg)) {
+						errMsg = e.msg
+					} else {
+						errMsg = JSON.stringify(e)
+					}
+				} else {
+					errMsg = e.toString()
 				}
-			}
-		}).catch(e => {
-			let errMsg = e;
-			if (JSON.isJSON(e)) {
-				if (String.isString(e.error)) {
-					errMsg = e.error;
-				}
-				else if (String.isString(e.message)) {
-					errMsg = e.message;
-				}
-				else if (String.isString(e.msg)) {
-					errMsg = e.msg;
-				}
-				else {
-					errMsg = JSON.stringify(e);
-				}
-			}
-			else {
-				errMsg = e.toString();
-			}
-			setError(errMsg);
-			setLoading(false);
-		});
-
+				setError(errMsg)
+				setLoading(false)
+			})
 	}
-
-
-
-
 
 	useEffect(() => {
 		if (initiated) {
 			if (!application.user) {
-				checkStaffIDAvailability();
-			}
-			else {
-				handleOnShowUser();
+				checkStaffIDAvailability()
+			} else {
+				handleOnShowUser()
 			}
 		}
-	}, [initiated, staffID]);
+	}, [initiated, staffID])
 
 	useEffect(() => {
 		return () => {
 			if (emailCacheTouched) {
-				clearEmailingCache();
+				clearEmailingCache()
 			}
 		}
-	}, [emailCacheTouched]);
+	}, [emailCacheTouched])
 
 	return (
 		<React.Fragment>
 			{loading && <CircularProgress size={16} color="secondary" />}
-			{ !loading && <JSONViewDialog {...state.userAccountDialog} onClose={()=>setState({userAccountDialog: {open: false, src: {}}})} />}
-			{(layoutType === "inline" && !loading) && <IconButton
-				color={application?.user ? "secondary" : "inherit"}
-				aria-label="Translate to user"
-				onClick={() => {
-					if (initiated) {
-						if (!application?.user && !(JSON.isJSON(state.userAccount) || !JSON.isEmpty(state.userAccount))) {
-							checkStaffIDAvailability();
+			{!loading && (
+				<JSONViewDialog {...state.userAccountDialog} onClose={() => setState({ userAccountDialog: { open: false, src: {} } })} />
+			)}
+			{layoutType === "inline" && !loading && (
+				<IconButton
+					color={application?.user ? "secondary" : "inherit"}
+					aria-label="Translate to user"
+					onClick={() => {
+						if (initiated) {
+							if (!application?.user && !(JSON.isJSON(state.userAccount) || !JSON.isEmpty(state.userAccount))) {
+								checkStaffIDAvailability()
+							} else {
+								handleOnShowUser()
+							}
+						} else {
+							setInitiated(true)
 						}
-						else {
-							handleOnShowUser();
-						}
-					}
-					else {
-						setInitiated(true);
-					}
-				}}
-				{...rest}
-			>
-				{!application?.user && (!JSON.isJSON(state.userAccount) || JSON.isEmpty(state.userAccount)) && <PersonAddOutlinedIcon fontSize="inherit" />}
-				{!!application?.user && <AccountCircleOutlinedIcon fontSize="inherit" />}
-			</IconButton>}
-			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
-				<Alert elevation={6} variant="filled" onClose={() => setError(false)} severity="error">
-					{error}
-				</Alert>
-			</Snackbar>}
+					}}
+					{...rest}
+				>
+					{!application?.user && (!JSON.isJSON(state.userAccount) || JSON.isEmpty(state.userAccount)) && (
+						<PersonAddOutlinedIcon fontSize="inherit" />
+					)}
+					{!!application?.user && <AccountCircleOutlinedIcon fontSize="inherit" />}
+				</IconButton>
+			)}
+			{error && (
+				<Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
+					<Alert elevation={6} variant="filled" onClose={() => setError(false)} severity="error">
+						{error}
+					</Alert>
+				</Snackbar>
+			)}
 		</React.Fragment>
 	)
-
-};
+}
 
 ConvertToUserIconAction.defaultProps = {
 	layoutType: "inline",

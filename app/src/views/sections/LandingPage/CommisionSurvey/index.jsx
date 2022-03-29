@@ -12,25 +12,20 @@ import { withTheme } from '@mui/styles';
 
 
 import SignupForm from "views/forms/Auth/Signup";
-import { useGlobals } from "contexts/Globals";
-import { closeDialog, openDialog } from "state/actions";
-import compose from "recompose/compose";
+import { useNetworkServices } from "contexts/NetworkServices"
+import { closeDialog, openDialog } from "state/actions"
+import compose from "recompose/compose"
 
-import ApiService from "services/Api";
+import ApiService from "services/Api"
 
-const styles = theme => ({
+const styles = theme => ({})
 
+const SectionComponent = props => {
+	const { closeDialog, openDialog, auth } = props
 
-});
+	const { definations } = useNetworkServices()
 
-
-const SectionComponent = (props) => {
-	const { closeDialog, openDialog, auth } = props;
-
-	const { definations } = useGlobals();
-
-	let [popupMessage, setPopupMessage] = useState(false);
-
+	let [popupMessage, setPopupMessage] = useState(false)
 
 	const handleSignupFormSuccess = () => {
 		openDialog({
@@ -43,19 +38,19 @@ const SectionComponent = (props) => {
 					onClick: () => closeDialog(),
 				},
 			},
-		});
+		})
 	}
 
 	useEffect(() => {
 		//handleSignupFormSuccess();
-	}, []);
+	}, [])
 
 	return (
 		<Section className={"p-0"} id="commission-a-survey" title={false}>
 			<GridContainer
 				className={"md:px-32 lg:px-48 py-16"}
 				style={{
-					backgroundImage: "url(" + ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/dots-map.png") + ")",
+					backgroundImage: "url(" + "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/dots-map.png" + ")",
 					backgroundRepeat: "no-repeat",
 					backgroundAttachment: "scroll",
 					backgroundPosition: "right top",
@@ -63,16 +58,19 @@ const SectionComponent = (props) => {
 				}}
 			>
 				<Hidden smDown className="w-full flex">
-					<GridItem
-						xs={12}
-						className={"flex flex-row items-center"}
-					>
-						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg")} className={"mr-4 h-8 w-8"} />
-						<Typography variant="h4" className={"capitalize"} >
+					<GridItem xs={12} className={"flex flex-row items-center"}>
+						<img
+							src={"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg"}
+							className={"mr-4 h-8 w-8"}
+						/>
+						<Typography variant="h4" className={"capitalize"}>
 							COMMISSION A
 						</Typography>
 
-						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")} className={"mx-4 h-6 w-auto"} />
+						<img
+							src={"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg"}
+							className={"mx-4 h-6 w-auto"}
+						/>
 
 						<Typography variant="h4" className={"capitalize"}>
 							SURVEY
@@ -81,16 +79,19 @@ const SectionComponent = (props) => {
 				</Hidden>
 
 				<Hidden mdUp className="w-full flex">
-					<GridItem
-						xs={12}
-						className={"flex flex-col items-center justify-center"}
-					>
-						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg")} className={"mb-4 h-8 w-8"} />
-						<Typography variant="h4" className={"capitalize"} >
+					<GridItem xs={12} className={"flex flex-col items-center justify-center"}>
+						<img
+							src={"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg"}
+							className={"mb-4 h-8 w-8"}
+						/>
+						<Typography variant="h4" className={"capitalize"}>
 							COMMISSION A
 						</Typography>
 
-						<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg")} className={"my-4 h-6 w-auto"} />
+						<img
+							src={"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg"}
+							className={"my-4 h-6 w-auto"}
+						/>
 
 						<Typography variant="h4" className={"capitalize"}>
 							SURVEY
@@ -103,14 +104,16 @@ const SectionComponent = (props) => {
 					</Typography>
 
 					<Typography variant="body1" paragraph gutterBottom>
-						Use the right data and get the analysis and insights you need. Use the wrong data and not only will your results be skewed rendering your analysis inaccurate, but you risk your project being on the wrong side of existing and future regulation and legislation. Garbage in, garbage out – it’s that simple. At Realfield we are dedicated to providing accurate, consistent, relevant and most importantly, ethical data. Real time.
+						Use the right data and get the analysis and insights you need. Use the wrong data and not only will your results be
+						skewed rendering your analysis inaccurate, but you risk your project being on the wrong side of existing and future
+						regulation and legislation. Garbage in, garbage out – it’s that simple. At Realfield we are dedicated to providing
+						accurate, consistent, relevant and most importantly, ethical data. Real time.
 					</Typography>
 
 					<Typography variant="body1" paragraph gutterBottom>
 						Let us provide you with the right data to power your research and your insights.
 					</Typography>
 				</GridItem>
-
 			</GridContainer>
 			{/* <GridContainer className={"p-0 md:px-32 lg:px-48 md:py-6"}>
 				<GridItem xs={12} className={"py-1"}>
@@ -133,9 +136,8 @@ const SectionComponent = (props) => {
 					/>
 				</GridItem>
 			</GridContainer> */}
-
 		</Section>
-	);
+	)
 }
 
 const mapStateToProps = (state, ownProps) => ({

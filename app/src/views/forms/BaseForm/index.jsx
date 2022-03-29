@@ -45,20 +45,15 @@ import * as definations from "definations";
 //Redux imports
 import { change, reduxForm, reset } from "redux-form";
 //
-import { withGlobals } from "contexts/Globals";
+import { withNetworkServices } from "contexts/NetworkServices"
 
 //
-import { ServiceDataHelper, UtilitiesHelper } from "utils/Helpers";
+import { ServiceDataHelper, UtilitiesHelper } from "utils/Helpers"
 
-
-
-
-const LightInputField = (props) => {
-	const { component: InputComponent, ...rest } = props;
-	return (
-		<InputComponent {...rest} />
-	);
-};
+const LightInputField = props => {
+	const { component: InputComponent, ...rest } = props
+	return <InputComponent {...rest} />
+}
 
 class BaseForm extends React.Component {
 	state = {
@@ -78,54 +73,42 @@ class BaseForm extends React.Component {
 		value_possibilities: {},
 		openSnackBar: false,
 		snackbarMessage: "",
-		snackbarColor: "success"
-	};
-
-	constructor(props) {
-		super(props);
-		//
-
-		const { defination, record } = props;
-		this.creatingNew = record ? false : true;
-		this.defination = defination;
-		this.ref_input_types = [
-			"select",
-			"transferlist",
-			"multiselect",
-			"radio",
-			"checkbox",
-			"dynamic"
-		];
-
-		this.handleChange = this.handleChange.bind(this);
-		this.setFieldValue = this.setFieldValue.bind(this);
-		this.unSetFieldValue = this.unSetFieldValue.bind(this);
-		this.onCloseSnackbar = this.onCloseSnackbar.bind(this);
-		this.applyChangeEffects = this.applyChangeEffects.bind(this);
-		this.callDefinationMethod = this.callDefinationMethod.bind(this);
-
-
-		this.handleResetForm = this.handleResetForm.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleKeyPress = this.handleKeyPress.bind(this);
-		this.mounted = false;
-		this.prepareForForm();
+		snackbarColor: "success",
 	}
 
+	constructor(props) {
+		super(props)
+		//
+
+		const { defination, record } = props
+		this.creatingNew = record ? false : true
+		this.defination = defination
+		this.ref_input_types = ["select", "transferlist", "multiselect", "radio", "checkbox", "dynamic"]
+
+		this.handleChange = this.handleChange.bind(this)
+		this.setFieldValue = this.setFieldValue.bind(this)
+		this.unSetFieldValue = this.unSetFieldValue.bind(this)
+		this.onCloseSnackbar = this.onCloseSnackbar.bind(this)
+		this.applyChangeEffects = this.applyChangeEffects.bind(this)
+		this.callDefinationMethod = this.callDefinationMethod.bind(this)
+
+		this.handleResetForm = this.handleResetForm.bind(this)
+		this.handleSubmit = this.handleSubmit.bind(this)
+		this.handleKeyPress = this.handleKeyPress.bind(this)
+		this.mounted = false
+		this.prepareForForm()
+	}
 
 	componentDidMount() {
-		this.mounted = true;
-
+		this.mounted = true
 	}
 
 	componentWillUnmount() {
-		this.mounted = false;
+		this.mounted = false
 	}
 
-
-
 	getSnapshotBeforeUpdate(prevProps, prevState) {
-		this.mounted = false;
+		this.mounted = false
 		return {
 			preparationRequired: !Object.areEqual(prevProps.defination, this.props.defination),
 			applyChangeEffectsRequired: !Object.areEqual(prevState.field_values, this.state.field_values),
@@ -134,78 +117,70 @@ class BaseForm extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		this.mounted = true;
+		this.mounted = true
 
 		if (snapshot.preparationRequired) {
-			this.prepareForForm();
-			this.loadFieldValuePosibilities();
+			this.prepareForForm()
+			this.loadFieldValuePosibilities()
 		}
 		if (snapshot.applyChangeEffectsRequired) {
-			this.applyChangeEffects();
+			this.applyChangeEffects()
 		}
 		if (snapshot.loadPossibilitesRequired) {
-			this.loadFieldValuePosibilities();
+			this.loadFieldValuePosibilities()
 		}
-
 	}
 
 	prepareForForm() {
-		const { defination, initialValues, initialize, exclude, record, fields, form_state, auth, change, onValuesChange } = this.props;
-		this.defination = defination;
+		const { defination, initialValues, initialize, exclude, record, fields, form_state, auth, change, onValuesChange } = this.props
+		this.defination = defination
 
-		let field_values = {};
-		let initializeRedux = true;
+		let field_values = {}
+		let initializeRedux = true
 
 		if (form_state) {
 			if (JSON.isJSON(form_state.values)) {
-				field_values = form_state.values;
-				initializeRedux = false;
+				field_values = form_state.values
+				initializeRedux = false
 				if (Function.isFunction(onValuesChange)) {
-					let labels = {};
+					let labels = {}
 					for (let key of Object.keys(field_values)) {
 						if (key in this.state.value_possibilities) {
-							labels[key] = this.state.value_possibilities[key][field_values[key]];
-						}
-						else if (key in defination.scope.columns) {
-							labels[key] = field_values[key];
+							labels[key] = this.state.value_possibilities[key][field_values[key]]
+						} else if (key in defination.scope.columns) {
+							labels[key] = field_values[key]
 						}
 					}
-					onValuesChange(field_values, labels);
+					onValuesChange(field_values, labels)
 				}
 			}
+		} else if (JSON.isJSON(initialValues) && Object.size(initialValues) > 0) {
+			field_values = initialValues
 		}
-		else if (JSON.isJSON(initialValues) && Object.size(initialValues) > 0) {
-			field_values = initialValues;
-		}
-		this.state.field_values = field_values;
+		this.state.field_values = field_values
 
 		//const { evaluatedFields, onChangeEffects } = this.evaluateFields();
 		this.evaluateFields().then(({ evaluatedFields, onChangeEffects }) => {
-			let arrangedFields = { unpositioned: {} };
-
+			let arrangedFields = { unpositioned: {} }
 
 			for (let [name, properties] of Object.entries(evaluatedFields)) {
 				if ((Array.isArray(fields) && fields.includes(name) && !exclude) || (!Array.isArray(fields) && !exclude)) {
 					if (this.creatingNew && (properties.input.default || properties.input.value) && !(name in field_values)) {
 						if (properties.input.value) {
-							field_values[name] = properties.input.value;
-						}
-						else {
-							field_values[name] = properties.input.default;
+							field_values[name] = properties.input.value
+						} else {
+							field_values[name] = properties.input.default
 						}
 						if (!initializeRedux) {
-							initializeRedux = true;
+							initializeRedux = true
 						}
 					}
 				}
-
 			}
 
 			if (initializeRedux) {
-				initialize(field_values);
+				initialize(field_values)
 			}
-
-
 
 			/*for (let [name, properties] of Object.entries(evaluatedFields)) {
 				if (properties.input.position) {
@@ -234,117 +209,123 @@ class BaseForm extends React.Component {
 				}
 			} */
 
-
-			this.setState({ record: record, fields: evaluatedFields, arrangedFields: arrangedFields, onChangeEffects: onChangeEffects, evaluating: false }, () => {
-				this.loadFieldValuePosibilities();
-			});
+			this.setState(
+				{
+					record: record,
+					fields: evaluatedFields,
+					arrangedFields: arrangedFields,
+					onChangeEffects: onChangeEffects,
+					evaluating: false,
+				},
+				() => {
+					this.loadFieldValuePosibilities()
+				}
+			)
 			//this.state = { ...this.state, record: record, fields: evaluatedFields, arrangedFields: arrangedFields, onChangeEffects: onChangeEffects, evaluating: false };
-		});
-
-
+		})
 	}
 
 	async applyChangeEffects(mounted = true) {
-		const { initialize } = this.props;
-		const instance = this;
-		let onChangeEffectsFields = {};
-		let fields = JSON.parse(JSON.stringify(this.state.fields));
-		let field_values = this.state.field_values;
-		let value_possibilities = this.state.value_possibilities;
-		let fieldValuesChanged = false;
+		const { initialize } = this.props
+		const instance = this
+		let onChangeEffectsFields = {}
+		let fields = JSON.parse(JSON.stringify(this.state.fields))
+		let field_values = this.state.field_values
+		let value_possibilities = this.state.value_possibilities
+		let fieldValuesChanged = false
 		for (const [name, onChangeEffect] of Object.entries(this.state.onChangeEffects)) {
 			if (Function.isFunction(onChangeEffect)) {
-				const field = await onChangeEffect(instance);
+				const field = await onChangeEffect(instance)
 				if (JSON.isJSON(field)) {
-					fields[name] = field;
+					fields[name] = field
 					/*if (field.input.value && field_values[name] !== field.input.value) {
 						field_values[name] = field.input.value;
 						fieldValuesChanged = true;
 					}*/
 					if (field.possibilities && !Object.areEqual(field.possibilities, value_possibilities)) {
 						if (field_values[name] && !(field_values[name] in field.possibilities)) {
-							field_values[name] = field.input.value;
+							field_values[name] = field.input.value
 						}
-						value_possibilities[name] = field.possibilities;
+						value_possibilities[name] = field.possibilities
 						//fieldValuesChanged = true;
+					} else if (field.input.value && field_values[name] !== field.input.value) {
+						field_values[name] = field.input.value
+						fieldValuesChanged = true
 					}
-					else if (field.input.value && field_values[name] !== field.input.value) {
-						field_values[name] = field.input.value;
-						fieldValuesChanged = true;
-
-					}
-					onChangeEffectsFields[name] = field;
+					onChangeEffectsFields[name] = field
 				}
-
 			}
 		}
 		if (fieldValuesChanged) {
-			initialize(field_values);
+			initialize(field_values)
 		}
-
-
 
 		if (Object.size(onChangeEffectsFields) > 0) {
 			if (mounted) {
-				this.setState({ fields: fields, field_values: field_values, value_possibilities: value_possibilities, onChangeEffectsFields: onChangeEffectsFields, evaluating: false });
-			}
-			else {
-				this.state.fields = fields;
-				this.state.field_values = field_values;
-				this.state.value_possibilities = value_possibilities;
-				this.state.onChangeEffectsFields = onChangeEffectsFields;
-				this.state.evaluating = false;
+				this.setState({
+					fields: fields,
+					field_values: field_values,
+					value_possibilities: value_possibilities,
+					onChangeEffectsFields: onChangeEffectsFields,
+					evaluating: false,
+				})
+			} else {
+				this.state.fields = fields
+				this.state.field_values = field_values
+				this.state.value_possibilities = value_possibilities
+				this.state.onChangeEffectsFields = onChangeEffectsFields
+				this.state.evaluating = false
 			}
 		}
 	}
 
 	loadFieldValuePosibilities() {
-		const { auth, fields, exclude, defination } = this.props;
-		let fields_to_load = {};
-		let loading_fields = {};
-		let value_possibilities = {};
+		const { auth, fields, exclude, defination } = this.props
+		let fields_to_load = {}
+		let loading_fields = {}
+		let value_possibilities = {}
 		if (Object.size(this.state.onChangeEffectsFields) > 0) {
 			for (let [effect_field_name, effect_field_properties] of Object.entries(this.state.onChangeEffectsFields)) {
 				/* if (!(effect_field_properties.input.type in this.ref_input_types)) {
 					continue;
 				} */
 				if (JSON.isJSON(effect_field_properties.reference) && !this.state.loading[effect_field_name]) {
-					fields_to_load[effect_field_name] = effect_field_properties;
-					loading_fields[effect_field_name] = true;
-				}
-				else if ((JSON.isJSON(effect_field_properties.possibilities) && !(effect_field_name in this.state.value_possibilities)) || !Object.areEqual(this.state.value_possibilities[effect_field_name], effect_field_properties.possibilities)) {
-					value_possibilities[effect_field_name] = effect_field_properties.possibilities;
-				}
-				else if (Array.isArray(effect_field_properties.possibilities) && !(effect_field_name in this.state.value_possibilities)) {
-					let possibilities = {};
+					fields_to_load[effect_field_name] = effect_field_properties
+					loading_fields[effect_field_name] = true
+				} else if (
+					(JSON.isJSON(effect_field_properties.possibilities) && !(effect_field_name in this.state.value_possibilities)) ||
+					!Object.areEqual(this.state.value_possibilities[effect_field_name], effect_field_properties.possibilities)
+				) {
+					value_possibilities[effect_field_name] = effect_field_properties.possibilities
+				} else if (Array.isArray(effect_field_properties.possibilities) && !(effect_field_name in this.state.value_possibilities)) {
+					let possibilities = {}
 					for (var i = 0; i < effect_field_properties.possibilities.length; i++) {
-						possibilities[effect_field_properties.possibilities[i]] = effect_field_properties.possibilities[i];
+						possibilities[effect_field_properties.possibilities[i]] = effect_field_properties.possibilities[i]
 					}
-					value_possibilities[effect_field_name] = possibilities;
+					value_possibilities[effect_field_name] = possibilities
 				}
-
 			}
-		}
-		else {
+		} else {
 			for (let [field_name, field_properties] of Object.entries(this.state.fields)) {
 				/* if (!(field_properties.input.type in this.ref_input_types)) {
 					continue;
 				} */
 				if (JSON.isJSON(field_properties.reference) && !this.state.loading[field_name]) {
 					if (!(field_name in this.state.value_possibilities)) {
-						fields_to_load[field_name] = field_properties;
-						loading_fields[field_name] = true;
+						fields_to_load[field_name] = field_properties
+						loading_fields[field_name] = true
 					}
-				}
-				else if ((JSON.isJSON(field_properties.possibilities) && !(field_name in this.state.value_possibilities)) || !Object.areEqual(this.state.value_possibilities[field_name], field_properties.possibilities)) {
-					value_possibilities[field_name] = field_properties.possibilities;
-				}
-				else if (Array.isArray(field_properties.possibilities) && !(field_name in this.state.value_possibilities)) {
-					let possibilities = {};
+				} else if (
+					(JSON.isJSON(field_properties.possibilities) && !(field_name in this.state.value_possibilities)) ||
+					!Object.areEqual(this.state.value_possibilities[field_name], field_properties.possibilities)
+				) {
+					value_possibilities[field_name] = field_properties.possibilities
+				} else if (Array.isArray(field_properties.possibilities) && !(field_name in this.state.value_possibilities)) {
+					let possibilities = {}
 					for (var i = 0; i < field_properties.possibilities.length; i++) {
-						possibilities[field_properties.possibilities[i]] = field_properties.possibilities[i];
+						possibilities[field_properties.possibilities[i]] = field_properties.possibilities[i]
 					}
-					value_possibilities[field_name] = possibilities;
+					value_possibilities[field_name] = possibilities
 				}
 			}
 		}
@@ -352,448 +333,426 @@ class BaseForm extends React.Component {
 		if (Object.size(value_possibilities) > 0) {
 			//
 
-			this.state.value_possibilities = { ...this.state.value_possibilities, ...value_possibilities };
+			this.state.value_possibilities = { ...this.state.value_possibilities, ...value_possibilities }
 		}
 
 		if (Object.size(fields_to_load) > 0) {
 			for (let [name, field] of Object.entries(fields_to_load)) {
 				if (Array.isArray(fields) && fields.length > 0) {
 					if ((exclude && fields.includes(name)) || !fields.includes(name)) {
-						continue;
+						continue
 					}
 				}
 
 				if (JSON.isJSON(field.reference)) {
 					//Reference field Service Calls
 					if (String.isString(field.reference.name) && JSON.isJSON(field.reference.service_query)) {
-						let service_key = field.reference.name;
-						let service_query = field.reference.service_query;
-						let service = definations[service_key] ? ApiService.getContextRequests(definations[service_key]?.endpoint) : false;
+						let service_key = field.reference.name
+						let service_query = field.reference.service_query
+						let service = definations[service_key] ? ApiService.getContextRequests(definations[service_key]?.endpoint) : false
 
-
-
-						let execute_service_call = service && service_query && this.state.last_field_changed !== name && this.ref_input_types.includes(field.input.type);
+						let execute_service_call =
+							service &&
+							service_query &&
+							this.state.last_field_changed !== name &&
+							this.ref_input_types.includes(field.input.type)
 
 						if (execute_service_call) {
-							this.setState(prevState => ({ loading: { ...prevState.loading, [name]: true } }));
-							service.getRecords(service_query).then(response => {
-								let raw_data = response.body.data;
+							this.setState(prevState => ({ loading: { ...prevState.loading, [name]: true } }))
+							service
+								.getRecords(service_query)
+								.then(response => {
+									let raw_data = response.body.data
 
-								let possibilities = {};
-								let resolves = field.reference.resolves;
-								let resolve_columns = fields_to_load;
+									let possibilities = {}
+									let resolves = field.reference.resolves
+									let resolve_columns = fields_to_load
 
-								if (resolves.emulation) {
-
-									if (resolves.emulation.defination in definations) {
-										if (Array.isArray(raw_data)) {
-											let new_raw_data = []
-											for (let j = 0; j < raw_data.length; j++) {
-												if (resolves.emulation.key in raw_data[j]) {
-													if (Array.isArray(raw_data[j][resolves.emulation.key])) {
-														new_raw_data = new_raw_data.concat(raw_data[j][resolves.emulation.key])
+									if (resolves.emulation) {
+										if (resolves.emulation.defination in definations) {
+											if (Array.isArray(raw_data)) {
+												let new_raw_data = []
+												for (let j = 0; j < raw_data.length; j++) {
+													if (resolves.emulation.key in raw_data[j]) {
+														if (Array.isArray(raw_data[j][resolves.emulation.key])) {
+															new_raw_data = new_raw_data.concat(raw_data[j][resolves.emulation.key])
+														} else {
+															new_raw_data.push(raw_data[j][resolves.emulation.key])
+														}
 													}
-													else {
-														new_raw_data.push(raw_data[j][resolves.emulation.key])
-													}
-
 												}
+												raw_data = new_raw_data
 											}
-											raw_data = new_raw_data;
+											resolve_columns = definations[resolves.emulation.defination].scope.columns
+										} else {
+											raw_data = []
 										}
-										resolve_columns = definations[resolves.emulation.defination].scope.columns;
 									}
-									else {
-										raw_data = [];
+									if (raw_data.length > 0) {
+										let resolvable_data = []
+										for (var i = 0; i < raw_data.length; i++) {
+											resolvable_data.push({ [name]: raw_data[i] })
+										}
+										let resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(
+											resolvable_data,
+											resolve_columns,
+											auth.user
+										)
+										for (var j = 0; j < resolved_data.length; j++) {
+											possibilities[resolved_data[j][name].value] = resolved_data[j][name].resolve
+										}
 									}
-
-								}
-								if (raw_data.length > 0) {
-
-									let resolvable_data = [];
-									for (var i = 0; i < raw_data.length; i++) {
-										resolvable_data.push({ [name]: raw_data[i] });
+									if (this.mounted) {
+										this.setState(state => ({
+											value_possibilities: {
+												...state.value_possibilities,
+												[name]: possibilities,
+											},
+											loading: { ...state.loading, [name]: false },
+										}))
+									} else {
+										this.state.value_possibilities = { ...this.state.value_possibilities, [name]: possibilities }
+										this.state.loading = { ...this.state.loading, [name]: false }
 									}
-									let resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(
-										resolvable_data,
-										resolve_columns,
-										auth.user
-									);
-									for (var j = 0; j < resolved_data.length; j++) {
-										possibilities[resolved_data[j][name].value] = resolved_data[j][name].resolve;
+								})
+								.catch(err => {
+									if (this.mounted) {
+										this.setState(state => ({
+											loading: { ...state.loading, [name]: false },
+											openSnackBar: true,
+											snackbarMessage: "Error fetching " + field.label + " ::: " + err.msg,
+											snackbarColor: "warning",
+										}))
+									} else {
+										this.state.loading = { ...this.state.loading, [name]: false }
+										this.state.openSnackBar = true
+										this.state.snackbarMessage = "Error fetching " + field.label + " ::: " + err.msg
+										this.state.snackbarColor = "warning"
 									}
-								}
-								if (this.mounted) {
-									this.setState(state => ({
-										value_possibilities: {
-											...state.value_possibilities,
-											[name]: possibilities
-										},
-										loading: { ...state.loading, [name]: false }
-									}));
-								}
-								else {
-									this.state.value_possibilities = { ...this.state.value_possibilities, [name]: possibilities };
-									this.state.loading = { ...this.state.loading, [name]: false }
-								}
-
-
-							}).catch(err => {
-								if (this.mounted) {
-									this.setState(state => ({
-										loading: { ...state.loading, [name]: false },
-										openSnackBar: true,
-										snackbarMessage: "Error fetching " + field.label + " ::: " + err.msg,
-										snackbarColor: "warning"
-									}));
-								}
-								else {
-									this.state.loading = { ...this.state.loading, [name]: false };
-									this.state.openSnackBar = true;
-									this.state.snackbarMessage = "Error fetching " + field.label + " ::: " + err.msg;
-									this.state.snackbarColor = "warning";
-								}
-
-							});
+								})
 						}
 					}
 				}
-
 			}
-			this.setState({ onChangeEffectsFields: {} });
+			this.setState({ onChangeEffectsFields: {} })
 		}
-
-
 	}
 
-
 	async evaluateFields() {
-		const that = this;
-		const columns = that.defination.scope.columns;
-		let fields = {};
-		let onChangeEffects = {};
+		const that = this
+		const columns = that.defination.scope.columns
+		let fields = {}
+		let onChangeEffects = {}
 		for (const [name, properties] of Object.entries(columns)) {
 			// Define onChange effects
 
 			//Evaluate value
-			let field = JSON.parse(JSON.stringify(properties));
+			let field = JSON.parse(JSON.stringify(properties))
 
 			if (properties.input.default) {
 				if (Function.isFunction(properties.input.default)) {
-					field.input.default = await that.callDefinationMethod(properties.input.default);
+					field.input.default = await that.callDefinationMethod(properties.input.default)
 				} else {
-					field.input.default = properties.input.default;
+					field.input.default = properties.input.default
 				}
 			}
 
 			if (Function.isFunction(properties.label)) {
-				field.label = await that.callDefinationMethod(properties.label);
+				field.label = await that.callDefinationMethod(properties.label)
 			}
 			if (Function.isFunction(properties.input.type)) {
-				field.input.type = await that.callDefinationMethod(properties.input.type);
+				field.input.type = await that.callDefinationMethod(properties.input.type)
 			}
 
 			if (Function.isFunction(properties.input.default)) {
-				field.input.value = await that.callDefinationMethod(properties.input.default);
+				field.input.value = await that.callDefinationMethod(properties.input.default)
 			}
 
 			if (Function.isFunction(properties.input.value)) {
-				field.input.value = await that.callDefinationMethod(properties.input.value);
+				field.input.value = await that.callDefinationMethod(properties.input.value)
 			}
 
 			if (Function.isFunction(properties.input.required)) {
-				field.input.required = await that.callDefinationMethod(properties.input.required);
+				field.input.required = await that.callDefinationMethod(properties.input.required)
 			}
 			if (Function.isFunction(properties.input.props)) {
-				field.input.props = await that.callDefinationMethod(properties.input.props);
+				field.input.props = await that.callDefinationMethod(properties.input.props)
 			}
 
 			if (properties.restricted) {
 				if (Function.isFunction(properties.restricted.input)) {
-					field.restricted.input = await that.callDefinationMethod(properties.restricted.input);
+					field.restricted.input = await that.callDefinationMethod(properties.restricted.input)
+				} else if (Boolean.isBoolean(properties.restricted.input)) {
+					field.restricted.input = properties.restricted.input
 				}
-				else if (Boolean.isBoolean(properties.restricted.input)) {
-					field.restricted.input = properties.restricted.input;
-				}
-
 			}
 			if (properties.reference) {
 				if (Function.isFunction(properties.reference)) {
-					field.reference = await that.callDefinationMethod(properties.reference);
+					field.reference = await that.callDefinationMethod(properties.reference)
 					if (JSON.isJSON(field.reference)) {
 						if (Function.isFunction(field.reference.name)) {
-							field.reference.name = await that.callDefinationMethod(field.reference.name);
+							field.reference.name = await that.callDefinationMethod(field.reference.name)
 						}
 						if (Function.isFunction(field.reference.resolves)) {
-							field.reference.resolves = await that.callDefinationMethod(field.reference.resolves);
+							field.reference.resolves = await that.callDefinationMethod(field.reference.resolves)
 						}
 						if (Function.isFunction(field.reference.service_query)) {
-							field.reference.service_query = await that.callDefinationMethod(field.reference.service_query);
+							field.reference.service_query = await that.callDefinationMethod(field.reference.service_query)
 						}
+					} else {
+						delete field.reference
 					}
-					else {
-						delete field.reference;
-					}
-
-				}
-				else {
+				} else {
 					if (Function.isFunction(properties.reference.name)) {
-						field.reference.name = await that.callDefinationMethod(properties.reference.name);
-					}
-					else {
-						field.reference.name = properties.reference.name;
+						field.reference.name = await that.callDefinationMethod(properties.reference.name)
+					} else {
+						field.reference.name = properties.reference.name
 					}
 					if (Function.isFunction(properties.reference.resolves)) {
-						field.reference.resolves = await that.callDefinationMethod(properties.reference.resolves);
-					}
-					else {
-						field.reference.resolves = properties.reference.resolves;
+						field.reference.resolves = await that.callDefinationMethod(properties.reference.resolves)
+					} else {
+						field.reference.resolves = properties.reference.resolves
 					}
 					if (Function.isFunction(properties.reference.service_query)) {
-						field.reference.service_query = await that.callDefinationMethod(properties.reference.service_query);
-					}
-					else {
-						field.reference.service_query = properties.reference.service_query;
+						field.reference.service_query = await that.callDefinationMethod(properties.reference.service_query)
+					} else {
+						field.reference.service_query = properties.reference.service_query
 					}
 				}
-
-
 			}
 			if (properties.possibilities) {
 				if (Function.isFunction(properties.possibilities)) {
-					field.possibilities = await that.callDefinationMethod(properties.possibilities);
+					field.possibilities = await that.callDefinationMethod(properties.possibilities)
 				}
 			}
 
-			fields[name] = field;
+			fields[name] = field
 
-			onChangeEffects[name] = async (instance) => {
-				let field_with_effects = JSON.parse(JSON.stringify(properties));
+			onChangeEffects[name] = async instance => {
+				let field_with_effects = JSON.parse(JSON.stringify(properties))
 				if (properties.input.default) {
 					if (Function.isFunction(properties.input.default)) {
-						field_with_effects.input.default = await instance.callDefinationMethod(properties.input.default);
+						field_with_effects.input.default = await instance.callDefinationMethod(properties.input.default)
 					}
 				}
 
 				if (Function.isFunction(properties.label)) {
-					field_with_effects.label = await instance.callDefinationMethod(properties.label);
+					field_with_effects.label = await instance.callDefinationMethod(properties.label)
 				}
 				if (Function.isFunction(properties.input.type)) {
-					field_with_effects.input.type = await instance.callDefinationMethod(properties.input.type);
+					field_with_effects.input.type = await instance.callDefinationMethod(properties.input.type)
 				}
 				if (Function.isFunction(properties.input.disabled)) {
-					field_with_effects.input.disabled = await instance.callDefinationMethod(properties.input.disabled);
+					field_with_effects.input.disabled = await instance.callDefinationMethod(properties.input.disabled)
 				}
 				if (Function.isFunction(properties.input.default)) {
-					field_with_effects.input.default = await instance.callDefinationMethod(properties.input.default);
+					field_with_effects.input.default = await instance.callDefinationMethod(properties.input.default)
 				}
 				if (Function.isFunction(properties.input.value)) {
-					field_with_effects.input.value = await instance.callDefinationMethod(properties.input.value);
+					field_with_effects.input.value = await instance.callDefinationMethod(properties.input.value)
 				}
 				if (Function.isFunction(properties.input.required)) {
-					field_with_effects.input.required = await instance.callDefinationMethod(properties.input.required);
+					field_with_effects.input.required = await instance.callDefinationMethod(properties.input.required)
 				}
 				if (Function.isFunction(properties.input.props)) {
-					field_with_effects.input.props = await instance.callDefinationMethod(properties.input.props);
+					field_with_effects.input.props = await instance.callDefinationMethod(properties.input.props)
 				}
 
 				if (properties.restricted) {
 					if (Function.isFunction(properties.restricted.input)) {
-						field_with_effects.restricted.input = await instance.callDefinationMethod(properties.restricted.input);
-					}
-					else if (Boolean.isBoolean(properties.restricted.input)) {
-						field_with_effects.restricted.input = properties.restricted.input;
-					}
-					else {
-						field_with_effects.restricted.input = false;
+						field_with_effects.restricted.input = await instance.callDefinationMethod(properties.restricted.input)
+					} else if (Boolean.isBoolean(properties.restricted.input)) {
+						field_with_effects.restricted.input = properties.restricted.input
+					} else {
+						field_with_effects.restricted.input = false
 					}
 				}
 
 				if (properties.reference) {
 					//field_with_effects.reference = properties.reference;
 					if (Function.isFunction(properties.reference)) {
-						field_with_effects.reference = await instance.callDefinationMethod(properties.reference);
+						field_with_effects.reference = await instance.callDefinationMethod(properties.reference)
 						if (JSON.isJSON(field_with_effects.reference)) {
 							if (Function.isFunction(field_with_effects.reference.name)) {
-								field_with_effects.reference.name = await instance.callDefinationMethod(field_with_effects.reference.name);
+								field_with_effects.reference.name = await instance.callDefinationMethod(field_with_effects.reference.name)
 							}
 							if (Function.isFunction(field_with_effects.reference.resolves)) {
-								field_with_effects.reference.resolves = await instance.callDefinationMethod(field_with_effects.reference.resolves);
+								field_with_effects.reference.resolves = await instance.callDefinationMethod(
+									field_with_effects.reference.resolves
+								)
 							}
 							if (Function.isFunction(field_with_effects.reference.service_query)) {
-								field_with_effects.reference.service_query = await instance.callDefinationMethod(field_with_effects.reference.service_query);
+								field_with_effects.reference.service_query = await instance.callDefinationMethod(
+									field_with_effects.reference.service_query
+								)
 							}
+						} else {
+							delete field_with_effects.reference
 						}
-						else {
-							delete field_with_effects.reference;
-						}
-					}
-					else {
+					} else {
 						if (Function.isFunction(properties.reference.name)) {
-							field_with_effects.reference.name = await instance.callDefinationMethod(properties.reference.name);
-						}
-						else {
-							field_with_effects.reference.name = properties.reference.name;
+							field_with_effects.reference.name = await instance.callDefinationMethod(properties.reference.name)
+						} else {
+							field_with_effects.reference.name = properties.reference.name
 						}
 						if (Function.isFunction(properties.reference.resolves)) {
-							field_with_effects.reference.resolves = await instance.callDefinationMethod(properties.reference.resolves);
-						}
-						else {
-							field_with_effects.reference.resolves = properties.reference.resolves;
+							field_with_effects.reference.resolves = await instance.callDefinationMethod(properties.reference.resolves)
+						} else {
+							field_with_effects.reference.resolves = properties.reference.resolves
 						}
 						if (Function.isFunction(properties.reference.service_query)) {
-							field_with_effects.reference.service_query = await instance.callDefinationMethod(properties.reference.service_query);
-						}
-						else {
-							field_with_effects.reference.service_query = properties.reference.service_query;
+							field_with_effects.reference.service_query = await instance.callDefinationMethod(
+								properties.reference.service_query
+							)
+						} else {
+							field_with_effects.reference.service_query = properties.reference.service_query
 						}
 					}
-
 				}
 				if (properties.possibilities) {
 					if (Function.isFunction(properties.possibilities)) {
-						field_with_effects.possibilities = await instance.callDefinationMethod(properties.possibilities);
+						field_with_effects.possibilities = await instance.callDefinationMethod(properties.possibilities)
 					}
 				}
-
 
 				if (!Object.areEqual(instance.state.fields[name], field_with_effects)) {
-
-					return field_with_effects;
+					return field_with_effects
+				} else {
+					return false
 				}
-				else {
-					return false;
-				}
-
-
-
-			};
+			}
 		}
-		return { evaluatedFields: fields, onChangeEffects: onChangeEffects };
-
+		return { evaluatedFields: fields, onChangeEffects: onChangeEffects }
 	}
-
-
 
 	unSetFieldValue(name) {
-		const { change, onValuesChange } = this.props;
+		const { change, onValuesChange } = this.props
 		if (JSON.isJSON(this.state.field_values)) {
-			let values = JSON.parse(JSON.stringify(this.state.field_values));
+			let values = JSON.parse(JSON.stringify(this.state.field_values))
 			if (name in values) {
-				delete values[name];
+				delete values[name]
 				if (!JSON.isJSON(values)) {
-					values = {};
+					values = {}
 				}
 				this.setState({ field_values: values }, () => {
-					change(name, null);
+					change(name, null)
 					if (Function.isFunction(onValuesChange)) {
-						let labels = {};
+						let labels = {}
 						for (let key of Object.keys(values)) {
 							if (key in this.state.value_possibilities && key !== name) {
-								labels[key] = this.state.value_possibilities[key][values[key]];
+								labels[key] = this.state.value_possibilities[key][values[key]]
 							}
 						}
-						onValuesChange(values, labels);
+						onValuesChange(values, labels)
 					}
-				});
+				})
 			}
 		}
-
-
 	}
-
-
 
 	setFieldValue(name, value) {
-		const { change, onValuesChange } = this.props;
-		change(name, value);
-		let values = JSON.parse(JSON.stringify(this.state.field_values));
+		const { change, onValuesChange } = this.props
+		change(name, value)
+		let values = JSON.parse(JSON.stringify(this.state.field_values))
 		if (!JSON.isJSON(values)) {
-			values = {};
+			values = {}
 		}
-		values[name] = value;
+		values[name] = value
 
-		this.setState({
-			field_values: values,
-			last_field_changed: name
-		}, () => {
-			if (Function.isFunction(onValuesChange)) {
-				let labels = {};
-				for (let key of Object.keys(values)) {
-
-					if (key in this.state.value_possibilities) {
-						labels[key] = this.state.value_possibilities[key][values[key]];
+		this.setState(
+			{
+				field_values: values,
+				last_field_changed: name,
+			},
+			() => {
+				if (Function.isFunction(onValuesChange)) {
+					let labels = {}
+					for (let key of Object.keys(values)) {
+						if (key in this.state.value_possibilities) {
+							labels[key] = this.state.value_possibilities[key][values[key]]
+						}
 					}
+					onValuesChange(values, labels)
 				}
-				onValuesChange(values, labels);
 			}
-		});
+		)
 	}
 
-	handleChange = (name) => (value, event = null) => {
-		this.setFieldValue(name, value);
-	};
+	handleChange =
+		name =>
+		(value, event = null) => {
+			this.setFieldValue(name, value)
+		}
 
 	onCloseSnackbar() {
 		this.setState({
-			openSnackBar: false
-		});
+			openSnackBar: false,
+		})
 	}
 
 	handleResetForm() {
-		const { reset, form, initialValues } = this.props;
-		this.setState(state => ({ field_values: JSON.isJSON(initialValues) ? initialValues : {} }));
+		const { reset, form, initialValues } = this.props
+		this.setState(state => ({ field_values: JSON.isJSON(initialValues) ? initialValues : {} }))
 		if (Function.isFunction(reset) && String.isString(form)) {
-			reset(form);
+			reset(form)
 		}
 	}
 
 	handleKeyPress(event) {
-		if ((event.key === 's' || event.key === 'S') && event.ctrlKey) {
-			event.preventDefault();
-			this.handleSubmit(event);
+		if ((event.key === "s" || event.key === "S") && event.ctrlKey) {
+			event.preventDefault()
+			this.handleSubmit(event)
 			//
 		}
 	}
 
 	async callDefinationMethod(method) {
-		const { auth, form_state, initialValues } = this.props;
-		let field_values = {};
-		let method_data = null;
+		const { auth, form_state, initialValues } = this.props
+		let field_values = {}
+		let method_data = null
 		if (method.length === 0) {
-			method_data = method();
+			method_data = method()
+		} else if (method.length === 1) {
+			method_data = method(this)
+		} else if (method.length === 2) {
+			method_data = method(this.state.field_values, auth.user)
+		} else if (method.length === 3) {
+			method_data = method(this.state.field_values, auth.user, this)
 		}
-		else if (method.length === 1) {
-			method_data = method(this);
-		}
-		else if (method.length === 2) {
-			method_data = method(this.state.field_values, auth.user);
-		}
-		else if (method.length === 3) {
-			method_data = method(this.state.field_values, auth.user, this);
-		}
-		return Promise.all([method_data]).then(data => {
-			return method_data;
-		}).catch(err => { });
+		return Promise.all([method_data])
+			.then(data => {
+				return method_data
+			})
+			.catch(err => {})
 	}
 
 	renderFieldInput(name, field, restricted = false) {
-		const { auth, form_state, record, initialValues, change, text_fields_variant, validation, layout, textFieldsProps, selectFieldsProps, textareaFieldsProps } = this.props;
-		let that = this;
+		const {
+			auth,
+			form_state,
+			record,
+			initialValues,
+			change,
+			text_fields_variant,
+			validation,
+			layout,
+			textFieldsProps,
+			selectFieldsProps,
+			textareaFieldsProps,
+		} = this.props
+		let that = this
 
-
-		let field_values = { ...this.state.default_field_values, ...this.state.field_values };
+		let field_values = { ...this.state.default_field_values, ...this.state.field_values }
 
 		//Evaluate value
-		let value = undefined;
+		let value = undefined
 		if (name in field_values) {
-			value = field_values[name];
+			value = field_values[name]
 		}
 
-
-		let inputProps = {};
+		let inputProps = {}
 		if (field.input.props) {
-			inputProps = field.input.props;
+			inputProps = field.input.props
 		}
 
 		if (field.input.type === "radio") {
@@ -816,9 +775,8 @@ class BaseForm extends React.Component {
 						size="small"
 						{...inputProps}
 					/>
-				);
-			}
-			else {
+				)
+			} else {
 				return (
 					<LightInputField
 						name={name}
@@ -832,13 +790,11 @@ class BaseForm extends React.Component {
 						validate={validation}
 						{...inputProps}
 					/>
-				);
+				)
 			}
 
-
-			return "";
-		}
-		else if (field.input.type === "select") {
+			return ""
+		} else if (field.input.type === "select") {
 			return (
 				<LightInputField
 					name={name}
@@ -858,10 +814,9 @@ class BaseForm extends React.Component {
 					{...selectFieldsProps}
 					{...inputProps}
 				/>
-			);
-		}
-		else if (field.input.type === "multiselect") {
-			value = Array.isArray(value) ? value : [];
+			)
+		} else if (field.input.type === "multiselect") {
+			value = Array.isArray(value) ? value : []
 
 			return (
 				<LightInputField
@@ -882,11 +837,10 @@ class BaseForm extends React.Component {
 					{...selectFieldsProps}
 					{...inputProps}
 				/>
-			);
+			)
 
-			return "";
-		}
-		else if (field.input.type === "transferlist") {
+			return ""
+		} else if (field.input.type === "transferlist") {
 			if (this.state.value_possibilities[name]) {
 				return (
 					<LightInputField
@@ -899,11 +853,10 @@ class BaseForm extends React.Component {
 						validate={validation}
 						{...inputProps}
 					/>
-				);
+				)
 			}
-			return "";
-		}
-		else if (["email", "number", "phone", "text", "password"].includes(field.input.type)) {
+			return ""
+		} else if (["email", "number", "phone", "text", "password"].includes(field.input.type)) {
 			return (
 				<LightInputField
 					name={name}
@@ -920,9 +873,8 @@ class BaseForm extends React.Component {
 					{...textFieldsProps}
 					{...inputProps}
 				/>
-			);
-		}
-		else if (field.input.type === "textarea") {
+			)
+		} else if (field.input.type === "textarea") {
 			return (
 				<LightInputField
 					name={name}
@@ -940,10 +892,8 @@ class BaseForm extends React.Component {
 					{...textareaFieldsProps}
 					{...inputProps}
 				/>
-			);
-		}
-
-		else if (field.input.type === "wysiwyg") {
+			)
+		} else if (field.input.type === "wysiwyg") {
 			return (
 				<LightInputField
 					name={name}
@@ -955,25 +905,14 @@ class BaseForm extends React.Component {
 					rows={4}
 					defaultValue={value}
 					onChange={this.handleChange(name)}
-					controls={[
-						"bold",
-						"italic",
-						"underline",
-						"highlight",
-						"link",
-						"media",
-						"numberList",
-						"bulletList",
-						"quote"
-					]}
+					controls={["bold", "italic", "underline", "highlight", "link", "media", "numberList", "bulletList", "quote"]}
 					required={field.input.required}
 					fullWidth
 					validate={validation}
 					{...inputProps}
 				/>
-			);
-		}
-		else if (field.input.type === "date") {
+			)
+		} else if (field.input.type === "date") {
 			return (
 				<LightInputField
 					fullWidth
@@ -995,9 +934,8 @@ class BaseForm extends React.Component {
 					{...inputProps}
 					validate={validation}
 				/>
-			);
-		}
-		else if (field.input.type === "datetime") {
+			)
+		} else if (field.input.type === "datetime") {
 			return (
 				<LightInputField
 					name={name}
@@ -1013,9 +951,8 @@ class BaseForm extends React.Component {
 					validate={validation}
 					{...inputProps}
 				/>
-			);
-		}
-		else if (field.input.type === "checkbox") {
+			)
+		} else if (field.input.type === "checkbox") {
 			return (
 				<LightInputField
 					name={name}
@@ -1029,63 +966,46 @@ class BaseForm extends React.Component {
 					validate={validation}
 					{...inputProps}
 				/>
-			);
-		}
-		else if (field.input.type === "slider") {
-			let default_value = value !== undefined ? value : false;
-			let step_value = 5;
-			let min_value = false;
-			let max_value = false;
-			let marks = [];
-			let values = [];
-			if (
-				String.isString(field.input.default) ||
-				Number.isNumber(field.input.default)
-			) {
+			)
+		} else if (field.input.type === "slider") {
+			let default_value = value !== undefined ? value : false
+			let step_value = 5
+			let min_value = false
+			let max_value = false
+			let marks = []
+			let values = []
+			if (String.isString(field.input.default) || Number.isNumber(field.input.default)) {
 				if (field.input.default.length > 0) {
-					default_value = Number.parseNumber(field.input.default);
+					default_value = Number.parseNumber(field.input.default)
 				}
 			}
 
 			if (this.state.value_possibilities[name]) {
-				for (let [possibility_value, possibility_label] of Object.entries(
-					this.state.value_possibilities[name]
-				)) {
+				for (let [possibility_value, possibility_label] of Object.entries(this.state.value_possibilities[name])) {
 					//if possibility_value is float parseFloat else if value is integer parseInt
-					possibility_value = /[-+]?(?:\d*\.\d+\.?\d*)(?:[eE][-+]?\d+)?/gim.test(
-						possibility_value
-					)
+					possibility_value = /[-+]?(?:\d*\.\d+\.?\d*)(?:[eE][-+]?\d+)?/gim.test(possibility_value)
 						? parseFloat(possibility_value)
 						: /^[-+]?(\d*)?\d+$/gim.test(possibility_value)
-							? parseInt(possibility_value)
-							: false;
+						? parseInt(possibility_value)
+						: false
 					//evaluate and push step
 					step_value =
 						values.length > 0
-							? Math.abs(possibility_value - values[values.length - 1]) <
-								step_value
+							? Math.abs(possibility_value - values[values.length - 1]) < step_value
 								? Math.abs(possibility_value - values[values.length - 1])
 								: step_value
 							: !default_value
-								? possibility_value
-								: step_value;
-					default_value = !default_value ? possibility_value : default_value;
-					min_value = !min_value
-						? possibility_value
-						: possibility_value < min_value
 							? possibility_value
-							: min_value;
-					max_value = !max_value
-						? possibility_value
-						: possibility_value > max_value
-							? possibility_value
-							: max_value;
-					values.push(possibility_value);
-					marks.push({ value: possibility_value, label: possibility_label });
+							: step_value
+					default_value = !default_value ? possibility_value : default_value
+					min_value = !min_value ? possibility_value : possibility_value < min_value ? possibility_value : min_value
+					max_value = !max_value ? possibility_value : possibility_value > max_value ? possibility_value : max_value
+					values.push(possibility_value)
+					marks.push({ value: possibility_value, label: possibility_label })
 				}
-				min_value = !min_value ? 0 : min_value;
-				max_value = !max_value ? 1 : max_value;
-				default_value = default_value ? default_value : min_value;
+				min_value = !min_value ? 0 : min_value
+				max_value = !max_value ? 1 : max_value
+				default_value = default_value ? default_value : min_value
 				return (
 					<LightInputField
 						name={name}
@@ -1100,20 +1020,18 @@ class BaseForm extends React.Component {
 						validate={validation}
 						{...inputProps}
 					/>
-				);
+				)
 			}
-			return "";
-		}
-		else if (field.input.type === "file") {
-			let acceptedFiles = ["image/*", "video/*", "audio/*", "application/*"];
+			return ""
+		} else if (field.input.type === "file") {
+			let acceptedFiles = ["image/*", "video/*", "audio/*", "application/*"]
 			let defaultInputProps = {
 				maxFileSize: 300000000,
 				upload: true,
-				filesLimit: Array.isArray(field.type) ? 20 : 1
-			};
+				filesLimit: Array.isArray(field.type) ? 20 : 1,
+			}
 
-
-			inputProps = { ...defaultInputProps, ...inputProps };
+			inputProps = { ...defaultInputProps, ...inputProps }
 			return (
 				<LightInputField
 					name={name}
@@ -1126,9 +1044,8 @@ class BaseForm extends React.Component {
 					variant={text_fields_variant}
 					{...inputProps}
 				/>
-			);
-		}
-		else if (field.input.type === "map") {
+			)
+		} else if (field.input.type === "map") {
 			return (
 				<LightInputField
 					name={name}
@@ -1140,9 +1057,23 @@ class BaseForm extends React.Component {
 					validate={validation}
 					{...inputProps}
 				/>
-			);
-		}
-		else if (["street_number", "route", "neighborhood", "political", "locality", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "administrative_area_level_4", "sublocality_level_1", "country", "postal_code"].includes(field.input.type)) {
+			)
+		} else if (
+			[
+				"street_number",
+				"route",
+				"neighborhood",
+				"political",
+				"locality",
+				"administrative_area_level_1",
+				"administrative_area_level_2",
+				"administrative_area_level_3",
+				"administrative_area_level_4",
+				"sublocality_level_1",
+				"country",
+				"postal_code",
+			].includes(field.input.type)
+		) {
 			return (
 				<LightInputField
 					name={name}
@@ -1156,16 +1087,15 @@ class BaseForm extends React.Component {
 					variant={text_fields_variant}
 					{...inputProps}
 				/>
-			);
-		}
-		else if (field.input.type === "dynamic") {
-			inputProps.mode = ["defination", "generation"].includes(inputProps.mode) ? inputProps.mode : "defination";
-			inputProps.blueprint = JSON.isJSON(inputProps.blueprint) ? inputProps.blueprint : {};
+			)
+		} else if (field.input.type === "dynamic") {
+			inputProps.mode = ["defination", "generation"].includes(inputProps.mode) ? inputProps.mode : "defination"
+			inputProps.blueprint = JSON.isJSON(inputProps.blueprint) ? inputProps.blueprint : {}
 			if (String.isString(value)) {
 				try {
-					value = JSON.parse(value);
+					value = JSON.parse(value)
 				} catch (e) {
-					value = {};
+					value = {}
 				}
 			}
 			return (
@@ -1181,17 +1111,16 @@ class BaseForm extends React.Component {
 					validate={validation}
 					{...inputProps}
 				/>
-			);
+			)
 		}
-
 	}
 
 	renderField(name) {
-		const { layout, inputColumnSize } = this.props;
-		const field = this.state.fields[name];
-		let restricted = this.state.submitting;
+		const { layout, inputColumnSize } = this.props
+		const field = this.state.fields[name]
+		let restricted = this.state.submitting
 		if (!this.state.submitting && field.restricted) {
-			restricted = field.restricted.input;
+			restricted = field.restricted.input
 		}
 		if (layout == "inline") {
 			/*if (this.state.loading[name]) {
@@ -1208,74 +1137,61 @@ class BaseForm extends React.Component {
 					</TableCell>
 				);
 			}*/
-			return (
-				<TableCell key={"field_" + name} >
-					{this.renderFieldInput(name, field, restricted)}
-				</TableCell>
-			);
-		}
-		else {
+			return <TableCell key={"field_" + name}>{this.renderFieldInput(name, field, restricted)}</TableCell>
+		} else {
 			return (
 				<GridItem
 					className={"p-0 m-0 px-1 py-1"}
-					md={field.input.size ? (inputColumnSize < 12 && field.input.size < inputColumnSize ? inputColumnSize : field.input.size) : inputColumnSize}
+					md={
+						field.input.size
+							? inputColumnSize < 12 && field.input.size < inputColumnSize
+								? inputColumnSize
+								: field.input.size
+							: inputColumnSize
+					}
 					style={field.input?.type === "hidden" ? { display: "none" } : {}}
 					key={"field_" + name}
 				>
 					{this.renderFieldInput(name, field, restricted)}
 				</GridItem>
-			);
+			)
 		}
-
 	}
 
 	async handleSubmit(event) {
-		event.preventDefault();
-		const submit_event = event;
-		const {
-			defination,
-			record,
-			fields,
-			exclude,
-			onSubmit,
-			onSubmitSuccess,
-			onSubmitSuccessMessage
-		} = this.props;
+		event.preventDefault()
+		const submit_event = event
+		const { defination, record, fields, exclude, onSubmit, onSubmitSuccess, onSubmitSuccessMessage } = this.props
 
-		let form_data =
-			this.state.field_values && typeof this.state.field_values === "object"
-				? this.state.field_values
-				: {};
+		let form_data = this.state.field_values && typeof this.state.field_values === "object" ? this.state.field_values : {}
 		if (onSubmit) {
-			this.setState(state => ({ submitting: true }));
+			this.setState(state => ({ submitting: true }))
 		}
-		let service = defination ? ApiService.getContextRequests(defination?.endpoint) : false;
+		let service = defination ? ApiService.getContextRequests(defination?.endpoint) : false
 		if (onSubmit) {
-			let submit_callback = onSubmit(form_data, submit_event);
-			Promise.all([submit_callback]).then(res => {
-				this.setState({
-					openSnackBar: true,
-					snackbarMessage: onSubmitSuccessMessage
-						? onSubmitSuccessMessage
-						: UtilitiesHelper.singularize(this.defination.label) +
-						" changes saved",
-					snackbarColor: "success",
-					submitting: false
-				});
-				if (Function.isFunction(onSubmitSuccess)) {
-					onSubmitSuccess(res);
-				}
-
-			})
+			let submit_callback = onSubmit(form_data, submit_event)
+			Promise.all([submit_callback])
+				.then(res => {
+					this.setState({
+						openSnackBar: true,
+						snackbarMessage: onSubmitSuccessMessage
+							? onSubmitSuccessMessage
+							: UtilitiesHelper.singularize(this.defination.label) + " changes saved",
+						snackbarColor: "success",
+						submitting: false,
+					})
+					if (Function.isFunction(onSubmitSuccess)) {
+						onSubmitSuccess(res)
+					}
+				})
 				.catch(err => {
 					this.setState({
 						openSnackBar: true,
-						snackbarMessage:
-							typeof err.msg === "object" ? JSON.stringify(err.msg) : err.msg,
+						snackbarMessage: typeof err.msg === "object" ? JSON.stringify(err.msg) : err.msg,
 						snackbarColor: "error",
-						submitting: false
-					});
-				});
+						submitting: false,
+					})
+				})
 		} else if (service) {
 			//
 			if (record) {
@@ -1286,24 +1202,22 @@ class BaseForm extends React.Component {
 							openSnackBar: true,
 							snackbarMessage: onSubmitSuccessMessage
 								? onSubmitSuccessMessage
-								: UtilitiesHelper.singularize(this.defination.label) +
-								" changes saved",
+								: UtilitiesHelper.singularize(this.defination.label) + " changes saved",
 							snackbarColor: "success",
-							submitting: false
-						});
+							submitting: false,
+						})
 						if (Function.isFunction(onSubmitSuccess)) {
-							onSubmitSuccess(response.body.data);
+							onSubmitSuccess(response.body.data)
 						}
 					})
 					.catch(err => {
 						this.setState({
 							openSnackBar: true,
-							snackbarMessage:
-								typeof err.msg === "object" ? JSON.stringify(err.msg) : err.msg,
+							snackbarMessage: typeof err.msg === "object" ? JSON.stringify(err.msg) : err.msg,
 							snackbarColor: "error",
-							submitting: false
-						});
-					});
+							submitting: false,
+						})
+					})
 			} else {
 				service
 					.create(form_data)
@@ -1312,25 +1226,22 @@ class BaseForm extends React.Component {
 							openSnackBar: true,
 							snackbarMessage: onSubmitSuccessMessage
 								? onSubmitSuccessMessage
-								: "New " +
-								UtilitiesHelper.singularize(this.defination.label) +
-								" added",
+								: "New " + UtilitiesHelper.singularize(this.defination.label) + " added",
 							snackbarColor: "success",
-							submitting: false
-						});
+							submitting: false,
+						})
 						if (Function.isFunction(onSubmitSuccess)) {
-							onSubmitSuccess(response.body.data);
+							onSubmitSuccess(response.body.data)
 						}
 					})
 					.catch(err => {
 						this.setState({
 							openSnackBar: true,
-							snackbarMessage:
-								typeof err.msg === "object" ? JSON.stringify(err.msg) : err.msg,
+							snackbarMessage: typeof err.msg === "object" ? JSON.stringify(err.msg) : err.msg,
 							snackbarColor: "error",
-							submitting: false
-						});
-					});
+							submitting: false,
+						})
+					})
 			}
 		}
 	}
@@ -1354,37 +1265,30 @@ class BaseForm extends React.Component {
 			pristine,
 			layout,
 			...rest
-
-		} = this.props;
+		} = this.props
 		let formClasses = classNames({
 			[`p-0`]: true,
 			[className]: className,
-			[`cursor-wait`]: this.state.submitting
-		});
-
-
-
+			[`cursor-wait`]: this.state.submitting,
+		})
 
 		return (
-			<form className={formClasses} id={form ? form : `${this.defination.name}-form`} autoComplete="off" onKeyDown={this.handleKeyPress} onSubmit={this.handleSubmit} >
-				<Card elevation={0} outlineColor={"transparent"} className="p-0 bg-transparent" >
+			<form
+				className={formClasses}
+				id={form ? form : `${this.defination.name}-form`}
+				autoComplete="off"
+				onKeyDown={this.handleKeyPress}
+				onSubmit={this.handleSubmit}
+			>
+				<Card elevation={0} outlineColor={"transparent"} className="p-0 bg-transparent">
 					{show_title ? (
 						<CardHeader
 							avatar={
-								<Avatar
-									aria-label="Password"
-									color={
-										this.defination ? this.defination.color : colors.hex.default
-									}
-								>
+								<Avatar aria-label="Password" color={this.defination ? this.defination.color : colors.hex.default}>
 									{record ? <EditIcon /> : <AddIcon />}
 								</Avatar>
 							}
-							title={
-								this.defination
-									? UtilitiesHelper.singularize(this.defination.label)
-									: "Record"
-							}
+							title={this.defination ? UtilitiesHelper.singularize(this.defination.label) : "Record"}
 							subheader={record ? "Update " : "New "}
 						/>
 					) : (
@@ -1392,68 +1296,110 @@ class BaseForm extends React.Component {
 					)}
 
 					<CardContent className="m-0 p-0 py-4">
-						{layout == "normal" && <GridContainer className="m-0 p-0">
-							{Object.keys(this.state.fields).map(
-								(column_name, column_index) =>
-									Array.isArray(fields) && fields.length > 0 ? exclude ? fields.includes(column_name) ? ""
-										: this.renderField(column_name)
-										: fields.includes(column_name)
+						{layout == "normal" && (
+							<GridContainer className="m-0 p-0">
+								{Object.keys(this.state.fields).map((column_name, column_index) =>
+									Array.isArray(fields) && fields.length > 0
+										? exclude
+											? fields.includes(column_name)
+												? ""
+												: this.renderField(column_name)
+											: fields.includes(column_name)
 											? this.renderField(column_name)
 											: ""
 										: this.renderField(column_name)
-							)}
-						</GridContainer>}
+								)}
+							</GridContainer>
+						)}
 
-						{layout == "inline" && <GridContainer className="m-0 p-0">
-							<GridItem xs={12}>
-								<Table className="w-full ">
-									<TableBody>
-										<TableRow>
-											{Object.keys(this.state.fields).map((column_name, column_index) => {
-												return ((Array.isArray(fields) ? fields.includes(column_name) : true) && (Array.isArray(exclude) ? !exclude.includes(column_name) : (exclude ? false : true))) ? this.renderField(column_name) : "";
-											})}
-										</TableRow>
-									</TableBody>
-								</Table>
-							</GridItem>
-						</GridContainer>}
+						{layout == "inline" && (
+							<GridContainer className="m-0 p-0">
+								<GridItem xs={12}>
+									<Table className="w-full ">
+										<TableBody>
+											<TableRow>
+												{Object.keys(this.state.fields).map((column_name, column_index) => {
+													return (Array.isArray(fields) ? fields.includes(column_name) : true) &&
+														(Array.isArray(exclude) ? !exclude.includes(column_name) : exclude ? false : true)
+														? this.renderField(column_name)
+														: ""
+												})}
+											</TableRow>
+										</TableBody>
+									</Table>
+								</GridItem>
+							</GridContainer>
+						)}
 					</CardContent>
 
-					{((show_discard || show_submit) && Object.keys(this.state.fields).length > 0) && <CardActions>
-						<GridContainer className="m-0 p-0">
+					{(show_discard || show_submit) && Object.keys(this.state.fields).length > 0 && (
+						<CardActions>
+							<GridContainer className="m-0 p-0">
+								{show_discard && (
+									<GridItem
+										xs={12}
+										md={6}
+										className="flex flex-row items-center justify-center md:items-start md:justify-start"
+									>
+										{!DiscardBtn && (
+											<Button className="sm:w-full md:w-auto" variant="text" outlined onClick={this.handleResetForm}>
+												{" "}
+												Discard changes{" "}
+											</Button>
+										)}
+										{DiscardBtn && (
+											<DiscardBtn
+												className="sm:w-full md:w-auto"
+												variant="text"
+												outlined
+												onClick={this.handleResetForm}
+												{...(discardBtnProps ? discardBtnProps : {})}
+											/>
+										)}
+									</GridItem>
+								)}
 
-							{show_discard && <GridItem xs={12} md={6} className="flex flex-row items-center justify-center md:items-start md:justify-start">
-								{!DiscardBtn && <Button className="sm:w-full md:w-auto" variant="text" outlined onClick={this.handleResetForm} > Discard changes </Button>}
-								{DiscardBtn && <DiscardBtn className="sm:w-full md:w-auto" variant="text" outlined onClick={this.handleResetForm} {...(discardBtnProps ? discardBtnProps : {})} />}
-							</GridItem>}
-
-
-							{show_submit && <GridItem xs={12} md={show_discard ? 6 : 12} className="flex flex-row items-center justify-center md:items-end md:justify-end">
-								{!SubmitBtn && <Button type="submit" className="sm:w-full md:w-auto" color="primary" outlined > {submit_btn_text ? submit_btn_text : "Save Changes"} </Button>}
-								{SubmitBtn && <SubmitBtn type="submit" className="sm:w-full md:w-auto" color="primary" outlined {...(submitBtnProps ? submitBtnProps : {})} />}
-							</GridItem>}
-
-						</GridContainer>
-					</CardActions>}
+								{show_submit && (
+									<GridItem
+										xs={12}
+										md={show_discard ? 6 : 12}
+										className="flex flex-row items-center justify-center md:items-end md:justify-end"
+									>
+										{!SubmitBtn && (
+											<Button type="submit" className="sm:w-full md:w-auto" color="primary" outlined>
+												{" "}
+												{submit_btn_text ? submit_btn_text : "Save Changes"}{" "}
+											</Button>
+										)}
+										{SubmitBtn && (
+											<SubmitBtn
+												type="submit"
+												className="sm:w-full md:w-auto"
+												color="primary"
+												outlined
+												{...(submitBtnProps ? submitBtnProps : {})}
+											/>
+										)}
+									</GridItem>
+								)}
+							</GridContainer>
+						</CardActions>
+					)}
 				</Card>
 
 				<Snackbar
 					anchorOrigin={{
 						vertical: "bottom",
-						horizontal: "center"
+						horizontal: "center",
 					}}
 					open={this.state.openSnackBar}
 					autoHideDuration={6000}
 					onClose={this.onCloseSnackbar}
 				>
-					<SnackbarContent
-						onClose={this.onCloseSnackbar}
-						color={this.state.snackbarColor}
-						message={this.state.snackbarMessage}
-					/>
+					<SnackbarContent onClose={this.onCloseSnackbar} color={this.state.snackbarColor} message={this.state.snackbarMessage} />
 				</Snackbar>
 			</form>
-		);
+		)
 	}
 }
 
@@ -1466,10 +1412,9 @@ BaseForm.defaultProps = {
 	show_discard: true,
 	validation: true,
 	inputColumnSize: 12,
-};
+}
 
 BaseForm.propTypes = {
-
 	className: PropTypes.string,
 	defination: PropTypes.object.isRequired,
 	service: PropTypes.any,
@@ -1497,20 +1442,11 @@ BaseForm.propTypes = {
 	fields: PropTypes.array,
 	exclude: PropTypes.bool,
 	wrapper: PropTypes.node,
-
-};
+}
 
 const mapStateToProps = (state, ownProps) => ({
 	auth: state.auth,
-	form_state: state.form[ownProps.form]
-});
+	form_state: state.form[ownProps.form],
+})
 
-export default withGlobals(
-	compose(
-		connect(
-			mapStateToProps,
-			{ change, reset }
-		),
-
-	)(reduxForm({ enableReinitialize: true })(BaseForm))
-);
+export default withNetworkServices(compose(connect(mapStateToProps, { change, reset }))(reduxForm({ enableReinitialize: true })(BaseForm)))
