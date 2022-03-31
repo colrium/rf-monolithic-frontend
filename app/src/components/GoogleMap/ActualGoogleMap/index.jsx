@@ -31,7 +31,8 @@ import ApiService from "services/Api"
 import { PersonOutlined as UserIcon } from "@mui/icons-material"
 import Button from "@mui/material/Button"
 import Rating from "@mui/material/Rating"
-
+import { useClientPositions } from "hooks"
+import { useGeolocation } from "react-use"
 import { google_maps } from "config"
 import { theme } from "assets/jss/app-theme"
 //
@@ -190,7 +191,6 @@ let _defaultCenter = google_maps.default_center
 let _defaultZoom = 12
 let _zoom = 12
 let firstLoad = true
-let _clientsPositions = {}
 let regionBoundsClients = {}
 let mapBounds = null
 
@@ -199,27 +199,6 @@ let user_avatar_shape = {
 	coords: [1, 1, 1, 20, 18, 20, 18, 1],
 	type: "poly",
 }
-
-/*const initialState = {
-	clientsPositions: {},
-	regionBoundsClients: {},
-	mapBounds: null,
-};
-
-function reducer(state=initialState, action={}) {
-	switch (action.type) {
-		case 'ADD_CLIENT_POSITION': {
-			return {count: state.count + 1};
-		}
-		case 'REMOVE_CLIENT_POSITION': {
-			return {count: state.count - 1};
-		}
-
-		default: {
-			return state;
-		}
-	}
-}*/
 
 const mapStateToProps = state => ({
 	app: state.app,
@@ -267,7 +246,8 @@ export default compose(
 		const { SocketIO } = useNetworkServices()
 
 		const [SocketsInitialized, setSocketsInitialized] = useState(false)
-
+		const geoLocation = useGeolocation()
+		const [clientPositions, clientPositionsActions] = useClientPositions()
 		const [selectedItem, setSelectedItem] = useState({ id: selectedEntry, type: selectedEntryType })
 		const [infoWindowContent, setInfoWindowContent] = useState(null)
 		const [infoWindowPosition, setInfoWindowPosition] = useState(null)
@@ -316,42 +296,6 @@ export default compose(
 		if (!JSON.isJSON(user) || (JSON.isJSON(user) && !user?._id)) {
 			user = { _id: null }
 		}
-
-		const getclientPositionHeadingMarkerIcon = (user, position) => {
-			let computed_icon = JSON.isJSON(user)
-				? ((String.isString(user?.icon)
-						? user?.icon.startsWith(user?.gender)
-							? user?.icon
-							: user?.gender
-						: String.isString(user?.gender)
-						? user?.gender.trim().toLowerCase()
-						: "male"): "male")
-				: "male"
-
-			if (!computed_icon) {
-				computed_icon = "male"
-			}
-
-			//
-
-			if (process.env.NODE_ENV === "development") {
-				computed_icon = icon_names[Math.floor(Math.random() * icon_names.length)]
-			}
-
-			return `${process.env.PUBLIC_URL}/img/avatars/${computed_icon}.png`
-		}
-
-		/*const getRegionWidth = (target_region = null) => {
-	target_region = target_region? target_region : false;
-	if (target_region) {
-		const lat1 = target_region.latitude - (region.latitudeDelta / 2);
-		const lng1 = target_region.longitude;
-		const lat2 = target_region.latitude + (region.latitudeDelta / 2);
-		const lng2 = target_region.longitude;
-
-		return crowFleightDistanceinKm(lat1, lng1, lat2, lng2);
-	}
-}*/
 
 		const handleOnPressMarker = (socketId, data) => async event => {
 			setSelectedItem({ type: "clients_positions", id: socketId })
@@ -433,71 +377,6 @@ export default compose(
 			animateStep(marker, new Date().getTime())
 		}
 
-		const handleOnClientPositionChange = useCallback(
-			({ socketId, ...data }) => {
-				let { user, position, track } = data
-				if (!JSON.isEmpty(user) && !JSON.isEmpty(position)) {
-					let clientInList =
-						auth.user?.isAdmin ||
-						(Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user?._id) : false)
-					if (clientInList) {
-						let currentMap = getActualGoogleMapInstance()
-
-						if (!regionBoundsClients[socketId]) {
-							regionBoundsClients[socketId] = {}
-
-							if (currentMap) {
-								let mapBounds = currentMap.getBounds()
-								if (mapBounds) {
-									if (mapBounds.contains({ lat: data.position.latitude, lng: position.longitude })) {
-										regionBoundsClients[socketId].user = user
-										regionBoundsClients[socketId].position = position
-										regionBoundsClients[socketId].marker = new google.maps.Marker({
-											position: { lat: position.latitude, lng: position.longitude },
-											title: user?.first_name + " " + user?.last_name,
-											icon: {
-												url: getclientPositionHeadingMarkerIcon(user, position),
-												scaledSize: new google.maps.Size(30, 30),
-											},
-											onClick: handleOnPressMarker(socketId, data),
-											duration: 250,
-											map: currentMap,
-										})
-									}
-								}
-							}
-						} else {
-							regionBoundsClients[socketId].user = user
-							regionBoundsClients[socketId].position = position
-							if (!regionBoundsClients[socketId].marker) {
-								regionBoundsClients[socketId].marker = new google.maps.Marker({
-									position: { lat: position.latitude, lng: position.longitude },
-									title: user?.first_name + " " + user?.last_name,
-									icon: {
-										url: getclientPositionHeadingMarkerIcon(user, position),
-										scaledSize: new google.maps.Size(30, 30),
-									},
-									onClick: handleOnPressMarker(socketId, data),
-									duration: 250,
-									map: currentMap,
-								})
-							}
-							regionBoundsClients[socketId].marker.setIcon({
-								url: getclientPositionHeadingMarkerIcon(user, position),
-								scaledSize: new google.maps.Size(30, 30),
-							})
-							animateClientMarkerToPosition(regionBoundsClients[socketId].marker, { socketId, ...data })
-						}
-					}
-				}
-			},
-			[regionBoundsClients, contactactable_contacts_ids]
-		)
-
-		const handleOnSocketConnect = () => {
-			SocketIO.emit("get-clients-positions", { user: user, type: "all" })
-		}
-
 		const applyMapOnAll = (google_map, clients_positions_only = false) => {
 			if (Array.isArray(markers) && !clients_positions_only) {
 				markers.map(mapMarker => {
@@ -515,8 +394,8 @@ export default compose(
 				})
 			}
 
-			if (JSON.isJSON(_clientsPositions)) {
-				Object.entries(_clientsPositions).map(([socketId, clientsPosition]) => {
+			if (JSON.isJSON(clientPositions)) {
+				Object.entries(clientPositions).map(([socketId, clientsPosition]) => {
 					if (clientsPosition.marker) {
 						clientsPosition.marker.setMap(google_map)
 					}
@@ -544,121 +423,7 @@ export default compose(
 		//Memoized Method
 		const setMapOnAll = useCallback(() => {
 			return applyMapOnAll(_map)
-		}, [_map, _clientsPositions, regionBoundsClients])
-
-		const handleOnSocketDisconnect = useCallback(() => {
-			applyMapOnAll(null, true)
-			_clientsPositions = {}
-			regionBoundsClients = {}
-			if (Function.isFunction(onLoadClientsPositions)) {
-				onLoadClientsPositions(_clientsPositions)
-			}
-		}, [_map, _clientsPositions, regionBoundsClients, onLoadClientsPositions])
-
-		const handleOnNewClientPosition = useCallback(
-			async ({ socketId, ...data }) => {
-				const { user, position } = data
-				if (user) {
-					_clientsPositions = Object.entries(_clientsPositions).reduce((accumulator, [socketId, clientData], index) => {
-						if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-							let appendClientToList =
-								clientData.user !== user?._id &&
-								(auth.user?.isAdmin ||
-									(Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user?._id) : false))
-
-							if (appendClientToList) {
-								accumulator[socketId] = clientData
-							}
-						}
-						return accumulator
-					}, {})
-
-					/*regionBoundsClients = Object.entries(regionBoundsClients).reduce((accumulator, [socketId, clientData], index) => {
-			if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-				if (clientData.user !== user?._id) {
-					accumulator[socketId] = clientData;
-				}
-			}
-			return accumulator;
-		}, {});*/
-					let appendClientToList =
-						auth.user?.isAdmin ||
-						(Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user?._id) : false)
-					if (appendClientToList) {
-						_clientsPositions[socketId] = data
-						if (Function.isFunction(onClientPositionAvailable)) {
-							onClientPositionAvailable(socketId, data)
-						}
-					}
-				}
-			},
-			[_map, _clientsPositions, regionBoundsClients, onClientPositionAvailable, contactactable_contacts_ids]
-		)
-
-		const handleOnClientsPositions = useCallback(
-			async clients_positions => {
-				let clients_positions_user_ids = []
-				_clientsPositions = Object.entries(clients_positions).reduce((accumulator, [socketId, clientData], index) => {
-					if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
-						if (!clients_positions_user_ids.includes(user?._id)) {
-							let appendClientToList =
-								auth.user?.isAdmin ||
-								(Array.isArray(contactactable_contacts_ids) ? contactactable_contacts_ids.includes(user?._id) : false)
-
-							if (appendClientToList) {
-								accumulator[socketId] = clientData
-							}
-						}
-					}
-					return accumulator
-				}, {})
-
-				if (Function.isFunction(onLoadClientsPositions)) {
-					onLoadClientsPositions(_clientsPositions)
-				}
-			},
-			[_clientsPositions, regionBoundsClients, onLoadClientsPositions, contactactable_contacts_ids]
-		)
-
-		const handleOnClientPositionUnavailable = useCallback(
-			({ socketId, ...data }) => {
-				if (_clientsPositions[socketId]) {
-					if (_clientsPositions[socketId].marker) {
-						_clientsPositions[socketId].marker.setMap(null)
-					}
-				}
-
-				if (regionBoundsClients[socketId]) {
-					if (regionBoundsClients[socketId].marker) {
-						regionBoundsClients[socketId].marker.setMap(null)
-					}
-				}
-
-				delete regionBoundsClients[socketId]
-				delete _clientsPositions[socketId]
-
-				if (Function.isFunction(onClientPositionUnavailable)) {
-					onClientPositionUnavailable(socketId, data)
-				}
-			},
-			[_clientsPositions, regionBoundsClients, onClientPositionUnavailable]
-		)
-
-		const initSockets = () => {
-			if (SocketIO) {
-				SocketIO.on("new-client-position", handleOnNewClientPosition)
-				SocketIO.on("clients-positions", handleOnClientsPositions)
-				SocketIO.on("client-position-unavailable", handleOnClientPositionUnavailable)
-				SocketIO.on("client-position-changed", handleOnClientPositionChange)
-				SocketIO.on("disconnect", handleOnSocketDisconnect)
-				if (SocketIO.connected) {
-					SocketIO.emit("get-clients-positions", { user: user, type: "all" })
-				} else {
-					SocketIO.on("connect", handleOnSocketConnect)
-				}
-				setSocketsInitialized(true)
-			}
-		}
+		}, [_map, clientPositions, regionBoundsClients])
 
 		const prepareMapBoundsClientsMarkers = useCallback(
 			mapBounds => {
@@ -669,7 +434,7 @@ export default compose(
 						}
 						return accumulator
 					}, {})
-					regionBoundsClients = Object.entries(_clientsPositions).reduce((accumulator, [socketId, clientData], index) => {
+					regionBoundsClients = Object.entries(clientPositions).reduce((accumulator, [socketId, clientData], index) => {
 						if (!JSON.isEmpty(clientData.position) && !JSON.isEmpty(clientData.user)) {
 							if (mapBounds.contains({ lat: clientData.position.latitude, lng: clientData.position.longitude })) {
 								let { user, position } = clientData
@@ -705,7 +470,7 @@ export default compose(
 					}, {})
 				}
 			},
-			[_clientsPositions]
+			[clientPositions]
 		)
 
 		const handleOnBoundsChanged = useCallback(() => {
@@ -939,20 +704,6 @@ export default compose(
 		}, [_map])
 
 		useEffect(() => {
-			if (!SocketsInitialized) {
-				initSockets()
-			}
-			return () => {
-				SocketIO.off("new-client-position", handleOnNewClientPosition)
-				SocketIO.off("client-position-changed", handleOnClientPositionChange)
-				SocketIO.off("clients-positions", handleOnClientsPositions)
-				SocketIO.off("client-position-unavailable", handleOnClientPositionUnavailable)
-				SocketIO.off("connect", handleOnSocketConnect)
-				//SocketIO.off("reconnect", handleOnSocketConnect);
-			}
-		}, [SocketIO])
-
-		useEffect(() => {
 			if (infoWindowOpen && selectedItem.type === "clients_position" && selectedItem.id in regionBoundsClients) {
 				if (
 					infoWindowPosition.lat !== regionBoundsClients[selectedItem.id].position.latitude ||
@@ -1012,9 +763,9 @@ export default compose(
 						/>
 					)}
 
-					{JSON.isJSON(props.currentDevicePosition) && props.showCurrentPosition && (
+					{!geoLocation.loading && props.showCurrentPosition && (
 						<Marker
-							position={props.currentDevicePosition.coordinates}
+							position={{ lat: geoLocation.latitude, lng: geoLocation.longitude }}
 							title={props.currentDevicePosition.title}
 							icon={current_position_marker_icon}
 						/>

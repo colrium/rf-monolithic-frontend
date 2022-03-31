@@ -35,8 +35,6 @@ export default function () {
 			console.log("checkQuota usedSpace", usedSpace)
 		}
 	}
-	console.log("database Dexie.version", Dexie.version)
-
 	db.version(1).stores({
 		...definations_stores,
 		inbox: "++id,_id,type,recipients,group_admins,group_name,archives,deletions,status,owner,uuid,participants,messages,state,started_by",

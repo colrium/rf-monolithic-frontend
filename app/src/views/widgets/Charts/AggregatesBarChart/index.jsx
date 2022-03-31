@@ -22,7 +22,7 @@ import { UtilitiesHelper } from "utils/Helpers";
 
 
 //
-defaults.global.legend.display = false;
+// defaults.global.legend.display = false;
 
 class AggregatesBarChart extends React.Component {
 	state = {

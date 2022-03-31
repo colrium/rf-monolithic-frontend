@@ -14,7 +14,7 @@ import { mdiOverscan, mdiArrowCollapseAll } from '@mdi/js';
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { appendNavHistory } from "state/actions/ui/nav";
-
+import GoogleMapOverview from "views/widgets/Overview/GoogleMapOverview"
 import { withTheme } from '@mui/styles';
 //
 import { responses } from "definations";

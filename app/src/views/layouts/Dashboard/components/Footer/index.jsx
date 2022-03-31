@@ -9,7 +9,7 @@ import Intercom from "react-intercom"
 
 const Footer = props => {
 	const { className, showIntercom } = props
-	const [clientPositions] = useClientPositions()
+	const clientPositions = useClientPositions()
 
 	return (
 		<footer

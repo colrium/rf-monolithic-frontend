@@ -51,10 +51,10 @@ export default function fetchInbox(params = {}, persist = true) {
 						}
 					})
 				}
-				console.log(
+				/* console.log(
 					"fetchInbox inbox_conversations",
 					inbox_conversations
-				)
+				) */
 
 				dispatch(
 					setMessagingCache("conversations", inbox_conversations)

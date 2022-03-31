@@ -35,8 +35,9 @@ export default function updateMessage(message, persist = true) {
 				}
 			}
 			if (JSON.isJSON(message)) {
+				console.log("updateMessage message", message)
 				const { conversation, sender, created_on } = message
-				const sender_id = sender._id || sender
+				const sender_id = sender?._id || sender
 				const is_outgoing = sender_id === auth.user?._id
 				const conversation_id = conversation?._id || conversation
 				const conversation_uuid = conversation?.uuid || message.conversation_uuid

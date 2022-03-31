@@ -29,6 +29,7 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import React from "react";
 import { connect } from "react-redux";
 import { apiCallRequest, closeDialog, openDialog } from "state/actions"
+import { withClientPositions } from "hoc"
 import compose from "recompose/compose"
 import GoogleMap from "components/GoogleMap"
 import Listings from "views/widgets/Listings"
@@ -134,7 +135,6 @@ class GoogleMapOverview extends React.Component {
 				: {},
 			context_entries: Array.isArray(cache.data[this.state.defination.name]) ? cache.data[this.state.defination.name] : [],
 			//drawerOpen: device.window_size.width >= 1280,
-			drawerOpen: false,
 		}
 	}
 
@@ -198,6 +198,10 @@ class GoogleMapOverview extends React.Component {
 	}
 
 	handleOnLoadMap(map, google) {
+		const {
+			clientsPositions: [clientsPositions, clientsPositionsActions],
+		} = this.props
+		clientsPositionsActions.setGoogleMap(map)
 		googleMap = map
 	}
 
@@ -258,11 +262,11 @@ class GoogleMapOverview extends React.Component {
 		})
 	}
 
-	handleClientListItemClick = (socketId, client) => event => {
+	handleClientListItemClick = (id, client) => event => {
 		if (googleMap) {
 			googleMap.panTo({
-				lat: client.position.latitude,
-				lng: client.position.longitude,
+				lat: client.latitude,
+				lng: client.longitude,
 			})
 			//googleMap.context.setZoom(15);
 		}
@@ -389,37 +393,16 @@ class GoogleMapOverview extends React.Component {
 		}
 	}
 
-	getclientPositionMarkerIcon = user => {
-		let computed_icon = JSON.isJSON(user)
-			? ((String.isString(user?.icon)
-					? user?.icon.startsWith(user?.gender)
-						? user?.icon
-						: user?.gender
-					: String.isString(user?.gender)
-					? user?.gender.trim().toLowerCase()
-					: "male"): "male")
-			: "male"
-
-		if (!computed_icon) {
-			computed_icon = "male"
-		}
-
-		if (process.env.NODE_ENV === "development") {
-			computed_icon = icon_names[Math.floor(Math.random() * icon_names.length)]
-		}
-		return `${process.env.PUBLIC_URL}/img/avatars/${computed_icon}.png`
-	}
-
 	render() {
 		const {
 			theme,
 			showAll,
 			device,
-
+			clientsPositions: [clientsPositions],
 			contexts,
 			actions,
 		} = this.props
-		const { context, clients_positions, show_client_positions, rendered_contexts, contexts_props } = this.state
+		const { context, show_client_positions, rendered_contexts, contexts_props } = this.state
 		let circles = []
 		let markers = []
 		let polylines = []
@@ -442,6 +425,8 @@ class GoogleMapOverview extends React.Component {
 			}
 		})
 		//
+
+		// console.log("GoogleMapOverview clientsPositions", clientsPositions)
 
 		return (
 			<Card
@@ -601,7 +586,7 @@ class GoogleMapOverview extends React.Component {
 							</BottomNavigation>
 						)}
 
-						{context === "clients_positions" && Object.size(clients_positions) === 0 && (
+						{context === "clients_positions" && Object.size(clientsPositions) === 0 && (
 							<GridContainer>
 								<GridItem xs={12} className="flex items-center justify-center p-2">
 									<Icon path={mdiFolderOutline} title="No Records available yet." color="#CCCCCC" size={5} />
@@ -615,36 +600,21 @@ class GoogleMapOverview extends React.Component {
 
 						{context === "clients_positions" && (
 							<List className={`p-0`}>
-								{Object.entries(clients_positions).map(([socketId, client], index) => {
-									let show_entry = true
-									if (index > 0) {
-										if (client.user?._id === clients_positions[Object.keys(clients_positions)[index - 1]].user?._id) {
-											show_entry = false
-										}
-									} else {
-										/*if (googleMap) {
-												googleMap.panTo({ lat: client.position.latitude, lng: client.position.longitude });
-												googleMap.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.setZoom(15);
-											}*/
-									}
-									if (client.user && show_entry) {
-										return (
-											<ListItem
-												className={"cursor-pointer hover:bg-gray-400"}
-												onClick={this.handleClientListItemClick(socketId, client)}
-												key={"client-" + socketId}
-											>
-												<ListItemAvatar>
-													<Avatar src={this.getclientPositionMarkerIcon(client.user)} />
-												</ListItemAvatar>
-												<ListItemText
-													primary={client.user.first_name + " " + client.user.last_name}
-													secondary={String.isString(client.user?.role) ? client.user?.role.humanize() : ""}
-												/>
-											</ListItem>
-										)
-									}
-								})}
+								{Object.entries(clientsPositions).map(([id, client], index) => (
+									<ListItem
+										className={"cursor-pointer hover:bg-gray-400"}
+										onClick={this.handleClientListItemClick(id, client)}
+										key={"client-" + id}
+									>
+										<ListItemAvatar>
+											<Avatar src={client.icon} />
+										</ListItemAvatar>
+										<ListItemText
+											primary={client.title}
+											secondary={String.isString(client.user?.role) ? client.user?.role.humanize() : ""}
+										/>
+									</ListItem>
+								))}
 							</List>
 						)}
 
@@ -842,4 +812,8 @@ const mapStateToProps = state => ({
 	device: state.device,
 })
 
-export default compose(connect(mapStateToProps, { apiCallRequest, closeDialog, openDialog }), withTheme)(GoogleMapOverview)
+export default compose(
+	connect(mapStateToProps, { apiCallRequest, closeDialog, openDialog }),
+	withTheme,
+	withClientPositions
+)(GoogleMapOverview)

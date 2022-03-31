@@ -39,6 +39,7 @@ export default function sendMessage(message) {
 
 					let sent_message = null
 					try {
+
 						sent_message = await ApiService.post("/messages", message_to_send).then(res => {
 							if (!JSON.isEmpty(res?.body?.data)) {
 								return res.body.data
@@ -50,12 +51,14 @@ export default function sendMessage(message) {
 					} catch (error) {
 						console.error("sendMessage error", error)
 					}
+
+					console.log("sendMessage sent_message", sent_message)
 					if (!JSON.isEmpty(sent_message)) {
 						//
 						sent_message.conversation = message_to_send.conversation
 						sent_message.sender = message_to_send.sender
 						await dispatch(appendMessage(sent_message))
-						dispatch(sendUnsentMessages())
+						// dispatch(sendUnsentMessages())
 					}
 					return sent_message
 				}

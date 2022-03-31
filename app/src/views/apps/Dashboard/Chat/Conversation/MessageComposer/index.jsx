@@ -91,20 +91,16 @@ const messageTypes = {
 }
 
 const MessageComposer = React.forwardRef((props, ref) => {
-	const { onSubmit, replyFor, ...rest } = props
+	const { onSubmit, replyFor, conversation, ...rest } = props
 	const theme = useTheme()
 	const dispatch = useDispatch()
 	const auth = useSelector(state => state.auth)
-	const active_conversation = useSelector(state => state.communication?.messaging?.active_conversation)
-	const conversations = useSelector(state => state.communication?.messaging?.conversations)
 
-	const indexOfConversation = getIndexOfConversation(conversations, active_conversation)
-	const conversation = conversations[indexOfConversation]
-	const { isAuthenticated, user } = auth
+	const conversationRef = useRef(conversation)
 
-	console.log("MessageComposer active_conversation", active_conversation)
 	const { handleSubmit, TextField, FilePicker, values, setValue, resetValues } = usePersistentForm({
-		name: `compose-message-${!String.isEmpty(conversation?.uuid) ? conversation?.uuid : "new"}`,
+		// name: `compose-message-${conversation?.uuid || conversation?._id || "new"}`,
+		name: `compose-message`,
 		defaultValues: {
 			content: "",
 			attachments: [],
@@ -114,8 +110,8 @@ const MessageComposer = React.forwardRef((props, ref) => {
 			reply_for: null,
 			type: "text",
 			content: "",
-			conversation: conversation?._id,
-			conversation_uuid: conversation?.uuid,
+			// conversation: conversation?._id,
+			// conversation_uuid: conversation?.uuid,
 		},
 	})
 	const inputRef = useRef(null)
@@ -155,8 +151,8 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		let form_values = {
 			...values,
 			sender: auth.user?._id,
-			conversation: conversation?._id || conversation,
-			conversation_uuid: conversation?.uuid || conversation,
+			// conversation: conversation?._id || conversation,
+			// conversation_uuid: conversation?.uuid || conversation,
 			content: content,
 		}
 		if (["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && Array.isEmpty(form_values.attachments)) {
@@ -206,17 +202,47 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		autoFocusContentInput()
 	})
 
+
+	const handleOnStartedTyping = useCallback(() => {
+		if (!isTypingRef.current) {
+			isTypingRef.current = true
+			EventRegister.emit("compose-message-started", {
+				conversation: conversationRef.current.uuid || conversationRef.current._id,
+				user: auth.user._id,
+			})
+		}
+	}, [ conversation])
+
+	const handleOnStoppedTyping = useCallback(() => {
+		if (isTypingRef.current) {
+			isTypingRef.current = false
+			EventRegister.emit("compose-message-stopped", {
+				conversation: conversationRef.current.uuid || conversationRef.current._id,
+				user: auth.user?._id,
+			})
+		}
+	}, [])
+
 	useDidUpdate(() => {
 		if (!String.isEmpty(values.content) || !Array.isEmpty(values.attachments)) {
-			if (!isTypingRef.current) {
-				isTypingRef.current = true
-				EventRegister.emit("compose-message-started", { conversation: conversation.uuid, user: auth.user._id })
-			}
-		} else if (isTypingRef.current) {
-			isTypingRef.current = false
-			EventRegister.emit("compose-message-stopped", { conversation: conversation.uuid, user: auth.user._id })
+			handleOnStartedTyping()
+		} else {
+			handleOnStoppedTyping()
 		}
 	}, [values.content])
+
+	// useDidUpdate(() => {
+
+	// 	if (!!inputRef.current) {
+	// 		inputRef.current.focus()
+	// 		inputRef.current.value = ""
+	// 	}
+	// }, [conversation.uuid, conversation._id])
+
+
+	useDidUpdate(() => {
+		conversationRef.current = conversation
+	}, [conversation])
 
 	return (
 		<Grid {...rest} container ref={ref}>

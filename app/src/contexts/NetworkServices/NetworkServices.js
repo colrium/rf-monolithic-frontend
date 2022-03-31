@@ -1,14 +1,15 @@
 import React from 'react';
 import Api from "services/Api";
 import SocketIO from "services/SocketIO"
-import socketIoClient from "socket.io-client"
-import { initializeApp } from "firebase/app"
-import { getMessaging } from "firebase/messaging"
-// import { getFirestore } from "firebase/firestore";
-import { getFirestore, collection, doc, setDoc, getDocs, getDoc } from "firebase/firestore/lite"
+import Firebase, { messaging, firestore, getFirestoreDoc, createUpdateFirestoreDoc, getFCMToken } from "services/Firebase"
+import { getToken, onTokenRefresh } from "firebase/messaging"
+// import { initializeApp } from "firebase/app"
+// import { getMessaging } from "firebase/messaging"
+// // import { getFirestore } from "firebase/firestore";
+// import { getFirestore, collection, doc, setDoc, getDocs, getDoc } from "firebase/firestore/lite"
 // import "firebase/messaging";
 // import "firebase/firestore";
-import { firebase as firebaseConfig, firebaseWebPushCertificate } from "config"
+// import { firebase as firebaseConfig, firebaseWebPushCertificate } from "config"
 import { onBackgroundMessage } from "firebase/messaging/sw"
 import { onMessage } from "firebase/messaging"
 import { connect } from "react-redux"
@@ -18,6 +19,7 @@ import { fetchInbox, appendMessage } from "state/actions/communication"
 import { setSettings } from "state/actions/app"
 import { EventRegister } from "utils"
 import compose from "recompose/compose"
+
 
 class NetworkServices extends React.Component {
 	unsubscribeFcMessagingOnMessage = () => undefined
@@ -56,11 +58,7 @@ class NetworkServices extends React.Component {
 		const {
 			auth: { isAuthenticated, user },
 		} = this.props
-		if (isAuthenticated && !JSON.isEmpty(user)) {
-			this.initializeFirebaseMessaging(user)
-		}
 
-		EventRegister.emit("test", { type: "normal" })
 	}
 
 	componentDidMount() {
@@ -69,6 +67,10 @@ class NetworkServices extends React.Component {
 			auth: { isAuthenticated, user },
 			fetchInbox,
 		} = this.props
+		if (isAuthenticated && !JSON.isEmpty(user)) {
+
+			this.initializeFirebaseMessaging(user)
+		}
 		this.initializeSockets()
 
 		if (isAuthenticated) {
@@ -117,9 +119,11 @@ class NetworkServices extends React.Component {
 		SocketIO.on("disconnect", this.handleSocketsDisconnected)
 	}
 
+
 	handleSocketsConnected() {
 		const {
 			auth: { isAuthenticated, user },
+			appendMessage,
 			setCurrentUser,
 			setSettings,
 		} = this.props
@@ -135,13 +139,31 @@ class NetworkServices extends React.Component {
 				}
 			})
 
+			SocketIO.on("message-marked-as-read", ({message}) => {
+				appendMessage(message)
+			})
+			SocketIO.on("message-marked-as-received", ({ message }) => {
+				appendMessage(message)
+			})
+			SocketIO.on("message-deleted-for-all", ({ message }) => {
+				appendMessage(message)
+			})
+			SocketIO.on("message-sent", message => {
+				appendMessage(message)
+			})
+
+			SocketIO.on("new-message", message => {
+				appendMessage(message)
+			})
+
 			SocketIO.on("settings", settings => {
 				setSettings(settings)
 			})
-			SocketIO.on("inbox", inbox => {
-				console.log("inbox", inbox)
-			})
+			// SocketIO.on("inbox", inbox => {
+			// 	console.log("inbox", inbox)
+			// })
 			SocketIO.emit("get-settings", user?._id)
+			// SocketIO.emit("get-inbox", {})
 			SocketIO.on("authorized", ({ user }) => {
 				const token = Api.getAccessToken()
 				SocketIO.auth = { token: token.access_token }
@@ -150,7 +172,8 @@ class NetworkServices extends React.Component {
 				const token = Api.getAccessToken()
 				SocketIO.emit("authorization", { token: token.access_token })
 			})
-			SocketIO.on("authorization-failed", ({}) => {
+			SocketIO.on("authorization-failed", data => {
+				console.log("authorization-failed data", data)
 				// EventRegister.emit("logout")
 			})
 		}
@@ -195,29 +218,20 @@ class NetworkServices extends React.Component {
 		}
 	}
 
-	initializeFirebase() {
-		let initializedFirebaseApp
-		initializedFirebaseApp = initializeApp(firebaseConfig)
-		let messaging
-		messaging = getMessaging()
-		let firestore
-		firestore = getFirestore(initializedFirebaseApp)
-	}
 
 	initializeFirebaseMessaging(user) {
 		const { setCurrentUser } = this.props
-		const userId = !JSON.isEmpty(user) && !String.isEmpty(user?._id) ? user?._id : false
-		if (!this.state?.Firebase?.initialized) {
-			return false
-		}
-		if (userId) {
+		const userId = user?._id || user
+
+
+		if (!String.isEmpty(userId)) {
 			this.checkMessagingPermission()
 				.then(hasPermission => {
 					if (hasPermission) {
 						// Get the device token
-						this.state.Firebase.messaging
-							.getToken()
+						getFCMToken()
 							.then(token => {
+								console.log("initializeFirebaseMessaging  getFCMToken token", token)
 								//
 								if (this._isMounted) {
 									this.setState({ fcmToken: token })
@@ -227,31 +241,34 @@ class NetworkServices extends React.Component {
 										fcmToken: token,
 									}
 								}
+
 								return this.saveTokenToDatabase(token, user)
 							})
 							.catch(err => {
 								//
+								console.log("initializeFirebaseMessaging getFCMToken err", err)
 							})
 
 						// If using other push notification providers (ie Amazon SNS, etc)
 						// you may need to get the APNs token instead for iOS:
 						// if(Platform.OS == 'ios') { this.state.Firebase.messaging.getAPNSToken().then(token => { return saveTokenToDatabase(token); }); }
 
-						// Listen to token changes
-						return this.state.Firebase.messaging.onTokenRefresh(newToken => {
-							if (this._isMounted) {
-								this.setState({ fcmToken: newToken })
-							} else {
-								this.state = {
-									...this.state,
-									fcmToken: newToken,
-								}
-							}
-						})
+						// // Listen to token changes
+						// return onTokenRefresh(newToken => {
+						// 	if (this._isMounted) {
+						// 		this.setState({ fcmToken: newToken })
+						// 	} else {
+						// 		this.state = {
+						// 			...this.state,
+						// 			fcmToken: newToken,
+						// 		}
+						// 	}
+						// })
 					}
 				})
-				.catch(err => {
+				.catch(error => {
 					//
+					console.log("initializeFirebaseMessaging error", error)
 				})
 
 			this.unsubscribeFcFirestoreUserOnSnapshot = getFirestoreDoc("users", user?._id).then(function (docSnapshot) {
@@ -264,22 +281,20 @@ class NetworkServices extends React.Component {
 				}
 			})
 
-			// onBackgroundMessage(this.state.Firebase.messaging, this.onFirebaseBackgroundMessageHandler);
-			// this.state.Firebase.messaging.setBackgroundMessageHandler(this.onFirebaseBackgroundMessageHandler);
-			this.unsubscribeFcMessagingOnMessage = onMessage(this.state.Firebase.messaging, this.onFirebaseMessageHandler)
+			// // onBackgroundMessage(this.state.Firebase.messaging, this.onFirebaseBackgroundMessageHandler);
+			// // this.state.Firebase.messaging.setBackgroundMessageHandler(this.onFirebaseBackgroundMessageHandler);
+			this.unsubscribeFcMessagingOnMessage = onMessage(messaging, this.onFirebaseMessageHandler)
 		} else {
 			return
 		}
 	}
 
 	async checkMessagingPermission() {
-		if (!this.state.Firebase?.initialized) {
-			return false
-		}
-		const authStatus = await this.state.Firebase.messaging.requestPermission()
+		return true
+		const authStatus = await messaging.requestPermission()
 		const enabled =
-			authStatus === this.state.Firebase?.messaging?.AuthorizationStatus?.AUTHORIZED ||
-			authStatus === this.Firebase?.messaging?.AuthorizationStatus?.PROVISIONAL
+			authStatus === messaging?.AuthorizationStatus?.AUTHORIZED ||
+			authStatus === messaging?.AuthorizationStatus?.PROVISIONAL
 		return enabled
 	}
 
@@ -391,7 +406,7 @@ class NetworkServices extends React.Component {
 								if (removeToken) {
 									////
 									////
-									this.state.Firebase.firestore
+									firestore
 										.collection("users")
 										.doc(userId)
 										.set({ ...user, tokens: tokens })
@@ -412,7 +427,7 @@ class NetworkServices extends React.Component {
 								if (condition) {
 								}
 
-								this.state.Firebase.firestore
+								firestore
 									.collection("users")
 									.doc(userId)
 									.set({ ...user, tokens: tokens })
@@ -436,7 +451,7 @@ class NetworkServices extends React.Component {
 			auth: { isAuthenticated },
 		} = this.props
 		if (isAuthenticated) {
-			////);
+			console.log("onFirebaseMessageHandler payload", payload)
 			const { data } = payload
 			if (data.event_name === "new-message" || data.event_name === "message-sent") {
 				appendMessage(data._id, false)
@@ -450,6 +465,7 @@ class NetworkServices extends React.Component {
 			auth: { isAuthenticated },
 		} = this.props
 		////);
+		console.log("onFirebaseBackgroundMessageHandler payload", payload)
 		if (isAuthenticated) {
 			const { data } = payload
 			if (data.event_name === "new-message" || data.event_name === "message-sent") {

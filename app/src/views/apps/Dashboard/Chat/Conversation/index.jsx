@@ -3,12 +3,13 @@
 import React, { useCallback, useRef, useLayoutEffect } from "react"
 import Box from "@mui/material/Box"
 import Grid from "@mui/material/Grid"
-
+import Menu from "@mui/material/Menu"
+import MenuItem from "@mui/material/MenuItem"
 import ForumOutlinedIcon from "@mui/icons-material/ForumOutlined"
 import Typography from "@mui/material/Typography"
 import { useSelector, useDispatch } from "react-redux"
 import { useTheme } from "@mui/material/styles"
-import { sendMessage } from "state/actions"
+import { sendMessage, updateMessage } from "state/actions"
 import Message from "./Message"
 import Header from "./Header"
 import MessageComposer from "./MessageComposer"
@@ -17,6 +18,7 @@ import { useDidMount, useDidUpdate, useSetState, useDeepMemo, useMark } from "ho
 import { CellMeasurer, List, AutoSizer, CellMeasurerCache } from "react-virtualized"
 import { EventRegister } from "utils"
 import { useWindowSize } from "react-use"
+import { useNetworkServices } from "contexts"
 
 const Conversation = props => {
 	const {
@@ -31,20 +33,17 @@ const Conversation = props => {
 		selected,
 		...rest
 	} = props
-	const windowSize = useWindowSize()
+
 	const theme = useTheme()
 	const dispatch = useDispatch()
-	const { isAuthenticated, user } = useSelector(state => state.auth)
+	const { user } = useSelector(state => state.auth)
 	const preferences = useSelector(state => state.app?.preferences || {})
-	const canvasRef = useRef(null)
 	const containerRef = useRef(null)
+	const replyForRef = useRef(null)
 	const listRef = useRef(null)
-	const maxMessageWidthRef = useRef(windowSize.width * 0.45)
-	const fontSizeRef = useRef(
-		'400 16px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'
-	)
+	const conversationRef = useRef(data)
+	const { SocketIO } = useNetworkServices()
 	const heightsRef = useRef([])
-	const lineHeightRef = useRef(16)
 	const noOfMessagesRef = useRef(data.messages?.length || 0)
 	const scrollToBottomRef = useRef(true)
 	const scrollToTopRef = useRef(false)
@@ -75,6 +74,7 @@ const Conversation = props => {
 		focused: -1,
 		dateIndexes: [],
 		typing: [],
+		contextMenu: { mouseX: null, mouseY: null },
 	})
 
 	const messageNeedsDateHeader = useCallback(
@@ -120,28 +120,40 @@ const Conversation = props => {
 	)
 	const handleOnMessageContextMenu = useCallback(
 		index => event => {
-			const { messages } = getState()
+			event.preventDefault()
+			const entry = messages[index]
 			setState({
 				focused: index,
 			})
-			if (Function.isFunction(onMessageContextMenu)) {
-				onMessageContextMenu(event, index, messages[index])
-			}
+
+			setState({
+				focused: index,
+				contextMenu: {
+					entry: entry,
+					mouseX: event.clientX - 2,
+					mouseY: event.clientY - 4,
+					open: true,
+				},
+			})
 		},
-		[onMessageContextMenu]
+		[messages]
 	)
+
+	const handleContextClose = () => {
+		setState({ contextMenu: { mouseX: null, mouseY: null, open: false } })
+	}
 
 	const handleOnMessageComposerSubmit = useCallback(
 		composed_message => {
 			let message_to_send = {
 				...composed_message,
-				conversation: data._id,
-				conversation_uuid: data.uuid,
+				conversation: conversationRef.current._id,
+				conversation_uuid: conversationRef.current.uuid,
 			}
 			scrollToBottomRef.current = true
 			dispatch(sendMessage(message_to_send))
 		},
-		[data]
+		[]
 	)
 
 	const loadMoreMessages = useCallback((startIndex, stopIndex) => {
@@ -245,6 +257,47 @@ const Conversation = props => {
 		[data]
 	)
 
+	const handleOnDeleteMessageForAll = useCallback(
+		event => {
+			const { contextMenu } = getState()
+
+			handleContextClose(event)
+			const updatedMessage = {
+				...contextMenu.entry,
+				state: "deleted-for-all",
+				deletions: conversationRef.current.recipients.concat([conversationRef.current.owner]),
+			}
+			dispatch(updateMessage(updatedMessage))
+			SocketIO.emit("delete-message-for-all", {
+				message: updatedMessage?._id || updatedMessage?.uuid,
+				user: user,
+			})
+		},
+		[user]
+	)
+
+	const handleOnDeleteMessageForUser = useCallback(
+		event => {
+			const { contextMenu } = getState()
+
+			handleContextClose(event)
+			const updatedMessage = {
+				...contextMenu.entry,
+				state: "deleted-for-sender",
+				deletions: Array.isArray(state.contextMenu.entry?.deletions)
+					? state.contextMenu?.entry?.deletions?.concat([user?._id])
+					: [user?._id],
+			}
+			handleContextClose(event)
+			dispatch(updateMessage(updatedMessage))
+			SocketIO.emit("delete-message-for-user", {
+				message: updatedMessage.entry?._id || updatedMessage.entry?.uuid,
+				user: user,
+			})
+		},
+		[user]
+	)
+
 	useDidMount(() => {
 		const onComposeMessagingStartedListener = EventRegister.on("compose-message-started", handleOnUserStartedTyping)
 		const onComposeMessagingStoppedListener = EventRegister.on("compose-message-stopped", handleOnUserStoppedTyping)
@@ -254,6 +307,16 @@ const Conversation = props => {
 			onComposeMessagingStoppedListener.remove()
 		}
 	})
+
+	useDidUpdate(() => {
+		replyForRef.current = null
+	}, [data.uuid, data._id])
+
+	useDidUpdate(() => {
+		conversationRef.current = data
+	}, [data])
+
+
 
 	return (
 		<Box
@@ -292,7 +355,33 @@ const Conversation = props => {
 				{/*!Array.isEmpty(state.typing) && <TypingIndicator className={"absolute bottom-0 left-0"} />*/}
 			</div>
 
-			<MessageComposer onSubmit={handleOnMessageComposerSubmit} className="" conversation={data} />
+			<MessageComposer onSubmit={handleOnMessageComposerSubmit} replyFor={replyForRef.current} conversation={data} />
+
+			<Menu
+				keepMounted={false}
+				open={state.contextMenu?.open}
+				onClose={handleContextClose}
+				anchorReference="anchorPosition"
+				anchorPosition={state.contextMenu.open ? { top: state.contextMenu.mouseY, left: state.contextMenu.mouseX } : undefined}
+			>
+				{state.contextMenu.entry?.sender?._id !== user?._id && state.contextMenu?.entry?.sender !== user?._id && (
+					<MenuItem
+						onClick={event => {
+							replyForRef.current = state.contextMenu?.entry
+							handleContextClose(event)
+						}}
+					>
+						Reply Message
+					</MenuItem>
+				)}
+
+				{(state.contextMenu?.entry?.sender?._id === user?._id || state.contextMenu?.entry?.sender === user?._id) && (
+					<MenuItem onClick={handleOnDeleteMessageForUser}>Delete For Me</MenuItem>
+				)}
+				{(state.contextMenu?.entry?.sender?._id === user?._id || state.contextMenu?.entry?.sender === user?._id) && (
+					<MenuItem onClick={handleOnDeleteMessageForAll}>Delete For All</MenuItem>
+				)}
+			</Menu>
 		</Box>
 	)
 }

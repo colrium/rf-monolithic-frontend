@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getMessaging } from "firebase/messaging";
+import { getMessaging, getToken } from "firebase/messaging";
 // import { getFirestore } from "firebase/firestore";
 import { getFirestore, collection, doc, setDoc, getDocs, getDoc } from 'firebase/firestore/lite';
 // import "firebase/messaging";
@@ -37,10 +37,23 @@ const createUpdateFirestoreDoc = (collectionName, entry, data) => {
 	})
 }
 
-export {
-	initializedFirebaseApp as default,
-	messaging,
-	firestore,
-	getFirestoreDoc,
-	createUpdateFirestoreDoc,
+const getFCMToken = () => {
+	return new Promise((resolve, reject) => {
+		getToken(messaging, { vapidKey: firebaseWebPushCertificate })
+			.then(token => {
+				if (token) {
+					resolve(token)
+				}
+				else {
+					reject("Permission")
+				}
+
+			})
+			.catch(err => {
+				reject(err)
+			})
+	})
 }
+
+
+export { initializedFirebaseApp as default, messaging, getToken, firestore, getFirestoreDoc, createUpdateFirestoreDoc, getFCMToken }

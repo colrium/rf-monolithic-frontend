@@ -3,11 +3,11 @@
 import React from "react"
 import { useClientPositions } from "hooks"
 
-const withClientPositions = config => Component => {
+const withClientPositions = Component => {
 	const componentWithClientPositions = Component =>
 		React.forwardRef((otherProps, ref) => {
-			const clientPositions = useClientPositions({ ...config })
-			return <Component clientPositions={clientPositions} {...otherProps} ref={ref} />
+			const clientPositions = useClientPositions()
+			return <Component clientsPositions={clientPositions} {...otherProps} ref={ref} />
 		})
 	return componentWithClientPositions(Component)
 }

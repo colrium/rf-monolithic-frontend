@@ -151,30 +151,40 @@ const Message = React.forwardRef((props, ref) => {
 		[onClick, data]
 	)
 
-	const handleOnContextMenu = useCallback(
-		index => event => {
+	const handleOnContextMenu = useCallback(event => {
 			event.preventDefault()
-			setState({
-				selected: index,
-			})
-
 			if (Function.isFunction(onContextMenu)) {
-				onContextMenu(event, index, data)
+				onContextMenu(event)
 			}
 		},
-		[onContextMenu, data]
+		[onContextMenu]
 	)
 
 	const handleOnVisibilityChange = useCallback(
 		isVisible => {
-			console.log("handleOnVisible isVisible", isVisible)
-			if (isVisible) {
-				console.log("handleOnVisible data", data)
+			const isIncoming = data.sender?._id !== auth.user?._id && data.sender !== auth.user?._id
+			if (isIncoming) {
+				if (isVisible) {
+					if (data.state === "sent" || data.state === "received" || data.state === "partially-received") {
+						SocketIO.emit("mark-message-as-read", {
+							message: data._id,
+						})
+					}
+				}
+				else{
+					if (data.state === "sent") {
+						SocketIO.emit("mark-message-as-received", {
+							message: data._id,
+						})
+					}
+				}
 			}
 		},
-		[data]
+		[]
 	)
+	const getContent = useCallback(() => {
 
+	}, [])
 	const ensuredForwardRef = useEnsuredForwardedRef(ref)
 	const visible = useVisibility(ensuredForwardRef)
 
