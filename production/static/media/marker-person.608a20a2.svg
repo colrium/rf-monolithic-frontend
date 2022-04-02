@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="0 0 512 512" width="100%" height="100%">
-	<path d="M 256,500 L 100,320 C 100,320 90,260 120,240 L 210,220 L 256,280 L 302,220 L 402,240 C 402,240 422,260 412,320 Z M 312,80 A 55,60 0 1,0 200,80 A 80,300 0 0,0 312,80 Z " stroke-width="20" fill-rule="evenodd" stroke-linecap="round" stroke="rgb(129, 20, 17)" fill="rgb(234, 67, 53)"/>
-
-</svg>

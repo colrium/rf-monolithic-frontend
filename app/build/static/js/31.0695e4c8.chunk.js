@@ -1,1 +1,0 @@
-(this.webpackJsonpdashboard=this.webpackJsonpdashboard||[]).push([[31],{2148:function(s,a,e){"use strict";e.r(a);e(1);var c=e(17),t=e(13),r=e(2084),n=e(0);a.default=function(s){return Object(n.jsx)(c.a,{className:"p-0",children:Object(n.jsx)(t.a,{xs:12,className:"p-0 relative",children:Object(n.jsx)(r.a,{})})})}}}]);

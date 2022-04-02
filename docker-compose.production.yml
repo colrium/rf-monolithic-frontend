@@ -2,7 +2,7 @@ version: "3.7"
 services:
     rf-fe-landingpage-production:
         build:
-            context: ./app
+            context: .
             dockerfile: Dockerfile.production
         container_name: rf-fe-production
         restart: unless-stopped
