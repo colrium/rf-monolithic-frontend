@@ -11,3 +11,4 @@ export * from "./api";
 export * from "./app";
 export * from "./communication";
 export * from "./forms";
+export * from "./lightbox"

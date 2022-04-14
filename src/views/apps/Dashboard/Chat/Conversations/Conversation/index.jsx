@@ -12,30 +12,34 @@ import Avatar from "@mui/material/Avatar"
 import Badge from "@mui/material/Badge"
 import { useNetworkServices } from "contexts"
 import Typography from "@mui/material/Typography"
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction"
 import PersonIcon from "@mui/icons-material/Person"
 import PeopleIcon from "@mui/icons-material/People"
-import AttachFileIcon from "@mui/icons-material/AttachFile"
-import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined"
-import MovieOutlinedIcon from "@mui/icons-material/MovieOutlined"
-import AudiotrackOutlinedIcon from "@mui/icons-material/AudiotrackOutlined"
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined"
 import BlockIcon from "@mui/icons-material/Block"
 import DoneIcon from "@mui/icons-material/Done"
 import DoneAllIcon from "@mui/icons-material/DoneAll"
 import ScheduleIcon from "@mui/icons-material/Schedule"
+import Icon from "@mdi/react"
+import { mdiImage, mdiVolumeHigh, mdiVideo, mdiPaperclip, mdiDotsHorizontal } from "@mdi/js"
 import { useDidMount, useDeepMemo, useSetState, useDidUpdate } from "hooks"
 import dexieDB from "config/dexie/database"
 import { useLiveQuery } from "dexie-react-hooks"
 
-
-const Conversation = (props, ref) => {
+const messageTypeIcons = {
+	video: mdiVideo,
+	audio: mdiVolumeHigh,
+	image: mdiImage,
+	file: mdiPaperclip,
+	// text: mdiDotsHorizontal,
+}
+const Conversation = React.forwardRef((props, ref) => {
 	const { data, className, selected, focused, ...rest } = props
 	const theme = useTheme()
 	const dispatch = useDispatch()
 	const auth = useSelector(state => state.auth)
 	const { SocketIO, Api: ApiService } = useNetworkServices()
 	const [state, setState, getState] = useSetState({
+		loading: false,
 		primaryText: "",
 		recipients: [],
 		avatars: [],
@@ -45,13 +49,35 @@ const Conversation = (props, ref) => {
 		lastMessageSenderName: false,
 	})
 	const conversationID = data?.uuid || data?._id || data
-	const lastMessage = useLiveQuery(() =>
-		dexieDB.messages
-			.where("conversation")
-			.equalsIgnoreCase(conversationID)
-			.or("conversation_uuid")
-			.equalsIgnoreCase(conversationID)
-			.last()
+
+	const lastMessage = useLiveQuery(
+		async () => {
+			setState({ loading: true })
+			let result = await dexieDB.messages
+				.filter(item => item?.conversation === conversationID || item?.conversation_uuid === conversationID)
+				.last()
+			setState({ loading: false })
+			return result
+		},
+		[conversationID],
+		null
+	)
+
+	const unreadCount = useLiveQuery(
+		() =>
+			dexieDB.messages
+				.where("conversation")
+				.equalsIgnoreCase(conversationID)
+				.or("conversation_uuid")
+				.equalsIgnoreCase(conversationID)
+				.and(
+					item =>
+						item.state === "sent" /*  || item.state === "received" || item.state === "partially-received" */ &&
+						item.sender !== auth.user?._id
+				)
+				.count(),
+		[conversationID, auth],
+		0
 	)
 
 	const details = useDeepMemo(() => {
@@ -61,26 +87,25 @@ const Conversation = (props, ref) => {
 		let last_message_content = false
 		let last_message_deleted = false
 		let last_message_sender_name = false
-		const last_message = Array.isArray(data.messages) ? data.messages[data.messages.length - 1] : null
-		if (last_message) {
-			last_message_content = last_message.content
-			if (last_message?.sender === auth.user?._id || last_message?.sender?._id === auth.user?._id) {
+		if (lastMessage) {
+			last_message_content = lastMessage.content
+			if (lastMessage?.sender === auth.user?._id || lastMessage?.sender?._id === auth.user?._id) {
 				last_message_sender_name = "You"
-			} else if (data?.owner === last_message?.sender) {
+			} else if (data?.owner === lastMessage?.sender) {
 				last_message_sender_name = data.started_by.first_name
 			} else {
 				if (Array.isArray(data?.participants)) {
 					data?.participants.map(participant => {
-						if (participant._id === last_message.sender) {
+						if (participant._id === lastMessage.sender) {
 							last_message_sender_name = participant.first_name
 						}
 					})
 				}
 			}
 			if (
-				(last_message?.state === "deleted-for-sender" &&
-					(last_message?.sender._id === auth.user?._id || last_message?.sender === auth.user?._id)) ||
-				last_message?.state === "deleted-for-all"
+				(lastMessage?.state === "deleted-for-sender" &&
+					(lastMessage?.sender._id === auth.user?._id || lastMessage?.sender === auth.user?._id)) ||
+				lastMessage?.state === "deleted-for-all"
 			) {
 				last_message_deleted = true
 			}
@@ -108,15 +133,15 @@ const Conversation = (props, ref) => {
 			avatar = data?.group_avatar
 		}
 		return {
-			primaryText: primaryText,
+			primaryText: `${!String.isEmpty(primaryText) ? primaryText : "Unknown"}`.capitalize(),
 			avatar: avatar,
 			owner: chatUser,
-			last_message: last_message,
+			lastMessage: lastMessage,
 			lastMessageContent: last_message_content,
 			lastMessageDeleted: last_message_deleted,
 			lastMessageSenderName: last_message_sender_name,
 		}
-	}, [data])
+	}, [data, lastMessage])
 
 	return (
 		<ListItemButton
@@ -200,7 +225,7 @@ const Conversation = (props, ref) => {
 								{!details.lastMessageDeleted && (
 									<Typography
 										variant="body2"
-										className="flex-initial truncate mr-2 font-normal"
+										className="flex-initial truncate mr-2 text-xs"
 										sx={{
 											color: theme =>
 												!String.isEmpty(details.lastMessageContent)
@@ -208,7 +233,18 @@ const Conversation = (props, ref) => {
 													: theme.palette.action.disabled,
 										}}
 									>
-										{details.lastMessageContent ? details.lastMessageContent : "No messages yet"}
+										{(details.lastMessage?.type in messageTypeIcons || state.loading) && (
+											<Icon
+												size={0.5}
+												path={state.loading ? mdiDotsHorizontal : messageTypeIcons[details.lastMessage?.type]}
+												color={theme.palette.text.disabled}
+											/>
+										)}
+										{!state.loading && details.lastMessageContent
+											? details.lastMessageContent
+											: !state.loading && JSON.isEmpty(details?.lastMessage)
+											? "No messages yet"
+											: ""}
 									</Typography>
 								)}
 								{details.lastMessageDeleted && (
@@ -220,31 +256,31 @@ const Conversation = (props, ref) => {
 									</div>
 								)}
 
-								{!details.lastMessageDeleted && details.last_message && (
+								{!details.lastMessageDeleted && details.lastMessage && (
 									<div
 										className={"flex flex-row items-center "}
 										style={{
 											color: theme.palette.text.disabled,
 										}}
 									>
-										{details.last_message?.state === "pending" &&
-											(details.last_message?.sender
-												? details.last_message.sender === auth.user?._id ||
-												  details.last_message.sender._id === auth.user?._id
+										{details.lastMessage?.state === "pending" &&
+											(details.lastMessage?.sender
+												? details.lastMessage.sender === auth.user?._id ||
+												  details.lastMessage.sender._id === auth.user?._id
 												: false) && <ScheduleIcon className={"mx-1 text-xs"} fontSize="small" />}
-										{details.last_message?.state === "sent" && details.last_message.sender === auth.user?._id && (
+										{details.lastMessage?.state === "sent" && details.lastMessage.sender === auth.user?._id && (
 											<DoneIcon className={"mx-1 text-xs"} fontSize="small" />
 										)}
-										{(details.last_message?.state === "partially-received" ||
-											details.last_message.state === "received") &&
-											(details.last_message?.sender === auth.user?._id ||
-												details.last_message?.sender._id === auth.user?._id) && (
+										{(details.lastMessage?.state === "partially-received" ||
+											details.lastMessage.state === "received") &&
+											(details.lastMessage?.sender === auth.user?._id ||
+												details.lastMessage?.sender._id === auth.user?._id) && (
 												<DoneAllIcon className={"mx-1 text-xs"} fontSize="small" />
 											)}
-										{(details.last_message?.state === "partially-read" || details.last_message.state === "read") &&
-											(details.last_message?.sender
-												? details.last_message.sender === auth.user?._id ||
-												  details.last_message.sender._id === auth.user?._id
+										{(details.lastMessage?.state === "partially-read" || details.lastMessage.state === "read") &&
+											(details.lastMessage?.sender
+												? details.lastMessage.sender === auth.user?._id ||
+												  details.lastMessage.sender._id === auth.user?._id
 												: false) && <DoneAllIcon className={"mx-1 text-xs"} color={"secondary"} fontSize="small" />}
 									</div>
 								)}
@@ -258,13 +294,13 @@ const Conversation = (props, ref) => {
 					</div>
 				}
 			/>
-			{data?.state?.incoming_unread > 0 && (
+			{unreadCount > 0 && (
 				<ListItemSecondaryAction>
-					<Avatar className={"bg-transparent primary-text h-4 w-4 text-xs"}>{data?.details.incoming_unread}</Avatar>
+					<Avatar className={"bg-transparent primary-text h-4 w-4 text-xs"}>{unreadCount}</Avatar>
 				</ListItemSecondaryAction>
 			)}
 		</ListItemButton>
 	)
-}
+})
 
-export default React.forwardRef(Conversation)
+export default React.memo(Conversation)

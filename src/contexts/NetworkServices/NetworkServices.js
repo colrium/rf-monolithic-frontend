@@ -15,11 +15,10 @@ import { onMessage } from "firebase/messaging"
 import { connect } from "react-redux"
 import * as definations from "definations"
 import { setAuthenticated, setCurrentUser, setToken } from "state/actions"
-import { fetchInbox, appendMessage } from "state/actions/communication"
+import { fetchInbox, ensureMessage } from "state/actions/communication"
 import { setSettings } from "state/actions/app"
 import { EventRegister } from "utils"
 import compose from "recompose/compose"
-
 
 class NetworkServices extends React.Component {
 	unsubscribeFcMessagingOnMessage = () => undefined
@@ -58,7 +57,6 @@ class NetworkServices extends React.Component {
 		const {
 			auth: { isAuthenticated, user },
 		} = this.props
-
 	}
 
 	componentDidMount() {
@@ -68,7 +66,6 @@ class NetworkServices extends React.Component {
 			fetchInbox,
 		} = this.props
 		if (isAuthenticated && !JSON.isEmpty(user)) {
-
 			this.initializeFirebaseMessaging(user)
 		}
 		this.initializeSockets()
@@ -119,11 +116,10 @@ class NetworkServices extends React.Component {
 		SocketIO.on("disconnect", this.handleSocketsDisconnected)
 	}
 
-
 	handleSocketsConnected() {
 		const {
 			auth: { isAuthenticated, user },
-			appendMessage,
+			ensureMessage,
 			setCurrentUser,
 			setSettings,
 		} = this.props
@@ -139,21 +135,21 @@ class NetworkServices extends React.Component {
 				}
 			})
 
-			SocketIO.on("message-marked-as-read", ({message}) => {
-				appendMessage(message)
+			SocketIO.on("message-marked-as-read", ({ message }) => {
+				ensureMessage(message)
 			})
 			SocketIO.on("message-marked-as-received", ({ message }) => {
-				appendMessage(message)
+				ensureMessage(message)
 			})
 			SocketIO.on("message-deleted-for-all", ({ message }) => {
-				appendMessage(message)
+				ensureMessage(message)
 			})
 			SocketIO.on("message-sent", message => {
-				appendMessage(message)
+				ensureMessage(message)
 			})
 
 			SocketIO.on("new-message", message => {
-				appendMessage(message)
+				ensureMessage(message)
 			})
 
 			SocketIO.on("settings", settings => {
@@ -218,11 +214,9 @@ class NetworkServices extends React.Component {
 		}
 	}
 
-
 	initializeFirebaseMessaging(user) {
 		const { setCurrentUser } = this.props
 		const userId = user?._id || user
-
 
 		if (!String.isEmpty(userId)) {
 			this.checkMessagingPermission()
@@ -293,8 +287,7 @@ class NetworkServices extends React.Component {
 		return true
 		const authStatus = await messaging.requestPermission()
 		const enabled =
-			authStatus === messaging?.AuthorizationStatus?.AUTHORIZED ||
-			authStatus === messaging?.AuthorizationStatus?.PROVISIONAL
+			authStatus === messaging?.AuthorizationStatus?.AUTHORIZED || authStatus === messaging?.AuthorizationStatus?.PROVISIONAL
 		return enabled
 	}
 
@@ -447,21 +440,21 @@ class NetworkServices extends React.Component {
 
 	async onFirebaseMessageHandler(payload) {
 		const {
-			appendMessage,
+			ensureMessage,
 			auth: { isAuthenticated },
 		} = this.props
 		if (isAuthenticated) {
 			console.log("onFirebaseMessageHandler payload", payload)
 			const { data } = payload
 			if (data.event_name === "new-message" || data.event_name === "message-sent") {
-				appendMessage(data._id, false)
+				ensureMessage(data._id, false)
 			}
 		}
 	}
 
 	async onFirebaseBackgroundMessageHandler(payload) {
 		const {
-			appendMessage,
+			ensureMessage,
 			auth: { isAuthenticated },
 		} = this.props
 		////);
@@ -469,7 +462,7 @@ class NetworkServices extends React.Component {
 		if (isAuthenticated) {
 			const { data } = payload
 			if (data.event_name === "new-message" || data.event_name === "message-sent") {
-				appendMessage(data._id)
+				ensureMessage(data._id)
 			}
 		}
 	}
@@ -488,7 +481,7 @@ export default compose(
 	connect(mapStateToProps, {
 		setAuthenticated,
 		setCurrentUser,
-		appendMessage,
+		ensureMessage,
 		setSettings,
 		fetchInbox,
 	})

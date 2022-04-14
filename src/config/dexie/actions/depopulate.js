@@ -1,6 +1,6 @@
 /** @format */
 
-export default function(data) {
+function depopulate(data) {
 	let unPopulated = data
 
 	if (JSON.isJSON(data)) {
@@ -29,3 +29,5 @@ export default function(data) {
 	}
 	return unPopulated
 }
+
+export default depopulate

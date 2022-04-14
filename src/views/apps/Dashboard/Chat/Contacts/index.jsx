@@ -9,9 +9,8 @@ import { useTheme } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import Paper from "@mui/material/Paper"
 import InputBase from "@mui/material/InputBase"
-import Divider from "@mui/material/Divider"
-import IconButton from "@mui/material/IconButton"
 import CircularProgress from "@mui/material/CircularProgress"
+import IconButton from "@mui/material/IconButton"
 import SearchIcon from "@mui/icons-material/Search"
 import Box from "@mui/material/Box"
 import Grid from "@mui/material/Grid"
@@ -19,6 +18,9 @@ import { EventRegister } from "utils"
 import { useDidMount, useDidUpdate, useSetState, useDeepMemo } from "hooks"
 import { useNetworkServices } from "contexts"
 import Contact from "./Contact"
+import { database as dexieDB, onContacts } from "config/dexie"
+import { useLiveQuery } from "dexie-react-hooks"
+import { useNavigate } from "react-router-dom"
 
 const Contacts = props => {
 	const { loadData, className, onClick, onContextMenu, keyword, ...rest } = props
@@ -26,13 +28,12 @@ const Contacts = props => {
 	const dispatch = useDispatch()
 	const { isAuthenticated, user } = useSelector(state => state.auth)
 	const { Api } = useNetworkServices()
-
+	const navigate = useNavigate()
 	const [state, setState, getState] = useSetState({
 		selections: [],
 		pagination: {page: 1, pagination: 10},
 		loading: false,
 		focused: [],
-		data: [],
 		noDataText: "No Contacts available",
 	})
 	const queryRef = useRef({ sort: "first_name,last-name" })
@@ -44,27 +45,35 @@ const Contacts = props => {
 	const itemSizeRef = useRef(64)
 	const onUnselectEventRef = useRef(null)
 
+	const contacts = useLiveQuery(
+		() =>
+			dexieDB.contacts
+				.toArray(),
+		[],
+		[]
+	)
+
 	const items = useDeepMemo(
 		deps => {
 			let itemsArr = []
-			if (Array.isArray(state.data)) {
+			if (Array.isArray(contacts)) {
 				if (!String.isEmpty(state.keyword)) {
-					itemsArr = state.data.filter(
+					itemsArr = contacts.filter(
 						entry => `${entry.first_name || ""} ${entry.last_name || ""}`.search(new RegExp(`${state.keyword}`, `i`)) !== -1
 					)
 				} else {
-					itemsArr = state.data
+					itemsArr = contacts
 				}
 			}
 			return itemsArr
 		},
-		[state.data, state.keyword]
+		[contacts, state.keyword]
 	)
 
 	const handleOnClick = useCallback(
 		index => event => {
 			event.preventDefault()
-			setState(prevState => ({
+			/* setState(prevState => ({
 				selections:
 					prevState.selections.indexOf(items[index]?._id) === -1
 						? prevState.selections.concat([items[index]?._id])
@@ -72,7 +81,11 @@ const Contacts = props => {
 			}))
 			if (Function.isFunction(onClick)) {
 				onClick(event, index, items[index])
+			} */
+			if (!!items[index]) {
+				navigate(`/messaging/conversations?with=${items[index].email_address || items[index]._id}`.toUriWithDashboardPrefix())
 			}
+
 		},
 		[onClick, items]
 	)
@@ -105,7 +118,19 @@ const Contacts = props => {
 			})
 		})
 		if (items.length === 0 || loadData) {
+			setState({ loading: true })
 			Api.get("/contacts", { params: { ...queryRef.current } })
+				.then(res => {
+					const {
+						body: { data, page, pages, count },
+					} = res
+					setState(prevState => ({ loading: false, pagination: { ...prevState.pagination, page, pages, count } }))
+					onContacts(data)
+				})
+				.catch(error => {
+					console.error("Get Contacts error", error)
+					setState({ loading: false })
+				})
 		}
 
 		return () => {
@@ -118,11 +143,26 @@ const Contacts = props => {
 	const onSearchFormSubmit = useCallback(
 		event => {
 			event.preventDefault()
-			if (searchInputRef.current) {
-				Api.get("/contacts", { params: { ...queryRef.current, q: searchInputRef.current.val } })
+			const {loading} = getState()
+			console.log("onSearchFormSubmit searchInputRef.current.val", searchInputRef.current.value)
+			if (!loading && !String.isEmpty(searchInputRef.current?.value)) {
+				setState({ loading: true })
+				Api.get("/contacts", { params: { ...queryRef.current, q: searchInputRef.current.value } })
+					.then(res => {
+						const {
+							body: { data, page, pages, count },
+						} = res
+						console.log("onSearchFormSubmit res", res)
+						setState(prevState => ({ loading: false /* pagination: { ...prevState.pagination, page, pages, count }  */ }))
+						onContacts(data)
+					})
+					.catch(error => {
+						console.error("Get Contacts error", error)
+						setState({ loading: false })
+					})
 			}
 		},
-		[state.loading]
+		[]
 	)
 
 	const getRowHeight = useCallback(({ index }) => {
@@ -131,24 +171,32 @@ const Contacts = props => {
 
 	const handleOnScroll = useCallback(
 		({ clientHeight, scrollHeight, scrollTop }) => {
-			const scrollBottom = Math.round(scrollHeight - scrollTop) - Math.round(clientHeight)
-			scrollToBottomRef.current = scrollBottom <= itemSizeRef.current
-			if (!scrollToBottomRef.current) {
-				scrollToTopRef.current = scrollTop <= itemSizeRef.current
-			} else {
-				scrollToTopRef.current = false
-			}
-			if (
-				!state.loading &&
-				state.scrollToBottomRef.current &&
-				state.pagination.page < state.pagination.pages &&
-				String.isEmpty(state.keyword)
-			) {
-				console.log("handleOnScroll state.pagination", state.pagination)
-				Api.get("/contacts", { params: { ...queryRef.current, page: state.pagination.page + 1 } })
+			const {loading, pagination, keyword } = getState()
+			console.log("handleOnScroll pagination", pagination)
+			console.log("handleOnScroll loading", loading)
+			if (!loading) {
+				const scrollBottom = Math.round(scrollHeight - scrollTop) - Math.round(clientHeight)
+				scrollToBottomRef.current = scrollBottom <= itemSizeRef.current
+				if (!scrollToBottomRef.current) {
+					scrollToTopRef.current = scrollTop <= itemSizeRef.current
+				} else {
+					scrollToTopRef.current = false
+				}
+				if (scrollToBottomRef.current && pagination.page < pagination.pages && String.isEmpty(keyword)) {
+					setState({loading: true})
+					Api.get("/contacts", { params: { ...queryRef.current, page: pagination.page + 1 } }).then(res => {
+						const {body: {data, page, pages, count}} = res
+						setState(prevState => ({ loading: false, pagination: { ...prevState.pagination, page, pages, count } }))
+						onContacts(data)
+						console.log("handleOnScroll res", res)
+					}).catch(error => {
+						console.error("On Contacts Scroll error", error)
+						setState({ loading: false })
+					})
+				}
 			}
 		},
-		[state.loading, state.pagination, state.keyword]
+		[]
 	)
 
 	const rowRenderer = useCallback(
@@ -181,7 +229,7 @@ const Contacts = props => {
 					<Typography
 						variant="subtitle1"
 						color="textSecondary"
-						className="mx-0 mb-8 h-12 w-12 md:w-20  md:h-20 rounded-full text-xl md:text-4xl flex flex-row items-center justify-center"
+						className="mx-0 my-12 h-20 w-20 md:w-40  md:h-40 rounded-full text-4xl md:text-6xl flex flex-row items-center justify-center"
 						sx={{
 							color: theme => theme.palette.text.disabled,
 							backgroundColor: theme => theme.palette.background.paper,
@@ -189,12 +237,7 @@ const Contacts = props => {
 					>
 						<ContactsIcon fontSize="inherit" />
 					</Typography>
-					<Typography
-						variant="body2"
-						color="textSecondary"
-						className="mx-0 text-xs"
-						sx={{ color: theme => theme.palette.text.disabled }}
-					>
+					<Typography variant="body2" color="textSecondary" className="mx-0" sx={{ color: theme => theme.palette.text.disabled }}>
 						{state.noDataText}
 					</Typography>
 				</Grid>
@@ -215,7 +258,7 @@ const Contacts = props => {
 	return (
 		<Box className="flex flex-col h-full">
 			<Box>
-				<Paper component="form" className="flex item-center mx-2 p-1 mt-2" onSubmit={onSearchFormSubmit}>
+				<Paper component="form" className="flex items-center mx-2 p-1 mt-2" onSubmit={onSearchFormSubmit}>
 					<InputBase
 						sx={{ ml: 1, flex: 1 }}
 						placeholder="Search Contacts"
@@ -224,9 +267,10 @@ const Contacts = props => {
 						inputProps={{ "aria-label": "search contacts" }}
 						inputRef={searchInputRef}
 					/>
-					<IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
-						<SearchIcon />
-					</IconButton>
+					{!state.loading ? <IconButton type="submit" size="small" aria-label="search">
+						<SearchIcon fontSize="inherit" />
+					</IconButton> : <CircularProgress size={18} />}
+
 				</Paper>
 			</Box>
 

@@ -23,10 +23,6 @@ import { useWindowSize } from "react-use";
 
 export const VirtualizedTableCell = props => {
 	const { row, onClick, resolveRowCellObjText, ...cell } = props;
-	console.log(
-		"VirtualizedTableCell cell?.getCellProps",
-		cell?.getCellProps()
-	);
 	const content = useMemo(() => {
 		if (!JSON.isJSON(cell?.value)) {
 			if (Function.isFunction(cell?.column?.Header?.renderRowCell)) {

@@ -54,17 +54,17 @@ const Header = props => {
 			titleStr = "Conversation"
 			if (conversation.type == "individual") {
 				if (
-					auth.user?._id === conversation.owner?._id ||
-					auth.user?._id === conversation.owner ||
-					auth.user?._id === conversation.started_by?._id ||
-					auth.user?._id === conversation.started_by
+					auth.user?._id === conversation?.owner?._id ||
+					auth.user?._id === conversation?.owner ||
+					auth.user?._id === conversation?.started_by?._id ||
+					auth.user?._id === conversation?.started_by
 				) {
 					if (
-						(auth.user?._id === conversation.started_by?._id || auth.user?._id === conversation.started_by) &&
-						!String.isEmpty(conversation.participants[0].first_name)
+						(auth.user?._id === conversation.started_by?._id || auth.user?._id === conversation?.started_by) &&
+						!String.isEmpty(conversation?.participants[0]?.first_name)
 					) {
 						titleStr = `${conversation.participants[0].first_name} ${conversation.participants[0].last_name}`
-					} else if (Array.isArray(conversation.participants)) {
+					} else if (Array.isArray(conversation?.participants)) {
 						for (let i = 0; i < conversation.participants.length; i++) {
 							if (conversation.participants[i]?._id === auth.user?._id) {
 								titleStr = `${conversation.participants[i]?.first_name} ${conversation.participants[i]?.last_name}`
@@ -116,9 +116,9 @@ const Header = props => {
 				) {
 					if (
 						(auth.user?._id === conversation.started_by?._id || auth.user?._id === conversation.started_by) &&
-						!String.isEmpty(conversation.participants[0].first_name)
+						!String.isEmpty(conversation.participants[0]?.first_name)
 					) {
-						subtitleStr = `${conversation.participants[0].presence}`
+						subtitleStr = `${conversation.participants[0]?.presence}`
 					} else if (Array.isArray(conversation.participants)) {
 						for (let i = 0; i < conversation.participants.length; i++) {
 							if (conversation.participants[i]?._id === auth.user?._id) {

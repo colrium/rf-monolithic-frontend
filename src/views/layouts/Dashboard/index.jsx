@@ -20,7 +20,7 @@ import { useSetState, useDidMount, useDidUpdate } from "hooks"
 import { Outlet, useSearchParams } from "react-router-dom"
 
 const Dashboard = props => {
-	const { sidebar_items } = props
+	const { sidebar_items, children } = props
 	const { SocketIO } = useNetworkServices()
 	const nav = useSelector(state => state.nav)
 	const dashboard = useSelector(state => state.dashboard)
@@ -113,7 +113,7 @@ const Dashboard = props => {
 					className={"absolute top-20 left-0 right-0"}
 				>
 					<GridItem xs={12}>
-						<Outlet />
+						{children}
 					</GridItem>
 				</GridContainer>
 				<ActionDialog />

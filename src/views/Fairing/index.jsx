@@ -39,7 +39,11 @@ const Fairing = props => {
 	}, [location, layout])
 
 	if (layout == "dashboard") {
-		return <DashboardLayout sidebar_items={drawer_items} />
+		return (
+		<DashboardLayout sidebar_items={drawer_items} >
+				<Outlet />
+			</DashboardLayout>
+		)
 	} else {
 		return (
 			<LandingPageLayout>

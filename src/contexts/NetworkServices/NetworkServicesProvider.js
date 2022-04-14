@@ -2,12 +2,12 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNetworkState, useCookie } from "react-use"
 import { firebase as firebaseConfig, baseUrls, client_id, client_secret, environment, authTokenLocation, authTokenName } from "config"
-import NetworkServices from "./NetworkServices"
+import FirebaseService from "./FirebaseService"
 import WebSocketService from "./WebSocketService"
 
 import NetworkServicesContext from "./NetworkServicesContext"
 import { setAuthenticated, setCurrentUser, setToken, clearAppState, setPreferences, setSettings } from "state/actions"
-import { FirebaseAppProvider, FirestoreProvider } from "reactfire"
+// import { FirebaseAppProvider, FirestoreProvider } from "reactfire"
 import Api from "services/Api"
 import { EventRegister } from "utils"
 import { useDidMount } from "hooks"
@@ -21,7 +21,7 @@ const NetworkServicesProvider = props => {
 	const dispatch = useDispatch()
 	const preferences = useSelector(state => ({ ...state.app?.preferences }))
 	const settings = useSelector(state => ({ ...state.app?.settings }))
-	const {user, isAuthenticated} = useSelector(state => state.auth)
+	const { user, isAuthenticated } = useSelector(state => state.auth)
 
 	const networkState = useNetworkState()
 
@@ -47,7 +47,7 @@ const NetworkServicesProvider = props => {
 
 	const handleOnLogin = useCallback(event => {
 		console.log("handleOnLogin event.detail", event.detail)
-		const { profile } = {...event.detail}
+		const { profile } = { ...event.detail }
 		if (JSON.isJSON(profile)) {
 			dispatch(setCurrentUser(profile))
 		}
@@ -166,11 +166,7 @@ const NetworkServicesProvider = props => {
 		return () => {
 			onChangeSettingSubscription.remove()
 		}
-	}, [])
-
-
-
-
+	}, [settings])
 
 	useDidMount(() => {
 		const removeAuthSubscritions = initializeAuthSubscriptions()
@@ -188,15 +184,19 @@ const NetworkServicesProvider = props => {
 		// console.log("networkState", networkState)
 	})
 
-
 	return (
-		<WebSocketService>
-			{SocketIO => (
-				<NetworkServicesContext.Provider value={{ SocketIO, Api, network: networkState }} {...rest}>
-					<FirebaseAppProvider firebaseConfig={firebaseConfig}>{children}</FirebaseAppProvider>
-				</NetworkServicesContext.Provider>
+		<FirebaseService>
+			{Firebase => (
+				<WebSocketService>
+					{SocketIO => (
+						<NetworkServicesContext.Provider value={{ SocketIO, Api, network: networkState, Firebase }} {...rest}>
+							{/* <FirebaseAppProvider firebaseConfig={firebaseConfig}>{children}</FirebaseAppProvider> */}
+							{children}
+						</NetworkServicesContext.Provider>
+					)}
+				</WebSocketService>
 			)}
-		</WebSocketService>
+		</FirebaseService>
 	)
 }
 

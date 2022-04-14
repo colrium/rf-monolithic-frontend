@@ -17,7 +17,7 @@ import dialog from "./dialog";
 import ecommerce from "./ecommerce";
 import communication from "./communication";
 import forms from "./forms";
-
+import lightbox from "./lightbox"
 
 const combinedReducer = combineReducers({
 	api,
@@ -33,7 +33,8 @@ const combinedReducer = combineReducers({
 	forms,
 	ecommerce,
 	communication,
-});
+	lightbox,
+})
 const appReducer = combineReducers((state = {}) => state);
 
 const rootReducer = (state, action) => {

@@ -30,8 +30,7 @@ const FileDropZone = React.forwardRef((props, ref) => {
 				inputComponent: Dropzone,
 				inputProps: {
 					...rest,
-
-				}
+				},
 			}}
 			className={`${className ? className : ""} cursor-pointer`}
 			variant={variant}
@@ -43,7 +42,7 @@ const FileDropZone = React.forwardRef((props, ref) => {
 			required={required}
 			fullWidth
 			multiline
-			ref={ref}
+			inputRef={ref}
 		/>
 	)
 })

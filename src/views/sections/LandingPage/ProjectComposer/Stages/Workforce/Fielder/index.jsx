@@ -23,7 +23,12 @@ import { useSetState, useDidUpdate, useDidMount, useLazyImage } from "hooks";
 const Fielder = (props) => {
     const {className, selected, onSelect, onDeselect, fielder, onClickGender, onClickCourse, ...rest } = props;
     const { avatar, icon, first_name, course, rating, gender, education } = fielder || {}
-    const [imageSrc, { ref: imageRef }] = useLazyImage((avatar ? (/*ApiService.getAttachmentFileUrl(avatar)*/ "https://api.realfield.io/attachments/download/" + avatar) : ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/avatars/" + icon + ".png")), ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/avatars/" + icon + ".png"));
+    const [imageSrc, { ref: imageRef }] = useLazyImage({
+		src: avatar
+			? /*ApiService.getAttachmentFileUrl(avatar)*/ "https://api.realfield.io/attachments/download/" + avatar
+			: "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/avatars/" + icon + ".png",
+		fallback: "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/avatars/" + icon + ".png",
+	})
     const checkboxLabel = useMemo(() => ({ inputProps: { 'aria-label': selected ? `Unselect ${first_name}` : `Select ${first_name}` } }), [selected, first_name]);
 
     const handleOnSelectToggle = useCallback((event) => {

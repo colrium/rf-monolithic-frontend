@@ -13,11 +13,48 @@ const Field = React.forwardRef((props, ref) => {
 		shouldUnregister,
 		helperText,
 		onChange,
+		onFocus,
+		onBlur,
 		disabled,
 		render,
 		...rest
 	} = props
 
+	const handleOnChange = useCallback(
+		defaultOnChange => e => {
+			if (Function.isFunction(defaultOnChange)) {
+				defaultOnChange(e)
+			}
+			if (Function.isFunction(onChange)) {
+				onChange(e)
+			}
+		},
+		[onChange]
+	)
+
+	const handleOnFocus = useCallback(
+		defaultOnFocus => e => {
+			if (Function.isFunction(defaultOnFocus)) {
+				defaultOnFocus(e)
+			}
+			if (Function.isFunction(onFocus)) {
+				onFocus(e)
+			}
+		},
+		[onFocus]
+	)
+
+	const handleOnBlur = useCallback(
+		defaultOnBlur => e => {
+			if (Function.isFunction(defaultOnBlur)) {
+				defaultOnBlur(e)
+			}
+			if (Function.isFunction(onBlur)) {
+				onBlur(e)
+			}
+		},
+		[onBlur]
+	)
 
 
 	const renderField = useCallback(
@@ -28,6 +65,8 @@ const Field = React.forwardRef((props, ref) => {
 			const {
 				field: {
 					onChange: fieldOnChange,
+					onFocus: fieldOnFocus,
+					onBlur: fieldOnBlur,
 					value: fieldValue,
 					...fieldParams
 				},
@@ -35,16 +74,16 @@ const Field = React.forwardRef((props, ref) => {
 				formState: { isSubmitting },
 			} = params
 
-			const handleOnChange = () => {
 
-			}
 			//
 
 			return (
 				<FileDropZone
 					{...fieldParams}
 					defaultValue={fieldValue}
-					onChange={onChange || handleOnChange}
+					onChange={handleOnChange(fieldOnChange)}
+					onFocus={handleOnFocus(fieldOnFocus)}
+					onBlur={handleOnBlur(fieldOnBlur)}
 					disabled={disabled || isSubmitting}
 					error={invalid}
 					helperText={error?.message || helperText}

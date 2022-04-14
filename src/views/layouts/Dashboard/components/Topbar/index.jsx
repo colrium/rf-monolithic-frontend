@@ -21,7 +21,8 @@ import { withTheme } from '@mui/styles';
 import Avatar from "components/Avatar";
 import ApiService from "services/Api";
 import { PersonOutlined as UserIcon } from "@mui/icons-material";
-import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
+import NotificationsPopup from "./NotificationsPopup"
+import MessagingIcon from "./MessagingIcon"
 import { logout, setCurrentUser } from "state/actions";
 import { ServiceDataHelper } from "utils/Helpers"
 import { width as drawerWidth } from "config/ui/drawer"
@@ -340,6 +341,8 @@ class Topbar extends Component {
 		})
 	}
 
+
+
 	render() {
 		const {
 			theme,
@@ -478,19 +481,8 @@ class Topbar extends Component {
 								/>
 
 							)*/}
-
-							<Link className={"cursor-pointer md:mx-2"} to={"/messages".toUriWithDashboardPrefix()}>
-								<IconButton>
-									<Badge
-										variant="dot"
-										invisible={Number.parseNumber(messaging.unread_count, 0) === 0}
-										badgeContent={messaging.unread_count}
-										color="primary"
-									>
-										<ForumOutlinedIcon />
-									</Badge>
-								</IconButton>
-							</Link>
+							<MessagingIcon />
+							<NotificationsPopup />
 
 							<Menu
 								id="user-presence-menu"

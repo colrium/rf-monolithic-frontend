@@ -27,19 +27,19 @@ export function setCurrentUser(user) {
 	};
 }
 
-export function updateCurrentUser(user) {
+export function updateCurrentUser(profile) {
 	return async (dispatch, getState) => {
-		const {auth} = getState();
+		const { auth, user } = getState()
 		if (auth.isAuthenticated) {
-			dispatch(setCurrentUser(user));
-			const ApiAuthService = ApiService.getAuthContextRequests();
-		    let persistedServerUser = await  ApiAuthService.update_profile(user).then(res => {
-				return res.body.data
-			}).catch(err => {
-				return false;
-			});
+			dispatch(setCurrentUser(profile))
+			let persistedServerUser = await ApiService.post("/profile", { ...user, ...profile })
+				.then(res => {
+					return res.body.data
+				})
+				.catch(err => {
+					return false
+				})
 		}
-
 	}
 }
 

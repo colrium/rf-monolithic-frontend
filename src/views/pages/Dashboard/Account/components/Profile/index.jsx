@@ -22,7 +22,10 @@ const icon_names = ["female", "female_1", "female_2", "female_3", "female_4", "f
 
 const Profile = (props) => {
 	const { auth, updateCurrentUser } = props;
-	const [avatarSrc, { ref: imageRef }] = useLazyImage(ApiService.getAttachmentFileUrl(auth.user?.avatar), ApiService.endpoint(`/public/img/avatars/${auth.user?.icon}.png`));
+	const [avatarSrc, { ref: imageRef }] = useLazyImage({
+		src: ApiService.getAttachmentFileUrl(auth.user?.avatar),
+		fallback: ApiService.endpoint(`/public/img/avatars/${auth.user?.icon}.png`),
+	})
 
 
 

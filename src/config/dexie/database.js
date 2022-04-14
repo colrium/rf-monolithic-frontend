@@ -11,11 +11,10 @@ class RealfieldDB extends Dexie {
 		super("rf-cache-db")
 		this.version(1).stores({
 			conversations:
-				"_id,uuid,type,recipients,group_admins,group_name,archives,deletions,status,owner,participants,state,started_by",
+				"++id,_id,uuid,type,recipients,group_admins,group_name,archives,deletions,status,owner,participants,state,started_by,created_on,last_used",
 			messages:
-				"_id,uuid,type,archives,deletions,reads,receipts,attachments,is_reply,reply_for,conversation,conversation_uuid,status,sender,content,state,timestamp",
-			contacts:
-				"_id,uuid,first_name,last_name,icon,avatar,email_address,role,gender,rating,staff_id,presence,course",
+				"++id,_id,uuid,type,archives,deletions,reads,receipts,attachments,is_reply,reply_for,conversation,conversation_uuid,status,sender,content,state,timestamp,created_on",
+			contacts: "++id,_id,uuid,first_name,last_name,icon,avatar,email_address,role,gender,rating,staff_id,presence,course",
 			client_positions: "&id,user,latitude,longitude",
 		})
 		try {

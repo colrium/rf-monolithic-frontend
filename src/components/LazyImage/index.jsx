@@ -1,12 +1,14 @@
 /** @format */
 
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import LightBox from "components/LightBox";
-import { Api as ApiService } from "services";
-import { useLazyImage } from "hooks";
+import React, { useState, useCallback } from "react"
+import styled from "styled-components"
 
-const placeHolder = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAD0lEQVR42mNkwAIYh7IgAAVVAAuInjI5AAAAAElFTkSuQmCC";
+import { useLazyImage } from "hooks"
+import { useForwardedRef } from "hooks"
+import { useDispatch } from "react-redux"
+import { setLightbox } from "state/actions"
+const placeHolder = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAD0lEQVR42mNkwAIYh7IgAAVVAAuInjI5AAAAAElFTkSuQmCC"
+import { makeStyles } from "@mui/styles"
 
 const Image = styled.img`
 	display: block;
@@ -29,58 +31,43 @@ const Image = styled.img`
 	}
 `
 
-const LazyImage = (props) => {
-	const {src, alt, onClick, lightbox, className, fallbackSrc = "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/icons/file-error.svg", ...rest } = props;
+const useStyles = makeStyles(theme => ({}))
 
+const LazyImage = React.forwardRef((props, ref) => {
+	const { src, alt, onClick, prev, next, lightbox, Component, className, ...rest } = props
+	const dispatch = useDispatch()
+	const classes = useStyles()
+	const [imageSrc, { ref: imageRef, error, loading }] = useLazyImage({ src: src, ref: ref })
 
-	const [lightboxOpen, setLightboxOpen] = useState(false);
-	const [hasError, setHasError] = useState(false);
-
-	const [imageSrc, { ref: imageRef, error: imageError, loading: imageLoading }] = useLazyImage(src, fallbackSrc)
-
-	const onLoad = event => {
-		event.target.classList.add("loaded");
-	};
-
-	const onError = event => {
-		event.target.src = fallbackSrc;
-		setHasError(true);
-	};
+	const handleOnClick = useCallback(
+		event => {
+			event.preventDefault()
+			if (lightbox) {
+				dispatch(setLightbox({ src, prev, next, alt }))
+			}
+			if (Function.isFunction(onClick)) {
+				onClick(event)
+			}
+		},
+		[onClick, lightbox, src, prev, next, alt]
+	)
 
 	return (
-		<div className={className ? className : ""}>
-			{lightbox && lightboxOpen && (
-				<LightBox
-					src={imageSrc}
-					alt={alt}
-					open={lightboxOpen}
-					onClose={() => setLightboxOpen(false)}
-				/>
-			)}
-			<Image
-				ref={imageRef}
-				src={imageSrc}
-				onClick={event => {
-
-					if (Function.isFunction(onClick)) {
-						onClick(event);
-					} else {
-						event.preventDefault()
-						setLightboxOpen(true);
-					}
-				}}
-				className={
-					(lightbox ? "cursor-pointer " : "cursor-auto") +
-					className ? className :  " w-full h-full"
-				}
-				{...rest}
-			/>
-		</div>
-	);
-};
+		<Component
+			ref={imageRef}
+			src={imageSrc}
+			onClick={handleOnClick}
+			className={`cursor-auto ${lightbox ? "cursor-pointer " : ""} ${className ? className : ""}${!loading ? "loaded" : ""} ${
+				error ? "has-error" : ""
+			}`}
+			{...rest}
+		/>
+	)
+})
 
 LazyImage.defaultProps = {
 	lightbox: true,
-};
+	Component: Image,
+}
 
 export default React.memo(LazyImage);

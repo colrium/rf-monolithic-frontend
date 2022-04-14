@@ -25,10 +25,7 @@ export default function fetchInbox(params = {}, persist = true) {
 
 			if (Array.isArray(inbox_conversations)) {
 				onInbox(inbox_conversations)
-
 			}
-
-
 		}
 		dispatch(setMessagingCache("fetching_inbox", false))
 		return inbox;

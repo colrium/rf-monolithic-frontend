@@ -2,12 +2,10 @@
 
 import React, { useEffect, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { setCurrentUser, setPreferences, setSettings } from "state/actions"
+import { setCurrentUser, setPreferences, setSettings, setActiveConversation } from "state/actions"
 import Api from "services/Api"
 import SocketIO from "services/SocketIO"
-import dexieDB from "config/dexie/database"
-import { onMessageMarkedAsRead, onMessageMarkedAsReceived, onMessageDeletedForAll, onMessageDeletedForUser, onMessageSent,
-onNewMessage, onConversation, onInbox } from "config/dexie/actions"
+import { onMessage, onConversation, onInbox, database as dexieDB } from "config/dexie"
 import { EventRegister } from "utils"
 import { useDidMount } from "hooks"
 
@@ -44,7 +42,9 @@ const WebSocketService = props => {
 	const handleOnMessageMarkedAsRead = useCallback(
 		async data => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onMessageMarkedAsRead(data)
+
+				const nextMessage = { uuid: data.message, state: "read", reads: [data.user] }
+				onMessage(nextMessage)
 			}
 		},
 		[user, isAuthenticated]
@@ -52,7 +52,8 @@ const WebSocketService = props => {
 	const handleOnMessageMarkedAsReceived = useCallback(
 		async data => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onMessageMarkedAsReceived(data)
+				const nextMessage = { uuid: data.message, state: "received", receipts: [data.user] }
+				onMessage(nextMessage)
 			}
 		},
 		[user, isAuthenticated]
@@ -61,7 +62,8 @@ const WebSocketService = props => {
 	const handleOnMessageDeletedForAll = useCallback(
 		async data => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onMessageDeletedForAll(data)
+				const nextMessage = { uuid: data.message, state: "deleted-for-all", deletions: [data.user] }
+				onMessage(nextMessage)
 			}
 		},
 		[user, isAuthenticated]
@@ -69,7 +71,8 @@ const WebSocketService = props => {
 	const handleOnMessageDeletedForUser = useCallback(
 		async data => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onMessageDeletedForUser(data)
+				const nextMessage = { uuid: data.message, state: "deleted-for-user", deletions: [data.user] }
+				onMessage(nextMessage)
 			}
 		},
 		[user, isAuthenticated]
@@ -78,7 +81,17 @@ const WebSocketService = props => {
 	const handleOnMessageSent = useCallback(
 		async message => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onMessageSent(message)
+				onMessage(message)
+			}
+		},
+		[user, isAuthenticated]
+	)
+
+	const handleOnNewConversation = useCallback(
+		async data => {
+			if (isAuthenticated && !JSON.isEmpty(user)) {
+				onConversation(data)
+				dispatch(setActiveConversation(data))
 			}
 		},
 		[user, isAuthenticated]
@@ -87,7 +100,10 @@ const WebSocketService = props => {
 	const handleOnNewMessage = useCallback(
 		async message => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onNewMessage(message)
+				onMessage(message, true)
+				SocketIO.emit("mark-message-as-received", {
+					message: message._id || message.uuid,
+				})
 			}
 		},
 		[user, isAuthenticated]
@@ -104,7 +120,7 @@ const WebSocketService = props => {
 
 	const handleOnInbox = useCallback(
 		async conversations => {
-			console.log("onInbox conversations", conversations)
+			// console.log("onInbox conversations", conversations)
 			if (isAuthenticated && !JSON.isEmpty(user)) {
 				onInbox(conversations)
 			}
@@ -130,6 +146,7 @@ const WebSocketService = props => {
 				dispatch(setPreferences(preferences))
 			})
 			SocketIO.on("inbox", handleOnInbox)
+			SocketIO.on("new-conversation", handleOnNewConversation)
 
 			SocketIO.on("authorized", ({ user }) => {
 				const token = Api.getAccessToken()
@@ -143,6 +160,13 @@ const WebSocketService = props => {
 				console.log("authorization-failed data", data)
 				// EventRegister.emit("logout")
 			})
+			SocketIO.on("create-conversation-error", error => {
+				const {data} = {...error}
+				if (!JSON.isEmpty(data)) {
+					handleOnNewConversation(data)
+				}
+				console.error("create-conversation-error data", data)
+			})
 			if (SocketIO.connected) {
 				SocketIO.emit("get-preferences", {})
 				SocketIO.emit("get-inbox", {})
@@ -155,8 +179,7 @@ const WebSocketService = props => {
 		}
 		if (SocketIO.connected) {
 			SocketIO.emit("get-settings")
-		}
-		else {
+		} else {
 			SocketIO.on("connect", () => {
 				SocketIO.emit("get-settings")
 			})
@@ -190,16 +213,13 @@ const WebSocketService = props => {
 		async message => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
 				const messageID = message?.uuid || message?._id || message
-				onMessageDeletedForUser({ message: messageID, user: user._id })
 				if (SocketIO.connected) {
 					SocketIO.emit("delete-message-for-user", { message: messageID })
-				}
-				else {
+				} else {
 					SocketIO.on("connect", () => {
 						SocketIO.emit("delete-message-for-user", { message: messageID })
 					})
 				}
-
 			}
 		},
 		[user, isAuthenticated]
@@ -209,7 +229,6 @@ const WebSocketService = props => {
 		async message => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
 				const messageID = message?.uuid || message?._id || message
-				onMessageDeletedForAll({ message: messageID, user: user._id })
 				if (SocketIO.connected) {
 					SocketIO.emit("delete-message-for-all", { message: messageID })
 				} else {
@@ -232,6 +251,8 @@ const WebSocketService = props => {
 
 		return () => {
 			onSendMessageListener.remove()
+			onDeleteMessageForUserListener.remove()
+			onDeleteMessageForAllListener.remove()
 			onLoginListener.remove()
 			onLogoutListener.remove()
 		}

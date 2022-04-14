@@ -10,7 +10,7 @@ import {pureShouldComponentUpdate, useOnPropsChanged} from "../../utils/reactUti
 const isDev = () => (process && process.env && process.env.NODE_ENV == "development");
 
 
-const createSortableContainer = (Builder, CanMoveFn = null) => 
+const createSortableContainer = (Builder, CanMoveFn = null) =>
   class SortableContainer extends Component {
     static propTypes = {
       tree: PropTypes.any.isRequired, //instanceOf(Immutable.Map)
@@ -130,7 +130,7 @@ const createSortableContainer = (Builder, CanMoveFn = null) =>
     _getScrollParent(node) {
       if (node == null)
         return null;
-    
+
       if (node === document.body || this._isScrollable(node)) {
         return node;
       } else {
@@ -149,7 +149,7 @@ const createSortableContainer = (Builder, CanMoveFn = null) =>
       let treeElContainer = treeEl.closest(".query-builder-container") || treeEl;
       treeElContainer = this._getScrollParent(treeElContainer) || document.body;
       const scrollTop = treeElContainer.scrollTop;
-      
+
       const _dragEl = this._getDraggableNodeEl(treeEl);
       const _plhEl = this._getPlaceholderNodeEl(treeEl);
 
@@ -271,7 +271,7 @@ const createSortableContainer = (Builder, CanMoveFn = null) =>
       target.removeEventListener("mousemove", this.onDrag);
       target.removeEventListener("mouseup", this.onDragEnd);
     }
-    
+
 
     handleDrag (dragInfo, e, canMoveFn) {
       const canMoveBeforeAfterGroup = true;
@@ -313,7 +313,6 @@ const createSortableContainer = (Builder, CanMoveFn = null) =>
           hovCNodeEl = hovNodeEl ? hovNodeEl.closest(".group-or-rule-container") : null;
         }
         if (!hovCNodeEl) {
-          console.log("out of tree bounds!");
         } else {
           const isGroup = hovCNodeEl.classList.contains("group-container");
           const hovNodeId = hovCNodeEl.getAttribute("data-id");
@@ -428,7 +427,7 @@ const createSortableContainer = (Builder, CanMoveFn = null) =>
                   }
                 }
               }
-              
+
               //sanitize
               availMoves = availMoves.filter(am => {
                 const placement = am[0];
@@ -517,16 +516,16 @@ const createSortableContainer = (Builder, CanMoveFn = null) =>
       const isPend = placement == constants.PLACEMENT_PREPEND || placement == constants.PLACEMENT_APPEND;
       const isParentChange = fromII.parent != toII.parent;
       const isStructChange = isPend || isParentChange;
-      const isForbiddenStructChange = fromII.parentType == "rule_group" || toII.type == "rule_group" 
+      const isForbiddenStructChange = fromII.parentType == "rule_group" || toII.type == "rule_group"
         || toII.parentType == "rule_group";
       const isLockedChange = toII.isLocked || fromII.isLocked || toParentII && toParentII.isLocked;
-      
+
       if (maxNesting && (newLev + 1) > maxNesting)
         return false;
-      
+
       if (isStructChange && (!canRegroup || isForbiddenStructChange || isLockedChange))
         return false;
-      
+
       let res = true;
       if (canMoveFn)
         res = canMoveFn(fromII.node.toJS(), toII.node.toJS(), placement, toParentII ? toParentII.node.toJS() : null);
@@ -569,4 +568,3 @@ export default (Builder, CanMoveFn = null) => {
 
   return ConnectedSortableContainer;
 };
-

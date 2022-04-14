@@ -127,8 +127,7 @@ export const SHOW_CONSENT = "[CONSENT] SHOW_CONSENT";
 
 
 export const CLEAR_APP_STATE = "[APP] CLEAR_STATE";
-// 
-///////////////////////////////////////////////
-//START OF TYPESCRIPT MIGRATION
-///////////////////////////////////////////////
-export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+
+export const LOGIN_SUCCESS = "[AUTH] LOGIN_SUCCESS"
+
+export const SET_LIGHTBOX = "[UI] LIGHTBOX"

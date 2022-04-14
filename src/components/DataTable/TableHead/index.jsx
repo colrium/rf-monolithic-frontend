@@ -97,9 +97,9 @@ export default function TableHeadComponent(props) {
 	);
 }
 
-TableHead.propTypes = {
-	headers: PropTypes.array.isRequired,
-	onRequestSort: PropTypes.func.isRequired,
-	order: PropTypes.oneOf(["", "asc", "desc"]).isRequired,
-	orderBy: PropTypes.string.isRequired,
-};
+// TableHead.propTypes = {
+// 	headers: PropTypes.array.isRequired,
+// 	onRequestSort: PropTypes.func.isRequired,
+// 	order: PropTypes.oneOf(["", "asc", "desc"]).isRequired,
+// 	orderBy: PropTypes.string.isRequired,
+// };

@@ -54,6 +54,22 @@ String.capitalize = targetStr => {
 	return result
 }
 
+String.prototype.capitalize = function () {
+	let targetStr = this
+
+	const words = targetStr.trim().toLowerCase().replaceAll("\t", "").split(" ")
+
+	const result = words
+		.map(word => {
+			if (word.length > 1) {
+				return word[0].toUpperCase() + word.substring(1)
+			}
+			return word.toUpperCase()
+		})
+		.join(" ")
+	return result
+}
+
 String.prototype.replaceAll = function (search, replacement) {
 	var target = this
 	return target.replace(new RegExp(search, "g"), replacement)
@@ -91,7 +107,23 @@ String.uid = function (len, numeric, all_caps) {
 String.uuid = uuidv4
 
 String.containsUrl = function (target) {
-	return new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?").test(target)
+	if (String.isString(target)) {
+		return (
+			new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?").test(target) &&
+			!/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(
+				target
+			)
+		)
+	}
+	return false
+}
+String.highlightContainedUrls = function (target, element = "a") {
+	if (String.isString(target)) {
+		let containedUrls = target.match(
+			new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_])?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?")
+		)
+		console.log("highlightContainedUrls containedUrls", containedUrls)
+	}
 }
 String.getContainedUrl = function (target) {
 	let containedUrl = target.match(

@@ -50,7 +50,6 @@ import DashboardHome from "views/pages/Dashboard/Home"
 import ChatApp from "views/apps/Dashboard/Chat"
 import ChatContacts from "views/apps/Dashboard/Chat/Contacts"
 import ChatConversations from "views/apps/Dashboard/Chat/Conversations"
-import ChatSidebar from "views/apps/Dashboard/Chat/Sidebar"
 
 const RouteComponentPlaceHolder = () => <ProgressIndicator type="logo" size={200} />
 const contexts = [

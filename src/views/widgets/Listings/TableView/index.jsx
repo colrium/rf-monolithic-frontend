@@ -61,6 +61,7 @@ const TableView = props => {
 		notificationsCount: 0,
 	});
 	let columnsRef = React.useRef([]);
+	let queryRef = React.useRef(query);
 
 	const {Api} = useNetworkServices()
 
@@ -273,13 +274,12 @@ const TableView = props => {
 	const loadData = useCallback(() => {
 		if (!!defination && defination?.endpoint) {
 				setState({ loading: true, load_error: false });
-				Api.get(defination.endpoint, {params: {...query}})
+				Api.get(defination.endpoint, {params: {...queryRef.current}})
 					.then(res => {
-						console.log("get query", query);
-						console.log("get res", res)
-						const {sort} = query || {};
-						const { data, pages, page, count } = res;
+						const {sort} = {...queryRef.current};
+						const { data, pages, page, count } = {...res?.body};
 						//
+
 						setState({
 							loading: false,
 							data: data,
@@ -289,7 +289,7 @@ const TableView = props => {
 							sort: sort,
 						});
 						if (Function.isFunction(onLoadData)) {
-							onLoadData(data, query);
+							onLoadData(data, queryRef.current);
 						}
 					})
 					.catch(e => {
@@ -306,7 +306,7 @@ const TableView = props => {
 				loading: false,
 			});
 		}
-	}, [onLoadData, defination, query]);
+	}, [onLoadData, defination]);
 
 	useDidMount(() => {
 		parseColumns();
@@ -314,6 +314,7 @@ const TableView = props => {
 	});
 
 	useDidUpdate(() => {
+		queryRef.current = {...queryRef.current, ...query}
 		loadData();
 	}, [query]);
 
@@ -327,15 +328,24 @@ const TableView = props => {
 		<GridContainer className={"p-0"}>
 			<GridItem className="p-0 m-0" xs={12}>
 				<DataTable
-					rows={Array.isArray(state.data) && state.data?.length > 0 ? state.data : []}
+					rows={Array.isArray(state.data) ? state.data : []}
 					totalCount={state.count}
 					headers={columnsRef.current}
 					sort={state.sort}
 					order={state.order}
+					onPageChange={(event, page) => {
+						queryRef.current = { ...queryRef.current, page: page + 1 }
+						loadData()
+					}}
+					onRowsPerPageChange={event => {
+						// console.log("event", event)
+						queryRef.current = { ...queryRef.current, rpp: event?.target?.value || 10, pagination: event?.target?.value || 10 }
+						loadData()
+					}}
 					orderBy={state.orderBy}
 					loading={state.loading}
 					page={state.page - 1}
-					rowsPerPage={query?.pagination || query?.rpp || 10}
+					rowsPerPage={queryRef.current?.rpp || queryRef.current?.pagination || 10}
 				/>
 			</GridItem>
 		</GridContainer>

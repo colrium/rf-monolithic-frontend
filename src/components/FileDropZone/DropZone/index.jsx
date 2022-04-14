@@ -12,10 +12,9 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Typography from "components/Typography";
 import PropTypes from "prop-types";
 import React, { memo, useMemo, useCallback, useRef } from "react";
-
-import ApiService from "services/Api";
-import { useSetState, useDidUpdate, useDidMount } from "hooks";
-import {useDropArea} from 'react-use';
+import { useNetworkServices } from "contexts"
+import { useSetState, useDidUpdate, useDidMount, useForwardedRef } from "hooks"
+import { useDropArea } from "react-use"
 
 
 const MuiAlert = React.forwardRef((props, ref) => {
@@ -26,62 +25,61 @@ const MuiAlert = React.forwardRef((props, ref) => {
 });
 
 const DropZone = React.forwardRef((props, ref) => {
-    const {
-        acceptedFiles,
-        activeColor,
-        className,
-        readOnly,
-        disabled,
-        dropzoneIcon,
-        defaultColor,
-        containerStyle,
-        helperText,
-        error,
-        variant,
-        label,
-        onChange,
-        onDelete,
-        onDrop,
-        onDropRejected,
-        value,
+	const {
+		acceptedFiles,
+		activeColor,
+		className,
+		readOnly,
+		disabled,
+		dropzoneIcon,
+		defaultColor,
+		containerStyle,
+		helperText,
+		error,
+		variant,
+		label,
+		onChange,
+		onDelete,
+		onDrop,
+		onDropRejected,
+		value,
 		defaultValue,
-        upload,
-        filesLimit,
-        uploadData,
-        maxFileSize,
-        required,
-        showPreviews,
-        dropzoneParagraphClass,
-        dropzoneText,
-        showFileNamesInPreview,
-        showPreviewsInDropzone,
-        showFileNames,
+		upload,
+		filesLimit,
+		uploadData,
+		maxFileSize,
+		required,
+		showPreviews,
+		dropzoneParagraphClass,
+		dropzoneText,
+		showFileNamesInPreview,
+		showPreviewsInDropzone,
+		showFileNames,
 		showAlerts,
-        onFocus,
-        onBlur,
-        ...rest
-    } = props;
+		onFocus,
+		onBlur,
+		...rest
+	} = props
 
-    const [state, setState, getState] = useSetState({
+	const [state, setState, getState] = useSetState({
 		fileObjects: [],
 		value: value || defaultValue,
 	})
 
-    const isMultiple = useMemo(() => filesLimit > 1, [filesLimit]);
-    const showDragDrop = Array.isArray(state.value)
+	const isMultiple = useMemo(() => filesLimit > 1, [filesLimit])
+	const showDragDrop = Array.isArray(state.value)
 		? state.value.length < filesLimit
 		: true &&
-		  ((String.isString(state.value)
-				? state.value.trim().length > 0 && filesLimit === 1
-				: true) ||
+		  ((String.isString(state.value) ? state.value.trim().length > 0 && filesLimit === 1 : true) ||
 				Array.isArray(state.value) ||
 				!state.value)
 
-	const fileInputRef = ref || useRef(null)
+	const { Api } = useNetworkServices()
+	const inputRef = useForwardedRef(ref)
 
 	const getAttachment = useCallback((attachment, params = { populate: 1 }) => {
 		return new Promise((resolve, reject) => {
-			ApiService.get("/attachments/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment), {
+			Api.get("/attachments/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment), {
 				populate: 1,
 				...params,
 			})
@@ -257,9 +255,8 @@ const DropZone = React.forwardRef((props, ref) => {
 										}
 									}
 								}
-
 								upload_data.append("attachment_file", file)
-								ApiService.post("/attachments/upload", upload_data, {})
+								Api.post("/attachments/upload", upload_data, {})
 									.then(upload_res => handleFileUploadSuccess(fileObject, files, file, upload_res))
 									.catch(handleFileUploadError(fileObject, file))
 							} else {
@@ -325,7 +322,7 @@ const DropZone = React.forwardRef((props, ref) => {
 					snackbarMessage: "Attached file " + fileObject.attachment.name + " deleted",
 					snackbarColor: "secondary",
 				})
-				ApiService.delete("/attachments/" + fileObject.attachment._id).catch(err => {})
+				Api.delete("/attachments/" + fileObject.attachment._id).catch(err => {})
 			} else {
 				setState(prevState => ({ fileObjects: prevState.fileObjects.remove(fileIndex) }))
 			}
@@ -373,11 +370,13 @@ const DropZone = React.forwardRef((props, ref) => {
 	)
 
 	const handleOnFocus = useCallback(
-		(triggerClick = true) => {
-			if (triggerClick && !!fileInputRef.current) {
-				fileInputRef.current.click()
+		(event, triggerClick = true) => {
+			if (triggerClick && !!inputRef?.current) {
+				inputRef.current.click()
 			}
-			onFocus()
+			if (Function.isFunction(onFocus)) {
+				onFocus(event)
+			}
 		},
 		[onFocus]
 	)
@@ -423,13 +422,13 @@ const DropZone = React.forwardRef((props, ref) => {
 
 	const [dropAreaBond, dropAreaState] = useDropArea({
 		onFiles: handleOnDrop,
-		onUri: uri => console.log("dropArea uri", uri),
-		onText: text => console.log("dropArea text", text),
+		onUri: uri => {},
+		onText: text => {},
 	})
 
 	useDidUpdate(() => {
 		if (dropAreaState?.over) {
-			handleOnFocus(false)
+			handleOnFocus(null, false)
 		} else {
 			handleOnBlur()
 		}
@@ -437,7 +436,11 @@ const DropZone = React.forwardRef((props, ref) => {
 
 	return (
 		<ClickAwayListener onClickAway={handleOnBlur}>
-			<Box className={`${className ? className : ""} cursor-pointer min-h-20 `} {...dropAreaBond} onClick={handleOnFocus}>
+			<Box
+				className={`${className ? className : ""} cursor-pointer min-h-20 `}
+				{...dropAreaBond}
+				onClick={event => handleOnFocus(event, true)}
+			>
 				<GridContainer className={"h-full w-full p-0 px-4 py-2"}>
 					<GridItem xs={12}>
 						{showDragDrop && (
@@ -473,7 +476,7 @@ const DropZone = React.forwardRef((props, ref) => {
 						type="file"
 						accept={acceptedFiles.join(",")}
 						className="hidden"
-						ref={fileInputRef}
+						ref={inputRef}
 					/>
 				</GridContainer>
 

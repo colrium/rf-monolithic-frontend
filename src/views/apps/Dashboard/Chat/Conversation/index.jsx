@@ -9,18 +9,22 @@ import ForumOutlinedIcon from "@mui/icons-material/ForumOutlined"
 import Typography from "@mui/material/Typography"
 import { useSelector, useDispatch } from "react-redux"
 import { useTheme } from "@mui/material/styles"
-import { sendMessage, updateMessage, fetchMessages } from "state/actions"
+import { sendMessage, ensureMessage, fetchMessages } from "state/actions"
 import Message from "./Message"
 import Header from "./Header"
 import MessageComposer from "./MessageComposer"
 import TypingIndicator from "./TypingIndicator"
 import { useDidMount, useDidUpdate, useSetState, useDeepMemo, useMark } from "hooks"
-import { CellMeasurer, List, AutoSizer, CellMeasurerCache } from "react-virtualized"
+import { CellMeasurer, List, AutoSizer, CellMeasurerCache, ScrollSync } from "react-virtualized"
 import { EventRegister } from "utils"
 import { useWindowSize } from "react-use"
 import { useNetworkServices } from "contexts"
-import dexieDB from "config/dexie/database"
+import { onMessages, database as dexieDB } from "config/dexie"
 import { useLiveQuery } from "dexie-react-hooks"
+import DialogTitle from "@mui/material/DialogTitle"
+import Dialog from "@mui/material/Dialog"
+import DialogContent from "@mui/material/DialogContent"
+import CircularProgress from "@mui/material/CircularProgress"
 
 const Conversation = props => {
 	const {
@@ -42,50 +46,55 @@ const Conversation = props => {
 	const active_conversation = useSelector(state => state.communication?.messaging?.active_conversation)
 	const preferences = useSelector(state => state.app?.preferences || {})
 
-	const messages = useLiveQuery(
-		() =>
-			dexieDB.messages
-				.where("conversation")
-				.equalsIgnoreCase(active_conversation || "")
-				.or("conversation_uuid")
-				.equalsIgnoreCase(active_conversation || "")
-				.toArray(),
-		[active_conversation],
-		[]
-	)
-	console.log("Conversation messages", messages)
-	// const conversation = useLiveQuery(() =>
-	// 	dexieDB.conversations.where("_id").equalsIgnoreCase(active_conversation).or("uuid").equalsIgnoreCase(active_conversation).last()
-	// )
-
-
-	const containerRef = useRef(null)
-	const replyForRef = useRef(null)
-	const listRef = useRef(null)
-	const conversationRef = useRef(conversation)
-	const { SocketIO } = useNetworkServices()
-	const heightsRef = useRef([])
-	const noOfMessagesRef = useRef(messages?.length || 0)
-	const scrollToBottomRef = useRef(true)
-	const scrollToTopRef = useRef(false)
-	const messageHeightRef = useRef(32)
-	const messageHeaderHeightRef = useRef(48)
-	const messageMediaHeightRef = useRef(18 * 6)
-	const messageLinkHeightRef = useRef(18 * 4)
-	const cellMeasurerCache = new CellMeasurerCache({
-		defaultHeight: 30,
-		fixedWidth: true,
-	})
-
-
-
 	const [state, setState, getState] = useSetState({
 		loading: false,
+		loaded: true,
 		selected: -1,
 		focused: -1,
 		dateIndexes: [],
 		typing: [],
 		contextMenu: { mouseX: null, mouseY: null },
+	})
+
+	const messages = useLiveQuery(
+		async () => {
+			let results = []
+			setState({ loading: true })
+			try {
+				results = await dexieDB.messages
+					.where("conversation")
+					.equalsIgnoreCase(active_conversation || "")
+					.or("conversation_uuid")
+					.equalsIgnoreCase(active_conversation || "")
+					.toArray()
+			} catch (error) {}
+			if (results?.length > 1) {
+				results = results.sort((a, b) => Date.parseFrom(a.timestamp || a.created_on) - Date.parseFrom(b.timestamp || b.created_on))
+			}
+
+			setState({ loading: false, loaded: true })
+			return results
+		},
+		[active_conversation],
+		[]
+	)
+
+	const containerRef = useRef(null)
+	const replyForRef = useRef(null)
+	const listRef = useRef(null)
+	const conversationRef = useRef(conversation)
+	const { SocketIO, Api } = useNetworkServices()
+	const heightsRef = useRef([])
+	const scrollToAlignmentRef = useRef("end")
+	const scrollToBottomRef = useRef(true)
+	const scrollToTopRef = useRef(false)
+	const messageHeightRef = useRef(32)
+	const messageHeaderHeightRef = useRef(48)
+	const messageMediaHeightRef = useRef(250)
+	const messageLinkHeightRef = useRef(18 * 4)
+	const cellMeasurerCache = new CellMeasurerCache({
+		defaultHeight: 30,
+		fixedWidth: true,
 	})
 
 	const messageNeedsDateHeader = useCallback(
@@ -104,8 +113,6 @@ const Conversation = props => {
 		[messages]
 	)
 
-
-
 	const getRowHeight = useCallback(({ index }) => {
 		if (index < messages.length) {
 			return heightsRef.current[index]
@@ -115,7 +122,6 @@ const Conversation = props => {
 
 	const handleOnMessageClick = useCallback(
 		index => event => {
-			const { messages } = getState()
 			setState({
 				focused: index,
 			})
@@ -123,7 +129,7 @@ const Conversation = props => {
 				onMessageClick(event, index, messages[index])
 			}
 		},
-		[onMessageClick]
+		[onMessageClick, messages]
 	)
 	const handleOnMessageContextMenu = useCallback(
 		index => event => {
@@ -150,18 +156,15 @@ const Conversation = props => {
 		setState({ contextMenu: { mouseX: null, mouseY: null, open: false } })
 	}
 
-	const handleOnMessageComposerSubmit = useCallback(
-		composed_message => {
-			let message_to_send = {
-				...composed_message,
-				conversation: conversationRef.current._id,
-				conversation_uuid: conversationRef.current.uuid,
-			}
-			scrollToBottomRef.current = true
-			dispatch(sendMessage(message_to_send))
-		},
-		[]
-	)
+	const handleOnMessageComposerSubmit = useCallback(composed_message => {
+		let message_to_send = {
+			...composed_message,
+			conversation: conversationRef.current._id,
+			conversation_uuid: conversationRef.current.uuid,
+		}
+		scrollToBottomRef.current = true
+		dispatch(sendMessage(message_to_send))
+	}, [])
 
 	const loadMoreMessages = useCallback((startIndex, stopIndex) => {
 		console.log("loadMoreMessages startIndex", startIndex)
@@ -169,15 +172,17 @@ const Conversation = props => {
 	}, [])
 
 	const handleOnScroll = useCallback(({ clientHeight, scrollHeight, scrollTop }) => {
-		const first_message_height = heightsRef.current[0]
-		const last_message_height = heightsRef.current[heightsRef.current.length - 1]
-		scrollToBottomRef.current =
-			Math.round(scrollHeight - scrollTop) - Math.round(clientHeight) <= (last_message_height || messageHeightRef.current)
-		if (!scrollToBottomRef.current) {
-			scrollToTopRef.current = scrollTop <= (first_message_height || messageHeightRef.current)
-		} else {
-			scrollToTopRef.current = false
-		}
+		// const first_message_height = heightsRef.current[0]
+		// const last_message_height = heightsRef.current[heightsRef.current.length - 1]
+		// scrollToBottomRef.current =
+		// 	Math.round(scrollHeight - scrollTop) - Math.round(clientHeight) <= (last_message_height || messageHeightRef.current)
+		// if (!scrollToBottomRef.current) {
+		// 	scrollToTopRef.current = scrollTop <= (first_message_height || messageHeightRef.current)
+		// 	scrollToAlignmentRef.current = scrollToTopRef.current ? "start" : "auto"
+		// } else {
+		// 	scrollToAlignmentRef.current = "end"
+		// 	scrollToTopRef.current = false
+		// }
 	}, [])
 
 	const rowRenderer = useCallback(
@@ -190,7 +195,8 @@ const Conversation = props => {
 							<Message
 								className={`${index == messages.length - 1 ? "border-b-8 border-transparent" : ""}`}
 								conversation={conversation}
-								data={messages[index]}
+								index={index}
+								message={messages[index]}
 								onClick={handleOnMessageClick(index)}
 								onContextMenu={handleOnMessageContextMenu(index)}
 								selected={index === selected}
@@ -213,10 +219,11 @@ const Conversation = props => {
 			)
 			// return <div {...rowProps}>Message {index}</div>
 		},
-		[messages, conversation]
+		[messages, conversation, cellMeasurerCache]
 	)
 
 	const noRowsRenderer = useCallback(() => {
+		const { loading } = getState()
 		return (
 			<Grid container spacing={2} className="flex flex-col items-center justify-center h-full">
 				<Grid item md={12} className={"flex flex-col items-center relative p-0 px-4 my-4 justify-center h-full"}>
@@ -229,10 +236,10 @@ const Conversation = props => {
 							backgroundColor: theme => theme.palette.background.paper,
 						}}
 					>
-						<ForumOutlinedIcon fontSize="inherit" />
+						{loading ? <CircularProgress /> : <ForumOutlinedIcon fontSize="inherit" />}
 					</Typography>
 					<Typography variant="body2" color="textSecondary" className="mx-0" sx={{ color: theme => theme.palette.text.disabled }}>
-						You don't have any messages here yet
+						{loading ? `Loading` : `You don't have any messages here yet`}
 					</Typography>
 				</Grid>
 			</Grid>
@@ -267,14 +274,13 @@ const Conversation = props => {
 	const handleOnDeleteMessageForAll = useCallback(
 		event => {
 			const { contextMenu } = getState()
-
 			handleContextClose(event)
 			const updatedMessage = {
 				...contextMenu.entry,
 				state: "deleted-for-all",
 				deletions: conversationRef.current.recipients.concat([conversationRef.current.owner]),
 			}
-			dispatch(updateMessage(updatedMessage))
+			dispatch(ensureMessage(updatedMessage))
 			SocketIO.emit("delete-message-for-all", {
 				message: updatedMessage?._id || updatedMessage?.uuid,
 				user: user,
@@ -296,8 +302,8 @@ const Conversation = props => {
 					: [user?._id],
 			}
 			handleContextClose(event)
-			dispatch(updateMessage(updatedMessage))
-			EventRegister.emit("delete-message-for-user", {
+			dispatch(ensureMessage(updatedMessage))
+			SocketIO.emit("delete-message-for-user", {
 				message: updatedMessage.entry?._id || updatedMessage.entry?.uuid,
 				user: user,
 			})
@@ -305,9 +311,58 @@ const Conversation = props => {
 		[user]
 	)
 
+	const markAllMessagesAsRead = useCallback(async () => {
+		const conversationID = conversation?.uuid || conversation?._id || conversation
+		const conversationUUID = conversation?.uuid || conversation?._id || conversation
+		const userID = user?._id
+
+		if (!String.isEmpty(userID) && (!String.isEmpty(conversationID) || !String.isEmpty(conversationUUID))) {
+			const unreadMessages = await dexieDB.messages
+				.filter(
+					item =>
+						(item?.conversation === conversationID ||
+							item?.conversation === conversationUUID ||
+							(item?.conversation_uuid &&
+								(item?.conversation_uuid === conversationID || item?.conversation_uuid === conversationUUID))) &&
+						item?.sender !== userID &&
+						(item.state === "sent" || item.state === "received" || item.state === "partially-received")
+				)
+				.toArray()
+
+			if (Array.isArray(unreadMessages) && unreadMessages.length > 0) {
+				let updatedUnreadMessages = unreadMessages.reduce((acc, unreadMessage) => {
+					// SocketIO.emit("mark-message-as-received", {
+					// 	message: unreadMessage._id,
+					// })
+					dispatch(ensureMessage({ ...unreadMessage, state: "received" }, false))
+					acc.push({ ...unreadMessage, state: "received" })
+					return acc
+				}, [])
+				console.log("updatedUnreadMessages", updatedUnreadMessages)
+				// try {
+				// 	onMessages(updatedUnreadMessages)
+				// } catch (error) {
+				// 	console.error("Mark all messages as read error", error)
+				// }
+			}
+		}
+	}, [conversation, user])
+
+	const getCount = useCallback(() => {
+		const { loading, typing, loaded } = getState()
+		let count = messages?.length
+		if (loading && !loaded) {
+			count = 0
+		} else if (typing?.length > 0) {
+			count = (messages?.length || 0) + 1
+		}
+		return count
+	}, [messages])
+
 	useDidMount(() => {
 		const onComposeMessagingStartedListener = EventRegister.on("compose-message-started", handleOnUserStartedTyping)
 		const onComposeMessagingStoppedListener = EventRegister.on("compose-message-stopped", handleOnUserStoppedTyping)
+		markAllMessagesAsRead()
 
 		return () => {
 			onComposeMessagingStartedListener.remove()
@@ -317,87 +372,88 @@ const Conversation = props => {
 
 	useDidUpdate(() => {
 		replyForRef.current = null
-	}, [conversation?.uuid, conversation?._id])
+		markAllMessagesAsRead()
+	}, [conversation?.uuid, conversation?._id, messages.length])
 
 	useDidUpdate(() => {
 		conversationRef.current = conversation
 	}, [conversation])
 
+	useDidUpdate(() => {
+		setState({ loaded: false })
+	}, [active_conversation])
 
+	useLayoutEffect(() => {
+		if (scrollToBottomRef.current && !!listRef.current && Array.isArray(messages) && messages.length > 0) {
+			listRef.current.scrollToRow(messages.length - 1)
+			const scrollToPosition = listRef.current.getOffsetForRow({ alignment: "end", index: messages.length - 1 })
+			listRef.current.scrollToPosition(scrollToPosition)
+		}
+		return () => {}
+	}, [messages.length])
 
-		return (
-			<Box
-				className={`relative flex flex-col bg-transparent text-base ${className} `}
-				sx={{
-					paddingTop: 0,
-					paddingBottom: 0,
-					backgroundColor: theme => `${theme.palette.action.disabledBackground} !important`,
-					backgroundImage: `url("/img/${preferences?.theme === "dark" ? "chat-bg-dark.jpg" : "chat-bg.jpg"}") !important`,
-					height: theme => `calc(100vh - ${theme.spacing(14)})`,
-					maxHeight: theme => `calc(100vh - ${theme.spacing(14)})`,
-				}}
-				ref={containerRef}
+	return (
+		<Box
+			className={`relative flex flex-col bg-transparent text-base ${className} `}
+			sx={{
+				paddingTop: 0,
+				paddingBottom: 0,
+				backgroundColor: theme => `${theme.palette.action.disabledBackground} !important`,
+				backgroundImage: `url("/img/${preferences?.theme === "dark" ? "chat-bg-dark.jpg" : "chat-bg.jpg"}") !important`,
+				height: theme => `calc(100vh - ${theme.spacing(14)})`,
+				maxHeight: theme => `calc(100vh - ${theme.spacing(14)})`,
+			}}
+			ref={containerRef}
+		>
+			{state.loaded && <Header conversation={conversation} typing={state.typing} />}
+			{Array.isArray(messages) && (
+				<div className={`flex-grow relative border-b-8 border-transparent`}>
+					<AutoSizer>
+						{({ height, width }) => (
+							<List
+								rowCount={getCount()}
+								onScroll={handleOnScroll}
+								rowHeight={cellMeasurerCache.rowHeight}
+								width={width}
+								height={height}
+								rowRenderer={rowRenderer}
+								noRowsRenderer={noRowsRenderer}
+								overscanRowCount={2}
+								{...rest}
+								ref={listRef}
+							/>
+						)}
+					</AutoSizer>
+				</div>
+			)}
+
+			{state.loaded && <MessageComposer onSubmit={handleOnMessageComposerSubmit} conversation={conversation} />}
+			<Menu
+				keepMounted={true}
+				open={state.contextMenu?.open}
+				onClose={handleContextClose}
+				anchorReference="anchorPosition"
+				anchorPosition={state.contextMenu.open ? { top: state.contextMenu.mouseY, left: state.contextMenu.mouseX } : undefined}
 			>
-				{Array.isArray(messages) && <Header conversation={conversation} typing={state.typing} />}
-				{Array.isArray(messages) && (
-					<div className={`flex-grow relative border-b-8 border-transparent`}>
-						<AutoSizer>
-							{({ height, width }) => (
-								<List
-									rowCount={!Array.isEmpty(state.typing) ? messages.length + 1 : messages.length}
-									onScroll={handleOnScroll}
-									deferredMeasurementCache={cellMeasurerCache}
-									rowHeight={cellMeasurerCache.rowHeight}
-									width={width}
-									height={height}
-									rowRenderer={rowRenderer}
-									noRowsRenderer={noRowsRenderer}
-									scrollToIndex={
-										scrollToBottomRef.current
-											? !Array.isEmpty(state.typing)
-												? messages.length
-												: messages.length - 1
-											: -1
-									}
-									{...rest}
-									ref={listRef}
-								/>
-							)}
-						</AutoSizer>
-					</div>
+				{state.contextMenu.entry?.sender?._id !== user?._id && state.contextMenu?.entry?.sender !== user?._id && (
+					<MenuItem
+						onClick={event => {
+							replyForRef.current = state.contextMenu?.entry
+							handleContextClose(event)
+						}}
+					>
+						Reply Message
+					</MenuItem>
 				)}
-				{Array.isArray(messages) && (
-					<MessageComposer onSubmit={handleOnMessageComposerSubmit} replyFor={replyForRef.current} conversation={conversation} />
+
+				{(state.contextMenu?.entry?.sender?._id === user?._id || state.contextMenu?.entry?.sender === user?._id) && (
+					<MenuItem onClick={handleOnDeleteMessageForUser}>Delete For Me</MenuItem>
 				)}
-				<Menu
-					keepMounted={false}
-					open={state.contextMenu?.open}
-					onClose={handleContextClose}
-					anchorReference="anchorPosition"
-					anchorPosition={state.contextMenu.open ? { top: state.contextMenu.mouseY, left: state.contextMenu.mouseX } : undefined}
-				>
-					{state.contextMenu.entry?.sender?._id !== user?._id && state.contextMenu?.entry?.sender !== user?._id && (
-						<MenuItem
-							onClick={event => {
-								replyForRef.current = state.contextMenu?.entry
-								handleContextClose(event)
-							}}
-						>
-							Reply Message
-						</MenuItem>
-					)}
-
-					{(state.contextMenu?.entry?.sender?._id === user?._id || state.contextMenu?.entry?.sender === user?._id) && (
-						<MenuItem onClick={handleOnDeleteMessageForUser}>Delete For Me</MenuItem>
-					)}
-					{(state.contextMenu?.entry?.sender?._id === user?._id || state.contextMenu?.entry?.sender === user?._id) && (
-						<MenuItem onClick={handleOnDeleteMessageForAll}>Delete For All</MenuItem>
-					)}
-				</Menu>
-			</Box>
-		)
-
-
+				{(state.contextMenu?.entry?.sender?._id === user?._id || state.contextMenu?.entry?.sender === user?._id) &&
+					state.contextMenu?.entry?.state !== "read" && <MenuItem onClick={handleOnDeleteMessageForAll}>Delete For All</MenuItem>}
+			</Menu>
+		</Box>
+	)
 }
 
 export default React.memo(Conversation)

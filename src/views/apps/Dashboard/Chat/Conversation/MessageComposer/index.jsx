@@ -98,7 +98,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 
 	const conversationRef = useRef(conversation)
 
-	const { handleSubmit, TextField, FilePicker, values, setValue, resetValues } = usePersistentForm({
+	const { handleSubmit, TextField, FilePicker, values, setValue, getValues, resetValues } = usePersistentForm({
 		// name: `compose-message-${conversation?.uuid || conversation?._id || "new"}`,
 		name: `compose-message`,
 		defaultValues: {
@@ -120,6 +120,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		emojiPickerOpen: false,
 		filePickerOpen: false,
 		typePickerOpen: false,
+		type: "text"
 	})
 
 	const onEmojiClick = useCallback(
@@ -141,24 +142,29 @@ const MessageComposer = React.forwardRef((props, ref) => {
 	}
 
 	const handleOnPickType = messageType => () => {
-		setState({ typePickerOpen: false, filePickerOpen: true })
+		setState({ typePickerOpen: false, filePickerOpen: true, "type": messageType })
 		setValue("type", messageType)
 	}
 
 	const handleOnSubmit = useCallback(() => {
 		let content = inputRef.current.value || ""
 		content = content.trim()
+		const {type} = getState()
 		let form_values = {
-			...values,
+			...getValues(),
+			type: type,
 			sender: auth.user?._id,
 			// conversation: conversation?._id || conversation,
 			// conversation_uuid: conversation?.uuid || conversation,
 			content: content,
 		}
-		if (["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && Array.isEmpty(form_values.attachments)) {
-			form_values.type = "text"
-			setValue("type", "text")
-		}
+		// if (["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && Array.isEmpty(form_values.attachments)) {
+		// 	form_values.type = "text"
+		// 	setValue("type", "text")
+		// }
+
+
+		console.log("form_values", form_values)
 		const submittable =
 			(form_values.type === "text" && !String.isEmpty(content)) ||
 			(["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && !Array.isEmpty(form_values.attachments))
@@ -171,6 +177,9 @@ const MessageComposer = React.forwardRef((props, ref) => {
 				// }
 
 				resetValues()
+				setState({ emojiPickerOpen: false, filePickerOpen: false, typePickerOpen: false, type: "text" })
+				setValue("type", "text")
+				setValue("attachments", [])
 			} catch (error) {
 				resetValues()
 			}
@@ -199,9 +208,9 @@ const MessageComposer = React.forwardRef((props, ref) => {
 	}, [])
 
 	useDidMount(() => {
-		autoFocusContentInput()
+		resetValues()
+		// autoFocusContentInput()
 	})
-
 
 	const handleOnStartedTyping = useCallback(() => {
 		if (!isTypingRef.current) {
@@ -211,7 +220,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 				user: auth.user._id,
 			})
 		}
-	}, [ conversation])
+	}, [conversation])
 
 	const handleOnStoppedTyping = useCallback(() => {
 		if (isTypingRef.current) {
@@ -238,7 +247,6 @@ const MessageComposer = React.forwardRef((props, ref) => {
 	// 		inputRef.current.value = ""
 	// 	}
 	// }, [conversation.uuid, conversation._id])
-
 
 	useDidUpdate(() => {
 		conversationRef.current = conversation
@@ -324,7 +332,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 						)}
 						{!Array.isEmpty(values.attachments) && !state.filePickerOpen && !state.typePickerOpen && (
 							<Grid item xs={12} className="mb-4">
-								<FilePicker
+								{/* <FilePicker
 									name={`attachments`}
 									variant={"outlined"}
 									filesLimit={values.attachments.length}
@@ -334,7 +342,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 										},
 									}}
 									{...messageTypes[values.type]?.filePickerProps}
-								/>
+								/> */}
 							</Grid>
 						)}
 						{String.containsUrl(values.content) && (
@@ -394,6 +402,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 									minRows={4}
 									maxRows={8}
 									fullWidth
+									autoFocus
 								/>
 							</div>
 							<div>

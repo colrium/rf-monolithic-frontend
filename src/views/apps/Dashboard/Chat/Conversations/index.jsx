@@ -12,14 +12,14 @@ import {
 	setActiveConversation,
 	sendMessage,
 	fetchMessages,
-	updateMessage,
+	ensureMessage,
 	fetchContacts,
 	fetchInbox,
 	createConversation,
 } from "state/actions"
 import { CellMeasurer, List, AutoSizer, CellMeasurerCache } from "react-virtualized"
 import { EventRegister } from "utils"
-import { useDidMount, useWillUnmount, useSetState } from "hooks"
+import { useDidMount, useDeepMemo, useSetState } from "hooks"
 import Conversation from "./Conversation"
 import { useLiveQuery } from "dexie-react-hooks"
 import dexieDB from "config/dexie/database"
@@ -30,9 +30,13 @@ const Conversations = props => {
 	const dispatch = useDispatch()
 	const { isAuthenticated, user } = useSelector(state => state.auth)
 	const listRef = useRef(null)
-	const conversations = useLiveQuery(() =>
-		dexieDB.conversations
-			.toArray()
+	const records = useLiveQuery(() => dexieDB.conversations.toArray(), [], [])
+	const conversations = useDeepMemo(
+		() =>
+			records.sort((a, b) => {
+				return Date.parseFrom(b.last_used || b.created_on) - Date.parseFrom(a.last_used || a.created_on)
+			}),
+		[records]
 	)
 	const [state, setState, getState] = useSetState({
 		loading: Boolean(fetchData),
@@ -49,8 +53,6 @@ const Conversations = props => {
 
 	const handleOnConversationClick = useCallback(
 		index => event => {
-			console.log("conversations[index] ", conversations[index])
-
 			dispatch(setActiveConversation(conversations[index]))
 			setState({
 				focused: index,
@@ -105,7 +107,6 @@ const Conversations = props => {
 			onClearConversationsSelection.remove()
 		}
 	})
-
 
 	const noRowsRenderer = useCallback(() => {
 		return (

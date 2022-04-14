@@ -32,7 +32,7 @@ export const onConversation = async conversation => {
 							dexieDBEntry?.last_used || conversation?.last_used || conversation?.created_on || new Date()
 						dexieDB.conversations.put(nextDexieDBEntry)
 					} else if (!JSON.isJSON(dexieDBEntry) || JSON.isEmpty(dexieDBEntry)) {
-						Api.get(`/conversations/${conversationID}`, {}).then(res => {
+						Api.get(`/conversations/${entryID}`, {}).then(res => {
 							const { body } = { ...res }
 							if (!!body?.data) {
 								onConversation(body?.data)

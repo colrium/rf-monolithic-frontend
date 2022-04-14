@@ -9,15 +9,15 @@ import { connect } from "react-redux";
 import { appendNavHistory } from "state/actions/ui/nav";
 
 
-import ContactSettingsWidget from "views/widgets/Settings/Contact";
-import GeneralSettingsWidget from "views/widgets/Settings/General";
-import LegalSettingsWidget from "views/widgets/Settings/Legal";
-import ReadingSettingsWidget from "views/widgets/Settings/Reading";
-import SocialSettingsWidget from "views/widgets/Settings/Social";
-import TrackingSettingsWidget from "views/widgets/Settings/Tracking";
-import MobileSettingsWidget from "views/widgets/Settings/Mobile";
-import MailSettingsWidget from "views/widgets/Settings/Mail";
-import AuthSettingsWidget from "views/widgets/Settings/Auth";
+import ContactSettingsWidget from "./Contact"
+import GeneralSettingsWidget from "./General"
+import LegalSettingsWidget from "./Legal"
+import ReadingSettingsWidget from "./Reading"
+import SocialSettingsWidget from "./Social"
+import TrackingSettingsWidget from "views/widgets/Settings/Tracking"
+import MobileSettingsWidget from "views/widgets/Settings/Mobile"
+import MailSettingsWidget from "views/widgets/Settings/Mail"
+import AuthSettingsWidget from "./Auth"
 
 function TabPanel(props) {
 	let [state, setState] = useState(props);

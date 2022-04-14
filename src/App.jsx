@@ -23,8 +23,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { NetworkServicesProvider } from "contexts"
 import CookiesConsentDialog from "views/widgets/CookiesConsentDialog"
 
-import Auth from "utils/Auth"
-
 import appStyle from "assets/jss/appStyle"
 import { theme } from "assets/jss/app-theme"
 //

@@ -12,6 +12,7 @@ export { default as useEffectOnceWhen } from "./useEffectOnceWhen";
 export { default as useDidMount } from "./useDidMount";
 export { default as useDidUpdate } from "./useDidUpdate";
 export { default as useSetState } from "./useSetState";
+export { default as useQueue } from "./useQueue"
 export { default as useToggle } from "./useToggle";
 export { default as useReduxForm } from "./useReduxForm";
 export { default as useWillUnmount } from "./useWillUnmount";
@@ -32,5 +33,6 @@ export { default as useEventListener } from "./useEventListener"
 export { default as useEventDispatcher } from "./useEventDispatcher"
 export { default as useEvent } from "./useEvent"
 export { default as useClientPositions } from "./useClientPositions"
+export { default as useForwardedRef } from "./useForwardedRef"
 
 export * from "./useGoogleMaps";

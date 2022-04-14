@@ -17,107 +17,111 @@ import { PersonOutlined as UserIcon } from "@mui/icons-material"
 import Button from "@mui/material/Button"
 import Rating from "@mui/material/Rating"
 import { useSearchParams, useNavigate } from "react-router-dom"
-google.maps.Marker.prototype.animateTo = function (newPosition, options) {
-	var defaultOptions = {
-		duration: 1000,
-		easing: "linear",
-		complete: null,
-		pan: null,
-	}
-	options = options || {}
 
-	// complete missing options
-	for (var key in defaultOptions) {
-		options[key] = options[key] || defaultOptions[key]
-	}
-
-	// make sure the pan option is valid
-	if (options.pan !== null) {
-		if (options.pan !== "center" && options.pan !== "inbounds") {
-			return
+if (!!google) {
+	google.maps.Marker.prototype.animateTo = function (newPosition, options) {
+		var defaultOptions = {
+			duration: 1000,
+			easing: "linear",
+			complete: null,
+			pan: null,
 		}
-	}
+		options = options || {}
 
-	window.requestAnimationFrame =
-		window.requestAnimationFrame ||
-		window.mozRequestAnimationFrame ||
-		window.webkitRequestAnimationFrame ||
-		window.msRequestAnimationFrame
-	window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame
-
-	// save current position. prefixed to avoid name collisions. separate for lat/lng to avoid calling lat()/lng() in every frame
-	this.AT_startPosition_lat = this.getPosition().lat()
-	this.AT_startPosition_lng = this.getPosition().lng()
-	var newPosition_lat = newPosition.lat()
-	var newPosition_lng = newPosition.lng()
-	var newPoint = new google.maps.LatLng(newPosition.lat(), newPosition.lng())
-
-	if (options.pan === "center") {
-		this.map.setCenter(newPoint)
-	}
-
-	if (options.pan === "inbounds") {
-		if (!this.map.getBounds().contains(newPoint)) {
-			var mapbounds = this.map.getBounds()
-			mapbounds.extend(newPoint)
-			this.map.fitBounds(mapbounds)
+		// complete missing options
+		for (var key in defaultOptions) {
+			options[key] = options[key] || defaultOptions[key]
 		}
-	}
 
-	// crossing the 180° meridian and going the long way around the earth?
-	if (Math.abs(newPosition_lng - this.AT_startPosition_lng) > 180) {
-		if (newPosition_lng > this.AT_startPosition_lng) {
-			newPosition_lng -= 360
-		} else {
-			newPosition_lng += 360
+		// make sure the pan option is valid
+		if (options.pan !== null) {
+			if (options.pan !== "center" && options.pan !== "inbounds") {
+				return
+			}
 		}
-	}
 
-	var animateStep = function (marker, startTime) {
-		var ellapsedTime = new Date().getTime() - startTime
-		var durationRatio = ellapsedTime / options.duration // 0 - 1
-		var easingDurationRatio = durationRatio
+		window.requestAnimationFrame =
+			window.requestAnimationFrame ||
+			window.mozRequestAnimationFrame ||
+			window.webkitRequestAnimationFrame ||
+			window.msRequestAnimationFrame
+		window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame
 
-		// // use jQuery easing if it's not linear
-		// if (options.easing !== "linear") {
-		// 	easingDurationRatio = jQuery.easing[options.easing](durationRatio, ellapsedTime, 0, 1, options.duration)
-		// }
+		// save current position. prefixed to avoid name collisions. separate for lat/lng to avoid calling lat()/lng() in every frame
+		this.AT_startPosition_lat = this.getPosition().lat()
+		this.AT_startPosition_lng = this.getPosition().lng()
+		var newPosition_lat = newPosition.lat()
+		var newPosition_lng = newPosition.lng()
+		var newPoint = new google.maps.LatLng(newPosition.lat(), newPosition.lng())
 
-		if (durationRatio < 1) {
-			var deltaPosition = new google.maps.LatLng(
-				marker.AT_startPosition_lat + (newPosition_lat - marker.AT_startPosition_lat) * easingDurationRatio,
-				marker.AT_startPosition_lng + (newPosition_lng - marker.AT_startPosition_lng) * easingDurationRatio
-			)
-			marker.setPosition(deltaPosition)
+		if (options.pan === "center") {
+			this.map.setCenter(newPoint)
+		}
 
-			// use requestAnimationFrame if it exists on this browser. If not, use setTimeout with ~60 fps
-			if (window.requestAnimationFrame) {
-				marker.AT_animationHandler = window.requestAnimationFrame(function () {
-					animateStep(marker, startTime)
-				})
+		if (options.pan === "inbounds") {
+			if (!this.map.getBounds().contains(newPoint)) {
+				var mapbounds = this.map.getBounds()
+				mapbounds.extend(newPoint)
+				this.map.fitBounds(mapbounds)
+			}
+		}
+
+		// crossing the 180° meridian and going the long way around the earth?
+		if (Math.abs(newPosition_lng - this.AT_startPosition_lng) > 180) {
+			if (newPosition_lng > this.AT_startPosition_lng) {
+				newPosition_lng -= 360
 			} else {
-				marker.AT_animationHandler = setTimeout(function () {
-					animateStep(marker, startTime)
-				}, 17)
-			}
-		} else {
-			marker.setPosition(newPosition)
-
-			if (typeof options.complete === "function") {
-				options.complete()
+				newPosition_lng += 360
 			}
 		}
-	}
 
-	// stop possibly running animation
-	if (window.cancelAnimationFrame) {
-		window.cancelAnimationFrame(this.AT_animationHandler)
-	} else {
-		clearTimeout(this.AT_animationHandler)
-	}
+		var animateStep = function (marker, startTime) {
+			var ellapsedTime = new Date().getTime() - startTime
+			var durationRatio = ellapsedTime / options.duration // 0 - 1
+			var easingDurationRatio = durationRatio
 
-	animateStep(this, new Date().getTime())
+			// // use jQuery easing if it's not linear
+			// if (options.easing !== "linear") {
+			// 	easingDurationRatio = jQuery.easing[options.easing](durationRatio, ellapsedTime, 0, 1, options.duration)
+			// }
+
+			if (durationRatio < 1) {
+				var deltaPosition = new google.maps.LatLng(
+					marker.AT_startPosition_lat + (newPosition_lat - marker.AT_startPosition_lat) * easingDurationRatio,
+					marker.AT_startPosition_lng + (newPosition_lng - marker.AT_startPosition_lng) * easingDurationRatio
+				)
+				marker.setPosition(deltaPosition)
+
+				// use requestAnimationFrame if it exists on this browser. If not, use setTimeout with ~60 fps
+				if (window.requestAnimationFrame) {
+					marker.AT_animationHandler = window.requestAnimationFrame(function () {
+						animateStep(marker, startTime)
+					})
+				} else {
+					marker.AT_animationHandler = setTimeout(function () {
+						animateStep(marker, startTime)
+					}, 17)
+				}
+			} else {
+				marker.setPosition(newPosition)
+
+				if (typeof options.complete === "function") {
+					options.complete()
+				}
+			}
+		}
+
+		// stop possibly running animation
+		if (window.cancelAnimationFrame) {
+			window.cancelAnimationFrame(this.AT_animationHandler)
+		} else {
+			clearTimeout(this.AT_animationHandler)
+		}
+
+		animateStep(this, new Date().getTime())
+	}
 }
+
 
 const ClientInfoWindow = ({ user, position, ...rest }) => {
 	// const { preferences } = useSelector(state => state.app)

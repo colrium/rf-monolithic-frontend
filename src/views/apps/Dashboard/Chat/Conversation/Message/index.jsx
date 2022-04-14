@@ -1,8 +1,12 @@
 /** @format */
 
-import React, { useMemo, useCallback } from "react"
+import React, { useRef, useCallback } from "react"
 import classNames from "classnames"
 import Box from "@mui/material/Box"
+import ListItem from "@mui/material/ListItem"
+import ListItemText from "@mui/material/ListItemText"
+import ListItemAvatar from "@mui/material/ListItemAvatar"
+import Avatar from "@mui/material/Avatar"
 import Typography from "@mui/material/Typography"
 import AttachFileIcon from "@mui/icons-material/AttachFile"
 import MovieOutlinedIcon from "@mui/icons-material/MovieOutlined"
@@ -15,10 +19,10 @@ import LazyImage from "components/LazyImage"
 import LinkPreview from "components/LinkPreview"
 import { useSelector, useDispatch } from "react-redux"
 import { useTheme } from "@mui/material/styles"
-import { useDidUpdate, useVisibility, useSetState, useDeepMemo } from "hooks"
+import { useDidUpdate, useVisibility, useSetState, useDeepMemo, useDidMount, useForwardedRef } from "hooks"
 import { useNetworkServices } from "contexts"
 import { Stack } from "@mui/material"
-import { useEnsuredForwardedRef } from "react-use"
+import Linkify from "react-linkify"
 import makeStyles from "@mui/styles/makeStyles"
 
 const useStyles = makeStyles(theme => ({
@@ -75,7 +79,7 @@ const useStyles = makeStyles(theme => ({
 const Message = React.forwardRef((props, ref) => {
 	const {
 		conversation,
-		data,
+		message,
 		className,
 		selected,
 		focused,
@@ -90,7 +94,9 @@ const Message = React.forwardRef((props, ref) => {
 		mediaSize = 100,
 		headerHeight = 48,
 		linkHeight = 100,
-		showTimeStamp,
+		showDetails,
+		index,
+		style,
 		...rest
 	} = props
 	const theme = useTheme()
@@ -99,20 +105,20 @@ const Message = React.forwardRef((props, ref) => {
 	const [state, setState, getState] = useSetState({
 		loading: false,
 		selected: -1,
-		showTimeStamp: Boolean(showTimeStamp),
+		showDetails: Boolean(showDetails),
 	})
 	const classes = useStyles()
-
+	const styleRef = useRef(style)
 	const messageDeleted = useDeepMemo(
 		() =>
-			(data.state === "deleted-for-sender" && (data.sender === auth.user?._id || data.sender._id === auth.user?._id)) ||
-			data.state === "deleted-for-all",
-		[data]
+			(message?.state === "deleted-for-sender" && (message?.sender === auth.user?._id || message?.sender?._id === auth.user?._id)) ||
+			message.state === "deleted-for-all",
+		[message]
 	)
 
-	const isOutgoing = useDeepMemo(() => data.sender._id === auth.user?._id || data.sender === auth.user?._id, [data, auth])
+	const isOutgoing = useDeepMemo(() => message?.sender?._id === auth.user?._id || message?.sender === auth.user?._id, [message, auth])
 	const bubbleClassName = useDeepMemo(() => {
-		const isCurrentOutgoing = data.sender?._id === auth.user?._id || data.sender === auth.user?._id
+		const isCurrentOutgoing = message.sender?._id === auth.user?._id || message.sender === auth.user?._id
 		let classNamesVal = isCurrentOutgoing ? "rounded-l-2xl " : "rounded-r-2xl"
 		const isPrevMessageOutgoing =
 			prevMessage?.sender && (prevMessage?.sender?._id === auth.user?._id || prevMessage?.sender === auth.user?._id)
@@ -141,66 +147,75 @@ const Message = React.forwardRef((props, ref) => {
 
 	const handleOnClick = useCallback(
 		index => event => {
-			setState({
-				selected: index,
-			})
-			if (Function.isFunction(onClick)) {
-				onClick(event, index, data)
+			if (!messageDeleted) {
+				// setState(prevState => ({
+				// 	selected: !prevState.selected,
+				// 	showDetails: !prevState.showDetails,
+				// }))
+				if (Function.isFunction(onClick)) {
+					onClick(event, index, message)
+				}
 			}
 		},
-		[onClick, data]
+		[onClick, message]
 	)
 
-	const handleOnContextMenu = useCallback(event => {
+	const handleOnContextMenu = useCallback(
+		event => {
 			event.preventDefault()
-			if (Function.isFunction(onContextMenu)) {
-				onContextMenu(event)
+			if (!messageDeleted) {
+				if (Function.isFunction(onContextMenu)) {
+					onContextMenu(event)
+				}
 			}
 		},
-		[onContextMenu]
+		[onContextMenu, messageDeleted]
 	)
 
 	const handleOnVisibilityChange = useCallback(
 		isVisible => {
-			const isIncoming = data.sender?._id !== auth.user?._id && data.sender !== auth.user?._id
-			if (isIncoming) {
+			if (!isOutgoing) {
 				if (isVisible) {
-					if (data.state === "sent" || data.state === "received" || data.state === "partially-received") {
+					if (message.state === "sent" || message.state === "received" || message.state === "partially-received") {
 						SocketIO.emit("mark-message-as-read", {
-							message: data._id,
+							message: message._id,
 						})
 					}
-				}
-				else{
-					if (data.state === "sent") {
+				} else {
+					if (message.state === "sent") {
 						SocketIO.emit("mark-message-as-received", {
-							message: data._id,
+							message: message._id,
 						})
 					}
 				}
 			}
 		},
-		[]
+		[isOutgoing, message]
 	)
-	const getContent = useCallback(() => {
-
-	}, [])
-	const ensuredForwardRef = useEnsuredForwardedRef(ref)
-	const visible = useVisibility(ensuredForwardRef)
+	const content = useDeepMemo(() => {
+		return message.content
+	}, [message.content])
+	const ensuredForwardRef = useForwardedRef(ref)
+	const visibilityRef = useRef(null)
+	const visible = useVisibility(visibilityRef)
 
 	useDidUpdate(() => {
 		handleOnVisibilityChange(visible)
 	}, [visible])
 
+	useDidMount(() => {
+		handleOnVisibilityChange(visible)
+	})
 	return (
 		<Box
-			onClick={handleOnClick}
+			onClick={handleOnClick(index)}
 			onContextMenu={handleOnContextMenu}
 			{...rest}
 			className={`overflow-hidden bg-transparent px-0  `}
+			style={style}
 			ref={ensuredForwardRef}
 		>
-			{showUnreadHeader && Array.isArray(data.reads) && data.reads.indexOf(auth.user?._id) === -1 && (
+			{showUnreadHeader && Array.isArray(message.reads) && message.reads.indexOf(auth.user?._id) === -1 && (
 				<Box className={`flex flex-row items-center p-0 w-full`} sx={{ height: headerHeight }}>
 					<Box
 						component="span"
@@ -232,7 +247,7 @@ const Message = React.forwardRef((props, ref) => {
 					/>
 				</Box>
 			)}
-			{showDateHeader && (!!data.timestamp || !!data.created_on) && (
+			{showDateHeader && (!!message.timestamp || !!message.created_on) && (
 				<Box className={`flex flex-row items-center justify-center p-0 w-full`} sx={{ height: headerHeight }}>
 					<Box
 						className="px-2 rounded-md h-3/6 flex flex-row items-center justify-center"
@@ -241,7 +256,7 @@ const Message = React.forwardRef((props, ref) => {
 							backgroundColor: theme => theme.palette.background.default,
 						}}
 					>
-						<Typography variant="body2">{`${Date.prose(data.timestamp || data.created_on, false)}`}</Typography>
+						<Typography variant="body2">{`${Date.prose(message.timestamp || message.created_on, false)}`}</Typography>
 					</Box>
 				</Box>
 			)}
@@ -254,7 +269,7 @@ const Message = React.forwardRef((props, ref) => {
 				}
 			>
 				<Box
-					className={`flex flex-col  px-4 py-1 mb-1 ${bubbleClassName} ${className ? className : ""} `}
+					className={`flex flex-col break-words px-4 py-1 mb-1 ${bubbleClassName} ${className ? className : ""} `}
 					sx={{
 						maxWidth: "60%",
 						height: "100% !important",
@@ -268,83 +283,83 @@ const Message = React.forwardRef((props, ref) => {
 									: "flex flex-row-reverse w-full items-center"
 							}
 						>
-							{conversation.type !== "individual" && JSON.isJSON(data.sender) && (
+							{conversation.type !== "individual" && JSON.isJSON(message.sender) && (
 								<Typography variant="body1" className={"flex-grow text-gray-500 font-bold"}>
-									{data.sender.first_name + " " + data.sender.last_name}
+									{message.sender.first_name + " " + message.sender.last_name}
 								</Typography>
 							)}
 						</div>
 					)}
-					{!messageDeleted && ["audio", "file", "video", "image"].includes(data.type) && Array.isArray(data.attachments) && (
+					{!messageDeleted && ["audio", "file", "video", "image"].includes(message.type) && Array.isArray(message.attachments) && (
 						<div
 							className={`flex flex-row flex-1 flex-wrap ${
-								data.type === "image" ? (data.attachments.length > 2 ? "grid-cols-2 grid-rows-2" : "") : ""
+								message.type === "image" ? (message.attachments.length > 2 ? "grid-cols-2 grid-rows-2" : "") : ""
 							}`}
 						>
-							{data.attachments.map(
+							{message.attachments.map(
 								(attachment, cursor) =>
 									cursor <= 3 && (
 										<div className={"mx-auto rounded"} key={"attachment-" + cursor}>
-											{data.type === "image" && (
+											{message.type === "image" && (
 												<LazyImage
 													className={"w-48 rounded"}
 													src={ApiService.getAttachmentFileUrl(attachment)}
 													alt={attachment?.name}
 													style={{
-														height: mediaSize,
+														height: "auto",
 														borderSize: 5,
 														borderColor: "transparent",
-														minWidth: mediaSize,
+														// minWidth: mediaSize,
 													}}
 												/>
 											)}
-											{data.type === "audio" && (
-												<div
-													className={"w-full lex flex-row items-center"}
+											{message.type === "audio" && (
+												<ListItem
 													onClick={e => {
 														e.preventDefault()
 														let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank")
 														win.focus()
 													}}
-													style={{ height: mediaSize, minWidth: mediaSize }}
 												>
-													<AudiotrackOutlinedIcon className={"text-2xl"} />
-													<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"}>
-														{attachment.name}
-													</Typography>
-												</div>
+													<ListItemAvatar>
+														<Avatar className="bg-black bg-opacity-10">
+															<AudiotrackOutlinedIcon className={"text-2xl"} />
+														</Avatar>
+													</ListItemAvatar>
+													<ListItemText primary="Audio" secondary={attachment?.name || "Attachment"} />
+												</ListItem>
 											)}
-											{data.type === "video" && (
-												<div
-													className={"w-full flex flex-row items-center"}
+											{message.type === "video" && (
+												<ListItem
 													onClick={e => {
 														e.preventDefault()
 														let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank")
 														win.focus()
 													}}
-													style={{ height: mediaSize, minWidth: mediaSize }}
 												>
-													<MovieOutlinedIcon className={"text-2xl"} />
-													<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"}>
-														{attachment.name}
-													</Typography>
-												</div>
+													<ListItemAvatar>
+														<Avatar className="bg-black bg-opacity-10">
+															<MovieOutlinedIcon className={"text-2xl"} />
+														</Avatar>
+													</ListItemAvatar>
+													<ListItemText primary="Video" secondary={attachment?.name || "Attachment"} />
+												</ListItem>
 											)}
-											{data.type === "file" && (
-												<div
-													className={"w-full flex flex-row items-center"}
+											{message.type === "file" && (
+												<ListItem
 													onClick={e => {
 														e.preventDefault()
 														let win = window.open(ApiService.getAttachmentFileUrl(attachment), "_blank")
 														win.focus()
 													}}
-													style={{ height: mediaSize, minWidth: mediaSize }}
 												>
-													<AttachFileIcon className={"text-2xl"} />
-													<Typography variant="body1" color="textPrimary" className={"flex-grow truncate"}>
-														{attachment.name}
-													</Typography>
-												</div>
+													<ListItemAvatar>
+														<Avatar className="bg-black bg-opacity-10">
+															<AttachFileIcon className={"text-2xl"} />
+														</Avatar>
+													</ListItemAvatar>
+													<ListItemText primary="File" secondary={attachment?.name || "Attachment"} />
+												</ListItem>
 											)}
 										</div>
 									)
@@ -370,44 +385,50 @@ const Message = React.forwardRef((props, ref) => {
 						<Stack className="flex flex-col">
 							<Stack xs={12} direction="row" spacing={2} className="p-0 flex-1 ">
 								<Stack className="m-0 p-0 flex flex-1 flex-col">
-									{String.containsUrl(data.content) && (
+									{String.containsUrl(message.content) && (
 										<LinkPreview
 											width="100%"
 											height={linkHeight}
 											className="p-0"
 											imageHeight={10}
 											descriptionLength={100}
-											url={String.getContainedUrl(data.content)[0]}
+											url={String.getContainedUrl(message.content)[0]}
 											openInNewTab
 										/>
 									)}
-									<Typography variant="body1" color="textPrimary" component="div" className="flex-1 leading-normal">
-										{data.content}
+									<Typography
+										variant="body1"
+										color="textPrimary"
+										component="div"
+										ref={visibilityRef}
+										className="flex-1 leading-normal"
+									>
+										<Linkify>{content}</Linkify>
 									</Typography>
 								</Stack>
 
-								{!showTimeStamp && (
+								{!state.showDetails && (
 									<Stack className="m-0 p-0 pb-1 flex flex-col self-end">
-										{data.state === "pending" &&
-											(data.sender._id === auth.user?._id || data.sender === auth.user?._id) && (
+										{message.state === "pending" &&
+											(message.sender._id === auth.user?._id || message.sender === auth.user?._id) && (
 												<ScheduleIcon className={"ml-2 text-xs"} fontSize="small" />
 											)}
-										{data.state === "sent" &&
-											(data.sender._id === auth.user?._id || data.sender === auth.user?._id) && (
+										{message.state === "sent" &&
+											(message.sender._id === auth.user?._id || message.sender === auth.user?._id) && (
 												<DoneIcon className={"ml-2 text-xs "} fontSize="small" />
 											)}
-										{(data.state === "partially-received" || data.state === "received") &&
-											(data.sender._id === auth.user?._id || data.sender === auth.user?._id) && (
+										{(message.state === "partially-received" || message.state === "received") &&
+											(message.sender._id === auth.user?._id || message.sender === auth.user?._id) && (
 												<DoneAllIcon className={"ml-2 text-xs"} fontSize="small" />
 											)}
-										{(data.state === "partially-read" || data.state === "read") &&
-											(data.sender._id === auth.user?._id || data.sender === auth.user?._id) && (
+										{(message.state === "partially-read" || message.state === "read") &&
+											(message.sender._id === auth.user?._id || message.sender === auth.user?._id) && (
 												<DoneAllIcon className={"ml-2 text-xs text-blue-500"} fontSize="small" />
 											)}
 									</Stack>
 								)}
 							</Stack>
-							{showTimeStamp && (
+							{state.showDetails && (
 								<Box
 									component="div"
 									sx={{
@@ -421,20 +442,22 @@ const Message = React.forwardRef((props, ref) => {
 										}}
 										className={"flex-1 text-right"}
 									>
-										{`${Date.format(data.timestamp || data.created_on, "h:i a")}`}
+										{`${Date.format(message.timestamp || message.created_on, "h:i a")}`}
 									</Typography>
-									{data.state === "pending" && (data.sender._id === auth.user?._id || data.sender === auth.user?._id) && (
-										<ScheduleIcon className={"ml-2 text-xs"} fontSize="small" />
-									)}
-									{data.state === "sent" && (data.sender._id === auth.user?._id || data.sender === auth.user?._id) && (
-										<DoneIcon className={"ml-2 text-xs "} fontSize="small" />
-									)}
-									{(data.state === "partially-received" || data.state === "received") &&
-										(data.sender._id === auth.user?._id || data.sender === auth.user?._id) && (
+									{message.state === "pending" &&
+										(message.sender._id === auth.user?._id || message.sender === auth.user?._id) && (
+											<ScheduleIcon className={"ml-2 text-xs"} fontSize="small" />
+										)}
+									{message.state === "sent" &&
+										(message.sender._id === auth.user?._id || message.sender === auth.user?._id) && (
+											<DoneIcon className={"ml-2 text-xs "} fontSize="small" />
+										)}
+									{(message.state === "partially-received" || message.state === "received") &&
+										(message.sender._id === auth.user?._id || message.sender === auth.user?._id) && (
 											<DoneAllIcon className={"ml-2 text-xs"} fontSize="small" />
 										)}
-									{(data.state === "partially-read" || data.state === "read") &&
-										(data.sender._id === auth.user?._id || data.sender === auth.user?._id) && (
+									{(message.state === "partially-read" || message.state === "read") &&
+										(message.sender._id === auth.user?._id || message.sender === auth.user?._id) && (
 											<DoneAllIcon className={"ml-2 text-xs text-blue-500"} fontSize="small" />
 										)}
 								</Box>

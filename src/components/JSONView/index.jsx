@@ -33,7 +33,6 @@ export const ReadableJSONViewEntry = React.memo(
 			}
 			return srcEntriesArr;
 		}, [src]);
-		console.log("src", src)
 		return (
 			<Stack {...rest} ref={ref}>
 				<Grid container>
