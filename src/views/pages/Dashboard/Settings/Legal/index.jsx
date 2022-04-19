@@ -1,6 +1,6 @@
 /** @format */
 import React from "react"
-import { connect } from "react-redux"
+import { useSelector } from "react-redux"
 import Typography from "@mui/material/Typography"
 import GridContainer from "components/Grid/GridContainer"
 import Card from "components/Card"
@@ -9,11 +9,10 @@ import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
 function Widget(props) {
-	const { app } = props
-	let settings = app.settings.legal
+	const settings = useSelector(state => ({ ...state?.app?.legal }))
 	const {
 		TextField,
-		RadioGroup,
+		WysiwygEditor,
 		values,
 		setValue,
 		formState: { errors },
@@ -27,7 +26,6 @@ function Widget(props) {
 
 	useDidUpdate(() => {
 		if (JSON.isEmpty(errors)) {
-			console.log("values", values)
 			EventRegister.emit("change-settings", {
 				legal: { ...settings, ...values },
 			})
@@ -45,7 +43,7 @@ function Widget(props) {
 
 				<GridContainer className="px-0">
 					<GridItem xs={12} className="mb-1">
-						<TextField name="terms-of-use" label="Terms of use" multiline={true} minRows={4} />
+						<WysiwygEditor name="terms-of-use" label="Terms of use" multiline={true} minRows={4} />
 					</GridItem>
 
 					<GridItem xs={12} className="mb-1">
@@ -63,9 +61,5 @@ function Widget(props) {
 		</Card>
 	)
 }
-const mapStateToProps = state => ({
-	auth: state.auth,
-	app: state.app,
-})
 
-export default connect(mapStateToProps, {})(React.memo(Widget))
+export default React.memo(Widget)

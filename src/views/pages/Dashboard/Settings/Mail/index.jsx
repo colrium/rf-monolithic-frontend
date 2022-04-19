@@ -9,7 +9,7 @@ import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
 function Widget() {
-	const settings = useSelector(state => ({ ...state?.app?.settings?.auth }))
+	const settings = useSelector(state => ({ ...state?.app?.settings?.mail }))
 	const {
 		TextField,
 		Autocomplete,
@@ -18,7 +18,7 @@ function Widget() {
 		values,
 		formState: { errors },
 	} = usePersistentForm({
-		name: "auth-settings",
+		name: "mail-settings",
 		volatile: true,
 		defaultValues: {
 			...settings,
@@ -28,50 +28,58 @@ function Widget() {
 	useDidUpdate(() => {
 		if (JSON.isEmpty(errors)) {
 			EventRegister.emit("change-settings", {
-				auth: { ...settings, ...values },
+				mail: { ...settings, ...values },
 			})
 		}
 	}, [values, errors, settings])
+
+	console.log("Mail Settings", settings)
 
 	return (
 		<Card>
 			<GridContainer className="px-8">
 				<GridItem xs={12} className="mb-2">
 					<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
-						Authorization settings
+						Mail settings
 					</Typography>
 				</GridItem>
 
 				<GridItem xs={12} className="my-4">
 					<Typography variant="h6" sx={{ color: theme => theme.palette.text.disabled }}>
-						Login
+						Outgoing Mail (SMTP)
 					</Typography>
 				</GridItem>
 
 				<GridContainer className="px-0">
-					<GridItem xs={12}>
-						<Checkbox name="logins_enabled" label="New user logins allowed" />
+					<GridItem xs={12} className="mb-1">
+						<TextField name="smtp_host" label="Host" />
 					</GridItem>
-					<GridItem xs={12}>
-						<Checkbox name="registrations_enabled" label="New registrations allowed" />
+					<GridItem xs={12} className="mb-1">
+						<TextField name="smtp_user" label="Account Address" type="email" />
 					</GridItem>
-					<GridItem xs={12}>
-						<Checkbox name="account_recovery_enabled" label="Account recovery allowed" />
+					<GridItem xs={12} className="mb-1">
+						<TextField name="smtp_password" label="Account Password" type="password" />
 					</GridItem>
-					<GridItem xs={12}>
-						<Checkbox name="OAuth2_enabled" label="OAuth2.0 authorization" />
-					</GridItem>
-				</GridContainer>
 
-				<GridItem xs={12} className="my-4">
-					<Typography variant="h6" sx={{ color: theme => theme.palette.text.disabled }}>
-						Websockets
-					</Typography>
-				</GridItem>
-
-				<GridContainer className="px-0">
 					<GridItem xs={12}>
-						<Checkbox name="enforce_sockeio_authorization" label="Enforce socketIo authorization" />
+						<Checkbox name="smtp_tls" label="TLS" />
+					</GridItem>
+					<GridItem xs={12}>
+						<Checkbox name="smtp_ssl" label="SSL" />
+					</GridItem>
+
+					<GridItem xs={12} className="mb-1">
+						<TextField name="smtp_sender_name" label="Sender Name" />
+					</GridItem>
+
+					{/* <GridItem xs={12} className="mb-1">
+						<Checkbox name="private" label="Private" />
+					</GridItem> */}
+
+					<GridItem xs={12} className="my-4">
+						<Typography variant="h6" sx={{ color: theme => theme.palette.text.disabled }}>
+							Password recovery template
+						</Typography>
 					</GridItem>
 				</GridContainer>
 			</GridContainer>

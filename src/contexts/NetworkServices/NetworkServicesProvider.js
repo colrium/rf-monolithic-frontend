@@ -94,7 +94,7 @@ const NetworkServicesProvider = props => {
 						slug: slug,
 						value: new_value,
 					}
-					return await Api.post(`/settings`, postData, {
+					return await Api.put(`/settings/${slug}`, postData, {
 						params: { create: 1, placement: "slug" },
 					})
 				}
@@ -200,6 +200,4 @@ const NetworkServicesProvider = props => {
 	)
 }
 
-
-
-export default React.memo(NetworkServicesProvider);
+export default React.memo(NetworkServicesProvider, (prevProps, nextProps) => true)

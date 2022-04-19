@@ -14,17 +14,13 @@ import GeneralSettingsWidget from "./General"
 import LegalSettingsWidget from "./Legal"
 import ReadingSettingsWidget from "./Reading"
 import SocialSettingsWidget from "./Social"
-import TrackingSettingsWidget from "views/widgets/Settings/Tracking"
+import TrackingSettingsWidget from "./Tracking"
 import MobileSettingsWidget from "views/widgets/Settings/Mobile"
-import MailSettingsWidget from "views/widgets/Settings/Mail"
+import MailSettingsWidget from "./Mail"
 import AuthSettingsWidget from "./Auth"
 
 function TabPanel(props) {
-	let [state, setState] = useState(props);
-	useEffect(() => {
-		setState(props);
-	}, [props]);
-	const { children, value, index, ...other } = state;
+	const { children, value, index, ...other } = props
 	return (
 		<GridContainer
 			component="div"
@@ -41,7 +37,7 @@ function TabPanel(props) {
 				</GridItem>
 			)}
 		</GridContainer>
-	);
+	)
 }
 
 class Page extends React.Component {

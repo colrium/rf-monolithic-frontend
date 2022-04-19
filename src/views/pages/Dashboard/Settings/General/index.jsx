@@ -1,6 +1,6 @@
 /** @format */
 import React from "react"
-import { connect } from "react-redux"
+import { useSelector } from "react-redux"
 import Typography from "@mui/material/Typography"
 import GridContainer from "components/Grid/GridContainer"
 import Card from "components/Card"
@@ -9,8 +9,7 @@ import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
 function Widget(props) {
-	const { app } = props
-	let settings = app.settings.general
+	const settings = useSelector(state => ({ ...state?.app?.general }))
 	const {
 		TextField,
 		RadioGroup,
@@ -113,9 +112,5 @@ function Widget(props) {
 		</Card>
 	)
 }
-const mapStateToProps = state => ({
-	auth: state.auth,
-	app: state.app,
-})
 
-export default connect(mapStateToProps, {})(React.memo(Widget))
+export default React.memo(Widget)
