@@ -145,6 +145,8 @@ const Message = React.forwardRef((props, ref) => {
 		return classNamesVal
 	}, [prevMessage, nextMessage, auth])
 
+	const contentHasUrl = useDeepMemo(() => !String.isEmpty(message?.content) && String.containsUrl(message?.content), [message?.content])
+
 	const handleOnClick = useCallback(
 		index => event => {
 			if (!messageDeleted) {
@@ -162,12 +164,12 @@ const Message = React.forwardRef((props, ref) => {
 
 	const handleOnContextMenu = useCallback(
 		event => {
-			event.preventDefault()
-			if (!messageDeleted) {
-				if (Function.isFunction(onContextMenu)) {
-					onContextMenu(event)
-				}
-			}
+			// event.preventDefault()
+			// if (!messageDeleted) {
+			// 	if (Function.isFunction(onContextMenu)) {
+			// 		onContextMenu(event)
+			// 	}
+			// }
 		},
 		[onContextMenu, messageDeleted]
 	)
@@ -382,10 +384,10 @@ const Message = React.forwardRef((props, ref) => {
 					)}
 
 					{!messageDeleted && (
-						<Stack className="flex flex-col">
-							<Stack xs={12} direction="row" spacing={2} className="p-0 flex-1 ">
-								<Stack className="m-0 p-0 flex flex-1 flex-col">
-									{String.containsUrl(message.content) && (
+						<Stack className="flex flex-col" ref={visibilityRef}>
+							<Stack direction="row" spacing={2} className="p-0 max-w-full ">
+								<Stack direction="column" className={`m-0 p-0 max-w-full flex flex-col ${contentHasUrl ? "pt-1" : ""}`}>
+									{contentHasUrl && (
 										<LinkPreview
 											width="100%"
 											height={linkHeight}
@@ -396,15 +398,10 @@ const Message = React.forwardRef((props, ref) => {
 											openInNewTab
 										/>
 									)}
-									<Typography
-										variant="body1"
-										color="textPrimary"
-										component="div"
-										ref={visibilityRef}
-										className="flex-1 leading-normal"
-									>
-										<Linkify>{content}</Linkify>
+									<Typography variant="body1" color="textPrimary" component="div" className="flex-1 leading-normal">
+										<Linkify properties={{ className: `text-blue-500` }}>{content}</Linkify>
 									</Typography>
+									{/* <Linkify className="flex-1 leading-normal">{content}</Linkify> */}
 								</Stack>
 
 								{!state.showDetails && (

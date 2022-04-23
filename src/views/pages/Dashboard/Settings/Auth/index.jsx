@@ -71,7 +71,7 @@ function Widget() {
 
 				<GridContainer className="px-0">
 					<GridItem xs={12}>
-						<Checkbox name="enforce_sockeio_authorization" label="Enforce socketIo authorization" />
+						<Checkbox name="enforce_socketio_authorization" label="Enforce socketIo authorization" />
 					</GridItem>
 				</GridContainer>
 			</GridContainer>

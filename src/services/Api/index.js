@@ -446,7 +446,7 @@ const ApiSingleton = (function () {
 			}
 			EventRegister.emit("api-request-error", errobj)
 			if (errobj?.code === 401) {
-				EventRegister.emit("logout", errobj)
+				// EventRegister.emit("logout", errobj)
 			}
 			return Promise.reject(errobj)
 		}

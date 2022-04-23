@@ -383,10 +383,12 @@ const Conversation = props => {
 		setState({ loaded: false })
 	}, [active_conversation])
 
-	useLayoutEffect(() => {
+	useDidUpdate(() => {
 		if (scrollToBottomRef.current && !!listRef.current && Array.isArray(messages) && messages.length > 0) {
-			listRef.current.scrollToRow(messages.length - 1)
-			const scrollToPosition = listRef.current.getOffsetForRow({ alignment: "end", index: messages.length - 1 })
+			console.log("listRef.current", listRef.current)
+			console.log("cellMeasurerCache", cellMeasurerCache)
+			// listRef.current.scrollToRow(messages.length)
+			const scrollToPosition = listRef.current.getOffsetForRow({ alignment: "end", index: messages.length })
 			listRef.current.scrollToPosition(scrollToPosition)
 		}
 		return () => {}

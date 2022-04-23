@@ -105,7 +105,7 @@ const LinkPreview = ({
 	return (
 		<Box
 			onClick={onClick}
-			className={`${className} bg-no-repeat bg-cover bg-center text-left flex flex-col  justify-end rounded cursor-pointer `}
+			className={`w-full max-w-full overflow-hidden bg-no-repeat bg-cover bg-center text-left flex flex-col  justify-end rounded cursor-pointer  ${className} `}
 			sx={{
 				// border: theme => `1px solid ${theme.palette.action.hover}`,
 				backgroundImage: `url(${explicitImageSrc || image || fallbackImageSrc}), url(${fallbackImageSrc})`,
@@ -118,12 +118,12 @@ const LinkPreview = ({
 				borderColor,
 			}}
 		>
-			<Box component="div" className="p-2 w-full flex flex-col blur-bg-sm transition-all" sx={{}}>
-				<Typography data-testid="title" className="mb-2 " variant="body1">
+			<Box component="div" className="p-1 overflow-hidden w-full flex flex-col blur-bg-sm transition-all" sx={{}}>
+				<Typography className="truncate" variant="body1">
 					{title || url}
 				</Typography>
 				{description && (
-					<Typography data-testid="desc" className="sm:hidden md:inline-block Secondary" variant="body2">
+					<Typography data-testid="desc" className="sm:hidden md:inline-block text-xs overflow-hidden truncate" variant="body2">
 						{descriptionLength
 							? description.length > descriptionLength
 								? description.slice(0, descriptionLength) + "..."
@@ -144,4 +144,4 @@ const LinkPreview = ({
 		</Box>
 	)
 }
-export default React.memo(LinkPreview)
+export default React.memo(LinkPreview, (prevProps, nextProps) => prevProps?.url !== nextProps?.url)
