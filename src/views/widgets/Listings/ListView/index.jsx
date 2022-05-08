@@ -321,7 +321,7 @@ class ListView extends React.Component {
 																	key={defination.name + "-" + index}
 																>
 																	<ListItem
-																		button
+
 																		alignItems="flex-start"
 																		onClick={() => {
 																			if (Function.isFunction(onClickEntry)) {

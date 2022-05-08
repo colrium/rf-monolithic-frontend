@@ -16,8 +16,8 @@ import GridContainer from "components/Grid/GridContainer"
 import GridItem from "components/Grid/GridItem"
 import ActionDialog from "components/ActionDialog"
 import ComposeEmailDialog from "components/ComposeEmailDialog"
+import { NotificationsQueueProvider } from "contexts"
 import { useSetState, useDidMount, useDidUpdate } from "hooks"
-import { Outlet, useSearchParams } from "react-router-dom"
 
 const Dashboard = props => {
 	const { sidebar_items, children } = props
@@ -30,7 +30,7 @@ const Dashboard = props => {
 	const theme = useTheme()
 	const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"))
 	const [state, setState] = useSetState({
-		drawerOpen: true,
+		drawerOpen: isLargeScreen,
 	})
 	const shiftTopbar = isLargeScreen
 	const shiftContent = isLargeScreen
@@ -112,13 +112,13 @@ const Dashboard = props => {
 					}}
 					className={"absolute top-20 left-0 right-0"}
 				>
-					<GridItem xs={12}>
-						{children}
-					</GridItem>
+					<GridItem xs={12}>{children}</GridItem>
 				</GridContainer>
 				<ActionDialog />
 				<ComposeEmailDialog />
 			</Box>
+
+
 			<Footer />
 		</Box>
 	)

@@ -1,10 +1,12 @@
-import React from "react";
-import { connect } from "react-redux";
+/** @format */
 
-import Fab from "@mui/material/Fab";
-import IconButton from "@mui/material/IconButton";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
-import Zoom from "@mui/material/Zoom";
+import React from "react"
+import { connect } from "react-redux"
+
+import Fab from "@mui/material/Fab"
+import IconButton from "@mui/material/IconButton"
+import useScrollTrigger from "@mui/material/useScrollTrigger"
+import Zoom from "@mui/material/Zoom"
 import Box from "@mui/material/Box"
 import FacebookIcon from "@mui/icons-material/Facebook"
 import InstagramIcon from "@mui/icons-material/Instagram"
@@ -24,7 +26,8 @@ import PropTypes from "prop-types"
 import Intercom from "react-intercom"
 import { Link } from "react-router-dom"
 import RequestDemoForm from "views/forms/RequestDemoForm"
-
+import { useClientPositions, useDidMount, useDidUpdate } from "hooks"
+import { useNotificationsQueue, useNetworkServices } from "contexts"
 import { Api as ApiService } from "services"
 
 function ScrollTop(props) {
@@ -65,14 +68,25 @@ ScrollTop.propTypes = {
 }
 
 function Footer(props) {
-	let {
+	const {
 		app: { settings },
 		className,
 		color,
 		columnWidgets,
 		absoluteFooter,
 	} = props
-
+	const { queueNotification } = useNotificationsQueue()
+	useDidMount(() => {
+		queueNotification([
+			{
+				// title: "Warning 1",
+				severity: "success",
+				timeout: 30000,
+				content:
+					"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+			},
+		])
+	})
 	const inverseColor = ["inverse", "transparent"].includes(color) ? "default" : "inverse"
 
 	return (
@@ -105,7 +119,7 @@ function Footer(props) {
 				<Intercom appID={intercom.app.id} {...intercom.app.user} />
 				<GridContainer className={className}>
 					{!columnWidgets && (
-						<GridContainer className=" md:px-24 ">
+						<GridContainer className=" md:px-32 ">
 							<GridItem sm={12} lg={5} className="p-0 m-0 mb-8">
 								<GridContainer className="p-0 m-0">
 									<GridItem sm={12} className="p-0 m-0">
@@ -129,7 +143,7 @@ function Footer(props) {
 
 							<GridItem sm={12} lg={7} className="p-0 m-0 mb-8">
 								<GridContainer className="p-0 m-0">
-									<GridItem className="pl-4" sm={12} md={4}>
+									<GridItem className="pl-4" sm={12} md={6}>
 										<Typography className="w-full block pb-4 uppercase" color={inverseColor} variant="h5">
 											Real Data
 										</Typography>
@@ -171,7 +185,7 @@ function Footer(props) {
 										</Link>
 									</GridItem>
 
-									<GridItem className="pl-4" sm={12} md={4}>
+									{/* <GridItem className="pl-4" sm={12} md={4}>
 										<Typography className="w-full block pb-4 uppercase" color={inverseColor} variant="h5">
 											Product
 										</Typography>
@@ -190,9 +204,9 @@ function Footer(props) {
 												Queries
 											</Button>
 										</Link>
-									</GridItem>
+									</GridItem> */}
 
-									<GridItem className="pl-4" sm={12} md={4}>
+									<GridItem className="pl-4" sm={12} md={6}>
 										<Typography className="w-full block pb-4 uppercase" color={inverseColor} variant="h5">
 											About Us
 										</Typography>
@@ -230,7 +244,33 @@ function Footer(props) {
 										<Typography className="w-full pl-0 block pb-4" variant="body2">
 											For more information, or to schedule a demo, drop us a line
 										</Typography>
-										<RequestDemoForm className="w-full block pb-4" color={inverseColor} />
+										<RequestDemoForm
+											className="w-full block pb-4 text-white"
+											sx={{
+												"& .MuiFormControl-root": {
+													color: theme => theme.palette.background.paper,
+													"& .MuiInputBase-input": {
+														color: theme => theme.palette.background.paper,
+														"&:-webkit-autofill": {
+															backgroundColor: "transparent !important",
+															color: theme => theme.palette.background.paper,
+														},
+													},
+													"& .MuiInputLabel-root": {
+														color: theme => theme.palette.background.paper,
+													},
+													"& .MuiFilledInput-root": {
+														borderBottomColor: theme => theme.palette.background.paper,
+														"&::before": {
+															borderBottomColor: theme => theme.palette.background.paper,
+														},
+													},
+													"& .MuiInputAdornment-root": {
+														color: theme => theme.palette.background.paper,
+													},
+												},
+											}}
+										/>
 									</GridItem>
 								</GridContainer>
 							</GridItem>
@@ -240,7 +280,7 @@ function Footer(props) {
 									<GridItem className="pl-4 block" sm={12} md={6}>
 										{settings.social && (
 											<GridContainer className="p-0 m-0">
-												<Typography className="w-full block" color={inverseColor} variant="h5">
+												<Typography className="w-full block" variant="h5">
 													Social
 												</Typography>
 											</GridContainer>
@@ -277,14 +317,10 @@ function Footer(props) {
 											Contact
 										</Typography>
 										{!String.isEmpty(settings.contact["phone"]) && (
-											<Typography className="w-full secondary-text block pb-4" variant="h4" paragraph>
-												{settings.contact["phone"]}
-											</Typography>
+											<Typography className="w-full block pb-4">{settings.contact["phone"]}</Typography>
 										)}
 										{!String.isEmpty(settings.contact["email"]) && (
-											<Typography className="w-full secondary-text block pb-4" variant="h4" paragraph>
-												{settings.contact["email"]}
-											</Typography>
+											<Typography className="w-full block pb-4">{settings.contact["email"]}</Typography>
 										)}
 									</GridItem>
 								</GridContainer>
@@ -304,7 +340,7 @@ function Footer(props) {
 
 				{!absoluteFooter && (
 					<GridContainer
-						className={" md:px-20"}
+						className={" md:px-32"}
 						sx={{
 							background: "rgba(0,0,0, 0.3)",
 						}}
@@ -358,15 +394,15 @@ Footer.propTypes = {
 	columnWidgets: PropTypes.array,
 	absoluteFooter: PropTypes.node,
 	color: PropTypes.oneOf(Object.keys(colors.hex)),
-};
+}
 
 Footer.defaultProps = {
 	color: "primary",
-};
+}
 
 const mapStateToProps = state => ({
 	auth: state.auth,
 	app: state.app,
-});
+})
 
-export default (connect(mapStateToProps, {})((React.memo(Footer))));
+export default connect(mapStateToProps, {})(React.memo(Footer))

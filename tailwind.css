@@ -1,10 +1,10 @@
 /**
  * This injects Tailwind's base styles, which is a combination of
  * Normalize.css and some additional base styles.
- * 
+ *
  * You can see the styles here:
  * https://github.com/tailwindcss/tailwindcss/blob/master/css/preflight.css
- * 
+ *
  * If using `postcss-import`, use this import instead:
  *
  * @format
@@ -61,3 +61,37 @@
  * @import "utilities/background-patterns";
  * @import "utilities/skew-transforms";
  */
+@layer utilities {
+  .center {
+	top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+  }
+  .center-y {
+	top: 50%;
+    transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+  }
+  .center-x {
+	left: 50%;
+    transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+  }
+
+  .h-half-screen {
+	height: 50vh !important;
+  }
+
+  input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	background-color: currentColor !important;
+	color: inherit !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+}

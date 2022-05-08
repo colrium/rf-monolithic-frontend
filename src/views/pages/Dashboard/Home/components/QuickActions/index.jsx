@@ -29,7 +29,7 @@ class QuickActions extends React.Component {
 		const { auth } = this.props
 		return (
 			<GridContainer className="p-0 m-0">
-				<Card elevation={0} outlineColor="#cfd8dc">
+				<Card elevation={0}>
 					<CardHeader
 						avatar={
 							<Avatar aria-label="Shortcuts" style={{ background: colors.hex.default }}>

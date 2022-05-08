@@ -250,43 +250,6 @@ export default {
 	".center_align": {
 		textAlign: "center !important",
 	},
-
-	".center": {
-		position: "relative",
-		top: "50%",
-		left: "50%",
-		WebkitTransform: "translate(-50%, -50%)",
-		MsTransform: "translate(-50%, -50%)",
-		transform: "translate(-50%, -50%)",
-	},
-	".center_vertically": {
-		position: "relative",
-		top: "50%",
-		WebkitTransform: "translateY(-50%)",
-		MsTransform: "translateY(-50%)",
-		transform: "translateY(-50%)",
-	},
-	".center-vertically": {
-		position: "relative",
-		top: "50%",
-		WebkitTransform: "translateY(-50%)",
-		MsTransform: "translateY(-50%)",
-		transform: "translateY(-50%)",
-	},
-	".center_horizontally": {
-		position: "relative",
-		left: "50%",
-		WebkitTransform: "translateX(-50%)",
-		MsTransform: "translateX(-50%)",
-		transform: "translateX(-50%)",
-	},
-	".center-horizontally": {
-		position: "relative",
-		left: "50%",
-		WebkitTransform: "translateX(-50%)",
-		MsTransform: "translateX(-50%)",
-		transform: "translateX(-50%)",
-	},
 	".ps__thumb-x, .ps__thumb-y": {
 		backgroundColor: `${colors.hex.secondary} !important`,
 	},
@@ -353,12 +316,10 @@ export default {
 	},
 
 	".bottom-to-top-fading-dark-bg": {
-		background:
-			"linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%) !important",
+		background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%) !important",
 	},
 	".bottom-to-top-fading-bg": {
-		background:
-			"linear-gradient(to top, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 90%, rgba(255,255,255,0) 100%) !important",
+		background: "linear-gradient(to top, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 90%, rgba(255,255,255,0) 100%) !important",
 	},
 	".blur-bg-sm": {
 		backdropFilter: "blur(7px) !important",
@@ -378,4 +339,4 @@ export default {
 	},*/
 	...muiGlobalStyles,
 	...color_based_styles,
-};
+}

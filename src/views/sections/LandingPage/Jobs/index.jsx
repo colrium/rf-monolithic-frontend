@@ -18,7 +18,6 @@ const SectionComponent = (props) => {
 
 	return (
 		<Section id="jobs">
-
 			<GridContainer className={"p-0"}>
 				<GridContainer className={"p-0 md:py-6"}>
 					<GridItem xs={12}>
@@ -81,7 +80,7 @@ const SectionComponent = (props) => {
 					</GridItem>
 					<GridItem xs={12} className={"flex flex-col items-center"}>
 						<Link to={"/apply".toUriWithLandingPagePrefix()}>
-							<Button variant="contained" color="primary" id="apply-link">
+							<Button variant="contained" color="primary" className="rounded-full px-8" id="apply-link">
 								Join us!
 							</Button>
 						</Link>

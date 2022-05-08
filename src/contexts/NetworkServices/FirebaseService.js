@@ -3,11 +3,11 @@
 import React, { useRef, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { initializeApp } from "firebase/app"
+import { getAuth } from "firebase/auth"
 import { getFirestore, collection, doc, setDoc, getDocs, getDoc, updateDoc } from "firebase/firestore/lite"
 import { setCurrentUser, ensureMessage, setSettings } from "state/actions"
 import { firebase as firebaseConfig, firebaseWebPushCertificate } from "config"
 import { getMessaging, getToken, onMessage } from "firebase/messaging"
-import Api from "services/Api"
 import { EventRegister } from "utils"
 import { useDidMount, useSetState, useDidUpdate } from "hooks"
 import { usePermission } from "react-use"
@@ -20,6 +20,7 @@ const FirebaseService = props => {
 	const { user, isAuthenticated } = useSelector(state => state.auth)
 	const appRef = useRef(initializeApp(firebaseConfig))
 	const firestoreRef = useRef(getFirestore(appRef.current))
+	const authRef = useRef(getAuth(appRef.current))
 	const messagingRef = useRef(getMessaging())
 	// messagingRef.current.usePublicVapidKey(firebaseWebPushCertificate)
 	const notificationPermission = usePermission({ name: "notification" })
@@ -274,8 +275,11 @@ const FirebaseService = props => {
 		app: appRef.current,
 		firestore: firestoreRef.current,
 		messaging: messagingRef.current,
+		auth: authRef.current,
 		getFirestoreDoc: getFirestoreDoc,
 		putFirestoreDoc: putFirestoreDoc,
+		config: firebaseConfig,
+		webPushCertificate: firebaseWebPushCertificate,
 	})
 }
 

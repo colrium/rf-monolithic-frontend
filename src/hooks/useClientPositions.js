@@ -1,4 +1,5 @@
 /** @format */
+/*global google*/
 
 import { useCallback, useRef } from "react"
 import { useMap, useGeolocation } from "react-use"
@@ -18,7 +19,7 @@ import Button from "@mui/material/Button"
 import Rating from "@mui/material/Rating"
 import { useSearchParams, useNavigate } from "react-router-dom"
 
-if (!!google) {
+if (typeof google !== "undefined") {
 	google.maps.Marker.prototype.animateTo = function (newPosition, options) {
 		var defaultOptions = {
 			duration: 1000,

@@ -241,7 +241,7 @@ function CardView({ ...props }) {
 	}
 
 	return defination && record ? (
-		<Card elevation={0} outlineColor="#CCCCCC">
+		<Card elevation={0}>
 			<CardHeader
 				avatar={resolveAvatar()}
 				title={resolveTitle()}

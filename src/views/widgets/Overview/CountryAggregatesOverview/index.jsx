@@ -23,7 +23,7 @@ const wrapperStyles = {
 class CountryAggregatesOverview extends React.Component {
 	render() {
 		return (
-			<Card elevation={0} outlineColor="#cfd8dc">
+			<Card elevation={0}>
 				<CardHeader
 					avatar={
 						<Avatar

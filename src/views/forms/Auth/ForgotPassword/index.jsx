@@ -117,16 +117,10 @@ const AuthForm = React.forwardRef((props, ref) => {
 					required
 					validate
 					disabled={state.submitting}
-					helperText={
-						"Enter your email address to initiate your account's password reset."
-					}
+					helperText={"Enter your email address to initiate your account's password reset."}
 				/>
 			</Grid>
-			<Grid
-				item
-				xs={12}
-				className="flex flex-row justify-center items-center mb-4"
-			>
+			<Grid item xs={12} className="flex flex-row justify-center items-center mb-4">
 				<LoadingButton
 					disabled={!formState.isValid || formState.isSubmitting}
 					loading={formState.isSubmitting}
@@ -145,30 +139,21 @@ const AuthForm = React.forwardRef((props, ref) => {
 					color: theme => theme.palette.secondary.main,
 				}}
 			>
-				<Link
-					className="no-underline text-current p-2 px-4 my-2 rounded transition-all duration-200 hover:bg-gray-800 hover:bg-opacity-5 focus:bg-gray-800 focus:bg-opacity-20 ease-in-out"
-					to="/auth/login"
-				>
-					Back to Login
+				<Link to="/auth/login">
+					<Button variant="text" className="capitalize rounded-full px-8 my-4">
+						Back to Login
+					</Button>
 				</Link>
 			</Grid>
 
-			<Grid
-				item
-				xs={12}
-				className="flex flex-col justify-center items-center"
-				sx={{
-					color: theme => theme.palette.secondary.main,
-				}}
-			>
+			<Grid item xs={12} className="flex flex-col justify-center items-center">
 				<Typography color="action.disabled" variant="body2">
 					already received password reset code?
 				</Typography>
-				<Link
-					className="no-underline text-current p-2 px-4 my-2 rounded transition-all duration-200 hover:bg-gray-800 hover:bg-opacity-5 focus:bg-gray-800 focus:bg-opacity-20 ease-in-out"
-					to="/auth/reset-password"
-				>
-					Reset password
+				<Link to="/auth/reset-password">
+					<Button variant="text" className="capitalize rounded-full px-8 my-4">
+						Reset password
+					</Button>
 				</Link>
 			</Grid>
 			<Snackbar

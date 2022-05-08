@@ -1,8 +1,6 @@
 import Box from "@mui/material/Box";
-import Snackbar from "@mui/material/Snackbar";
 import { CloudUploadOutlined as CloudUploadIcon } from "@mui/icons-material";
 import Icon from "@mui/material/Icon";
-import Alert from '@mui/material/Alert';
 import { colors } from "assets/jss/app-theme";
 import PreviewList from "components/FileDropZone/PreviewList";
 import GridContainer from "components/Grid/GridContainer";
@@ -12,17 +10,9 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Typography from "components/Typography";
 import PropTypes from "prop-types";
 import React, { memo, useMemo, useCallback, useRef } from "react";
-import { useNetworkServices } from "contexts"
+import { useNetworkServices, useNotificationsQueue } from "contexts"
 import { useSetState, useDidUpdate, useDidMount, useForwardedRef } from "hooks"
 import { useDropArea } from "react-use"
-
-
-const MuiAlert = React.forwardRef((props, ref) => {
-    return <Alert elevation = { 6 }
-    variant = "filled" {...props }
-    ref = { ref }
-    />;
-});
 
 const DropZone = React.forwardRef((props, ref) => {
 	const {
@@ -65,6 +55,7 @@ const DropZone = React.forwardRef((props, ref) => {
 		fileObjects: [],
 		value: value || defaultValue,
 	})
+	const { queueNotification } = useNotificationsQueue()
 
 	const isMultiple = useMemo(() => filesLimit > 1, [filesLimit])
 	const showDragDrop = Array.isArray(state.value)
@@ -179,12 +170,12 @@ const DropZone = React.forwardRef((props, ref) => {
 				count++ //
 				if (count === files.length) {
 					// display message when the last one fires
-					// setState({
-					// 	openSnackBar: true,
-					// 	snackbarMessage: message,
-					// 	snackbarColor:
-					// 		"inverse",
-					// });
+					// queueNotification({
+					// 	content: message,
+					// 	severity: "success",
+					// 	priority: 1,
+					// 	timeout: 3000,
+					// })
 				}
 			}
 		},
@@ -197,12 +188,14 @@ const DropZone = React.forwardRef((props, ref) => {
 			var message = ""
 			const { fileObjects } = getState()
 			let fileObjectIndex = fileObjects.indexOf(fileObject)
-
+			queueNotification({
+				content: `File ${file.name} upload failed. `,
+				severity: "error",
+				priority: 1,
+				timeout: 3000,
+			})
 			setState(prevState => ({
 				fileObjects: prevState.fileObjects.remove(fileObjectIndex),
-				openSnackBar: true,
-				snackbarMessage: `File ${file.name} upload failed. `,
-				snackbarColor: "error",
 			}))
 		},
 		[]
@@ -213,10 +206,10 @@ const DropZone = React.forwardRef((props, ref) => {
 			const { fileObjects } = getState()
 
 			if (fileObjects.length + files.length > filesLimit) {
-				setState({
-					openSnackBar: true,
-					snackbarMessage: `Maximum allowed number of files exceeded. Only ${filesLimit} allowed`,
-					snackbarColor: "error",
+				queueNotification({
+					content: `Maximum allowed number of files exceeded. Only ${filesLimit} allowed`,
+					severity: "error",
+					timeout: 3000,
 				})
 			} else {
 				var count = 0
@@ -267,10 +260,11 @@ const DropZone = React.forwardRef((props, ref) => {
 								count++ //
 								if (count === files.length) {
 									// display message when the last one fires
-									setState({
-										openSnackBar: true,
-										snackbarMessage: message,
-										snackbarColor: "inverse",
+									queueNotification({
+										content: message,
+										severity: "success",
+										priority: 1,
+										timeout: 3000,
 									})
 								}
 							}
@@ -314,13 +308,15 @@ const DropZone = React.forwardRef((props, ref) => {
 						newValue = null
 					}
 				}
-
+				queueNotification({
+										content: `Attached file ${fileObject.attachment.name}  deleted`,
+										severity: "warning",
+										priority: 1,
+										timeout: 3000,
+									})
 				setState({
 					fileObjects: newfileObjects,
 					value: newValue,
-					openSnackBar: true,
-					snackbarMessage: "Attached file " + fileObject.attachment.name + " deleted",
-					snackbarColor: "secondary",
 				})
 				Api.delete("/attachments/" + fileObject.attachment._id).catch(err => {})
 			} else {
@@ -345,20 +341,17 @@ const DropZone = React.forwardRef((props, ref) => {
 			if (onDropRejected) {
 				onDropRejected(rejectedFiles, evt)
 			}
-			setState({
-				openSnackBar: true,
-				snackbarMessage: message,
-				snackbarColor: "error",
+			queueNotification({
+				content: message,
+				severity: "error",
+				priority: 1,
+				timeout: 3000,
 			})
 		},
 		[onDropRejected, acceptedFiles, maxFileSize]
 	)
 
-	const onCloseSnackbar = useCallback(() => {
-		setState({
-			openSnackBar: false,
-		})
-	}, [])
+
 
 	const triggerOnChange = useCallback(
 		newValue => {
@@ -481,21 +474,7 @@ const DropZone = React.forwardRef((props, ref) => {
 				</GridContainer>
 
 				{/* <FormHelperText error={Boolean(error)}> {helperText} </FormHelperText> */}
-				{showAlerts && (
-					<Snackbar
-						anchorOrigin={{
-							vertical: "bottom",
-							horizontal: "right",
-						}}
-						open={state.openSnackBar}
-						autoHideDuration={6000}
-						onClose={onCloseSnackbar}
-					>
-						<MuiAlert onClose={onCloseSnackbar} color={state.snackbarColor || "secondary"} sx={{ width: "100%" }}>
-							{state.snackbarMessage || ""}{" "}
-						</MuiAlert>
-					</Snackbar>
-				)}
+
 			</Box>
 		</ClickAwayListener>
 	)

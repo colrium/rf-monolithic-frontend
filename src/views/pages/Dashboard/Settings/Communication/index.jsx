@@ -9,7 +9,7 @@ import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
 function Widget() {
-	const settings = useSelector(state => ({ ...state?.app?.settings?.mail }))
+	const settings = useSelector(state => ({ ...state?.app?.settings?.communication }))
 	const {
 		TextField,
 		Autocomplete,
@@ -18,7 +18,7 @@ function Widget() {
 		values,
 		formState: { errors },
 	} = usePersistentForm({
-		name: "mail-settings",
+		name: "communication-settings",
 		volatile: true,
 		defaultValues: {
 			...settings,
@@ -28,19 +28,17 @@ function Widget() {
 	useDidUpdate(() => {
 		if (JSON.isEmpty(errors)) {
 			EventRegister.emit("change-settings", {
-				mail: { ...settings, ...values },
+				communication: { ...settings, ...values },
 			})
 		}
 	}, [values, errors, settings])
-
-	console.log("Mail Settings", settings)
 
 	return (
 		<Card>
 			<GridContainer className="px-8">
 				<GridItem xs={12} className="mb-2">
 					<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
-						Mail settings
+						Communication settings
 					</Typography>
 				</GridItem>
 
@@ -55,26 +53,27 @@ function Widget() {
 						<TextField name="smtp_host" label="Host" />
 					</GridItem>
 					<GridItem xs={12} className="mb-1">
-						<TextField name="smtp_user" label="Account Address" type="email" />
+						<TextField name="smtp_user" label="SMTP Email Address" type="email" />
 					</GridItem>
 					<GridItem xs={12} className="mb-1">
-						<TextField name="smtp_password" label="Account Password" type="password" />
+						<TextField name="smtp_password" label="SMTP Password" type="password" />
 					</GridItem>
 
 					<GridItem xs={12}>
-						<Checkbox name="smtp_tls" label="TLS" />
-					</GridItem>
-					<GridItem xs={12}>
-						<Checkbox name="smtp_ssl" label="SSL" />
+						<Checkbox name="smtp_secure" label="Secure SMTP" />
 					</GridItem>
 
 					<GridItem xs={12} className="mb-1">
-						<TextField name="smtp_sender_name" label="Sender Name" />
+						<TextField name="smtp_sender_name" label="SMTP Sender Name" debounce={1000} />
 					</GridItem>
 
-					{/* <GridItem xs={12} className="mb-1">
-						<Checkbox name="private" label="Private" />
-					</GridItem> */}
+					<GridItem xs={12} className="mb-1">
+						<TextField name="courierAuthorizationToken" label="Courier Authorization Token" type="password" debounce={1000} />
+					</GridItem>
+
+					<GridItem xs={12} className="mb-1">
+						<Checkbox name="smtp_pool" label="SMTP Pool" />
+					</GridItem>
 
 					<GridItem xs={12} className="my-4">
 						<Typography variant="h6" sx={{ color: theme => theme.palette.text.disabled }}>

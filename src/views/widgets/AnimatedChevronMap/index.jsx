@@ -538,7 +538,7 @@ const AnimatedChevronMap = ( props ) => {
 				onClick={() => {
 					setState( prevState => ( {presenceOpen: !prevState.presenceOpen} ) );
 				}}
-				style={{...state.popup.position, ...popUpStyle, }}
+				style={{...state.popup?.position, ...popUpStyle, }}
 				ref={mapPopupRef}
 			>
 				{!state.presenceOpen && <Typography variants="body1" className="text-xl uppercase font-black">{state.popup.message}</Typography>}

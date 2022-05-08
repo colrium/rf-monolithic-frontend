@@ -1149,8 +1149,9 @@ class ListingView extends React.Component {
 			load_data,
 			onClickEntry,
 			sorterFormLayoutType,
-		} = this.props;
-		const { view, queryBuilderProps, service } = this.state;
+		} = this.props
+		const { view, queryBuilderProps } = this.state
+
 		return (
 			<GridContainer className="p-0 m-0">
 				<GridContainer className="p-0 m-0">

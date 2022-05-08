@@ -20,7 +20,7 @@ const Stage = (props) => {
     const stageValues = (JSON.getDeepPropertyValue(`stages.${ stage }`, (values || {})) || {});
 
     const changeStageValue = useCallback((name, value) => {
-        setValue(name, value);
+        // setValue(name, value);
     }, []);
 
     const handleOnChange = useCallback((name) => (value) => {

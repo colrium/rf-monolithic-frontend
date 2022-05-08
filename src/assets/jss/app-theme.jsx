@@ -459,20 +459,12 @@ let theme = createTheme({
 		default: {
 			main: "inherit",
 		},
-		// error: {
-		// 	main: errorColor,
-		// },
-		// background: {
-		// 	default: "#F7F7F7",
-		// 	paper: "#FFFFFF",
-		// },
-		// text: {
-		// 	primary: "#575757",
-		// 	secondary: "#737373",
-		// 	disabled: "#999999",
-		// 	contrast: inverseColor,
-		// 	contrastDark: Color(inverseColor).darken(0.2).hex(),
-		// },
+		white: {
+			main: "#FFFFFF",
+		},
+		success: {
+			main: "#00AF41"
+		},
 		...defaultPallete,
 	},
 	typography: {
@@ -533,9 +525,9 @@ let theme = createTheme({
 			lineHeight: "25px",
 		},
 		subtitle2: {
-			fontSize: "18px",
+			fontSize: "16px",
 			letterSpacing: 0,
-			lineHeight: "20px",
+			lineHeight: "18px",
 		},
 		body1: {
 			fontSize: 14,
@@ -543,7 +535,7 @@ let theme = createTheme({
 		},
 		body2: {
 			fontWeight: 600,
-			fontSize: "12px",
+			fontSize: 12,
 		},
 		button: {
 			fontWeight: 400,
@@ -551,15 +543,14 @@ let theme = createTheme({
 		},
 		caption: {
 			fontWeight: 400,
-			fontSize: "12px",
-			lineHeight: "16px",
+			fontSize: 10,
+			lineHeight: "12px",
 		},
 	},
 	appDrawer: {
 		width: app.drawer.width,
 	},
 })
-
 
 const alignments = {
 	right: {
@@ -577,29 +568,7 @@ const alignments = {
 	centeralign: {
 		textAlign: "center",
 	},
-	center: {
-		position: "relative",
-		top: "50%",
-		left: "50%",
-		WebkitTransform: "translate(-50%, -50%)",
-		MsTransform: "translate(-50%, -50%)",
-		transform: "translate(-50%, -50%)",
-	},
-	center_vertically: {
-		position: "relative",
-		top: "50%",
-		WebkitTransform: "translateY(-50%)",
-		MsTransform: "translateY(-50%)",
-		transform: "translateY(-50%)",
-	},
-	center_horizontally: {
-		position: "relative",
-		left: "50%",
-		WebkitTransform: "translateX(-50%)",
-		MsTransform: "translateX(-50%)",
-		transform: "translateX(-50%)",
-	},
-};
+}
 const placements = {
 	right: {
 		float: "right",
@@ -616,29 +585,7 @@ const placements = {
 	center_align: {
 		textAlign: "center",
 	},
-	center: {
-		position: "relative",
-		top: "50%",
-		left: "50%",
-		WebkitTransform: "translate(-50%, -50%)",
-		MsTransform: "translate(-50%, -50%)",
-		transform: "translate(-50%, -50%)",
-	},
-	center_vertically: {
-		position: "relative",
-		top: "50%",
-		WebkitTransform: "translateY(-50%)",
-		MsTransform: "translateY(-50%)",
-		transform: "translateY(-50%)",
-	},
-	center_horizontally: {
-		position: "relative",
-		left: "50%",
-		WebkitTransform: "translateX(-50%)",
-		MsTransform: "translateX(-50%)",
-		transform: "translateX(-50%)",
-	},
-};
+}
 
 const textcases = {
 	lowercase: {

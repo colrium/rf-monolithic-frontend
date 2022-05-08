@@ -1,9 +1,9 @@
 /** @format */
 
 import React from "react"
-import NotificationQueueContext from "./NotificationQueueContext"
+import NotificationQueueContext from "./NotificationsQueueContext"
 
-export default function NotificationQueueConsumer({ children }) {
+export default function NotificationsQueueConsumer({ children }) {
 	return (
 		<NotificationQueueContext.Consumer>
 			{context => {

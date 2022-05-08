@@ -159,7 +159,7 @@ class TransferList extends React.Component {
 							<ListItem
 								key={value_entry}
 								role="listitem"
-								button
+
 								onClick={this.handleToggle(value_entry)}
 							>
 								<ListItemIcon>

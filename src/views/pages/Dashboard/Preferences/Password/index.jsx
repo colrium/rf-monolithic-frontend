@@ -10,7 +10,7 @@ import UsersDefination from "definations/users";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import ApiService from "services/Api";
-import BaseForm from "views/forms/BaseForm";
+import BaseForm from "views/forms/BaseForm/index.class";
 
 
 class Password extends Component {
@@ -93,7 +93,7 @@ class Password extends Component {
 		const { className, auth } = this.props;
 
 		return (
-			<Card elevation={0} outlineColor="#cfd8dc" className={className}>
+			<Card elevation={0} className={className}>
 				<CardHeader
 					avatar={
 						<Avatar

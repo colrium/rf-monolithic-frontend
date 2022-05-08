@@ -6,8 +6,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import ActionDialog from "components/ActionDialog";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "./Header"
+import Footer from "./Footer"
 
 import { useErrorBoundary } from "hooks";
 

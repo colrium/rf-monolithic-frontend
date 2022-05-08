@@ -7,24 +7,20 @@ import { connect } from "react-redux";
 import CacheBuster from 'hoc/CacheBuster';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { NetworkServicesProvider, NotificationsQueueProvider } from "contexts"
+import ProgressDialog from "components/ProgressDialog"
 
-import ProgressDialog from "components/ProgressDialog";
-
-import { create as createJss } from "jss";
-import preset from "jss-preset-default";
-import { SheetsRegistry } from "react-jss";
-import { JssProvider } from "react-jss";
-import VendorPrefixer from "jss-plugin-vendor-prefixer";
-import NestedJSS from "jss-plugin-nested";
-import useMediaQuery from '@mui/material/useMediaQuery';
-
-
-
-import { NetworkServicesProvider } from "contexts"
-import CookiesConsentDialog from "views/widgets/CookiesConsentDialog"
+import { create as createJss } from "jss"
+import preset from "jss-preset-default"
+import { SheetsRegistry } from "react-jss"
+import { JssProvider } from "react-jss"
+import VendorPrefixer from "jss-plugin-vendor-prefixer"
+import NestedJSS from "jss-plugin-nested"
+import useMediaQuery from "@mui/material/useMediaQuery"
 
 import appStyle from "assets/jss/appStyle"
 import { theme } from "assets/jss/app-theme"
+import { useDeepMemo } from "hooks"
 //
 import Routes from "routes"
 import "assets/css/tui-calendar.min.css"
@@ -49,35 +45,53 @@ const App = props => {
 		app: { preferences, initialized },
 	} = props
 	const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
-	const getAppTheme = React.useCallback(() => {
+	const evaluatedTheme = useDeepMemo(() => {
 		let themeMode = prefersDarkMode || preferences.theme === "dark" ? "dark" : "light"
 		let computedTheme = theme
 		computedTheme.palette.mode = themeMode
 		computedTheme.palette.background = {
-			default: themeMode === "dark" ? "#2b2b2b" : "#f5f5f5",
+			default: themeMode === "dark" ? "#2b2b2b" : "#f3f3f3",
 			paper: themeMode === "dark" ? "#121212" : "#ffffff",
 		}
 
 		computedTheme.palette.text = {
-			primary: themeMode === "dark" ? "#ffffff" : "#1a1a1a",
+			primary: themeMode === "dark" ? "#ffffff" : "#424242",
 			contrast: themeMode === "dark" ? "#1a1a1a" : "#ffffff",
 			contrastDark: themeMode === "dark" ? "#ffffff" : "#141414",
 			secondary: themeMode === "dark" ? "#d4d4d4" : "#737373",
 			disabled: "#999999",
 		}
-		return createTheme(computedTheme)
+		return createTheme({
+			...computedTheme,
+			components: {
+				// Name of the component
+				MuiButton: {
+					styleOverrides: style => {
+						const { ownerState } = style
+						console.log("MuiButton styleOverrides style", style)
+						return {
+							...(ownerState.rounded && {
+								backgroundColor: "#202020",
+								color: "#fff",
+							}),
+						}
+					},
+				},
+			},
+		})
 	}, [prefersDarkMode, preferences.theme])
 
 	return (
-		<ThemeProvider theme={getAppTheme()}>
-			<NetworkServicesProvider>
-				<JssProvider jss={jss} registry={sheets}>
+		<ThemeProvider theme={evaluatedTheme}>
+			<JssProvider jss={jss} registry={sheets}>
+				<NetworkServicesProvider>
+					<NotificationsQueueProvider>
 						<BrowserRouter>
 							<Routes />
 						</BrowserRouter>
-				</JssProvider>
-				<CookiesConsentDialog />
-			</NetworkServicesProvider>
+					</NotificationsQueueProvider>
+				</NetworkServicesProvider>
+			</JssProvider>
 		</ThemeProvider>
 	)
 }

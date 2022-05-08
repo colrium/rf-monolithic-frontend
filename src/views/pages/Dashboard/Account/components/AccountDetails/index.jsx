@@ -19,7 +19,7 @@ import compose from "recompose/compose";
 import ApiService from "services/Api";
 import { updateCurrentUser } from "state/actions/auth";
 
-import BaseForm from "views/forms/BaseForm";
+import BaseForm from "views/forms/BaseForm/index.class";
 //
 // Component styles
 

@@ -9,7 +9,7 @@ import { quoterequests as defination } from "definations";
 import React from "react";
 import ApiService from "services/Api";
 
-import BaseForm from "views/forms/BaseForm";
+import BaseForm from "views/forms/BaseForm/index.class";
 
 class Step extends React.Component {
 	render() {

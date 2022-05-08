@@ -8,7 +8,24 @@ import Editor from "./Editor"
 import { useSetState, useDeepMemo } from "hooks"
 
 const WysiwygEditor = React.forwardRef((props, ref) => {
-	const { className, readOnly, disabled, helperText, error, variant, label, required, editorConfig = {}, ...rest } = props
+	const {
+		className,
+		readOnly,
+		disabled,
+		minRows,
+		maxRows,
+		rows,
+		color,
+		helperText,
+		error,
+		sx,
+		variant,
+		label,
+		fullWidth = true,
+		required,
+		editorConfig = {},
+		...rest
+	} = props
 
 	return (
 		<TextField
@@ -26,8 +43,13 @@ const WysiwygEditor = React.forwardRef((props, ref) => {
 			error={error}
 			label={label}
 			required={required}
-			fullWidth
+			fullWidth={fullWidth}
 			multiline
+			minRows={minRows}
+			maxRows={maxRows}
+			rows={rows}
+			color={color}
+			sx={sx}
 			inputRef={ref}
 		/>
 	)

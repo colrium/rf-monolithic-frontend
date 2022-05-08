@@ -271,7 +271,7 @@ class CustomCalendar extends React.Component {
 		};
 
 		return (
-			<Card elevation={0} outlineColor="#cfd8dc">
+			<Card elevation={0}>
 				<CardHeader
 					avatar={
 						<Avatar

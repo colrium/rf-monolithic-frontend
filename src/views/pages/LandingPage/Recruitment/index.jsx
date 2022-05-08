@@ -42,13 +42,13 @@ class Page extends React.Component {
 		const { classes, auth, theme, device, ...rest } = this.props;
 		return (
 			<GridContainer
-				className={classes?.root + " p-0 md:px-12"}
+				className={classes?.root + " p-0"}
 				direction="column"
 				alignItems="center"
 				justify="center"
 			>
 				<GridContainer className={"p-0"}>
-					<GridItem xs={12} sm={12} md={12} className={"p-0 px-4 md:px-48 "}>
+					<GridItem xs={12} sm={12} md={12} className={"p-0 pb-4 "}>
 						<JobsSection />
 					</GridItem>
 				</GridContainer>

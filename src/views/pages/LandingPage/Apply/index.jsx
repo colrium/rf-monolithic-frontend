@@ -19,9 +19,9 @@ class Page extends React.Component {
 		return (
 			<GridContainer
 				style={{ minHeight: "90vh" }}
-				className={"p-0 px-4 md:px-32"}
+				className={"p-0"}
 			>
-				<GridItem xs={12} md={11} className={"p-0"}>
+				<GridItem xs={12} className={"p-0"}>
 					<ApplySection />
 				</GridItem>
 			</GridContainer>

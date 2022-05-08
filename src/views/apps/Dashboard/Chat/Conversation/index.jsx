@@ -331,14 +331,14 @@ const Conversation = props => {
 
 			if (Array.isArray(unreadMessages) && unreadMessages.length > 0) {
 				let updatedUnreadMessages = unreadMessages.reduce((acc, unreadMessage) => {
-					// SocketIO.emit("mark-message-as-received", {
-					// 	message: unreadMessage._id,
-					// })
-					dispatch(ensureMessage({ ...unreadMessage, state: "received" }, false))
+					SocketIO.emit("mark-message-as-received", {
+						message: unreadMessage._id,
+					})
+					// dispatch(ensureMessage({ ...unreadMessage, state: "received" }, false))
 					acc.push({ ...unreadMessage, state: "received" })
 					return acc
 				}, [])
-				console.log("updatedUnreadMessages", updatedUnreadMessages)
+				// console.log("updatedUnreadMessages", updatedUnreadMessages)
 				// try {
 				// 	onMessages(updatedUnreadMessages)
 				// } catch (error) {
