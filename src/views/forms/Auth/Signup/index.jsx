@@ -45,10 +45,10 @@ const SignupForm = React.forwardRef((props, ref) => {
 		mode: "onChange",
 		reValidateMode: "onChange",
 		// volatile: true,
-		defaultValues: {  },
+		defaultValues: { country: "KE" },
 		onSubmit: async (formData, e) => {
 			return await Api.post("/signup", formData)
-				.then((res) => {
+				.then(res => {
 					console.log("res", res)
 					if (formData.interest === "demo") {
 						queueNotification({
@@ -61,7 +61,7 @@ const SignupForm = React.forwardRef((props, ref) => {
 							content: `Signup request successfull! Thank you for your interest in Realfield! We will be in touch shortly`,
 						})
 						let quoteData = { ...formData }
-						delete quoteData.password;
+						delete quoteData.password
 						delete quoteData.repeat_password
 
 						const newParams = new URLSearchParams(quoteData).toString()
@@ -73,7 +73,6 @@ const SignupForm = React.forwardRef((props, ref) => {
 						})
 						navigate(`/community`.toUriWithLandingPagePrefix())
 					}
-
 
 					if (Function.isFunction(onSubmitSuccess)) {
 						onSubmitSuccess(res)
