@@ -1,7 +1,7 @@
 # get the base node image
 # FROM node:alpine as builder
-FROM node:8.12-alpine as builder
-RUN apk add g++ make python
+FROM node:9-slim as builder
+RUN apt-get update || : && apt-get install python -y
 # set the working dir for container
 WORKDIR /frontend
 RUN npm install -g npm-run-all
