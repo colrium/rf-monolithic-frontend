@@ -91,13 +91,11 @@ const useLazyImage = props => {
 			imageRef.current.onerror = onImageError
 			getSrcImage(imgSrc)
 				.then(cachedSrc => {
-					console.log("loadImage cachedSrc", cachedSrc)
 					setState({
 						loading: false,
 						error: null,
 						src: cachedSrc,
 					})
-
 					imageRef.current.src = cachedSrc
 				})
 				.catch(error => {

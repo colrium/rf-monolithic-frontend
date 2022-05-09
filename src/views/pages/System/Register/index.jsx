@@ -9,7 +9,7 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import React from "react";
 
-import SignupForm from "views/forms/Auth/Signup";
+import SignupForm from "views/forms/Auth/Signup"
 import AnimatedChevronMap from "views/widgets/AnimatedChevronMap";
 import { intercom } from "config";
 import Intercom from "react-intercom";

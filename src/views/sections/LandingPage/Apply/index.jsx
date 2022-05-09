@@ -26,7 +26,7 @@ const SectionComponent = props => {
 	return (
 		<Section id="jobs-apply">
 			<GridContainer className={"p-0"}>
-				<GridItem xs={12} md={11} className={"p-0"}>
+				<GridItem xs={12}  className={"p-0"}>
 					<GridContainer className={"p-0"}>
 						<GridItem xs={12} sm={12} className={"p-0 pt-8 pb-4"}>
 							<Typography variant="h3">Fielder Registration</Typography>
@@ -69,7 +69,7 @@ const SectionComponent = props => {
 										margin: "dense",
 										InputProps: {
 											classes: {
-												root: "inverse",
+												// root: "inverse",
 											},
 										},
 									}}
@@ -77,14 +77,14 @@ const SectionComponent = props => {
 										margin: "dense",
 										InputProps: {
 											classes: {
-												root: "inverse",
+												// root: "inverse",
 											},
 										},
 									}}
 									selectFieldsProps={{
 										margin: "dense",
 										classes: {
-											inputRoot: "inverse",
+											// inputRoot: "inverse",
 										},
 									}}
 									onSubmitSuccess={() => setContent("acknowledgement")}

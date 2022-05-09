@@ -901,11 +901,8 @@ class BaseForm extends React.Component {
 					component={WysiwygInput}
 					label={field.label}
 					variant={text_fields_variant}
-					multiline
-					rows={4}
 					defaultValue={value}
 					onChange={this.handleChange(name)}
-					controls={["bold", "italic", "underline", "highlight", "link", "media", "numberList", "bulletList", "quote"]}
 					required={field.input.required}
 					fullWidth
 					validate={validation}
@@ -1280,7 +1277,7 @@ class BaseForm extends React.Component {
 				onKeyDown={this.handleKeyPress}
 				onSubmit={this.handleSubmit}
 			>
-				<Card elevation={0} outlineColor={"transparent"} className="p-0 bg-transparent">
+				<Card elevation={0} className="p-0 bg-transparent">
 					{show_title ? (
 						<CardHeader
 							avatar={

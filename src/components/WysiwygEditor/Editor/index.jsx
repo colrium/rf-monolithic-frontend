@@ -67,10 +67,13 @@ const WysiwygEditor = React.forwardRef((props, ref) => {
 	}, [value, defaultValue, contentStateRef.current])
 
 	const editorState = useDeepMemo(() => {
+		console.log("contentState", contentState)
 		if (!!editorStateRef.current) {
 			return editorStateRef.current
+		} else if (!!contentState) {
+			return EditorState.createWithContent(contentState)
 		}
-		return EditorState.createWithContent(contentState)
+		return EditorState.createEmpty()
 	}, [contentState, editorStateRef.current])
 
 	const handleOnChange = useCallback(async () => {

@@ -431,7 +431,7 @@ class GoogleMapOverview extends React.Component {
 		return (
 			<Card
 				elevation={0}
-				outlineColor={theme.palette.text.primary}
+
 				sx={
 					{
 						/*backgroundColor: theme =>  theme.palette.background.paper*/

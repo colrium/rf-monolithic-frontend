@@ -39,6 +39,7 @@ export const environment = process.env.NODE_ENV;
 export const client_id = process.env.REACT_APP_CLIENT_ID;
 export const client_secret = process.env.REACT_APP_CLIENT_SECRET;
 
+
 export const firebase = {
 	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
 	authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -47,34 +48,32 @@ export const firebase = {
 	storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
 	messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
 	appId: process.env.REACT_APP_FIREBASE_APP_ID,
-	measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
-};
+	measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
+}
 
-export const firebaseWebPushCertificate = "BCRs2cCvL59gp6AyJybuna4N7migtv4c6O6Twvgpg0-FE8yAhAmEpYNRc7YwV4T4QjhLQkds8U2NUS6ZVxVChXw";
-
+export const firebaseWebPushCertificate = "BCRs2cCvL59gp6AyJybuna4N7migtv4c6O6Twvgpg0-FE8yAhAmEpYNRc7YwV4T4QjhLQkds8U2NUS6ZVxVChXw"
 
 export const baseUrls = {
 	domain: environment == "development" ? "realfield.local" : process.env.REACT_APP_DOMAIN,
 	host: environment == "development" ? "realfield.local" : process.env.REACT_APP_API_HOST, // This is for development and experimentation purposes only to cater for docker loadbalancer/proxy scenarios. Its considered unsecure to set or accept requests with a HOST header/parameter.
-	api: environment == "development" ? "http://api.realfield.local" : process.env.REACT_APP_API_ENDPOINT,
-	api_socket_io: environment == "development" ? "ws://api.realfield.local" : "wss://api.realfield.io",
+	api: environment == "development" ? "http://localhost:8000" : process.env.REACT_APP_API_ENDPOINT,
+	api_socket_io: environment == "development" ? "ws://localhost:8000" : "wss://api.realfield.io",
 }
 
+export const google_maps_url =
+	"https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_MAPS_KEY + "&v=3.exp&libraries=geometry,drawing,places"
 
-
-export const google_maps_url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_MAPS_KEY + "&v=3.exp&libraries=geometry,drawing,places";
-
-export const default_location = { lat: -1.2921, lng: 36.8219 };
+export const default_location = { lat: -1.2921, lng: 36.8219 }
 
 export const auth_token = {
 	location: process.env.REACT_APP_AUTH_TOKEN_LOCATION,
 	name: process.env.REACT_APP_AUTH_TOKEN_NAME,
-};
+}
 
 export const apiClient = {
 	client_id: process.env.REACT_APP_CLIENT_ID,
 	client_secret: process.env.REACT_APP_CLIENT_SECRET,
-};
+}
 
 export const google_maps = {
 	url:
@@ -82,13 +81,13 @@ export const google_maps = {
 		process.env.REACT_APP_GOOGLE_MAPS_KEY +
 		"&v=3.exp&libraries=geometry,drawing,places",
 	default_center: { lat: -1.2921, lng: 36.8219 },
-};
+}
 
-export const google_maps_api_key = process.env.REACT_APP_GOOGLE_MAPS_KEY;
+export const google_maps_api_key = process.env.REACT_APP_GOOGLE_MAPS_KEY
 
 export const builderIO = {
 	public_api_key: process.env.REACT_APP_BUILDER_IO_PUBLIC_API_KEY,
-};
+}
 
 export const intercom = {
 	app: {
@@ -99,15 +98,17 @@ export const intercom = {
 		email: process.env.REACT_APP_INTERCOM_USER_EMAIL,
 		name: process.env.REACT_APP_INTERCOM_USER_NAME,
 	},
-};
+}
 
-export const dashboardBaseUri = "/dashboard";
-export const landingPageBaseUri = "/page";
-export const orderFormBaseUri = "/order";
+export const dashboardBaseUri = "/dashboard"
+export const landingPageBaseUri = "/page"
+export const orderFormBaseUri = "/order"
 
-export const logRedux = false;
+export const logRedux = false
 
 export const locales = {
-	"en": "English(UK)",
+	en: "English(UK)",
 	"en-us": "English(US)",
-};
+}
+
+export const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID

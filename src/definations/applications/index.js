@@ -354,7 +354,7 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						}
 					},
 				},
@@ -381,7 +381,7 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					},
 				},
@@ -452,7 +452,7 @@ export default {
 					default: "",
 					required: false,
 					props: {
-						freeSolo: true,
+						// freeSolo: true,
 					},
 				},
 				possibilities: {
@@ -475,11 +475,11 @@ export default {
 						maxDate: new Date().setFullYear(currentDate.getFullYear() - 18),
 						format: "DD/MM/YYYY",
 						margin: "dense",
-						InputProps: {
-							classes: {
-								root: "inverse",
-							}
-						}
+						// InputProps: {
+						// 	classes: {
+						// 		root: "inverse",
+						// 	}
+						// }
 					},
 				},
 			},
@@ -506,7 +506,7 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					},
 				},
@@ -525,7 +525,7 @@ export default {
 						freeSolo: true,
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					},
 				},
@@ -553,7 +553,7 @@ export default {
 						freeSolo: true,
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					}
 				},
@@ -580,7 +580,7 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					}
 
@@ -607,7 +607,7 @@ export default {
 						freeSolo: true,
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					},
 				},
@@ -635,7 +635,7 @@ export default {
 						freeSolo: true,
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					}
 				},
@@ -662,7 +662,7 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					}
 
@@ -701,7 +701,7 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						}
 					},
 				},
@@ -751,10 +751,10 @@ export default {
 						return true;
 					},
 					input: (values, user) => {
-						if (user) {
-							return !user?.isAdmin;
-						}
-						return true;
+						// if (user) {
+						// 	return !user?.isAdmin;
+						// }
+						return false;
 					},
 				},
 			},
@@ -774,10 +774,10 @@ export default {
 						return true;
 					},
 					input: (values, user) => {
-						if (user) {
-							return !user?.isAdmin;
-						}
-						return true;
+						// if (user) {
+						// 	return !user?.isAdmin;
+						// }
+						return false;
 					},
 				},
 			},
@@ -794,9 +794,9 @@ export default {
 							"Click to select file \n OR \n Drag & drop your selfie here",
 						filesLimit: 1,
 						dropzoneIcon: "portrait",
-						containerStyle: {
-							background: "#FFFFFF"
-						}
+						// containerStyle: {
+						// 	background: "#FFFFFF"
+						// }
 					},
 				},
 				reference: {
@@ -828,9 +828,9 @@ export default {
 						dropzoneText: "Click to select file \n OR \n Drag & drop your Resume here",
 						filesLimit: 1,
 						dropzoneIcon: "insert_drive_file",
-						containerStyle: {
-							background: "#FFFFFF"
-						}
+						// containerStyle: {
+						// 	background: "#FFFFFF"
+						// }
 					},
 				},
 				reference: {
@@ -858,9 +858,9 @@ export default {
 							"Click to select file \n OR \n Drag & drop your Copy of Government ID here",
 						filesLimit: 1,
 						dropzoneIcon: "credit_card",
-						containerStyle: {
-							background: "#FFFFFF"
-						}
+						// containerStyle: {
+						// 	background: "#FFFFFF"
+						// }
 					},
 				},
 				reference: {
@@ -885,9 +885,9 @@ export default {
 					props: {
 						freeSolo: true,
 						margin: "dense",
-						classes: {
-							inputRoot: "inverse",
-						},
+						// classes: {
+						// 	// inputRoot: "inverse",
+						// },
 					},
 				},
 				possibilities: (values, user) => {

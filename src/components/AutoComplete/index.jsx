@@ -10,7 +10,7 @@ import {useUpdate} from 'react-use';
 
 
 function CustomAutocomplete(props) {
-	const { className, disabled, multiple, loading, onChange, label, required, variant, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, onOpen, onClose, touched, invalid, isClearable, error, value, options, freeSolo, ...rest } = props
+	const { className, disabled, multiple, loading, onChange, label, required, variant, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, onOpen, onClose, touched, invalid, isClearable, error, value, options, freeSolo, onFocus, onBlur, ...rest } = props
 
 	const [state, setState, getState] = useSetState({
 		open: false,
@@ -290,6 +290,7 @@ function CustomAutocomplete(props) {
 			value={freeSolo && String.isString(valueRef.current) ? null : valueRef.current}
 			options={optionsRef.current}
 			loading={state.loading || loading}
+
 			freeSolo={freeSolo}
 
 		/>

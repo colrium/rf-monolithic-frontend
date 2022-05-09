@@ -14,7 +14,7 @@ function Widget() {
 		TextField,
 		Autocomplete,
 		Checkbox,
-		RadioGroup,
+		register,
 		values,
 		formState: { errors },
 	} = usePersistentForm({
@@ -28,7 +28,14 @@ function Widget() {
 	useDidUpdate(() => {
 		if (JSON.isEmpty(errors)) {
 			EventRegister.emit("change-settings", {
-				auth: { ...settings, ...values },
+				auth: {
+					...settings,
+					...values,
+					websockets: {
+						...values.websockets,
+						send_authorization_timeout: Number.parseNumber(values?.websockets?.send_authorization_timeout, 1000),
+					},
+				},
 			})
 		}
 	}, [values, errors, settings])
@@ -71,7 +78,25 @@ function Widget() {
 
 				<GridContainer className="px-0">
 					<GridItem xs={12}>
-						<Checkbox name="enforce_socketio_authorization" label="Enforce socketIo authorization" />
+						<Checkbox name="websockets.enforce_authorization" label="Enforce socketIo authorization" />
+					</GridItem>
+					<GridItem xs={12} className="mb-1">
+						<TextField
+							type="number"
+							name="websockets.send_authorization_timeout"
+							label="Send Authorization Timeout (Ms)"
+							rules={{
+								valueAsNumber: true,
+								deps: [`websockets.enforce_authorization`],
+								// validate: {
+								// 	checkMin: value =>
+								// 		(values[`websockets.enforce_authorization`] && parseInt(value) < 1000) || "Min value is 1000",
+								// 	checkMax: value => parseInt(value) > 10000 || "Max value is 10 seconds",
+								// },
+							}}
+							disabled={!values.websockets.enforce_authorization}
+							helperText="The time in milliseconds server should wait for a client to send authorization request."
+						/>
 					</GridItem>
 				</GridContainer>
 			</GridContainer>

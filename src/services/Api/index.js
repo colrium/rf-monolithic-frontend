@@ -117,7 +117,12 @@ const ApiSingleton = (function () {
 			instance_options = JSON.merge(instance_options, { headers: { Authorization: `${value.token_type} ${value.access_token}` } });
 			axios.defaults.headers.common['Authorization'] = `${value.token_type} ${value.access_token}`;
 			if (instance) {
-				instance.defaults.headers.common['Authorization'] = `${value.token_type} ${value.access_token}`;
+				instance.defaults.headers.common["Authorization"] = `${value.token_type} ${value.access_token}`
+				instance.interceptors.request.use(function (config) {
+					config.headers.Authorization = `${value.token_type} ${value.access_token}`
+					return config
+				})
+
 			}
 
 			EventRegister.emit('access-token-set', value);
@@ -199,6 +204,101 @@ const ApiSingleton = (function () {
 		return accessTokenSetAndValid();
 	}
 
+	function proceedWithGoogleOneTap(data) {
+		return new Promise((resolve, reject) => {
+			if (instance) {
+
+					instance
+						.post("/auth/google-one-tap", {...data, client_id: client_id, client_secret: client_secret, grant_type: "password" })
+						.then(async res => {
+
+
+							const { profile, token, ...rest } = res.body?.data || res.data?.data || {}
+							let resObj = {
+								token: token,
+								profile: profile,
+							}
+							console.log("/auth/google-one-tap resObj", resObj)
+							setAccessToken(token)
+							if (JSON.isJSON(profile) && JSON.isEmpty(profile)) {
+								resObj.profile = await axios
+									.get(endpoint("/profile"), { headers: { ...getAuthorizationHeader(token) } })
+									.then(profile_res => {
+										return profile_res.body?.data || profile_res.data?.data
+									})
+									.catch(err => {
+										console.error(err)
+									})
+							}
+							if (!JSON.isEmpty(resObj.profile) && !JSON.isEmpty(resObj.token)) {
+								EventRegister.emit("login", resObj)
+								resolve(resObj)
+							} else {
+								reject({ message: "Incomplete result", ...resObj })
+							}
+						})
+						.catch(err => {
+							console.error(err)
+							reject(err)
+						})
+
+			} else {
+				let errObj = {
+					msg: "Authenticate with google Request Failed. Invalid Request service instance",
+					message: "Authenticate with google  Request Failed. Invalid Request service instance",
+					body: null,
+					code: 400,
+				}
+				reject(errObj)
+			}
+		})
+	}
+
+	function proceedWithGoogle(data) {
+		return new Promise((resolve, reject) => {
+			if (instance) {
+				instance
+					.post("/auth/google", { ...data, client_id: client_id, client_secret: client_secret, grant_type: "password" })
+					.then(async res => {
+						const { profile, token, ...rest } = res.body?.data || res.data?.data || {}
+						let resObj = {
+							token: token,
+							profile: profile,
+						}
+						setAccessToken(token)
+						if (JSON.isJSON(profile) && JSON.isEmpty(profile)) {
+							resObj.profile = await axios
+								.get(endpoint("/profile"), { headers: { ...getAuthorizationHeader(token) } })
+								.then(profile_res => {
+									return profile_res.body?.data || profile_res.data?.data
+								})
+								.catch(err => {
+									console.error(err)
+								})
+						}
+						if (!JSON.isEmpty(resObj.profile) && !JSON.isEmpty(resObj.token)) {
+							EventRegister.emit("login", resObj)
+							resolve(resObj)
+						} else {
+							reject({ message: "Incomplete result", ...resObj })
+						}
+					})
+					.catch(err => {
+						console.error(err)
+						reject(err)
+					})
+			} else {
+				let errObj = {
+					msg: "Authenticate with google Request Failed. Invalid Request service instance",
+					message: "Authenticate with google  Request Failed. Invalid Request service instance",
+					body: null,
+					code: 400,
+				}
+				reject(errObj)
+			}
+		})
+	}
+
 	function login(data, get_profile = true) {
 		return new Promise((resolve, reject) => {
 			if (instance) {
@@ -240,16 +340,7 @@ const ApiSingleton = (function () {
 								profile: profile,
 							}
 							setAccessToken(token)
-							if (JSON.isJSON(profile) && !JSON.isEmpty(profile)) {
-								resObj.profile = await axios
-									.get(endpoint("/profile"), { headers: { ...getAuthorizationHeader(token) } })
-									.then(profile_res => {
-										return profile_res.body?.data || profile_res.data?.data
-									})
-									.catch(err => {
-										console.error(err)
-									})
-							}
+
 							if (!JSON.isEmpty(resObj.profile) && !JSON.isEmpty(resObj.token)) {
 								EventRegister.emit("login", resObj)
 								resolve(resObj)
@@ -522,6 +613,8 @@ const ApiSingleton = (function () {
 		newInstance.getContextRequests = (service_uri = "/", scope_instance = false) => getContextRequests(service_uri, scope_instance)
 		newInstance.isUserAuthenticated = () => isUserAuthenticated()
 		newInstance.login = (data, get_profile = true) => login(data, get_profile)
+		newInstance.proceedWithGoogleOneTap = proceedWithGoogleOneTap
+		newInstance.proceedWithGoogle = proceedWithGoogle
 		newInstance.logout = () => logout()
 		newInstance.logoutAll = () => logoutAll()
 		newInstance.logoutOthers = () => logoutOthers()

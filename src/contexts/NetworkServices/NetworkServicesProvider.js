@@ -1,16 +1,27 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNetworkState, useCookie } from "react-use"
-import { firebase as firebaseConfig, baseUrls, client_id, client_secret, environment, authTokenLocation, authTokenName } from "config"
+import {
+	firebase as firebaseConfig,
+	baseUrls,
+	client_id,
+	client_secret,
+	environment,
+	authTokenLocation,
+	authTokenName,
+	googleClientId,
+} from "config"
 import FirebaseService from "./FirebaseService"
 import WebSocketService from "./WebSocketService"
 
 import NetworkServicesContext from "./NetworkServicesContext"
 import { setAuthenticated, setCurrentUser, setToken, clearAppState, setPreferences, setSettings } from "state/actions"
 // import { FirebaseAppProvider, FirestoreProvider } from "reactfire"
+import * as definations from "definations"
 import Api from "services/Api"
 import { EventRegister } from "utils"
 import { useDidMount } from "hooks"
+
 
 const NetworkServicesProvider = props => {
 	const { children, notificationType, ...rest } = props
@@ -25,7 +36,7 @@ const NetworkServicesProvider = props => {
 
 	const networkState = useNetworkState()
 
-	const handleOnAccessTokenSet = useCallback(({ detail: token }) => {
+	const handleOnAccessTokenSet = useCallback((token) => {
 		const { access_token, token_type, refresh_token } = token || {}
 		if (authTokenLocation === "redux") {
 			dispatch(setToken(token || {}))
@@ -46,12 +57,18 @@ const NetworkServicesProvider = props => {
 	}, [])
 
 	const handleOnLogin = useCallback(event => {
-		console.log("handleOnLogin event.detail", event.detail)
-		const { profile } = { ...event.detail }
+
+		const { profile, token } = { ...event.detail }
+		handleOnAccessTokenSet(token)
 		if (JSON.isJSON(profile)) {
 			dispatch(setCurrentUser(profile))
 		}
 		dispatch(setAuthenticated(true))
+		EventRegister.emit("notification", {
+			severity: "success",
+			title: `Login successfull!`,
+			content: `Welcome back ${profile.first_name || ""} ${profile.last_name || ""}!`,
+		})
 	}, [])
 
 	const handleOnLogout = useCallback(() => {
@@ -114,7 +131,7 @@ const NetworkServicesProvider = props => {
 				refresh_token: authRefreshTokenCookie,
 			})
 		}
-		const onAccessTokenSetListener = EventRegister.on("access-token-set", handleOnAccessTokenSet)
+		const onAccessTokenSetListener = EventRegister.on("access-token-set", event => handleOnAccessTokenSet(event.detail))
 		const onAccessTokenUnsetListener = EventRegister.on("access-token-unset", handleOnAccessTokenUnset)
 		const onLoginListener = EventRegister.on("login", handleOnLogin)
 		const onLogoutListener = EventRegister.on("logout", handleOnLogout)
@@ -168,6 +185,8 @@ const NetworkServicesProvider = props => {
 		}
 	}, [settings])
 
+
+
 	useDidMount(() => {
 		const removeAuthSubscritions = initializeAuthSubscriptions()
 		const removePreferencesSubscritions = initializePreferencesSubscriptions()
@@ -189,8 +208,7 @@ const NetworkServicesProvider = props => {
 			{Firebase => (
 				<WebSocketService>
 					{SocketIO => (
-						<NetworkServicesContext.Provider value={{ SocketIO, Api, network: networkState, Firebase }} {...rest}>
-							{/* <FirebaseAppProvider firebaseConfig={firebaseConfig}>{children}</FirebaseAppProvider> */}
+						<NetworkServicesContext.Provider value={{ SocketIO, Api, network: networkState, Firebase, definations }} {...rest}>
 							{children}
 						</NetworkServicesContext.Provider>
 					)}

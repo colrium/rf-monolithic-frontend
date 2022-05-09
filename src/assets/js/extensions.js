@@ -400,7 +400,6 @@ Number.parseNumber = function (input, fallback = null) {
 };
 
 //String Extensions
-if (Number.parseNumber) {}
 Number.getRandomInt = function (min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -1500,26 +1499,24 @@ Date.timeago = function (nd, s, suffs={}) {
 
 
 Date.parseFrom = function (input, defaultDate = null) {
-	let date = defaultDate;
+	let date = defaultDate
 	if (!!input) {
 		if (Date.isDate(input)) {
 			date = input
 		}
 		try {
-			let ms = Date.parse(input);
-			date = new Date(ms);
+			let ms = Date.parse(input)
+			date = new Date(ms)
 		} catch (e) {
-			console.error("Date.from error", e);
+			console.error("Date.parseFrom error", e)
 		}
 	}
-	// console.log("Date.from date", date);
-	return date;
-};
+	return date
+}
 
-
-Date.prose = function (input = null, showTime=true, ) {
+Date.prose = function (input = null, showTime = true) {
 	let date = new Date()
-	let dateProse = null;
+	let dateProse = null
 	if (!!input) {
 		if (Date.isDate(input)) {
 			date = input
@@ -1528,40 +1525,23 @@ Date.prose = function (input = null, showTime=true, ) {
 			let ms = Date.parse(input)
 			date = new Date(ms)
 			let difference = Date.difference(date)
-			if (
-				difference.years > 0 ||
-				difference.months > 0 ||
-				difference.weeks > 0
-			) {
-				dateProse = `${Date.format(date, "F d, Y")}${
-					showTime ? Date.format(date, " h:i a") : ""
-				}`
+			if (difference.years > 0 || difference.months > 0 || difference.weeks > 0) {
+				dateProse = `${Date.format(date, "F d, Y")}${showTime ? Date.format(date, " h:i a") : ""}`
 			} else if (difference.days > 1) {
-				dateProse = `${Date.format(date, "l")}${
-					showTime ? Date.format(date, " h:i a") : ""
-				}`
+				dateProse = `${Date.format(date, "l")}${showTime ? Date.format(date, " h:i a") : ""}`
 			} else if (difference.days === 1) {
-				dateProse = `Yesterday${
-					showTime ? Date.format(date, " h:i a") : ""
-				}`
+				dateProse = `Yesterday${showTime ? Date.format(date, " h:i a") : ""}`
 			} else {
-
 				if (date.format("Y M d") !== new Date().format("Y M d")) {
 					// console.log("prose date ", date)
 					// console.log("prose difference ", difference)
-					dateProse = `Yesterday${
-						showTime ? Date.format(date, " h:i a") : ""
-					}`
+					dateProse = `Yesterday${showTime ? Date.format(date, " h:i a") : ""}`
+				} else {
+					dateProse = `Today${showTime ? Date.format(date, " h:i a") : ""}`
 				}
-				else {
-					dateProse = `Today${
-						showTime ? Date.format(date, " h:i a") : ""
-					}`
-				}
-
 			}
 		} catch (e) {
-			console.error("Date.from error", e)
+			console.error("Date.prose error", e)
 		}
 	}
 

@@ -271,13 +271,21 @@ const TableView = props => {
 		// });
 	}, [defination]);
 
-	const loadData = useCallback(() => {
-		if (!!defination && defination?.endpoint) {
-				setState({ loading: true, load_error: false });
-				Api.get(defination.endpoint, {params: {...queryRef.current}})
+	const loadData = useCallback(
+		(reset = false) => {
+			if (!!defination && defination?.endpoint) {
+				setState(prevState => ({
+					loading: true,
+					load_error: false,
+					data: reset ? [] : prevState.data,
+					pages: reset ? 1 : prevState.pages,
+					page: reset ? 0 : prevState.page,
+					count: reset ? 0 : prevState.count,
+				}))
+				Api.get(defination.endpoint, { params: { ...queryRef.current } })
 					.then(res => {
-						const {sort} = {...queryRef.current};
-						const { data, pages, page, count } = {...res?.body};
+						const { sort } = { ...queryRef.current }
+						const { data, pages, page, count } = { ...res?.body }
 						//
 
 						setState({
@@ -287,39 +295,42 @@ const TableView = props => {
 							page,
 							count,
 							sort: sort,
-						});
+						})
 						if (Function.isFunction(onLoadData)) {
-							onLoadData(data, queryRef.current);
+							onLoadData(data, queryRef.current)
 						}
 					})
 					.catch(e => {
 						setState({
 							load_error: e,
 							loading: false,
-						});
-					});
-
-		} else {
-			setState({
-				data: [],
-				load_error: { msg: "No Context defination or provided" },
-				loading: false,
-			});
-		}
-	}, [onLoadData, defination]);
+						})
+					})
+			} else {
+				setState({
+					data: [],
+					load_error: { msg: "No Context defination or provided" },
+					loading: false,
+				})
+			}
+		},
+		[onLoadData, defination]
+	)
 
 	useDidMount(() => {
-		parseColumns();
-		loadData();
-	});
+		parseColumns()
+		loadData(false)
+	})
 
 	useDidUpdate(() => {
-		queryRef.current = {...queryRef.current, ...query}
-		loadData();
-	}, [query]);
+		queryRef.current = { ...queryRef.current, ...query }
+		loadData(false)
+	}, [query])
 
-
-
+	useDidUpdate(() => {
+		parseColumns()
+		loadData(true)
+	}, [defination])
 	// console.log(" data", data)
 	// console.log(" pagination", pagination)
 

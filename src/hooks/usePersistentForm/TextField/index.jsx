@@ -31,7 +31,14 @@ const Field = React.forwardRef((props, ref) => {
 		render,
 		type,
 		inputRef,
+		multiline,
+		rows,
+		maxRows,
+		minRows,
 		InputProps,
+		sx,
+		debounce = 250,
+		variant,
 		...rest
 	} = props
 	const [state, setState, getState] = useSetState({
@@ -43,9 +50,9 @@ const Field = React.forwardRef((props, ref) => {
 			if (Function.isFunction(defaultOnChange)) {
 				defaultOnChange(e)
 			}
-			if (Function.isFunction(onChange)) {
-				onChange(e)
-			}
+			// if (Function.isFunction(onChange)) {
+			// 	onChange(e)
+			// }
 		},
 		[onChange]
 	)
@@ -101,7 +108,7 @@ const Field = React.forwardRef((props, ref) => {
 					onFocus={handleOnFocus(fieldOnFocus)}
 					onBlur={handleOnBlur(fieldOnBlur)}
 					disabled={disabled || formState.isSubmitting}
-					error={invalid}
+					error={isTouched && !!error?.message}
 					InputProps={{
 						...props.InputProps,
 						endAdornment:
@@ -155,7 +162,7 @@ const Field = React.forwardRef((props, ref) => {
 					}}
 					helperText={
 						<Stack className="w-full">
-							{!!error?.message && (
+							{isTouched && !!error?.message && (
 								<FormHelperText component="div" error>
 									{error?.message}
 								</FormHelperText>
@@ -167,10 +174,21 @@ const Field = React.forwardRef((props, ref) => {
 							)}
 						</Stack>
 					}
+					sx={{
+						"& .MuiFormHelperText-root": {
+							marginLeft: `2px !important`,
+							marginRight: `2px !important`,
+						},
+						...sx,
+					}}
 					inputRef={props.inputRef || fieldRef}
 					ref={ref}
 					fullWidth
-					variant="filled"
+					variant={variant}
+					multiline={multiline}
+					rows={rows}
+					maxRows={maxRows}
+					minRows={minRows}
 					{...rest}
 				/>
 			)

@@ -11,7 +11,7 @@ import { connect } from "react-redux";
 import { withTheme } from '@mui/styles';
 
 
-import SignupForm from "views/forms/Auth/Signup";
+import SignupForm from "views/forms/Auth/Signup"
 import { useNetworkServices } from "contexts/NetworkServices"
 import { closeDialog, openDialog } from "state/actions"
 import compose from "recompose/compose"
@@ -48,7 +48,7 @@ const SectionComponent = props => {
 	return (
 		<Section className={"p-0"} id="commission-a-survey" title={false}>
 			<GridContainer
-				className={"md:px-32 lg:px-48 py-16"}
+				className={"py-16"}
 				style={{
 					backgroundImage: "url(" + "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/dots-map.png" + ")",
 					backgroundRepeat: "no-repeat",

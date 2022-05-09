@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
 		padding: "0",
 		margin: "0",
 		overflow: "auto",
+		background: theme.palette.background.default,
 	},
 	login_container: {
 		padding: "0",
@@ -109,15 +110,6 @@ const AuthPage = (props) => {
 													"linear-gradient(to right, #8C189B, #6a0f75)",
 											}}
 										/>
-									</GridItem>
-
-									<GridItem xs={12}>
-										<Typography
-											className={"w-full text-center"}
-											variant="h5"
-										>
-											realfield.io
-										</Typography>
 									</GridItem>
 								</GridContainer>
 							</GridContainer>

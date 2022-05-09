@@ -2,11 +2,6 @@ import React, { useCallback } from "react";
 import { Controller } from "react-hook-form";
 import AutoComplete from "components/AutoComplete"
 import {
-	CircularProgress,
-	IconButton,
-	InputAdornment,
-	TextField,
-	InputBase,
 	FormHelperText,
 	Stack,
 } from "@mui/material"
@@ -23,6 +18,7 @@ const Field = React.forwardRef((props, ref) => {
 		disabled,
 		render,
 		helperText,
+		sx,
 		...rest
 	} = props
 
@@ -53,10 +49,10 @@ const Field = React.forwardRef((props, ref) => {
 				<AutoComplete
 					onChange={handleOnChange(fieldOnChange)}
 					disabled={disabled || formState.isSubmitting}
-					error={invalid}
+					error={isTouched && !!error?.message}
 					helperText={
 						<Stack className="w-full">
-							{!!error?.message && (
+							{isTouched && !!error?.message && (
 								<FormHelperText component="div" error>
 									{error?.message}
 								</FormHelperText>
@@ -68,6 +64,13 @@ const Field = React.forwardRef((props, ref) => {
 							)}
 						</Stack>
 					}
+					sx={{
+						"& .MuiFormHelperText-root": {
+							marginLeft: `2px !important`,
+							marginRight: `2px !important`,
+						},
+						...sx,
+					}}
 					{...rest}
 					{...fieldParams}
 					ref={ref}

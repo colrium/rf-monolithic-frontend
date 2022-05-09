@@ -21,7 +21,6 @@ import { withTheme } from '@mui/styles';
 import Avatar from "components/Avatar";
 import ApiService from "services/Api";
 import { PersonOutlined as UserIcon } from "@mui/icons-material";
-import NotificationsPopup from "./NotificationsPopup"
 import MessagingIcon from "./MessagingIcon"
 import { logout, setCurrentUser } from "state/actions";
 import { ServiceDataHelper } from "utils/Helpers"
@@ -70,14 +69,14 @@ class Topbar extends Component {
 		this.onCloseUserPresenceMenu = this.onCloseUserPresenceMenu.bind(this)
 		this.onChangeUserPresenceMenu = this.onChangeUserPresenceMenu.bind(this)
 
-		this.initSocketActionsListener()
+
 	}
 
 	componentDidMount() {
 		let { dashboard } = this.props
-
 		this.signal = true
 		this.mounted = true
+		this.initSocketActionsListener()
 		//
 	}
 
@@ -136,7 +135,9 @@ class Topbar extends Component {
 			auth,
 			setCurrentUser,
 		} = this.props
-		this.state.serverConnected = SocketIO.connected
+		this.setState({
+			serverConnected: SocketIO.connected,
+		})
 		SocketIO.on("connect", () => {
 			this.setState({
 				connectionSnackBarOpen: false,
@@ -482,7 +483,6 @@ class Topbar extends Component {
 
 							)*/}
 							<MessagingIcon />
-							<NotificationsPopup />
 
 							<Menu
 								id="user-presence-menu"
@@ -557,7 +557,7 @@ class Topbar extends Component {
 
 				{/* <Notification title="test notification"/> */}
 
-				<Snackbar
+				{/* <Snackbar
 					anchorOrigin={{
 						vertical: "top",
 						horizontal: "center",
@@ -587,7 +587,7 @@ class Topbar extends Component {
 						color="inverse"
 						message={this.state.notificationSnackBarMessage}
 					/>
-				</Snackbar>
+				</Snackbar> */}
 			</Box>
 		)
 	}

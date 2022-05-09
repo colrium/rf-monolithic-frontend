@@ -77,13 +77,13 @@ const renderResponseSummaryRow = data => props => {
 	const { index, ...rest } = props;
 
 	return (
-		<ListItem button {...rest} key={index}>
+		<ListItem {...rest} key={index}>
 			<ListItemText primary={Object.keys(data)[index]} />
 			<ListItemSecondaryAction>
 				<Typography>{Object.values(data)[index]}</Typography>
 			</ListItemSecondaryAction>
 		</ListItem>
-	);
+	)
 };
 
 const TextResponseSummaryDataGrid = React.memo(props => {

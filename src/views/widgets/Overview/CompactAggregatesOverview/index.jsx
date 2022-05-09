@@ -82,7 +82,7 @@ class CompactAggregatesOverview extends React.Component {
 		const { classes, auth, contexts, gridSize, theme, chartType } = this.props
 
 		return (
-			<Card outlineColor="#cfd8dc">
+			<Card>
 				<CardHeader
 					avatar={
 						<Avatar aria-label={this.state.defination.label} style={{ background: this.state.defination.color }}>

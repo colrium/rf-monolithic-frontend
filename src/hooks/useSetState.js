@@ -45,7 +45,7 @@ const useSetState = (initialState = {}) => {
 						if (isMountedRef.current) {
 							update();
 						}
-						
+
 						if (Function.isFunction(cb)) {
 							cb(state.current)
 						}

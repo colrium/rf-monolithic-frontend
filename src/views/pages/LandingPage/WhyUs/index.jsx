@@ -37,7 +37,7 @@ class Page extends React.Component {
 		const { classes, auth, theme, device, ...rest } = this.props;
 		return (
 			<GridContainer
-				className={classes?.root + " px-4 md:px-32"}
+				className={classes?.root + " p-0"}
 				direction="column"
 				alignItems="center"
 				justify="center"

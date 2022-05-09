@@ -1,14 +1,12 @@
 /** @format */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Dialog } from "@mui/material";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from '@mui/material/Button';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import Slide from '@mui/material/Slide';
 import { connect } from "react-redux";
@@ -20,7 +18,7 @@ import GridItem from "components/Grid/GridItem";
 import { apiCallRequest, setEmailingCache, clearEmailingCache } from "state/actions";
 import { TextInput } from "components/FormInputs";
 import ScrollBars from "components/ScrollBars";
-
+import { useNetworkServices, useNotificationsQueue } from "contexts"
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -29,7 +27,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function ComposeEmailDialog(props) {
 	const { communication: { emailing: { popup_open, recipient_address, recipient_name, cc, bcc, subject, content, context, record } }, apiCallRequest, setEmailingCache, clearEmailingCache } = props;
-
+	const { Api } = useNetworkServices()
+	const { queueNotification } = useNotificationsQueue()
 	const [emailRecipientAddress, setEmailRecipientAddress] = useState(recipient_address);
 	const [emailCC, setEmailCC] = useState(cc);
 	const [emailBCC, setEmailBCC] = useState(bcc);
@@ -44,44 +43,45 @@ function ComposeEmailDialog(props) {
 	const [hasCC, setHasCC] = useState(!String.isEmpty(cc));
 	const [hasBCC, setHasBCC] = useState(!String.isEmpty(bcc));
 
-	const handleSendEmail = () => {
-		setSubmitting(true);
-		setAlert(false);
-		setError(false);
-		apiCallRequest("emails",
+	const handleSendEmail = useCallback(() => {
+		setSubmitting(true)
+		setAlert(false)
+		setError(false)
+		Api.post(
+			"/emails",
 			{
-				uri: "/emails",
-				type: "create",
-				params: { p: "1" },
-				data: {
-					folder: "outbox",
-					subject: emailSubject,
-					recipient_address: emailRecipientAddress,
-					cc: emailCC,
-					bcc: emailBCC,
-					content: emailContent,
-					context: emailContext,
-					record: emailRecord,
-					attachments: null,
-				},
-				cache: false,
-				silent: true,
-			}
-		).then(res => {
-			const { data } = res.body;
-			clearEmailingCache();
-			setEmailingCache("popup_open", false);
-			setSubmitting(false);
-			setAlert("Email sent.");
-			setError(false);
-		}).catch(err => {
-			setSubmitting(false);
-			setAlert(false);
-			setError(err);
-		});
-
-
-	}
+				folder: "outbox",
+				subject: emailSubject,
+				recipient_address: emailRecipientAddress,
+				cc: emailCC,
+				bcc: emailBCC,
+				content: emailContent,
+				context: emailContext,
+				record: emailRecord,
+				attachments: null,
+			},
+			{ params: { p: "1" } }
+		)
+			.then(res => {
+				const { data } = res.body
+				clearEmailingCache()
+				setEmailingCache("popup_open", false)
+				setSubmitting(false)
+				queueNotification({
+					severity: "success",
+					title: `Email sent`,
+					content: `Email sent to ${emailRecipientAddress}`,
+				})
+			})
+			.catch(err => {
+				setSubmitting(false)
+				queueNotification({
+					severity: "error",
+					title: `Something went wrong`,
+					content: `Error sending email to ${emailRecipientAddress}`,
+				})
+			})
+	}, [emailSubject, emailRecipientAddress, emailCC, emailBCC, emailContent, emailContext, emailRecord, record, emailSubject])
 
 	const handleDiscardEmail = () => {
 		clearEmailingCache();
@@ -367,16 +367,6 @@ function ComposeEmailDialog(props) {
 					Send
 				</Button>
 			</DialogActions>
-			{error && <Snackbar open={Boolean(error)} autoHideDuration={10000} onClose={() => setError(false)}>
-				<Alert elevation={6} variant="filled" onClose={() => setError(false)} severity="error">
-					{error.toString()}
-				</Alert>
-			</Snackbar>}
-			{/*alert && <Snackbar open={Boolean(alert)} autoHideDuration={5000} onClose={() => setAlert(false)}>
-				<Alert elevation={6} variant="filled" onClose={() => setAlert(false)} severity="success">
-					{alert.toString()}
-				</Alert>
-			</Snackbar>*/}
 		</Dialog>
 	);
 }
