@@ -8,7 +8,7 @@ RUN npm install -g npm-run-all
 COPY ./package.json /frontend
 
 # install npm dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # copy other project files
 COPY . .
