@@ -28,9 +28,9 @@
 		"update:packages": "node wipe-dependencies.js && npm update --save-dev && npm update --save",
 		"remove-unused-imports": "jscodeshift -t remove-unused-imports.js src --extensions=jsx,js --verbose=2 -d",
 		"remove-console": "jscodeshift -t remove-consoles.js src --extensions=js,jsx --verbose=2",
-		"docker:production": "yarn build:production && docker-compose -f docker-compose.production.yml up -d",
-		"docker:preview": "yarn build:preview && docker-compose -f docker-compose.preview.yml up -d",
-		"docker": "yarn build:react && docker-compose -f docker-compose.yml up -d"
+		"docker:production": "docker-compose -f docker-compose.production.yml up -d",
+		"docker:preview": "docker-compose -f docker-compose.preview.yml up -d",
+		"docker": "docker-compose -f docker-compose.yml up -d"
 	},
 	"dependencies": {
 		"@date-io/moment": "^2.11.0",
