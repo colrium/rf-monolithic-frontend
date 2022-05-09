@@ -16506,11 +16506,6 @@ react-google-maps@^9.4.5:
     scriptjs "^2.5.8"
     warning "^3.0.0"
 
-react-google-one-tap-login@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/react-google-one-tap-login/-/react-google-one-tap-login-0.1.1.tgz#12a61e63e19251622cf1575b601d79fd4d07847a"
-  integrity sha512-RCbOfR3Z7VcRae4AzrLoBfY/aqqdN24pkQeNz9CJ0W65C9SY3vAwF0Yp8mwpeFwsugaZ5b1HZsfhUYWtb3IMrw==
-
 react-google-onetap@0.0.5:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/react-google-onetap/-/react-google-onetap-0.0.5.tgz#858940858d220d73a06bf271287f3ea548dd0b52"

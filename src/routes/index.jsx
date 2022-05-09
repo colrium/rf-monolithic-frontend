@@ -35,7 +35,7 @@ import NotFound from "views/pages/System/NotFound";
 import LoginForm from "views/forms/Auth/Login"
 import ForgotPasswordForm from "views/forms/Auth/ForgotPassword"
 import ResetPasswordForm from "views/forms/Auth/ResetPassword"
-import SignupForm from "views/forms/Auth/Signup/index.class"
+import SignupForm from "views/forms/Auth/Signup"
 
 
 import DashboardPreferences from "views/pages/Dashboard/Preferences"

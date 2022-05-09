@@ -475,11 +475,11 @@ export default {
 						maxDate: new Date().setFullYear(currentDate.getFullYear() - 18),
 						format: "DD/MM/YYYY",
 						margin: "dense",
-						InputProps: {
-							classes: {
-								root: "inverse",
-							}
-						}
+						// InputProps: {
+						// 	classes: {
+						// 		root: "inverse",
+						// 	}
+						// }
 					},
 				},
 			},

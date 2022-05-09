@@ -38,6 +38,8 @@ const SignupForm = React.forwardRef((props, ref) => {
 		strategy: null,
 	})
 
+
+
 	const { submit, TextField, Autocomplete, RadioGroup, values, setValue, resetValues, formState } = usePersistentForm({
 		name: `user-signup-form`,
 		mode: "onChange",
@@ -56,7 +58,7 @@ const SignupForm = React.forwardRef((props, ref) => {
 					} else if (formData.interest === "quote") {
 						queueNotification({
 							severity: "success",
-							content: `Signup request successfull! `,
+							content: `Signup request successfull! Thank you for your interest in Realfield! We will be in touch shortly`,
 						})
 						let quoteData = { ...formData }
 						delete quoteData.password;
@@ -91,6 +93,38 @@ const SignupForm = React.forwardRef((props, ref) => {
 		},
 	})
 
+	const onGoogleSuccess = ({data, res}) => {
+		if (data.interest === "demo") {
+						queueNotification({
+							severity: "success",
+							content: `Signup request successfull! Thank you for your interest in Realfield! We will be in touch shortly to schedule your demo at your convenience. `,
+						})
+					} else if (data.interest === "quote") {
+						queueNotification({
+							severity: "success",
+							content: `Signup request successfull! Thank you for your interest in Realfield! We will be in touch shortly`,
+						})
+						let quoteData = { ...data }
+						delete quoteData.password;
+						delete quoteData.repeat_password
+
+						const newParams = new URLSearchParams(quoteData).toString()
+						navigate(`/compose-project?${newParams}`.toUriWithLandingPagePrefix())
+					} else {
+						queueNotification({
+							severity: "success",
+							content: `Signup request successfull! `,
+						})
+						navigate(`/community`.toUriWithLandingPagePrefix())
+					}
+	}
+
+	const onGoogleError = ({ data, error }) => {
+		queueNotification({
+			severity: "error",
+			content: `Signup failed! ${error.message || error.msg || "Something went wrong!"}`,
+		})
+	}
 
 	return (
 		<Grid container {...rest} component="form" onSubmit={submit} ref={ref}>
@@ -478,7 +512,12 @@ const SignupForm = React.forwardRef((props, ref) => {
 			{!String.isEmpty(values.interest) && (
 				<Grid container>
 					<Grid item xs={12} className="flex flex-col justify-center my-4 items-center">
-						<GoogleLoginButton postData={{ interest: values.interest }} {...googleLoginProps} />
+						<GoogleLoginButton
+							onSuccess={onGoogleSuccess}
+							onError={onGoogleError}
+							postData={{ interest: values.interest }}
+							{...googleLoginProps}
+						/>
 					</Grid>
 				</Grid>
 			)}

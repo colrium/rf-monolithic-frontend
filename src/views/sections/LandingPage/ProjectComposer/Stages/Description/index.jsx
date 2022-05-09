@@ -18,9 +18,10 @@ const Stage = (props) => {
     const {errors, isValid} = formState;
 
     const changeStageValue = useCallback((name, value) => {
-        setValue(name, value);
+        // setValue(name, value);
     }, []);
 
+	console.log("Stage formState", formState)
 
     const handleOnTextfieldChange = useCallback((name) => (event) => {
         changeStageValue(name, event.target.value);
@@ -39,75 +40,74 @@ const Stage = (props) => {
     }, [isValid, stageValues, onSubmit]);
 
     return (
-        <GridContainer>
-            {/* {!!title && <GridItem className="flex flex-row items-start">
+		<GridContainer>
+			{/* {!!title && <GridItem className="flex flex-row items-start">
                 <Typography variant="h1" className="flex-1">
                     {title}
                 </Typography>
             </GridItem>} */}
-            {!!description && <GridItem className="flex flex-col items-start py-8">
-                <Typography variant="body2">
-                    {description}
-                </Typography>
-            </GridItem>}
-            <GridItem className={"py-12"}>
-                <GridContainer>
-                    <GridItem md={12} className={"py-8"}>
-                        <TextField
-                            label="Project Name"
-                            placeholder="This is the Project Title"
-                            {...register(`stages.${stage}.project_name`, {
-                                required: "Project Name is required.",
-                            })}
-                            onChange={handleOnTextfieldChange(`stages.${stage}.project_name`)}
-                            variant={"filled"}
-                            required
-                            fullWidth
-                        />
-                    </GridItem>
+			{!!description && (
+				<GridItem className="flex flex-col items-start py-8">
+					<Typography variant="body2">{description}</Typography>
+				</GridItem>
+			)}
+			<GridItem className={"py-12"}>
+				<GridContainer>
+					<GridItem md={12} className={"py-8"}>
+						<TextField
+							label="Project Name"
+							placeholder="This is the Project Title"
+							name={`stages.${stage}.project_name`}
+							rules={{
+								required: "Project Name is required.",
+							}}
+							variant={"filled"}
+							required
+							fullWidth
+						/>
+					</GridItem>
 
-                    <GridItem md={12} className={"py-8"}>
-                        <TextField
-                            label="Project Summary"
-                            {...register(`stages.${stage}.project_summary`, {
-                                required: "Project Summary is required.",
-                            })}
-                            onChange={handleOnTextfieldChange(`stages.${stage}.project_summary`)}
-                            helperText={"Please give us a short description of your project"}
-                            variant={"filled"}
-                            multiline
-                            rows={8}
-                            required
-                            fullWidth
-                        />
-                    </GridItem>
+					<GridItem md={12} className={"py-8"}>
+						<TextField
+							label="Project Summary"
+							name={`stages.${stage}.project_summary`}
+							rules={{
+								required: "Project Summary is required.",
+							}}
+							helperText={"Please give us a short description of your project"}
+							variant={"filled"}
+							multiline
+							rows={8}
+							required
+							fullWidth
+						/>
+					</GridItem>
 
-                    <GridItem md={12} className={"py-8"}>
-                        <TextField
-                            label="Project Objectives"
-                            {...register(`stages.${stage}.project_objectives`, {
-                                required: "Project Objectives is required.",
-                            })}
-                            onChange={handleOnTextfieldChange(`stages.${stage}.project_objectives`)}
-                            helperText={"Please give us a short description of your project"}
-                            variant={"filled"}
-                            multiline
-                            rows={12}
-                            required
-                            fullWidth
-                        />
-                    </GridItem>
+					<GridItem md={12} className={"py-8"}>
+						<TextField
+							label="Project Objectives"
+							name={`stages.${stage}.project_objectives`}
+							rules={{
+								required: "Project Objectives is required.",
+							}}
+							helperText={"Please give us a short description of your project"}
+							variant={"filled"}
+							multiline
+							rows={12}
+							required
+							fullWidth
+						/>
+					</GridItem>
+				</GridContainer>
+			</GridItem>
 
-                </GridContainer>
-            </GridItem>
-
-            <GridItem className="flex flex-col items-center py-20 mb-12">
-                <Button onClick={handleSubmit(submit)} disabled={!isValid} color="accent" variant="contained">
-                    Great. Nearly there
-                </Button>
-            </GridItem>
-        </GridContainer>
-    )
+			<GridItem className="flex flex-col items-center py-20 mb-12">
+				<Button onClick={handleSubmit(submit)} disabled={!isValid} color="accent" variant="contained">
+					Great. Nearly there
+				</Button>
+			</GridItem>
+		</GridContainer>
+	)
 }
 
 export default Stage;

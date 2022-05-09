@@ -3,6 +3,7 @@
 import React, { useCallback } from "react"
 import { Controller } from "react-hook-form"
 import FileDropZone from "components/FileDropZone"
+import { FormHelperText, Stack } from "@mui/material"
 
 const Field = React.forwardRef((props, ref) => {
 	const {
@@ -85,8 +86,21 @@ const Field = React.forwardRef((props, ref) => {
 					onFocus={handleOnFocus(fieldOnFocus)}
 					onBlur={handleOnBlur(fieldOnBlur)}
 					disabled={disabled || isSubmitting}
-					error={invalid}
-					helperText={error?.message || helperText}
+					error={isTouched && !!error?.message}
+					helperText={
+						<Stack className="w-full">
+							{isTouched && !!error?.message && (
+								<FormHelperText component="div" error>
+									{error?.message}
+								</FormHelperText>
+							)}
+							{!!props.helperText && (
+								<FormHelperText component="div" error={false}>
+									{props.helperText}
+								</FormHelperText>
+							)}
+						</Stack>
+					}
 					ref={ref}
 					{...rest}
 				/>

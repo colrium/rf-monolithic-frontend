@@ -16,7 +16,7 @@ const stage = "start";
 
 const Stage = (props) => {
     const { onSubmit, title, description } = props;
-    const { trigger, register, Field, TextField, Select, getValues, setValue, values, formState, handleSubmit } = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage, } });
+    const { trigger, register, Field, TextField, Select, getValues, resetValues, setValue, values, formState, handleSubmit } = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage, } });
     const { isValid, isSubmitted } = formState;
     const stageValues = (JSON.getDeepPropertyValue(`stages.${ stage }`, (values || {})) || {});
     const complete_stages = useMemo((() => (JSON.getDeepPropertyValue(`complete_stages`, values)) || []), [values]);
@@ -24,7 +24,7 @@ const Stage = (props) => {
 
 
     const changeStageValue = useCallback((name, value) => {
-        setValue(name, value);
+        // setValue(name, value);
     }, []);
 
     const handleOnChange = useCallback((name) => (value) => {
@@ -54,6 +54,12 @@ const Stage = (props) => {
         }
     }, [isValid, stageValues, onSubmit]);
 
+
+	useDidMount(() => {
+		// resetValues();
+	});
+
+
     return (
 		<GridContainer>
 			<GridItem className="p-6 flex flex-row justify-end">
@@ -75,7 +81,6 @@ const Stage = (props) => {
 						<TextField
 							label="First Name"
 							name={`stages.${stage}.first_name`}
-							defaultValue={stageValues?.first_name || ""}
 							rules={{
 								required: "Please enter your First Name.",
 							}}
@@ -88,7 +93,6 @@ const Stage = (props) => {
 						<TextField
 							label="Last Name"
 							name={`stages.${stage}.last_name`}
-							defaultValue={stageValues?.last_name || ""}
 							rules={{
 								required: "Last Name is required.",
 							}}
@@ -100,13 +104,13 @@ const Stage = (props) => {
 					<GridItem md={6} className={"py-8"}>
 						<TextField
 							label="Email"
-							{...register(`stages.${stage}.email_address`, {
+							name={`stages.${stage}.email_address`}
+							rules={{
 								required: "Email is required.",
-								pattern: {
-									value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-									message: "Invalid Email",
+								validate:{
+									pattern: val => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(val) || "Invalid Email",
 								},
-							})}
+							}}
 							variant={"filled"}
 							required
 							fullWidth
@@ -116,13 +120,10 @@ const Stage = (props) => {
 						<TextField
 							label="Phone"
 							placeholder="(Country Code) Telephone"
-							{...register(`stages.${stage}.phone`, {
+							name={`stages.${stage}.phone`}
+							rules={{
 								required: "Phone is required.",
-								minLength: {
-									value: 10,
-									message: "Phone is too short",
-								},
-							})}
+							}}
 							variant={"filled"}
 							required
 							fullWidth
@@ -146,7 +147,6 @@ const Stage = (props) => {
 							label="Start Date"
 							name={`stages.${stage}.start_date`}
 							defaultValue={stageValues?.start_date || new Date().addDays(7)}
-							onChange={handleOnChange(`stages.${stage}.start_date`)}
 							component={StaticDateInput}
 							rules={{
 								valueAsDate: true,
@@ -189,7 +189,6 @@ const Stage = (props) => {
 							label="End Date"
 							name={`stages.${stage}.end_date`}
 							defaultValue={stageValues?.end_date || new Date().addDays(14)}
-							onChange={handleOnChange(`stages.${stage}.end_date`)}
 							component={StaticDateInput}
 							rules={{
 								valueAsDate: true,

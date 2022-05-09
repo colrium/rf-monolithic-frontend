@@ -28,7 +28,7 @@ const GoogleIcon = props => {
 	)
 }
 const GoogleLoginButton = React.forwardRef((props, ref) => {
-	const { onSuccess, onFailure, callApi=true, sx, postData, render, className, buttonText, cookiePolicy="single_host_origin", ...rest } = props
+	const { onSuccess, onError, callApi=true, sx, postData, render, className, buttonText, cookiePolicy="single_host_origin", ...rest } = props
 	const { Api } = useNetworkServices()
 	const onGoogleLoginSuccess = useCallback(
 		data => {
@@ -36,30 +36,30 @@ const GoogleLoginButton = React.forwardRef((props, ref) => {
 				Api.proceedWithGoogle({ ...data, ...postData })
 					.then(res => {
 						if (Function.isFunction(onSuccess)) {
-							onSuccess({ ...data, ...res })
+							onSuccess({ data, res })
 						}
 					})
 					.catch(error => {
-						if (Function.isFunction(onFailure)) {
-							onFailure(err)
+						if (Function.isFunction(onError)) {
+							onError({ data, error })
 						}
 					})
 			} else {
 				if (Function.isFunction(onSuccess)) {
-					onSuccess(data)
+					onSuccess({ data })
 				}
 			}
 		},
-		[onSuccess, onFailure, callApi, postData]
+		[onSuccess, onError, callApi, postData]
 	)
 	const onGoogleLoginError = useCallback(
 		response => {
 			console.error(response)
-			if (Function.isFunction(onFailure)) {
-				onFailure(response)
+			if (Function.isFunction(onError)) {
+				onError({ data: null, error: response })
 			}
 		},
-		[onFailure]
+		[onError]
 	)
 
 

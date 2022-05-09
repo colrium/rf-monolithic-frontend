@@ -19,7 +19,7 @@ import { Link, useParams, useNavigate } from "react-router-dom"
 import compose from "recompose/compose"
 import ApiService from "services/Api"
 //
-import ContextDataForm from "views/forms/BaseForm/index.class"
+import ContextDataForm from "views/forms/BaseForm/index"
 import { useDidMount, useSetState, useDidUpdate } from "hooks"
 
 const Page = props => {

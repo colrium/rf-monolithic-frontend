@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-    rf-fe-landingpage-production:
+    rf-fe-production:
         build:
             context: .
             dockerfile: Dockerfile.production

@@ -10,7 +10,7 @@ import UsersDefination from "definations/users";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import ApiService from "services/Api";
-import BaseForm from "views/forms/BaseForm/index.class";
+import BaseForm from "views/forms/BaseForm";
 
 
 class Password extends Component {

@@ -10,7 +10,7 @@ import { useNetworkServices } from "contexts/NetworkServices"
 import compose from "recompose/compose"
 
 import ApiService from "services/Api"
-import BaseForm from "views/forms/BaseForm/index.class"
+import BaseForm from "views/forms/BaseForm"
 
 const SectionComponent = props => {
 	const { classes, auth, theme, device, ...rest } = props

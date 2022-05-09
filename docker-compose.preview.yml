@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+    rf-fe-preview:
+        build:
+            context: .
+            dockerfile: Dockerfile.preview
+        container_name: rf-fe-preview
+        restart: unless-stopped
+        volumes:
+            - ./nginx:/nginx
+        networks:
+            - proxy-bridge
+networks:
+    proxy-bridge:
+        external: true
+        name: proxy-bridge
