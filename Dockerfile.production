@@ -3,7 +3,7 @@ FROM node:alpine as builder
 
 # set the working dir for container
 WORKDIR /frontend
-
+RUN npm install -g npm-run-all
 # copy the json file first
 COPY ./package.json /frontend
 
@@ -14,9 +14,9 @@ RUN npm install
 COPY . .
 
 # build the folder
-RUN npm run build
+RUN npm run build:production
 
 # Handle Nginx
 FROM nginx
-COPY --from=builder /frontend/build /usr/share/nginx/html
+COPY --from=builder /frontend/production /usr/share/nginx/html
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
