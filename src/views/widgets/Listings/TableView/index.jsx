@@ -11,7 +11,6 @@ import GridItem from "components/Grid/GridItem";
 import Typography from "components/Typography";
 import Skeleton from '@mui/material/Skeleton';
 import { formats } from "config/data";
-import MUIDataTable from "mui-datatables";
 import PropTypes from "prop-types";
 import React, { useCallback } from "react";
 import { connect } from "react-redux";
