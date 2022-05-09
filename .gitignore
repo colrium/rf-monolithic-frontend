@@ -6,7 +6,9 @@ node_modules
 .pnp.js
 build/
 # testing
-/coverage
+coverage
+preview/
+production/
 
 # misc
 .DS_Store
