@@ -12,10 +12,9 @@ const Stages = (props) => {
     const stage = (JSON.getDeepPropertyValue(`stage`, values) || stagekeys[0]);
     const complete_stages = (JSON.getDeepPropertyValue(`complete_stages`, values) || []);
 
-    const handleOnStageSubmit = useCallback((values) => {
+    const handleOnStageSubmit = useCallback((values, e) => {
         let indexOfStage = stagekeys.indexOf(stage);
         //]", stagekeys[(indexOfStage + 1)])
-        console.log("indexOfStage < (stagekeys.length - 1)", indexOfStage < (stagekeys.length - 1))
         if (indexOfStage >= 0 && indexOfStage < (stagekeys.length - 1)) {
             let next_complete_stages = Array.isArray(complete_stages) ? complete_stages : [];
             if (next_complete_stages.indexOf(stage) === -1) {
