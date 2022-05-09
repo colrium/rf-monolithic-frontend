@@ -1,6 +1,7 @@
 # get the base node image
-FROM node:alpine as builder
-
+# FROM node:alpine as builder
+FROM node:8.12-alpine as builder
+RUN apk add g++ make python
 # set the working dir for container
 WORKDIR /frontend
 RUN npm install -g npm-run-all
