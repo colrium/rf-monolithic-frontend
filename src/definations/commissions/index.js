@@ -38,7 +38,7 @@ import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import CircularProgress from "@mui/material/CircularProgress";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import { DataGrid } from "@material-ui/data-grid";
+import DataTable from "components/DataTable"
 import ReactJsonView from "react-json-view";
 
 function Alert(props) {
@@ -105,9 +105,9 @@ const TextResponseSummaryDataGrid = React.memo(props => {
 
 	return (
 		<div style={{ height: 300, width: "100%" }}>
-			<DataGrid rows={rows} columns={columns} />
+			{/* <DataTable rows={rows} columns={columns} /> */}
 		</div>
-	);
+	)
 });
 
 const CardViewBody = React.memo(props => {

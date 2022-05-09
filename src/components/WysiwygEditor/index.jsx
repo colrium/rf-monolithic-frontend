@@ -1,7 +1,6 @@
 /** @format */
 
 import React, { memo, useCallback } from "react"
-import MUIEditor, { MUIEditorState } from "react-mui-draft-wysiwyg"
 import { convertFromHTML, convertToHTML, convertFromRaw } from "draft-js"
 import TextField from "@mui/material/TextField"
 import Editor from "./Editor"
