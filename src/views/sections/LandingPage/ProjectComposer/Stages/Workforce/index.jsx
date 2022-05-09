@@ -38,7 +38,15 @@ const Stage = (props) => {
     const initialContainerWidth = containerMeasurements.width || (windowWidth * (sm ? 0.95 : 0.75));
     const itemWidth = (initialContainerWidth / no_of_columns) - 4;
 
-    const { Field, values, getValues, setValue, register, formState, handleSubmit } = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage, } });
+    const { Field, values, getValues, setValue, register, formState, submit } = usePersistentForm({
+		name: "projectcomposer",
+		defaultValues: { stage: stage },
+		onSubmit: async (formData, e) => {
+			if (Function.isFunction(onSubmit)) {
+				onSubmit(formData, e)
+			}
+		},
+	})
     const stageValues = (JSON.getDeepPropertyValue(`stages.${ stage }`, (values || {})) || {});
     const regions = JSON.getDeepPropertyValue("stages.respondents.regions", values) || [];
     const fielders = JSON.getDeepPropertyValue(`stages.${ stage }.fielders`, values) || [];
@@ -103,12 +111,6 @@ const Stage = (props) => {
         // setValue( `stages.${ stage }.state`, persistentState );
     })
 
-    const submit = useCallback((formValues) => {
-
-        if (Function.isFunction(onSubmit)) {
-            onSubmit(formValues);
-        }
-    }, [onSubmit, stageValues]);
 
     const loadData = useCallback((params = {}, concat = true) => {
         let { columns, records, records_chunks } = getState();
@@ -618,7 +620,7 @@ const Stage = (props) => {
                 </ScrollBars>
             </GridItem> }
             <GridItem className="flex flex-col items-center  py-8">
-                <Button onClick={ handleSubmit(submit) } disabled={ !isValid } color="accent" variant="contained">
+                <Button onClick={submit} disabled={ !isValid } color="accent" variant="contained">
                     Review Project
                 </Button>
             </GridItem>

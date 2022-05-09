@@ -16,43 +16,17 @@ const stage = "start";
 
 const Stage = (props) => {
     const { onSubmit, title, description } = props;
-    const { trigger, register, Field, TextField, Select, getValues, resetValues, setValue, values, formState, handleSubmit } = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage, } });
+    const { trigger, register, Field, TextField, Select, getValues, resetValues, setValue, values, formState, submit } =
+		usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage }, onSubmit: async (formData, e) => {
+			if (Function.isFunction(onSubmit)) {
+				onSubmit(formData, e)
+			}
+		} })
     const { isValid, isSubmitted } = formState;
     const stageValues = (JSON.getDeepPropertyValue(`stages.${ stage }`, (values || {})) || {});
     const complete_stages = useMemo((() => (JSON.getDeepPropertyValue(`complete_stages`, values)) || []), [values]);
     const complete_stagesRef = useRef(complete_stages);
 
-
-    const changeStageValue = useCallback((name, value) => {
-        // setValue(name, value);
-    }, []);
-
-    const handleOnChange = useCallback((name) => (value) => {
-        changeStageValue(name, value);
-    }, []);
-
-    const handleOnTextfieldChange = useCallback((name) => (event) => {
-        changeStageValue(name, event.target.value);
-    }, []);
-
-    const handleOnAutocompleteChange = useCallback((name) => (event, newValue) => {
-        changeStageValue(name, newValue);
-    }, []);
-
-    const handleOnSelectChange = useCallback((name) => (event) => {
-        changeStageValue(name, event.target.value);
-    }, []);
-
-    const submit = useCallback((formValues) => {
-        // let next_complete_stages = Array.isArray(complete_stagesRef.current) ? complete_stagesRef.current : [];
-        // if (next_complete_stages.indexOf(stage) === -1) {
-        //     next_complete_stages.push(stage);
-        //     setValue(`complete_stages`, next_complete_stages);
-        // }
-        if (Function.isFunction(onSubmit)) {
-            onSubmit(stageValues);
-        }
-    }, [isValid, stageValues, onSubmit]);
 
 
 	useDidMount(() => {
@@ -107,8 +81,11 @@ const Stage = (props) => {
 							name={`stages.${stage}.email_address`}
 							rules={{
 								required: "Email is required.",
-								validate:{
-									pattern: val => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(val) || "Invalid Email",
+								validate: {
+									pattern: val =>
+										/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+											val
+										) || "Invalid Email",
 								},
 							}}
 							variant={"filled"}
@@ -230,7 +207,7 @@ const Stage = (props) => {
 			</GridItem>
 
 			<GridItem className="flex flex-col items-center py-20 mb-12">
-				<Button onClick={handleSubmit(submit)} disabled={!isValid} color="accent" variant="contained">
+				<Button onClick={submit} disabled={!isValid} color="accent" variant="contained">
 					Ok. Ready to continue
 				</Button>
 			</GridItem>

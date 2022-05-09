@@ -15,7 +15,11 @@ const stage = "scope";
 const Stage = (props) => {
     const { onSubmit, title, description } = props;
 
-    const { handleSubmit, submit, FilePicker, RadioGroup, values, setValue, getValues, formState } = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage, } });
+    const { submit, FilePicker, RadioGroup, values, setValue, getValues, formState } = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage, }, onSubmit: async (formData, e) => {
+			if (Function.isFunction(onSubmit)) {
+				onSubmit(formData, e)
+			}
+		} });
     const { isValid } = formState;
     const stageValues = (JSON.getDeepPropertyValue(`stages.${ stage }`, (values || {})) || {});
 
@@ -92,10 +96,7 @@ const Stage = (props) => {
 			</GridItem>
 
 			<GridItem className="flex flex-col items-center  py-8">
-				{/* <Button onClick={handleSubmit(submit)} disabled={!isValid} color="accent" variant="contained">
-                    Now Select your Target
-                </Button> */}
-				<Button onClick={handleSubmit(submit)} disabled={!isValid} color="accent" variant="contained">
+				<Button onClick={submit} disabled={!isValid} color="accent" variant="contained">
 					Now Select your Target
 				</Button>
 			</GridItem>

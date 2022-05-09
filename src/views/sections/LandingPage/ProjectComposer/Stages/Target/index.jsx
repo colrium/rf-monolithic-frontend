@@ -92,10 +92,10 @@ const Stage = (props) => {
 
 
     const handleOnSubmit = useCallback(() => {
-        if (Function.isFunction(onSubmit)) {
-            onSubmit(internalValues);
-        }
-    }, [internalValues]);
+		if (Function.isFunction(onSubmit)) {
+			onSubmit(internalValues)
+		}
+	}, [internalValues, onSubmit])
 
 
 
