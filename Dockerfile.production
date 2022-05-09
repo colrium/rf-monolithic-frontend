@@ -1,10 +1,6 @@
 # FROM node:alpine as builder
-FROM node:alpine as builder
-RUN apk --no-cache add --virtual native-deps \
-  g++ gcc libgcc libstdc++ linux-headers make python && \
-  npm install --quiet node-gyp -g &&\
-  npm install --quiet && \
-  apk del native-deps
+FROM node:8.12-alpine as builder
+RUN apk add g++ make python
 
 # set the working dir for container
 WORKDIR /frontend
