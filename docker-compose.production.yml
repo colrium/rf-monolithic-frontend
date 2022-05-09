@@ -6,8 +6,6 @@ services:
             dockerfile: Dockerfile.production
         container_name: rf-fe-production
         restart: unless-stopped
-        volumes:
-            - ./nginx:/nginx
         networks:
             - proxy-bridge
 

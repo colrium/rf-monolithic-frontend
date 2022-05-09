@@ -6,8 +6,6 @@ services:
             dockerfile: Dockerfile.preview
         container_name: rf-fe-preview
         restart: unless-stopped
-        volumes:
-            - ./nginx:/nginx
         networks:
             - proxy-bridge
 networks:
