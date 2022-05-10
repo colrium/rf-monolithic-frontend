@@ -43,25 +43,21 @@ const SectionComponent = props => {
 					</Typography>
 				</GridItem>
 
-				<GridItem xs={12} className={"p-0 pt-4"}>
+				<GridItem xs={12} className={"p-0 py-4"}>
 					<Typography variant="h4" color="text.secondary" paragraph>
 						How We Work
 					</Typography>
-					<GridContainer className={"p-0 py-6"}>
-						<GridItem
-							xs={12}
-							className={"p-0 flex flex-row items-center justify-center"}
-							sx={{ height: "50vh !important" }}
-						>
+					<GridContainer className={"p-0"}>
+						<GridItem xs={12} className={"p-0 flex flex-row items-center justify-center"}>
 							<iframe
 								width="853"
-								height="520"
-								src={`https://www.youtube.com/embed/hRf_WPDOPv4`}
+								height="720"
+								src={`https://www.youtube.com/embed/l4OqPF6NnJI`}
 								frameBorder="0"
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 								allowFullScreen
-								className="relative left-0 top-0 w-full h-full"
-								title="Embedded youtube"
+								className="w-full"
+								title="How We Work"
 							/>
 						</GridItem>
 					</GridContainer>
