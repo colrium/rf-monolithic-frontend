@@ -1,8 +1,8 @@
 /** @format */
 
 
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from '@mui/material/Typography';
 import Hidden from '@mui/material/Hidden';
 import Section from "components/Section";
@@ -31,7 +31,7 @@ const SectionComponent = props => {
 
 	return (
 		<Section className={"p-0 md:pt-0"} id="commission-a-survey" sx={{paddingTop: `0px !important`}}>
-			<GridContainer
+			<Grid container
 				className={"py-16"}
 				sx={{
 					backgroundImage: "url(" + "https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/dots-map.png" + ")",
@@ -42,7 +42,7 @@ const SectionComponent = props => {
 				}}
 			>
 				<Hidden smDown className="w-full flex">
-					<GridItem xs={12} className={"flex flex-row items-center"}>
+					<Grid item  xs={12} className={"flex flex-row items-center"}>
 						<img
 							src={"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg"}
 							className={"mr-4 h-8 w-8"}
@@ -59,11 +59,11 @@ const SectionComponent = props => {
 						<Typography variant="h4" className={"capitalize"}>
 							SURVEY
 						</Typography>
-					</GridItem>
+					</Grid>
 				</Hidden>
 
 				<Hidden mdUp className="w-full flex">
-					<GridItem xs={12} className={"flex flex-col items-center justify-center"}>
+					<Grid item  xs={12} className={"flex flex-col items-center justify-center"}>
 						<img
 							src={"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/chevron-white.svg"}
 							className={"mb-4 h-8 w-8"}
@@ -80,9 +80,9 @@ const SectionComponent = props => {
 						<Typography variant="h4" className={"capitalize"}>
 							SURVEY
 						</Typography>
-					</GridItem>
+					</Grid>
 				</Hidden>
-				<GridItem xs={12} className={"px-2"}>
+				<Grid item  xs={12} className={"px-2"}>
 					<Typography variant="body1" paragraph className="font-bold">
 						Data is the essential fuel required to power robust, evidence based analysis and decision making.
 					</Typography>
@@ -97,8 +97,8 @@ const SectionComponent = props => {
 					<Typography variant="body1" paragraph gutterBottom>
 						Let us provide you with the right data to power your research and your insights.
 					</Typography>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		</Section>
 	)
 }

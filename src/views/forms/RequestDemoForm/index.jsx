@@ -13,8 +13,8 @@ import Snackbar from "@mui/material/Snackbar";
 import Box from "@mui/material/Box"
 import CircularProgress from "@mui/material/CircularProgress";
 import compose from "recompose/compose"
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import SnackbarContent from "components/Snackbar/SnackbarContent";
 
 
@@ -33,10 +33,6 @@ class RequestDemoForm extends React.Component {
 	}
 	constructor(props) {
 		super(props)
-		const {
-			networkServices,
-		} = this.props
-		console.log("networkServices", networkServices)
 		this.handleDemoRequestSubmit = this.handleDemoRequestSubmit.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.handleSnackbarClose = this.handleSnackbarClose.bind(this)
@@ -110,8 +106,8 @@ class RequestDemoForm extends React.Component {
 		const { inputVariant, fullWidth, disabled, className, ...rest } = this.props
 		return (
 			<Box component={"form"} noValidate ref="demoRequestForm" onSubmit={this.handleDemoRequestSubmit} {...rest}>
-				<GridContainer className={"p-0"}>
-					<GridItem xs={12} sm={12} md={12} className={"p-0"}>
+				<Grid container className={"p-0"}>
+					<Grid item  xs={12} sm={12} md={12} className={"p-0"}>
 						<TextField
 							id="request-demo-email"
 							type="email"
@@ -139,8 +135,8 @@ class RequestDemoForm extends React.Component {
 							helperText={this.state.submiterror && this.state.alert ? this.state.alert : ""}
 							required
 						/>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 			</Box>
 		)
 	}

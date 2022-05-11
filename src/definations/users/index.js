@@ -16,7 +16,7 @@ import IconButton from "@mui/material/IconButton";
 import { withTheme } from '@mui/styles';
 import MailOutlineIcon from "@mui/icons-material/MailOutline"
 import { connect } from "react-redux"
-import Typography from "components/Typography"
+import Typography from '@mui/material/Typography'
 import Avatar from "components/Avatar"
 import ApiService from "services/Api"
 

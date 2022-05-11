@@ -3,11 +3,11 @@ import { CloudUploadOutlined as CloudUploadIcon } from "@mui/icons-material";
 import Icon from "@mui/material/Icon";
 import { colors } from "assets/jss/app-theme";
 import PreviewList from "components/FileDropZone/PreviewList";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import FormHelperText from '@mui/material/FormHelperText';
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React, { memo, useMemo, useCallback, useRef } from "react";
 import { useNetworkServices, useNotificationsQueue } from "contexts"
@@ -434,10 +434,10 @@ const DropZone = React.forwardRef((props, ref) => {
 				{...dropAreaBond}
 				onClick={event => handleOnFocus(event, true)}
 			>
-				<GridContainer className={"h-full w-full p-0 px-4 py-2"}>
-					<GridItem xs={12}>
+				<Grid container className={"h-full w-full p-0 px-4 py-2"}>
+					<Grid item  xs={12}>
 						{showDragDrop && (
-							<GridContainer direction="column" justify="center" alignItems="center">
+							<Grid container direction="column" justify="center" alignItems="center">
 								<Typography
 									className={"m-4 text-8xl"}
 									color={dropAreaState?.over ? "primary" : "text.secondary"}
@@ -449,7 +449,7 @@ const DropZone = React.forwardRef((props, ref) => {
 								</Typography>
 
 								<FormHelperText> {dropzoneText} </FormHelperText>
-							</GridContainer>
+							</Grid>
 						)}
 
 						{showPreviews && (
@@ -462,7 +462,7 @@ const DropZone = React.forwardRef((props, ref) => {
 								title={label}
 							/>
 						)}
-					</GridItem>
+					</Grid>
 					<input
 						{...rest}
 						onChange={handleOnInputChange}
@@ -471,7 +471,7 @@ const DropZone = React.forwardRef((props, ref) => {
 						className="hidden"
 						ref={inputRef}
 					/>
-				</GridContainer>
+				</Grid>
 
 				{/* <FormHelperText error={Boolean(error)}> {helperText} </FormHelperText> */}
 

@@ -35,8 +35,8 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import SnackbarContent from "components/Snackbar/SnackbarContent";
 import PropTypes from "prop-types";
 import ApiService from "services/Api";
@@ -1137,7 +1137,7 @@ class BaseForm extends React.Component {
 			return <TableCell key={"field_" + name}>{this.renderFieldInput(name, field, restricted)}</TableCell>
 		} else {
 			return (
-				<GridItem
+				<Grid item
 					className={"p-0 m-0 px-1 py-1"}
 					md={
 						field.input.size
@@ -1150,7 +1150,7 @@ class BaseForm extends React.Component {
 					key={"field_" + name}
 				>
 					{this.renderFieldInput(name, field, restricted)}
-				</GridItem>
+				</Grid>
 			)
 		}
 	}
@@ -1294,7 +1294,7 @@ class BaseForm extends React.Component {
 
 					<CardContent className="m-0 p-0 py-4">
 						{layout == "normal" && (
-							<GridContainer className="m-0 p-0">
+							<Grid container className="m-0 p-0">
 								{Object.keys(this.state.fields).map((column_name, column_index) =>
 									Array.isArray(fields) && fields.length > 0
 										? exclude
@@ -1306,12 +1306,12 @@ class BaseForm extends React.Component {
 											: ""
 										: this.renderField(column_name)
 								)}
-							</GridContainer>
+							</Grid>
 						)}
 
 						{layout == "inline" && (
-							<GridContainer className="m-0 p-0">
-								<GridItem xs={12}>
+							<Grid container className="m-0 p-0">
+								<Grid item  xs={12}>
 									<Table className="w-full ">
 										<TableBody>
 											<TableRow>
@@ -1324,16 +1324,16 @@ class BaseForm extends React.Component {
 											</TableRow>
 										</TableBody>
 									</Table>
-								</GridItem>
-							</GridContainer>
+								</Grid>
+							</Grid>
 						)}
 					</CardContent>
 
 					{(show_discard || show_submit) && Object.keys(this.state.fields).length > 0 && (
 						<CardActions>
-							<GridContainer className="m-0 p-0">
+							<Grid container className="m-0 p-0">
 								{show_discard && (
-									<GridItem
+									<Grid item
 										xs={12}
 										md={6}
 										className="flex flex-row items-center justify-center md:items-start md:justify-start"
@@ -1353,11 +1353,11 @@ class BaseForm extends React.Component {
 												{...(discardBtnProps ? discardBtnProps : {})}
 											/>
 										)}
-									</GridItem>
+									</Grid>
 								)}
 
 								{show_submit && (
-									<GridItem
+									<Grid item
 										xs={12}
 										md={show_discard ? 6 : 12}
 										className="flex flex-row items-center justify-center md:items-end md:justify-end"
@@ -1377,9 +1377,9 @@ class BaseForm extends React.Component {
 												{...(submitBtnProps ? submitBtnProps : {})}
 											/>
 										)}
-									</GridItem>
+									</Grid>
 								)}
-							</GridContainer>
+							</Grid>
 						</CardActions>
 					)}
 				</Card>

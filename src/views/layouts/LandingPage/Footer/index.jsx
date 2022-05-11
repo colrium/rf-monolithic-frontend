@@ -18,9 +18,9 @@ import YouTubeIcon from "@mui/icons-material/YouTube"
 import GooglePlusIcon from "mdi-react/GooglePlusIcon"
 import { colors } from "assets/jss/app-theme"
 import Button from "@mui/material/Button"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
-import Typography from "components/Typography"
+import Grid from '@mui/material/Grid'
+
+import Typography from '@mui/material/Typography'
 import { intercom } from "config"
 import PropTypes from "prop-types"
 import Intercom from "react-intercom"
@@ -107,13 +107,13 @@ function Footer(props) {
 					</ScrollTop>
 				</div>
 				<Intercom appID={intercom.app.id} {...intercom.app.user} />
-				<GridContainer className={className}>
+				<Grid container className={className}>
 					{!columnWidgets && (
-						<GridContainer className="px-4 md:px-32 ">
-							<GridItem sm={12} lg={5} className="p-0 m-0 mb-8">
-								<GridContainer className="p-0 m-0">
-									<GridItem sm={12} className="p-0 m-0">
-										<GridItem xs={12} className={"mb-6 p-0"}>
+						<Grid container className="px-4 md:px-32 ">
+							<Grid item  sm={12} lg={5} className="p-0 m-0 mb-8">
+								<Grid container className="p-0 m-0">
+									<Grid item  sm={12} className="p-0 m-0">
+										<Grid item  xs={12} className={"mb-6 p-0"}>
 											<Typography className={"mb-2 font-extrabold"} variant="h2" paragraph>
 												<span>Ethical Data</span>
 												<span className="avenir">.</span>
@@ -126,14 +126,14 @@ function Footer(props) {
 											<Typography className="inverse-text" variant="body2" paragraph>
 												For data you can’t find online
 											</Typography>
-										</GridItem>
-									</GridItem>
-								</GridContainer>
-							</GridItem>
+										</Grid>
+									</Grid>
+								</Grid>
+							</Grid>
 
-							<GridItem sm={12} lg={7} className="p-0 m-0 mb-8">
-								<GridContainer className="p-0 m-0">
-									<GridItem className="pl-4" sm={12} md={6}>
+							<Grid item  sm={12} lg={7} className="p-0 m-0 mb-8">
+								<Grid container className="p-0 m-0">
+									<Grid item  className="pl-4" sm={12} md={6}>
 										<Typography className="w-full block pb-4 uppercase" color={inverseColor} variant="h5">
 											Real Data
 										</Typography>
@@ -173,9 +173,9 @@ function Footer(props) {
 												Ethical Principles
 											</Button>
 										</Link>
-									</GridItem>
+									</Grid>
 
-									{/* <GridItem className="pl-4" sm={12} md={4}>
+									{/* <Grid item  className="pl-4" sm={12} md={4}>
 										<Typography className="w-full block pb-4 uppercase" color={inverseColor} variant="h5">
 											Product
 										</Typography>
@@ -194,9 +194,9 @@ function Footer(props) {
 												Queries
 											</Button>
 										</Link>
-									</GridItem> */}
+									</Grid> */}
 
-									<GridItem className="pl-4" sm={12} md={6}>
+									<Grid item  className="pl-4" sm={12} md={6}>
 										<Typography className="w-full block pb-4 uppercase" color={inverseColor} variant="h5">
 											About Us
 										</Typography>
@@ -224,13 +224,13 @@ function Footer(props) {
 												Jobs
 											</Button>
 										</Link>
-									</GridItem>
-								</GridContainer>
-							</GridItem>
+									</Grid>
+								</Grid>
+							</Grid>
 
-							<GridItem md={5} className="p-0 m-0 mb-8 px-4">
-								<GridContainer className="p-0 m-0">
-									<GridItem sm={12} md={8} className="p-0">
+							<Grid item  md={5} className="p-0 m-0 mb-8 px-4">
+								<Grid container className="p-0 m-0">
+									<Grid item  sm={12} md={8} className="p-0">
 										<Typography className="w-full pl-0 block pb-4" variant="body2">
 											For more information, or to schedule a demo, drop us a line
 										</Typography>
@@ -261,22 +261,22 @@ function Footer(props) {
 												},
 											}}
 										/>
-									</GridItem>
-								</GridContainer>
-							</GridItem>
+									</Grid>
+								</Grid>
+							</Grid>
 
-							<GridItem md={7} className="p-0 m-0 mb-8">
-								<GridContainer className="p-0 m-0">
-									<GridItem className="pl-4 block" sm={12} md={6}>
+							<Grid item  md={7} className="p-0 m-0 mb-8">
+								<Grid container className="p-0 m-0">
+									<Grid item  className="pl-4 block" sm={12} md={6}>
 										{settings.social && (
-											<GridContainer className="p-0 m-0">
+											<Grid container className="p-0 m-0">
 												<Typography className="w-full block" variant="h5">
 													Social
 												</Typography>
-											</GridContainer>
+											</Grid>
 										)}
 										{settings.social && (
-											<GridContainer className="p-0 m-0">
+											<Grid container className="p-0 m-0">
 												{Object.entries(settings.social).map(
 													([name, url], index) =>
 														!String.isEmpty(url) &&
@@ -298,11 +298,11 @@ function Footer(props) {
 															</IconButton>
 														)
 												)}
-											</GridContainer>
+											</Grid>
 										)}
-									</GridItem>
+									</Grid>
 
-									<GridItem className="pl-4 block" sm={12} md={6}>
+									<Grid item  className="pl-4 block" sm={12} md={6}>
 										<Typography className="w-full block pb-4" color={inverseColor} variant="h5">
 											Contact
 										</Typography>
@@ -312,30 +312,30 @@ function Footer(props) {
 										{!String.isEmpty(settings.contact["email"]) && (
 											<Typography className="w-full block pb-4">{settings.contact["email"]}</Typography>
 										)}
-									</GridItem>
-								</GridContainer>
-							</GridItem>
-						</GridContainer>
+									</Grid>
+								</Grid>
+							</Grid>
+						</Grid>
 					)}
-				</GridContainer>
+				</Grid>
 				{absoluteFooter && (
-					<GridContainer
+					<Grid container
 						sx={{
 							background: "rgba(0,0,0, 0.3)",
 						}}
 					>
 						{absoluteFooter}
-					</GridContainer>
+					</Grid>
 				)}
 
 				{!absoluteFooter && (
-					<GridContainer
+					<Grid container
 						className={"sm:px-8 md:px-32"}
 						sx={{
 							background: "rgba(0,0,0, 0.3)",
 						}}
 					>
-						<GridItem
+						<Grid item
 							className="py-2 pl-0 flex sm:flex-col lg:flex-row justify-center md:justify-start items-center"
 							xs={12}
 							md={3}
@@ -351,8 +351,8 @@ function Footer(props) {
 									}
 								</Button>
 							</Link>
-						</GridItem>
-						<GridItem
+						</Grid>
+						<Grid item
 							className="py-2 pl-0 flex sm:flex-col lg:flex-row justify-center md:justify-start items-center"
 							xs={12}
 							md={3}
@@ -360,23 +360,23 @@ function Footer(props) {
 							<Typography className="mt-2 mb-1 pl-2 pr-2" variant="body1">
 								{settings.general["trademark"]}
 							</Typography>
-						</GridItem>
-						<GridItem className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
+						</Grid>
+						<Grid item  className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
 							<Link className="pl-0 block" to={"/privacy-policy".toUriWithLandingPagePrefix()} color="inherit">
 								<Button color="inherit" className="capitalize">
 									Terms.
 								</Button>
 							</Link>
-						</GridItem>
+						</Grid>
 
-						<GridItem className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
+						<Grid item  className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
 							<Link className="pl-0 block" to={"/privacy-policy".toUriWithLandingPagePrefix()} color="inherit">
 								<Button color="inherit" className=" capitalize">
 									Privacy.
 								</Button>
 							</Link>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 				)}
 			</Box>
 		</Box>

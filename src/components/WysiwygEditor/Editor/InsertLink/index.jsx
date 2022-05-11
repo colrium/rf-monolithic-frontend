@@ -29,7 +29,6 @@ const InsertLinkIconComponent = props => {
 	const handleOnChange = value => event => {
 		event.stopPropagation()
 		setState({ open: false, popOverAnchorEl: null })
-		console.log("LinkAddComponent onChange ", onChange)
 		// onChange("fontSize", value)
 	}
 

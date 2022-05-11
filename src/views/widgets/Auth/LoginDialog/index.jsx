@@ -5,10 +5,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import ScrollBars from "components/ScrollBars";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
@@ -46,11 +46,11 @@ function Widget(props) {
 			</DialogTitle>
 			<ScrollBars>
 				<DialogContent>
-					<GridContainer className="px-4">
-						<GridItem xs={12} className="p-0 m-0">
+					<Grid container className="px-4">
+						<Grid item  xs={12} className="p-0 m-0">
 							<LoginForm onLogin={onLoginInternal} />
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 				</DialogContent>
 			</ScrollBars>
 

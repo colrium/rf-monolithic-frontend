@@ -49,7 +49,6 @@ const SignupForm = React.forwardRef((props, ref) => {
 		onSubmit: async (formData, e) => {
 			return await Api.post("/signup", formData)
 				.then(res => {
-					console.log("res", res)
 					if (formData.interest === "demo") {
 						queueNotification({
 							severity: "success",
@@ -80,7 +79,7 @@ const SignupForm = React.forwardRef((props, ref) => {
 					resetValues()
 				})
 				.catch(err => {
-					console.log("err", err)
+					console.error("err", err)
 					queueNotification({
 						severity: "error",
 						content: `Signup request failed. ${err.msg || "Something went wrong!"}`,

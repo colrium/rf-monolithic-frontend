@@ -120,7 +120,6 @@ const WebSocketService = props => {
 
 	const handleOnInbox = useCallback(
 		async conversations => {
-			// console.log("onInbox conversations", conversations)
 			if (isAuthenticated && !JSON.isEmpty(user)) {
 				onInbox(conversations)
 			}

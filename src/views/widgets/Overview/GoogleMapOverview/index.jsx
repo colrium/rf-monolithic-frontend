@@ -19,9 +19,9 @@ import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import { withTheme } from "@mui/styles";
@@ -426,8 +426,6 @@ class GoogleMapOverview extends React.Component {
 		})
 		//
 
-		// console.log("GoogleMapOverview clientsPositions", clientsPositions)
-
 		return (
 			<Card
 				elevation={0}
@@ -512,8 +510,8 @@ class GoogleMapOverview extends React.Component {
 					}
 				/>
 				<CardContent className="p-0 m-0 overflow-x-hidden relative">
-					<GridContainer className="p-0 m-0">
-						<GridItem xs={12} className={`m-0 p-0 flex relative`}>
+					<Grid container className="p-0 m-0">
+						<Grid item  xs={12} className={`m-0 p-0 flex relative`}>
 							<div
 								className={`flex-grow p-0 transition-all`}
 								style={{
@@ -540,8 +538,8 @@ class GoogleMapOverview extends React.Component {
 									circles={circles}
 								/>
 							</div>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 					<Drawer
 						variant={
 							// device.window_size.width >= 1280
@@ -587,15 +585,15 @@ class GoogleMapOverview extends React.Component {
 						)}
 
 						{context === "clients_positions" && Object.size(clientsPositions) === 0 && (
-							<GridContainer>
-								<GridItem xs={12} className="flex items-center justify-center p-2">
+							<Grid container>
+								<Grid item  xs={12} className="flex items-center justify-center p-2">
 									<Icon path={mdiFolderOutline} title="No Records available yet." color="#CCCCCC" size={5} />
-								</GridItem>
+								</Grid>
 
-								<GridItem xs={12} className="flex items-center justify-center p-2">
+								<Grid item  xs={12} className="flex items-center justify-center p-2">
 									<Typography>No Records available yet.</Typography>
-								</GridItem>
-							</GridContainer>
+								</Grid>
+							</Grid>
 						)}
 
 						{context === "clients_positions" && (
@@ -752,10 +750,10 @@ class GoogleMapOverview extends React.Component {
 					</Drawer>
 				</CardContent>
 				<CardActions>
-					<GridContainer className="p-0 m-0">
+					<Grid container className="p-0 m-0">
 						{Array.isArray(contexts) &&
 							contexts.map((context_entry_name, cursor) => (
-								<GridItem
+								<Grid item
 									xs={12}
 									md={Math.round(12 / contexts.length)}
 									className={"flex items-center justify-center"}
@@ -774,9 +772,9 @@ class GoogleMapOverview extends React.Component {
 											this.handleToggleContextRender(context_entry_name, new_value)
 										}}
 									/>
-								</GridItem>
+								</Grid>
 							))}
-						<GridItem xs={12}>
+						<Grid item  xs={12}>
 							<Typography variant="body2">
 								{this.props.context
 									? definations[this.props.context]
@@ -784,8 +782,8 @@ class GoogleMapOverview extends React.Component {
 										: "Map from a glance"
 									: "Map from a glance"}
 							</Typography>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 				</CardActions>
 			</Card>
 		)

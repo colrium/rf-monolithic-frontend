@@ -3,13 +3,12 @@
 // Material helpers
 import { CircularProgress } from "@mui/material";
 
-import GridContainer from "components/Grid/GridContainer";
+import Grid from '@mui/material/Grid';
 // Shared components
-import Portlet from "components/Portlet";
-import PortletContent from "components/Portlet/Content";
-import PortletHeader from "components/Portlet/Header";
-import PortletLabel from "components/Portlet/Label";
-import Typography from "components/Typography";
+import Card from "@mui/material/Card"
+import CardHeader from "@mui/material/CardHeader"
+import CardContent from "@mui/material/CardContent"
+import Typography from '@mui/material/Typography';
 import UsersDefination from "definations/users";
 import React, { Component } from "react";
 //Redux imports
@@ -88,14 +87,9 @@ class Account extends Component {
 
 	render() {
 		return (
-			<Portlet>
-				<PortletHeader>
-					<PortletLabel
-						subtitle="The information can be edited"
-						title="Profile"
-					/>
-				</PortletHeader>
-				<PortletContent>
+			<Card>
+				<CardHeader subheader="Edit to update profile" title="Profile" />
+				<CardContent>
 					{Object.keys(this.state.formValues).length > 0 ? (
 						<BaseForm
 							defination={UsersDefination}
@@ -111,15 +105,15 @@ class Account extends Component {
 							show_title={false}
 						/>
 					) : (
-						<GridContainer>
+						<Grid container>
 							<CircularProgress color="secondary" />
 
 							<Typography>Loading Profile </Typography>
-						</GridContainer>
+						</Grid>
 					)}
-				</PortletContent>
-			</Portlet>
-		);
+				</CardContent>
+			</Card>
+		)
 	}
 }
 

@@ -479,7 +479,6 @@ const AnimatedChevronMap = props => {
 		setState({ paused: !isVisible })
 		// setPresenceOpen(false);
 		if (!!mapPopupRef.current) {
-			// console.log( "handleOnViewportVisibilityChange isVisible", isVisible, mapPopupRef.current )
 			mapPopupRef.current.classList.remove("active")
 			if (!isVisible) {
 				clearInterval(nextAnimTimeOut)

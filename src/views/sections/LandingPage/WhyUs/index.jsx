@@ -4,8 +4,8 @@ import React from "react";
 import Button from '@mui/material/Button';
 import IconButton from "@mui/material/IconButton"
 import Box from "@mui/material/Box"
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from '@mui/material/Typography';
 import Section from "components/Section";
 import Accordion from '@mui/material/Accordion';
@@ -59,18 +59,18 @@ const SectionComponent = (props) => {
 
 	return (
 		<Section className={"p-0 min-h-screen pb-16"} id="why-us" sx={{ backgroundColor: theme => theme.palette.background.paper }}>
-			<GridContainer className={"p-0"}>
-				<GridItem xs={12} md={12} className="p-0 pb-8">
-					<GridContainer className={"p-0"}>
-						<GridItem xs={12} className="p-0 mb-2">
+			<Grid container className={"p-0"}>
+				<Grid item  xs={12} md={12} className="p-0 pb-8">
+					<Grid container className={"p-0"}>
+						<Grid item  xs={12} className="p-0 mb-2">
 							<Typography variant="h4" color="textSecondary" className="mb-2" gutterBottom>
 								Why should you use Realfield?
 							</Typography>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 
-					<GridContainer className={"p-0"}>
-						<GridItem xs={12} className="p-0 mb-2 flex flex-row items-center">
+					<Grid container className={"p-0"}>
+						<Grid item  xs={12} className="p-0 mb-2 flex flex-row items-center">
 							<Box
 								className="w-10 h-10 rounded-full flex flex-row items-center justify-center mr-4"
 								sx={{
@@ -85,9 +85,9 @@ const SectionComponent = (props) => {
 							<Typography className="flex-1" variant="subtitle2">
 								Swift understanding of people's preferences, attitudes and behaviours
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12} className="p-0 mb-2 flex flex-row items-center">
+						<Grid item  xs={12} className="p-0 mb-2 flex flex-row items-center">
 							<Box
 								className="w-10 h-10 rounded-full flex flex-row items-center justify-center mr-4"
 								sx={{
@@ -102,9 +102,9 @@ const SectionComponent = (props) => {
 							<Typography className="flex-1" variant="subtitle2">
 								High quality empirical data
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12} className="p-0 mb-2 flex flex-row items-center">
+						<Grid item  xs={12} className="p-0 mb-2 flex flex-row items-center">
 							<Box
 								className="w-10 h-10 rounded-full flex flex-row items-center justify-center mr-4"
 								sx={{
@@ -118,9 +118,9 @@ const SectionComponent = (props) => {
 							<Typography className="flex-1" variant="subtitle2">
 								Real time results
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12} className="p-0  mb-2 flex flex-row items-center">
+						<Grid item  xs={12} className="p-0  mb-2 flex flex-row items-center">
 							<Box
 								className="w-10 h-10 rounded-full flex flex-row items-center justify-center mr-4"
 								sx={{
@@ -134,9 +134,9 @@ const SectionComponent = (props) => {
 							<Typography className="flex-1" variant="subtitle2">
 								Ethical sourcing
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12} className="p-0 mb-2 flex flex-row items-center">
+						<Grid item  xs={12} className="p-0 mb-2 flex flex-row items-center">
 							<Box
 								className="w-10 h-10 rounded-full flex flex-row items-center justify-center mr-4"
 								sx={{
@@ -150,51 +150,51 @@ const SectionComponent = (props) => {
 							<Typography className="flex-1" variant="subtitle2">
 								Accessible pricing
 							</Typography>
-						</GridItem>
-					</GridContainer>
-				</GridItem>
+						</Grid>
+					</Grid>
+				</Grid>
 
-				<GridItem xs={12} className="p-0" id="realfield-approach">
+				<Grid item  xs={12} className="p-0" id="realfield-approach">
 					<Typography variant="h4" className="mb-2" color="text.secondary" paragraph>
 						Realfield's Ethical Approach
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-2">
+				<Grid item  xs={12} className="p-0 py-2">
 					<Typography color="text.secondary">
 						Why are our ethical data collection practices important for your project?
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-2">
+				<Grid item  xs={12} className="p-0 py-2">
 					<Typography color="text.secondary">
 						Do you really want your entire project to suffer under the huge reputation risks you could face - not to mention the
 						legal risks - just for using unethically sourced dirty data?
 					</Typography>
-				</GridItem>
-				<GridItem xs={12} className="p-0 py-2">
+				</Grid>
+				<Grid item  xs={12} className="p-0 py-2">
 					<Typography color="text.secondary">
 						Our ethical standards safeguard your reputation, your project and your results. All data we supply is collected
 						according to local legal standards and GDPR requirements and will be reviewed as regulations and laws evolve.
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="flex flex-col items-center my-8" id="ethical-principles">
+				<Grid item  xs={12} className="flex flex-col items-center my-8" id="ethical-principles">
 					<Link to={"/ethical-principles".toUriWithLandingPagePrefix()} className="block">
 						<Button className="capitalize rounded-full" size="large" variant="contained">
 							Learn more about our Ethical Principles
 						</Button>
 					</Link>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0" id="realfield-advantage">
+				<Grid item  xs={12} className="p-0" id="realfield-advantage">
 					<Typography variant="h4" className="mb-2" color="text.secondary" paragraph>
 						The Real Advantages of Realfield
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className={"p-0 my-4"}>
-					<GridItem xs={12} className="p-0 mb-2 flex flex-row  items-center">
+				<Grid container className={"p-0 my-4"}>
+					<Grid item  xs={12} className="p-0 mb-2 flex flex-row  items-center">
 						<Box
 							className="w-10 h-10 rounded-full flex flex-row items-center justify-center mr-4"
 							sx={{
@@ -209,9 +209,9 @@ const SectionComponent = (props) => {
 							We work fast and accurately to provide understanding where few others can, enabled by our network of primary
 							data collectors
 						</Typography>
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="p-0 mb-2 flex flex-row items-center">
+					<Grid item  xs={12} className="p-0 mb-2 flex flex-row items-center">
 						<Box
 							className="w-10 h-10 rounded-full flex flex-row items-center justify-center mr-4"
 							sx={{
@@ -226,9 +226,9 @@ const SectionComponent = (props) => {
 							We provide flexibility and full transparency to adapt to the needs of your project during the collection
 							process.
 						</Typography>
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="p-0 mb-2 flex flex-row items-center">
+					<Grid item  xs={12} className="p-0 mb-2 flex flex-row items-center">
 						<Box
 							className="w-10 h-10 rounded-full flex flex-row items-center justify-center mr-4"
 							sx={{
@@ -243,11 +243,11 @@ const SectionComponent = (props) => {
 							We offer an A-Z service including collection design, large-scale field operation, data quality assurance, and
 							annotation.
 						</Typography>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
-				<GridContainer className={"p-0"}>
-					<GridItem xs={12}>
+				<Grid container className={"p-0"}>
+					<Grid item  xs={12}>
 						<Accordion>
 							<AccordionSummary
 								expandIcon={<ExpandMoreIcon />}
@@ -257,8 +257,8 @@ const SectionComponent = (props) => {
 								<Typography variant="h5">Data</Typography>
 							</AccordionSummary>
 							<AccordionDetails>
-								<GridContainer className={"p-0"}>
-									<GridItem xs={12}>
+								<Grid container className={"p-0"}>
+									<Grid item  xs={12}>
 										<Typography variant="body1" className="accent-text mb-4" gutterBottom paragraph>
 											Realfield supplies high quality, primary citizen and consumer data, both quantitative and
 											qualitative, collected through observation, interviews, questionnaires, schedules, and
@@ -281,8 +281,8 @@ const SectionComponent = (props) => {
 										<Typography variant="body1" className="mb-4" gutterBottom paragraph>
 											Amongst the most valuable data for evidence-based decision making is citizen and consumer data.
 										</Typography>
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							</AccordionDetails>
 						</Accordion>
 
@@ -298,8 +298,8 @@ const SectionComponent = (props) => {
 								<Typography variant="h5">Data Quality</Typography>
 							</AccordionSummary>
 							<AccordionDetails>
-								<GridContainer className={"p-0"}>
-									<GridItem xs={12}>
+								<Grid container className={"p-0"}>
+									<Grid item  xs={12}>
 										<Typography variant="body1" className="mb-4" gutterBottom paragraph>
 											Data quality is important because it directly affects your strategic decision making. Poor
 											quality data results in poor decisions that costs time and money. In 2016, IBM estimated that
@@ -408,8 +408,8 @@ const SectionComponent = (props) => {
 												</Typography>
 											</li>
 										</ol>
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							</AccordionDetails>
 						</Accordion>
 
@@ -422,8 +422,8 @@ const SectionComponent = (props) => {
 								<Typography variant="h5">Data Ethics</Typography>
 							</AccordionSummary>
 							<AccordionDetails>
-								<GridContainer className={"p-0"}>
-									<GridItem xs={12}>
+								<Grid container className={"p-0"}>
+									<Grid item  xs={12}>
 										<Typography className="m-auto" paragraph>
 											Realfield’s deep commitment to ethical data collection safeguards your reputation, your project
 											and your insights.
@@ -435,13 +435,13 @@ const SectionComponent = (props) => {
 												Ethical Principles
 											</a>
 										</Typography>
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							</AccordionDetails>
 						</Accordion>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Section>
 	)
 }

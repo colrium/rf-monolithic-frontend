@@ -12,7 +12,7 @@ import {
 } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
 import Avatar from "components/Avatar";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import React from "react";
 import ApiService from "services/Api";
 import { FilesHelper, UtilitiesHelper } from "utils/Helpers";

@@ -79,7 +79,6 @@ const NotificationContent = React.forwardRef((props, ref) => {
 		}
 	}, [timeoutPercentage])
 
-	// console.log("timeoutPercentage", timeoutPercentage)
 
 	return (
 		<Card onClick={handleOnClick(elapsed)} className={`cursor ${className ? className : ""}`} raised {...rest} ref={ref}>

@@ -17,10 +17,10 @@ import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Status from "components/Status";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import { formats } from "config/data";
 import PropTypes from "prop-types";
 import React from "react";
@@ -285,9 +285,9 @@ class CustomCalendar extends React.Component {
 					subheader={subtitle}
 				></CardHeader>
 				<CardContent className="p-0 m-0">
-					<GridContainer className="p-0 m-0">
-						<GridContainer className="p-0 m-0">
-							<GridItem sm={6} md={4}>
+					<Grid container className="p-0 m-0">
+						<Grid container className="p-0 m-0">
+							<Grid item  sm={6} md={4}>
 								<Tabs
 									value={view}
 									onChange={this.handleChangeCalendarView}
@@ -300,16 +300,16 @@ class CustomCalendar extends React.Component {
 									<Tab value="week" label="Week" />
 									<Tab value="day" label="Day" />
 								</Tabs>
-							</GridItem>
+							</Grid>
 
-							<GridItem sm={6} md={4}>
+							<Grid item  sm={6} md={4}>
 								<Typography variant="h3" center>
 									{" "}
 									{view_title}{" "}
 								</Typography>
-							</GridItem>
+							</Grid>
 
-							<GridItem sm={12} md={4}>
+							<Grid item  sm={12} md={4}>
 								<div className="float-right">
 									<IconButton
 										onClick={this.handleClickPrevButton}
@@ -322,11 +322,11 @@ class CustomCalendar extends React.Component {
 										<NextIcon />
 									</IconButton>
 								</div>
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 
-						<GridContainer className="p-0 m-0">
-							<GridItem xs={12}>
+						<Grid container className="p-0 m-0">
+							<Grid item  xs={12}>
 								<Calendar
 									theme={theme}
 									view={view}
@@ -336,13 +336,13 @@ class CustomCalendar extends React.Component {
 									ref={this.calendarRef}
 									{...calProps}
 								/>
-							</GridItem>
-						</GridContainer>
-					</GridContainer>
+							</Grid>
+						</Grid>
+					</Grid>
 				</CardContent>
 				<CardActions>
-					<GridContainer className="p-0 m-0">
-						<GridItem xs={12}>
+					<Grid container className="p-0 m-0">
+						<Grid item  xs={12}>
 							<Typography
 								variant="subtitle2"
 								display="block"
@@ -352,8 +352,8 @@ class CustomCalendar extends React.Component {
 								{" "}
 								Calendar index{" "}
 							</Typography>
-						</GridItem>
-						<GridItem xs={12}>
+						</Grid>
+						<Grid item  xs={12}>
 							{calendars.map((calendar, index) => (
 								<Status
 									color={
@@ -365,8 +365,8 @@ class CustomCalendar extends React.Component {
 									key={"calendar-" + index}
 								/>
 							))}
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 				</CardActions>
 			</Card>
 		);

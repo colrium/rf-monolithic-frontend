@@ -6,10 +6,7 @@ import { useDidMount } from "hooks"
 
 const IconsOnly = props => {
 	const { config } = props
-	//
-	useDidMount(() => {
-		console.log("IconsOnly props", props)
-	})
+
 
 	return (
 		<div className="inline-block">

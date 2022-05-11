@@ -1,8 +1,8 @@
 import React from "react";
 
 
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from '@mui/material/Typography';
 import Section from "components/Section";
 import { connect } from "react-redux";
@@ -18,22 +18,22 @@ const SectionComponent = props => {
 
 	return (
 		<Section className="pb-0" id="about-us" title={""}>
-			<GridContainer className={"p-0"}>
-				<GridItem xs={12} className={"p-0"}>
+			<Grid container className={"p-0"}>
+				<Grid item  xs={12} className={"p-0"}>
 					<Typography variant="h4" color="text.secondary" paragraph>
 						About Us
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"p-0"}>
+				<Grid item  xs={12} className={"p-0"}>
 					<Typography color="text.secondary">
 						We are anthropologists, academics, data collectors, data scientists, researchers, statisticians, software engineers,
 						sociologists, subject matter experts and students. We are truth seekers, information explorers and believers in the
 						power of facts and evidence.
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"p-0 pt-4"}>
+				<Grid item  xs={12} className={"p-0 pt-4"}>
 					<Typography variant="h4" color="text.secondary" paragraph>
 						Our Mission
 					</Typography>
@@ -41,14 +41,14 @@ const SectionComponent = props => {
 						We help you swiftly understand people’s preferences, attitudes and behaviours by using networks of primary data
 						collectors working with proven methods enabled by Realfield’s platform.
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"p-0 py-4"}>
+				<Grid item  xs={12} className={"p-0 py-4"}>
 					<Typography variant="h4" color="text.secondary" paragraph>
 						How We Work
 					</Typography>
-					<GridContainer className={"p-0"}>
-						<GridItem xs={12} className={"p-0 flex flex-row items-center justify-center"}>
+					<Grid container className={"p-0"}>
+						<Grid item  xs={12} className={"p-0 flex flex-row items-center justify-center"}>
 							<iframe
 								width="853"
 								height="720"
@@ -59,10 +59,10 @@ const SectionComponent = props => {
 								className="w-full"
 								title="How We Work"
 							/>
-						</GridItem>
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+						</Grid>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Section>
 	)
 }

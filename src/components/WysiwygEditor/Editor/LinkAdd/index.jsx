@@ -16,8 +16,10 @@ const LinkAddComponent = props => {
 
 	const handleOnChange = value => event => {
 		event.stopPropagation()
-		console.log("LinkAddComponent onChange ", onChange)
-		// onChange("link", value)
+		if (Function.isFunction(onChange)) {
+			// onChange("link", value)
+		}
+
 	}
 
 	return (

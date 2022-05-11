@@ -6,14 +6,14 @@
 
 import React, { useEffect, useState, useCallback, useLayoutEffect } from "react"
 import ReactDOMServer from "react-dom/server"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 import { connect } from "react-redux"
 import { GoogleMap, InfoWindow, Circle, Marker, Polyline, withGoogleMap, withScriptjs } from "react-google-maps"
 import { ThemeProvider } from "@mui/material/styles"
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager"
 import Avatar from "@mui/material/Avatar"
-import Typography from "components/Typography"
+import Typography from '@mui/material/Typography'
 import mapStyles, { mapDarkStyles } from "./mapStyles"
 import { GooglePlacesAutocomplete } from "components/FormInputs"
 import { compose } from "recompose"
@@ -111,8 +111,8 @@ const ClientInfoWindow = ({ user, track, position, history, app, ...rest }) => {
 
 	return (
 		<ThemeProvider theme={preferences ? (preferences.theme === "dark" ? theme : theme) : theme}>
-			<GridContainer style={{ maxWidth: 300 }}>
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+			<Grid container style={{ maxWidth: 300 }}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					{user?.avatar ? (
 						<Avatar
 							className="bg-transparent mr-4"
@@ -125,51 +125,51 @@ const ClientInfoWindow = ({ user, track, position, history, app, ...rest }) => {
 						</Avatar>
 					)}
 					<Typography variant="h5">{user?.first_name}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Gender:
 					</Typography>
 					<Typography variant="body1">{user?.gender ? user?.gender : "Unspecified"}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Course of Study:
 					</Typography>
 					<Typography variant="body1">{user?.course ? user?.course : "Unspecified"}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Tasks Completed:
 					</Typography>
 					<Typography variant="body1">{user?.noof_completed_tasks ? user?.noof_completed_tasks : "0"}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Uncompleted Tasks:
 					</Typography>
 					<Typography variant="body1">{user?.noof_uncompleted_tasks ? user?.noof_uncompleted_tasks : "0"}</Typography>
-				</GridItem>
-				<GridItem xs={12} className={"flex flex-col"}>
+				</Grid>
+				<Grid item  xs={12} className={"flex flex-col"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Rating
 					</Typography>
 					<Rating name="read-only" value={user?.rating ? user?.rating : 4} readOnly />
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center justify-center"}>
 					<Button
 						href={("/messages?with=" + user?.email_address).toUriWithDashboardPrefix()}
 						style={{ background: "#8C189B", color: "#FFFFFF" }}
 					>
 						Message Me
 					</Button>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		</ThemeProvider>
 	)
 }
@@ -980,7 +980,7 @@ export default compose(
 		}, [infoWindowOpen, selectedItem, infoWindowPosition])
 
 		return (
-			<GridContainer className="relative ">
+			<Grid container className="relative ">
 				<GoogleMap
 					defaultZoom={mapZoom}
 					zoom={zoom}
@@ -1045,7 +1045,7 @@ export default compose(
 						</Paper>
 					</div>
 				)}
-			</GridContainer>
+			</Grid>
 		)
 	})
 )

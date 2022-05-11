@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import Section from "components/Section";
 import { connect } from "react-redux";
 import { withTheme } from '@mui/styles';
@@ -25,16 +25,16 @@ const SectionComponent = props => {
 
 	return (
 		<Section id="jobs-apply">
-			<GridContainer className={"p-0"}>
-				<GridItem xs={12} className={"p-0"}>
-					<GridContainer className={"p-0"}>
-						<GridItem xs={12} sm={12} className={"p-0 pt-8 pb-4"}>
+			<Grid container className={"p-0"}>
+				<Grid item  xs={12} className={"p-0"}>
+					<Grid container className={"p-0"}>
+						<Grid item  xs={12} sm={12} className={"p-0 pt-8 pb-4"}>
 							<Typography variant="h3">Fielder Registration</Typography>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 
-					<GridContainer className={"p-0"}>
-						<GridItem xs={12} sm={12} className={"p-0 py-2 pb-4"}>
+					<Grid container className={"p-0"}>
+						<Grid item  xs={12} sm={12} className={"p-0 py-2 pb-4"}>
 							{/*<Typography variant="subtitle2">
 									Its great to meet you! Please complete all
 									fields within the form below to register your
@@ -49,12 +49,12 @@ const SectionComponent = props => {
 								in becoming a Real Fielder. All applications will be reviewed, and you will be contacted by our Team with
 								further details. Thanks! We look forward to working with you soon!
 							</Typography>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 
-					<GridContainer className={"p-0"}>
+					<Grid container className={"p-0"}>
 						{content === "form" && (
-							<GridItem xs={12} className={"p-0 flex justify-center items-center text-center py-16"}>
+							<Grid item  xs={12} className={"p-0 flex justify-center items-center text-center py-16"}>
 								<Typography variant="h3" className="text-center" color="text.disabled">
 									We are temporarily not accepting applications. Please check back again soon!
 								</Typography>
@@ -92,22 +92,22 @@ const SectionComponent = props => {
 									}}
 									onSubmitSuccess={() => setContent("acknowledgement")}
 								/>*/}
-							</GridItem>
+							</Grid>
 						)}
 
 						{content === "acknowledgement" && (
-							<GridItem xs={12} className={"p-0 py-48 flex flex-col justify-center items-center"}>
+							<Grid item  xs={12} className={"p-0 py-48 flex flex-col justify-center items-center"}>
 								<Typography variant="subtitle1" color="primary" paragraph>
 									Your application has been submitted successfully. Thankyou for your interest in working with us.
 								</Typography>
 								<Typography variant="body1" paragraph>
 									A member of our will get in touch with you about your application as soon as possible{" "}
 								</Typography>
-							</GridItem>
+							</Grid>
 						)}
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Section>
 	)
 }

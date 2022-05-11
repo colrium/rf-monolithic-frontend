@@ -1,8 +1,7 @@
 /** @format */
-import GridContainer from "components/Grid/GridContainer"
+import Grid from '@mui/material/Grid'
 import React from "react"
 import {useDidMount} from "hooks"
-import Grid from "@mui/material/Grid"
 import Typography from "@mui/material/Typography"
 import { Outlet } from "react-router-dom"
 import { app } from "assets/jss/app-theme.jsx"
@@ -10,6 +9,7 @@ import { app } from "assets/jss/app-theme.jsx"
 const Page = props => {
 	useDidMount(() => {
 		document.title = app.title("Community")
+		document.querySelector('meta[name="description"]').setAttribute("content", "Welcome to the Realfield Community Page! We hope you enjoy the content and invite you to share your thoughts on the articles we post in the comments section")
 	})
 		return (
 			<Grid container className={"md:px-32 py-20"}>

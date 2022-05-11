@@ -1,8 +1,8 @@
 import React from "react";
 
 
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from '@mui/material/Typography';
 import Section from "components/Section";
 import { connect } from "react-redux";
@@ -51,14 +51,14 @@ const SectionComponent = (props) => {
 
 	return (
 		<Section className={"p-0 min-h-screen"} id="why-us" >
-			<GridContainer className={"p-0"}>
+			<Grid container className={"p-0"}>
 
 
-				<GridItem xs={12} className="p-0 flex flex-col items-center  py-4">
+				<Grid item  xs={12} className="p-0 flex flex-col items-center  py-4">
 					<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-black.svg")} className="sm:w-5/6 md:w-4/6 lg:w-1/3 h-auto" />
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-4">
+				<Grid item  xs={12} className="p-0 py-4">
 					<Typography variant="h3" paragraph className="mb-12 uppercase">
 						Privacy Policy
 					</Typography>
@@ -93,9 +93,9 @@ const SectionComponent = (props) => {
 					</Typography>
 
 
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						1. PERSONAL DATA WE MAY COLLECT FROM YOU
 					</Typography>
@@ -299,9 +299,9 @@ const SectionComponent = (props) => {
 					</Typography>
 
 
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						2. THIRD-PARTY WEBSITES
 					</Typography>
@@ -357,10 +357,10 @@ const SectionComponent = (props) => {
 
 
 
-				</GridItem>
+				</Grid>
 
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						3. WHERE AND HOW WE STORE YOUR PERSONAL DATA
 					</Typography>
@@ -460,10 +460,10 @@ const SectionComponent = (props) => {
 
 
 
-				</GridItem>
+				</Grid>
 
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						4. USES MADE OF THE PERSONAL DATA
 					</Typography>
@@ -704,9 +704,9 @@ const SectionComponent = (props) => {
 						</ul>
 					</Typography>
 
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						5. DISCLOSURE OF YOUR PERSONAL DATA
 					</Typography>
@@ -778,9 +778,9 @@ const SectionComponent = (props) => {
 						</ul>
 					</Typography>
 
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						6. MONITORING
 					</Typography>
@@ -791,11 +791,11 @@ const SectionComponent = (props) => {
 						We may monitor and/or record our communications with you, on whatever channel, for quality, training, fraud detection and compliance purposes.
 					</Typography>
 
-				</GridItem>
+				</Grid>
 
 
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						7. YOUR RIGHTS
 					</Typography>
@@ -1091,9 +1091,9 @@ const SectionComponent = (props) => {
 						</ul>
 					</Typography>
 
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						8. CHANGES TO OUR PRIVACY POLICY
 					</Typography>
@@ -1108,12 +1108,12 @@ const SectionComponent = (props) => {
 						You should check our Privacy Policy on a regular basis to ensure you are aware of its most recent version, as it is the latest available version of this Privacy Policy that shall apply each time you access to the site or application.
 					</Typography>
 
-				</GridItem>
+				</Grid>
 
 
 
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						9. CONTACT
 					</Typography>
@@ -1124,12 +1124,12 @@ const SectionComponent = (props) => {
 						Questions, comments and requests regarding this Privacy Policy are welcome and should be addressed by email to <a href="mailto:getstarted@realfield.io" className="underline">getstarted@realfield.io</a> or by post to our registered address mentioned above.
 					</Typography>
 
-				</GridItem>
+				</Grid>
 
 
 
 
-				<GridItem xs={12} className="p-0 py-8">
+				<Grid item  xs={12} className="p-0 py-8">
 					<Typography variant="subtitle1" paragraph className="mb-12 uppercase">
 						10. REALFIELD USE OF COOKIES
 					</Typography>
@@ -1310,12 +1310,12 @@ const SectionComponent = (props) => {
 						These external suppliers are responsible for the cookies they post on the dashboard and, for more information about these cookies, you should refer to their specific privacy policies.
 					</Typography>
 
-				</GridItem>
+				</Grid>
 
 
 
 
-			</GridContainer>
+			</Grid>
 
 		</Section>
 	);

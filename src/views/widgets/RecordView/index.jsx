@@ -9,15 +9,15 @@ import clsx from "clsx";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import ListingView from "views/widgets/Listings";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import PropTypes from "prop-types";
 import React from "react";
 //Redux imports
@@ -145,11 +145,11 @@ class RecordView extends React.Component {
 	render() {
 		const { className, auth, defination, record, service } = this.props;
 		return (
-			<GridContainer
+			<Grid container
 				className={`${className ? className : ""} relative p-4`}
 			>
-				<GridContainer>
-					<GridItem xs={12}>
+				<Grid container>
+					<Grid item  xs={12}>
 						<Button
 							className={"absolute right-4 bottom-4"}
 							onClick={this.handleShowViewsMenu}
@@ -178,10 +178,10 @@ class RecordView extends React.Component {
 								)
 							)}
 						</Menu>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
-				<GridContainer>
+				<Grid container>
 					{this.state.view === "cardview" && (
 						<CardView
 							defination={defination}
@@ -189,11 +189,11 @@ class RecordView extends React.Component {
 							record={record}
 						/>
 					)}
-				</GridContainer>
-				<GridContainer className="p-0">
-					<GridItem xs={12}>
-						<GridContainer>
-							<GridItem xs={2} md={1}>
+				</Grid>
+				<Grid container className="p-0">
+					<Grid item  xs={12}>
+						<Grid container>
+							<Grid item  xs={2} md={1}>
 								<IconButton
 									className={clsx(`transform rotate-0`, {
 										[`rotate-180`]: this.state.expanded,
@@ -204,8 +204,8 @@ class RecordView extends React.Component {
 								>
 									<ExpandMoreIcon />
 								</IconButton>
-							</GridItem>
-							<GridItem xs={10} md={11}>
+							</Grid>
+							<Grid item  xs={10} md={11}>
 								<Typography
 									color={
 										this.state.expanded ? "text.secondary" : "text.disabled"
@@ -216,10 +216,10 @@ class RecordView extends React.Component {
 									Related to this{" "}
 									{defination.label.singularize()}{" "}
 								</Typography>
-							</GridItem>
-						</GridContainer>
-					</GridItem>
-					<GridItem xs={12}>
+							</Grid>
+						</Grid>
+					</Grid>
+					<Grid item  xs={12}>
 						<Collapse in={this.state.expanded} timeout="auto">
 							{JSON.isJSON(defination.scope.dependants) ? (
 								<AppBar
@@ -306,9 +306,9 @@ class RecordView extends React.Component {
 									)
 							)}
 						</Collapse>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

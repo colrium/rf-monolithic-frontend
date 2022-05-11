@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import Section from "components/Section";
 import ProgressIndicator from "components/ProgressIndicator";
 import Accordion from '@mui/material/Accordion';
@@ -67,7 +67,6 @@ const SectionComponent = props => {
 		})
 			.then(res => {
 				const { data } = { ...res?.body }
-				console.log("FAQs data", data)
 
 				setState({
 					records: Array.isArray(data) ? data : [],
@@ -86,30 +85,30 @@ const SectionComponent = props => {
 	return (
 		<Section className={`${classes.root} mb-16`} id="faqs" title="FAQs">
 
-			<GridContainer className={"p-0"}>
-				<GridContainer className={"p-0"}>
+			<Grid container className={"p-0"}>
+				<Grid container className={"p-0"}>
 					{state.loading && (
-						<GridItem xs={12} className={"flex items-center flex-col justify-center"}>
+						<Grid item  xs={12} className={"flex items-center flex-col justify-center"}>
 							<ProgressIndicator />
 							<Typography color="text.secondary" variant="subtitle2" paragraph>
 								Loading...
 							</Typography>
-						</GridItem>
+						</Grid>
 					)}
 					{state.error && (
-						<GridItem xs={12} className={"flex items-center justify-center"}>
+						<Grid item  xs={12} className={"flex items-center justify-center"}>
 							<Typography color="error" variant="subtitle2" paragraph>
 								{state.error.msg}
 							</Typography>
-						</GridItem>
+						</Grid>
 					)}
 
-					<GridItem xs={12} className={"p-0"}>
+					<Grid item  xs={12} className={"p-0"}>
 						{state.records.map(
 							(record, cursor) =>
 								record.content &&
 								record.type == "faq" && (
-									<Accordion>
+									<Accordion key={`faq-${cursor}`}>
 										<AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={record.slug} id={record.slug}>
 											<Typography className={classes?.heading}>{cursor + 1 + ". \t " + record.title}</Typography>
 										</AccordionSummary>
@@ -119,9 +118,9 @@ const SectionComponent = props => {
 									</Accordion>
 								)
 						)}
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Section>
 	)
 }

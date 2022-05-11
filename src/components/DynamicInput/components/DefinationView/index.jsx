@@ -19,9 +19,9 @@ import MenuIcon from "@mui/icons-material/MoreVert";
 import classNames from "classnames";
 import Button from "components/Button";
 import { CheckboxInput, MapInput, RadioInput, SelectInput, TextInput } from "components/FormInputs";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -558,9 +558,9 @@ class DefinationView extends React.Component {
 			inputMenuAnchor,
 		} = this.state;
 		return (
-			<GridContainer className="m-0 p-1">
+			<Grid container className="m-0 p-1">
 				{Object.entries(value).map(([name, properties], cursor) => (
-					<GridItem
+					<Grid item
 						className="m-0 p-1 rounded hover:bg-gray-200"
 						xs={12}
 						md={
@@ -577,8 +577,8 @@ class DefinationView extends React.Component {
 						{properties.type === "field" && (
 							<div >
 								<div >
-									<GridContainer className="m-0">
-										<GridItem xs={12} className="m-0 p-0">
+									<Grid container className="m-0">
+										<Grid item  xs={12} className="m-0 p-0">
 											<Typography
 												variant="body1"
 												className="cursor-pointer truncate hover:text-blue-600"
@@ -608,8 +608,8 @@ class DefinationView extends React.Component {
 															: ""
 														: "")}
 											</Typography>
-										</GridItem>
-										<GridItem xs={12} className="m-0 p-0">
+										</Grid>
+										<Grid item  xs={12} className="m-0 p-0">
 											<Typography
 												variant="body2"
 												color="grey"
@@ -626,8 +626,8 @@ class DefinationView extends React.Component {
 														: "Field"
 													: "Field"}{" "}
 											</Typography>
-										</GridItem>
-									</GridContainer>
+										</Grid>
+									</Grid>
 								</div>
 								<div >
 									{properties.type === "group" && (
@@ -698,8 +698,8 @@ class DefinationView extends React.Component {
 							<div className="w-full p-1">
 								<div className={" m-0"}>
 									<div >
-										<GridContainer className="m-0 p-0">
-											<GridItem
+										<Grid container className="m-0 p-0">
+											<Grid item
 												xs={12}
 												className="m-0 p-0"
 											>
@@ -715,8 +715,8 @@ class DefinationView extends React.Component {
 												>
 													{properties.label}
 												</Typography>
-											</GridItem>
-											<GridItem
+											</Grid>
+											<Grid item
 												xs={12}
 												className="m-0 p-0"
 											>
@@ -728,8 +728,8 @@ class DefinationView extends React.Component {
 													{" "}
 													Group{" "}
 												</Typography>
-											</GridItem>
-										</GridContainer>
+											</Grid>
+										</Grid>
 									</div>
 									<div >
 										<IconButton
@@ -796,7 +796,7 @@ class DefinationView extends React.Component {
 										</IconButton>
 									</div>
 								</div>
-								<GridContainer
+								<Grid container
 									className={
 										"m-0 p-0" +
 										(this.state.expandedGroups.includes(
@@ -806,20 +806,20 @@ class DefinationView extends React.Component {
 											: "hidden")
 									}
 								>
-									<GridItem xs={12} className="m-0 p-0 px-4">
+									<Grid item  xs={12} className="m-0 p-0 px-4">
 										<Collapse
 											in={this.state.expandedGroups.includes(
 												name
 											)}
 											timeout="auto"
 										>
-											<GridContainer>
+											<Grid container>
 												{Array.isArray(
 													properties.fields
 												) &&
 													properties.fields.map(
 														(entry, index) => (
-															<GridItem
+															<Grid item
 																xs={12}
 																md={
 																	entry.input
@@ -838,8 +838,8 @@ class DefinationView extends React.Component {
 																}
 															>
 																<div>
-																	<GridContainer className="m-0">
-																		<GridItem
+																	<Grid container className="m-0">
+																		<Grid item
 																			xs={
 																				12
 																			}
@@ -872,8 +872,8 @@ class DefinationView extends React.Component {
 																							: ""
 																						: "")}
 																			</Typography>
-																		</GridItem>
-																		<GridItem
+																		</Grid>
+																		<Grid item
 																			xs={
 																				12
 																			}
@@ -900,8 +900,8 @@ class DefinationView extends React.Component {
 																						: "Field"
 																					: "Field"}{" "}
 																			</Typography>
-																		</GridItem>
-																	</GridContainer>
+																		</Grid>
+																	</Grid>
 																</div>
 																<div
 																>
@@ -915,16 +915,16 @@ class DefinationView extends React.Component {
 																		<MenuIcon className="text-lg" />
 																	</IconButton>
 																</div>
-															</GridItem>
+															</Grid>
 														)
 													)}
-											</GridContainer>
+											</Grid>
 										</Collapse>
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							</div>
 						)}
-					</GridItem>
+					</Grid>
 				))}
 				<Menu
 					id="input-menu"
@@ -986,23 +986,23 @@ class DefinationView extends React.Component {
 						Delete{" "}
 					</MenuItem>
 				</Menu>
-			</GridContainer>
+			</Grid>
 		);
 	}
 
 	renderInputs() {
 		return (
-			<GridContainer className="p-0 m-0">
+			<Grid container className="p-0 m-0">
 				{this.renderInputsDefination()}
-			</GridContainer>
+			</Grid>
 		);
 	}
 
 	renderGroupContextDefination() {
 		const { context } = this.state;
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridItem xs={12}>
+			<Grid container className="p-0 m-0">
+				<Grid item  xs={12}>
 					<TextInput
 						autoFocus
 						variant="outlined"
@@ -1020,8 +1020,8 @@ class DefinationView extends React.Component {
 						required
 						validate
 					/>
-				</GridItem>
-				<GridItem xs={12}>
+				</Grid>
+				<Grid item  xs={12}>
 					<SelectInput
 						textFieldProps={{
 							label: "Size",
@@ -1058,8 +1058,8 @@ class DefinationView extends React.Component {
 						}
 						placeholder="Select Size"
 					/>
-				</GridItem>
-				<GridItem xs={12}>
+				</Grid>
+				<Grid item  xs={12}>
 					<CheckboxInput
 						label="Joined Fields"
 						checked={context.joinedfields ? true : false}
@@ -1068,8 +1068,8 @@ class DefinationView extends React.Component {
 						}}
 						color="primary"
 					/>
-				</GridItem>
-				<GridItem xs={12}>
+				</Grid>
+				<Grid item  xs={12}>
 					<CheckboxInput
 						checked={context.multientries ? true : false}
 						onChange={value => {
@@ -1078,8 +1078,8 @@ class DefinationView extends React.Component {
 						color="primary"
 						label="Multi Entries"
 					/>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 
@@ -1093,8 +1093,8 @@ class DefinationView extends React.Component {
 				: undefined
 			: undefined;
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridItem xs={12}>
+			<Grid container className="p-0 m-0">
+				<Grid item  xs={12}>
 					<SelectInput
 						textFieldProps={{
 							label: "Type",
@@ -1142,16 +1142,16 @@ class DefinationView extends React.Component {
 						}
 						placeholder="Select Map data type"
 					/>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 
 	inputDefaultValueDefinationHelper() {
 		const { context } = this.state;
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridItem xs={12}>
+			<Grid container className="p-0 m-0">
+				<Grid item  xs={12}>
 					<SelectInput
 						textFieldProps={{
 							label: "Type",
@@ -1203,19 +1203,19 @@ class DefinationView extends React.Component {
 						}
 						placeholder="Select Map data type"
 					/>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 
 	inputPossibilitiesDefinationHelper() {
 		const { context } = this.state;
 		return (
-			<GridContainer className="p-0 m-0">
+			<Grid container className="p-0 m-0">
 				{["select", "transferlist", "radio", "checkbox"].includes(
 					context.input ? context.input.type : undefined
 				) && (
-						<GridItem xs={12}>
+						<Grid item  xs={12}>
 							<TextInput
 								variant="outlined"
 								onChange={value => {
@@ -1248,9 +1248,9 @@ class DefinationView extends React.Component {
 								helperText="Enter options each separated by a comma (,)"
 								fullWidth
 							/>
-						</GridItem>
+						</Grid>
 					)}
-			</GridContainer>
+			</Grid>
 		);
 	}
 
@@ -1291,7 +1291,7 @@ class DefinationView extends React.Component {
 		let appendableProps = this.getAppendableProps();
 
 		return (
-			<GridContainer className="p-0 m-0">
+			<Grid container className="p-0 m-0">
 				{appendableProps.map((appendableProp, cursor) => {
 					const {
 						name,
@@ -1314,7 +1314,7 @@ class DefinationView extends React.Component {
 								? value
 								: defaultValue;
 						return (
-							<GridItem
+							<Grid item
 								xs={12}
 								md={Number.parseNumber(size, 12)}
 								key={"appendableProp-" + cursor}
@@ -1373,33 +1373,33 @@ class DefinationView extends React.Component {
 										label={label}
 									/>
 								)}
-							</GridItem>
+							</Grid>
 						);
 					} else {
 						return (
-							<GridItem
+							<Grid item
 								xs={12}
 								className="p-0 m-0"
 								key={"appendableProp-" + cursor}
 							>
 								{" "}
 								{label} render Error
-							</GridItem>
+							</Grid>
 						);
 					}
 				})}
-			</GridContainer>
+			</Grid>
 		);
 	}
 
 	inputDefaultValueDefinationHelper() {
 		const { context } = this.state;
 		return (
-			<GridContainer className="p-0 m-0 mb-4">
+			<Grid container className="p-0 m-0 mb-4">
 				{["select", "transferlist", "radio", "checkbox"].includes(
 					context.input ? context.input.type : undefined
 				) && (
-						<GridItem xs={12} className="p-0 m-0">
+						<Grid item  xs={12} className="p-0 m-0">
 							<SelectInput
 								textFieldProps={{
 									label: "Default Value",
@@ -1421,7 +1421,7 @@ class DefinationView extends React.Component {
 								value={context.input ? (context.input.default ? context.input.default : undefined) : undefined}
 								placeholder="Select Default"
 							/>
-						</GridItem>
+						</Grid>
 					)}
 
 				{![
@@ -1432,7 +1432,7 @@ class DefinationView extends React.Component {
 					"checkbox",
 					"map",
 				].includes(context.input ? context.input.type : undefined) && (
-						<GridItem xs={12} className="p-0 m-0">
+						<Grid item  xs={12} className="p-0 m-0">
 							<TextInput
 								onChange={value => {
 									if (value.trim().length > 0) {
@@ -1451,7 +1451,7 @@ class DefinationView extends React.Component {
 								type="text"
 								fullWidth
 							/>
-						</GridItem>
+						</Grid>
 					)}
 
 				{["map"].includes(
@@ -1464,7 +1464,7 @@ class DefinationView extends React.Component {
 								: false
 							: false
 						: false) && (
-						<GridItem xs={12} className="p-0 m-0">
+						<Grid item  xs={12} className="p-0 m-0">
 							<MapInput
 								onChange={value => {
 									if (value.trim().length > 0) {
@@ -1483,17 +1483,17 @@ class DefinationView extends React.Component {
 								type={context.input.props.type}
 								fullWidth
 							/>
-						</GridItem>
+						</Grid>
 					)}
-			</GridContainer>
+			</Grid>
 		);
 	}
 
 	renderFieldContextDefination() {
 		const { context } = this.state;
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridItem xs={12}>
+			<Grid container className="p-0 m-0">
+				<Grid item  xs={12}>
 					<TextInput
 						autoFocus
 						variant="outlined"
@@ -1510,9 +1510,9 @@ class DefinationView extends React.Component {
 						required
 						validate
 					/>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} md={6}>
+				<Grid item  xs={12} md={6}>
 					<SelectInput
 						textFieldProps={{
 							label: "Field Type",
@@ -1544,9 +1544,9 @@ class DefinationView extends React.Component {
 						}
 						placeholder="Select Type"
 					/>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} md={6}>
+				<Grid item  xs={12} md={6}>
 					<SelectInput
 						textFieldProps={{
 							label: "Input Size",
@@ -1600,26 +1600,26 @@ class DefinationView extends React.Component {
 						}
 						placeholder="Select Input Size"
 					/>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12}>
+				<Grid item  xs={12}>
 					{this.inputPossibilitiesDefinationHelper()}
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12}>
+				<Grid item  xs={12}>
 					{this.inputDefaultValueDefinationHelper()}
-				</GridItem>
+				</Grid>
 
 				{(context.input ? context.input.type : undefined) === "map" && (
-					<GridItem xs={12}>
+					<Grid item  xs={12}>
 						{this.mapInputPropsDefinationHelper()}
-					</GridItem>
+					</Grid>
 				)}
 
 				{["select", "transferlist", "checkbox", "map"].includes(
 					context.input ? context.input.type : undefined
 				) && (
-						<GridItem xs={12}>
+						<Grid item  xs={12}>
 							<CheckboxInput
 								checked={
 									context.input
@@ -1656,10 +1656,10 @@ class DefinationView extends React.Component {
 								color="primary"
 								label="Multiple"
 							/>
-						</GridItem>
+						</Grid>
 					)}
 
-				<GridItem xs={12}>
+				<Grid item  xs={12}>
 					<CheckboxInput
 						checked={
 							context.input
@@ -1679,9 +1679,9 @@ class DefinationView extends React.Component {
 						color="primary"
 						label="Required"
 					/>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12}>
+				<Grid item  xs={12}>
 					<CheckboxInput
 						checked={
 							context.input
@@ -1701,11 +1701,11 @@ class DefinationView extends React.Component {
 						color="primary"
 						label="Disabled"
 					/>
-				</GridItem>
-				<GridItem xs={12}>
+				</Grid>
+				<Grid item  xs={12}>
 					{this.appendPropsDefinationHelper()}
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 
@@ -1769,14 +1769,14 @@ class DefinationView extends React.Component {
 			enableGrouping,
 		} = this.state;
 		return (
-			<GridContainer>
-				<GridContainer className="p-0 m-0">
+			<Grid container>
+				<Grid container className="p-0 m-0">
 					{this.renderInputs()}
 					{this.renderContextDialog()}
-				</GridContainer>
+				</Grid>
 
-				<GridContainer className="p-0 m-0">
-					<GridItem xs={12}>
+				<Grid container className="p-0 m-0">
+					<Grid item  xs={12}>
 						<Tooltip title="Add New">
 							<IconButton
 								aria-label="add-element-btn"
@@ -1814,9 +1814,9 @@ class DefinationView extends React.Component {
 								New Field{" "}
 							</MenuItem>
 						</Menu>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

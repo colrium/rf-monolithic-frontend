@@ -6,7 +6,6 @@ import { useTween } from "react-use"
 
 const TimeoutProgress = props => {
 	const { timeout, paused, ...rest } = props
-	console.log("NotificationContent props", props)
 	return (
 		<Grid container {...rest}>
 			<Grid item xs={12} className="flex flex-row">

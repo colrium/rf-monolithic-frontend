@@ -24,8 +24,8 @@ const Fairing = props => {
 	const { Api } = useNetworkServices()
 	const theme = useTheme()
 	const googleOneTapLogin = useGoogleOneTapLogin({
-		onError: error => console.log(error),
-		onSuccess: response => console.log(response),
+		onError: error => console.error(error),
+		onSuccess: response => {},
 		disabled: auth.isAuthenticated || environment === 'development',
 		googleAccountConfigs: {
 			client_id: googleClientId,
@@ -50,22 +50,9 @@ const Fairing = props => {
 				.replaceAll("".toUriWithDashboardPrefix(), "")
 			document.title = app.title(windowTitle.humanize())
 		}
-
-		// console.log("windowTitle", windowTitle)
 	}, [location, layout])
 
 
-
-	const onGoogleOnetapSuccess = data => {
-		console.log("onGoogleOnetapSuccess data", data)
-		// Api.proceedWithGoogleOneTap({ token: data.aud })
-		// 	.then(res => {
-		// 		console.log("onGoogleOnetap res", res)
-		// 	})
-		// 	.catch(err => {
-		// 		console.log("onGoogleOnetap err", err)
-		// 	})
-	}
 
 	return (
 		<Box

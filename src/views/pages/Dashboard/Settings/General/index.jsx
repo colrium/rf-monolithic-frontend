@@ -2,9 +2,9 @@
 import React from "react"
 import { useSelector } from "react-redux"
 import Typography from "@mui/material/Typography"
-import GridContainer from "components/Grid/GridContainer"
+import Grid from '@mui/material/Grid'
 import Card from "components/Card"
-import GridItem from "components/Grid/GridItem"
+
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
@@ -26,7 +26,6 @@ function Widget(props) {
 
 	useDidUpdate(() => {
 		if (JSON.isEmpty(errors)) {
-			console.log("values", values)
 			EventRegister.emit("change-settings", {
 				general: { ...settings, ...values },
 			})
@@ -35,20 +34,20 @@ function Widget(props) {
 
 	return (
 		<Card>
-			<GridContainer className="px-8">
-				<GridItem xs={12} className="mb-2">
+			<Grid container className="px-8">
+				<Grid item  xs={12} className="mb-2">
 					<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
 						General
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className="px-0">
-					<GridItem xs={12} className="mb-1">
+				<Grid container className="px-0">
+					<Grid item  xs={12} className="mb-1">
 						<Typography variant="body2" sx={{ color: theme => theme.palette.text.disabled }}>
 							SEO
 						</Typography>
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField
 							name="seo-title"
 							label="SEO Title"
@@ -56,9 +55,9 @@ function Widget(props) {
 								required: true,
 							}}
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-1">
+					<Grid item  xs={12} className="mb-1">
 						<TextField
 							name="seo-tagline"
 							label="SEO Tagline"
@@ -68,13 +67,13 @@ function Widget(props) {
 							multiline={true}
 							minRows={4}
 						/>
-					</GridItem>
-					<GridItem xs={12} className="mb-2">
+					</Grid>
+					<Grid item  xs={12} className="mb-2">
 						<Typography variant="body2" sx={{ color: theme => theme.palette.text.disabled }}>
 							Ownership
 						</Typography>
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField
 							name="copyright"
 							label="Copyright"
@@ -82,8 +81,8 @@ function Widget(props) {
 								required: true,
 							}}
 						/>
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField
 							name="trademark"
 							label="Trademark"
@@ -91,13 +90,13 @@ function Widget(props) {
 								required: true,
 							}}
 						/>
-					</GridItem>
-					<GridItem xs={12} className="mb-2">
+					</Grid>
+					<Grid item  xs={12} className="mb-2">
 						<Typography variant="body2" sx={{ color: theme => theme.palette.text.disabled }}>
 							Routing
 						</Typography>
-					</GridItem>
-					<GridItem xs={12} className="mb-4">
+					</Grid>
+					<Grid item  xs={12} className="mb-4">
 						<RadioGroup
 							name="landing-page-routing"
 							label="Landing page routing"
@@ -106,9 +105,9 @@ function Widget(props) {
 								required: true,
 							}}
 						/>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Card>
 	)
 }

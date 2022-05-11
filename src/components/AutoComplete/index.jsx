@@ -39,7 +39,6 @@ function CustomAutocomplete(props) {
 			try {
 				parsedOptions=JSON.parse(targetOptions);
 			} catch (error) {
-				console.log(" error", error)
 				setState({error: error?.toString? error.toString() : JSON.stringify(error)});
 			}
 		}
@@ -63,7 +62,6 @@ function CustomAutocomplete(props) {
 			}
 
 			parsedValue = optionsRef.current.reduce((currentParsedValue, entry) => {
-					// console.log("parseInputValue entry", entry)
 						if (JSON.isJSON(entry)) {
 							let entryValues = Object.values(entry);
 							targetValues.map(targetValueEntry => {

@@ -13,7 +13,7 @@ import {
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import Status from "components/Status";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import React from "react";
 import { Link } from "react-router-dom";
 import ApiService from "services/Api";

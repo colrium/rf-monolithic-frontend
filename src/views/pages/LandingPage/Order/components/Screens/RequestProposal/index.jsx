@@ -2,9 +2,9 @@
 
 import { ArrowBack, Send } from "@mui/icons-material";
 import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import { quoterequests as defination } from "definations";
 import React from "react";
 import ApiService from "services/Api";
@@ -15,13 +15,13 @@ class Step extends React.Component {
 	render() {
 		const { onComplete, onCancel } = this.props;
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridItem xs={12}>
+			<Grid container className="p-0 m-0">
+				<Grid item  xs={12}>
 					<Typography variant="body2" className="default_text">
 						Enter Quote details below
 					</Typography>
-				</GridItem>
-				<GridItem xs={12}>
+				</Grid>
+				<Grid item  xs={12}>
 					<BaseForm
 						defination={defination}
 						form="landingpage_proposal_request"
@@ -57,8 +57,8 @@ class Step extends React.Component {
 							outlined: false,
 						}}
 					/>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 }

@@ -145,7 +145,6 @@ const NetworkServicesProvider = props => {
 
 	const initializePreferencesSubscriptions = useCallback(() => {
 		const onChangePreferencesSubscription = EventRegister.on("change-preferences", event => {
-			// console.log("change-preferences event.detail", event.detail)
 			if (JSON.isJSON(event.detail)) {
 				let eventPreferences = Object.entries(event.detail).reduce((allPreferences, [key, value]) => {
 					allPreferences[key] = value
@@ -166,7 +165,6 @@ const NetworkServicesProvider = props => {
 
 	const initializeSettingsSubscriptions = useCallback(() => {
 		const onChangeSettingSubscription = EventRegister.on("change-settings", event => {
-			// console.log("change-settings event.detail", event.detail)
 			if (JSON.isJSON(event.detail)) {
 				let eventSettings = Object.entries(event.detail).reduce((allSettings, [key, value]) => {
 					allSettings[key] = value
@@ -199,9 +197,7 @@ const NetworkServicesProvider = props => {
 		}
 	})
 
-	useDidMount(() => {
-		// console.log("networkState", networkState)
-	})
+
 
 	return (
 		<FirebaseService>

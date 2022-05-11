@@ -5,7 +5,7 @@ import CloseSideBarIcon from "@mui/icons-material/MenuOpen"
 import OpenSideBarIcon from "@mui/icons-material/Menu"
 import classNames from "classnames"
 import SnackbarContent from "components/Snackbar/SnackbarContent"
-import Typography from "components/Typography"
+import Typography from '@mui/material/Typography'
 import { notifications as notificationsDefination } from "definations"
 import Icon from "@mdi/react"
 import { mdiBellOutline } from "@mdi/js"

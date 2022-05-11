@@ -5,9 +5,9 @@ import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { colors } from "assets/jss/app-theme";
 import Button from "components/Button";
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 
 import PropTypes from "prop-types";
 import React from "react";
@@ -70,15 +70,15 @@ class Page extends React.Component {
 		},
 		{})
 		return (
-			<GridContainer>
-				<GridItem xs={12}>
+			<Grid container>
+				<Grid item  xs={12}>
 					{defination.access.restricted(auth.user) && <AccessDenied />}
 
 					{!defination.access.restricted(auth.user) && (
 						<Listings defination={defination} service={service} query={{ ...this.state.query, ...urlQuery }} />
 					)}
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		)
 	}
 }

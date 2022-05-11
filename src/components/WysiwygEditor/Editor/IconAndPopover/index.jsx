@@ -4,7 +4,7 @@ import React from "react"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import IconButton from "@mui/material/IconButton"
-import Typography from "components/Typography"
+import Typography from '@mui/material/Typography'
 import { useSetState } from "hooks"
 
 const IconAndPopoverComponent = props => {

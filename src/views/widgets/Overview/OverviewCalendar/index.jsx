@@ -2,7 +2,7 @@
 
 
 import Calendar from "components/Calendar";
-import GridContainer from "components/Grid/GridContainer";
+import Grid from '@mui/material/Grid';
 import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
@@ -26,7 +26,7 @@ class OverviewCalendar extends React.Component {
 	render() {
 		const { auth } = this.props;
 		return (
-			<GridContainer className="p-0 m-0">
+			<Grid container className="p-0 m-0">
 				<Calendar
 					title={
 						auth.user?.role === "admin"
@@ -37,7 +37,7 @@ class OverviewCalendar extends React.Component {
 						auth.user?.role === "admin" ? "Calendar" : "Events"
 					}
 				/>
-			</GridContainer>
+			</Grid>
 		);
 	}
 }

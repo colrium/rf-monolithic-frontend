@@ -21,10 +21,6 @@ const useWhyDidYouUpdate = (name, props) => {
 					};
 				}
 			});
-			// If changesObj not empty then output to console
-			if (Object.keys(changesObj).length > 0) {
-				console.log(`${name} updated `, changesObj)
-			}
 		}
 		// Finally update previousProps with current props for next hook call
 		previousProps.current = props;

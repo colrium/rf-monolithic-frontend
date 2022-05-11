@@ -28,7 +28,6 @@ const Mobile = ( props ) => {
     }, [complete] );
 
 
-    // console.log( "complete_stages", complete_stages)
     const handleNext = useCallback( () => {
         if( indexOfstage < (stagekeys.length -1)) {
             setValue( `stage`, stagekeys[( indexOfstage + 1)] );

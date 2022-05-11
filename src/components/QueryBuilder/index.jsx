@@ -11,8 +11,8 @@ import {
 	BasicConfig,
 	Utils as QbUtils,
 } from "./lib";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import NestedMenuItem from "components/NestedMenuItem";
 import MaterialConfig from "./lib/config/material";
 import { TextInput, SelectInput } from "components/FormInputs";
@@ -119,8 +119,6 @@ const FieldsSelectComponent = memo(props => {
 		/>
 	);
 });
-// Choose your skin (ant/material/vanilla):
-// console.log("MaterialConfig", MaterialConfig);
 const InitialConfig = {
 	...MaterialConfig,
 	settings: {
@@ -140,7 +138,6 @@ const InitialConfig = {
 		},
 	},
 }
-// console.log("MaterialConfig", MaterialConfig);
 // You can load query value from your backend storage (for saving see `Query.onChange()`)
 const queryValue = { id: QbUtils.uuid(), type: "group" };
 let onChangeFired = false;
@@ -404,7 +401,7 @@ const QueryBuilder = memo(props => {
 					id="panelqb-header"
 					className={"bg-transparent"}
 				>
-					<GridContainer className={"flex flex-row justify-center items-center"}>
+					<Grid container className={"flex flex-row justify-center items-center"}>
 						{search && (
 							<Tooltip title="Enter Search Query">
 								<TextInput
@@ -498,7 +495,7 @@ const QueryBuilder = memo(props => {
 								</NestedMenuItem>
 							))}
 						</Menu>
-					</GridContainer>
+					</Grid>
 				</AccordionSummary>
 				<AccordionDetails elevation={0}>
 					<Query

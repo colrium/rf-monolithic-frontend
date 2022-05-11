@@ -2,8 +2,8 @@ import React, { /*useEffect,*/ useState } from "react";
 import { connect } from "react-redux"
 import Typography from "@mui/material/Typography"
 import { TextInput, WysiwygInput } from "components/FormInputs"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 
 function Widget(props) {
 	let {
@@ -11,12 +11,12 @@ function Widget(props) {
 	} = props
 
 	return (
-		<GridContainer className="px-2">
-			<GridItem xs={12} className="mb-2">
+		<Grid container className="px-2">
+			<Grid item  xs={12} className="mb-2">
 				<Typography variant="h3"> Contact settings</Typography>
-			</GridItem>
+			</Grid>
 
-			{/* <GridItem xs={12} className="mb-4">
+			{/* <Grid item  xs={12} className="mb-4">
 				<TextInput
 					type="text"
 					name="phone"
@@ -27,9 +27,9 @@ function Widget(props) {
 					disabled={loading["phone"]}
 					error={errors["phone"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<TextInput
 					type="email"
 					name="email"
@@ -41,9 +41,9 @@ function Widget(props) {
 					error={errors["email"]}
 					validate
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<WysiwygInput
 					name="address"
 					label="Address"
@@ -53,8 +53,8 @@ function Widget(props) {
 					disabled={loading["addres"]}
 					error={errors["address"]}
 				/>
-			</GridItem> */}
-		</GridContainer>
+			</Grid> */}
+		</Grid>
 	)
 }
 

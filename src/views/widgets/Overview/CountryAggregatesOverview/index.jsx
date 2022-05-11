@@ -6,9 +6,9 @@ import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import VectorMap from "components/VectorMap";
 import * as definations from "definations";
 import React from "react";
@@ -38,7 +38,7 @@ class CountryAggregatesOverview extends React.Component {
 				></CardHeader>
 
 				<CardContent>
-					<GridContainer className="p-0 m-0">
+					<Grid container className="p-0 m-0">
 						<VectorMap
 							{...world}
 							color="#CCCCCC"
@@ -46,17 +46,17 @@ class CountryAggregatesOverview extends React.Component {
 							labels={{ Kenya: "Total : 1" }}
 							enableSelect={false}
 						/>
-					</GridContainer>
+					</Grid>
 				</CardContent>
 				<CardActions>
-					<GridContainer className="p-0 m-0">
-						<GridItem xs={12}>
+					<Grid container className="p-0 m-0">
+						<Grid item  xs={12}>
 							<Typography variant="body2">
 								{" "}
 								{definations.surveys.label} by Country Overview{" "}
 							</Typography>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 				</CardActions>
 			</Card>
 		);

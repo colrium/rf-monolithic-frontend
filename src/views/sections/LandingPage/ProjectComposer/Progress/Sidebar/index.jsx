@@ -1,7 +1,7 @@
 /** @format */
 import React, { useCallback, useMemo } from "react";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import { IconButton, Button, Typography, SvgIcon, Tooltip } from '@mui/material';
 import { form as formConfig, stages } from "../../config";
 import { useDidMount, usePersistentForm } from "hooks";
@@ -21,12 +21,12 @@ const Sidebar = (props) => {
     }, [complete]);
 
     return (
-        <GridContainer className="min-h-screen">
-            <GridItem className="flex flex-col items-end px-4">
+        <Grid container className="min-h-screen">
+            <Grid item  className="flex flex-col items-end px-4">
                 <img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/survey.png")} />
-            </GridItem>
+            </Grid>
 
-            <GridItem className="flex flex-col items-end justify-center px-8">
+            <Grid item  className="flex flex-col items-end justify-center px-8">
                 {Object.entries(stages).map(([key, value], index) => (
                     key !== stage && !complete_stages.includes(key) ? (
                         <IconButton
@@ -66,13 +66,13 @@ const Sidebar = (props) => {
                     )
 
                 ))}
-            </GridItem>
-            <GridItem className="flex flex-col items-end px-8">
+            </Grid>
+            <Grid item  className="flex flex-col items-end px-8">
                 <Typography variant="body1" color="text.secondary" className=" px-4">
                     {`Stage ${(stagekeys.indexOf(stage) + 1)} of ${stagekeys.length}`}
                 </Typography>
-            </GridItem>
-            <GridItem className="flex flex-col items-end px-8">
+            </Grid>
+            <Grid item  className="flex flex-col items-end px-8">
                 <Typography
                     variant="body2"
                     color="accent.main"
@@ -80,8 +80,8 @@ const Sidebar = (props) => {
                 >
                     {stages[stage]?.title}
                 </Typography>
-            </GridItem>
-        </GridContainer>
+            </Grid>
+        </Grid>
     )
 }
 

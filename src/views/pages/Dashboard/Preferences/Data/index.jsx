@@ -2,9 +2,9 @@
 import React from "react"
 import { connect } from "react-redux";
 import { Typography } from "@mui/material";
-import GridContainer from "components/Grid/GridContainer";
+import Grid from '@mui/material/Grid';
 import Card from "components/Card";
-import GridItem from "components/Grid/GridItem";
+;
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
@@ -33,18 +33,18 @@ function Widget (props) {
 
 	return (
 		<Card elevation={0}>
-			<GridContainer className="px-2">
-				<GridItem xs={12} className="mb-2">
+			<Grid container className="px-2">
+				<Grid item  xs={12} className="mb-2">
 					<Typography variant="h3">
 						Display and Visualization
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className="px-0">
-					<GridItem xs={12} className="mb-2">
+				<Grid container className="px-0">
+					<Grid item  xs={12} className="mb-2">
 						<Typography variant="h5">Data</Typography>
-					</GridItem>
-					<GridItem xs={12} className="mb-2">
+					</Grid>
+					<Grid item  xs={12} className="mb-2">
 						<Autocomplete
 							name="pagination"
 							label="Records per Page"
@@ -68,9 +68,9 @@ function Widget (props) {
 								},
 							}}
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-4">
+					<Grid item  xs={12} className="mb-4">
 						<TextField
 							name="defaultMapZoom"
 							label="Default Map Zoom"
@@ -87,9 +87,9 @@ function Widget (props) {
 								valueAsNumber: true,
 							}}
 						/>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Card>
 	)
 }

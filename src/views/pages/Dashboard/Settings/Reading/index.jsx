@@ -2,9 +2,9 @@
 import React from "react"
 import { connect } from "react-redux"
 import Typography from "@mui/material/Typography"
-import GridContainer from "components/Grid/GridContainer"
+import Grid from '@mui/material/Grid'
 import Card from "components/Card"
-import GridItem from "components/Grid/GridItem"
+
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
@@ -34,25 +34,25 @@ function Widget(props) {
 
 	return (
 		<Card>
-			<GridContainer className="px-8">
-				<GridItem xs={12} className="mb-2">
+			<Grid container className="px-8">
+				<Grid item  xs={12} className="mb-2">
 					<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
 						Reading
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className="px-0">
-					<GridItem xs={12} className="mb-1">
+				<Grid container className="px-0">
+					<Grid item  xs={12} className="mb-1">
 						<Checkbox name="enable-blog" label="Enable Blog" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<Checkbox name="enable-press" label="Enable Press" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<Checkbox name="enable-faq" label="Enable FAQ" />
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Card>
 	)
 }

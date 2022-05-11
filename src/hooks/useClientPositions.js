@@ -6,8 +6,8 @@ import { useMap, useGeolocation } from "react-use"
 import { useNetworkServices } from "contexts"
 import { useSelector } from "react-redux"
 import ReactDOMServer from "react-dom/server"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 import Avatar from "@mui/material/Avatar"
 import Typography from "@mui/material/Typography"
 import { ThemeProvider } from "@mui/material/styles"
@@ -129,8 +129,8 @@ const ClientInfoWindow = ({ user, position, ...rest }) => {
 	// const navigate = useNavigate()
 	return (
 		<ThemeProvider theme={theme}>
-			<GridContainer style={{ maxWidth: 300 }}>
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+			<Grid container style={{ maxWidth: 300 }}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					{user?.avatar ? (
 						<Avatar
 							className="bg-transparent mr-4"
@@ -143,51 +143,51 @@ const ClientInfoWindow = ({ user, position, ...rest }) => {
 						</Avatar>
 					)}
 					<Typography variant="h5">{user?.first_name}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Gender:
 					</Typography>
 					<Typography variant="body1">{user?.gender ? user?.gender : "Unspecified"}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Course of Study:
 					</Typography>
 					<Typography variant="body1">{user?.course ? user?.course : "Unspecified"}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Tasks Completed:
 					</Typography>
 					<Typography variant="body1">{user?.noof_completed_tasks ? user?.noof_completed_tasks : "0"}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Uncompleted Tasks:
 					</Typography>
 					<Typography variant="body1">{user?.noof_uncompleted_tasks ? user?.noof_uncompleted_tasks : "0"}</Typography>
-				</GridItem>
-				<GridItem xs={12} className={"flex flex-col"}>
+				</Grid>
+				<Grid item  xs={12} className={"flex flex-col"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Rating
 					</Typography>
 					<Rating name="read-only" value={user?.rating ? user?.rating : 4} readOnly />
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
+				<Grid item  xs={12} className={"flex flex-row items-center justify-center"}>
 					<Button
 						href={("/messaging/conversations?with=" + user?.email_address).toUriWithDashboardPrefix()}
 						style={{ background: "#8C189B", color: "#FFFFFF" }}
 					>
 						Message Me
 					</Button>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		</ThemeProvider>
 	)
 }
@@ -277,7 +277,6 @@ const useClientPositions = options => {
 	const handleOnClientPositions = useCallback(
 		clientPositions => {
 			// reset()
-			console.log("handleOnClientPositions clientPositions", clientPositions)
 			if (Array.isArray(clientPositions)) {
 				clientPositions.map(clientPosition => handleOnClientPosition(clientPosition))
 			}
@@ -295,7 +294,6 @@ const useClientPositions = options => {
 
 	const handleOnSocketIOConnect = useCallback(
 		socket => {
-			// console.log("handleOnSocketIOConnect socket.id", socket.id)
 			SocketIO.emit("get-client-positions", { ...filter })
 		},
 		[filter]

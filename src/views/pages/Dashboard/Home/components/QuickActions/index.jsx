@@ -8,9 +8,9 @@ import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography"
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography'
 import React from "react"
 //Redux imports
 import { connect } from "react-redux"
@@ -28,7 +28,7 @@ class QuickActions extends React.Component {
 	render() {
 		const { auth } = this.props
 		return (
-			<GridContainer className="p-0 m-0">
+			<Grid container className="p-0 m-0">
 				<Card elevation={0}>
 					<CardHeader
 						avatar={
@@ -42,11 +42,11 @@ class QuickActions extends React.Component {
 					></CardHeader>
 
 					<CardContent>
-						<GridContainer className="p-0 m-0">
+						<Grid container className="p-0 m-0">
 							{Object.entries(definations).map(
 								([name, defination], index) =>
 									!defination.access.actions.create.restricted(auth.user) && (
-										<GridItem xs={3} sm={2} lg={1} key={"shortcut-" + index}>
+										<Grid item  xs={3} sm={2} lg={1} key={"shortcut-" + index}>
 											<Link to={defination.access.actions.create.uri}>
 												<Typography
 													variant="h3"
@@ -66,22 +66,22 @@ class QuickActions extends React.Component {
 													New {defination.label}
 												</Typography>
 											</Link>
-										</GridItem>
+										</Grid>
 									)
 							)}
-						</GridContainer>
+						</Grid>
 					</CardContent>
 					<CardActions>
-						<GridContainer className="p-0 m-0">
-							<GridItem xs={12}>
+						<Grid container className="p-0 m-0">
+							<Grid item  xs={12}>
 								<Typography className="grey_text" variant="body2" component="p" display="block">
 									Quick Links
 								</Typography>
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 					</CardActions>
 				</Card>
-			</GridContainer>
+			</Grid>
 		)
 	}
 }

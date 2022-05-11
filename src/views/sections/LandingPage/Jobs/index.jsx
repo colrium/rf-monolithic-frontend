@@ -1,9 +1,9 @@
 import React from "react";
 
 import Button from '@mui/material/Button';
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import Section from "components/Section";
 import { connect } from "react-redux";
 import { withTheme } from '@mui/styles';
@@ -18,17 +18,17 @@ const SectionComponent = (props) => {
 
 	return (
 		<Section id="jobs">
-			<GridContainer className={"p-0"}>
-				<GridContainer className={"p-0 md:py-6"}>
-					<GridItem xs={12}>
+			<Grid container className={"p-0"}>
+				<Grid container className={"p-0 md:py-6"}>
+					<Grid item  xs={12}>
 						<Typography variant="h1" className="accent-text w-full text-center">
 							Welcome to Realfield!
 						</Typography>
-					</GridItem>
+					</Grid>
 
-				</GridContainer>
-				<GridContainer className={"p-0"}>
-					<GridItem xs={12} className={"flex flex-col mb-4"}>
+				</Grid>
+				<Grid container className={"p-0"}>
+					<Grid item  xs={12} className={"flex flex-col mb-4"}>
 						<Typography variant="body1" className="font-bold" paragraph>
 							<span className="mr-2">We are now recruiting Fielders to undertake data collection for upcoming projects around the country. If you are interested in working for an exciting startup with an important ethical mission in East Africa's rapidly growing gig-economy and you have a reputation for fast reliable and efficient work,
 							</span>
@@ -77,16 +77,16 @@ const SectionComponent = (props) => {
 							</ul>
 
 						</Typography>
-					</GridItem>
-					<GridItem xs={12} className={"flex flex-col items-center"}>
+					</Grid>
+					<Grid item  xs={12} className={"flex flex-col items-center"}>
 						<Link to={"/apply".toUriWithLandingPagePrefix()}>
 							<Button variant="contained" color="primary" className="rounded-full px-8" id="apply-link">
 								Join us!
 							</Button>
 						</Link>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 
 
 		</Section>

@@ -2,9 +2,9 @@
 
 import Hidden from "@mui/material/Hidden";
 import { app } from "assets/jss/app-theme";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import { environment } from "config";
 import React from "react";
 import { connect } from "react-redux";
@@ -267,14 +267,14 @@ class Page extends React.Component {
 			? this.state.steps_data[this.state.step_name]
 			: {};
 		return (
-			<GridContainer className="p-0 m-0 md:relative md:mb-8 md:h-screen bg-gray-100 md:overflow-x-hidden md:overflow-y-hidden">
-				<GridItem
+			<Grid container className="p-0 m-0 md:relative md:mb-8 md:h-screen bg-gray-100 md:overflow-x-hidden md:overflow-y-hidden">
+				<Grid item
 					xs={12}
 					md={3}
 					className="inverse md:absolute md:top-0 md:left-0 md:right-auto md:h-screen"
 				>
-					<GridContainer className="absolute center">
-						<GridItem>
+					<Grid container className="absolute center">
+						<Grid item >
 							<Hidden smDown>
 								<Stepper
 									color="grey"
@@ -296,16 +296,16 @@ class Page extends React.Component {
 									onStep={this.handleStepNavigation}
 								/>
 							</Hidden>
-						</GridItem>
-					</GridContainer>
-				</GridItem>
-				<GridItem
+						</Grid>
+					</Grid>
+				</Grid>
+				<Grid item
 					xs={12}
 					md={9}
 					className="md:p-4 md:pt-8 md:absolute md:top-0 md:right-0 md:h-screen "
 				>
-					<GridContainer className="px-8 h-16 md:absolute md:top-0">
-						<GridItem xs={12} md={8} className="p-2">
+					<Grid container className="px-8 h-16 md:absolute md:top-0">
+						<Grid item  xs={12} md={8} className="p-2">
 							<Typography
 								variant="h4"
 								className="default_text text-left"
@@ -313,9 +313,9 @@ class Page extends React.Component {
 								{" "}
 								{this.state.steps[this.state.step_name]}{" "}
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12} md={4} className="p-2">
+						<Grid item  xs={12} md={4} className="p-2">
 							<Typography
 								variant="h6"
 								className="grey_text text-right font-bold uppercase"
@@ -323,10 +323,10 @@ class Page extends React.Component {
 								Step {this.state.step + 1} /{" "}
 								{Object.size(this.state.steps)}{" "}
 							</Typography>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 
-					<GridContainer className="xs:px1 md:px-8 h-full mt-8 overflow-y-auto overflow-x-hidden">
+					<Grid container className="xs:px1 md:px-8 h-full mt-8 overflow-y-auto overflow-x-hidden">
 						{this.state.step_name === "start" && (
 							<StartScreen
 								onComplete={this.handleOnStepComplete}
@@ -385,9 +385,9 @@ class Page extends React.Component {
 								{...step_data}
 							/>
 						)}
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

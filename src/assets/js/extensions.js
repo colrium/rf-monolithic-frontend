@@ -7,33 +7,6 @@ import { dashboardBaseUri, landingPageBaseUri, baseUrls, surpressed_logs } from 
 
 lodash.mixin(lodash_inflection)
 
-/*const console_warn = console.warn;
-console.warn = function surpressWarnings(msg) {
-	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
-
-	if (!supressedLogs.some(entry => msg.includes(entry))) {
-		console_warn.apply(console, arguments);
-	}
-};
-const console_error = console.error;
-console.error = function surpressErrors(msg) {
-	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
-
-	if (!supressedLogs.some(entry => msg.includes(entry))) {
-		console_error.apply(console, arguments);
-	}
-};
-const console_log = console.log;
-console.log = function surpressLogs(msg) {
-	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
-
-	if (!supressedLogs.some(entry => msg.includes(entry))) {
-		console_log.apply(console, arguments);
-	}
-};*/
-
-//Type Extensions
-// Warn if overriding existing method
 
 String.isString = function (input) {
 	return input !== undefined && input !== null ? input.constructor === String : false
@@ -117,14 +90,7 @@ String.containsUrl = function (target) {
 	}
 	return false
 }
-String.highlightContainedUrls = function (target, element = "a") {
-	if (String.isString(target)) {
-		let containedUrls = target.match(
-			new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_])?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?")
-		)
-		console.log("highlightContainedUrls containedUrls", containedUrls)
-	}
-}
+
 String.getContainedUrl = function (target) {
 	let containedUrl = target.match(
 		new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_])?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?")
@@ -1074,7 +1040,6 @@ Date.format = (input, format) => {
 		console.error("Date.format error", error)
 	}
 
-	// console.log("Date.format input", input, "result", result)
 	return result;
 }
 
@@ -1533,8 +1498,6 @@ Date.prose = function (input = null, showTime = true) {
 				dateProse = `Yesterday${showTime ? Date.format(date, " h:i a") : ""}`
 			} else {
 				if (date.format("Y M d") !== new Date().format("Y M d")) {
-					// console.log("prose date ", date)
-					// console.log("prose difference ", difference)
 					dateProse = `Yesterday${showTime ? Date.format(date, " h:i a") : ""}`
 				} else {
 					dateProse = `Today${showTime ? Date.format(date, " h:i a") : ""}`

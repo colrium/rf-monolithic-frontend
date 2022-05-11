@@ -1,8 +1,8 @@
 /** @format */
 
 import { app } from "assets/jss/app-theme";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React from "react";
 
 import CartView from "views/widgets/Ecommerce/Cart";
@@ -27,14 +27,14 @@ class Page extends React.Component {
 	render() {
 		const { classes, ...rest } = this.props;
 		return (
-			<GridContainer className="relative min-h-screen">
-				<GridItem xs={12} sm={10} md={8} className="m-auto">
+			<Grid container className="relative min-h-screen">
+				<Grid item  xs={12} sm={10} md={8} className="m-auto">
 					<CartView
 						className="w-full"
 						onProceedToCheckout={this.onProceedToCheckout}
 					/>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 }

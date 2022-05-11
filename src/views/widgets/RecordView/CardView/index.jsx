@@ -7,9 +7,9 @@
 import Card from "components/Card";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-//import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+//import Typography from '@mui/material/Typography';
 import { formats } from "config/data";
 import PropTypes from "prop-types";
 import React from "react";
@@ -196,7 +196,7 @@ function CardView({ ...props }) {
 			body = resolvedRefRecord.body;
 		} else if (resolvedRefRecord.resolver === "helper") {
 			body = (
-				<GridContainer className="p-0 m-0">
+				<Grid container className="p-0 m-0">
 					{Object.entries(defination.scope.columns).map(
 						([name, column], index) =>
 							column.restricted && Function.isFunction() ? (
@@ -204,36 +204,36 @@ function CardView({ ...props }) {
 									record,
 									auth.user
 								) && (
-									<GridContainer
+									<Grid container
 										className="pl-4 m-0"
 										key={index}
 									>
-										<GridItem xs={12} className="py-0">
+										<Grid item  xs={12} className="py-0">
 											<Typography variant={"body2"} color="grey">
 												{column.label}
 											</Typography>
-										</GridItem>
+										</Grid>
 
-										<GridItem xs={12} className="py-0">
+										<Grid item  xs={12} className="py-0">
 											{resolveDisplayValue(name)}
-										</GridItem>
-									</GridContainer>
+										</Grid>
+									</Grid>
 								)
 							) : (
-								<GridContainer className="pl-4 m-0" key={index}>
-									<GridItem xs={12} className="py-0">
+								<Grid container className="pl-4 m-0" key={index}>
+									<Grid item  xs={12} className="py-0">
 										<Typography variant={"body2"} color="grey">
 											{column.label}
 										</Typography>
-									</GridItem>
+									</Grid>
 
-									<GridItem xs={12} className="py-0">
+									<Grid item  xs={12} className="py-0">
 										{resolveDisplayValue(name)}
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							)
 					)}
-				</GridContainer>
+				</Grid>
 			);
 		}
 
@@ -252,7 +252,7 @@ function CardView({ ...props }) {
 			<CardContent className="p-0 m-0 overflow-auto"><JSONView src={record} humanize/></CardContent>
 		</Card>
 	) : (
-		<GridContainer />
+		<Grid container />
 	);
 }/**/
 

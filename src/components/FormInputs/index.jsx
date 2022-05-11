@@ -23,7 +23,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AutoComplete from "components/AutoComplete";
 import DynamicField from "components/DynamicInput";
 import FileDropZone from "components/FileDropZone";
-import GridContainer from "components/Grid/GridContainer";
+import Grid from '@mui/material/Grid';
 import TransferList from "components/TransferList";
 import GoogleMap from "components/GoogleMap";
 
@@ -315,7 +315,7 @@ export const SliderInput = ({
 			: Number.parseNumber(defaultValue, null)
 	);
 	return (
-		<GridContainer className="m-0 p-0">
+		<Grid container className="m-0 p-0">
 			<Typography id={name + "-slider"} gutterBottom>
 				{label}
 			</Typography>
@@ -343,7 +343,7 @@ export const SliderInput = ({
 				}}
 				{...rest}
 			/>
-		</GridContainer>
+		</Grid>
 	);
 };
 

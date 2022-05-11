@@ -5,8 +5,8 @@ import StarIcon from '@mui/icons-material/Star';
 import Avatar from '@mui/material/Avatar';
 import { Call as PhoneIcon, MailOutline as EmailIcon, Person as UserRoleIcon } from "@mui/icons-material";
 import Card from "components/Card";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import LazyImage from "components/LazyImage";
 import Status from "components/Status";
 import React, { Component } from "react";
@@ -30,8 +30,8 @@ const Profile = (props) => {
 
 
 	return (
-		<GridContainer>
-			<GridItem xs={12}>
+		<Grid container>
+			<Grid item  xs={12}>
 				<div className="max-w-4xl flex items-center h-auto flex-wrap mx-auto my-32 lg:my-0">
 					<Card className="w-full lg:w-3/5 rounded-lg lg:rounded-l-lg lg:rounded-r-none  mx-6 lg:mx-0">
 						<div className="p-4 md:p-12 text-center lg:text-left">
@@ -80,15 +80,15 @@ const Profile = (props) => {
 						style={{ height: "50vh" }}
 					/>
 				</div>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className={""}>
+			<Grid item  xs={12} className={""}>
 
 				<Card className="w-full rounded-lg lg:rounded-l-lg lg:rounded-r-none p-4  mx-6 lg:mx-0">
-					<GridItem xs={12}>
+					<Grid item  xs={12}>
 						<h1 className="text-xl pt-8 lg:pt-0">Preffered Icon</h1>
-					</GridItem>
-					<GridItem xs={12} className={"inline-flex flex-wrap flex-row items-center"}>
+					</Grid>
+					<Grid item  xs={12} className={"inline-flex flex-wrap flex-row items-center"}>
 						{icon_names.map((icon_name) => (
 							auth.user?.icon === icon_name ? (
 								<Avatar className={"m-2 h-20 w-20 border-2 border-green-600"} src={ApiService.endpoint(`/public/img/avatars/${icon_name}.png`)} key={icon_name} alt={icon_name} />
@@ -106,10 +106,10 @@ const Profile = (props) => {
 
 
 						))}
-					</GridItem>
+					</Grid>
 				</Card>
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	);
 
 }

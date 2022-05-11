@@ -1,7 +1,7 @@
 /*global google*/
 import React, { useCallback, useRef } from "react";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import GoogleMap from "components/GoogleMap";
 import { Button, Chip, Typography } from "@mui/material";
 import {
@@ -105,9 +105,6 @@ const Stage = (props) => {
 
 
 
-
-        // console.log("handleOnDoubleClickFeature featureLevel", featureLevel, "featureType", featureType, "admin_level_0", admin_level_0, "admin_level_1", admin_level_1, "admin_level_2", admin_level_2, "admin_level_3", admin_level_3)
-
         if (googleMap.current) {
             let eventFeatureBounds = getFeatureBounds(feature);
             googleMap.current.fitBounds(eventFeatureBounds)
@@ -116,7 +113,6 @@ const Stage = (props) => {
             for (let i = 0; i < (featureLevel + 1); i++) {
                 let levelName = feature.getProperty(("admin_level_" + i))
                 if (!String.isEmpty(levelName)) {
-                    console.log("level ", i, levelName)
                     nextLevelUri = nextLevelUri + ("/" + String.capitalize(levelName))
                 }
 
@@ -126,11 +122,8 @@ const Stage = (props) => {
             let nextLevelFeaturesUri = nextLevelUri + (featureLevel === 3 ? ("/feature.geojson") : ("/features.geojson"));
             let nextLevelFeatureUrl = new URL(("http://api.realfield.workspace" + nextLevelFeaturesUri));
 
-            //console.log("nextLevelFeatureUri ", nextLevelFeatureUri)
-
             setState({ loading: true, level: featureLevel })
             fetch(nextLevelFeatureUrl).then(res => res.json()).then(geojson => {
-                console.log(nextLevelFeatureUrl, "geojson", geojson);
                 googleMap.current.data.forEach((featureEntry) => {
                     // feature.setProperty("isFocused", false)
                     let featureEntryLevel = featureEntry.getProperty("level")
@@ -162,7 +155,6 @@ const Stage = (props) => {
         feature.setProperty('isSelected', isSelected);
 
         feature.toGeoJson((geojson) => {
-            console.log("featureName", featureName)
             setState(prevState => ({
                 geojsons: isSelected ? prevState.geojsons.concat([geojson]) : prevState.geojsons.filter(entry => (entry.properties.level !== featureLevel && featureName !== entry.properties[fetureLevelKey]))
             }))
@@ -207,7 +199,6 @@ const Stage = (props) => {
                 }
             }
             let featureCenter = getFeatureCenterCoordinates(event.feature)
-            //console.log("handleOnFeatureMouseover event", event)
             if ((featureLevel >= state.level || state.level === 0)) {
                 event.feature.setProperty("isFocused", true);
                 googleMapInfoWindow.current.setContent(`<div class="infowindow ">
@@ -323,42 +314,42 @@ const Stage = (props) => {
     }, [])
 
     return (
-        <GridContainer className={ "relative p-0" }>
-            { <GridItem className="flex flex-row items-start">
+        <Grid container className={ "relative p-0" }>
+            { <Grid item  className="flex flex-row items-start">
                 { !!title && <Typography variant="subtitle1" className="flex-1">
                     { title }
                 </Typography> }
-            </GridItem> }
-            { !!description && <GridItem className="flex flex-col items-start py-2">
+            </Grid> }
+            { !!description && <Grid item  className="flex flex-col items-start py-2">
                 <Typography variant="body2">
                     { description }
                 </Typography>
-            </GridItem> }
-            { Array.isArray(state.geojsons) && <GridItem xs={ 12 }>
-                <GridContainer>
+            </Grid> }
+            { Array.isArray(state.geojsons) && <Grid item  xs={ 12 }>
+                <Grid container>
                     <Typography variant="h5">
                         { state.geojsons.map((geojson, index) => (
                             <Chip className={ "mx-2" } label={ getGeoJsonLabel(geojson) } key={ "geojsons" + "_" + index } />
                         )) }
                     </Typography>
-                </GridContainer>
-            </GridItem> }
+                </Grid>
+            </Grid> }
 
-            <GridItem xs={ 12 } className="p-0 min-h-screen">
+            <Grid item  xs={ 12 } className="p-0 min-h-screen">
                 <GoogleMap
                     zoom={ 6 }
                     showCurrentPosition={ true }
                     onMapLoad={ handleOnMapLoad }
                     className="p-0 min-h-screen"
                 />
-            </GridItem>
+            </Grid>
 
-            <GridItem xs={ 12 } className="flex flex-col items-center  py-8">
+            <Grid item  xs={ 12 } className="flex flex-col items-center  py-8">
                 <Button onClick={ handleOnSubmit } disabled={ state.invalid } className="accent inverse-text" variant="outlined">
                     Ok. Ready to continue
                 </Button>
-            </GridItem>
-        </GridContainer>
+            </Grid>
+        </Grid>
     )
 }
 

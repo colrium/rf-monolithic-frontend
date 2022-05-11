@@ -1,5 +1,4 @@
 /** @format */
-import GridContainer from "components/Grid/GridContainer"
 import React, { useCallback, useEffect } from "react"
 import { useDidMount, useSetState } from "hooks"
 import { useNetworkServices } from "contexts"
@@ -54,7 +53,6 @@ const Post = props => {
 		const pathnameArr= location.pathname.split("/")
 		const slugId = pathnameArr[pathnameArr.length - 1]
 		loadData(slugId, {})
-		console.log("slugId", slugId)
 	}, [location.pathname])
 	return (
 		<Grid container className={"p-0 py-8"}>

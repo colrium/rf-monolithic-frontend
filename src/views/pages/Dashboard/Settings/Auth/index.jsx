@@ -2,9 +2,9 @@
 import React from "react"
 import { useSelector } from "react-redux"
 import Typography from "@mui/material/Typography"
-import GridContainer from "components/Grid/GridContainer"
+import Grid from '@mui/material/Grid'
 import Card from "components/Card"
-import GridItem from "components/Grid/GridItem"
+
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
@@ -42,45 +42,45 @@ function Widget() {
 
 	return (
 		<Card>
-			<GridContainer className="px-8">
-				<GridItem xs={12} className="mb-2">
+			<Grid container className="px-8">
+				<Grid item  xs={12} className="mb-2">
 					<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
 						Authorization settings
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="my-4">
+				<Grid item  xs={12} className="my-4">
 					<Typography variant="h6" sx={{ color: theme => theme.palette.text.disabled }}>
 						Login
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className="px-0">
-					<GridItem xs={12}>
+				<Grid container className="px-0">
+					<Grid item  xs={12}>
 						<Checkbox name="logins_enabled" label="New user logins allowed" />
-					</GridItem>
-					<GridItem xs={12}>
+					</Grid>
+					<Grid item  xs={12}>
 						<Checkbox name="registrations_enabled" label="New registrations allowed" />
-					</GridItem>
-					<GridItem xs={12}>
+					</Grid>
+					<Grid item  xs={12}>
 						<Checkbox name="account_recovery_enabled" label="Account recovery allowed" />
-					</GridItem>
-					<GridItem xs={12}>
+					</Grid>
+					<Grid item  xs={12}>
 						<Checkbox name="OAuth2_enabled" label="OAuth2.0 authorization" />
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
-				<GridItem xs={12} className="my-4">
+				<Grid item  xs={12} className="my-4">
 					<Typography variant="h6" sx={{ color: theme => theme.palette.text.disabled }}>
 						Websockets
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className="px-0">
-					<GridItem xs={12}>
+				<Grid container className="px-0">
+					<Grid item  xs={12}>
 						<Checkbox name="websockets.enforce_authorization" label="Enforce socketIo authorization" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField
 							type="number"
 							name="websockets.send_authorization_timeout"
@@ -97,9 +97,9 @@ function Widget() {
 							disabled={!values.websockets.enforce_authorization}
 							helperText="The time in milliseconds server should wait for a client to send authorization request."
 						/>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Card>
 	)
 }

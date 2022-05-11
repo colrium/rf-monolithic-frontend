@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Cookies from "universal-cookie";
 import { setupCache } from 'axios-cache-adapter';
 import store from "state/store";
 import watch from 'redux-watch';
@@ -49,12 +48,16 @@ const ApiSingleton = (function () {
 		}
 		return endpoint_url + uri;
 	};
+	function getCookie(name) {
+		const value = `; ${document.cookie}`
+		const parts = value.split(`; ${name}=`)
+		if (parts.length === 2) return parts.pop().split(";").shift()
+	}
 
 	function getAuthCookies() {
-		let cookies = new Cookies();
-		let access_token = cookies.get(authTokenName);
-		let token_type = cookies.get(authTokenName + "_type");
-		let refresh_token = cookies.get(authTokenName + "_refresh_token");
+		let access_token = getCookie(authTokenName)
+		let token_type = getCookie(authTokenName + "_type")
+		let refresh_token = getCookie(authTokenName + "_refresh_token")
 		if (access_token && token_type) {
 			return {
 				access_token: access_token,
@@ -62,7 +65,11 @@ const ApiSingleton = (function () {
 				refresh_token: refresh_token,
 			};
 		}
-		return null;
+		return {
+			access_token: "",
+			token_type: "",
+			refresh_token: "",
+		}
 	}
 
 	function getAccessToken() {
@@ -72,7 +79,8 @@ const ApiSingleton = (function () {
 
 	function getAuthorizationHeader(token) {
 		//
-		let targetAccessToken = token || access_token;
+		let authCookies = getAuthCookies();
+		let targetAccessToken = token || access_token || authCookies;
 		if (isAccessTokenValid(targetAccessToken)) {
 			return {
 				Authorization: (targetAccessToken?.token_type || "") + " " + (targetAccessToken?.access_token || ""),
@@ -218,7 +226,6 @@ const ApiSingleton = (function () {
 								token: token,
 								profile: profile,
 							}
-							console.log("/auth/google-one-tap resObj", resObj)
 							setAccessToken(token)
 							if (JSON.isJSON(profile) && JSON.isEmpty(profile)) {
 								resObj.profile = await axios
@@ -332,7 +339,6 @@ const ApiSingleton = (function () {
 					instance
 						.post("login", JSON.merge(data, { client_id: client_id, client_secret: client_secret, grant_type: "password" }))
 						.then(async res => {
-							console.log("login res", res)
 
 							const { profile, token, ...rest } = res.body?.data || res.data?.data || {}
 							let resObj = {
@@ -577,8 +583,8 @@ const ApiSingleton = (function () {
 			}
 
 			config.headers = {
-				...config.headers,
 				...getAuthorizationHeader(access_token),
+				...config.headers,
 			}
 			EventRegister.emit("api-request-attempt", config)
 			return config

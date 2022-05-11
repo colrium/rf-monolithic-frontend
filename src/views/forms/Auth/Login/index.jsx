@@ -66,7 +66,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 					navigate(navigateTo)
 				})
 				.catch(err => {
-					console.log("err", err)
+					console.error("err", err)
 					setState({
 						submitting: false,
 						error: err.msg,

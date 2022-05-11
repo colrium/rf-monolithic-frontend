@@ -3,17 +3,17 @@ import { connect } from "react-redux"
 
 import Typography from "@mui/material/Typography"
 import { WysiwygInput, TextInput } from "components/FormInputs"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 
 function Widget(props) {
 	return (
-		<GridContainer className="px-2">
-			<GridItem xs={12} className="mb-2">
+		<Grid container className="px-2">
+			<Grid item  xs={12} className="mb-2">
 				<Typography variant="h3"> Legal settings</Typography>
-			</GridItem>
+			</Grid>
 
-			{/* <GridItem xs={12} className="mb-4">
+			{/* <Grid item  xs={12} className="mb-4">
 				<TextInput
 					name="cookies-consent"
 					label="Cookies Consent"
@@ -25,9 +25,9 @@ function Widget(props) {
 					disabled={loading["cookies-consent"]}
 					error={errors["cookies-consent"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<WysiwygInput
 					name="terms-of-use"
 					label="Terms of use"
@@ -37,9 +37,9 @@ function Widget(props) {
 					disabled={loading["terms-of-use"]}
 					error={errors["terms-of-use"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<WysiwygInput
 					name="end-user-agreement"
 					label="End user agreement"
@@ -49,9 +49,9 @@ function Widget(props) {
 					disabled={loading["end-user-agreement"]}
 					error={errors["end-user-agreement"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<WysiwygInput
 					name="privacy-policy"
 					label="Privacy policy"
@@ -61,8 +61,8 @@ function Widget(props) {
 					disabled={loading["privacy-policy"]}
 					error={errors["privacy-policy"]}
 				/>
-			</GridItem> */}
-		</GridContainer>
+			</Grid> */}
+		</Grid>
 	)
 }
 

@@ -4,7 +4,7 @@
 	"private": true,
 	"description": "Realfield Web",
 	"main": "index.js",
-	"homepage": "https://preview.realfield.io",
+	"homepage": "https://realfield.io",
 	"author": "Mutugi Riungu",
 	"scripts": {
 		"generate-build-version": "node generate-build-version",
@@ -79,7 +79,6 @@
 		"perfect-scrollbar": "^1.5.5",
 		"prop-types": "^15.7.2",
 		"react": "^17.0.2",
-		"react-awesome-query-builder": "^4.5.2",
 		"react-chartjs-2": "^3.0.5",
 		"react-dom": "^17.0.2",
 		"react-draft-wysiwyg": "^1.14.7",
@@ -108,7 +107,6 @@
 		"socket.io-client": "^4.2.0",
 		"styled-components": "^5.3.1",
 		"typescript": "^4.4.3",
-		"universal-cookie": "^4.0.4",
 		"uuid": "^8.3.2",
 		"web-vitals": "^1.0.1"
 	},

@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import Typography from "@mui/material/Typography";
-import GridContainer from "components/Grid/GridContainer";
+import Grid from '@mui/material/Grid';
 import Card from "components/Card";
-import GridItem from "components/Grid/GridItem";
+;
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
@@ -36,49 +36,49 @@ function Widget(props) {
 
 	return (
 		<Card>
-			<GridContainer className="px-8">
-				<GridItem xs={12} className="mb-2">
+			<Grid container className="px-8">
+				<Grid item  xs={12} className="mb-2">
 					<Typography variant="h3">This website uses cookies</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="mb-2">
+				<Grid item  xs={12} className="mb-2">
 					<Typography variant="body2">{app.settings.legal["cookies-consent"]}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className="px-0">
+				<Grid container className="px-0">
 
-					<GridItem xs={12} className="mb-2">
+					<Grid item  xs={12} className="mb-2">
 						<Checkbox
 							name="necessary"
 							label="Necessary"
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-2">
+					<Grid item  xs={12} className="mb-2">
 						<Checkbox
 							name="statistics"
 							label="Statistics"
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-2">
+					<Grid item  xs={12} className="mb-2">
 						<Checkbox
 							name="preferences"
 							label="Preferences"
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-2">
+					<Grid item  xs={12} className="mb-2">
 						<Checkbox
 							name="marketing"
 							label="Marketing"
 						/>
-					</GridItem>
+					</Grid>
 
 
-				</GridContainer>
+				</Grid>
 
-			</GridContainer>
+			</Grid>
 		</Card>
 	);
 }

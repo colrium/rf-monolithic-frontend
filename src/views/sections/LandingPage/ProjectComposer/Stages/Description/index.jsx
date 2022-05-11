@@ -1,7 +1,7 @@
 /** @format */
 import React, { useCallback, useMemo, useRef } from "react";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { usePersistentForm } from "hooks";
@@ -27,20 +27,20 @@ const Stage = (props) => {
 
 
     return (
-		<GridContainer>
-			{/* {!!title && <GridItem className="flex flex-row items-start">
+		<Grid container>
+			{/* {!!title && <Grid item  className="flex flex-row items-start">
                 <Typography variant="h1" className="flex-1">
                     {title}
                 </Typography>
-            </GridItem>} */}
+            </Grid>} */}
 			{!!description && (
-				<GridItem className="flex flex-col items-start py-8">
+				<Grid item  className="flex flex-col items-start py-8">
 					<Typography variant="body2">{description}</Typography>
-				</GridItem>
+				</Grid>
 			)}
-			<GridItem className={"py-12"}>
-				<GridContainer>
-					<GridItem md={12} className={"py-8"}>
+			<Grid item  className={"py-12"}>
+				<Grid container>
+					<Grid item  md={12} className={"py-8"}>
 						<TextField
 							label="Project Name"
 							placeholder="This is the Project Title"
@@ -52,9 +52,9 @@ const Stage = (props) => {
 							required
 							fullWidth
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem md={12} className={"py-8"}>
+					<Grid item  md={12} className={"py-8"}>
 						<TextField
 							label="Project Summary"
 							name={`stages.${stage}.project_summary`}
@@ -68,9 +68,9 @@ const Stage = (props) => {
 							required
 							fullWidth
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem md={12} className={"py-8"}>
+					<Grid item  md={12} className={"py-8"}>
 						<TextField
 							label="Project Objectives"
 							name={`stages.${stage}.project_objectives`}
@@ -84,16 +84,16 @@ const Stage = (props) => {
 							required
 							fullWidth
 						/>
-					</GridItem>
-				</GridContainer>
-			</GridItem>
+					</Grid>
+				</Grid>
+			</Grid>
 
-			<GridItem className="flex flex-col items-center py-20 mb-12">
+			<Grid item  className="flex flex-col items-center py-20 mb-12">
 				<Button onClick={submit} disabled={!isValid} color="accent" variant="contained">
 					Great. Nearly there
 				</Button>
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 }
 

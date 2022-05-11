@@ -13,8 +13,8 @@ import { connect } from "react-redux";
 import { withTheme } from "@mui/styles";
 
 import compose from "recompose/compose";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import { apiCallRequest, setEmailingCache, clearEmailingCache } from "state/actions";
 import { TextInput } from "components/FormInputs";
 import ScrollBars from "components/ScrollBars";
@@ -183,8 +183,8 @@ function ComposeEmailDialog(props) {
 						tabIndex={-1}
 					>
 
-						<GridContainer id="compose-email-dialog-body">
-							<GridItem xs={12}>
+						<Grid container id="compose-email-dialog-body">
+							<Grid item  xs={12}>
 								<TextInput
 									variant={"outlined"}
 									defaultValue={emailSubject}
@@ -213,9 +213,9 @@ function ComposeEmailDialog(props) {
 									validate
 									fullWidth
 								/>
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={12}>
+							<Grid item  xs={12}>
 								<TextInput
 									variant={"outlined"}
 									defaultValue={emailRecipientAddress}
@@ -245,8 +245,8 @@ function ComposeEmailDialog(props) {
 									validate
 									fullWidth
 								/>
-							</GridItem>
-							{hasCC && <GridItem xs={12}>
+							</Grid>
+							{hasCC && <Grid item  xs={12}>
 								<TextInput
 									variant={"outlined"}
 									defaultValue={emailCC}
@@ -274,18 +274,18 @@ function ComposeEmailDialog(props) {
 									}}
 									fullWidth
 								/>
-							</GridItem>}
+							</Grid>}
 
-							{!hasCC && <GridItem xs={12} className={"flex flex-row-reverse"}>
+							{!hasCC && <Grid item  xs={12} className={"flex flex-row-reverse"}>
 								<Button
 									onClick={() => setHasCC(true)}
 									color={"secondary"}
 								>
 									Add CC
 								</Button>
-							</GridItem>}
+							</Grid>}
 
-							{hasBCC && <GridItem xs={12}>
+							{hasBCC && <Grid item  xs={12}>
 								<TextInput
 									variant={"outlined"}
 									defaultValue={emailBCC}
@@ -313,20 +313,20 @@ function ComposeEmailDialog(props) {
 									}}
 									fullWidth
 								/>
-							</GridItem>}
+							</Grid>}
 
-							{(!hasBCC && hasCC) && <GridItem xs={12} className={"flex flex-row-reverse"}>
+							{(!hasBCC && hasCC) && <Grid item  xs={12} className={"flex flex-row-reverse"}>
 								<Button
 									onClick={() => setHasBCC(true)}
 									color={"secondary"}
 								>
 									Add BCC
 								</Button>
-							</GridItem>}
+							</Grid>}
 
 
 
-							<GridItem xs={12}>
+							<Grid item  xs={12}>
 								<TextInput
 									variant={"outlined"}
 									defaultValue={emailContent}
@@ -342,8 +342,8 @@ function ComposeEmailDialog(props) {
 									fullWidth
 
 								/>
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 
 					</DialogContentText>
 				</ScrollBars>

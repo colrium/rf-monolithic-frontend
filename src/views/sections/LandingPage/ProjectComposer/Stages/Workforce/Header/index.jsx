@@ -47,8 +47,6 @@ import coursesGroups from "../../../config/coursesGroups.json";
 // coursesGroups = coursesGroups.filter(entry => !String.isEmpty(entry)).map(entry => (entry.trim().length > 3? String.capitalize(entry.trim()) : entry.trim())).unique().sort((a, b) => (a > b ? 1 : -1));
 // coursesTags.unshift("All");
 // coursesGroups.unshift("All");
-// console.log("coursesTags", coursesTags);
-// console.log("coursesGroups", coursesGroups);
 
 const StyledToggleButtonGroup=styled(ToggleButtonGroup)(({theme}) => ({
 	"& .MuiToggleButtonGroup-grouped": {
@@ -109,7 +107,6 @@ const Header=props => {
 
 	useDidUpdate( () => {
 		if( keywordInputRef.current ) {
-			// console.log( "keywordInputRef.current", keywordInputRef.current, keyword)
 			keywordInputRef.current.val = keyword;
 		}
 	}, [keyword])

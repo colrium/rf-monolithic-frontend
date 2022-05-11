@@ -5,7 +5,6 @@ import React from "react"
 
 const NotificationContent = props => {
 	const { content, title, subtitle, icon, image, actions, ...rest } = props
-	console.log("NotificationContent props", props)
 	return (
 		<Grid container {...rest}>
 			<Grid item xs={12} className="flex flex-row">

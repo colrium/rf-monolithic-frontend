@@ -67,7 +67,6 @@ const WysiwygEditor = React.forwardRef((props, ref) => {
 	}, [value, defaultValue, contentStateRef.current])
 
 	const editorState = useDeepMemo(() => {
-		console.log("contentState", contentState)
 		if (!!editorStateRef.current) {
 			return editorStateRef.current
 		} else if (!!contentState) {
@@ -84,9 +83,10 @@ const WysiwygEditor = React.forwardRef((props, ref) => {
 					onChangeValue = stateToHTML(editorStateRef.current.getCurrentContent())
 				}
 			}
-			console.log("onChangeValue", onChangeValue)
-			console.log("WysiwygEditor type", type)
-			// onChange(onChangeValue)
+			if (Function.isFunction(onChange)) {
+				onChange(onChangeValue)
+			}
+
 		}
 	}, [onChange, type])
 
@@ -100,14 +100,6 @@ const WysiwygEditor = React.forwardRef((props, ref) => {
 		// setState({ contentState: newContentState })
 	}
 
-	useDidUpdate(() => {
-		console.log("editorState", editorState)
-	}, [editorState])
-
-	useDidMount(() => {
-		console.log("useDidMount rest", rest)
-		console.log("useDidMount inputRef", inputRef)
-	})
 
 	return (
 		<Editor

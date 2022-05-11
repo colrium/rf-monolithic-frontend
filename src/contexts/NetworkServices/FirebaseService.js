@@ -128,17 +128,6 @@ const FirebaseService = props => {
 						if (querySnapshot) {
 							let querySnapshotDoc = querySnapshot.data()
 
-							// querySnapshot.docChanges().forEach(change => {
-							// 	if (isAuthenticated && user?._id === userId) {
-							// 		if (change.type === "modified") {
-							// 			console.log("User modified: ", change.doc.data())
-							// 		}
-							// 		if (change.type === "removed") {
-							// 			console.log("User modified: ", change.doc.data())
-							// 		}
-							// 	}
-							// })
-							////
 
 							if (querySnapshotDoc) {
 								if (Array.isArray(querySnapshotDoc?.tokens)) {
@@ -206,7 +195,6 @@ const FirebaseService = props => {
 
 	const onMessageHandler = useCallback(
 		async payload => {
-			console.log("onFirebaseMessageHandler payload", payload)
 			if (isAuthenticated) {
 				const { data } = payload
 				if (data.event_name === "new-message" || data.event_name === "message-sent") {
@@ -235,21 +223,7 @@ const FirebaseService = props => {
 	const observeUserChanges = useCallback(
 		user => {
 			if (isAuthenticated) {
-				db.collection("cities")
-					.where("state", "==", "CA")
-					.onSnapshot(querySnapshot => {
-						querySnapshot.docChanges().forEach(change => {
-							if (change.type === "added") {
-								console.log("New city: ", change.doc.data())
-							}
-							if (change.type === "modified") {
-								console.log("Modified city: ", change.doc.data())
-							}
-							if (change.type === "removed") {
-								console.log("Removed city: ", change.doc.data())
-							}
-						})
-					})
+
 			}
 		},
 		[isAuthenticated]

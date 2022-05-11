@@ -6,8 +6,8 @@ import { connect } from "react-redux";
 import { useLocation } from "react-router-dom";
 import compose from "recompose/compose";
 import classNames from 'classnames';
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from '@mui/material/Typography';
 
 
@@ -36,17 +36,17 @@ const Section = (props) => {
 	}, [location]);
 
 	return (
-		<GridContainer name={id} className={`${className || ""}  flex px-4 md:px-32 pt-20 `} id={id} {...rest}>
+		<Grid container name={id} className={`${className || ""}  flex px-4 md:px-32 pt-20 `} id={id} {...rest}>
 			{title && (
-				<GridItem xs={12} className={"p-0 pb-8"}>
+				<Grid item  xs={12} className={"p-0 pb-8"}>
 					<Typography {...titleProps}>{title}</Typography>
-				</GridItem>
+				</Grid>
 			)}
 
-			<GridItem xs={12} className={"p-0"}>
+			<Grid item  xs={12} className={"p-0"}>
 				{children}
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 };
 

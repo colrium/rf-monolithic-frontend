@@ -2,8 +2,8 @@
 
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React, { useEffect } from "react"
 import { connect } from "react-redux";
 import { appendNavHistory } from "state/actions/ui/nav";
@@ -22,7 +22,7 @@ import AuthSettingsWidget from "./Auth"
 function TabPanel(props) {
 	const { children, value, index, ...other } = props
 	return (
-		<GridContainer
+		<Grid container
 			component="div"
 			role="tabpanel"
 			hidden={value !== index}
@@ -32,18 +32,17 @@ function TabPanel(props) {
 			{...other}
 		>
 			{value === index && (
-				<GridItem xs={12} className="p-0">
+				<Grid item  xs={12} className="p-0">
 					{children}
-				</GridItem>
+				</Grid>
 			)}
-		</GridContainer>
+		</Grid>
 	)
 }
 
 const Page = props => {
 	const { hash, pathname } = useLocation()
 	const navigate = useNavigate()
-	console.log("location", location)
 	const [state, setState] = useSetState({
 		active_tab: hash ? hash.replace("#", "").trim().toLowerCase() : "general",
 		tabs: {
@@ -80,8 +79,8 @@ const Page = props => {
 	}
 
 	return (
-		<GridContainer className="px-2 pt-8">
-			<GridItem xs={12} md={tabs_orientation === "vertical" ? 3 : 12} lg={tabs_orientation === "vertical" ? 2 : 12}>
+		<Grid container className="px-2 pt-8">
+			<Grid item  xs={12} md={tabs_orientation === "vertical" ? 3 : 12} lg={tabs_orientation === "vertical" ? 2 : 12}>
 				<Tabs
 					orientation={tabs_orientation}
 					variant="scrollable"
@@ -102,9 +101,9 @@ const Page = props => {
 						/>
 					))}
 				</Tabs>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} md={tabs_orientation === "vertical" ? 9 : 12} lg={tabs_orientation === "vertical" ? 10 : 12}>
+			<Grid item  xs={12} md={tabs_orientation === "vertical" ? 9 : 12} lg={tabs_orientation === "vertical" ? 10 : 12}>
 				{Object.entries(state.tabs).map(([name, value], cursor) => (
 					<TabPanel value={state.active_tab} index={name} key={"settings-tabpanel-" + cursor}>
 						{name === "general" && <GeneralSettingsWidget />}
@@ -118,8 +117,8 @@ const Page = props => {
 						{name === "auth" && <AuthSettingsWidget />}
 					</TabPanel>
 				))}
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 }
 

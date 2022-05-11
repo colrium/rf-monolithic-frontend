@@ -6,9 +6,9 @@ import Card from "components/Card";
 import CardActions from "components/Card/CardActions";
 import CardContent from "components/Card/CardContent";
 import CardHeader from "components/Card/CardHeader";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography"
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography'
 import PropTypes from "prop-types"
 import React, { Component } from "react"
 import { connect } from "react-redux"
@@ -122,10 +122,10 @@ class Overview extends Component {
 		}
 
 		return (
-			<GridContainer className="p-0 m-0" className={rootClassName}>
+			<Grid container className="p-0 m-0" className={rootClassName}>
 				{Object.entries(views_data).map(
 					([context, { title, type, icon, description, size, query, value, resolveValue, view, ...rest }], cursor) => (
-						<GridItem xs={12} md={size ? size : wrapperSize >= 8 ? 3 : 6} key={context + "-numbers"}>
+						<Grid item  xs={12} md={size ? size : wrapperSize >= 8 ? 3 : 6} key={context + "-numbers"}>
 							<Card elevation={1} style={{ backgroundColor: theme.palette.background.paper }}>
 								<CardHeader
 									title={
@@ -136,8 +136,8 @@ class Overview extends Component {
 								/>
 
 								<CardContent className="p-0 m-0">
-									<GridContainer className="p-0 m-0">
-										<GridItem xs={12} className="flex items-center justify-center">
+									<Grid container className="p-0 m-0">
+										<Grid item  xs={12} className="flex items-center justify-center">
 											{type === "count" && (
 												<Typography
 													variant="h2"
@@ -156,8 +156,8 @@ class Overview extends Component {
 													{resolveValue(value)}{" "}
 												</Typography>
 											)}
-										</GridItem>
-									</GridContainer>
+										</Grid>
+									</Grid>
 								</CardContent>
 
 								<CardActions>
@@ -166,10 +166,10 @@ class Overview extends Component {
 									</Typography>
 								</CardActions>
 							</Card>
-						</GridItem>
+						</Grid>
 					)
 				)}
-			</GridContainer>
+			</Grid>
 		)
 	}
 }

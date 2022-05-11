@@ -21,8 +21,8 @@ import TableCell from "@mui/material/TableCell"
 import TableRow from "@mui/material/TableRow"
 import { useDispatch, useSelector } from "react-redux"
 //
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 import SnackbarContent from "components/Snackbar/SnackbarContent"
 import PropTypes from "prop-types"
 import { useSetState, usePersistentForm, useDidMount, useDidUpdate } from "hooks"
@@ -279,8 +279,6 @@ const BaseForm = React.forwardRef((props, ref) => {
 												possibilities[resolved_data[j][name].value] = resolved_data[j][name].resolve
 											}
 										}
-										console.log("name", name,"possibilities", possibilities)
-										console.log("name", name,"raw_data", raw_data)
 										queueNotification({content: "Data fetched " + field.label + " ::: " + err.msg})
 										setState(prevState => {
 
@@ -972,7 +970,7 @@ const BaseForm = React.forwardRef((props, ref) => {
 			return <TableCell key={"field_" + name}>{renderFieldInput(name, field, restricted)}</TableCell>
 		} else {
 			return (
-				<GridItem
+				<Grid item
 					className={"p-0 m-0 px-1 py-1"}
 					md={
 						field.input.size
@@ -985,7 +983,7 @@ const BaseForm = React.forwardRef((props, ref) => {
 					key={"field_" + name}
 				>
 					{renderFieldInput(name, field, restricted)}
-				</GridItem>
+				</Grid>
 			)
 		}
 	}, [])
@@ -1031,12 +1029,12 @@ const BaseForm = React.forwardRef((props, ref) => {
 				)}
 
 				<CardContent className="m-0 p-0 py-4 flex flex-row">
-				<GridContainer className="m-0 p-0 flex-1">
+				<Grid container className="m-0 p-0 flex-1">
 					<ErrorMessage />
-				</GridContainer>
+				</Grid>
 
 					{layout == "normal" && (
-						<GridContainer className="m-0 p-0 flex-1">
+						<Grid container className="m-0 p-0 flex-1">
 							{Object.keys(state.fields).map((column_name, column_index) =>
 								Array.isArray(fields) && fields.length > 0
 									? exclude
@@ -1048,12 +1046,12 @@ const BaseForm = React.forwardRef((props, ref) => {
 										: ""
 									: renderField(column_name)
 							)}
-						</GridContainer>
+						</Grid>
 					)}
 
 					{layout == "inline" && (
-						<GridContainer className="m-0 p-0">
-							<GridItem xs={12}>
+						<Grid container className="m-0 p-0">
+							<Grid item  xs={12}>
 								<Table className="w-full ">
 									<TableBody>
 										<TableRow>
@@ -1066,17 +1064,17 @@ const BaseForm = React.forwardRef((props, ref) => {
 										</TableRow>
 									</TableBody>
 								</Table>
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 					)}
 					{!!SidebarComponent && <SidebarComponent values={values} />}
 				</CardContent>
 
 				{(show_discard || show_submit) && Object.keys(state.fields).length > 0 && (
 					<CardActions>
-						<GridContainer className="m-0 p-0">
+						<Grid container className="m-0 p-0">
 							{show_discard && (
-								<GridItem
+								<Grid item
 									xs={12}
 									md={6}
 									className="flex flex-row items-center justify-center md:items-start md:justify-start"
@@ -1096,11 +1094,11 @@ const BaseForm = React.forwardRef((props, ref) => {
 											{...(discardBtnProps ? discardBtnProps : {})}
 										/>
 									)}
-								</GridItem>
+								</Grid>
 							)}
 
 							{show_submit && (
-								<GridItem
+								<Grid item
 									xs={12}
 									md={show_discard ? 6 : 12}
 									className="flex flex-row items-center justify-center md:items-end md:justify-end"
@@ -1120,9 +1118,9 @@ const BaseForm = React.forwardRef((props, ref) => {
 											{...(submitBtnProps ? submitBtnProps : {})}
 										/>
 									)}
-								</GridItem>
+								</Grid>
 							)}
-						</GridContainer>
+						</Grid>
 					</CardActions>
 				)}
 			</Card>

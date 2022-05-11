@@ -1,7 +1,7 @@
 /** @format */
 import React, { useCallback, useRef, useEffect, useMemo } from "react";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
@@ -35,23 +35,23 @@ const Stage = (props) => {
 
 
     return (
-		<GridContainer>
-			<GridItem className="p-6 flex flex-row justify-end">
+		<Grid container>
+			<Grid item  className="p-6 flex flex-row justify-end">
 				{/* {!!title && <Typography variant="h1" className="flex-1">
                     {title}
                 </Typography>} */}
 				{/* <Button color="primary" variant="outlined">
                     Sign in
                 </Button> */}
-			</GridItem>
+			</Grid>
 			{!!description && (
-				<GridItem className="flex flex-col items-start py-8">
+				<Grid item  className="flex flex-col items-start py-8">
 					<Typography variant="body2">{description}</Typography>
-				</GridItem>
+				</Grid>
 			)}
-			<GridItem>
-				<GridContainer>
-					<GridItem md={6} className={"py-8"}>
+			<Grid item >
+				<Grid container>
+					<Grid item  md={6} className={"py-8"}>
 						<TextField
 							label="First Name"
 							name={`stages.${stage}.first_name`}
@@ -62,8 +62,8 @@ const Stage = (props) => {
 							required
 							fullWidth
 						/>
-					</GridItem>
-					<GridItem md={6} className={"py-8"}>
+					</Grid>
+					<Grid item  md={6} className={"py-8"}>
 						<TextField
 							label="Last Name"
 							name={`stages.${stage}.last_name`}
@@ -74,8 +74,8 @@ const Stage = (props) => {
 							required
 							fullWidth
 						/>
-					</GridItem>
-					<GridItem md={6} className={"py-8"}>
+					</Grid>
+					<Grid item  md={6} className={"py-8"}>
 						<TextField
 							label="Email"
 							name={`stages.${stage}.email_address`}
@@ -92,8 +92,8 @@ const Stage = (props) => {
 							required
 							fullWidth
 						/>
-					</GridItem>
-					<GridItem md={6} className={"py-8"}>
+					</Grid>
+					<Grid item  md={6} className={"py-8"}>
 						<TextField
 							label="Phone"
 							placeholder="(Country Code) Telephone"
@@ -105,9 +105,9 @@ const Stage = (props) => {
 							required
 							fullWidth
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem md={12} className={"py-8"}>
+					<Grid item  md={12} className={"py-8"}>
 						<Select
 							name={`stages.${stage}.survey_type`}
 							label={"Survey Type"}
@@ -117,9 +117,9 @@ const Stage = (props) => {
 							variant={"filled"}
 							required
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem md={6} className={"py-8"}>
+					<Grid item  md={6} className={"py-8"}>
 						<Field
 							label="Start Date"
 							name={`stages.${stage}.start_date`}
@@ -146,7 +146,6 @@ const Stage = (props) => {
 
 											if (Date.isDate(end_date_value)) {
 												start_difference = end_date_value.difference(start_date_value)
-												// console.log("start_difference", start_difference)
 												return (
 													start_difference.type === "past" ||
 													start_difference.same_day ||
@@ -160,8 +159,8 @@ const Stage = (props) => {
 							}}
 							required
 						/>
-					</GridItem>
-					<GridItem md={6} className={"py-8"}>
+					</Grid>
+					<Grid item  md={6} className={"py-8"}>
 						<Field
 							label="End Date"
 							name={`stages.${stage}.end_date`}
@@ -188,7 +187,6 @@ const Stage = (props) => {
 
 											if (Date.isDate(start_date_value)) {
 												start_difference = end_date_value.difference(start_date_value)
-												// console.log("start_difference", start_difference)
 												return (
 													start_difference.type === "past" ||
 													start_difference.same_day ||
@@ -202,16 +200,16 @@ const Stage = (props) => {
 							}}
 							required
 						/>
-					</GridItem>
-				</GridContainer>
-			</GridItem>
+					</Grid>
+				</Grid>
+			</Grid>
 
-			<GridItem className="flex flex-col items-center py-20 mb-12">
+			<Grid item  className="flex flex-col items-center py-20 mb-12">
 				<Button onClick={submit} disabled={!isValid} color="accent" variant="contained">
 					Ok. Ready to continue
 				</Button>
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 }
 

@@ -6,9 +6,9 @@ import { Menu, MenuItem } from "@mui/material";
 import { MoreVert as AggregateMenuIcon } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
 import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React from "react";
 import { defaults, Bar } from "react-chartjs-2";
@@ -303,15 +303,15 @@ class AggregatesBarChart extends React.Component {
 		} = this.props;
 
 		return (
-			!JSON.isEmpty(defination) && <GridContainer className={className + " p-0 m-0"}>
-				<GridItem xs={12} className="p-0 m-0">
-					<GridContainer className="p-0 m-0">
-						<GridContainer className="p-0 m-0">
+			!JSON.isEmpty(defination) && <Grid container className={className + " p-0 m-0"}>
+				<Grid item  xs={12} className="p-0 m-0">
+					<Grid container className="p-0 m-0">
+						<Grid container className="p-0 m-0">
 							{(showMenu || showTitle) && (
-								<GridItem xs={12}>
-									<GridContainer>
+								<Grid item  xs={12}>
+									<Grid container>
 										{showTitle && !showMenu && (
-											<GridItem xs={12}>
+											<Grid item  xs={12}>
 												<Typography
 
 													variant="body1"
@@ -328,11 +328,11 @@ class AggregatesBarChart extends React.Component {
 														: "Unknown"}{" "}
 													Aggregate
 												</Typography>
-											</GridItem>
+											</Grid>
 										)}
 
 										{dynamic && showMenu && (
-											<GridItem
+											<Grid item
 												className="p-0 m-0"
 												xs={12}
 											>
@@ -397,13 +397,13 @@ class AggregatesBarChart extends React.Component {
 														)
 													)}
 												</Menu>
-											</GridItem>
+											</Grid>
 										)}
-									</GridContainer>
-								</GridItem>
+									</Grid>
+								</Grid>
 							)}
 
-							<GridItem className="p-0 m-0" xs={12}>
+							<Grid item  className="p-0 m-0" xs={12}>
 								{Array.isArray(this.state.chart_data.labels) &&
 									this.state.chart_data.labels.length > 0 ? (
 									<Bar
@@ -420,7 +420,7 @@ class AggregatesBarChart extends React.Component {
 										}}
 									/>
 								) : (
-									<GridContainer
+									<Grid container
 										className="p-0 m-0"
 										justify="center"
 										alignItems="center"
@@ -446,14 +446,14 @@ class AggregatesBarChart extends React.Component {
 												: ""}{" "}
 											Aggregates
 										</Typography>
-									</GridContainer>
+									</Grid>
 								)}
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 
 						{api.complete && api.error && (
-							<GridContainer>
-								<GridItem xs={12}>
+							<Grid container>
+								<Grid item  xs={12}>
 									<Typography
 										color="error"
 										variant="body2"
@@ -462,12 +462,12 @@ class AggregatesBarChart extends React.Component {
 										{"An error occured. \n " +
 											api.error.msg}
 									</Typography>
-								</GridItem>
-							</GridContainer>
+								</Grid>
+							</Grid>
 						)}
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

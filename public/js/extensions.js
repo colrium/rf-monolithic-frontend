@@ -118,7 +118,6 @@ String.prototype.pluralize = function() {
 };
 
 String.prototype.variablelize = function(connector = "_") {
-	//console.log("connector", connector);
 	var target = this;
 	target = target.replaceAll(/([A-Z])/g, " $1");
 	target = target.trim();
@@ -256,9 +255,9 @@ Function.debounce = (func, wait, options= {leading: true, trailing: true}) => {
 		//   and not already in a timeout then the answer is: Yes
 		var callNow = options.leading && !timeout;
 
-		// This is the basic debounce behaviour where you can call this 
-		//   function several times, but it will only execute once 
-		//   [before or after imposing a delay]. 
+		// This is the basic debounce behaviour where you can call this
+		//   function several times, but it will only execute once
+		//   [before or after imposing a delay].
 		//   Each time the returned function is called, the timer starts over.
 		clearTimeout(timeout);
 
@@ -272,7 +271,7 @@ Function.debounce = (func, wait, options= {leading: true, trailing: true}) => {
 			// Check if the function already ran with the immediate flag
 			if (!options.leading) {
 				// Call the original function with apply
-				// apply lets you define the 'this' object as well as the arguments 
+				// apply lets you define the 'this' object as well as the arguments
 				//    (both captured before setTimeout)
 				func.apply(context, args);
 			}
@@ -303,7 +302,6 @@ Function.createThrottle = function (max) {
 					}).catch(err => {
 						reject(err)
 					}).finally(() => {
-						//console.log("createThrottle queue", queue);
 						throttle.current = --cur
 						if (queue.length > 0) {
 							queue.shift()()
@@ -403,7 +401,7 @@ Array.prototype.remove = function(from, to) {
 
 Array.prototype.shuffle = function() {
 	var i = this.length, j, temp;
-	if (i == 0) { 
+	if (i == 0) {
 		return this;
 	}
 	while (--i) {
@@ -469,9 +467,9 @@ Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 			else{
 				row = Object.values(row);
 			}
-			
+
 		}
-		
+
 		for (var j = 0; j < row.length; j++) {
 				var innerValue = row[j] === null || row[j] === undefined? '' : JSON.stringify(row[j]);
 				if (row[j] instanceof Date) {
@@ -479,7 +477,7 @@ Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 				}
 				else if (row[j] instanceof Object) {
 					innerValue = JSON.stringify(row[j]);
-				};				
+				};
 				//var result = innerValue.replace(/"/g, '""');
 				var result = innerValue;
 
@@ -491,9 +489,9 @@ Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 					finalVal += ',';
 				}
 				finalVal += result;
-			
+
 		}
-			
+
 		return finalVal + '\n';
 	};
 
@@ -505,7 +503,7 @@ Array.prototype.toCSV = function(filename=String.uid(25), columns=false) {
 	var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
 	if (navigator.msSaveBlob) { // IE 10+
 		navigator.msSaveBlob(blob, filename);
-	} 
+	}
 	else {
 		var link = document.createElement("a");
 		if (link.download !== undefined) { // feature detection
@@ -862,7 +860,7 @@ JSON.fromJSON = function(input) {
 	return newObject;
 };
 
-/*JSON.merge = function(a, b) {	
+/*JSON.merge = function(a, b) {
 	let merged = {};
 	if (JSON.isJSON(a) && JSON.isJSON(b)) {
 		merged = Object.assign(a, b);
@@ -1209,10 +1207,10 @@ Date.replaceChars = {
 	since: function() {
 		let startTime = this.getTime();
 		let endTime = performance.now();
-		var timeDiff = endTime - startTime; //in ms 
-		// strip the ms 
-		timeDiff /= 1000; 		  
-		// get seconds 
+		var timeDiff = endTime - startTime; //in ms
+		// strip the ms
+		timeDiff /= 1000;
+		// get seconds
 		let seconds = Math.round(timeDiff);
 
 		function secondsToDHms(secs) {
@@ -1286,110 +1284,8 @@ Date.prototype.minusMilliSeconds = function(ms) {
 
 
 
-/*Date.difference = function(date1, date2 = new Date()) {
-	
-	if (Number.isNumber(date1)) {
-		try {
-			date1 = new Date(date1);
-		} catch (e) {
-			console.log("difference date1 error", e);
-		}
-	}
-	if (Number.isNumber(date2)) {
-		try {
-			date2 = new Date(date2);
-		} catch (e) {
-			console.log("difference date2 error", e);
-		}
-	}
-	
-	var intervals = {
-		years: 0,
-		months: 0,
-		weeks: 0,
-		days: 0,
-		hours: 0,
-		minutes: 0,
-		seconds: 0,
-		milliseconds: 0,
-		direction: "forward",
-		description: "",
-	}
-
-	if ((date1 instanceof Date) && (date2 instanceof Date)) {
-		var years = 0;
-		var months = 0;
-		var weeks = 0;
-		var days = 0;
-		var hours = 0;
-		var minutes = 0;
-		var seconds = 0;
-		var milliseconds = 0;
-		var direction = date2.getTime() >= date1.getTime()? "forward" : "reverse";
-		var description = "";
-
-		var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-		if (date2.getFullYear() % 4 === 0) {
-			daysInMonth[1] = 29;
-		}
-		
-		
-		
-		years = Math.abs((date2.getFullYear() - date1.getFullYear()));
-
-		//months = date2.getDate() - date1.getMonth();
-
-		months = (years === 0? (date2.getMonth() - date1.getMonth()) : (( 11 - date1.getMonth()) +  (11 - date2.getMonth())));
-		if (years > 0 && date1.getMonth() < 6) {
-			months = (11 - date1.getMonth()) + date2.getMonth();
-		}
-		days = (months === 0? (date2.getDate() - date1.getDate()) : (( daysInMonth[date1.getMonth()] - date1.getDate()) + (daysInMonth[date2.getMonth()] - date2.getDate())));
-		
-		weeks = Math.floor((days >= 7? (days/7) : 0));
-		days = weeks > 0? (days - (weeks*7)) : days;
-		hours = ((days === 0? (date2.getHours() - date1.getHours()) : (( 23 - date1.getHours()) + (23 - date2.getHours()))));
-		minutes = ((hours === 0? (date2.getMinutes() - date1.getMinutes()) : (( 59 - date1.getMinutes()) + (59 - date2.getMinutes()))));
-		seconds = ((minutes === 0? (date2.getSeconds() - date1.getSeconds()) : (( 59 - date1.getSeconds()) + (59 - date2.getSeconds()))));
-		milliseconds = ((seconds === 0? (date2.getMilliseconds() - date1.getMilliseconds()) : (( 999 - date1.getMilliseconds()) + (599 - date1.getMilliseconds()))));
-
-		if (years > 0) {
-			description = years+" years";
-			if (years === 1) {
-				description = "last year";
-				if (months > 0) {
-					description = date1.toLocaleString;
-				}
-			}
-			
-		}
-		else  if (months > 0) {
-
-		}
-		
-			
-
-
-		intervals.years = years;
-		intervals.months = months;
-		intervals.weeks = weeks;
-		intervals.days = days;
-		intervals.hours = hours;
-		intervals.minutes = minutes;
-		intervals.seconds = seconds;
-		intervals.milliseconds = milliseconds;
-		intervals.direction = direction;
-		intervals.description = description;
-
-		console.log("date1", date1.toLocaleString());
-		console.log("date2", date2.toLocaleString());
-	}
-		
-
-	return intervals;
-};*/
-
 Date.difference = function(date1, date2 = new Date()) {
-	
+
 	if (Number.isNumber(date1)) {
 		try {
 			date1 = new Date(date1);
@@ -1400,7 +1296,7 @@ Date.difference = function(date1, date2 = new Date()) {
 			date2 = new Date(date2);
 		} catch (e) {}
 	}
-	
+
 	var intervals = {
 		years: 0,
 		months: 0,
@@ -1440,7 +1336,7 @@ Date.difference = function(date1, date2 = new Date()) {
         intervals.minutes =  Math.abs(minutes);
         intervals.seconds =  Math.abs(seconds);
     }
-		
+
 
 	return intervals;
 };

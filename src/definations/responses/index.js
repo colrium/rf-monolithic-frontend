@@ -12,8 +12,8 @@ import Button from "components/Button";
 import React, { useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
 import { context_country_data } from "config/data";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import ApiService from "services/Api";
 import compose from "recompose/compose";
 import { connect } from "react-redux";
@@ -69,11 +69,11 @@ const CountSummaryGraph = (props) => {
 	}, [isAuthenticated]);
 
 	return (
-		<GridContainer>
-			<GridItem>
+		<Grid container>
+			<Grid item >
 				{report && <Bar data={{ labels: report.labels, datasets: [{ label: "Responses count by date", data: report.data, backgroundColor: "#00AF41", hoverBackgroundColor: "#76C4D5", }] }} />}
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 }
 const DashboardCountGraph = compose(

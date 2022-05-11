@@ -1,6 +1,6 @@
 /** @format */
 
-import GridContainer from "components/Grid/GridContainer";
+import Grid from '@mui/material/Grid';
 import ScrollBars from "components/ScrollBars";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
@@ -14,7 +14,7 @@ class PageContent extends Component {
 
 		return (
 			<ScrollBars className={classes?.bodyWrapper}>
-				<GridContainer className={className}></GridContainer>
+				<Grid container className={className}></Grid>
 			</ScrollBars>
 		);
 	}

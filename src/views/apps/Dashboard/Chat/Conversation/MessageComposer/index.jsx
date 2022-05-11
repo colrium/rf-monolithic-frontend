@@ -155,12 +155,6 @@ const MessageComposer = React.forwardRef((props, ref) => {
 				// conversation_uuid: conversation?.uuid || conversation,
 				content: content,
 			}
-			// if (["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && Array.isEmpty(form_values.attachments)) {
-			// 	form_values.type = "text"
-			// 	setValue("type", "text")
-			// }
-
-			console.log("form_values", form_values)
 			const submittable =
 				(form_values.type === "text" && !String.isEmpty(content)) ||
 				(["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && !Array.isEmpty(form_values.attachments))
@@ -214,10 +208,6 @@ const MessageComposer = React.forwardRef((props, ref) => {
 		if (!isTypingRef.current) {
 			isTypingRef.current = true
 			SocketIO.emit("started-typing-message", {
-				conversation: conversationRef.current.uuid || conversationRef.current._id,
-				user: auth.user._id,
-			})
-			console.log("started-typing-message", {
 				conversation: conversationRef.current.uuid || conversationRef.current._id,
 				user: auth.user._id,
 			})

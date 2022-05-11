@@ -2,9 +2,9 @@
 import React from "react"
 import { useSelector } from "react-redux"
 import Typography from "@mui/material/Typography"
-import GridContainer from "components/Grid/GridContainer"
+import Grid from '@mui/material/Grid'
 import Card from "components/Card"
-import GridItem from "components/Grid/GridItem"
+
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
@@ -34,30 +34,30 @@ function Widget(props) {
 
 	return (
 		<Card>
-			<GridContainer className="px-8">
-				<GridItem xs={12} className="mb-2">
+			<Grid container className="px-8">
+				<Grid item  xs={12} className="mb-2">
 					<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
 						Legal
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className="px-0">
-					<GridItem xs={12} className="mb-1">
+				<Grid container className="px-0">
+					<Grid item  xs={12} className="mb-1">
 						<WysiwygEditor name="terms-of-use" label="Terms of use" multiline={true} minRows={4} />
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-1">
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="end-user-agreement" label="End user agreement" multiline={true} minRows={4} />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="privacy-policy" label="Privacy policy" multiline={true} minRows={8} />
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-1">
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="cookies-consent" label="Cookies consent" multiline={true} minRows={8} />
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Card>
 	)
 }

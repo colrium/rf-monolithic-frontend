@@ -1,7 +1,7 @@
 /** @format */
 import React, { useCallback, useMemo } from "react";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import { form as formConfig, stages } from "../config";
 import { useDidMount, usePersistentForm } from "hooks";
 const stagekeys = Object.keys(stages);
@@ -36,18 +36,18 @@ const Stages = (props) => {
     const { component: StageComponent, ...stageProps } = stages[stage] ? stages[stage] : stages[stagekeys[0]];
 
     return (
-        <GridContainer
+        <Grid container
             className="min-h-screen p-0"
 
         >
-            <GridItem className="p-0">
+            <Grid item  className="p-0">
                 {!!StageComponent && <StageComponent
                     onSubmit={handleOnStageSubmit}
                     stages={stages}
                     {...stageProps}
                 />}
-            </GridItem>
-        </GridContainer>
+            </Grid>
+        </Grid>
     )
 }
 

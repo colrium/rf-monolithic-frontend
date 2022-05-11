@@ -2,9 +2,9 @@
 import React from "react"
 import { connect } from "react-redux"
 import Typography from "@mui/material/Typography"
-import GridContainer from "components/Grid/GridContainer"
+import Grid from '@mui/material/Grid'
 import Card from "components/Card"
-import GridItem from "components/Grid/GridItem"
+
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
@@ -33,44 +33,44 @@ function Widget(props) {
 
 	return (
 		<Card>
-			<GridContainer className="px-8">
-				<GridItem xs={12} className="mb-2">
+			<Grid container className="px-8">
+				<Grid item  xs={12} className="mb-2">
 					<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
 						Social Networks
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className="px-0">
-					<GridItem xs={12} className="mb-1">
+				<Grid container className="px-0">
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="facebook" label="Facebook" />
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-1">
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="twitter" label="Twitter" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="instagram" label="Instagram" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="youtube" label="Youtube" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="linkedin" label="Linkedin" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="whatsapp" label="Whatsapp" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="instagram" label="Instagram" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="google_plus" label="Google +" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="pinterest" label="Pinterest" />
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Card>
 	)
 }

@@ -1,7 +1,7 @@
 /** @format */
 import React, { useCallback, useMemo, useRef } from "react";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
@@ -27,21 +27,21 @@ const Stage = (props) => {
 
 
     return (
-		<GridContainer>
-			{/* {!!title && <GridItem className="flex flex-row items-start">
+		<Grid container>
+			{/* {!!title && <Grid item  className="flex flex-row items-start">
                 <Typography variant="h1" className="flex-1">
                     {title}
                 </Typography>
-            </GridItem>} */}
+            </Grid>} */}
 			{!!description && (
-				<GridItem className="flex flex-col items-start py-8">
+				<Grid item  className="flex flex-col items-start py-8">
 					<Typography variant="body2">{description}</Typography>
-				</GridItem>
+				</Grid>
 			)}
 
-			<GridItem className={"py-12"}>
-				<GridContainer>
-					<GridItem md={12} className={"py-8"}>
+			<Grid item  className={"py-12"}>
+				<Grid container>
+					<Grid item  md={12} className={"py-8"}>
 						<FilePicker
 							name={`stages.${stage}.questions`}
 							label="Upload Questions"
@@ -60,9 +60,9 @@ const Stage = (props) => {
 							}}
 							required
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem md={12} className={"py-8"}>
+					<Grid item  md={12} className={"py-8"}>
 						<RadioGroup
 							name={`stages.${stage}.data_gathering_format`}
 							label="Data gathering format"
@@ -80,9 +80,9 @@ const Stage = (props) => {
 							}}
 							required
 						/>
-					</GridItem>
+					</Grid>
 
-					{/* <GridItem md={12} className={"py-8"}>
+					{/* <Grid item  md={12} className={"py-8"}>
                         <MultiSelectInput
                             label="Countries"
                             value={values.countries}
@@ -91,16 +91,16 @@ const Stage = (props) => {
                             options={{ KE: "Kenya", }}
                             required
                         />
-                    </GridItem>*/}
-				</GridContainer>
-			</GridItem>
+                    </Grid>*/}
+				</Grid>
+			</Grid>
 
-			<GridItem className="flex flex-col items-center  py-8">
+			<Grid item  className="flex flex-col items-center  py-8">
 				<Button onClick={submit} disabled={!isValid} color="accent" variant="contained">
 					Now Select your Target
 				</Button>
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 }
 

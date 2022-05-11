@@ -1,8 +1,8 @@
 /** @format */
 
 import { app } from "assets/jss/app-theme";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
@@ -67,14 +67,14 @@ const Page = (props) => {
 
 
 		return (
-			<GridContainer className="m-0 p-0">
-				<GridItem xs={12}>
+			<Grid container className="m-0 p-0">
+				<Grid item  xs={12}>
 					<GooglePlacesAutocomplete
 								variant="outlined"
 								margin="dense"
 					/>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 
 }

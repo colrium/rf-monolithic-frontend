@@ -23,8 +23,6 @@ import { theme } from "assets/jss/app-theme"
 import { useDeepMemo } from "hooks"
 //
 import Routes from "routes"
-import "assets/css/tui-calendar.min.css"
-import "react-awesome-query-builder/lib/css/styles.css"
 import "react-virtualized/styles.css"
 
 const jss = createJss()
@@ -68,7 +66,6 @@ const App = props => {
 				MuiButton: {
 					styleOverrides: style => {
 						const { ownerState } = style
-						console.log("MuiButton styleOverrides style", style)
 						return {
 							...(ownerState.rounded && {
 								backgroundColor: "#202020",

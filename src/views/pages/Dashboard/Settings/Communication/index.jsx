@@ -2,9 +2,9 @@
 import React from "react"
 import { useSelector } from "react-redux"
 import Typography from "@mui/material/Typography"
-import GridContainer from "components/Grid/GridContainer"
+import Grid from '@mui/material/Grid'
 import Card from "components/Card"
-import GridItem from "components/Grid/GridItem"
+
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
 
@@ -35,53 +35,53 @@ function Widget() {
 
 	return (
 		<Card>
-			<GridContainer className="px-8">
-				<GridItem xs={12} className="mb-2">
+			<Grid container className="px-8">
+				<Grid item  xs={12} className="mb-2">
 					<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
 						Communication settings
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="my-4">
+				<Grid item  xs={12} className="my-4">
 					<Typography variant="h6" sx={{ color: theme => theme.palette.text.disabled }}>
 						Outgoing Mail (SMTP)
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridContainer className="px-0">
-					<GridItem xs={12} className="mb-1">
+				<Grid container className="px-0">
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="smtp_host" label="Host" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="smtp_user" label="SMTP Email Address" type="email" />
-					</GridItem>
-					<GridItem xs={12} className="mb-1">
+					</Grid>
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="smtp_password" label="SMTP Password" type="password" />
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12}>
+					<Grid item  xs={12}>
 						<Checkbox name="smtp_secure" label="Secure SMTP" />
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-1">
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="smtp_sender_name" label="SMTP Sender Name" debounce={1000} />
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-1">
+					<Grid item  xs={12} className="mb-1">
 						<TextField name="courierAuthorizationToken" label="Courier Authorization Token" type="password" debounce={1000} />
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-1">
+					<Grid item  xs={12} className="mb-1">
 						<Checkbox name="smtp_pool" label="SMTP Pool" />
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="my-4">
+					<Grid item  xs={12} className="my-4">
 						<Typography variant="h6" sx={{ color: theme => theme.palette.text.disabled }}>
 							Password recovery template
 						</Typography>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Card>
 	)
 }

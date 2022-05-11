@@ -28,7 +28,6 @@ export default function ensureMessage(message, persist = true) {
 				}
 			}
 			if (JSON.isJSON(message)) {
-				console.log("ensureMessage message", message)
 				const { conversation, sender, created_on } = message
 				const sender_id = sender?._id || sender
 				const is_outgoing = sender_id === auth.user?._id

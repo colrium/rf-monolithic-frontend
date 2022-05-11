@@ -10,9 +10,9 @@ import ListItemText from "@mui/material/ListItemText";
 
 //
 import ApiService from "services/Api";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
@@ -209,78 +209,78 @@ class ListView extends React.Component {
 	render() {
 		const { defination, service, onClickEntry } = this.props;
 		return (
-			<GridContainer className={"p-0"}>
-				<GridItem className="p-0 m-0" xs={12}>
+			<Grid container className={"p-0"}>
+				<Grid item  className="p-0 m-0" xs={12}>
 					{this.state.loading ? (
-						<GridContainer>
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+						<Grid container>
+							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-3/12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-8/12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-4/12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-3/12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-5/12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-9/12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-4/12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-3/12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-4/12" />
 								</div>
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 					) : (
-						<GridContainer className="p-0 m-0">
+						<Grid container className="p-0 m-0">
 							{this.state.load_error ? (
-								<GridContainer>
-									<GridItem xs={12}>
+								<Grid container>
+									<Grid item  xs={12}>
 										<Typography
 											color="error"
 											variant="h1"
@@ -288,8 +288,8 @@ class ListView extends React.Component {
 										>
 											<Icon fontSize="large">error</Icon>
 										</Typography>
-									</GridItem>
-									<GridItem xs={12}>
+									</Grid>
+									<Grid item  xs={12}>
 										<Typography
 											color="error"
 											variant="body1"
@@ -303,15 +303,15 @@ class ListView extends React.Component {
 											<br />
 											{this.state.load_error.msg}
 										</Typography>
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							) : (
-								<GridContainer className="p-0 m-0">
-									<GridItem className="p-0 m-0" xs={12}>
+								<Grid container className="p-0 m-0">
+									<Grid item  className="p-0 m-0" xs={12}>
 										{Array.isArray(this.state.records) &&
 											this.state.records.length > 0 ? (
-											<GridContainer className="p-0 m-0">
-												<GridItem xs={12}>
+											<Grid container className="p-0 m-0">
+												<Grid item  xs={12}>
 													<List
 														className={"p-0 transparent-bg"}
 													>
@@ -360,10 +360,10 @@ class ListView extends React.Component {
 															)
 														)}
 													</List>
-												</GridItem>
-											</GridContainer>
+												</Grid>
+											</Grid>
 										) : (
-											<GridContainer
+											<Grid container
 												className="p-0 m-0"
 												justify="center"
 												alignItems="center"
@@ -379,15 +379,15 @@ class ListView extends React.Component {
 												>
 													No{defination?.label || "Records"} found
 												</Typography>
-											</GridContainer>
+											</Grid>
 										)}
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							)}
-						</GridContainer>
+						</Grid>
 					)}
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 }

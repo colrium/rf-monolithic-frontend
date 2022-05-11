@@ -50,7 +50,6 @@ const BlockTypeComponent = props => {
 		id: String.uuid(),
 	})
 
-	console.log("BlockTypeComponent props ", props)
 
 	const handleOnPopoverOpen = event => {
 		setState({ open: true, popOverAnchorEl: event.currentTarget })

@@ -1,7 +1,7 @@
 /** @format */
 import React, { useCallback, useRef, useMemo } from "react";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Chip from '@mui/material/Chip';

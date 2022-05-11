@@ -578,12 +578,10 @@ export default {
 							},
 						})
 							.then(res => {
-								console.log("possibilities", res)
 								let possibilitiesData = {}
 								if (Array.isArray(res?.body?.data)) {
 									possibilitiesData = res.body.data.reduce((acc, curr) => (acc[curr.name] = curr.name), {})
 								}
-								console.log("possibilitiesData", possibilitiesData)
 								return possibilitiesData
 							})
 							.catch(err => {

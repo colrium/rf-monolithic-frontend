@@ -4,8 +4,8 @@
 import { colors } from "assets/jss/app-theme";
 //
 import Card from "components/Card";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import LazyModule from "components/LazyModule";
 import PropTypes from "prop-types";
 import React from "react";
@@ -147,9 +147,9 @@ class Page extends React.Component {
 
 
 		return (
-			<GridContainer >
+			<Grid container >
 
-				<GridItem xs={12} lg={this.state.mainMapInFullWidth ? 12 : 7} className="p-2">
+				<Grid item  xs={12} lg={this.state.mainMapInFullWidth ? 12 : 7} className="p-2">
 					<Card>
 						<LazyModule
 							resolve={() =>
@@ -199,16 +199,16 @@ class Page extends React.Component {
 							] : []}
 						/>
 					</Card>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-2">
+				<Grid item  xs={12} className="p-2">
 					<Card>
 						<ResponsesCountsReport />
 					</Card>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} lg={this.state.mainMapInFullWidth ? 12 : 5} className="p-2">
-					<GridContainer className="p-0 m-0">
+				<Grid item  xs={12} lg={this.state.mainMapInFullWidth ? 12 : 5} className="p-2">
+					<Grid container className="p-0 m-0">
 						<LazyModule
 							resolve={() =>
 								import(
@@ -232,8 +232,8 @@ class Page extends React.Component {
 							contexts={this.state.counts_overview_contexts}
 							wrapperSize={this.state.mainMapInFullWidth ? 12 : 5}
 						/>
-					</GridContainer>
-					<GridContainer className="p-0 m-0">
+					</Grid>
+					<Grid container className="p-0 m-0">
 						<LazyModule
 							resolve={() =>
 								import(
@@ -263,10 +263,10 @@ class Page extends React.Component {
 							chartType={"bar"}
 							contexts={["responses"]}
 						/>
-					</GridContainer>
-				</GridItem>
+					</Grid>
+				</Grid>
 
-				<GridItem xs={12} className="p-2">
+				<Grid item  xs={12} className="p-2">
 					<LazyModule
 						resolve={() =>
 							import(
@@ -295,10 +295,10 @@ class Page extends React.Component {
 						]}
 						gridSize={4}
 					/>
-				</GridItem>
+				</Grid>
 
 
-			</GridContainer>
+			</Grid>
 		);
 	}
 }

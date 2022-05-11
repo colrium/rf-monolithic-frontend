@@ -4,10 +4,10 @@ import { Icon } from "@mui/material";
 
 //
 import Calendar from "components/Calendar";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import ProgressIndicator from "components/ProgressIndicator";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React from "react";
 //Redux imports
@@ -220,28 +220,28 @@ class CalendarView extends React.Component {
 	render() {
 
 		return (
-			<GridContainer>
+			<Grid container>
 				{this.state.defination && (
-					<GridItem className="p-0 m-0" xs={12}>
+					<Grid item  className="p-0 m-0" xs={12}>
 						{this.state.loading ? (
-							<GridContainer
+							<Grid container
 								justify="center"
 								alignItems="center"
 							>
-								<GridItem xs={1}>
+								<Grid item  xs={1}>
 									<ProgressIndicator
 										size={24}
 										thickness={4}
 										color="secondary"
 										disableShrink
 									/>
-								</GridItem>
-							</GridContainer>
+								</Grid>
+							</Grid>
 						) : (
-							<GridContainer className="p-0 m-0">
+							<Grid container className="p-0 m-0">
 								{this.state.load_error ? (
-									<GridContainer>
-										<GridItem xs={12}>
+									<Grid container>
+										<Grid item  xs={12}>
 											<Typography
 												color="error"
 												variant="h1"
@@ -251,8 +251,8 @@ class CalendarView extends React.Component {
 													error
 												</Icon>
 											</Typography>
-										</GridItem>
-										<GridItem xs={12}>
+										</Grid>
+										<Grid item  xs={12}>
 											<Typography
 												color="error"
 												variant="body1"
@@ -265,17 +265,17 @@ class CalendarView extends React.Component {
 												<br />
 												{this.state.load_error.msg}
 											</Typography>
-										</GridItem>
-									</GridContainer>
+										</Grid>
+									</Grid>
 								) : (
-									<GridContainer className="p-0 m-0">
-										<GridItem className="p-0 m-0" xs={12}>
+									<Grid container className="p-0 m-0">
+										<Grid item  className="p-0 m-0" xs={12}>
 											{Array.isArray(
 												this.state.records
 											) &&
 												this.state.records.length > 0 ? (
-												<GridContainer className="p-0 m-0">
-													<GridItem xs={12}>
+												<Grid container className="p-0 m-0">
+													<Grid item  xs={12}>
 														<Calendar
 															icon={
 																this.state
@@ -315,10 +315,10 @@ class CalendarView extends React.Component {
 																	.handleDeleteItemConfirm
 															}
 														/>
-													</GridItem>
-												</GridContainer>
+													</Grid>
+												</Grid>
 											) : (
-												<GridContainer
+												<Grid container
 													className="p-0 m-0"
 													justify="center"
 													alignItems="center"
@@ -343,16 +343,16 @@ class CalendarView extends React.Component {
 															: "Records"}{" "}
 														found
 													</Typography>
-												</GridContainer>
+												</Grid>
 											)}
-										</GridItem>
-									</GridContainer>
+										</Grid>
+									</Grid>
 								)}
-							</GridContainer>
+							</Grid>
 						)}
-					</GridItem>
+					</Grid>
 				)}
-			</GridContainer>
+			</Grid>
 		);
 	}
 }

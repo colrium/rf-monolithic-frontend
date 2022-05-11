@@ -12,8 +12,8 @@ import Box from "@mui/material/Box"
 import { Footer, Sidebar, Topbar } from "./components"
 
 import { width as drawerWidth } from "config/ui/drawer"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 import ActionDialog from "components/ActionDialog"
 import ComposeEmailDialog from "components/ComposeEmailDialog"
 import { NotificationsQueueProvider } from "contexts"
@@ -105,15 +105,15 @@ const Dashboard = props => {
 						}}
 					/> */}
 
-				<GridContainer
+				<Grid container
 					sx={{
 						backgroundColor: theme.palette.background.default,
 						color: theme.palette.text.primary,
 					}}
 					className={"absolute top-20 left-0 right-0"}
 				>
-					<GridItem xs={12}>{children}</GridItem>
-				</GridContainer>
+					<Grid item  xs={12}>{children}</Grid>
+				</Grid>
 				<ActionDialog />
 				<ComposeEmailDialog />
 			</Box>

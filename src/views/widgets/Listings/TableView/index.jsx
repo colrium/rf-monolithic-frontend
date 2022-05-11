@@ -6,9 +6,9 @@ import Menu from "@mui/material/Menu";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import MenuItem from "@mui/material/MenuItem";
 import Avatar from "components/Avatar";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import { formats } from "config/data";
 import PropTypes from "prop-types";
@@ -330,13 +330,11 @@ const TableView = props => {
 		parseColumns()
 		loadData(true)
 	}, [defination])
-	// console.log(" data", data)
-	// console.log(" pagination", pagination)
 
 
 	return (
-		<GridContainer className={"p-0"}>
-			<GridItem className="p-0 m-0" xs={12}>
+		<Grid container className={"p-0"}>
+			<Grid item  className="p-0 m-0" xs={12}>
 				<DataTable
 					rows={Array.isArray(state.data) ? state.data : []}
 					totalCount={state.count}
@@ -348,7 +346,6 @@ const TableView = props => {
 						loadData()
 					}}
 					onRowsPerPageChange={event => {
-						// console.log("event", event)
 						queryRef.current = { ...queryRef.current, rpp: event?.target?.value || 10, pagination: event?.target?.value || 10 }
 						loadData()
 					}}
@@ -357,8 +354,8 @@ const TableView = props => {
 					page={state.page - 1}
 					rowsPerPage={queryRef.current?.rpp || queryRef.current?.pagination || 10}
 				/>
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 };
 TableView.propTypes = {

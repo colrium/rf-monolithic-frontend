@@ -3,8 +3,8 @@
 import Button from "@mui/material/Button";
 
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import PropTypes from "prop-types";
 import React from "react";
 import lodash from "lodash";
@@ -227,8 +227,6 @@ class ListingView extends React.Component {
 
 		this.handleOnRecordsPerPageChanged = this.handleOnRecordsPerPageChanged.bind(this);
 		this.handleOnQueryBuilderChange = this.handleOnQueryBuilderChange.bind(this);
-
-		console.log("app?.preferences?.data?.pagination", app?.preferences?.data?.pagination)
 	}
 
 	componentDidMount() {
@@ -1121,7 +1119,6 @@ class ListingView extends React.Component {
 	}
 
 	handleOnQueryBuilderChange(new_value) {
-		// console.log("handleOnQueryBuilderChange new_value", new_value)
 		this.setState(prevState => {
 			return {
 				query: {
@@ -1153,10 +1150,10 @@ class ListingView extends React.Component {
 		const { view, queryBuilderProps } = this.state
 
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridContainer className="p-0 m-0">
+			<Grid container className="p-0 m-0">
+				<Grid container className="p-0 m-0">
 					{this.state.showViewOptions && (
-						<GridItem sm={12} md={8}>
+						<Grid item  sm={12} md={8}>
 							{Object.entries(this.state.views).map(
 								([name, label], index) => (
 									<Button
@@ -1175,14 +1172,14 @@ class ListingView extends React.Component {
 									</Button>
 								)
 							)}
-						</GridItem>
+						</Grid>
 					)}
 					{this.state.showAddBtn &&
 						defination &&
 						!defination?.access?.actions?.create?.restricted(
 							auth.user
 						) && (
-							<GridItem
+							<Grid item
 								sm={12}
 								lg={this.state.showViewOptions ? 4 : 12}
 								className="flex flex-row-reverse"
@@ -1192,21 +1189,21 @@ class ListingView extends React.Component {
 										variant={"text"}>
 										Create New
 									</Button>
-							</GridItem>
+							</Grid>
 						)}
-				</GridContainer>
+				</Grid>
 
-				<GridContainer className="p-1 m-0">
+				<Grid container className="p-1 m-0">
 					{showSorter && view !== "googlemapview" && (
-						<GridItem xs={12} className="p-0 m-0 mb-2">
+						<Grid item  xs={12} className="p-0 m-0 mb-2">
 								<QueryBuilder
 									onChange={this.handleOnQueryBuilderChange}
 									{...queryBuilderProps}
 								/>
-						</GridItem>
+						</Grid>
 					)}
 
-					<GridItem xs={12} className="p-0 m-0">
+					<Grid item  xs={12} className="p-0 m-0">
 						{view == "tableview" && (
 							<TableView
 								defination={defination}
@@ -1254,12 +1251,12 @@ class ListingView extends React.Component {
 								onClickEntry={onClickEntry}
 							/>
 						)}
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
 				{showPagination && view != "googlemapview" && view != "tableview" && (
-					<GridContainer className="p-0 m-0 mb-4">
-						<GridItem
+					<Grid container className="p-0 m-0 mb-4">
+						<Grid item
 							xs={12}
 							className="p-2 flex items-center justify-center">
 							<TablePagination
@@ -1300,10 +1297,10 @@ class ListingView extends React.Component {
 									toolbar: "flex-col-reverse px-2",
 								}}
 							/>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 				)}
-			</GridContainer>
+			</Grid>
 		);
 	}
 }

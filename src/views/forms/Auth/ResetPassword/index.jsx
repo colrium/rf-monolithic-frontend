@@ -110,8 +110,6 @@ const AuthForm = React.forwardRef((props, ref) => {
 		// resetValues()
 	})
 
-	// console.log("formState.errors", formState.errors)
-
 	return (
 		<Grid container {...rest} component="form" onSubmit={submit} ref={ref}>
 			<Grid item xs={12} className="p-4 md:pb-8 text-center">

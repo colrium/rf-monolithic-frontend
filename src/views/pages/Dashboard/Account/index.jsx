@@ -5,8 +5,8 @@
 //
 import { colors } from "assets/jss/app-theme";
 // Material components
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
@@ -37,25 +37,25 @@ class Account extends Component {
 	render() {
 
 		return (
-			<GridContainer>
-				<GridContainer>
-					<GridItem xs={12}>
+			<Grid container>
+				<Grid container>
+					<Grid item  xs={12}>
 						<Profile />
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
-				<GridContainer>
-					<GridItem xs={12}>
+				<Grid container>
+					<Grid item  xs={12}>
 						<AccountProfile />
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
-				<GridContainer>
-					<GridItem xs={12}>
+				<Grid container>
+					<Grid item  xs={12}>
 						<AccountDetails />
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }
