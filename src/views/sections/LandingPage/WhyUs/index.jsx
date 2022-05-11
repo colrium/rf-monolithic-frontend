@@ -58,7 +58,7 @@ const SectionComponent = (props) => {
 
 
 	return (
-		<Section className={"p-0 min-h-screen"} id="why-us" sx={{ backgroundColor: theme => theme.palette.background.paper }}>
+		<Section className={"p-0 min-h-screen pb-16"} id="why-us" sx={{ backgroundColor: theme => theme.palette.background.paper }}>
 			<GridContainer className={"p-0"}>
 				<GridItem xs={12} md={12} className="p-0 pb-8">
 					<GridContainer className={"p-0"}>
@@ -82,7 +82,7 @@ const SectionComponent = (props) => {
 								</Typography>
 							</Box>
 
-							<Typography variant="subtitle2">
+							<Typography className="flex-1" variant="subtitle2">
 								Swift understanding of people's preferences, attitudes and behaviours
 							</Typography>
 						</GridItem>
@@ -99,7 +99,9 @@ const SectionComponent = (props) => {
 								</Typography>
 							</Box>
 
-							<Typography variant="subtitle2">High quality empirical data</Typography>
+							<Typography className="flex-1" variant="subtitle2">
+								High quality empirical data
+							</Typography>
 						</GridItem>
 
 						<GridItem xs={12} className="p-0 mb-2 flex flex-row items-center">
@@ -113,7 +115,9 @@ const SectionComponent = (props) => {
 									3
 								</Typography>
 							</Box>
-							<Typography variant="subtitle2">Real time results</Typography>
+							<Typography className="flex-1" variant="subtitle2">
+								Real time results
+							</Typography>
 						</GridItem>
 
 						<GridItem xs={12} className="p-0  mb-2 flex flex-row items-center">
@@ -127,7 +131,9 @@ const SectionComponent = (props) => {
 									4
 								</Typography>
 							</Box>
-							<Typography variant="subtitle2">Ethical sourcing</Typography>
+							<Typography className="flex-1" variant="subtitle2">
+								Ethical sourcing
+							</Typography>
 						</GridItem>
 
 						<GridItem xs={12} className="p-0 mb-2 flex flex-row items-center">
@@ -141,7 +147,9 @@ const SectionComponent = (props) => {
 									5
 								</Typography>
 							</Box>
-							<Typography variant="subtitle2">Accessible pricing</Typography>
+							<Typography className="flex-1" variant="subtitle2">
+								Accessible pricing
+							</Typography>
 						</GridItem>
 					</GridContainer>
 				</GridItem>
@@ -197,7 +205,7 @@ const SectionComponent = (props) => {
 								1
 							</Typography>
 						</Box>
-						<Typography variant="subtitle2">
+						<Typography className="flex-1" variant="subtitle2">
 							We work fast and accurately to provide understanding where few others can, enabled by our network of primary
 							data collectors
 						</Typography>
@@ -214,7 +222,7 @@ const SectionComponent = (props) => {
 								2
 							</Typography>
 						</Box>
-						<Typography variant="subtitle2">
+						<Typography className="flex-1" variant="subtitle2">
 							We provide flexibility and full transparency to adapt to the needs of your project during the collection
 							process.
 						</Typography>
@@ -231,7 +239,7 @@ const SectionComponent = (props) => {
 								3
 							</Typography>
 						</Box>
-						<Typography variant="subtitle2">
+						<Typography className="flex-1" variant="subtitle2">
 							We offer an A-Z service including collection design, large-scale field operation, data quality assurance, and
 							annotation.
 						</Typography>

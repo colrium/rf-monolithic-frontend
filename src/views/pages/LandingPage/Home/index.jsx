@@ -11,7 +11,7 @@ import Grid from "@mui/material/Grid"
 
 // Sections for this page
 import JumbotronSection from "views/sections/LandingPage/Jumbotron";
-import SignupForm from "views/forms/Auth/Signup"
+import SignupSection from "views/sections/LandingPage/Signup"
 import CommisionSurveySection from "views/sections/LandingPage/CommisionSurvey"
 import ProjectComposerSection from "views/sections/LandingPage/ProjectComposer"
 const styles = theme => ({})
@@ -41,27 +41,8 @@ class Page extends React.Component {
 					<CommisionSurveySection />
 				</Grid>
 
-				<Grid container className={"p-0 md:px-0"} id="get-started">
-						<Grid container sx={{}} className={"p-0 xs:px-4 md:px-32  py-16"}>
-							<Grid item xs={12} className={`flex flex-col py-4`}>
-								<Typography variant="h3" color="text.secondary" className={`mb-4`}>
-									Sign up to start
-								</Typography>
-								<Typography variant="body1" color="text.disabled">
-									To join our Community, schedule a demo or start a project, please complete the following sign -up form.
-								</Typography>
-							</Grid>
-							<Grid item xs={12}>
-								<SignupForm
-									googleLoginProps={{
-										sx: {
-											backgroundColor: theme => theme.palette.action.hover,
-											color: theme => theme.palette.google.main,
-										},
-									}}
-								/>
-							</Grid>
-						</Grid>
+				<Grid container id="get-started">
+					<SignupSection />
 				</Grid>
 			</Grid>
 		)

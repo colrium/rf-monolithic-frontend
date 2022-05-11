@@ -81,7 +81,7 @@ function Footer(props) {
 
 	return (
 		<Box
-			className={`w-full pt-8 `}
+			className={`w-full pt-8`}
 			sx={{
 				backgroundColor: theme => theme.palette.accent.main,
 				color: theme => theme.palette.background.paper,
@@ -109,7 +109,7 @@ function Footer(props) {
 				<Intercom appID={intercom.app.id} {...intercom.app.user} />
 				<GridContainer className={className}>
 					{!columnWidgets && (
-						<GridContainer className=" md:px-32 ">
+						<GridContainer className="px-4 md:px-32 ">
 							<GridItem sm={12} lg={5} className="p-0 m-0 mb-8">
 								<GridContainer className="p-0 m-0">
 									<GridItem sm={12} className="p-0 m-0">
@@ -228,7 +228,7 @@ function Footer(props) {
 								</GridContainer>
 							</GridItem>
 
-							<GridItem md={5} className="p-0 m-0 mb-8">
+							<GridItem md={5} className="p-0 m-0 mb-8 px-4">
 								<GridContainer className="p-0 m-0">
 									<GridItem sm={12} md={8} className="p-0">
 										<Typography className="w-full pl-0 block pb-4" variant="body2">
@@ -330,12 +330,16 @@ function Footer(props) {
 
 				{!absoluteFooter && (
 					<GridContainer
-						className={" md:px-32"}
+						className={"sm:px-8 md:px-32"}
 						sx={{
 							background: "rgba(0,0,0, 0.3)",
 						}}
 					>
-						<GridItem className="py-2 pl-0 flex sm:flex-col lg:flex-row items-center" sm={12} md={6}>
+						<GridItem
+							className="py-2 pl-0 flex sm:flex-col lg:flex-row justify-center md:justify-start items-center"
+							xs={12}
+							md={3}
+						>
 							<Link className="pl-0 block" to={"/home".toUriWithLandingPagePrefix()} color="inherit">
 								<Button color="inherit">
 									{
@@ -347,17 +351,17 @@ function Footer(props) {
 									}
 								</Button>
 							</Link>
-							{/*<Typography
-							className="mt-2 mb-1 pl-2 pr-2"
-							variant="body1"
+						</GridItem>
+						<GridItem
+							className="py-2 pl-0 flex sm:flex-col lg:flex-row justify-center md:justify-start items-center"
+							xs={12}
+							md={3}
 						>
-							&copy; {settings.general["copyright"].replaceAll("YYYY", new Date().format("Y"))}
-						</Typography>*/}
 							<Typography className="mt-2 mb-1 pl-2 pr-2" variant="body1">
 								{settings.general["trademark"]}
 							</Typography>
 						</GridItem>
-						<GridItem className="p-0 pl-4 block flex flex-row items-center justify-center" sm={12} md={3}>
+						<GridItem className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
 							<Link className="pl-0 block" to={"/privacy-policy".toUriWithLandingPagePrefix()} color="inherit">
 								<Button color="inherit" className="capitalize">
 									Terms.
@@ -365,7 +369,7 @@ function Footer(props) {
 							</Link>
 						</GridItem>
 
-						<GridItem className="p-0 pl-4 block flex flex-row items-center justify-center" sm={12} md={3}>
+						<GridItem className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
 							<Link className="pl-0 block" to={"/privacy-policy".toUriWithLandingPagePrefix()} color="inherit">
 								<Button color="inherit" className=" capitalize">
 									Privacy.

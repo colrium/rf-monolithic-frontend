@@ -1,15 +1,15 @@
+/** @format */
 
-import {colors} from "assets/jss/app-theme.jsx";
-import PropTypes from "prop-types";
-import React, {useState, useEffect, useRef, useCallback} from "react";
-import Typography from '@mui/material/Typography';
-import {makeStyles} from '@mui/styles';
-import {useMotionValue, useTransform} from "framer-motion";
+import { colors } from "assets/jss/app-theme.jsx"
+import PropTypes from "prop-types"
+import React, { useState, useEffect, useRef, useCallback } from "react"
+import Typography from "@mui/material/Typography"
+import { makeStyles } from "@mui/styles"
+import { useMotionValue, useTransform } from "framer-motion"
 import ViewPortSensor from "components/ViewPortSensor"
-import {useSetState} from "hooks";
+import { useSetState } from "hooks"
 
-
-const useStyles = makeStyles( theme => ( {
+const useStyles = makeStyles(theme => ({
 	mapWrapper: {
 		position: "relative",
 		height: "100%",
@@ -28,12 +28,14 @@ const useStyles = makeStyles( theme => ( {
 				opacity: "1",
 				"&:nth-child(1)": {
 					fill: colors.hex.primary,
-					boxShadow: "0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0,0,0, 0.2)",
+					boxShadow:
+						"0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0,0,0, 0.2)",
 					opacity: "1",
 				},
 				"&:nth-child(2)": {
 					fill: colors.hex.secondary,
-					boxShadow: "0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0,0,0, 0.2)",
+					boxShadow:
+						"0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0,0,0, 0.2)",
 					opacity: "1",
 				},
 			},
@@ -45,11 +47,13 @@ const useStyles = makeStyles( theme => ( {
 				//animationTimingFunction: "ease-in-out",
 				"&:nth-child(1)": {
 					fill: theme.palette.text.primary,
-					boxShadow: "0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0,0,0, 0.2)",
+					boxShadow:
+						"0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0,0,0, 0.2)",
 				},
 				"&:nth-child(2)": {
 					fill: theme.palette.text.primary,
-					boxShadow: "0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0,0,0, 0.2)",
+					boxShadow:
+						"0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0,0,0, 0.2)",
 				},
 			},
 		},
@@ -69,7 +73,7 @@ const useStyles = makeStyles( theme => ( {
 		animation: "popupDisappearAnim 0.1s",
 		animationDelay: "0.15s",
 		animationIterationCount: 1,
-		fontFamily: 'Avenir',
+		fontFamily: "Avenir",
 		background: theme.palette.secondary.main,
 		"&.active": {
 			animation: "popupAppearAnim 0.1s ease-in-out",
@@ -142,17 +146,15 @@ const useStyles = makeStyles( theme => ( {
 			opacity: "0.8",
 		},
 	},
-} ) );
-
-
+}))
 
 const animations = [
-
 	{
 		polygonIndex: 315,
 		message: "Accurate",
 		presenceTitle: "Accuracy",
-		presenceContent: "Data that is error-free and exact. Accuracy is achieved when a measured value matches the actual (true) value and it contains no mistakes, such as outdated information, redundancies, and typos. Our goal is to continually increase the accuracy of your data, even as your datasets grow in size.",
+		presenceContent:
+			"Data that is error-free and exact. Accuracy is achieved when a measured value matches the actual (true) value and it contains no mistakes, such as outdated information, redundancies, and typos. Our goal is to continually increase the accuracy of your data, even as your datasets grow in size.",
 		color: "red",
 		width: 120,
 	},
@@ -168,7 +170,8 @@ const animations = [
 		polygonIndex: 231,
 		message: "Remote",
 		presenceTitle: "Remotely Collected",
-		presenceContent: "Realfield supplies high quality, primary citizen and consumer data, both quantitative and qualitative, collected through observation, interviews, questionnaires, schedules, and experiments.",
+		presenceContent:
+			"Realfield supplies high quality, primary citizen and consumer data, both quantitative and qualitative, collected through observation, interviews, questionnaires, schedules, and experiments.",
 		color: "red",
 		width: 100,
 	},
@@ -184,7 +187,8 @@ const animations = [
 		polygonIndex: 26,
 		message: "Timely",
 		presenceTitle: "Timeliness",
-		presenceContent: "Realfield offers real time data ensuring its relevance and fitness for purpose. Data is available and accurate. It’s important to collect data in a timely manner in order to ensure that it is relevant and fit for purpose in analysis and the generation of insights",
+		presenceContent:
+			"Realfield offers real time data ensuring its relevance and fitness for purpose. Data is available and accurate. It’s important to collect data in a timely manner in order to ensure that it is relevant and fit for purpose in analysis and the generation of insights",
 		color: "red",
 		width: 100,
 	},
@@ -192,7 +196,8 @@ const animations = [
 		polygonIndex: 41,
 		message: "Reliable",
 		presenceTitle: "Complete & Reliable",
-		presenceContent: "Data is considered complete when records are full and contain enough information to draw conclusions. Tracking data quality involves finding fields that contain missing or incomplete values. All data entries must be complete in order to compose a high-quality data set.",
+		presenceContent:
+			"Data is considered complete when records are full and contain enough information to draw conclusions. Tracking data quality involves finding fields that contain missing or incomplete values. All data entries must be complete in order to compose a high-quality data set.",
 		color: "red",
 		width: 100,
 	},
@@ -200,7 +205,8 @@ const animations = [
 		polygonIndex: 116,
 		message: "Responsible",
 		presenceTitle: "Reliable and consistent",
-		presenceContent: "Data reliably free of contradictions in your databases. This means that if two values are examined from separate data sets, they will match or align. ",
+		presenceContent:
+			"Data reliably free of contradictions in your databases. This means that if two values are examined from separate data sets, they will match or align. ",
 		color: "red",
 		width: 120,
 	},
@@ -208,19 +214,19 @@ const animations = [
 		polygonIndex: 10,
 		message: "Ethical",
 		presenceTitle: "Data Ethics",
-		presenceContent: "Realfield’s deep commitment to ethical data collection safeguards your reputation, your project and your insights.",
+		presenceContent:
+			"Realfield’s deep commitment to ethical data collection safeguards your reputation, your project and your insights.",
 		color: "red",
 		width: 100,
 	},
-];
+]
 
-
-const AnimatedChevronMap = ( props ) => {
-	const classes = useStyles();
-	const {mapcolor, popUpStyle, interval} = props;
-	const mapIdSuffix = String.uid( 11 );
-	const popUpIdPrefix = String.uid( 11 );
-	const [state, setState, getState] = useSetState( {
+const AnimatedChevronMap = props => {
+	const classes = useStyles()
+	const { mapcolor, popUpStyle, interval } = props
+	const mapIdSuffix = String.uid(11)
+	const popUpIdPrefix = String.uid(11)
+	const [state, setState, getState] = useSetState({
 		mapContainer: null,
 		mapPopup: null,
 		allPoints: [],
@@ -232,53 +238,41 @@ const AnimatedChevronMap = ( props ) => {
 		started: false,
 		paused: true,
 		presenceOpen: false,
-	} )
+	})
 
-	const [allPoints, setAllPoints] = useState( [] );
-	const [points, setPoints] = useState( [] );
-	const [nearbyPoints, setNearbyPoints] = useState( [] );
-	const [popup, setPopup] = useState( animations[0] );
-	const [popupOpen, setPopupOpen] = useState( false );
-	const [activePoint, setActivePoint] = useState( -1 );
-	const [started, setStarted] = useState( false );
-	const [paused, setPaused] = useState( true );
-	const [presenceOpen, setPresenceOpen] = useState( false );
+	const [allPoints, setAllPoints] = useState([])
+	const [points, setPoints] = useState([])
+	const [nearbyPoints, setNearbyPoints] = useState([])
+	const [popup, setPopup] = useState(animations[0])
+	const [popupOpen, setPopupOpen] = useState(false)
+	const [activePoint, setActivePoint] = useState(-1)
+	const [started, setStarted] = useState(false)
+	const [paused, setPaused] = useState(true)
+	const [presenceOpen, setPresenceOpen] = useState(false)
 
-	const mapContainerRef = useRef( null );
-	const mapPopupRef = useRef( null );
+	const mapContainerRef = useRef(null)
+	const mapPopupRef = useRef(null)
 
+	let startAnimTimeOut = null
+	let activatePopupTimeOut = null
+	let nextAnimTimeOut = null
 
-	let startAnimTimeOut = null;
-	let activatePopupTimeOut = null;
-	let nextAnimTimeOut = null;
-
-	const identifyClosestPolygons = ( boundingRect ) => {
-		return state.allPoints.filter( function ( item, index ) {
-			var itemRect = item.getBoundingClientRect();
-			var thresholdX = boundingRect.width;
-			var thresholdY = boundingRect.height * 1.5;
-			var topDiff = Math.max(
-				-1 * ( boundingRect.top - itemRect.top ),
-				boundingRect.top - itemRect.top
-			);
-			var leftDiff = Math.max( -1 * ( boundingRect.left - itemRect.left ),
-				boundingRect.left - itemRect.left
-			);
-			return (
-				( topDiff !== 0 || leftDiff !== 0 ) &&
-				topDiff <= thresholdY &&
-				leftDiff <= thresholdX
-			);
-		} );
+	const identifyClosestPolygons = boundingRect => {
+		return state.allPoints.filter(function (item, index) {
+			var itemRect = item.getBoundingClientRect()
+			var thresholdX = boundingRect.width
+			var thresholdY = boundingRect.height * 1.5
+			var topDiff = Math.max(-1 * (boundingRect.top - itemRect.top), boundingRect.top - itemRect.top)
+			var leftDiff = Math.max(-1 * (boundingRect.left - itemRect.left), boundingRect.left - itemRect.left)
+			return (topDiff !== 0 || leftDiff !== 0) && topDiff <= thresholdY && leftDiff <= thresholdX
+		})
 	}
 
-	const positionTop = useMotionValue( 0 );
-	const positionLeft = useMotionValue( 0 );
+	const positionTop = useMotionValue(0)
+	const positionLeft = useMotionValue(0)
 
-	const x = useMotionValue( 10 )
-	const y = useTransform( x, value => value * 2 )
-
-
+	const x = useMotionValue(10)
+	const y = useTransform(x, value => value * 2)
 
 	const motionVariants = {
 		visible: {
@@ -294,9 +288,9 @@ const AnimatedChevronMap = ( props ) => {
 				when: "afterChildren",
 			},
 		},
-		open: {opacity: 1, scale: 1, x: "-50%"},
-		close: {scale: 0, x: "-50%"},
-	};
+		open: { opacity: 1, scale: 1, x: "-50%" },
+		close: { scale: 0, x: "-50%" },
+	}
 
 	// useEffect(() => {
 	// 	const mapContainerDom = document.querySelector("#animated-chevron-map-" + mapIdSuffix + "." + classes?.mapWrapper);
@@ -306,161 +300,93 @@ const AnimatedChevronMap = ( props ) => {
 
 	// }, []);
 
-
-	useEffect( () => {
-		if( !!mapContainerRef.current ) {
-			if( !!mapPopupRef.current ) {
-				!!mapPopupRef.current.classList.remove( "active" );
+	useEffect(() => {
+		if (!!mapContainerRef.current) {
+			if (!!mapPopupRef.current) {
+				!!mapPopupRef.current.classList.remove("active")
 			}
-			const pointsDoms = Array.from( mapContainerRef.current.querySelectorAll( "#animated-chevron-map-" + mapIdSuffix + " ." + [classes?.point] ) );
+			const pointsDoms = Array.from(
+				mapContainerRef.current.querySelectorAll("#animated-chevron-map-" + mapIdSuffix + " ." + [classes?.point])
+			)
 
-			if( pointsDoms ) {
-				let animationsPoints = [];
-				let animationPolygonIndexes = animations.map( animation => {
-					let animationDom = mapContainerRef.current.querySelector( "#animated-chevron-map-" + mapIdSuffix + " ." + classes?.point + ":nth-child(" + ( animation.polygonIndex + 1 ) + ")" );
-					animationsPoints.push( animationDom );
-				} );
-				setState( {
+			if (pointsDoms) {
+				let animationsPoints = []
+				let animationPolygonIndexes = animations.map(animation => {
+					let animationDom = mapContainerRef.current.querySelector(
+						"#animated-chevron-map-" + mapIdSuffix + " ." + classes?.point + ":nth-child(" + (animation.polygonIndex + 1) + ")"
+					)
+					animationsPoints.push(animationDom)
+				})
+				setState({
 					allPoints: pointsDoms,
-					points: animationsPoints
-				} )
+					points: animationsPoints,
+				})
 			}
-
 		}
 
 		return () => {
-			clearTimeout( startAnimTimeOut );
-			clearTimeout( activatePopupTimeOut );
-			clearTimeout( nextAnimTimeOut );
+			clearTimeout(startAnimTimeOut)
+			clearTimeout(activatePopupTimeOut)
+			clearTimeout(nextAnimTimeOut)
 		}
+	}, [mapContainerRef])
 
-	}, [mapContainerRef] );
+	useEffect(() => {
+		if (state.points.length > 0 && !state.paused && !!mapPopupRef.current) {
+			let currentItem = state.activePoint >= state.points.length - 1 || state.activePoint < 0 ? 0 : state.activePoint + 1
+			let previousItem = currentItem > 0 ? currentItem - 1 : state.points.length - 1
+			if (state.started) {
+				nextAnimTimeOut = setInterval(function () {
+					let targetChevron = state.points[currentItem]
+					let previousChevron = state.points[previousItem]
 
-	useEffect( () => {
-
-		if( state.points.length > 0 && !state.paused && !!mapPopupRef.current ) {
-			let currentItem = ( state.activePoint >= ( state.points.length - 1 ) || state.activePoint < 0 ? 0 : state.activePoint + 1 );
-			let previousItem = currentItem > 0 ? ( currentItem - 1 ) : ( state.points.length - 1 );
-			if( state.started ) {
-
-
-				nextAnimTimeOut = setInterval( function () {
-					let targetChevron = state.points[currentItem];
-					let previousChevron = state.points[previousItem];
-
-					if( targetChevron ) {
-						if( previousChevron ) {
-							setTimeout( function () {
-								previousChevron.classList.remove( "active" );
-								previousChevron.classList.add( "ripple" );
-								setTimeout( function () {
-									previousChevron.classList.remove( "ripple" );
-									setTimeout( function () {
-										if( !!mapPopupRef.current ) {
-											!!mapPopupRef.current.classList.remove( "active" );
+					if (targetChevron) {
+						if (previousChevron) {
+							setTimeout(function () {
+								previousChevron.classList.remove("active")
+								previousChevron.classList.add("ripple")
+								setTimeout(function () {
+									previousChevron.classList.remove("ripple")
+									setTimeout(function () {
+										if (!!mapPopupRef.current) {
+											!!mapPopupRef.current.classList.remove("active")
 										}
-									}, 40 );
-								}, 40 );
-
-							}, 120 );
+									}, 40)
+								}, 40)
+							}, 120)
 						}
 
-						setTimeout( function () {
-							if( !!mapPopupRef.current ) {
-								!!mapPopupRef.current.classList.remove( "active" );
+						setTimeout(function () {
+							if (!!mapPopupRef.current) {
+								!!mapPopupRef.current.classList.remove("active")
 							}
-
-						}, 40 );
+						}, 40)
 						//setActivePoint(-1);
 						//setPopupOpen(false);
 
+						let ajacentsAnimTime = 70
+						var pointBoundingRect = targetChevron.getBoundingClientRect()
+						let adjacentSiblings = identifyClosestPolygons(pointBoundingRect)
+						adjacentSiblings = adjacentSiblings.shuffle().concat([targetChevron, targetChevron, targetChevron])
 
+						adjacentSiblings.map((adjacentSibling, cursor) => {
+							setTimeout(function () {
+								setTimeout(function () {
+									adjacentSibling.classList.remove("ripple")
+								}, Number.getRandomInt(30, 50))
+								adjacentSibling.classList.add("ripple")
+							}, ajacentsAnimTime * (cursor + 1))
+						})
 
-						let ajacentsAnimTime = 70;
-						var pointBoundingRect = targetChevron.getBoundingClientRect();
-						let adjacentSiblings = identifyClosestPolygons( pointBoundingRect );
-						adjacentSiblings = adjacentSiblings.shuffle().concat( [targetChevron, targetChevron, targetChevron] );
-
-
-						adjacentSiblings.map( ( adjacentSibling, cursor ) => {
-							setTimeout( function () {
-								setTimeout( function () {
-									adjacentSibling.classList.remove( "ripple" );
-								}, Number.getRandomInt( 30, 50 ) );
-								adjacentSibling.classList.add( "ripple" );
-							}, ( ajacentsAnimTime * ( cursor + 1 ) ) );
-						} );
-
-						setTimeout( function () {
-							if( !!mapContainerRef.current ) {
-								var mapPosition = mapContainerRef.current.getBoundingClientRect();
+						setTimeout(function () {
+							if (!!mapContainerRef.current) {
+								var mapPosition = mapContainerRef.current.getBoundingClientRect()
 								var relativePosition = {
-									left: ( pointBoundingRect.left - mapPosition.left ) + ( pointBoundingRect.width / 2 ),
+									left: pointBoundingRect.left - mapPosition.left + pointBoundingRect.width / 2,
 									top: pointBoundingRect.bottom - mapPosition.top,
-								};
+								}
 
-								setState( {
-									activePoint: currentItem,
-									popup: {
-										position: {
-											left: relativePosition.left,
-											top: relativePosition.top + 1,
-										},
-										...animations[currentItem],
-									}
-								} )
-
-
-								targetChevron.classList.add( "active" );
-
-								setTimeout( function () {
-									if( !!mapPopupRef.current ) {
-										!!mapPopupRef.current.classList.add( "active" );
-									}
-
-								}, 100 );
-
-								currentItem = ( currentItem >= ( state.points.length - 1 ) ? 0 : currentItem + 1 );
-								previousItem = currentItem > 0 ? ( currentItem - 1 ) : ( state.points.length - 1 );
-							}
-
-						}, ( ajacentsAnimTime * adjacentSiblings.length ) );
-					}
-
-
-
-
-				}, interval );
-			}
-			else {
-				startAnimTimeOut = setTimeout( function () {
-					let targetChevron = state.points[currentItem];
-					let previousChevron = state.points[previousItem];
-
-					if( targetChevron ) {
-						let ajacentsAnimTime = 70;
-						var pointBoundingRect = state.points[currentItem].getBoundingClientRect();
-						let adjacentSiblings = identifyClosestPolygons( pointBoundingRect );
-						adjacentSiblings = adjacentSiblings.shuffle().concat( [targetChevron, targetChevron, targetChevron] );
-						//adjacentSiblings.push(targetChevron);
-
-						adjacentSiblings.map( ( adjacentSibling, cursor ) => {
-							setTimeout( function () {
-								setTimeout( function () {
-									adjacentSibling.classList.remove( "ripple" );
-								}, Number.getRandomInt( 30, 50 ) );
-								adjacentSibling.classList.add( "ripple" );
-							}, ( ajacentsAnimTime * ( cursor + 1 ) ) );
-						} );
-
-						setTimeout( function () {
-							if( !!mapContainerRef.current ) {
-								var mapPosition = mapContainerRef.current.getBoundingClientRect();
-								var relativePosition = {
-									left: ( pointBoundingRect.left - mapPosition.left ) + ( pointBoundingRect.width / 2 ),
-									top: pointBoundingRect.bottom - mapPosition.top,
-								};
-								setState( {
+								setState({
 									activePoint: currentItem,
 									popup: {
 										position: {
@@ -469,62 +395,100 @@ const AnimatedChevronMap = ( props ) => {
 										},
 										...animations[currentItem],
 									},
-									started: true
-								} )
-								targetChevron.classList.add( "active" );
+								})
 
-								setTimeout( function () {
-									if( !!mapPopupRef.current ) {
-										!!mapPopupRef.current.classList.add( "active" );
+								targetChevron.classList.add("active")
+
+								setTimeout(function () {
+									if (!!mapPopupRef.current) {
+										!!mapPopupRef.current.classList.add("active")
 									}
-								}, 100 );
+								}, 100)
 
-
-								currentItem = ( currentItem >= ( state.points.length - 1 ) ? 0 : currentItem + 1 );
-								previousItem = currentItem > 0 ? ( currentItem - 1 ) : ( state.points.length - 1 );
+								currentItem = currentItem >= state.points.length - 1 ? 0 : currentItem + 1
+								previousItem = currentItem > 0 ? currentItem - 1 : state.points.length - 1
 							}
-
-
-						}, ( ajacentsAnimTime * adjacentSiblings.length ) );
+						}, ajacentsAnimTime * adjacentSiblings.length)
 					}
+				}, interval)
+			} else {
+				startAnimTimeOut = setTimeout(function () {
+					let targetChevron = state.points[currentItem]
+					let previousChevron = state.points[previousItem]
 
+					if (targetChevron) {
+						let ajacentsAnimTime = 70
+						var pointBoundingRect = state.points[currentItem].getBoundingClientRect()
+						let adjacentSiblings = identifyClosestPolygons(pointBoundingRect)
+						adjacentSiblings = adjacentSiblings.shuffle().concat([targetChevron, targetChevron, targetChevron])
+						//adjacentSiblings.push(targetChevron);
 
+						adjacentSiblings.map((adjacentSibling, cursor) => {
+							setTimeout(function () {
+								setTimeout(function () {
+									adjacentSibling.classList.remove("ripple")
+								}, Number.getRandomInt(30, 50))
+								adjacentSibling.classList.add("ripple")
+							}, ajacentsAnimTime * (cursor + 1))
+						})
 
+						setTimeout(function () {
+							if (!!mapContainerRef.current) {
+								var mapPosition = mapContainerRef.current.getBoundingClientRect()
+								var relativePosition = {
+									left: pointBoundingRect.left - mapPosition.left + pointBoundingRect.width / 2,
+									top: pointBoundingRect.bottom - mapPosition.top,
+								}
+								setState({
+									activePoint: currentItem,
+									popup: {
+										position: {
+											left: relativePosition.left,
+											top: relativePosition.top + 1,
+										},
+										...animations[currentItem],
+									},
+									started: true,
+								})
+								targetChevron.classList.add("active")
 
+								setTimeout(function () {
+									if (!!mapPopupRef.current) {
+										!!mapPopupRef.current.classList.add("active")
+									}
+								}, 100)
 
-
-				}, 500 );
-
-
+								currentItem = currentItem >= state.points.length - 1 ? 0 : currentItem + 1
+								previousItem = currentItem > 0 ? currentItem - 1 : state.points.length - 1
+							}
+						}, ajacentsAnimTime * adjacentSiblings.length)
+					}
+				}, 500)
 			}
-		}
-		else {
-			clearTimeout( startAnimTimeOut );
-			clearInterval( nextAnimTimeOut );
+		} else {
+			clearTimeout(startAnimTimeOut)
+			clearInterval(nextAnimTimeOut)
 		}
 		return () => {
-			clearTimeout( startAnimTimeOut );
-			clearInterval( nextAnimTimeOut );
+			clearTimeout(startAnimTimeOut)
+			clearInterval(nextAnimTimeOut)
 		}
-	}, [state.points, state.paused, state.started] );
+	}, [state.points, state.paused, state.started])
 
-
-
-	const handleOnViewportVisibilityChange = useCallback( ( isVisible ) => {
-		setState( {paused: !isVisible} );
+	const handleOnViewportVisibilityChange = useCallback(isVisible => {
+		setState({ paused: !isVisible })
 		// setPresenceOpen(false);
-		if( !!mapPopupRef.current ) {
+		if (!!mapPopupRef.current) {
 			// console.log( "handleOnViewportVisibilityChange isVisible", isVisible, mapPopupRef.current )
-			mapPopupRef.current.classList.remove( "active" );
-			if( !isVisible ) {
-				clearInterval( nextAnimTimeOut );
+			mapPopupRef.current.classList.remove("active")
+			if (!isVisible) {
+				clearInterval(nextAnimTimeOut)
 			}
 			// else {
 			// 	mapPopupRef.current.classList.remove("active");
 			// }
-
 		}
-	}, [] )
+	}, [])
 
 	return (
 		<ViewPortSensor
@@ -534,27 +498,33 @@ const AnimatedChevronMap = ( props ) => {
 			ref={mapContainerRef}
 		>
 			<div
-				className={classes?.mapPopup + " ease-in-out avenir " + ( state.presenceOpen ? " presence" : "" ) + ( state.paused ? " hidden" : "" )}
+				className={
+					classes?.mapPopup + " ease-in-out avenir " + (state.presenceOpen ? " presence" : "") + (state.paused ? " hidden" : "")
+				}
 				onClick={() => {
-					setState( prevState => ( {presenceOpen: !prevState.presenceOpen} ) );
+					setState(prevState => ({ presenceOpen: !prevState.presenceOpen }))
 				}}
-				style={{...state.popup?.position, ...popUpStyle, }}
+				style={{ ...state.popup?.position, ...popUpStyle }}
 				ref={mapPopupRef}
 			>
-				{!state.presenceOpen && <Typography variants="body1" className="text-xl uppercase font-black">{state.popup.message}</Typography>}
-				{state.presenceOpen && <div className="flex flex-col">
-					<Typography variants="body1" className="text-sm normal-case font-bold" paragraph>{state.popup.presenceTitle}</Typography>
-					<Typography variants="body2" className="text-sm normal-case">{state.popup.presenceContent}</Typography>
-				</div>}
+				{!state.presenceOpen && (
+					<Typography variants="body1" className="text-xl uppercase font-black">
+						{state.popup.message}
+					</Typography>
+				)}
+				{state.presenceOpen && (
+					<div className="flex flex-col">
+						<Typography variants="body1" className="text-sm normal-case font-bold" paragraph>
+							{state.popup.presenceTitle}
+						</Typography>
+						<Typography variants="body2" className="text-sm normal-case">
+							{state.popup.presenceContent}
+						</Typography>
+					</div>
+				)}
 			</div>
 
-
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 639.65 350.66"
-				width="100%"
-				height="100%"
-			>
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 639.65 350.66" width="100%" height="100%">
 				<g className={classes?.point}>
 					<polygon points="70.66 95.99 70.66 108.81 62.56 111.44 70.66 95.99" fill={mapcolor} stroke="none"></polygon>
 					<polygon points="71.67 95.99 71.67 108.81 79.77 111.44 71.67 95.99" fill={mapcolor} stroke="none"></polygon>
@@ -1901,18 +1871,17 @@ const AnimatedChevronMap = ( props ) => {
 				</g>
 			</svg>
 		</ViewPortSensor>
-	);
-};
+	)
+}
 
 AnimatedChevronMap.defaultProps = {
 	mapcolor: "#C0C0C0",
 	interval: 2000,
-};
+}
 
 AnimatedChevronMap.propTypes = {
-
 	mapcolor: PropTypes.string,
 	interval: PropTypes.number,
-};
+}
 
-export default ( ( AnimatedChevronMap ) );
+export default AnimatedChevronMap

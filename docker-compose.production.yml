@@ -8,6 +8,8 @@ services:
         restart: unless-stopped
         networks:
             - proxy-bridge
+        ports:
+            - "5002:80"
 
 networks:
     proxy-bridge:

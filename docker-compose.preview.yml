@@ -8,6 +8,8 @@ services:
         restart: unless-stopped
         networks:
             - proxy-bridge
+        ports:
+            - "5001:80"
 networks:
     proxy-bridge:
         external: true

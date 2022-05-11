@@ -16,7 +16,7 @@
 		"build:react": "react-scripts build ",
 		"build:react-preview": "react-scripts build && rm -rf preview && mv build preview",
 		"build:production": " react-scripts build && rm -rf production && mv build production",
-		"build:preview": "react-scripts build && rm -rf preview && mv build preview",
+		"build:preview": "rm -rf build && react-scripts build && rm -rf preview && mv build preview",
 		"start": "react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",

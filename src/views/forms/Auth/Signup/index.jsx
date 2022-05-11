@@ -58,7 +58,7 @@ const SignupForm = React.forwardRef((props, ref) => {
 					} else if (formData.interest === "quote") {
 						queueNotification({
 							severity: "success",
-							content: `Signup request successfull! Thank you for your interest in Realfield! We will be in touch shortly`,
+							content: `Signup request successfull! We will be in touch directly to arrange a time to discuss your project and how we can provide you with the data you need. Realfield Team`,
 						})
 						let quoteData = { ...formData }
 						delete quoteData.password

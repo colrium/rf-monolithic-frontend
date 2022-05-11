@@ -36,7 +36,7 @@ const Section = (props) => {
 	}, [location]);
 
 	return (
-		<GridContainer name={id} className={`p-0 flex sm:px-4 md:px-32 pt-20 ${className || ""}`} id={id} {...rest}>
+		<GridContainer name={id} className={`${className || ""}  flex px-4 md:px-32 pt-20 `} id={id} {...rest}>
 			{title && (
 				<GridItem xs={12} className={"p-0 pb-8"}>
 					<Typography {...titleProps}>{title}</Typography>

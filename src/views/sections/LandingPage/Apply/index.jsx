@@ -26,7 +26,7 @@ const SectionComponent = props => {
 	return (
 		<Section id="jobs-apply">
 			<GridContainer className={"p-0"}>
-				<GridItem xs={12}  className={"p-0"}>
+				<GridItem xs={12} className={"p-0"}>
 					<GridContainer className={"p-0"}>
 						<GridItem xs={12} sm={12} className={"p-0 pt-8 pb-4"}>
 							<Typography variant="h3">Fielder Registration</Typography>
@@ -54,8 +54,11 @@ const SectionComponent = props => {
 
 					<GridContainer className={"p-0"}>
 						{content === "form" && (
-							<GridItem xs={12} className={"p-0"}>
-								<BaseForm
+							<GridItem xs={12} className={"p-0 flex justify-center items-center text-center py-16"}>
+								<Typography variant="h3" className="text-center" color="text.disabled">
+									We are temporarily not accepting applications. Please check back again soon!
+								</Typography>
+								{/*<BaseForm
 									defination={defination}
 									service={service}
 									form="applications-form"
@@ -88,7 +91,7 @@ const SectionComponent = props => {
 										},
 									}}
 									onSubmitSuccess={() => setContent("acknowledgement")}
-								/>
+								/>*/}
 							</GridItem>
 						)}
 
