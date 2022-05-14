@@ -4,7 +4,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Check from "@mui/icons-material/Check";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
 ;
 import Typography from '@mui/material/Typography';

@@ -11,7 +11,7 @@ import {
 	DeleteOutlined as DeleteIcon,
 } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
-import Avatar from "components/Avatar";
+import Avatar from "@mui/material/Avatar";
 import Typography from '@mui/material/Typography';
 import React from "react";
 import ApiService from "services/Api";

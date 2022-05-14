@@ -172,6 +172,7 @@ function Header(props) {
 						</ListItem>
 					)}
 
+					{auth.isAuthenticated && (
 						<ListItem>
 							<ListItemText
 								primary={
@@ -181,7 +182,8 @@ function Header(props) {
 								}
 							/>
 						</ListItem>
-					{auth.isAuthenticated && Object.size(auth.user) > 0 && (
+					)}
+					{auth.isAuthenticated && (
 						<ListItem>
 							<ListItemText
 								primary={
@@ -228,34 +230,33 @@ function Header(props) {
 							backgroundColor: theme => (trigger ? theme.palette.background.default : "transparent"),
 						}}
 					>
+						<Toolbar className={"p-0"}>
+							<NavLink to={"/home".toUriWithLandingPagePrefix()} color="inherit">
+								<Button className="px-0">
+									{
+										<img
+											src={"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg"}
+											className="h-8"
+											alt="logo"
+										/>
+									}
+								</Button>
+							</NavLink>
 
-							<Toolbar className={"p-0"}>
-								<NavLink  to={"/home".toUriWithLandingPagePrefix()} color="inherit">
-									<Button className="px-0">
-										{
-											<img
-												src={"https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo.svg"}
-												className="h-8"
-												alt="logo"
-											/>
-										}
-									</Button>
-								</NavLink>
-
-								<div className="flex-grow" />
-								<NavLink
-									to={"/why-us".toUriWithLandingPagePrefix()}
-									color="inherit"
-									className="mr-4"
-									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
-									}}
-								>
-									<Button edge="end" color="inherit" className=" capitalize">
-										Why Realfield?
-									</Button>
-								</NavLink>
-								{/*<NavLink
+							<div className="flex-grow" />
+							<NavLink
+								to={"/why-us".toUriWithLandingPagePrefix()}
+								color="inherit"
+								className="mr-4"
+								activeStyle={{
+									borderBottom: "2px solid " + theme.palette.primary.main,
+								}}
+							>
+								<Button edge="end" color="inherit" className=" capitalize">
+									Why Realfield?
+								</Button>
+							</NavLink>
+							{/*<NavLink
 										to={"/home#products".toUriWithLandingPagePrefix()}
 										color="inherit"
 										className="mr-4"
@@ -271,19 +272,20 @@ function Header(props) {
 											Products
 										</Button>
 									</NavLink>*/}
-								<NavLink
-									to={"/about-us".toUriWithLandingPagePrefix()}
-									color="inherit"
-									className="mr-4"
-									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
-										color: `${theme.palette.primary.main} !important`,
-									}}
-								>
-									<Button edge="end" className="px-0" color="inherit" className=" capitalize">
-										About us
-									</Button>
-								</NavLink>
+							<NavLink
+								to={"/about-us".toUriWithLandingPagePrefix()}
+								color="inherit"
+								className="mr-4"
+								activeStyle={{
+									borderBottom: "2px solid " + theme.palette.primary.main,
+									color: `${theme.palette.primary.main} !important`,
+								}}
+							>
+								<Button edge="end" className="px-0" color="inherit" className=" capitalize">
+									About us
+								</Button>
+							</NavLink>
+							{auth.isAuthenticated && (
 								<NavLink
 									to={"/community".toUriWithLandingPagePrefix()}
 									color="inherit"
@@ -295,49 +297,50 @@ function Header(props) {
 										Community
 									</Button>
 								</NavLink>
-								{(!auth.isAuthenticated || Object.size(auth.user) === 0) && (
-									<NavLink
-										to={"/auth/login"}
-										color="inherit"
-										activeStyle={{
-											borderBottom: "2px solid " + theme.palette.primary.main,
-										}}
-									>
-										<Button color="inherit" className=" capitalize">
-											Login
-										</Button>
-									</NavLink>
-								)}
-
-								{auth.isAuthenticated && Object.size(auth.user) > 0 && (
-									<NavLink
-										to={"/home".toUriWithDashboardPrefix()}
-										color="inherit"
-										activeStyle={{
-											borderBottom: "2px solid " + theme.palette.primary.main,
-										}}
-									>
-										<Button edge="end" color="inherit" className="capitalize">
-											Dashboard
-										</Button>
-									</NavLink>
-								)}
-
+							)}
+							{(!auth.isAuthenticated || Object.size(auth.user) === 0) && (
 								<NavLink
-									to={"/jobs".toUriWithLandingPagePrefix()}
+									to={"/auth/login"}
 									color="inherit"
-									activeStyle={
-										{
-											//borderBottom: "2px solid "+theme.palette.primary.main,
-										}
-									}
+									activeStyle={{
+										borderBottom: "2px solid " + theme.palette.primary.main,
+									}}
 								>
-									<Fab color="primary" variant="extended" size="small" className="mx-2 px-6 capitalize">
-										Jobs!
-									</Fab>
+									<Button color="inherit" className=" capitalize">
+										Login
+									</Button>
 								</NavLink>
+							)}
 
-								{/*<NavLink
+							{auth.isAuthenticated && Object.size(auth.user) > 0 && (
+								<NavLink
+									to={"/home".toUriWithDashboardPrefix()}
+									color="inherit"
+									activeStyle={{
+										borderBottom: "2px solid " + theme.palette.primary.main,
+									}}
+								>
+									<Button edge="end" color="inherit" className="capitalize">
+										Dashboard
+									</Button>
+								</NavLink>
+							)}
+
+							<NavLink
+								to={"/jobs".toUriWithLandingPagePrefix()}
+								color="inherit"
+								activeStyle={
+									{
+										//borderBottom: "2px solid "+theme.palette.primary.main,
+									}
+								}
+							>
+								<Fab color="primary" variant="extended" size="small" className="mx-2 px-6 capitalize">
+									Jobs!
+								</Fab>
+							</NavLink>
+
+							{/*<NavLink
 										to={"/cart".toUriWithLandingPagePrefix()}
 										color="inherit"
 									>
@@ -350,7 +353,7 @@ function Header(props) {
 											</Badge>
 										</IconButton>
 									</NavLink>*/}
-							</Toolbar>
+						</Toolbar>
 					</AppBar>
 				</ElevationScroll>
 			</Hidden>

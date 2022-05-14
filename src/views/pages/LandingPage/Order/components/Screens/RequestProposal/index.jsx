@@ -1,7 +1,7 @@
 /** @format */
 
 import { ArrowBack, Send } from "@mui/icons-material";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
 ;
 import Typography from '@mui/material/Typography';

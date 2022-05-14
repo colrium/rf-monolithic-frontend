@@ -1,7 +1,7 @@
 /** @format */
 
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 //
 import Grid from '@mui/material/Grid';
 ;

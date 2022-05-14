@@ -2,10 +2,10 @@
 
 import { VpnKeyOutlined as PasswordIcon } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
-import Avatar from "components/Avatar";
-import Card from "components/Card";
-import CardContent from "components/Card/CardContent";
-import CardHeader from "components/Card/CardHeader";
+import Avatar from "@mui/material/Avatar";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
 import UsersDefination from "definations/users";
 import React, { Component } from "react";
 import { connect } from "react-redux";

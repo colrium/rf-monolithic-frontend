@@ -30,9 +30,8 @@ const ApiSingleton = (function () {
 		baseURL: DEFAULT,
 		withCredentials: false,
 		headers: {
-			"x-client-id": client_id,
-			"x-client-secret": client_secret,
-			Authorization: "",
+			// "x-client-id": client_id,
+			// "x-client-secret": client_secret,
 		}
 	};
 	var access_token = {};
@@ -48,6 +47,17 @@ const ApiSingleton = (function () {
 		}
 		return endpoint_url + uri;
 	};
+
+	function setCookie(name, value, days) {
+		var expires = ""
+		if (days) {
+			var date = new Date()
+			date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
+			expires = "; expires=" + date.toUTCString()
+		}
+		document.cookie = name + "=" + (value || "") + expires + "; path=/"
+	}
+
 	function getCookie(name) {
 		const value = `; ${document.cookie}`
 		const parts = value.split(`; ${name}=`)
@@ -74,19 +84,15 @@ const ApiSingleton = (function () {
 
 	function getAccessToken() {
 
-		return access_token;
+		return getAuthCookies()
 	}
 
 	function getAuthorizationHeader(token) {
 		//
 		let authCookies = getAuthCookies();
-		let targetAccessToken = token || access_token || authCookies;
-		if (isAccessTokenValid(targetAccessToken)) {
-			return {
-				Authorization: (targetAccessToken?.token_type || "") + " " + (targetAccessToken?.access_token || ""),
-			};
+		return {
+			Authorization: `${authCookies?.token_type || ""} ${authCookies?.access_token || ""}`.trim(),
 		}
-		return { Authorization: "" };
 	}
 
 	function decodeAccessToken(access_token) {
@@ -122,27 +128,27 @@ const ApiSingleton = (function () {
 	function setAccessToken(value) {
 		if (isAccessTokenValid(value)) {
 			access_token = value;
-			instance_options = JSON.merge(instance_options, { headers: { Authorization: `${value.token_type} ${value.access_token}` } });
-			axios.defaults.headers.common['Authorization'] = `${value.token_type} ${value.access_token}`;
-			if (instance) {
-				instance.defaults.headers.common["Authorization"] = `${value.token_type} ${value.access_token}`
-				instance.interceptors.request.use(function (config) {
-					config.headers.Authorization = `${value.token_type} ${value.access_token}`
-					return config
-				})
+			setCookie(authTokenName, value.access_token || value.token, 365)
+			setCookie(`${authTokenName}_type`, value.token_type, 365)
+			setCookie(`${authTokenName}_refresh_token`, value.refresh_token, 365)
+			// instance_options = JSON.merge(instance_options, { headers: { Authorization: `${value.token_type} ${value.access_token}` } });
+			// axios.defaults.headers.common['Authorization'] = `${value.token_type} ${value.access_token}`;
+			// if (instance) {
+			// 	instance.defaults.headers.common["Authorization"] = `${value.token_type} ${value.access_token}`
+			// 	instance.interceptors.request.use(function (config) {
+			// 		config.headers.Authorization = `${value.token_type} ${value.access_token}`
+			// 		return config
+			// 	})
 
-			}
+			// }
+
 
 			EventRegister.emit('access-token-set', value);
 		}
 		else {
-			access_token = {}
-			axios.defaults.headers.common['Authorization'] = ``;
-			instance_options = JSON.merge(instance_options, { headers: { Authorization: "" } });
-
-			if (instance) {
-				instance.defaults.headers.common['Authorization'] = ``;
-			}
+			setCookie(authTokenName, "", 365)
+			setCookie(`${authTokenName}_type`, "", 365)
+			setCookie(`${authTokenName}_refresh_token`, "", 365)
 
 			EventRegister.emit('access-token-unset', value);
 		}
@@ -152,61 +158,6 @@ const ApiSingleton = (function () {
 		let access_token = getAccessToken();
 		return isAccessTokenValid(access_token);
 	}
-
-	// function onErrorHandler(error) {
-	// 	let errobj = {
-	// 		...error,
-	// 		msg: "Request Failed",
-	// 		message: "Request Failed",
-	// 		body: null,
-	// 		code: 400,
-	// 	};
-	// 	if (error.response) {
-	// 		errobj = {
-	// 			headers: error.response.headers,
-	// 			...error.response,
-	// 			code: error.response.status,
-	// 			msg: error.response.statusText,
-	// 			message: error.response.statusText,
-	// 			body: error.response.data,
-
-	// 		};
-	// 		if (error.response.data) {
-	// 			if (error.response.data.message || error.response.data.msg || error.response.data.error) {
-	// 				errobj.msg = error.response.data.message || error.response.data.msg || error.response.data.error;
-	// 				errobj.message = error.response.data.message || error.response.data.msg || error.response.data.error;
-	// 			}
-	// 		}
-	// 	} else if (error.request) {
-	// 		errobj = {
-	// 			...error,
-	// 			code: 400,
-	// 			msg: "Request Error: " + error.message,
-	// 			message: "Request Error: " + error.message,
-	// 			body: null,
-
-	// 		};
-	// 	}
-
-	// 	//console.warn("onErrorHandler errobj", errobj);
-	// 	return Promise.reject(errobj);
-	// }
-
-	// function onSuccessHandler(response) {
-	// 	const { data: { message, msg, ...body }, status, headers, ...rest } = response;
-	// 	let res_message = message || msg || "Success";
-
-	// 	let res = {
-	// 		...rest,
-	// 		message: res_message,
-	// 		body: body,
-	// 		code: status,
-	// 		status: status,
-	// 		headers: headers,
-	// 	};
-
-	// 	return Promise.resolve(res);
-	// }
 
 	function isUserAuthenticated(validUser = true) {
 		return accessTokenSetAndValid();
@@ -309,33 +260,7 @@ const ApiSingleton = (function () {
 	function login(data, get_profile = true) {
 		return new Promise((resolve, reject) => {
 			if (instance) {
-				if (isUserAuthenticated(get_profile) || isUserAuthenticated(!get_profile)) {
-					let resObj = {
-						token: getAccessToken(),
-						profile: instance_user,
-					}
-					if (get_profile && isUserAuthenticated(false)) {
-						axios
-							.get(endpoint("/profile"))
-							.then(profile_res => {
-								let profile = profile_res.body?.data || profile_res.data?.data
 
-								if (!JSON.isEmpty(profile)) {
-									resObj.profile = profile
-									EventRegister.emit("login", resObj)
-									resolve(resObj)
-								} else {
-									resolve(resObj)
-								}
-							})
-							.catch(err => {
-								reject(err)
-							})
-					} else {
-						EventRegister.emit("login", resObj)
-						resolve(resObj)
-					}
-				} else {
 					instance
 						.post("login", JSON.merge(data, { client_id: client_id, client_secret: client_secret, grant_type: "password" }))
 						.then(async res => {
@@ -358,7 +283,7 @@ const ApiSingleton = (function () {
 							console.error(err)
 							reject(err)
 						})
-				}
+
 			} else {
 				let errObj = {
 					msg: "Login Request Failed. Invalid Request service instance",
@@ -441,7 +366,6 @@ const ApiSingleton = (function () {
 					: { ...options }
 				: { ...options }
 		)
-		//Do not apply interceptors here unless you know. They make the other ins
 
 		return isolatedInstance
 	}
@@ -569,32 +493,31 @@ const ApiSingleton = (function () {
 			return Promise.resolve(res)
 		}
 
-		function onRequestAttemptHandler(config) {
+		function onRequestAttemptHandler(request) {
 			let cancelToken = axios.CancelToken
-			let cancelOnTimeout = config?.timeout ?? 0 > 0
-			if (!!config.cancelToken) {
-				cancelToken = config.cancelToken
+			let cancelOnTimeout = request?.timeout ?? 0 > 0
+			if (!!request.cancelToken) {
+				cancelToken = request.cancelToken
 			}
 			if (cancelOnTimeout) {
-				config.cancelOnTimeout = cancelOnTimeout
-				config.cancelToken = cancelToken?.source()?.token
-				config.cancelUUID = String.uuid()
-				config.cancelTokenSource = cancelToken?.source()
+				request.cancelOnTimeout = cancelOnTimeout
+				request.cancelToken = cancelToken?.source()?.token
+				request.cancelUUID = String.uuid()
+				request.cancelTokenSource = cancelToken?.source()
 			}
 
-			config.headers = {
-				...getAuthorizationHeader(access_token),
-				...config.headers,
+
+			const authHeader = getAuthorizationHeader()
+			request.headers = {
+				...request.headers,
+				...authHeader,
 			}
-			EventRegister.emit("api-request-attempt", config)
-			return config
+			EventRegister.emit("api-request-attempt", request)
+			return request
 		}
 		newInstance.interceptors.request.use(
-			function (config) {
-				return onRequestAttemptHandler(config)
-			},
-			function (error) {
-				return onErrorHandler(error)
+			function (request) {
+				return onRequestAttemptHandler(request)
 			}
 		)
 		newInstance.interceptors.response.use(

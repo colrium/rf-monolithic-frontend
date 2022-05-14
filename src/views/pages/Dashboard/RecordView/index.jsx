@@ -5,7 +5,7 @@ import { Icon } from "@mui/material";
 import AccessErrorIcon from "@mui/icons-material/WarningRounded";
 //
 import { colors } from "assets/jss/app-theme";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 //
 import Grid from '@mui/material/Grid';
 ;

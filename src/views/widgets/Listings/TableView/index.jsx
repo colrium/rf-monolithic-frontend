@@ -5,7 +5,7 @@ import Chip from "@mui/material/Chip";
 import Menu from "@mui/material/Menu";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import MenuItem from "@mui/material/MenuItem";
-import Avatar from "components/Avatar";
+import Avatar from "@mui/material/Avatar";
 import Grid from '@mui/material/Grid';
 ;
 import Typography from '@mui/material/Typography';

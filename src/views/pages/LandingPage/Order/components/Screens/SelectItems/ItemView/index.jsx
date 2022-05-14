@@ -1,7 +1,7 @@
 /** @format */
 
 import Chip from "@mui/material/Chip";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import { DynamicInput } from "components/FormInputs";
 import Grid from '@mui/material/Grid';
 ;

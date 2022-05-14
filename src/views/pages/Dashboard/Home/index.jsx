@@ -3,7 +3,7 @@
 
 import { colors } from "assets/jss/app-theme";
 //
-import Card from "components/Card";
+import Card from "@mui/material/Card";
 import Grid from '@mui/material/Grid';
 ;
 import LazyModule from "components/LazyModule";
@@ -202,7 +202,7 @@ class Page extends React.Component {
 				</Grid>
 
 				<Grid item  xs={12} className="p-2">
-					<Card>
+					<Card className="w-full flex items-center" sx={{height: theme => "70vh"}}>
 						<ResponsesCountsReport />
 					</Card>
 				</Grid>

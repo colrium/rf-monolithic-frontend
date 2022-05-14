@@ -9,7 +9,7 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@mui/icons-material";
 import ImageIcon from "@mui/icons-material/ImageOutlined";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import React from "react";
 import { Link } from "react-router-dom";
 import { CountriesHelper } from "utils/Helpers";

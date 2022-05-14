@@ -30,10 +30,12 @@ const Dashboard = props => {
 	const theme = useTheme()
 	const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"))
 	const [state, setState] = useSetState({
-		drawerOpen: isLargeScreen,
+		drawerOpen: true,
 	})
-	const shiftTopbar = isLargeScreen
-	const shiftContent = isLargeScreen
+
+	useDidUpdate(() => {
+		setState({ drawerOpen: isLargeScreen })
+	}, [isLargeScreen])
 
 	return (
 		<Box

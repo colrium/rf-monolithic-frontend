@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNetworkState, useCookie } from "react-use"
+import { useNetworkState } from "react-use"
 import {
 	firebase as firebaseConfig,
 	baseUrls,
@@ -25,9 +25,6 @@ import { useDidMount } from "hooks"
 
 const NetworkServicesProvider = props => {
 	const { children, notificationType, ...rest } = props
-	const [authCookie, updateAuthCookie, deleteAuthCookie] = useCookie(authTokenName)
-	const [authTypeCookie, updateAuthTypeCookie, deleteAuthTypeCookie] = useCookie(`${authTokenName}_type`)
-	const [authRefreshTokenCookie, updateRefreshTokenCookie, deleteRefreshTokenCookie] = useCookie(`${authTokenName}_refresh_token`)
 
 	const dispatch = useDispatch()
 	const preferences = useSelector(state => ({ ...state.app?.preferences }))
@@ -40,10 +37,6 @@ const NetworkServicesProvider = props => {
 		const { access_token, token_type, refresh_token } = token || {}
 		if (authTokenLocation === "redux") {
 			dispatch(setToken(token || {}))
-		} else {
-			updateAuthCookie(access_token)
-			updateAuthTypeCookie(token_type)
-			updateRefreshTokenCookie(refresh_token)
 		}
 	}, [])
 
@@ -51,22 +44,18 @@ const NetworkServicesProvider = props => {
 		if (authTokenLocation === "redux") {
 			dispatch(setToken({}))
 		}
-		deleteAuthCookie()
-		deleteAuthTypeCookie()
-		deleteRefreshTokenCookie()
 	}, [])
 
 	const handleOnLogin = useCallback(event => {
 
 		const { profile, token } = { ...event.detail }
-		handleOnAccessTokenSet(token)
 		if (JSON.isJSON(profile)) {
 			dispatch(setCurrentUser(profile))
 		}
 		dispatch(setAuthenticated(true))
 		EventRegister.emit("notification", {
 			severity: "success",
-			title: `Login successfull!`,
+			title: `Login successful!`,
 			content: `Welcome back ${profile.first_name || ""} ${profile.last_name || ""}!`,
 		})
 	}, [])
@@ -123,14 +112,6 @@ const NetworkServicesProvider = props => {
 	)
 
 	const initializeAuthSubscriptions = useCallback(() => {
-		//Api.logout();
-		if (isAuthenticated && !String.isEmpty(authCookie) && !String.isEmpty(authTypeCookie)) {
-			Api.setAccessToken({
-				access_token: authCookie,
-				token_type: authTypeCookie,
-				refresh_token: authRefreshTokenCookie,
-			})
-		}
 		const onAccessTokenSetListener = EventRegister.on("access-token-set", event => handleOnAccessTokenSet(event.detail))
 		const onAccessTokenUnsetListener = EventRegister.on("access-token-unset", handleOnAccessTokenUnset)
 		const onLoginListener = EventRegister.on("login", handleOnLogin)

@@ -7,8 +7,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { IconButton } from "@mui/material";
-import Button from "components/Button";
-import Avatar from "components/Avatar";
+import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
 import {
 	HistoryOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,

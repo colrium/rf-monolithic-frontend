@@ -8,7 +8,7 @@ import {
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@mui/icons-material";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import React, { useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
 import { context_country_data } from "config/data";
@@ -69,8 +69,8 @@ const CountSummaryGraph = (props) => {
 	}, [isAuthenticated]);
 
 	return (
-		<Grid container>
-			<Grid item >
+		<Grid container className="w-full">
+			<Grid item xs={12}>
 				{report && <Bar data={{ labels: report.labels, datasets: [{ label: "Responses count by date", data: report.data, backgroundColor: "#00AF41", hoverBackgroundColor: "#76C4D5", }] }} />}
 			</Grid>
 		</Grid>

@@ -2,7 +2,7 @@
 
 import Chip from "@mui/material/Chip";
 import Skeleton from '@mui/material/Skeleton';
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import { DynamicInput } from "components/FormInputs";
 import Grid from '@mui/material/Grid';
 ;

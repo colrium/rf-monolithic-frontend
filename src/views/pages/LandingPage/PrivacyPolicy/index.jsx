@@ -37,7 +37,7 @@ class Page extends React.Component {
 		const { classes, auth, theme, device, ...rest } = this.props;
 		return (
 			<Grid container
-				className={classes?.root + " px-4 md:px-32"}
+				className={"min-height-screen"}
 				direction="column"
 				alignItems="center"
 				justify="center"

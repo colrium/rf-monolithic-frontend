@@ -110,10 +110,10 @@ function Footer(props) {
 				<Grid container className={className}>
 					{!columnWidgets && (
 						<Grid container className="px-4 md:px-32 ">
-							<Grid item  sm={12} lg={5} className="p-0 m-0 mb-8">
+							<Grid item xs={12} lg={5} className="p-0 m-0 mb-8">
 								<Grid container className="p-0 m-0">
-									<Grid item  sm={12} className="p-0 m-0">
-										<Grid item  xs={12} className={"mb-6 p-0"}>
+									<Grid item xs={12} className="p-0 m-0">
+										<Grid item xs={12} className={"mb-6 p-0 flex flex-col items-center md:items-start"}>
 											<Typography className={"mb-2 font-extrabold"} variant="h2" paragraph>
 												<span>Ethical Data</span>
 												<span className="avenir">.</span>
@@ -123,7 +123,7 @@ function Footer(props) {
 												<span className="avenir">.</span>
 											</Typography>
 
-											<Typography className="inverse-text" variant="body2" paragraph>
+											<Typography color="inverse" variant="body2" paragraph>
 												For data you can’t find online
 											</Typography>
 										</Grid>
@@ -131,187 +131,182 @@ function Footer(props) {
 								</Grid>
 							</Grid>
 
-							<Grid item  sm={12} lg={7} className="p-0 m-0 mb-8">
+							<Grid item xs={12} lg={7} className="p-0 m-0 mb-8">
 								<Grid container className="p-0 m-0">
-									<Grid item  className="pl-4" sm={12} md={6}>
-										<Typography className="w-full block pb-4 uppercase" color={inverseColor} variant="h5">
-											Real Data
-										</Typography>
+									<Grid item className="flex flex-col items-center md:items-start md:pl-4" xs={12} md={6}>
+										<Box className="w-8/12">
+											<Typography className=" pb-4 uppercase" color={inverseColor} variant="h5">
+												Real Data
+											</Typography>
 
-										<Link to={"/why-us".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Why Realfield?
-											</Button>
-										</Link>
+											<Link to={"/why-us".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													Why Realfield?
+												</Button>
+											</Link>
 
-										<Link to={"/why-us#realfield-advantage".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Realfield Advantage
-											</Button>
-										</Link>
+											<Link to={"/why-us#realfield-advantage".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													Realfield Advantage
+												</Button>
+											</Link>
 
-										<Link to={"/about-us#data".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Data
-											</Button>
-										</Link>
+											<Link to={"/about-us#data".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													Data
+												</Button>
+											</Link>
 
-										<Link to={"/about-us#data-quality".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Data Quality
-											</Button>
-										</Link>
+											<Link to={"/about-us#data-quality".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													Data Quality
+												</Button>
+											</Link>
 
-										<Link to={"/about-us#data-ethics".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Data Ethics
-											</Button>
-										</Link>
+											<Link to={"/about-us#data-ethics".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													Data Ethics
+												</Button>
+											</Link>
 
-										<Link to={"/ethical-principles".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Ethical Principles
-											</Button>
-										</Link>
+											<Link to={"/ethical-principles".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													Ethical Principles
+												</Button>
+											</Link>
+										</Box>
 									</Grid>
 
-									{/* <Grid item  className="pl-4" sm={12} md={4}>
-										<Typography className="w-full block pb-4 uppercase" color={inverseColor} variant="h5">
-											Product
-										</Typography>
+									<Grid item className="flex flex-col items-center mt-8 md:mt-0 md:items-start md:pl-4" xs={12} md={6}>
+										<Box className="w-8/12">
+											<Typography className="w-full block pb-4 uppercase" color={"inverse"} variant="h5">
+												About Us
+											</Typography>
 
-										<Link to={"/home#products".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Surveys
-											</Button>
-										</Link>
+											<Link to={"/about-us".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													Who we are
+												</Button>
+											</Link>
 
-										<Link to={"/home#products".toUriWithLandingPagePrefix()} className="block">
-											<Button
-												className="inverse-text justify-start px-0 capitalize justify-start px-0"
-												color={"inverse"}
-											>
-												Queries
-											</Button>
-										</Link>
-									</Grid> */}
+											<Link to={"/about-us#being-a-fielder".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													Being a Fielder
+												</Button>
+											</Link>
 
-									<Grid item  className="pl-4" sm={12} md={6}>
-										<Typography className="w-full block pb-4 uppercase" color={inverseColor} variant="h5">
-											About Us
-										</Typography>
+											<Link to={"/about-us#faqs".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													FAQs
+												</Button>
+											</Link>
 
-										<Link to={"/about-us".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Who we are
-											</Button>
-										</Link>
-
-										<Link to={"/about-us#being-a-fielder".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Being a Fielder
-											</Button>
-										</Link>
-
-										<Link to={"/about-us#faqs".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												FAQs
-											</Button>
-										</Link>
-
-										<Link to={"/jobs".toUriWithLandingPagePrefix()} className="block">
-											<Button className="capitalize justify-start px-0" color={"inverse"}>
-												Jobs
-											</Button>
-										</Link>
+											<Link to={"/jobs".toUriWithLandingPagePrefix()} className="block">
+												<Button className="capitalize justify-start px-0" color={"inverse"}>
+													Jobs
+												</Button>
+											</Link>
+										</Box>
 									</Grid>
 								</Grid>
 							</Grid>
 
-							<Grid item  md={5} className="p-0 m-0 mb-8 px-4">
+							<Grid item md={5} className="p-0 m-0 mb-8">
 								<Grid container className="p-0 m-0">
-									<Grid item  sm={12} md={8} className="p-0">
-										<Typography className="w-full pl-0 block pb-4" variant="body2">
-											For more information, or to schedule a demo, drop us a line
-										</Typography>
-										<RequestDemoForm
-											className="w-full block pb-4 text-white"
-											sx={{
-												"& .MuiFormControl-root": {
-													color: theme => theme.palette.background.paper,
-													"& .MuiInputBase-input": {
+									<Grid item xs={12} md={8} className="p-0 flex flex-col items-center md:items-start">
+										<Box className="w-full">
+											<Typography className="w-full pl-0 block pb-4" variant="body2">
+												For more information, or to schedule a demo, drop us a line
+											</Typography>
+											<RequestDemoForm
+												className="w-full block pb-4 text-white"
+												sx={{
+													"& .MuiFormControl-root": {
 														color: theme => theme.palette.background.paper,
-														"&:-webkit-autofill": {
-															backgroundColor: "transparent !important",
+														"& .MuiInputBase-input": {
+															color: theme => theme.palette.background.paper,
+															"&:-webkit-autofill": {
+																backgroundColor: "transparent !important",
+																color: theme => theme.palette.background.paper,
+															},
+														},
+														"& .MuiInputLabel-root": {
+															color: theme => theme.palette.background.paper,
+														},
+														"& .MuiFilledInput-root": {
+															borderBottomColor: theme => theme.palette.background.paper,
+															"&::before": {
+																borderBottomColor: theme => theme.palette.background.paper,
+															},
+														},
+														"& .MuiInputAdornment-root": {
 															color: theme => theme.palette.background.paper,
 														},
 													},
-													"& .MuiInputLabel-root": {
-														color: theme => theme.palette.background.paper,
-													},
-													"& .MuiFilledInput-root": {
-														borderBottomColor: theme => theme.palette.background.paper,
-														"&::before": {
-															borderBottomColor: theme => theme.palette.background.paper,
-														},
-													},
-													"& .MuiInputAdornment-root": {
-														color: theme => theme.palette.background.paper,
-													},
-												},
-											}}
-										/>
+												}}
+											/>
+										</Box>
 									</Grid>
 								</Grid>
 							</Grid>
 
-							<Grid item  md={7} className="p-0 m-0 mb-8">
+							<Grid item md={7} className="p-0 m-0 mb-8">
 								<Grid container className="p-0 m-0">
-									<Grid item  className="pl-4 block" sm={12} md={6}>
-										{settings.social && (
-											<Grid container className="p-0 m-0">
-												<Typography className="w-full block" variant="h5">
-													Social
-												</Typography>
-											</Grid>
-										)}
-										{settings.social && (
-											<Grid container className="p-0 m-0">
-												{Object.entries(settings.social).map(
-													([name, url], index) =>
-														!String.isEmpty(url) &&
-														String.isUrl(url) && (
-															<IconButton
-																className="text-white"
-																aria-label={name}
-																href={url}
-																target="_blank"
-																key={name + "-button"}
-															>
-																{name === "twitter" && <TwitterIcon />}
-																{name === "linkedin" && <LinkedInIcon />}
-																{name === "instagram" && <InstagramIcon />}
-																{name === "whatsapp" && <WhatsAppIcon />}
-																{name === "facebook" && <FacebookIcon />}
-																{name === "youtube" && <YouTubeIcon />}
-																{name === "google_plus" && <GooglePlusIcon />}
-															</IconButton>
-														)
+									<Grid item className="pl-0 md:pl-4 flex flex-col items-center md:items-start" xs={12} md={6}>
+										<Box className="w-8/12">
+											{(settings.social?.twitter ||
+												settings.social?.linkedin ||
+												settings.social?.instagram ||
+												settings.social?.whatsapp ||
+												settings.social?.facebook ||
+												settings.social?.youtube ||
+												settings.social?.google_plus) && (
+													<Grid container className="p-0 m-0">
+														<Typography className="w-full block" variant="h5">
+															Social {JSON.stringify(settings.social)}
+														</Typography>
+													</Grid>
 												)}
-											</Grid>
-										)}
+												<Grid container className="p-0 m-0">
+													{Object.entries(settings.social).map(
+														([name, url], index) =>
+															!String.isEmpty(url) &&
+															String.isUrl(url) && (
+																<IconButton
+																	className="text-white"
+																	aria-label={name}
+																	href={url}
+																	target="_blank"
+																	key={name + "-button"}
+																>
+																	{name === "twitter" && <TwitterIcon />}
+																	{name === "linkedin" && <LinkedInIcon />}
+																	{name === "instagram" && <InstagramIcon />}
+																	{name === "whatsapp" && <WhatsAppIcon />}
+																	{name === "facebook" && <FacebookIcon />}
+																	{name === "youtube" && <YouTubeIcon />}
+																	{name === "google_plus" && <GooglePlusIcon />}
+																</IconButton>
+															)
+													)}
+												</Grid>
+										</Box>
 									</Grid>
 
-									<Grid item  className="pl-4 block" sm={12} md={6}>
-										<Typography className="w-full block pb-4" color={inverseColor} variant="h5">
-											Contact
-										</Typography>
-										{!String.isEmpty(settings.contact["phone"]) && (
-											<Typography className="w-full block pb-4">{settings.contact["phone"]}</Typography>
-										)}
-										{!String.isEmpty(settings.contact["email"]) && (
-											<Typography className="w-full block pb-4">{settings.contact["email"]}</Typography>
-										)}
+									<Grid item className="pl-0 md:pl-4 flex flex-col items-center md:items-start" xs={12} md={6}>
+										<Box className="w-8/12">
+											{(!String.isEmpty(settings.contact["phone"]) || !String.isEmpty(settings.contact["email"])) && (
+												<Typography className="w-full block pb-4" color={inverseColor} variant="h5">
+													Contact
+												</Typography>
+											)}
+											{!String.isEmpty(settings.contact["phone"]) && (
+												<Typography className="w-full block pb-4">{settings.contact["phone"]}</Typography>
+											)}
+											{!String.isEmpty(settings.contact["email"]) && (
+												<Typography className="w-full block pb-4">{settings.contact["email"]}</Typography>
+											)}
+										</Box>
 									</Grid>
 								</Grid>
 							</Grid>
@@ -319,7 +314,8 @@ function Footer(props) {
 					)}
 				</Grid>
 				{absoluteFooter && (
-					<Grid container
+					<Grid
+						container
 						sx={{
 							background: "rgba(0,0,0, 0.3)",
 						}}
@@ -329,13 +325,15 @@ function Footer(props) {
 				)}
 
 				{!absoluteFooter && (
-					<Grid container
+					<Grid
+						container
 						className={"sm:px-8 md:px-32"}
 						sx={{
 							background: "rgba(0,0,0, 0.3)",
 						}}
 					>
-						<Grid item
+						<Grid
+							item
 							className="py-2 pl-0 flex sm:flex-col lg:flex-row justify-center md:justify-start items-center"
 							xs={12}
 							md={3}
@@ -352,7 +350,8 @@ function Footer(props) {
 								</Button>
 							</Link>
 						</Grid>
-						<Grid item
+						<Grid
+							item
 							className="py-2 pl-0 flex sm:flex-col lg:flex-row justify-center md:justify-start items-center"
 							xs={12}
 							md={3}
@@ -361,7 +360,7 @@ function Footer(props) {
 								{settings.general["trademark"]}
 							</Typography>
 						</Grid>
-						<Grid item  className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
+						<Grid item className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
 							<Link className="pl-0 block" to={"/privacy-policy".toUriWithLandingPagePrefix()} color="inherit">
 								<Button color="inherit" className="capitalize">
 									Terms.
@@ -369,7 +368,7 @@ function Footer(props) {
 							</Link>
 						</Grid>
 
-						<Grid item  className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
+						<Grid item className="p-0 pl-4 block flex flex-row items-center justify-center md:justify-start" xs={12} md={3}>
 							<Link className="pl-0 block" to={"/privacy-policy".toUriWithLandingPagePrefix()} color="inherit">
 								<Button color="inherit" className=" capitalize">
 									Privacy.

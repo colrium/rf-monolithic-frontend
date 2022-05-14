@@ -9,9 +9,9 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@mui/icons-material";
 import DefinationContextIcon from "@mui/icons-material/WorkOutlineOutlined";
-import Avatar from "components/Avatar";
-import Badge from "components/Badge";
-import Button from "components/Button";
+import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import Button from "@mui/material/Button";
 import GoogleMap from "components/GoogleMap";
 import Grid from '@mui/material/Grid';
 ;

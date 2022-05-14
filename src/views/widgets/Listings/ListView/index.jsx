@@ -7,7 +7,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-
+import FolderOpenIcon from "@mui/icons-material/FolderOpen"
 //
 import ApiService from "services/Api";
 import Grid from '@mui/material/Grid';
@@ -210,66 +210,66 @@ class ListView extends React.Component {
 		const { defination, service, onClickEntry } = this.props;
 		return (
 			<Grid container className={"p-0"}>
-				<Grid item  className="p-0 m-0" xs={12}>
+				<Grid item className="p-0 m-0" xs={12}>
 					{this.state.loading ? (
 						<Grid container>
-							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-3/12" />
 								</div>
 							</Grid>
 
-							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-8/12" />
 								</div>
 							</Grid>
 
-							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-4/12" />
 								</div>
 							</Grid>
 
-							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-3/12" />
 								</div>
 							</Grid>
 
-							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-5/12" />
 								</div>
 							</Grid>
 
-							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-9/12" />
 								</div>
 							</Grid>
 
-							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-4/12" />
 								</div>
 							</Grid>
 
-							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-3/12" />
 								</div>
 							</Grid>
 
-							<Grid item  md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
+							<Grid item md={12} className={"flex flex-row items-center relative p-0 px-4 my-4"}>
 								<Skeleton variant="circle" width={40} height={40} />
 								<div className="flex-grow mx-2 flex flex-col">
 									<Skeleton variant="text" className="w-4/12" />
@@ -280,26 +280,16 @@ class ListView extends React.Component {
 						<Grid container className="p-0 m-0">
 							{this.state.load_error ? (
 								<Grid container>
-									<Grid item  xs={12}>
-										<Typography
-											color="error"
-											variant="h1"
-																						fullWidth
-										>
+									<Grid item xs={12}>
+										<Typography color="error" variant="h1" fullWidth>
 											<Icon fontSize="large">error</Icon>
 										</Typography>
 									</Grid>
-									<Grid item  xs={12}>
-										<Typography
-											color="error"
-											variant="body1"
-											className={"w-full text-center"}
-																						fullWidth
-										>
+									<Grid item xs={12}>
+										<Typography color="error" variant="body1" className={"w-full text-center"} fullWidth>
 											An error occured.
 											<br />
-											Status Code :{" "}
-											{this.state.load_error.code}
+											Status Code : {this.state.load_error.code}
 											<br />
 											{this.state.load_error.msg}
 										</Typography>
@@ -307,76 +297,36 @@ class ListView extends React.Component {
 								</Grid>
 							) : (
 								<Grid container className="p-0 m-0">
-									<Grid item  className="p-0 m-0" xs={12}>
-										{Array.isArray(this.state.records) &&
-											this.state.records.length > 0 ? (
+									<Grid item className="p-0 m-0" xs={12}>
+										{Array.isArray(this.state.records) && this.state.records.length > 0 ? (
 											<Grid container className="p-0 m-0">
-												<Grid item  xs={12}>
-													<List
-														className={"p-0 transparent-bg"}
-													>
-														{this.state.records.map(
-															(entry, index) => (
-																<div
-																	key={defination.name + "-" + index}
+												<Grid item xs={12}>
+													<List className={"p-0 transparent-bg"}>
+														{this.state.records.map((entry, index) => (
+															<div key={defination.name + "-" + index}>
+																<ListItem
+																	alignItems="flex-start"
+																	onClick={() => {
+																		if (Function.isFunction(onClickEntry)) {
+																			onClickEntry(this.state.raw_records[index], index)
+																		}
+																	}}
 																>
-																	<ListItem
+																	{entry.avatar && <ListItemAvatar>{entry.avatar}</ListItemAvatar>}
+																	{entry.icon && <ListItemIcon> {entry.icon} </ListItemIcon>}
 
-																		alignItems="flex-start"
-																		onClick={() => {
-																			if (Function.isFunction(onClickEntry)) {
-																				onClickEntry(this.state.raw_records[index], index);
-																			}
-																		}}
-																	>
-																		{entry.avatar && (
-																			<ListItemAvatar>
-																				{entry.avatar}
-																			</ListItemAvatar>
-																		)}
-																		{entry.icon && (
-																			<ListItemIcon>
-																				{" "}
-																				{
-																					entry.icon
-																				}{" "}
-																			</ListItemIcon>
-																		)}
-
-																		<ListItemText
-																			primary={
-																				entry.title
-																			}
-																			secondary={
-																				entry.body
-																			}
-																		/>
-
-																	</ListItem>
-																	<Divider
-																		component="li"
-																	/>
-																</div>
-															)
-														)}
+																	<ListItemText primary={entry.title} secondary={entry.body} />
+																</ListItem>
+																<Divider component="li" />
+															</div>
+														))}
 													</List>
 												</Grid>
 											</Grid>
 										) : (
-											<Grid container
-												className="p-0 m-0"
-												justify="center"
-												alignItems="center"
-											>
-												<img
-													alt="Empty list"
-													src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/empty-state-table.svg")}
-												/>
-												<Typography
-													color="grey"
-													variant="body2"
-																										fullWidth
-												>
+											<Grid container className="p-0 m-0 flex flex-col justify-center items-center">
+												<FolderOpenIcon className="text-9xl" />
+												<Typography color="grey" variant="body2" fullWidth>
 													No{defination?.label || "Records"} found
 												</Typography>
 											</Grid>
@@ -388,7 +338,7 @@ class ListView extends React.Component {
 					)}
 				</Grid>
 			</Grid>
-		);
+		)
 	}
 }
 ListView.propTypes = {

@@ -7,12 +7,12 @@ import MenuItem from "@mui/material/MenuItem";
 import FolderIcon from "@mui/icons-material/FolderOutlined";
 import MenuIcon from "@mui/icons-material/MoreVert";
 import { colors } from "assets/jss/app-theme";
-import Avatar from "components/Avatar";
-import Badge from "components/Badge";
-import Card from "components/Card";
-import CardActions from "components/Card/CardActions";
-import CardContent from "components/Card/CardContent";
-import CardHeader from "components/Card/CardHeader";
+import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
 import Grid from '@mui/material/Grid';
 ;
 import Typography from '@mui/material/Typography'
@@ -122,10 +122,20 @@ class CompactAggregatesOverview extends React.Component {
 					}
 				></CardHeader>
 				<CardContent className="p-0 m-0">
-					<Grid container className={classes?.fullHeight} direction="column" justify="center" alignItems="center">
+					<Grid
+						container
+						className={classes?.fullHeight}
+						direction="column"
+						className="p-0 m-0 flex flex-col justify-center items-center"
+					>
 						<Grid container className="p-0 m-0">
-							<Grid item  xs={12}>
-								<Grid container style={{ height: "100%" }} direction="column" justify="center" alignItems="center">
+							<Grid item xs={12}>
+								<Grid
+									container
+									style={{ height: "100%" }}
+									direction="column"
+									className="p-0 m-0 justify-center items-center"
+								>
 									{chartType === "pie" && (
 										<AggregatesPieChart
 											defination={this.state.defination}
@@ -152,8 +162,8 @@ class CompactAggregatesOverview extends React.Component {
 									)}
 								</Grid>
 							</Grid>
-							<Grid item  xs={12}>
-								<Grid container className="center" direction="column" justify="center" alignItems="center">
+							<Grid item xs={12}>
+								<Grid container className="p-0 m-0 justify-center items-center" direction="column">
 									<Typography color="grey" variant="body2" gutterBottom>
 										Aggregates Index
 									</Typography>
@@ -180,7 +190,7 @@ class CompactAggregatesOverview extends React.Component {
 				</CardContent>
 				<CardActions>
 					<Grid container className="p-0 m-0">
-						<Grid item  xs={12}>
+						<Grid item xs={12}>
 							<Typography variant="body2">{this.state.defination.label} by Aggregates</Typography>
 						</Grid>
 					</Grid>

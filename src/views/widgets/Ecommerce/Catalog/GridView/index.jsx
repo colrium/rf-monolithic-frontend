@@ -1,7 +1,7 @@
 /** @format */
 
 import Skeleton from '@mui/material/Skeleton';
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
 ;
 import LazyImage from "components/LazyImage";

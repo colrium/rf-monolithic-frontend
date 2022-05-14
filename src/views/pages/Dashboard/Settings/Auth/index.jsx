@@ -3,7 +3,7 @@ import React from "react"
 import { useSelector } from "react-redux"
 import Typography from "@mui/material/Typography"
 import Grid from '@mui/material/Grid'
-import Card from "components/Card"
+import Card from "@mui/material/Card"
 
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"
@@ -94,7 +94,7 @@ function Widget() {
 								// 	checkMax: value => parseInt(value) > 10000 || "Max value is 10 seconds",
 								// },
 							}}
-							disabled={!values.websockets.enforce_authorization}
+							disabled={!values?.websockets?.enforce_authorization}
 							helperText="The time in milliseconds server should wait for a client to send authorization request."
 						/>
 					</Grid>

@@ -132,6 +132,7 @@ const WebSocketService = props => {
 			dispatch(setSettings(settings))
 		})
 		if (isAuthenticated && !JSON.isEmpty(user)) {
+
 			SocketIO.on("presence-changed", handleOnPresenceChanged)
 			SocketIO.on("user-changed-presence", handleOnUserChangedPresence)
 
@@ -153,6 +154,7 @@ const WebSocketService = props => {
 			})
 			SocketIO.on("unauthorized", ({}) => {
 				const token = Api.getAccessToken()
+				console.log("unauthorized", token)
 				SocketIO.emit("authorization", { token: token.access_token })
 			})
 			SocketIO.on("authorization-failed", data => {

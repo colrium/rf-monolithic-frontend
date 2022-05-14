@@ -3,7 +3,7 @@
 import IconButton from "@mui/material/IconButton";
 import BackIcon from "@mui/icons-material/ArrowBack";
 import Check from "@mui/icons-material/Check";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
 ;
 import React from "react";

@@ -9,8 +9,8 @@ import {
 	EventOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@mui/icons-material";
-import Avatar from "components/Avatar";
-import Button from "components/Button";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
 ;
 import Typography from '@mui/material/Typography';

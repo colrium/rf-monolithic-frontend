@@ -5,7 +5,7 @@ import { Menu, MenuItem } from "@mui/material";
 
 import { MoreVert as AggregateMenuIcon } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
 ;
 import Typography from '@mui/material/Typography';
@@ -15,7 +15,7 @@ import { defaults, Pie } from "react-chartjs-2";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { apiCallRequest } from "state/actions";
-
+import FolderOpenIcon from "@mui/icons-material/FolderOpen"
 //
 import ApiService from "services/Api";
 import { UtilitiesHelper } from "utils/Helpers";
@@ -303,27 +303,17 @@ class AggregatesPieChart extends React.Component {
 		} = this.props;
 		return (
 			<Grid container className={className + " p-0 m-0"}>
-				<Grid item  xs={12} className="p-0 m-0">
+				<Grid item xs={12} className="p-0 m-0">
 					<Grid container className="p-0 m-0">
 						<Grid container className="p-0 m-0">
 							{(showMenu || showTitle) && (
-								<Grid item  xs={12}>
+								<Grid item xs={12}>
 									<Grid container>
 										{showTitle && !showMenu && (
-											<Grid item  xs={12}>
-												<Typography
-
-													variant="body1"
-													fullWidth
-																									>
-													{defination.scope.columns[
-														this.state.aggregate
-													]
-														? defination.scope
-															.columns[
-															this.state
-																.aggregate
-														].label
+											<Grid item xs={12}>
+												<Typography variant="body1" fullWidth>
+													{defination.scope.columns[this.state.aggregate]
+														? defination.scope.columns[this.state.aggregate].label
 														: "Unknown"}{" "}
 													Aggregate
 												</Typography>
@@ -331,70 +321,36 @@ class AggregatesPieChart extends React.Component {
 										)}
 
 										{dynamic && showMenu && (
-											<Grid item
-												className="p-0 m-0"
-												xs={12}
-											>
+											<Grid item className="p-0 m-0" xs={12}>
 												<Button
 													aria-controls="aggregate-menu"
 													aria-haspopup="true"
-													onClick={
-														this
-															.handleShowAggregateMenu
-													}
-
+													onClick={this.handleShowAggregateMenu}
 													className="float-right"
 													size="md"
 													aria-label="Aggregate Menu"
-
 												>
-													{defination.scope.columns[
-														this.state.aggregate
-													]
-														? defination.scope
-															.columns[
-															this.state
-																.aggregate
-														].label
+													{defination.scope.columns[this.state.aggregate]
+														? defination.scope.columns[this.state.aggregate].label
 														: "Unknown"}{" "}
 													Aggregate
 													<AggregateMenuIcon />
 												</Button>
 												<Menu
 													id="surveys-aggregate-menu"
-													anchorEl={
-														this.state
-															.aggregateMenuEl
-													}
+													anchorEl={this.state.aggregateMenuEl}
 													keepMounted
-													open={Boolean(
-														this.state
-															.aggregateMenuEl
-													)}
-													onClose={
-														this
-															.handleCloseAggregateMenu
-													}
+													open={Boolean(this.state.aggregateMenuEl)}
+													onClose={this.handleCloseAggregateMenu}
 												>
-													{this.aggregatables.map(
-														(
-															aggregatable,
-															index
-														) => (
-															<MenuItem
-																onClick={this.handleAggregateMenuItemClick(
-																	aggregatable.name
-																)}
-																key={
-																	"aggregate_" +
-																	aggregatable.name
-																}
-															>
-																{aggregatable.label +
-																	" Aggregate"}
-															</MenuItem>
-														)
-													)}
+													{this.aggregatables.map((aggregatable, index) => (
+														<MenuItem
+															onClick={this.handleAggregateMenuItemClick(aggregatable.name)}
+															key={"aggregate_" + aggregatable.name}
+														>
+															{aggregatable.label + " Aggregate"}
+														</MenuItem>
+													))}
 												</Menu>
 											</Grid>
 										)}
@@ -402,34 +358,16 @@ class AggregatesPieChart extends React.Component {
 								</Grid>
 							)}
 
-							<Grid item  className="p-0 m-0" xs={12}>
-								{Array.isArray(this.state.chart_data.labels) &&
-									this.state.chart_data.labels.length > 0 ? (
+							<Grid item className="p-2" xs={12}>
+								{Array.isArray(this.state.chart_data.labels) && this.state.chart_data.labels.length > 0 ? (
 									<Pie data={this.state.chart_data} />
 								) : (
-									<Grid container
-										className="p-0 m-0"
-										justify="center"
-										alignItems="center"
-									>
-										<img
-											alt="Empty Aggregates"
-											className={`w-9/12`}
-											src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/empty-state-table.svg")}
-										/>
-										<Typography
-											className={`mt-4`}
-											color="grey"
-											variant="body2"
-																						fullWidth
-										>
+									<Grid container className="p-0 m-0 flex flex-col justify-center items-center">
+										<FolderOpenIcon className="text-9xl" />
+										<Typography className={`mt-4`} color="grey" variant="body2" fullWidth>
 											No{" "}
-											{defination.scope.columns[
-												this.state.aggregate
-											]
-												? defination.scope.columns[
-													this.state.aggregate
-												].label
+											{defination.scope.columns[this.state.aggregate]
+												? defination.scope.columns[this.state.aggregate].label
 												: ""}{" "}
 											Aggregates
 										</Typography>
@@ -440,14 +378,9 @@ class AggregatesPieChart extends React.Component {
 
 						{api.complete && api.error && (
 							<Grid container>
-								<Grid item  xs={12}>
-									<Typography
-										color="error"
-										variant="body2"
-																				fullWidth
-									>
-										{"An error occured. \n " +
-											api.error.msg}
+								<Grid item xs={12}>
+									<Typography color="error" variant="body2" fullWidth>
+										{"An error occured. \n " + api.error.msg}
 									</Typography>
 								</Grid>
 							</Grid>
@@ -455,7 +388,7 @@ class AggregatesPieChart extends React.Component {
 					</Grid>
 				</Grid>
 			</Grid>
-		);
+		)
 	}
 }
 

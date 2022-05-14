@@ -17,7 +17,7 @@ import {
 import { ThemeProvider } from '@mui/material/styles';
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
 import Avatar from '@mui/material/Avatar';
-import Typography from 'components/Typography';
+import Typography from '@mui/material/Typography';
 import mapStyles, { mapDarkStyles } from "./mapStyles";
 import { GooglePlacesAutocomplete } from "components/FormInputs";
 import { compose } from "recompose";

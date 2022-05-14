@@ -4,7 +4,7 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import Avatar from '@mui/material/Avatar';
 import { Call as PhoneIcon, MailOutline as EmailIcon, Person as UserRoleIcon } from "@mui/icons-material";
-import Card from "components/Card";
+import Card from "@mui/material/Card";
 import Grid from '@mui/material/Grid';
 ;
 import LazyImage from "components/LazyImage";

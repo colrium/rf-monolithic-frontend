@@ -1,7 +1,7 @@
 
-import Card from "components/Card";
-import CardContent from "components/Card/CardContent";
-import CardHeader from "components/Card/CardHeader";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
 import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React from "react";

@@ -138,6 +138,7 @@ const NotificationsQueueProvider = props => {
 	useDidMount(() => {
 		// setState({ websocketsConnection: SocketIO.connected })
 		SocketIO.on("connect", () => onSocketIOConnected)
+		SocketIO.on("reconnect", () => onSocketIOConnected)
 		SocketIO.on("disconnect", onSocketIODisonnected)
 		SocketIO.on("new_notification", onSocketIONewNotification)
 		const onNotificationListener = EventRegister.on("notification", handleOnNotification)
@@ -205,7 +206,7 @@ const NotificationsQueueProvider = props => {
 						/>
 					</Snackbar>
 				))}
-			<Snackbar
+			{/* <Snackbar
 				open={!state.websocketsConnection || !online}
 				anchorOrigin={{
 					vertical: "top",
@@ -215,7 +216,7 @@ const NotificationsQueueProvider = props => {
 				<Alert severity="error" sx={{ width: "100%" }}>
 					{!state.websocketsConnection ? "Server connection unavailable!" : "Network connection unavailable!"}
 				</Alert>
-			</Snackbar>
+			</Snackbar> */}
 		</NotificationsQueueContext.Provider>
 	)
 }

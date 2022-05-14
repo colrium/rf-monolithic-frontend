@@ -118,10 +118,10 @@ const SignupForm = React.forwardRef((props, ref) => {
 	}
 
 	const onGoogleError = ({ data, error }) => {
-		queueNotification({
-			severity: "error",
-			content: `Signup failed! ${error.message || error.msg || "Something went wrong!"}`,
-		})
+		// queueNotification({
+		// 	severity: "error",
+		// 	content: `Signup failed! ${error.message || error.msg || "Something went wrong!"}`,
+		// })
 	}
 
 	return (

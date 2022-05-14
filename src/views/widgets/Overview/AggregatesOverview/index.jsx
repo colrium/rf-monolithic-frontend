@@ -4,9 +4,9 @@
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import Color from "color";
-import Card from "components/Card";
-import CardActions from "components/Card/CardActions";
-import CardContent from "components/Card/CardContent";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
 import Grid from '@mui/material/Grid';
 ;
 //
@@ -89,7 +89,7 @@ class Overview extends Component {
 						!defination.access.restricted(auth.user) &&
 						defination.access.view.summary(auth.user) &&
 						contexts.includes(name) && (
-							<Grid item  xs={12} md={gridSize} key={name + "-aggregates"}>
+							<Grid item className="p-2"  xs={12} md={gridSize} key={name + "-aggregates"}>
 								<Card
 									className="rounded p-0"
 									style={{

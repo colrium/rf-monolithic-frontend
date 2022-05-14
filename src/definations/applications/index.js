@@ -10,7 +10,7 @@ import {
 } from "@mui/icons-material";
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import React, { useEffect, useState, useCallback } from "react";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';

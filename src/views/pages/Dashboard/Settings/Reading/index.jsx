@@ -3,7 +3,7 @@ import React from "react"
 import { connect } from "react-redux"
 import Typography from "@mui/material/Typography"
 import Grid from '@mui/material/Grid'
-import Card from "components/Card"
+import Card from "@mui/material/Card"
 
 import { EventRegister } from "utils"
 import { usePersistentForm, useDidUpdate } from "hooks"

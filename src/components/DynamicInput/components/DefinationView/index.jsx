@@ -17,7 +17,7 @@ import MoveUpIcon from "@mui/icons-material/ArrowUpward";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MenuIcon from "@mui/icons-material/MoreVert";
 import classNames from "classnames";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import { CheckboxInput, MapInput, RadioInput, SelectInput, TextInput } from "components/FormInputs";
 import Grid from '@mui/material/Grid';
 ;

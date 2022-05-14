@@ -12,11 +12,11 @@ import {
 } from "@mui/icons-material";
 import Calendar from "@toast-ui/react-calendar";
 import { colors } from "assets/jss/app-theme";
-import Avatar from "components/Avatar";
-import Card from "components/Card";
-import CardActions from "components/Card/CardActions";
-import CardContent from "components/Card/CardContent";
-import CardHeader from "components/Card/CardHeader";
+import Avatar from "@mui/material/Avatar";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
 import Grid from '@mui/material/Grid';
 ;
 import Status from "components/Status";

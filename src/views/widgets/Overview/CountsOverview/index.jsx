@@ -2,10 +2,10 @@
 
 
 import classNames from "classnames";
-import Card from "components/Card";
-import CardActions from "components/Card/CardActions";
-import CardContent from "components/Card/CardContent";
-import CardHeader from "components/Card/CardHeader";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
 import Grid from '@mui/material/Grid';
 ;
 import Typography from '@mui/material/Typography'
@@ -125,8 +125,15 @@ class Overview extends Component {
 			<Grid container className="p-0 m-0" className={rootClassName}>
 				{Object.entries(views_data).map(
 					([context, { title, type, icon, description, size, query, value, resolveValue, view, ...rest }], cursor) => (
-						<Grid item  xs={12} md={size ? size : wrapperSize >= 8 ? 3 : 6} key={context + "-numbers"}>
-							<Card elevation={1} style={{ backgroundColor: theme.palette.background.paper }}>
+						<Grid
+							item
+							xs={12}
+							md={size ? size : wrapperSize >= 8 ? 3 : 6}
+							sx={{ minHeight: theme => theme.spacing(40) }}
+							className="px-2 py-2"
+							key={context + "-numbers"}
+						>
+							<Card  elevation={1} >
 								<CardHeader
 									title={
 										<Typography variant="h5" style={{ color: theme.palette.text.disabled, fontWeight: "500" }}>
@@ -135,12 +142,13 @@ class Overview extends Component {
 									}
 								/>
 
-								<CardContent className="p-0 m-0">
-									<Grid container className="p-0 m-0">
-										<Grid item  xs={12} className="flex items-center justify-center">
+								<CardContent>
+									<Grid container className="p-0 m-0 flex items-center">
+										<Grid item xs={12} className="flex items-center justify-center">
 											{type === "count" && (
 												<Typography
 													variant="h2"
+													className="text-5xl"
 													style={{ color: theme.palette.accent.main, fontWeight: "700", fontSize: "2rem" }}
 												>
 													{" "}

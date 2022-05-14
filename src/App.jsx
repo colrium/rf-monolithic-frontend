@@ -44,9 +44,10 @@ const App = props => {
 	} = props
 	const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
 	const evaluatedTheme = useDeepMemo(() => {
-		let themeMode = prefersDarkMode || preferences.theme === "dark" ? "dark" : "light"
+		let themeMode = preferences.theme === "dark" ? "dark" : "light"
 		let computedTheme = theme
 		computedTheme.palette.mode = themeMode
+
 		computedTheme.palette.background = {
 			default: themeMode === "dark" ? "#2b2b2b" : "#f3f3f3",
 			paper: themeMode === "dark" ? "#121212" : "#ffffff",
@@ -76,7 +77,7 @@ const App = props => {
 				},
 			},
 		})
-	}, [prefersDarkMode, preferences.theme])
+	}, [preferences.theme])
 
 	return (
 		<ThemeProvider theme={evaluatedTheme}>
