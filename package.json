@@ -17,7 +17,7 @@
 		"build:react-preview": "react-scripts build && rm -rf preview && mv build preview",
 		"build:production": "GENERATE_SOURCEMAP=false && react-scripts build && rm -rf production && mv build production",
 		"build:preview": "rm -rf build && react-scripts build && rm -rf preview && mv build preview",
-		"start": "react-scripts start",
+		"start": "npm-run-all --parallel watch:css start:react",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
@@ -30,7 +30,8 @@
 		"remove-console": "jscodeshift -t remove-consoles.js src --extensions=js,jsx --verbose=2",
 		"docker:production": "docker-compose -f docker-compose.production.yml up -d",
 		"docker:preview": "yarn build:preview && docker-compose -f docker-compose.preview.yml up -d",
-		"docker": "docker-compose -f docker-compose.yml up -d"
+		"docker": "docker-compose -f docker-compose.yml up -d",
+		"analyze": "craco build"
 	},
 	"dependencies": {
 		"@craco/craco": "^6.4.3",
@@ -44,6 +45,7 @@
 		"@mui/lab": "^5.0.0-alpha.50",
 		"@mui/material": "^5.0.3",
 		"@mui/styles": "^5.0.1",
+		"@mui/x-date-pickers": "^5.0.0-alpha.3",
 		"@react-page/core": "^0.30.0",
 		"@testing-library/jest-dom": "^5.11.4",
 		"@testing-library/react": "^11.1.0",
@@ -58,6 +60,7 @@
 		"clsx": "^1.1.1",
 		"color": "^4.0.1",
 		"date-fns": "^2.28.0",
+		"dequal": "^2.0.2",
 		"dexie": "^3.2.1",
 		"dexie-react-hooks": "^1.1.1",
 		"draft-js": "^0.11.7",
@@ -124,6 +127,7 @@
 		"@types/jwt-decode": "^2.2.1",
 		"@welldone-software/why-did-you-render": "^6.2.1",
 		"autoprefixer": "^10.3.7",
+		"compression-webpack-plugin": "^9.2.0",
 		"cross-env": "^7.0.3",
 		"eslint-config-airbnb": "19.0.4",
 		"eslint-config-node": "^4.1.0",
@@ -146,7 +150,8 @@
 		"react-router-sitemap": "^1.2.0",
 		"redux-devtools": "^3.5.0",
 		"tailwindcss": "^2.2.16",
-		"terser-brunch": "^4.1.0"
+		"terser-brunch": "^4.1.0",
+		"webpack-bundle-analyzer": "^4.5.0"
 	},
 	"resolutions": {
 		"@material-ui/styles": "4.1.2"

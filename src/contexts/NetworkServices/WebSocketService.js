@@ -140,8 +140,8 @@ const WebSocketService = props => {
 			SocketIO.on("message-marked-as-received", handleOnMessageMarkedAsReceived)
 			SocketIO.on("message-deleted-for-all", handleOnMessageDeletedForAll)
 			SocketIO.on("message-deleted-for-user", handleOnMessageDeletedForUser)
-			SocketIO.on("message-sent", handleOnMessageSent)
-			SocketIO.on("new-message", handleOnNewMessage)
+			// SocketIO.on("message-sent", handleOnMessageSent)
+			// SocketIO.on("new-message", handleOnNewMessage)
 			SocketIO.on("preferences", preferences => {
 				dispatch(setPreferences(preferences))
 			})
@@ -154,7 +154,6 @@ const WebSocketService = props => {
 			})
 			SocketIO.on("unauthorized", ({}) => {
 				const token = Api.getAccessToken()
-				console.log("unauthorized", token)
 				SocketIO.emit("authorization", { token: token.access_token })
 			})
 			SocketIO.on("authorization-failed", data => {
@@ -166,7 +165,6 @@ const WebSocketService = props => {
 				if (!JSON.isEmpty(data)) {
 					handleOnNewConversation(data)
 				}
-				console.error("create-conversation-error data", data)
 			})
 			if (SocketIO.connected) {
 				SocketIO.emit("get-preferences", {})

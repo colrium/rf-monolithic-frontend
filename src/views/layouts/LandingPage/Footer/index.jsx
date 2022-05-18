@@ -110,7 +110,7 @@ function Footer(props) {
 				<Grid container className={className}>
 					{!columnWidgets && (
 						<Grid container className="px-4 md:px-32 ">
-							<Grid item xs={12} lg={5} className="p-0 m-0 mb-8">
+							<Grid item xs={12} md={5} className="p-0 m-0 mb-8">
 								<Grid container className="p-0 m-0">
 									<Grid item xs={12} className="p-0 m-0">
 										<Grid item xs={12} className={"mb-6 p-0 flex flex-col items-center md:items-start"}>
@@ -131,7 +131,7 @@ function Footer(props) {
 								</Grid>
 							</Grid>
 
-							<Grid item xs={12} lg={7} className="p-0 m-0 mb-8">
+							<Grid item xs={12} md={7} className="p-0 m-0 mb-8">
 								<Grid container className="p-0 m-0">
 									<Grid item className="flex flex-col items-center md:items-start md:pl-4" xs={12} md={6}>
 										<Box className="w-8/12">
@@ -211,9 +211,9 @@ function Footer(props) {
 								</Grid>
 							</Grid>
 
-							<Grid item md={5} className="p-0 m-0 mb-8">
+							<Grid item xs={12} md={5} className="p-0 m-0 mb-8 pr-4 md:pr-16">
 								<Grid container className="p-0 m-0">
-									<Grid item xs={12} md={8} className="p-0 flex flex-col items-center md:items-start">
+									<Grid item xs={12} className="p-0 flex flex-col items-center md:items-start">
 										<Box className="w-full">
 											<Typography className="w-full pl-0 block pb-4" variant="body2">
 												For more information, or to schedule a demo, drop us a line
@@ -252,7 +252,7 @@ function Footer(props) {
 
 							<Grid item md={7} className="p-0 m-0 mb-8">
 								<Grid container className="p-0 m-0">
-									<Grid item className="pl-0 md:pl-4 flex flex-col items-center md:items-start" xs={12} md={6}>
+									<Grid item className="pl-0 md:pl-4 flex flex-col items-start md:items-start" xs={12} md={6}>
 										<Box className="w-8/12">
 											{(settings.social?.twitter ||
 												settings.social?.linkedin ||
@@ -261,42 +261,44 @@ function Footer(props) {
 												settings.social?.facebook ||
 												settings.social?.youtube ||
 												settings.social?.google_plus) && (
-													<Grid container className="p-0 m-0">
-														<Typography className="w-full block" variant="h5">
-															Social {JSON.stringify(settings.social)}
-														</Typography>
-													</Grid>
-												)}
 												<Grid container className="p-0 m-0">
-													{Object.entries(settings.social).map(
-														([name, url], index) =>
-															!String.isEmpty(url) &&
-															String.isUrl(url) && (
-																<IconButton
-																	className="text-white"
-																	aria-label={name}
-																	href={url}
-																	target="_blank"
-																	key={name + "-button"}
-																>
-																	{name === "twitter" && <TwitterIcon />}
-																	{name === "linkedin" && <LinkedInIcon />}
-																	{name === "instagram" && <InstagramIcon />}
-																	{name === "whatsapp" && <WhatsAppIcon />}
-																	{name === "facebook" && <FacebookIcon />}
-																	{name === "youtube" && <YouTubeIcon />}
-																	{name === "google_plus" && <GooglePlusIcon />}
-																</IconButton>
-															)
-													)}
+													<Typography className="w-full block" variant="h5">
+														Social
+													</Typography>
 												</Grid>
+											)}
+											<Grid container className="p-0 m-0">
+												{Object.entries(settings.social).map(
+													([name, url], index) =>
+														!String.isEmpty(url) &&
+														String.isUrl(url) && (
+															<IconButton
+																color="inverse"
+																size="small"
+																aria-label={name}
+																title={name.capitalize()}
+																href={url}
+																target="_blank"
+																key={`social-${name}-button`}
+															>
+																{name === "twitter" && <TwitterIcon fontSize="inherit" />}
+																{name === "linkedin" && <LinkedInIcon fontSize="inherit" />}
+																{name === "instagram" && <InstagramIcon fontSize="inherit" />}
+																{name === "whatsapp" && <WhatsAppIcon fontSize="inherit" />}
+																{name === "facebook" && <FacebookIcon fontSize="inherit" />}
+																{name === "youtube" && <YouTubeIcon fontSize="inherit" />}
+																{name === "google_plus" && <GooglePlusIcon fontSize="inherit" />}
+															</IconButton>
+														)
+												)}
+											</Grid>
 										</Box>
 									</Grid>
 
 									<Grid item className="pl-0 md:pl-4 flex flex-col items-center md:items-start" xs={12} md={6}>
 										<Box className="w-8/12">
 											{(!String.isEmpty(settings.contact["phone"]) || !String.isEmpty(settings.contact["email"])) && (
-												<Typography className="w-full block pb-4" color={inverseColor} variant="h5">
+												<Typography className="w-full block" color={inverseColor} variant="h5">
 													Contact
 												</Typography>
 											)}

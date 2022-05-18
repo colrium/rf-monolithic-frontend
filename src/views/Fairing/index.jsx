@@ -55,10 +55,7 @@ const Fairing = props => {
 
 
 	return (
-		<Box
-			sx={{color: theme => theme.palette.text.primary}}
-			component="div"
-		>
+		<Box sx={{ color: theme => theme.palette.text.primary, backgroundColor: theme => theme.palette.background.default }} component="div">
 			{layout === "dashboard" ? (
 				<DashboardLayout sidebar_items={drawer_items}>
 					<Outlet />
@@ -69,7 +66,6 @@ const Fairing = props => {
 				</LandingPageLayout>
 			)}
 			<CookiesConsentDialog />
-
 		</Box>
 	)
 }

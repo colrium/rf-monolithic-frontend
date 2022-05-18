@@ -75,13 +75,12 @@ const Field = React.forwardRef((props, ref) => {
 				formState: { isSubmitting },
 			} = params
 
-
 			//
 
 			return (
 				<FileDropZone
 					{...fieldParams}
-					defaultValue={fieldValue}
+					value={fieldValue}
 					onChange={handleOnChange(fieldOnChange)}
 					onFocus={handleOnFocus(fieldOnFocus)}
 					onBlur={handleOnBlur(fieldOnBlur)}

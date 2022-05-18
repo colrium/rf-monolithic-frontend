@@ -302,7 +302,7 @@ class AggregatesPieChart extends React.Component {
 			cache,
 		} = this.props;
 		return (
-			<Grid container className={className + " p-0 m-0"}>
+			<Grid container className={`${className || ""} p-0 m-0`}>
 				<Grid item xs={12} className="p-0 m-0">
 					<Grid container className="p-0 m-0">
 						<Grid container className="p-0 m-0">

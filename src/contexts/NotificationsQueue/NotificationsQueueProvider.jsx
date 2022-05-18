@@ -17,11 +17,11 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
 
-const useStyles = makeStyles(theme => ({
+const useStyles = theme => ({
 	root: {
 		"& .MuiSnackbarContent-root": {
-			color: `${theme.palette.text.primary} !important`,
-			backgroundColor: theme.palette.background.paper,
+			// color: `${theme.palette.text.primary} !important`,
+			// backgroundColor: theme.palette.background.paper,
 			backgroundColor: "transparent",
 		},
 	},
@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
 			// borderRadius: theme.spacing(),
 		},
 	},
-}))
+})
 const NotificationsQueueProvider = props => {
 	const { children, queue: initialQueue, displayMax = 2 } = props
 	const classes = useStyles()
@@ -56,7 +56,7 @@ const NotificationsQueueProvider = props => {
 			spreadEntries = entries.reduce((acc, current) => acc.concat([current.data]), [])
 		}
 		return spreadEntries
-	}, [entries])
+	}, [entries], [])
 
 	const appendNotification = useCallback(
 		notification => {
@@ -100,12 +100,12 @@ const NotificationsQueueProvider = props => {
 
 	const displayedNotifications = useDeepMemo(
 		() => notificationsQueue.sort((a, b) => b.priority - a.priority).slice(0, displayMax),
-		[notificationsQueue, displayMax]
+		[notificationsQueue, displayMax], []
 	)
 
 	const totalAutoHideDuration = useDeepMemo(
 		() => notificationsQueue.reduce((acc, cur) => acc + (cur.timeout || cur.autoHideDuration || 3000) + 500, 0),
-		[notificationsQueue]
+		[notificationsQueue], []
 	)
 
 	const onSocketIONewNotification = useCallback(

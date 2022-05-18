@@ -34,6 +34,7 @@ export { default as useEventDispatcher } from "./useEventDispatcher"
 export { default as useEvent } from "./useEvent"
 export { default as useClientPositions } from "./useClientPositions"
 export { default as useForwardedRef } from "./useForwardedRef"
+export { default as useDeepCompareMemoize } from "./useDeepCompareMemoize"
 export { default as useGoogleOneTapLogin } from "./useGoogleOneTapLogin"
 
 export * from "./useGoogleMaps";

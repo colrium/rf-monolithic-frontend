@@ -38,8 +38,8 @@ const Field = React.forwardRef((props, ref) => {
 
 	const renderField = useCallback(
 		params => {
-			if (Function.isFunction(render)) {
-				return render(params)
+			if (Function.isFunction(props.render)) {
+				return props.render(params)
 			}
 			const {
 				field: { onChange: fieldOnChange, ...fieldParams },
@@ -48,7 +48,7 @@ const Field = React.forwardRef((props, ref) => {
 			return (
 				<AutoComplete
 					onChange={handleOnChange(fieldOnChange)}
-					disabled={disabled || formState.isSubmitting}
+					disabled={props.disabled || formState.isSubmitting}
 					error={isTouched && !!error?.message}
 					helperText={
 						<Stack className="w-full">
@@ -57,9 +57,9 @@ const Field = React.forwardRef((props, ref) => {
 									{error?.message}
 								</FormHelperText>
 							)}
-							{!!helperText && (
+							{!!props.helperText && (
 								<FormHelperText component="div" error={false}>
-									{helperText}
+									{props.helperText}
 								</FormHelperText>
 							)}
 						</Stack>
@@ -69,15 +69,15 @@ const Field = React.forwardRef((props, ref) => {
 							marginLeft: `2px !important`,
 							marginRight: `2px !important`,
 						},
-						...sx,
+						...props.sx,
 					}}
-					{...rest}
+					{...props}
 					{...fieldParams}
 					ref={ref}
 				/>
 			)
 		},
-		[render]
+		[props]
 	)
 
 	return (

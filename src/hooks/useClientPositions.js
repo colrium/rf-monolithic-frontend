@@ -293,11 +293,22 @@ const useClientPositions = options => {
 	)
 
 	const handleOnSocketIOConnect = useCallback(
-		socket => {
+		() => {
 			SocketIO.emit("get-client-positions", { ...filter })
 		},
 		[filter]
 	)
+	const handleOnSocketIODisconnect = useCallback(() => {
+		const currentState = getState()
+		Object.entries(currentState).map(([id, value]) => {
+			if (value.marker instanceof google.maps.Marker) {
+				value.marker.setMap(null)
+			}
+		})
+		setState({})
+
+	}, [])
+
 
 	const handleOnUserPresenceChanged = useCallback(({ user, presence }) => {
 		const position = get(user)
@@ -313,9 +324,9 @@ const useClientPositions = options => {
 	}, [])
 
 	useDidMount(() => {
-		var geolocationInterval = setInterval(() => {
-			handleOnGeoLocation({ longitude: 36.746521 + Math.random() * 0.001, latitude: -1.164471 + Math.random() * 0.001 })
-		}, 5000)
+		// var geolocationInterval = setInterval(() => {
+		// 	handleOnGeoLocation({ longitude: 36.746521 + Math.random() * 0.001, latitude: -1.164471 + Math.random() * 0.001 })
+		// }, 5000)
 		SocketIO.on("clients-positions", handleOnClientPositions)
 		SocketIO.on("new-client-position", handleOnClientPosition)
 		SocketIO.on("client-position-changed", handleOnClientPosition)
@@ -330,9 +341,9 @@ const useClientPositions = options => {
 		}
 
 		SocketIO.on("connect", handleOnSocketIOConnect)
+		SocketIO.on("disconnect", handleOnSocketIODisconnect)
 
 		return () => {
-			clearInterval(geolocationInterval)
 			SocketIO.off("clients-positions", handleOnClientPositions)
 			SocketIO.off("new-client-position", handleOnClientPosition)
 			SocketIO.off("client-position-changed", handleOnClientPosition)
@@ -355,8 +366,6 @@ const useClientPositions = options => {
 	}, [])
 
 	useDidUpdate(() => {
-		// SocketIO.emit("get-client-positions", { ...filter })
-
 		if (!geoLocation.loading) {
 			handleOnGeoLocation(geoLocation)
 		}
