@@ -4,7 +4,7 @@ import Avatar from "@mui/material/Avatar"
 import Box from "@mui/material/Box"
 
 import IconButton from "@mui/material/IconButton"
-import React, { useEffect, useCallback } from "react"
+import React, { useEffect, useCallback, useRef } from "react"
 import Typography from "@mui/material/Typography"
 import CheckIcon from "@mui/icons-material/Check"
 import Card from "@mui/material/Card"
@@ -16,7 +16,7 @@ import CloseIcon from "@mui/icons-material/Close"
 import CircularProgress from "@mui/material/CircularProgress"
 import { useRaf } from "react-use"
 import { useTheme } from "@mui/material/styles"
-import { useDidUpdate, useSetState } from "hooks"
+import { useDidUpdate, useSetState, useDidMount } from "hooks"
 import { motion, AnimatePresence } from "framer-motion"
 
 const NotificationContent = React.forwardRef((props, ref) => {
@@ -45,6 +45,8 @@ const NotificationContent = React.forwardRef((props, ref) => {
 		paused: false,
 		pauseElapsed: 0,
 	})
+	const timeoutRef = useRef(null)
+	const pausedRef = useRef(false)
 	const pauseTimeout = state.paused && state.pauseElapsed > 0 ? timeout * state.pauseElapsed : timeout
 	const elapsed = useRaf(state.paused ? 0 : pauseTimeout, 500)
 	const timeoutPercentage = (1 - (state.paused ? state.pauseElapsed : elapsed)) * 100
@@ -63,6 +65,7 @@ const NotificationContent = React.forwardRef((props, ref) => {
 	)
 	const handleOnClick = useCallback(
 		elapsed => event => {
+			pausedRef.current = !pausedRef.current
 			setState(prevState => ({
 				paused: !prevState.paused,
 				pauseElapsed: !prevState.paused ? elapsed : prevState.pauseElapsed,
@@ -73,11 +76,27 @@ const NotificationContent = React.forwardRef((props, ref) => {
 		},
 		[onClick]
 	)
-	useDidUpdate(() => {
-		if (timeoutPercentage === 0) {
-			handleOnClose()
+	// useDidUpdate(() => {
+	// 	if (timeoutPercentage === 0) {
+	// 		handleOnClose()
+	// 	}
+	// }, [timeoutPercentage])
+
+	useDidMount(() => {
+		timeoutRef.current = setTimeout(() => {
+			if (!pausedRef.current) {
+				handleOnClose()
+			}
+			else {
+				clearTimeout(timeoutRef.current)
+			}
+		}, timeout || 6000)
+
+		return () => {
+			clearTimeout(timeoutRef.current)
 		}
-	}, [timeoutPercentage])
+
+	})
 
 
 	return (
@@ -95,7 +114,7 @@ const NotificationContent = React.forwardRef((props, ref) => {
 						action ||
 						(!!onClose && (
 							<Box className={`relative flex flex-row items-center justify-center`}>
-								<CircularProgress
+								{/* <CircularProgress
 									variant="determinate"
 									className=""
 									sx={{
@@ -107,7 +126,7 @@ const NotificationContent = React.forwardRef((props, ref) => {
 									size={theme.spacing(2.5)}
 									thickness={4}
 									value={timeoutPercentage}
-								/>
+								/> */}
 								<IconButton
 									size="small"
 									color="inherit"

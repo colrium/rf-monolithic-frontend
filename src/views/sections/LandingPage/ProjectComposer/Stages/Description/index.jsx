@@ -1,16 +1,15 @@
 /** @format */
-import React, { useCallback, useMemo, useRef } from "react";
-import Grid from '@mui/material/Grid';
-;
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { usePersistentForm } from "hooks";
+import React, { useCallback, useMemo, useRef } from "react"
+import Grid from "@mui/material/Grid"
+import Button from "@mui/material/Button"
+import Typography from "@mui/material/Typography"
+import { usePersistentForm } from "hooks"
 
-const stage = "description";
-const Stage = (props) => {
-    const { onSubmit, title, description } = props;
+const stage = "description"
+const Stage = props => {
+	const { onSubmit, title, description } = props
 
-    const { Field, TextField, formState, setValue, values, register, submit } = usePersistentForm({
+	const { Field, TextField, formState, setValue, getValues, register, submit } = usePersistentForm({
 		name: "projectcomposer",
 		defaultValues: { stage: stage },
 		onSubmit: async (formData, e) => {
@@ -20,13 +19,12 @@ const Stage = (props) => {
 		},
 	})
 
-    const stageValues = (JSON.getDeepPropertyValue(`stages.${stage}`, (values || {})) || {});
-    const complete_stages = useMemo((() => (JSON.getDeepPropertyValue(`complete_stages`, values)) || []), [values]);
-    const complete_stagesRef = useRef(complete_stages);
-    const {errors, isValid} = formState;
+	const stageValues = JSON.getDeepPropertyValue(`stages.${stage}`, getValues() || {}) || {}
+	const complete_stages = useMemo(() => JSON.getDeepPropertyValue(`complete_stages`, getValues()) || [], [])
+	const complete_stagesRef = useRef(complete_stages)
+	const { errors, isValid } = formState
 
-
-    return (
+	return (
 		<Grid container>
 			{/* {!!title && <Grid item  className="flex flex-row items-start">
                 <Typography variant="h1" className="flex-1">
@@ -34,13 +32,13 @@ const Stage = (props) => {
                 </Typography>
             </Grid>} */}
 			{!!description && (
-				<Grid item  className="flex flex-col items-start py-8">
+				<Grid item className="flex flex-col items-start py-8">
 					<Typography variant="body2">{description}</Typography>
 				</Grid>
 			)}
-			<Grid item  className={"py-12"}>
+			<Grid item className={"py-12"}>
 				<Grid container>
-					<Grid item  md={12} className={"py-8"}>
+					<Grid item md={12} className={"py-8"}>
 						<TextField
 							label="Project Name"
 							placeholder="This is the Project Title"
@@ -54,7 +52,7 @@ const Stage = (props) => {
 						/>
 					</Grid>
 
-					<Grid item  md={12} className={"py-8"}>
+					<Grid item md={12} className={"py-8"}>
 						<TextField
 							label="Project Summary"
 							name={`stages.${stage}.project_summary`}
@@ -70,7 +68,7 @@ const Stage = (props) => {
 						/>
 					</Grid>
 
-					<Grid item  md={12} className={"py-8"}>
+					<Grid item md={12} className={"py-8"}>
 						<TextField
 							label="Project Objectives"
 							name={`stages.${stage}.project_objectives`}
@@ -88,7 +86,7 @@ const Stage = (props) => {
 				</Grid>
 			</Grid>
 
-			<Grid item  className="flex flex-col items-center py-20 mb-12">
+			<Grid item className="flex flex-col items-center py-20 mb-12">
 				<Button onClick={submit} disabled={!isValid} color="accent" variant="contained">
 					Great. Nearly there
 				</Button>
@@ -97,4 +95,4 @@ const Stage = (props) => {
 	)
 }
 
-export default Stage;
+export default Stage

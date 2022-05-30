@@ -94,7 +94,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 
 	const conversationRef = useRef(conversation)
 
-	const { handleSubmit, TextField, FilePicker, values, setValue, getValues, resetValues } = usePersistentForm({
+	const { handleSubmit, TextField, FilePicker, setValue, getValues, resetValues } = usePersistentForm({
 		// name: `compose-message-${conversation?.uuid || conversation?._id || "new"}`,
 		name: `compose-message`,
 		defaultValues: {
@@ -110,6 +110,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 			// conversation_uuid: conversation?.uuid,
 		},
 	})
+	const values = getValues()
 	const inputRef = useRef(null)
 	const isTypingRef = useRef(false)
 	const [state, setState, getState] = useSetState({

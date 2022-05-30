@@ -21,7 +21,7 @@ import TableCell from "@mui/material/TableCell"
 import TableRow from "@mui/material/TableRow"
 import { useDispatch, useSelector } from "react-redux"
 //
-import Grid from '@mui/material/Grid'
+import Grid from "@mui/material/Grid"
 
 import SnackbarContent from "components/Snackbar/SnackbarContent"
 import PropTypes from "prop-types"
@@ -35,8 +35,6 @@ const LightInputField = props => {
 	const { component: InputComponent, ...rest } = props
 	return <InputComponent {...rest} />
 }
-
-
 
 const BaseForm = React.forwardRef((props, ref) => {
 	const {
@@ -86,7 +84,6 @@ const BaseForm = React.forwardRef((props, ref) => {
 		WysiwygEditor,
 		Checkbox,
 		Controller,
-		values,
 		persistedValues,
 		resetValues,
 		reset,
@@ -102,6 +99,7 @@ const BaseForm = React.forwardRef((props, ref) => {
 		volatile: volatile,
 		defaultValues: record || initialValues || {},
 	})
+	const values = getValues()
 	const [state, setState, getState] = useSetState({
 		record: false,
 		loading: {},
@@ -140,172 +138,164 @@ const BaseForm = React.forwardRef((props, ref) => {
 		[auth, values]
 	)
 
-	const loadFieldValuePosibilities = useCallback(
-		() => {
-			let fields_to_load = {}
-			let loading_fields = {}
-			let value_possibilities = {}
-			let currentState = getState()
-			if (Object.size(currentState.onChangeEffectsFields) > 0) {
-				for (let [effect_field_name, effect_field_properties] of Object.entries(currentState.onChangeEffectsFields)) {
-					/* if (!(effect_field_properties.input.type in ref_input_types)) {
+	const loadFieldValuePosibilities = useCallback(() => {
+		let fields_to_load = {}
+		let loading_fields = {}
+		let value_possibilities = {}
+		let currentState = getState()
+		if (Object.size(currentState.onChangeEffectsFields) > 0) {
+			for (let [effect_field_name, effect_field_properties] of Object.entries(currentState.onChangeEffectsFields)) {
+				/* if (!(effect_field_properties.input.type in ref_input_types)) {
 					continue;
 				} */
-					if (JSON.isJSON(effect_field_properties.reference) && !currentState.loading[effect_field_name]) {
-						fields_to_load[effect_field_name] = effect_field_properties
-						loading_fields[effect_field_name] = true
-					} else if (
-						(JSON.isJSON(effect_field_properties.possibilities) && !(effect_field_name in currentState.value_possibilities)) ||
-						!Object.areEqual(newState.value_possibilities[effect_field_name], effect_field_properties.possibilities)
-					) {
-						value_possibilities[effect_field_name] = effect_field_properties.possibilities
-					} else if (
-						Array.isArray(effect_field_properties.possibilities) &&
-						!(effect_field_name in newState.value_possibilities)
-					) {
-						let possibilities = {}
-						for (var i = 0; i < effect_field_properties.possibilities.length; i++) {
-							possibilities[effect_field_properties.possibilities[i]] = effect_field_properties.possibilities[i]
-						}
-						value_possibilities[effect_field_name] = possibilities
+				if (JSON.isJSON(effect_field_properties.reference) && !currentState.loading[effect_field_name]) {
+					fields_to_load[effect_field_name] = effect_field_properties
+					loading_fields[effect_field_name] = true
+				} else if (
+					(JSON.isJSON(effect_field_properties.possibilities) && !(effect_field_name in currentState.value_possibilities)) ||
+					!Object.areEqual(newState.value_possibilities[effect_field_name], effect_field_properties.possibilities)
+				) {
+					value_possibilities[effect_field_name] = effect_field_properties.possibilities
+				} else if (Array.isArray(effect_field_properties.possibilities) && !(effect_field_name in newState.value_possibilities)) {
+					let possibilities = {}
+					for (var i = 0; i < effect_field_properties.possibilities.length; i++) {
+						possibilities[effect_field_properties.possibilities[i]] = effect_field_properties.possibilities[i]
 					}
+					value_possibilities[effect_field_name] = possibilities
 				}
-			} else {
-
-				for (let [field_name, field_properties] of Object.entries(currentState.fields)) {
-					/* if (!(field_properties.input.type in ref_input_types)) {
+			}
+		} else {
+			for (let [field_name, field_properties] of Object.entries(currentState.fields)) {
+				/* if (!(field_properties.input.type in ref_input_types)) {
 					continue;
 				} */
-					if (JSON.isJSON(field_properties?.reference) && !currentState.loading[field_name] && field_properties?.reference?.name !== "attachments") {
-						if (currentState.value_possibilities && !currentState.value_possibilities[field_name]) {
-							fields_to_load[field_name] = field_properties
-							loading_fields[field_name] = true
-						}
-					} else if (
-						(JSON.isJSON(field_properties?.possibilities) &&
-							currentState.value_possibilities &&
-							!(field_name in currentState.value_possibilities)) ||
-						!Object.areEqual(currentState.value_possibilities[field_name], field_properties.possibilities)
-					) {
-						value_possibilities[field_name] = field_properties.possibilities
-					} else if (
-						Array.isArray(field_properties.possibilities) &&
+				if (
+					JSON.isJSON(field_properties?.reference) &&
+					!currentState.loading[field_name] &&
+					field_properties?.reference?.name !== "attachments"
+				) {
+					if (currentState.value_possibilities && !currentState.value_possibilities[field_name]) {
+						fields_to_load[field_name] = field_properties
+						loading_fields[field_name] = true
+					}
+				} else if (
+					(JSON.isJSON(field_properties?.possibilities) &&
 						currentState.value_possibilities &&
-						!(field_name in currentState.value_possibilities)
-					) {
-						let possibilities = {}
-						for (var i = 0; i < field_properties.possibilities.length; i++) {
-							possibilities[field_properties.possibilities[i]] = field_properties.possibilities[i]
-						}
-						value_possibilities[field_name] = possibilities
+						!(field_name in currentState.value_possibilities)) ||
+					!Object.areEqual(currentState.value_possibilities[field_name], field_properties.possibilities)
+				) {
+					value_possibilities[field_name] = field_properties.possibilities
+				} else if (
+					Array.isArray(field_properties.possibilities) &&
+					currentState.value_possibilities &&
+					!(field_name in currentState.value_possibilities)
+				) {
+					let possibilities = {}
+					for (var i = 0; i < field_properties.possibilities.length; i++) {
+						possibilities[field_properties.possibilities[i]] = field_properties.possibilities[i]
 					}
+					value_possibilities[field_name] = possibilities
 				}
 			}
+		}
 
-			if (Object.size(value_possibilities) > 0) {
-				//
-				currentState.value_possibilities = { ...currentState.value_possibilities, ...value_possibilities }
+		if (Object.size(value_possibilities) > 0) {
+			//
+			currentState.value_possibilities = { ...currentState.value_possibilities, ...value_possibilities }
+		}
 
-			}
+		setState({ value_possibilities: { ...currentState.value_possibilities, ...value_possibilities } })
 
-
-			setState({value_possibilities: { ...currentState.value_possibilities, ...value_possibilities } })
-
-			if (Object.size(fields_to_load) > 0) {
-				for (let [name, field] of Object.entries(fields_to_load)) {
-					if (Array.isArray(fields) && fields.length > 0) {
-						if ((exclude && fields.includes(name)) || !fields.includes(name)) {
-							continue
-						}
+		if (Object.size(fields_to_load) > 0) {
+			for (let [name, field] of Object.entries(fields_to_load)) {
+				if (Array.isArray(fields) && fields.length > 0) {
+					if ((exclude && fields.includes(name)) || !fields.includes(name)) {
+						continue
 					}
+				}
 
-					if (JSON.isJSON(field.reference)) {
-						//Reference field Service Calls
-						if (String.isString(field.reference.name) && JSON.isJSON(field.reference.service_query)) {
-							let service_key = field.reference.name
-							let service_query = field.reference.service_query
-							let service = definations[service_key]
-								? ApiService.getContextRequests(definations[service_key]?.endpoint)
-								: false
+				if (JSON.isJSON(field.reference)) {
+					//Reference field Service Calls
+					if (String.isString(field.reference.name) && JSON.isJSON(field.reference.service_query)) {
+						let service_key = field.reference.name
+						let service_query = field.reference.service_query
+						let service = definations[service_key] ? ApiService.getContextRequests(definations[service_key]?.endpoint) : false
 
-							let execute_service_call =
-								service &&
-								service_query &&
-								currentState.last_field_changed !== name &&
-								ref_input_types.includes(field?.input?.type)
+						let execute_service_call =
+							service &&
+							service_query &&
+							currentState.last_field_changed !== name &&
+							ref_input_types.includes(field?.input?.type)
 
-							if (execute_service_call) {
-								setState(prevState => ({ loading: { ...prevState.loading, [name]: true } }))
-								service
-									.getRecords(service_query)
-									.then(response => {
-										let raw_data = response.body.data
+						if (execute_service_call) {
+							setState(prevState => ({ loading: { ...prevState.loading, [name]: true } }))
+							service
+								.getRecords(service_query)
+								.then(response => {
+									let raw_data = response.body.data
 
-										let possibilities = {}
-										let resolves = field.reference.resolves
-										let resolve_columns = fields_to_load
+									let possibilities = {}
+									let resolves = field.reference.resolves
+									let resolve_columns = fields_to_load
 
-										if (resolves.emulation) {
-											if (resolves.emulation.defination in definations) {
-												if (Array.isArray(raw_data)) {
-													let new_raw_data = []
-													for (let j = 0; j < raw_data.length; j++) {
-														if (resolves.emulation.key in raw_data[j]) {
-															if (Array.isArray(raw_data[j][resolves.emulation.key])) {
-																new_raw_data = new_raw_data.concat(raw_data[j][resolves.emulation.key])
-															} else {
-																new_raw_data.push(raw_data[j][resolves.emulation.key])
-															}
+									if (resolves.emulation) {
+										if (resolves.emulation.defination in definations) {
+											if (Array.isArray(raw_data)) {
+												let new_raw_data = []
+												for (let j = 0; j < raw_data.length; j++) {
+													if (resolves.emulation.key in raw_data[j]) {
+														if (Array.isArray(raw_data[j][resolves.emulation.key])) {
+															new_raw_data = new_raw_data.concat(raw_data[j][resolves.emulation.key])
+														} else {
+															new_raw_data.push(raw_data[j][resolves.emulation.key])
 														}
 													}
-													raw_data = new_raw_data
 												}
-												resolve_columns = definations[resolves.emulation.defination].scope.columns
-											} else {
-												raw_data = []
+												raw_data = new_raw_data
 											}
+											resolve_columns = definations[resolves.emulation.defination].scope.columns
+										} else {
+											raw_data = []
 										}
-										if (raw_data.length > 0) {
-											let resolvable_data = []
-											for (var i = 0; i < raw_data.length; i++) {
-												resolvable_data.push({ [name]: raw_data[i] })
-											}
-											let resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(
-												resolvable_data,
-												resolve_columns,
-												auth.user
-											)
-											for (var j = 0; j < resolved_data.length; j++) {
-												possibilities[resolved_data[j][name].value] = resolved_data[j][name].resolve
-											}
+									}
+									if (raw_data.length > 0) {
+										let resolvable_data = []
+										for (var i = 0; i < raw_data.length; i++) {
+											resolvable_data.push({ [name]: raw_data[i] })
 										}
-										queueNotification({content: "Data fetched " + field.label + " ::: " + err.msg})
-										setState(prevState => {
-
-											return ({
+										let resolved_data = ServiceDataHelper.resolveReferenceColumnsDisplays(
+											resolvable_data,
+											resolve_columns,
+											auth.user
+										)
+										for (var j = 0; j < resolved_data.length; j++) {
+											possibilities[resolved_data[j][name].value] = resolved_data[j][name].resolve
+										}
+									}
+									queueNotification({ content: "Data fetched " + field.label + " ::: " + err.msg })
+									setState(prevState => {
+										return {
 											value_possibilities: {
 												...prevState.value_possibilities,
 												[name]: possibilities,
 											},
 											loading: { ...prevState.loading, [name]: false },
-										})})
+										}
 									})
-									.catch(err => {
-										queueNotification({severity: "error", content: "Error fetching " + field.label + " ::: " + err.msg})
-										setState(prevState => ({
-											loading: { ...prevState.loading, [name]: false },
-										}))
-									})
-							}
+								})
+								.catch(err => {
+									queueNotification({ severity: "error", content: "Error fetching " + field.label + " ::: " + err.msg })
+									setState(prevState => ({
+										loading: { ...prevState.loading, [name]: false },
+									}))
+								})
 						}
 					}
 				}
-				setState({ onChangeEffectsFields: {} })
 			}
-		},
-		[auth, fields, exclude]
-	)
-
+			setState({ onChangeEffectsFields: {} })
+		}
+	}, [auth, fields, exclude])
 
 	const prepareForForm = useCallback(() => {
 		let currentState = getState()
@@ -363,7 +353,6 @@ const BaseForm = React.forwardRef((props, ref) => {
 			)
 		})
 	}, [defination, initialValues, exclude, record, fields, values, onValuesChange])
-
 
 	const evaluateFields = useCallback(async () => {
 		const columns = { ...defination?.scope?.columns }
@@ -503,9 +492,7 @@ const BaseForm = React.forwardRef((props, ref) => {
 								field_with_effects.reference.name = await callDefinationMethod(field_with_effects.reference.name)
 							}
 							if (Function.isFunction(field_with_effects.reference.resolves)) {
-								field_with_effects.reference.resolves = await callDefinationMethod(
-									field_with_effects.reference.resolves
-								)
+								field_with_effects.reference.resolves = await callDefinationMethod(field_with_effects.reference.resolves)
 							}
 							if (Function.isFunction(field_with_effects.reference.service_query)) {
 								field_with_effects.reference.service_query = await callDefinationMethod(
@@ -527,9 +514,7 @@ const BaseForm = React.forwardRef((props, ref) => {
 							field_with_effects.reference.resolves = properties.reference.resolves
 						}
 						if (Function.isFunction(properties.reference.service_query)) {
-							field_with_effects.reference.service_query = await callDefinationMethod(
-								properties.reference.service_query
-							)
+							field_with_effects.reference.service_query = await callDefinationMethod(properties.reference.service_query)
 						} else {
 							field_with_effects.reference.service_query = properties.reference.service_query
 						}
@@ -586,24 +571,20 @@ const BaseForm = React.forwardRef((props, ref) => {
 		}
 
 		if (Object.size(onChangeEffectsFields) > 0) {
-				setState({
-					fields: fields,
-					field_values: field_values,
-					value_possibilities: value_possibilities,
-					onChangeEffectsFields: onChangeEffectsFields,
-					evaluating: false,
-				})
+			setState({
+				fields: fields,
+				field_values: field_values,
+				value_possibilities: value_possibilities,
+				onChangeEffectsFields: onChangeEffectsFields,
+				evaluating: false,
+			})
 		}
-
-
 	}, [])
 
-	const handleSubmit = useCallback((event) => {
+	const handleSubmit = useCallback(event => {
 		if (event) {
 			event.preventDefault()
 		}
-
-
 	}, [])
 
 	const handleKeyPress = useCallback(event => {
@@ -639,7 +620,7 @@ const BaseForm = React.forwardRef((props, ref) => {
 						label={field.label}
 						required={field.input.required}
 						disabled={restricted}
-						options={{...currentState.value_possibilities[name]}}
+						options={{ ...currentState.value_possibilities[name] }}
 						validate={validation}
 						{...inputProps}
 					/>
@@ -649,7 +630,7 @@ const BaseForm = React.forwardRef((props, ref) => {
 					<Autocomplete
 						name={name}
 						disabled={restricted}
-						options={{...currentState.value_possibilities[name]}}
+						options={{ ...currentState.value_possibilities[name] }}
 						placeholder={"Select " + field.label.singularize()}
 						validate={true}
 						variant={text_fields_variant}
@@ -669,11 +650,10 @@ const BaseForm = React.forwardRef((props, ref) => {
 						name={name}
 						disabled={restricted}
 						label={field.label}
-						options={{...currentState.value_possibilities[name]}}
+						options={{ ...currentState.value_possibilities[name] }}
 						placeholder={"Select " + field.label}
 						required={validation && field.input.required}
 						variant={text_fields_variant}
-
 						loading={currentState.loading[name]}
 						{...selectFieldsProps}
 						{...inputProps}
@@ -970,7 +950,8 @@ const BaseForm = React.forwardRef((props, ref) => {
 			return <TableCell key={"field_" + name}>{renderFieldInput(name, field, restricted)}</TableCell>
 		} else {
 			return (
-				<Grid item
+				<Grid
+					item
 					className={"p-0 m-0 px-1 py-1"}
 					md={
 						field.input.size
@@ -1002,8 +983,6 @@ const BaseForm = React.forwardRef((props, ref) => {
 		// applyChangeEffects()
 	}, [values])
 
-
-
 	return (
 		<form
 			className={` ${className}`}
@@ -1029,9 +1008,9 @@ const BaseForm = React.forwardRef((props, ref) => {
 				)}
 
 				<CardContent className="m-0 p-0 py-4 flex flex-row">
-				<Grid container className="m-0 p-0 flex-1">
-					<ErrorMessage />
-				</Grid>
+					<Grid container className="m-0 p-0 flex-1">
+						<ErrorMessage />
+					</Grid>
 
 					{layout == "normal" && (
 						<Grid container className="m-0 p-0 flex-1">
@@ -1051,7 +1030,7 @@ const BaseForm = React.forwardRef((props, ref) => {
 
 					{layout == "inline" && (
 						<Grid container className="m-0 p-0">
-							<Grid item  xs={12}>
+							<Grid item xs={12}>
 								<Table className="w-full ">
 									<TableBody>
 										<TableRow>
@@ -1074,7 +1053,8 @@ const BaseForm = React.forwardRef((props, ref) => {
 					<CardActions>
 						<Grid container className="m-0 p-0">
 							{show_discard && (
-								<Grid item
+								<Grid
+									item
 									xs={12}
 									md={6}
 									className="flex flex-row items-center justify-center md:items-start md:justify-start"
@@ -1098,7 +1078,8 @@ const BaseForm = React.forwardRef((props, ref) => {
 							)}
 
 							{show_submit && (
-								<Grid item
+								<Grid
+									item
 									xs={12}
 									md={show_discard ? 6 : 12}
 									className="flex flex-row items-center justify-center md:items-end md:justify-end"

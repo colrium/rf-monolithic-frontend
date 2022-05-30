@@ -39,7 +39,7 @@ const Field = React.forwardRef((props, ref) => {
 				</Stack>
 			</FormControl>
 		)
-    }, [render, rest]);
+    }, [props]);
 
     return (
         <Controller

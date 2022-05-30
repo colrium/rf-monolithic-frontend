@@ -17,7 +17,6 @@ import { usePersistentForm, useDidMount, useSetState } from "hooks"
 import { Link } from "react-router-dom"
 
 import { useDispatch, useSelector } from "react-redux"
-import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth"
 import { useNetworkServices, useNotificationsQueue } from "contexts"
 import { GoogleLoginButton } from "views/forms/Auth/OAuth"
 const steps = {
@@ -38,7 +37,7 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 		vacancies: [],
 	})
 
-	const { submit, TextField, Autocomplete, RadioGroup, values, setValue, resetValues, formState } = usePersistentForm({
+	const { submit, TextField, Autocomplete, RadioGroup, getValues, setValue, resetValues, formState } = usePersistentForm({
 		name: `job-application-form`,
 		mode: "onChange",
 		reValidateMode: "onChange",
@@ -101,7 +100,7 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 						required: "Password is required.",
 						deps: [`password`],
 						validate: {
-							matchesPassword: val => values.password === val || "Should match password",
+							matchesPassword: val => getValues().password === val || "Should match password",
 						},
 					}}
 					size="small"

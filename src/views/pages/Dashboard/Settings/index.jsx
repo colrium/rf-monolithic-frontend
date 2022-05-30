@@ -1,12 +1,11 @@
 /** @format */
 
-import Tab from "@mui/material/Tab";
-import Tabs from "@mui/material/Tabs";
-import Grid from '@mui/material/Grid';
-;
+import Tab from "@mui/material/Tab"
+import Tabs from "@mui/material/Tabs"
+import Grid from "@mui/material/Grid"
 import React, { useEffect } from "react"
-import { connect } from "react-redux";
-import { appendNavHistory } from "state/actions/ui/nav";
+import { connect } from "react-redux"
+import { appendNavHistory } from "state/actions/ui/nav"
 import { useSetState, useDidUpdate } from "hooks"
 import { useLocation, useNavigate } from "react-router-dom"
 import ContactSettingsWidget from "./Contact"
@@ -15,14 +14,14 @@ import LegalSettingsWidget from "./Legal"
 import ReadingSettingsWidget from "./Reading"
 import SocialSettingsWidget from "./Social"
 import TrackingSettingsWidget from "./Tracking"
-import MobileSettingsWidget from "views/widgets/Settings/Mobile"
 import CommunicationSettingsWidget from "./Communication"
 import AuthSettingsWidget from "./Auth"
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props
 	return (
-		<Grid container
+		<Grid
+			container
 			component="div"
 			role="tabpanel"
 			hidden={value !== index}
@@ -32,7 +31,7 @@ function TabPanel(props) {
 			{...other}
 		>
 			{value === index && (
-				<Grid item  xs={12} className="p-0">
+				<Grid item xs={12} className="p-0">
 					{children}
 				</Grid>
 			)}
@@ -53,7 +52,6 @@ const Page = props => {
 			contact: "Contact",
 			communication: "Communication",
 			tracking: "Tracking",
-			mobile: "Mobile App",
 			auth: "Authorization",
 		},
 	})
@@ -80,7 +78,7 @@ const Page = props => {
 
 	return (
 		<Grid container className="px-2 pt-8">
-			<Grid item  xs={12} md={tabs_orientation === "vertical" ? 3 : 12} lg={tabs_orientation === "vertical" ? 2 : 12}>
+			<Grid item xs={12} md={tabs_orientation === "vertical" ? 3 : 12} lg={tabs_orientation === "vertical" ? 2 : 12}>
 				<Tabs
 					orientation={tabs_orientation}
 					variant="scrollable"
@@ -103,7 +101,7 @@ const Page = props => {
 				</Tabs>
 			</Grid>
 
-			<Grid item  xs={12} md={tabs_orientation === "vertical" ? 9 : 12} lg={tabs_orientation === "vertical" ? 10 : 12}>
+			<Grid item xs={12} md={tabs_orientation === "vertical" ? 9 : 12} lg={tabs_orientation === "vertical" ? 10 : 12}>
 				{Object.entries(state.tabs).map(([name, value], cursor) => (
 					<TabPanel value={state.active_tab} index={name} key={"settings-tabpanel-" + cursor}>
 						{name === "general" && <GeneralSettingsWidget />}
@@ -113,7 +111,6 @@ const Page = props => {
 						{name === "contact" && <ContactSettingsWidget />}
 						{name === "communication" && <CommunicationSettingsWidget />}
 						{name === "tracking" && <TrackingSettingsWidget />}
-						{name === "mobile" && <MobileSettingsWidget />}
 						{name === "auth" && <AuthSettingsWidget />}
 					</TabPanel>
 				))}
@@ -126,6 +123,6 @@ const mapStateToProps = state => ({
 	auth: state.auth,
 	nav: state.nav,
 	device: state.device,
-});
+})
 
-export default (connect(mapStateToProps, { appendNavHistory })(Page));
+export default connect(mapStateToProps, { appendNavHistory })(Page)

@@ -1,30 +1,20 @@
-import axios from 'axios';
-import { setupCache } from 'axios-cache-adapter';
-import store from "state/store";
-import watch from 'redux-watch';
-import decode from "jwt-decode";
-import { baseUrls, client_id, client_secret, environment, authTokenLocation, authTokenName } from "config";
-import { setAuthenticated, setCurrentUser, setToken, clearAppState } from "state/actions";
-import { EventRegister } from "utils";
-const DEFAULT = baseUrls.api.endsWith("/") ? baseUrls.api : (baseUrls.api + "/");
-const HOST = baseUrls.host;
+/** @format */
 
-
-
-// Create `axios-cache-adapter` instance
-const axios_cache = setupCache({
-	maxAge: 24 * 60 * 60 * 1000, //24 hours
-	readHeaders: true,
-});
-
-
-
+import axios from "axios"
+import store from "state/store"
+import watch from "redux-watch"
+import decode from "jwt-decode"
+import { baseUrls, client_id, client_secret, environment, authTokenLocation, authTokenName } from "config"
+import { setAuthenticated, setCurrentUser, setToken, clearAppState } from "state/actions"
+import { EventRegister } from "utils"
+const DEFAULT = baseUrls.api.endsWith("/") ? baseUrls.api : baseUrls.api + "/"
+const HOST = baseUrls.host
 
 const ApiSingleton = (function () {
-	var instance;
-	var instance_initialized = false;
-	var instance_authenticated = false;
-	var instance_user = false;
+	var instance
+	var instance_initialized = false
+	var instance_authenticated = false
+	var instance_user = false
 	var default_options = {
 		cache: true,
 		baseURL: DEFAULT,
@@ -32,21 +22,20 @@ const ApiSingleton = (function () {
 		headers: {
 			// "x-client-id": client_id,
 			// "x-client-secret": client_secret,
-		}
-	};
-	var access_token = {};
+		},
+	}
+	var access_token = {}
 	// To mitigate mutation of default_options as an effect of instance_options mutation and not wanting to use Object.freeze()
-	var instance_options = Object.toJSON(default_options);
-
+	var instance_options = Object.toJSON(default_options)
 
 	function endpoint(uri = "/") {
-		let endpoint_url = DEFAULT;
+		let endpoint_url = DEFAULT
 		if (!String.isEmpty(uri)) {
-			uri = uri.trim();
-			uri = uri.startsWith(DEFAULT) ? uri.replace(DEFAULT, "") : ((uri.startsWith("/") ? uri.substring(1) : uri));
+			uri = uri.trim()
+			uri = uri.startsWith(DEFAULT) ? uri.replace(DEFAULT, "") : uri.startsWith("/") ? uri.substring(1) : uri
 		}
-		return endpoint_url + uri;
-	};
+		return endpoint_url + uri
+	}
 
 	function setCookie(name, value, days) {
 		var expires = ""
@@ -73,7 +62,7 @@ const ApiSingleton = (function () {
 				access_token: access_token,
 				token_type: token_type,
 				refresh_token: refresh_token,
-			};
+			}
 		}
 		return {
 			access_token: "",
@@ -83,51 +72,50 @@ const ApiSingleton = (function () {
 	}
 
 	function getAccessToken() {
-
 		return getAuthCookies()
 	}
 
 	function getAuthorizationHeader(token) {
 		//
-		let authCookies = getAuthCookies();
+		let authCookies = getAuthCookies()
 		return {
 			Authorization: `${authCookies?.token_type || ""} ${authCookies?.access_token || ""}`.trim(),
 		}
 	}
 
 	function decodeAccessToken(access_token) {
-		let token = access_token;
+		let token = access_token
 		if (JSON.isJSON(access_token) && access_token.access_token) {
-			token = access_token.access_token;
+			token = access_token.access_token
 		}
 		if (String.isString(token)) {
 			try {
-				const payload = decode(token);
-				return payload;
+				const payload = decode(token)
+				return payload
 			} catch (e) {
-				return null;
+				return null
 			}
 		}
-		return null;
+		return null
 	}
 
 	function isAccessTokenValid(token) {
-		let isValid = false;
+		let isValid = false
 		if ((JSON.isJSON(token) && !String.isEmpty(token.access_token)) || (String.isString(token) && !String.isEmpty(token))) {
-			let token_value = JSON.isJSON(token) ? token.access_token : token;
+			let token_value = JSON.isJSON(token) ? token.access_token : token
 			//try to decode token
 			try {
-				const decodedToken = decode(token_value);
-				isValid = Boolean(decodedToken);
-			} catch (e) { }
+				const decodedToken = decode(token_value)
+				isValid = Boolean(decodedToken)
+			} catch (e) {}
 		}
 
-		return isValid;
+		return isValid
 	}
 
 	function setAccessToken(value) {
 		if (isAccessTokenValid(value)) {
-			access_token = value;
+			access_token = value
 			setCookie(authTokenName, value.access_token || value.token, 365)
 			setCookie(`${authTokenName}_type`, value.token_type, 365)
 			setCookie(`${authTokenName}_refresh_token`, value.refresh_token, 365)
@@ -142,64 +130,58 @@ const ApiSingleton = (function () {
 
 			// }
 
-
-			EventRegister.emit('access-token-set', value);
-		}
-		else {
+			EventRegister.emit("access-token-set", value)
+		} else {
 			setCookie(authTokenName, "", 365)
 			setCookie(`${authTokenName}_type`, "", 365)
 			setCookie(`${authTokenName}_refresh_token`, "", 365)
 
-			EventRegister.emit('access-token-unset', value);
+			EventRegister.emit("access-token-unset", value)
 		}
 	}
 
 	function accessTokenSetAndValid() {
-		let access_token = getAccessToken();
-		return isAccessTokenValid(access_token);
+		let access_token = getAccessToken()
+		return isAccessTokenValid(access_token)
 	}
 
 	function isUserAuthenticated(validUser = true) {
-		return accessTokenSetAndValid();
+		return accessTokenSetAndValid()
 	}
 
 	function proceedWithGoogleOneTap(data) {
 		return new Promise((resolve, reject) => {
 			if (instance) {
-
-					instance
-						.post("/auth/google-one-tap", {...data, client_id: client_id, client_secret: client_secret, grant_type: "password" })
-						.then(async res => {
-
-
-							const { profile, token, ...rest } = res.body?.data || res.data?.data || {}
-							let resObj = {
-								token: token,
-								profile: profile,
-							}
-							setAccessToken(token)
-							if (JSON.isJSON(profile) && JSON.isEmpty(profile)) {
-								resObj.profile = await axios
-									.get(endpoint("/profile"), { headers: { ...getAuthorizationHeader(token) } })
-									.then(profile_res => {
-										return profile_res.body?.data || profile_res.data?.data
-									})
-									.catch(err => {
-										console.error(err)
-									})
-							}
-							if (!JSON.isEmpty(resObj.profile) && !JSON.isEmpty(resObj.token)) {
-								EventRegister.emit("login", resObj)
-								resolve(resObj)
-							} else {
-								reject({ message: "Incomplete result", ...resObj })
-							}
-						})
-						.catch(err => {
-							console.error(err)
-							reject(err)
-						})
-
+				instance
+					.post("/auth/google-one-tap", { ...data, client_id: client_id, client_secret: client_secret, grant_type: "password" })
+					.then(async res => {
+						const { profile, token, ...rest } = res.body?.data || res.data?.data || {}
+						let resObj = {
+							token: token,
+							profile: profile,
+						}
+						setAccessToken(token)
+						if (JSON.isJSON(profile) && JSON.isEmpty(profile)) {
+							resObj.profile = await axios
+								.get(endpoint("/profile"), { headers: { ...getAuthorizationHeader(token) } })
+								.then(profile_res => {
+									return profile_res.body?.data || profile_res.data?.data
+								})
+								.catch(err => {
+									console.error(err)
+								})
+						}
+						if (!JSON.isEmpty(resObj.profile) && !JSON.isEmpty(resObj.token)) {
+							EventRegister.emit("login", resObj)
+							resolve(resObj)
+						} else {
+							reject({ message: "Incomplete result", ...resObj })
+						}
+					})
+					.catch(err => {
+						console.error(err)
+						reject(err)
+					})
 			} else {
 				let errObj = {
 					msg: "Authenticate with google Request Failed. Invalid Request service instance",
@@ -260,30 +242,27 @@ const ApiSingleton = (function () {
 	function login(data, get_profile = true) {
 		return new Promise((resolve, reject) => {
 			if (instance) {
+				instance
+					.post("login", JSON.merge(data, { client_id: client_id, client_secret: client_secret, grant_type: "password" }))
+					.then(async res => {
+						const { profile, token, ...rest } = res.body?.data || res.data?.data || {}
+						let resObj = {
+							token: token || rest,
+							profile: profile,
+						}
+						setAccessToken(token)
 
-					instance
-						.post("login", JSON.merge(data, { client_id: client_id, client_secret: client_secret, grant_type: "password" }))
-						.then(async res => {
-
-							const { profile, token, ...rest } = res.body?.data || res.data?.data || {}
-							let resObj = {
-								token: token || rest,
-								profile: profile,
-							}
-							setAccessToken(token)
-
-							if (!JSON.isEmpty(resObj.profile) && !JSON.isEmpty(resObj.token)) {
-								EventRegister.emit("login", resObj)
-								resolve(resObj)
-							} else {
-								reject({ message: "Incomplete result", ...resObj })
-							}
-						})
-						.catch(err => {
-							console.error(err)
-							reject(err)
-						})
-
+						if (!JSON.isEmpty(resObj.profile) && !JSON.isEmpty(resObj.token)) {
+							EventRegister.emit("login", resObj)
+							resolve(resObj)
+						} else {
+							reject({ message: "Incomplete result", ...resObj })
+						}
+					})
+					.catch(err => {
+						console.error(err)
+						reject(err)
+					})
 			} else {
 				let errObj = {
 					msg: "Login Request Failed. Invalid Request service instance",
@@ -357,15 +336,7 @@ const ApiSingleton = (function () {
 
 	function createIsolatedInstance(config = {}) {
 		const { cache, ...options } = JSON.merge(default_options, instance_options, config)
-		let isolatedInstance = axios.create(
-			cache
-				? Boolean.isBoolean(cache)
-					? { ...options, adapter: axios_cache.adapter }
-					: cache.adapter
-					? { ...options, ...cache }
-					: { ...options }
-				: { ...options }
-		)
+		let isolatedInstance = axios.create({ ...options })
 
 		return isolatedInstance
 	}
@@ -381,15 +352,7 @@ const ApiSingleton = (function () {
 	function createInstance(config = {}) {
 		const { cache, interceptors, ...options } = JSON.merge(default_options, config, instance_options)
 
-		let newInstance = axios.create(
-			cache
-				? Boolean.isBoolean(cache)
-					? { ...options, adapter: axios_cache.adapter }
-					: cache.adapter
-					? { ...options, ...cache }
-					: { ...options }
-				: { ...options }
-		)
+		let newInstance = axios.create({ ...options })
 
 		EventRegister.on("api-request-attempt", ({ detail: config }) => {
 			const { cancelOnTimeout, cancelUUID, cancelToken, cancelTokenSource, timeout } = config
@@ -506,7 +469,6 @@ const ApiSingleton = (function () {
 				request.cancelTokenSource = cancelToken?.source()
 			}
 
-
 			const authHeader = getAuthorizationHeader()
 			request.headers = {
 				...request.headers,
@@ -515,11 +477,9 @@ const ApiSingleton = (function () {
 			EventRegister.emit("api-request-attempt", request)
 			return request
 		}
-		newInstance.interceptors.request.use(
-			function (request) {
-				return onRequestAttemptHandler(request)
-			}
-		)
+		newInstance.interceptors.request.use(function (request) {
+			return onRequestAttemptHandler(request)
+		})
 		newInstance.interceptors.response.use(
 			function (res) {
 				return onSuccessHandler(res)
@@ -565,23 +525,20 @@ const ApiSingleton = (function () {
 		return newInstance
 	}
 
-
-
-
 	return {
 		getInstance: function (options = {}) {
 			if (!instance || !instance_initialized) {
-				createInstance(options);
+				createInstance(options)
 				// instance.login({ email: "colrium@gmail.com", password: "WI5HINd8" }).then(data => { });
 
-				instance_initialized = true;
+				instance_initialized = true
 			}
-			return instance;
+			return instance
 		},
 		destroyInstance: function () {
-			instance = undefined;
-			instance_initialized = false;
-			return instance;
+			instance = undefined
+			instance_initialized = false
+			return instance
 		},
 		isolated: createIsolatedInstance,
 		endpoint: endpoint,
@@ -592,11 +549,10 @@ const ApiSingleton = (function () {
 		getAccessToken: getAccessToken,
 		setAccessToken: setAccessToken,
 		getAuthorizationHeader: getAuthorizationHeader,
-		getContextRequests: getContextRequests
-	};
+		getContextRequests: getContextRequests,
+	}
+})()
 
-})();
+export const api = ApiSingleton
 
-export const api = ApiSingleton;
-
-export default ApiSingleton.getInstance();
+export default ApiSingleton.getInstance()

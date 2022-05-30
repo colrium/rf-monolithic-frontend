@@ -9,7 +9,7 @@ import { environment } from "config"
 import { Outlet } from "react-router-dom"
 import { app } from "assets/jss/app-theme"
 import Box from "@mui/material/Box"
-import { useNetworkServices } from "contexts/NetworkServices"
+import { useNetworkServices, useCacheBuster } from "contexts"
 import { googleClientId } from "config"
 import GoogleLogin from "react-google-login"
 import { useDidMount, useGoogleOneTapLogin } from "hooks"
@@ -23,10 +23,11 @@ const Fairing = props => {
 	const location = useLocation()
 	const { Api } = useNetworkServices()
 	const theme = useTheme()
+
 	const googleOneTapLogin = useGoogleOneTapLogin({
 		onError: error => console.error(error),
 		onSuccess: response => {},
-		disabled: auth.isAuthenticated || environment === 'development',
+		disabled: auth.isAuthenticated || environment === "development",
 		googleAccountConfigs: {
 			client_id: googleClientId,
 			callback: data => {
@@ -34,6 +35,7 @@ const Fairing = props => {
 			},
 		},
 	})
+
 	useEffect(() => {
 		if (layout === "dashboard" && (!auth.isAuthenticated || String.isEmpty(auth.user?._id))) {
 			const pathname = location.pathname
@@ -52,10 +54,8 @@ const Fairing = props => {
 		}
 	}, [location, layout])
 
-
-
 	return (
-		<Box sx={{ color: theme => theme.palette.text.primary, backgroundColor: theme => theme.palette.background.default }} component="div">
+		<Box sx={{ color: theme => theme.palette.text.primary, backgroundColor: theme => theme.palette.background.paper }} component="div">
 			{layout === "dashboard" ? (
 				<DashboardLayout sidebar_items={drawer_items}>
 					<Outlet />

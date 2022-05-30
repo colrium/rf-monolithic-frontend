@@ -35,7 +35,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 		strategy: null,
 	})
 
-	const { submit, TextField, values, setValue, resetValues, formState } = usePersistentForm({
+	const { submit, TextField, setValue, resetValues, formState } = usePersistentForm({
 		name: `login-auth-form`,
 		mode: "onChange",
 		reValidateMode: "onChange",
@@ -209,7 +209,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 							Proceed with Email/Password
 						</Button>
 					)*/}
-					<GoogleLoginButton  />
+					<GoogleLoginButton />
 				</Grid>
 				<Grid
 					item

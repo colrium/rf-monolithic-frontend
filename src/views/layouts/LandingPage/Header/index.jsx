@@ -117,43 +117,16 @@ function Header(props) {
 					<ListItem>
 						<ListItemText
 							primary={
-								<NavLink
-									to={"/why-us".toUriWithLandingPagePrefix()}
-									color="inherit"
-									activeStyle={{
-										color: theme.palette.primary.main,
-									}}
-								>
+								<NavLink to={"/why-us".toUriWithLandingPagePrefix()} color="inherit">
 									Why Realfield?
 								</NavLink>
 							}
 						/>
 					</ListItem>
-					{/*<ListItem>
-						<ListItemText
-							primary={
-								<NavLink
-									to={"/home#products".toUriWithLandingPagePrefix()}
-									color="inherit"
-									activeStyle={{
-										color: theme.palette.primary.main,
-									}}
-								>
-									Products
-								</NavLink>
-							}
-						/>
-					</ListItem>*/}
 					<ListItem>
 						<ListItemText
 							primary={
-								<NavLink
-									to={"/about-us".toUriWithLandingPagePrefix()}
-									color="inherit"
-									activeStyle={{
-										color: theme.palette.primary.main,
-									}}
-								>
+								<NavLink to={"/about-us".toUriWithLandingPagePrefix()} color="inherit">
 									About us
 								</NavLink>
 							}
@@ -198,13 +171,7 @@ function Header(props) {
 					<ListItem>
 						<ListItemText
 							primary={
-								<NavLink
-									to={"/jobs".toUriWithLandingPagePrefix()}
-									color="inherit"
-									activeStyle={{
-										color: theme.palette.primary.main,
-									}}
-								>
+								<NavLink to={"/jobs".toUriWithLandingPagePrefix()} color="inherit">
 									Jobs
 								</NavLink>
 							}
@@ -217,7 +184,7 @@ function Header(props) {
 
 	return (
 		<div id="back-to-top-anchor">
-			<Hidden smDown>
+			<Hidden mdDown>
 				<ElevationScroll {...props}>
 					<AppBar
 						className={
@@ -244,68 +211,25 @@ function Header(props) {
 							</NavLink>
 
 							<div className="flex-grow" />
-							<NavLink
-								to={"/why-us".toUriWithLandingPagePrefix()}
-								color="inherit"
-								className="mr-4"
-								activeStyle={{
-									borderBottom: "2px solid " + theme.palette.primary.main,
-								}}
-							>
+							<NavLink to={"/why-us".toUriWithLandingPagePrefix()} color="inherit" className="mr-4">
 								<Button edge="end" color="inherit" className=" capitalize">
 									Why Realfield?
 								</Button>
 							</NavLink>
-							{/*<NavLink
-										to={"/home#products".toUriWithLandingPagePrefix()}
-										color="inherit"
-										className="mr-4"
-										activeStyle={{
-											borderBottom: "2px solid "+theme.palette.primary.main,
-										}}
-									>
-										<Button
-											edge="end"
-											color="inherit"
-										className=" capitalize"
-										>
-											Products
-										</Button>
-									</NavLink>*/}
-							<NavLink
-								to={"/about-us".toUriWithLandingPagePrefix()}
-								color="inherit"
-								className="mr-4"
-								activeStyle={{
-									borderBottom: "2px solid " + theme.palette.primary.main,
-									color: `${theme.palette.primary.main} !important`,
-								}}
-							>
+							<NavLink to={"/about-us".toUriWithLandingPagePrefix()} color="inherit" className="mr-4">
 								<Button edge="end" className="px-0" color="inherit" className=" capitalize">
 									About us
 								</Button>
 							</NavLink>
 							{auth.isAuthenticated && (
-								<NavLink
-									to={"/community".toUriWithLandingPagePrefix()}
-									color="inherit"
-									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
-									}}
-								>
+								<NavLink to={"/community".toUriWithLandingPagePrefix()} color="inherit">
 									<Button edge="end" color="inherit" className="capitalize">
 										Community
 									</Button>
 								</NavLink>
 							)}
 							{(!auth.isAuthenticated || Object.size(auth.user) === 0) && (
-								<NavLink
-									to={"/auth/login"}
-									color="inherit"
-									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
-									}}
-								>
+								<NavLink to={"/auth/login"} color="inherit">
 									<Button color="inherit" className=" capitalize">
 										Login
 									</Button>
@@ -313,28 +237,14 @@ function Header(props) {
 							)}
 
 							{auth.isAuthenticated && Object.size(auth.user) > 0 && (
-								<NavLink
-									to={"/home".toUriWithDashboardPrefix()}
-									color="inherit"
-									activeStyle={{
-										borderBottom: "2px solid " + theme.palette.primary.main,
-									}}
-								>
+								<NavLink to={"/home".toUriWithDashboardPrefix()} color="inherit">
 									<Button edge="end" color="inherit" className="capitalize">
 										Dashboard
 									</Button>
 								</NavLink>
 							)}
 
-							<NavLink
-								to={"/jobs".toUriWithLandingPagePrefix()}
-								color="inherit"
-								activeStyle={
-									{
-										//borderBottom: "2px solid "+theme.palette.primary.main,
-									}
-								}
-							>
+							<NavLink to={"/jobs".toUriWithLandingPagePrefix()} color="inherit">
 								<Fab color="primary" variant="extended" size="small" className="mx-2 px-6 capitalize">
 									Jobs!
 								</Fab>
@@ -360,8 +270,18 @@ function Header(props) {
 
 			<Hidden mdUp>
 				<ElevationScroll {...props}>
-					<AppBar className="shadow-none inverse default_text">
-						<Toolbar>
+					<AppBar
+						className="shadow-none inverse default_text"
+						sx={{
+							backgroundColor: theme => theme.palette.background.paper,
+							color: theme => theme.palette.text.primary,
+						}}
+					>
+						<Toolbar
+							sx={{
+								backgroundColor: "transparent",
+							}}
+						>
 							<IconButton edge="start" className="mr-4" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
 								<MenuIcon />
 							</IconButton>

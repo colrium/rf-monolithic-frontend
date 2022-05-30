@@ -1,88 +1,109 @@
 /** @format */
-import React, { useCallback, useMemo, useEffect } from "react";
-import Grid from '@mui/material/Grid';
-;
-import Button from "@mui/material/Button";
-import IconButton from '@mui/material/IconButton';
-import Typography from "@mui/material/Typography";
+import React, { useCallback, useMemo, useEffect } from "react"
+import Grid from "@mui/material/Grid"
+import Button from "@mui/material/Button"
+import IconButton from "@mui/material/IconButton"
+import Typography from "@mui/material/Typography"
 
-import TextField from '@mui/material/TextField';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import EditIcon from '@mui/icons-material/Edit';
-import { useSetState, usePersistentForm, useGeojson, useDidMount } from "hooks";
+import TextField from "@mui/material/TextField"
+import Card from "@mui/material/Card"
+import CardHeader from "@mui/material/CardHeader"
+import CardActions from "@mui/material/CardActions"
+import CardContent from "@mui/material/CardContent"
+import Dialog from "@mui/material/Dialog"
+import DialogActions from "@mui/material/DialogActions"
+import DialogContent from "@mui/material/DialogContent"
+import DialogContentText from "@mui/material/DialogContentText"
+import DialogTitle from "@mui/material/DialogTitle"
+import EditIcon from "@mui/icons-material/Edit"
+import { useSetState, usePersistentForm, useGeojson, useDidMount } from "hooks"
 
+const stage = "review"
 
-const stage = "review";
+const Stage = props => {
+	const { onSubmit, stages, title, description } = props
 
-const Stage = (props) => {
-    const { onSubmit, stages, title, description } = props;
+	const [state, setState] = useSetState({
+		invalid: false,
+		previewDialogOpen: false,
+		previewDialogTitle: "",
+		previewDialogContent: "",
+	})
 
-    const [state, setState] = useSetState({
-        invalid: false,
-        previewDialogOpen: false,
-        previewDialogTitle: "",
-        previewDialogContent: "",
-    });
+	const {
+		handleSubmit,
+		register,
+		setError,
+		errors,
+		formState: { isValid },
+		ErrorMessage,
+		Field,
+		Select,
+		trigger,
+		RadioGroup,
+		Autocomplete,
+		getValues,
+		setValue,
+	} = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage } })
+	const stagesValues = JSON.getDeepPropertyValue(`stages`, getValues()) || {}
+	const values = JSON.getDeepPropertyValue(`stages.${stage}`, getValues()) || {}
 
-    const { handleSubmit, register, setError, errors, formState: { isValid }, ErrorMessage, Field, Select, trigger, RadioGroup, Autocomplete, getValues, values: allValues, setValue } = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage, } });
-    const stagesValues = useMemo(() => (JSON.getDeepPropertyValue(`stages`, allValues) || {}), [allValues]);
-    const values = useMemo(() => (JSON.getDeepPropertyValue(`stages.${stage}`, allValues) || {}), [allValues]);
+	const geojsonUtils = useGeojson()
 
-    const geojsonUtils = useGeojson();
+	useDidMount(() => {
+		// register(`stages.${stage}`, {
+		//     validate: validateStage
+		// })
+	})
 
+	const changeStageValue = useCallback((name, value) => {
+		setValue(name, value)
+		//trigger([`stages.${stage}`])
+	}, [])
 
+	const handleOnTextfieldChange = useCallback(
+		name => event => {
+			changeStageValue(name, event.target.value)
+		},
+		[]
+	)
 
-    useDidMount(() => {
-        // register(`stages.${stage}`, {
-        //     validate: validateStage
-        // })
-    })
+	const handleOnSelectChange = useCallback(
+		name => event => {
+			changeStageValue(name, event.target.value)
+		},
+		[]
+	)
 
-    const changeStageValue = useCallback((name, value) => {
-        setValue(name, value);
-        //trigger([`stages.${stage}`])
-    }, []);
+	const submit = useCallback(
+		formValues => {
+			if (Function.isFunction(onSubmit)) {
+				onSubmit(formValues)
+			}
+		},
+		[onSubmit]
+	)
 
-    const handleOnTextfieldChange = useCallback((name) => (event) => {
-        changeStageValue(name, event.target.value);
-    }, []);
+	const handleOnOpenPreviewDialog = useCallback(
+		(previewDialogTitle, previewDialogContent) => () => {
+			setState({
+				previewDialogOpen: true,
+				previewDialogTitle: previewDialogTitle,
+				previewDialogContent: previewDialogContent,
+			})
+		},
+		[]
+	)
 
-    const handleOnSelectChange = useCallback((name) => (event) => {
-        changeStageValue(name, event.target.value);
-    }, []);
+	const handleOnClosePreviewDialog = useCallback(() => {
+		setState({
+			previewDialogOpen: false,
+			previewDialogTitle: "",
+			previewDialogContent: "",
+		})
+	}, [])
 
-
-    const submit = useCallback((formValues) => {
-        if (Function.isFunction(onSubmit)) {
-            onSubmit(formValues);
-        }
-    }, [onSubmit]);
-
-    const handleOnOpenPreviewDialog = useCallback((previewDialogTitle, previewDialogContent) => () => {
-        setState({
-            previewDialogOpen: true,
-            previewDialogTitle: previewDialogTitle,
-            previewDialogContent: previewDialogContent,
-        });
-    }, []);
-
-    const handleOnClosePreviewDialog = useCallback(() => {
-        setState({
-            previewDialogOpen: false,
-            previewDialogTitle: "",
-            previewDialogContent: "",
-        });
-    }, []);
-
-    return (
+	return (
 		<Grid container>
 			{/* {!!title && <Grid item  className="flex flex-row items-start">
                 <Typography variant="h1" className="flex-1">
@@ -397,7 +418,7 @@ const Stage = (props) => {
 						<Grid item xs={12} className={"p-0 py-4 flex flex-row items-center"}>
 							<Typography color="text.disabled">Last Autosave</Typography>
 							<Typography className={"mx-8 font-bold"} color="text.secondary">
-								{allValues.persist_timestamp ? `${new Date(allValues.persist_timestamp).toLocaleString()}` : "None"}
+								{getValues().persist_timestamp ? `${new Date(getValues().persist_timestamp).toLocaleString()}` : "None"}
 							</Typography>
 						</Grid>
 					</Grid>
@@ -792,6 +813,6 @@ const Stage = (props) => {
 			</Dialog>
 		</Grid>
 	)
-};
+}
 
-export default Stage;
+export default Stage

@@ -13,10 +13,8 @@ import Alert from "@mui/material/Alert"
 import Typography from "@mui/material/Typography"
 import { Link } from "react-router-dom"
 
-
 const AuthForm = React.forwardRef((props, ref) => {
-	const { email, onSubmit, onSubmitSuccess, onSubmitError, ...rest } =
-		props || {}
+	const { email, onSubmit, onSubmitSuccess, onSubmitError, ...rest } = props || {}
 
 	const { Api } = useNetworkServices()
 
@@ -24,15 +22,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 		submitting: false,
 		alert: false,
 	})
-	const {
-		submit,
-		TextField,
-		values,
-		setValue,
-		resetValues,
-		formState,
-		...formRest
-	} = usePersistentForm({
+	const { submit, TextField, getValues, setValue, resetValues, formState, ...formRest } = usePersistentForm({
 		name: `forgot-password-auth-form`,
 		defaultValues: {
 			email: email || "",
@@ -44,9 +34,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 					setState({
 						submitting: false,
 						error: false,
-						alert:
-							res.message ||
-							"An email has been sent to your email with password reset resources",
+						alert: res.message || "An email has been sent to your email with password reset resources",
 					})
 					resetValues()
 					if (Function.isFunction(onSubmitSuccess)) {
@@ -68,16 +56,20 @@ const AuthForm = React.forwardRef((props, ref) => {
 		},
 	})
 
+	const values = getValues()
+
 	const applyQueryParams = useCallback(() => {
-		let queryParams = (
-			window.location.search.match(
-				new RegExp("([^?=&]+)(=([^&]*))?", "g")
-			) || []
-		).reduce(function (result, each, n, every) {
+		let queryParams = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function (
+			result,
+			each,
+			n,
+			every
+		) {
 			let [key, value] = each.split("=")
 			result[key] = value
 			return result
-		}, {})
+		},
+		{})
 		if ("e" in queryParams || "email" in queryParams) {
 			let email = queryParams.e || queryParams.email
 			if (email !== values.email) {
@@ -89,7 +81,6 @@ const AuthForm = React.forwardRef((props, ref) => {
 	useDidMount(() => {
 		applyQueryParams()
 		resetValues()
-
 	})
 
 	return (
@@ -176,6 +167,6 @@ const AuthForm = React.forwardRef((props, ref) => {
 			</Snackbar>
 		</Grid>
 	)
-});
+})
 
 export default React.memo(AuthForm)

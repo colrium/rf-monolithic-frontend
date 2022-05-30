@@ -1,27 +1,17 @@
-import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNetworkState } from "react-use"
-import {
-	firebase as firebaseConfig,
-	baseUrls,
-	client_id,
-	client_secret,
-	environment,
-	authTokenLocation,
-	authTokenName,
-	googleClientId,
-} from "config"
-import FirebaseService from "./FirebaseService"
-import WebSocketService from "./WebSocketService"
+/** @format */
 
+import React, { useEffect, useCallback, useMemo } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { useNetworkState } from "react-use"
+import { baseUrls, client_id, client_secret, environment, authTokenLocation, authTokenName, googleClientId } from "config"
+//
+import WebSocketService from "./WebSocketService"
 import NetworkServicesContext from "./NetworkServicesContext"
 import { setAuthenticated, setCurrentUser, setToken, clearAppState, setPreferences, setSettings } from "state/actions"
-// import { FirebaseAppProvider, FirestoreProvider } from "reactfire"
 import * as definations from "definations"
 import Api from "services/Api"
 import { EventRegister } from "utils"
 import { useDidMount } from "hooks"
-
 
 const NetworkServicesProvider = props => {
 	const { children, notificationType, ...rest } = props
@@ -33,7 +23,7 @@ const NetworkServicesProvider = props => {
 
 	const networkState = useNetworkState()
 
-	const handleOnAccessTokenSet = useCallback((token) => {
+	const handleOnAccessTokenSet = useCallback(token => {
 		const { access_token, token_type, refresh_token } = token || {}
 		if (authTokenLocation === "redux") {
 			dispatch(setToken(token || {}))
@@ -47,7 +37,6 @@ const NetworkServicesProvider = props => {
 	}, [])
 
 	const handleOnLogin = useCallback(event => {
-
 		const { profile, token } = { ...event.detail }
 		if (JSON.isJSON(profile)) {
 			dispatch(setCurrentUser(profile))
@@ -164,8 +153,6 @@ const NetworkServicesProvider = props => {
 		}
 	}, [settings])
 
-
-
 	useDidMount(() => {
 		const removeAuthSubscritions = initializeAuthSubscriptions()
 		const removePreferencesSubscritions = initializePreferencesSubscriptions()
@@ -177,22 +164,15 @@ const NetworkServicesProvider = props => {
 			removeSettingsSubscritions()
 		}
 	})
-
-
-
 	return (
-		<FirebaseService>
-			{Firebase => (
-				<WebSocketService>
-					{SocketIO => (
-						<NetworkServicesContext.Provider value={{ SocketIO, Api, network: networkState, Firebase, definations }} {...rest}>
-							{children}
-						</NetworkServicesContext.Provider>
-					)}
-				</WebSocketService>
+		<WebSocketService>
+			{SocketIO => (
+				<NetworkServicesContext.Provider value={{ SocketIO, Api, network: networkState, definations }} {...rest}>
+					{children}
+				</NetworkServicesContext.Provider>
 			)}
-		</FirebaseService>
+		</WebSocketService>
 	)
 }
 
-export default React.memo(NetworkServicesProvider, (prevProps, nextProps) => true)
+export default NetworkServicesProvider

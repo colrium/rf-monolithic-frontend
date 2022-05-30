@@ -20,21 +20,20 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const useStyles = theme => ({
 	root: {
 		"& .MuiSnackbarContent-root": {
-			// color: `${theme.palette.text.primary} !important`,
-			// backgroundColor: theme.palette.background.paper,
 			backgroundColor: "transparent",
+			"&.MuiSnackbarContent-message": {
+				backgroundColor: "transparent",
+			},
 		},
 	},
 	snackbarContent: {
-		"& .MuiSnackbarContent-message": {
+		"&.MuiSnackbarContent-message": {
 			p: 0,
 			flex: 1,
 			paddingBottom: 0,
 			paddingTop: 0,
 			maxWidth: "40vw",
-			// color: `${theme.palette.text.primary} !important`,
-			// backgroundColor: theme.palette.background.paper,
-			// borderRadius: theme.spacing(),
+			backgroundColor: "transparent",
 		},
 	},
 })
@@ -136,10 +135,10 @@ const NotificationsQueueProvider = props => {
 	}
 
 	useDidMount(() => {
-		// setState({ websocketsConnection: SocketIO.connected })
-		SocketIO.on("connect", () => onSocketIOConnected)
-		SocketIO.on("reconnect", () => onSocketIOConnected)
-		SocketIO.on("disconnect", onSocketIODisonnected)
+		setState({ websocketsConnection: SocketIO.connected })
+		SocketIO.on("connect", onSocketIOConnected)
+		SocketIO.on("reconnect", onSocketIOConnected)
+		SocketIO.on("disconnected", onSocketIODisonnected)
 		SocketIO.on("new_notification", onSocketIONewNotification)
 		const onNotificationListener = EventRegister.on("notification", handleOnNotification)
 
@@ -151,6 +150,7 @@ const NotificationsQueueProvider = props => {
 			onNotificationListener.remove()
 		}
 	})
+
 	return (
 		<NotificationsQueueContext.Provider
 			value={{
@@ -161,32 +161,6 @@ const NotificationsQueueProvider = props => {
 			}}
 		>
 			{children}
-			{/* <Snackbar
-				className={`${classes.root} p-0 m-0 flex-1`}
-				open={displayedNotifications.length > 0}
-				onClose={() => {}}
-				anchorOrigin={{
-					vertical: "top",
-					horizontal: "right",
-				}}
-			>
-				<SnackbarContent
-					className={`${classes.snackbarContent} p-0 m-0 flex-1`}
-					elevation={0}
-					message={
-						<Stack spacing={2} sx={{ maxWidth: 600 }}>
-							{displayedNotifications.map(({ onClose, ...notification }, index) => (
-								<Notification
-									{...notification}
-									open
-									onClose={onClose}
-									key={notification.id}
-								/>
-							))}
-						</Stack>
-					}
-				/>
-			</Snackbar> */}
 			{displayedNotifications?.length > 0 &&
 				displayedNotifications.map(({ anchorOrigin, onClose, ...notification }, index) => (
 					<Snackbar
@@ -198,25 +172,15 @@ const NotificationsQueueProvider = props => {
 							vertical: "bottom",
 							horizontal: "center",
 						}}
+						key={notification.id}
 					>
 						<SnackbarContent
-							className={`${classes.snackbarContent} p-0 m-0 flex-1 `}
+							className={`${classes.snackbarContent} bg-transparent p-0 m-0 flex-1 `}
 							elevation={0}
 							message={<Notification {...notification} onClose={onClose} key={notification.id} />}
 						/>
 					</Snackbar>
 				))}
-			{/* <Snackbar
-				open={!state.websocketsConnection || !online}
-				anchorOrigin={{
-					vertical: "top",
-					horizontal: "center",
-				}}
-			>
-				<Alert severity="error" sx={{ width: "100%" }}>
-					{!state.websocketsConnection ? "Server connection unavailable!" : "Network connection unavailable!"}
-				</Alert>
-			</Snackbar> */}
 		</NotificationsQueueContext.Provider>
 	)
 }

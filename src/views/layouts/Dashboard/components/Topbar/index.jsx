@@ -497,7 +497,7 @@ class Topbar extends Component {
 								<MenuItem
 									classes={{
 										root:
-											"opacity-100 inverse-text " +
+											"opacity-100 " +
 											(this.state.serverConnected
 												? auth.user?.presence === "online"
 													? "bg-green-700"
@@ -508,7 +508,7 @@ class Topbar extends Component {
 									}}
 									disabled
 								>
-									<Typography color="inherit" variant="subtitle1">
+									<Typography color="inverse" variant="subtitle1">
 										{auth.user?.first_name + " " + auth.user?.last_name}
 									</Typography>
 								</MenuItem>

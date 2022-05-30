@@ -1,23 +1,27 @@
-import { useCallback, useMemo, useRef, forwardRef, useEffect } from "react";
-import { useForm as useReactHookForm, Controller } from "react-hook-form";
-import Typography from "@mui/material/Typography"
-import Alert from "@mui/material/Alert"
-import { useSelector, useDispatch } from 'react-redux';
-import { useLatest } from 'react-use';
-import { setForm, removeForm } from "state/actions";
-import ErrorMessage from "./ErrorMessage";
-import Field from "./Field";
-import TextField from "./TextField";
-import FilePicker from "./FilePicker"
-import RadioGroup from "./RadioGroup";
-import Checkbox from "./Checkbox";
-import Select from "./Select";
-import Autocomplete from "./Autocomplete";
-import WysiwygEditor from "./WysiwygEditor"
+/** @format */
 
-import { useDidMount, useDidUpdate, useWillUnmount } from "hooks"
+import { useCallback, useMemo, forwardRef, createContext, useRef } from "react"
+import { useForm as useReactHookForm, Controller } from "react-hook-form"
+import Typography from "@mui/material/Typography"
+import { generate, Observable } from "rxjs"
+import Alert from "@mui/material/Alert"
+import { useSelector, useDispatch } from "react-redux"
+import { useLatest } from "react-use"
+import { setForm, removeForm } from "state/actions"
+import ErrorMessage from "./ErrorMessage"
+import Field from "./Field"
+import TextField from "./TextField"
+import FilePicker from "./FilePicker"
+import RadioGroup from "./RadioGroup"
+import Checkbox from "./Checkbox"
+import Select from "./Select"
+import Autocomplete from "./Autocomplete"
+import WysiwygEditor from "./WysiwygEditor"
+import Form from "./Form"
+import { useDidMount, useDidUpdate, useWillUnmount, useWhyDidYouUpdate } from "hooks"
 import { EventRegister } from "utils"
 
+export const Context = createContext({})
 const DEFAULT_CONFIG = {
 	name: "default",
 	mode: "all",
@@ -32,6 +36,7 @@ const DEFAULT_CONFIG = {
 	defaultValues: {},
 	watch: true,
 	volatile: false,
+	resetOnSubmitSuccess: true,
 	exclude: [],
 	include: [],
 }
@@ -49,6 +54,7 @@ const useForm = (config = DEFAULT_CONFIG) => {
 		shouldUseNativeValidation,
 		delayError,
 		defaultValues,
+		resetOnSubmitSuccess,
 		onSubmit,
 		onSubmitError,
 		watch: watchFields,
@@ -58,14 +64,14 @@ const useForm = (config = DEFAULT_CONFIG) => {
 		persistOnChange,
 		...options
 	} = { ...DEFAULT_CONFIG, ...config }
+
 	const dispatch = useDispatch()
 	const { forms } = useSelector(storeState => ({ ...storeState, forms: storeState?.forms || {} }))
 	const persistedValues = useMemo(() => forms[name]?.values, [forms])
 
-	const persistedValuesRef = useLatest(persistedValues)
-	const subscriptionRef = useLatest(null)
+	const watchSubscriptionRef = useRef(null)
 
-	const { control, handleSubmit, watch, setValue, getValues, trigger, reset, resetField, formState, ...rest } = useReactHookForm({
+	const form = useReactHookForm({
 		mode: mode || "onSubmit",
 		reValidateMode: reValidateMode || "onChange",
 		defaultValues: persistedValues || defaultValues || {},
@@ -79,16 +85,18 @@ const useForm = (config = DEFAULT_CONFIG) => {
 		// shouldUseNativeValidation: true,
 		...options,
 	})
+	const { control, handleSubmit, watch, setValue, getValues, trigger, reset, resetField, formState, ...rest } = form
 
 	const { errors } = formState
 
+	// const whyDidYouUpdate = useWhyDidYouUpdate("useForm", config)
+	const valuesRef = useRef(getValues())
 	const persistFormValues = useCallback(
-		async form_data => {
-			const persist_values = JSON.merge(getValues(), { ...form_data })
+		persistValues => {
 			if (!volatile) {
 				dispatch(
 					setForm(name, {
-						values: persist_values,
+						values: persistValues,
 						persist_timestamp: new Date(),
 					})
 				)
@@ -113,35 +121,57 @@ const useForm = (config = DEFAULT_CONFIG) => {
 		[mode, reValidateMode]
 	)
 
-	const handleOnWatchedValue = useCallback((data, { name: fieldName, values, type }) => {
-		let prevFieldValue = JSON.getDeepPropertyValue(fieldName, persistedValuesRef.current)
-		let newFieldValue = JSON.getDeepPropertyValue(fieldName, data)
-		let nextStateValue = JSON.setDeepPropertyValue(fieldName, newFieldValue, persistedValuesRef.current)
-		persistedValuesRef.current = nextStateValue
-		EventRegister.emit("form-changed", {
-			name: name,
-			values: nextStateValue,
-			change: { field: fieldName, prevValue: prevFieldValue },
-			type: type,
+	const handleOnWatchedValue = useCallback(
+		subscriber =>
+			(data, { name: fieldName, values, type }) => {
+				let prevFieldValue = JSON.getDeepPropertyValue(fieldName, valuesRef.current)
+				let newFieldValue = JSON.getDeepPropertyValue(fieldName, data)
+				valuesRef.current = getValues()
+				subscriber.next({
+					...formState,
+					values: valuesRef.current,
+					change: {
+						name: name,
+						change: { field: fieldName, prevValue: prevFieldValue },
+						type: type,
+					},
+				})
+			},
+		[formState]
+	)
+	const observerRef = useRef(
+		new Observable(subscriber => {
+			watchSubscriptionRef.current = watch(handleOnWatchedValue(subscriber))
 		})
-	}, [])
+	)
 
 	useDidMount(() => {
 		initializeForm()
 
-		const subscription = watch(handleOnWatchedValue)
-		const formChange = EventRegister.on("form-changed", ({ detail: formData }) => {
-			validateForm(formData, formData.type)
-			persistFormValues(formData.values)
+		const subscription = observerRef.current.subscribe({
+			next(observerRes) {
+				if (observerRes) {
+					const { change, values, ...data } = observerRes
+					if (change?.type) {
+						validateForm(values, change.type)
+						// persistFormValues(values)
+					}
+				}
+			},
+			error(err) {
+				console.error("something wrong occurred: " + err)
+			},
+			complete() {
+				console.log("done")
+			},
 		})
 		return () => {
+			if (watchSubscriptionRef.current) {
+				watchSubscriptionRef.current.unsubscribe()
+			}
 			subscription.unsubscribe()
-			formChange.remove()
+			persistFormValues(valuesRef.current)
 		}
-	})
-
-	useWillUnmount(() => {
-		persistFormValues(getValues())
 	})
 
 	const resetValues = useCallback(() => {
@@ -152,11 +182,11 @@ const useForm = (config = DEFAULT_CONFIG) => {
 				keepDirty: false,
 				keepIsSubmitted: false,
 				keepTouched: false,
-				keepIsValid: true,
+				keepIsValid: false,
 				keepSubmitCount: false,
 			}
 		)
-		// persistFormValues({ ...defaultValues })
+		persistFormValues({ ...defaultValues })
 	}, [])
 
 	const submitForm = useCallback(
@@ -170,8 +200,15 @@ const useForm = (config = DEFAULT_CONFIG) => {
 				: (vals, e) => console.error("onSubmitError ", vals, e)
 
 			handleSubmit(onSubmitHandler, onSubmitErrorHandler)()
+			Promise.all()
+				.then(() => {
+					if (resetOnSubmitSuccess) {
+						resetValues()
+					}
+				})
+				.catch(err => console.error("Error submitting form", err))
 		},
-		[onSubmit, onSubmitError]
+		[onSubmit, onSubmitError, resetOnSubmitSuccess]
 	)
 
 	const ControlField = useCallback(
@@ -184,23 +221,16 @@ const useForm = (config = DEFAULT_CONFIG) => {
 	const ErrorMessageComponent = useCallback(
 		() =>
 			forwardRef((params, ref) => {
-				return (
-					<ErrorMessage
-						errors={errors}
-						ref={ref}
-						render={({ message }) => <Alert severity="error">{message}</Alert>}
-						{...params}
-					/>
-				)
+				return <ErrorMessage ref={ref} render={({ message }) => <Alert severity="error">{message}</Alert>} {...params} />
 			}),
-		[errors]
+		[]
 	)
 
 	const ControlTextField = useCallback(
 		forwardRef((params, ref) => {
 			return <TextField control={control} {...params} ref={ref} />
 		}),
-		[control, errors]
+		[control]
 	)
 
 	const ControlRadioGroup = useCallback(
@@ -243,8 +273,17 @@ const useForm = (config = DEFAULT_CONFIG) => {
 		}),
 		[control]
 	)
+	const FormComponent = forwardRef(({ children, ...rest }, ref) => {
+		return (
+			<Form onSubmit={submitForm} {...rest} ref={ref}>
+				{children}
+			</Form>
+		)
+	})
 
 	return {
+		Context,
+		Form: FormComponent,
 		submit: submitForm,
 		ErrorMessage: ErrorMessageComponent,
 		Field: ControlField,
@@ -256,7 +295,7 @@ const useForm = (config = DEFAULT_CONFIG) => {
 		WysiwygEditor: ControlWysiwygEditor,
 		Checkbox: ControlCheckbox,
 		Controller,
-		values: getValues(),
+		observer$: observerRef.current,
 		persistedValues,
 		resetValues,
 		reset,
@@ -272,4 +311,4 @@ const useForm = (config = DEFAULT_CONFIG) => {
 	}
 }
 
-export default useForm;
+export default Function.memoize(useForm)

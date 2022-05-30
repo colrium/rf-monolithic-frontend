@@ -1,42 +1,37 @@
 /** @format */
-import React, { useCallback, useRef, useEffect, useMemo } from "react";
-import Grid from '@mui/material/Grid';
-;
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import React, { useCallback, useRef, useEffect, useMemo } from "react"
+import Grid from "@mui/material/Grid"
+import Typography from "@mui/material/Typography"
+import Button from "@mui/material/Button"
 
+import { StaticDateInput } from "components/FormInputs"
+import { usePersistentForm, useSetState, useDidUpdate, useDidMount } from "hooks"
 
+const stage = "start"
 
-import {
-    StaticDateInput,
-} from "components/FormInputs";
-import { usePersistentForm, useSetState, useDidUpdate, useDidMount } from "hooks";
-
-const stage = "start";
-
-const Stage = (props) => {
-    const { onSubmit, title, description } = props;
-    const { trigger, register, Field, TextField, Select, getValues, resetValues, setValue, values, formState, submit } =
-		usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage }, onSubmit: async (formData, e) => {
+const Stage = props => {
+	const { onSubmit, title, description } = props
+	const { trigger, register, Field, TextField, Select, getValues, resetValues, setValue, formState, submit } = usePersistentForm({
+		name: "projectcomposer",
+		defaultValues: { stage: stage },
+		onSubmit: async (formData, e) => {
 			if (Function.isFunction(onSubmit)) {
 				onSubmit(formData, e)
 			}
-		} })
-    const { isValid, isSubmitted } = formState;
-    const stageValues = (JSON.getDeepPropertyValue(`stages.${ stage }`, (values || {})) || {});
-    const complete_stages = useMemo((() => (JSON.getDeepPropertyValue(`complete_stages`, values)) || []), [values]);
-    const complete_stagesRef = useRef(complete_stages);
-
-
+		},
+	})
+	const { isValid, isSubmitted } = formState
+	const stageValues = JSON.getDeepPropertyValue(`stages.${stage}`, getValues() || {}) || {}
+	const complete_stages = () => JSON.getDeepPropertyValue(`complete_stages`, getValues()) || []
+	const complete_stagesRef = useRef(complete_stages)
 
 	useDidMount(() => {
 		// resetValues();
-	});
+	})
 
-
-    return (
+	return (
 		<Grid container>
-			<Grid item  className="p-6 flex flex-row justify-end">
+			<Grid item className="p-6 flex flex-row justify-end">
 				{/* {!!title && <Typography variant="h1" className="flex-1">
                     {title}
                 </Typography>} */}
@@ -45,13 +40,13 @@ const Stage = (props) => {
                 </Button> */}
 			</Grid>
 			{!!description && (
-				<Grid item  className="flex flex-col items-start py-8">
+				<Grid item className="flex flex-col items-start py-8">
 					<Typography variant="body2">{description}</Typography>
 				</Grid>
 			)}
-			<Grid item >
+			<Grid item>
 				<Grid container>
-					<Grid item  md={6} className={"py-8"}>
+					<Grid item md={6} className={"py-8"}>
 						<TextField
 							label="First Name"
 							name={`stages.${stage}.first_name`}
@@ -63,7 +58,7 @@ const Stage = (props) => {
 							fullWidth
 						/>
 					</Grid>
-					<Grid item  md={6} className={"py-8"}>
+					<Grid item md={6} className={"py-8"}>
 						<TextField
 							label="Last Name"
 							name={`stages.${stage}.last_name`}
@@ -75,7 +70,7 @@ const Stage = (props) => {
 							fullWidth
 						/>
 					</Grid>
-					<Grid item  md={6} className={"py-8"}>
+					<Grid item md={6} className={"py-8"}>
 						<TextField
 							label="Email"
 							name={`stages.${stage}.email_address`}
@@ -93,7 +88,7 @@ const Stage = (props) => {
 							fullWidth
 						/>
 					</Grid>
-					<Grid item  md={6} className={"py-8"}>
+					<Grid item md={6} className={"py-8"}>
 						<TextField
 							label="Phone"
 							placeholder="(Country Code) Telephone"
@@ -107,7 +102,7 @@ const Stage = (props) => {
 						/>
 					</Grid>
 
-					<Grid item  md={12} className={"py-8"}>
+					<Grid item md={12} className={"py-8"}>
 						<Select
 							name={`stages.${stage}.survey_type`}
 							label={"Survey Type"}
@@ -119,7 +114,7 @@ const Stage = (props) => {
 						/>
 					</Grid>
 
-					<Grid item  md={6} className={"py-8"}>
+					<Grid item md={6} className={"py-8"}>
 						<Field
 							label="Start Date"
 							name={`stages.${stage}.start_date`}
@@ -160,7 +155,7 @@ const Stage = (props) => {
 							required
 						/>
 					</Grid>
-					<Grid item  md={6} className={"py-8"}>
+					<Grid item md={6} className={"py-8"}>
 						<Field
 							label="End Date"
 							name={`stages.${stage}.end_date`}
@@ -204,7 +199,7 @@ const Stage = (props) => {
 				</Grid>
 			</Grid>
 
-			<Grid item  className="flex flex-col items-center py-20 mb-12">
+			<Grid item className="flex flex-col items-center py-20 mb-12">
 				<Button onClick={submit} disabled={!isValid} color="accent" variant="contained">
 					Ok. Ready to continue
 				</Button>
@@ -213,4 +208,4 @@ const Stage = (props) => {
 	)
 }
 
-export default Stage;
+export default Stage

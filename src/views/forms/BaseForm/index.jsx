@@ -84,7 +84,6 @@ const BaseForm = React.forwardRef((props, ref) => {
 		WysiwygEditor,
 		Checkbox,
 		Controller,
-		values,
 		persistedValues,
 		resetValues,
 		reset,
@@ -100,6 +99,7 @@ const BaseForm = React.forwardRef((props, ref) => {
 		volatile: volatile,
 		defaultValues: record || initialValues || {},
 	})
+	const values = getValues()
 	const [state, setState, getState] = useSetState({
 		record: false,
 		loading: {},

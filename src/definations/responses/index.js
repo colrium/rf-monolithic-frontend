@@ -1,5 +1,5 @@
 /** @format */
-
+import ReactJson from "react-json-view";
 import { IconButton } from "@mui/material";
 import {
 	Add as AddIcon,
@@ -527,6 +527,17 @@ export default {
 						return true;
 					},
 				},
+				tableProps: {
+					render: (entry) => {
+						return (<ReactJson
+							name={false}
+							src={entry?.response_form_value || {}}
+							enableClipboard
+							displayDataTypes={false}
+							collapsed
+						/>)
+					}
+				}
 
 			},
 			coordinates: {
@@ -549,6 +560,17 @@ export default {
 						return true;
 					},
 				},
+				tableProps: {
+					render: (entry) => {
+						return (<ReactJson
+							name={false}
+							src={entry?.coordinates || []}
+							enableClipboard
+							displayDataTypes={false}
+							collapsed
+						/>)
+					}
+				}
 			},
 			submitter: {
 				type: "string",

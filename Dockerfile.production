@@ -1,23 +1,8 @@
-# FROM node:alpine as builder
-FROM node:8.12-alpine as builder
-RUN apk add g++ make python
-
-# set the working dir for container
-WORKDIR /frontend
-RUN npm install -g npm-run-all
-# copy the json file first
-COPY ./package.json /frontend
-
-# install npm dependencies
-RUN npm install --legacy-peer-deps
-
-# copy other project files
-COPY . .
-
-# build the folder
-RUN npm run build:production
-
-# Handle Nginx
-FROM nginx
-COPY --from=builder /frontend/production /usr/share/nginx/html
+# production environment
+FROM nginx:stable-alpine
+RUN mkdir -p /usr/share/nginx/html/errors
+COPY ./nginx/errors /usr/share/nginx/html/errors
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./production /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

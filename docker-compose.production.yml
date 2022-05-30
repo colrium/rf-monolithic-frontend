@@ -1,3 +1,5 @@
+# @format
+
 version: "3.7"
 services:
     rf-fe-production:
@@ -6,6 +8,8 @@ services:
             dockerfile: Dockerfile.production
         container_name: rf-fe-production
         restart: unless-stopped
+        # volumes:
+        #     - ./production:/usr/share/nginx/html
         networks:
             - proxy-bridge
         ports:

@@ -81,7 +81,7 @@ const WebSocketService = props => {
 	const handleOnMessageSent = useCallback(
 		async message => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onMessage(message)
+				// onMessage(message)
 			}
 		},
 		[user, isAuthenticated]
@@ -100,7 +100,7 @@ const WebSocketService = props => {
 	const handleOnNewMessage = useCallback(
 		async message => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onMessage(message, true)
+				// onMessage(message, true)
 				SocketIO.emit("mark-message-as-received", {
 					message: message._id || message.uuid,
 				})

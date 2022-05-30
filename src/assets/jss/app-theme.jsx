@@ -456,6 +456,10 @@ let theme = createTheme({
 			main: inverseColor,
 			contrastText: defaultColor,
 		},
+		contrast: {
+			main: inverseColor,
+			contrastText: defaultColor,
+		},
 		default: {
 			main: "inherit",
 		},

@@ -13,14 +13,30 @@ module.exports = {
 		sourceType: "module",
 	},
 	extends: ["airbnb", "prettier"],
-	plugins: ["prettier"],
+	plugins: ["prettier", "unused-imports"],
 	rules: {
 		indent: ["error", 4],
 		"linebreak-style": ["error", "unix"],
 		quotes: ["error", "double"],
 		semi: ["error", "always"],
 		"prettier/prettier": "error",
-		"no-unused-vars": ["error", "local"],
+		"no-unused-vars": "off",
+		"unused-imports/no-unused-imports": "error",
+		"unused-imports/no-unused-vars": [
+			"warn",
+			{
+				vars: "all",
+				varsIgnorePattern: "^_",
+				args: "after-used",
+				argsIgnorePattern: "^_",
+			},
+		],
+		"sort-imports": [
+			"error",
+			{
+				ignoreDeclarationSort: true,
+			},
+		],
 		"no-console": "error",
 		"func-names": "off",
 		"no-process-exit": "off",
@@ -36,11 +52,7 @@ module.exports = {
 		"function-call-argument-newline": ["error", "consistent"],
 		"array-bracket-spacing": ["error", "always"],
 		"no-var": "error",
-		"object-curly-spacing": [
-			"error",
-			"always",
-			{ objectsInObjects: false },
-		],
+		"object-curly-spacing": ["error", "always", { objectsInObjects: false }],
 		"function-call-argument-newline": ["error", "consistent"],
 	},
-};
+}

@@ -5,32 +5,19 @@ import Grid from "@mui/material/Grid"
 import LoadingButton from "@mui/lab/LoadingButton"
 import Typography from "@mui/material/Typography"
 import Button from "@mui/material/Button"
-import { usePersistentForm, useDidMount, useDeepMemo } from "hooks"
+import { useDerivedState } from "hooks"
 import { useNetworkServices, useNotificationsQueue } from "contexts"
+import { usePersistentForms } from "contexts"
 
 const ApplicationForm = React.forwardRef((props, ref) => {
-	const { onSubmit, ...rest } = props || {}
 
-	const { Api } = useNetworkServices()
+	const { submit, TextField, Autocomplete, RadioGroup, values, setValue, resetValues, formState } =  usePersistentForms("job-application-form")
 	const { queueNotification } = useNotificationsQueue()
+	const { Api } = useNetworkServices()
 
 
 
-	const { submit, TextField, Autocomplete, RadioGroup, values, setValue, resetValues, formState } = usePersistentForm({
-		name: `job-application-form`,
-		mode: "onChange",
-		reValidateMode: "onChange",
-		defaultValues: { country: "KE" },
-		onSubmit: async (formData, e) => {
-			if (Function.isFunction(onSubmit)) {
-				onSubmit(formData, e)
-			}
-		},
-	})
-
-
-
-	const vacancyData = useDeepMemo(
+	const vacancyData = useDerivedState(
 		async () => {
 			let options = await Api.get("/recruitment/vacancies")
 					.then(res => {
@@ -44,9 +31,9 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 					})
 					.catch(err => {
 						queueNotification({
-					severity: "error",
-					content: `Error getting vacancies. ${err.msg || "Something went wrong!"}`,
-				})
+							severity: "error",
+							content: `Error getting vacancies. ${err.msg || "Something went wrong!"}`,
+						})
 						return {}
 					})
 
@@ -65,7 +52,7 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 	)
 
 	return (
-		<Grid container {...rest} component="div" ref={ref}>
+		<Grid container {...props} component="div" ref={ref}>
 			<Grid spacing={4} container>
 				<Grid item xs={12} md={12} className="inline-block text-left">
 					<Autocomplete

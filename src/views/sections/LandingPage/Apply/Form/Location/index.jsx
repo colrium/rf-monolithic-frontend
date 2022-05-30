@@ -10,9 +10,8 @@ import MUITextField from "@mui/material/TextField"
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker"
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker"
 
-import { usePersistentForm, useDeepMemo, useSetState } from "hooks"
-
-import { useNotificationsQueue, useNetworkServices } from "contexts"
+import { useDerivedState } from "hooks"
+import { useNotificationsQueue, useNetworkServices, usePersistentForms } from "contexts"
 let contryCodeNames = {
 	ET: "Ethiopia",
 	KE: "Kenya",
@@ -21,36 +20,24 @@ let contryCodeNames = {
 	UG: "Uganda",
 }
 
-const ApplicationFormComponent = React.forwardRef((props, ref) => {
-	const { onSubmit, ...rest } = props || {}
+const ApplicationForm = React.forwardRef((props, ref) => {
+	const { submit, TextField, Field, Autocomplete, RadioGroup, values, setValue, resetValues, formState } =
+		usePersistentForms("job-application-form")
 
 	const { Api } = useNetworkServices()
 	const { queueNotification } = useNotificationsQueue()
 
-
-	const { submit, TextField, Field, Autocomplete, RadioGroup, values, setValue, resetValues, formState } = usePersistentForm({
-		name: `job-application-form`,
-		mode: "onChange",
-		reValidateMode: "onChange",
-		defaultValues: { country: "KE" },
-		onSubmit: async (formData, e) => {
-			if (Function.isFunction(onSubmit)) {
-				onSubmit(formData, e)
-			}
-		},
-	})
-	const [state, setState] = useSetState({
-		administrativeLevel1Label: "Region/County/Province",
-		administrativeLevel1Options: {},
-	})
-
-
-	const adminLevel1Data = useDeepMemo(
-		async () => {
+	const [adminLevel1Data] = useDerivedState(
+		async prevState => {
 			let adminLevelLabel = "Region/County/Province"
 			let adminLevelOptions = {}
 
 			if (!String.isEmpty(values.country)) {
+				if (prevState.updated) {
+					setValue(`administrative_level_2`, null)
+					setValue(`administrative_level_3`, null)
+				}
+
 				adminLevelOptions = await Api.get("/geography/boundaries", {
 					params: {
 						admin_level_0: contryCodeNames[values.country],
@@ -86,20 +73,25 @@ const ApplicationFormComponent = React.forwardRef((props, ref) => {
 			return {
 				label: adminLevelLabel,
 				options: adminLevelOptions,
+				// defaultValue: firstKey,
 				disabled: false,
 				loading: false,
+				updated: true,
 			}
 		},
 		[values.country],
-		{ label: "Region/County/Province", options: {}, value: null, disabled: true, loading: true }
+		{ label: "Region/County/Province", options: {}, disabled: true, loading: true, loaded: false }
 	)
 
-	const adminLevel2Data = useDeepMemo(
-		async () => {
+	const [adminLevel2Data] = useDerivedState(
+		async prevState => {
 			let adminLevelLabel = "Sub County/Sub Region/District"
 			let adminLevelOptions = {}
 
 			if (!String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_1)) {
+				if (prevState.updated) {
+					setValue(`administrative_level_3`, null)
+				}
 				adminLevelOptions = await Api.get("/geography/boundaries", {
 					params: {
 						admin_level_0: contryCodeNames[values.country],
@@ -110,7 +102,6 @@ const ApplicationFormComponent = React.forwardRef((props, ref) => {
 					},
 				})
 					.then(res => {
-						console.log("adminLevel2Data res", res)
 						let possibilitiesData = {}
 						if (Array.isArray(res?.body?.data)) {
 							let administrativeLevelLabelSet = false
@@ -120,6 +111,7 @@ const ApplicationFormComponent = React.forwardRef((props, ref) => {
 									adminLevelLabel = curr.admin_level_type
 									administrativeLevelLabelSet = true
 								}
+
 								return acc
 							}, {})
 						}
@@ -136,16 +128,16 @@ const ApplicationFormComponent = React.forwardRef((props, ref) => {
 			return {
 				label: adminLevelLabel,
 				options: adminLevelOptions,
-				value: firstKey,
 				disabled: false,
 				loading: false,
+				updated: true,
 			}
 		},
 		[values.country, values.administrative_level_1],
-		{ label: "Sub County/Sub Region/District", options: {}, value: null, disabled: true, loading: true }
+		{ label: "Sub County/Sub Region/District", options: {}, disabled: true, loading: true }
 	)
 
-	const adminLevel3Data = useDeepMemo(
+	const [adminLevel3Data] = useDerivedState(
 		async () => {
 			let adminLevelLabel = "Sub County/Sub Region/District"
 			let adminLevelOptions = {}
@@ -166,7 +158,6 @@ const ApplicationFormComponent = React.forwardRef((props, ref) => {
 					},
 				})
 					.then(res => {
-						console.log("adminLevel3Data res", res)
 						let possibilitiesData = {}
 						if (Array.isArray(res?.body?.data)) {
 							let administrativeLevelLabelSet = false
@@ -192,17 +183,17 @@ const ApplicationFormComponent = React.forwardRef((props, ref) => {
 			return {
 				label: adminLevelLabel,
 				options: adminLevelOptions,
-				value: firstKey,
+				updated: true,
 				disabled: false,
 				loading: false,
 			}
 		},
 		[values.country, values.administrative_level_1, values.administrative_level_2],
-		{ label: "Ward/Locality/Municipality", options: {}, value: null, disabled: true, loading: true}
+		{ label: "Ward/Locality/Municipality", options: {}, disabled: true, loading: true }
 	)
 
 	return (
-		<Grid container spacing={4} {...rest} component="div" ref={ref}>
+		<Grid container spacing={4} {...props} component="div" ref={ref}>
 			<Grid item xs={12} md={6} className="">
 				<Autocomplete
 					variant="filled"
@@ -280,28 +271,8 @@ const ApplicationFormComponent = React.forwardRef((props, ref) => {
 					validate
 				/>
 			</Grid>
-
-			{/* <Grid container spacing={4}>
-				<Grid item xs={12} className="flex flex-row justify-center items-center my-4">
-					<LoadingButton
-						disabled={!formState.isValid || formState.isSubmitting}
-						loading={formState.isSubmitting}
-						className="capitalize rounded-full px-8"
-						variant="contained"
-						sx={
-							{
-								// color: theme => theme.palette.text.primary,
-								// backgroundColor: theme => theme.palette.background.paper,
-							}
-						}
-						type="submit"
-					>
-						Submit
-					</LoadingButton>
-				</Grid>
-			</Grid> */}
 		</Grid>
 	)
 })
 
-export default React.memo(ApplicationFormComponent)
+export default React.memo(ApplicationForm)

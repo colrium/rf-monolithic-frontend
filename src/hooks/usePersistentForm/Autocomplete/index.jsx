@@ -1,26 +1,12 @@
-import React, { useCallback } from "react";
-import { Controller } from "react-hook-form";
+/** @format */
+
+import React, { useCallback } from "react"
+import { Controller } from "react-hook-form"
 import AutoComplete from "components/AutoComplete"
-import {
-	FormHelperText,
-	Stack,
-} from "@mui/material"
+import { FormHelperText, Stack } from "@mui/material"
 
 const Field = React.forwardRef((props, ref) => {
-	const {
-		name,
-		control,
-		defaultValue,
-		value,
-		rules,
-		shouldUnregister,
-		onChange,
-		disabled,
-		render,
-		helperText,
-		sx,
-		...rest
-	} = props
+	const { name, control, defaultValue, value, rules, shouldUnregister, onChange, disabled, render, helperText, sx, ...rest } = props
 
 	const formState = control._formState
 	const handleOnChange = useCallback(
@@ -31,7 +17,6 @@ const Field = React.forwardRef((props, ref) => {
 			if (Function.isFunction(onChange)) {
 				onChange(e)
 			}
-
 		},
 		[onChange]
 	)
@@ -64,13 +49,6 @@ const Field = React.forwardRef((props, ref) => {
 							)}
 						</Stack>
 					}
-					sx={{
-						"& .MuiFormHelperText-root": {
-							marginLeft: `2px !important`,
-							marginRight: `2px !important`,
-						},
-						...props.sx,
-					}}
 					{...props}
 					{...fieldParams}
 					ref={ref}
@@ -92,4 +70,4 @@ const Field = React.forwardRef((props, ref) => {
 	)
 })
 
-export default React.memo(Field);
+export default React.memo(Field)

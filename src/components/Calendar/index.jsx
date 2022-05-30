@@ -1,44 +1,37 @@
 /** @format */
 
-import IconButton from "@mui/material/IconButton";
+import IconButton from "@mui/material/IconButton"
 
-import Tab from "@mui/material/Tab";
+import Tab from "@mui/material/Tab"
 //
-import Tabs from "@mui/material/Tabs";
-import {
-	ArrowBack as PrevIcon,
-	ArrowForward as NextIcon,
-	EventOutlined as CalendarIcon,
-} from "@mui/icons-material";
-import Calendar from "@toast-ui/react-calendar";
-import { colors } from "assets/jss/app-theme";
-import Avatar from "@mui/material/Avatar";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
-import Grid from '@mui/material/Grid';
-;
-import Status from "components/Status";
-import Typography from '@mui/material/Typography';
-import { formats } from "config/data";
-import PropTypes from "prop-types";
-import React from "react";
-import { UtilitiesHelper } from "utils/Helpers";
-
+import Tabs from "@mui/material/Tabs"
+import { ArrowBack as PrevIcon, ArrowForward as NextIcon, EventOutlined as CalendarIcon } from "@mui/icons-material"
+import { colors } from "assets/jss/app-theme"
+import Avatar from "@mui/material/Avatar"
+import Card from "@mui/material/Card"
+import CardActions from "@mui/material/CardActions"
+import CardContent from "@mui/material/CardContent"
+import CardHeader from "@mui/material/CardHeader"
+import Grid from "@mui/material/Grid"
+import Status from "components/Status"
+import Typography from "@mui/material/Typography"
+import { formats } from "config/data"
+import PropTypes from "prop-types"
+import React from "react"
+import { UtilitiesHelper } from "utils/Helpers"
 
 class CustomCalendar extends React.Component {
-	calendarRef = React.createRef();
+	calendarRef = React.createRef()
 	state = {
 		view: "month",
 		view_title: new Date().format(formats.dateformats.month),
 		calendars: [],
 		tasks: [],
 		schedules: [],
-	};
+	}
 
 	constructor(props) {
-		super(props);
+		super(props)
 		const {
 			theme,
 			view,
@@ -53,7 +46,7 @@ class CustomCalendar extends React.Component {
 			title_color,
 			subtitle_color,
 			calendarProps,
-		} = props;
+		} = props
 		this.state = {
 			...this.state,
 			theme: theme,
@@ -62,8 +55,8 @@ class CustomCalendar extends React.Component {
 				view === "day"
 					? new Date().format(formats.dateformats.date)
 					: view === "week"
-						? new Date().format(formats.dateformats.week)
-						: new Date().format(formats.dateformats.month),
+					? new Date().format(formats.dateformats.week)
+					: new Date().format(formats.dateformats.month),
 			calendars: calendars,
 			tasks: tasks,
 			schedules: schedules,
@@ -75,20 +68,18 @@ class CustomCalendar extends React.Component {
 			title_color: title_color,
 			subtitle_color: subtitle_color,
 			calendarProps: calendarProps,
-		};
-		this.handleChangeCalendarView = this.handleChangeCalendarView.bind(
-			this
-		);
-		this.handleClickPrevButton = this.handleClickPrevButton.bind(this);
-		this.handleClickNextButton = this.handleClickNextButton.bind(this);
+		}
+		this.handleChangeCalendarView = this.handleChangeCalendarView.bind(this)
+		this.handleClickPrevButton = this.handleClickPrevButton.bind(this)
+		this.handleClickNextButton = this.handleClickNextButton.bind(this)
 	}
 
 	componentDidMount() {
-		this.initCalendarEvents();
+		this.initCalendarEvents()
 	}
 
 	getSnapshotBeforeUpdate(prevProps) {
-		return { refreshRequired: !Object.areEqual(prevProps, this.props) };
+		return { refreshRequired: !Object.areEqual(prevProps, this.props) }
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
@@ -106,7 +97,7 @@ class CustomCalendar extends React.Component {
 			title_color,
 			subtitle_color,
 			calendarProps,
-		} = this.props;
+		} = this.props
 		if (snapshot.refreshRequired) {
 			this.setState(
 				{
@@ -116,8 +107,8 @@ class CustomCalendar extends React.Component {
 						view === "day"
 							? new Date().format(formats.dateformats.date)
 							: view === "week"
-								? new Date().format(formats.dateformats.week)
-								: new Date().format(formats.dateformats.month),
+							? new Date().format(formats.dateformats.week)
+							: new Date().format(formats.dateformats.month),
 					calendars: calendars,
 					tasks: tasks,
 					schedules: schedules,
@@ -131,116 +122,102 @@ class CustomCalendar extends React.Component {
 					calendarProps: calendarProps,
 				},
 				this.initCalendarEvents
-			);
+			)
 		}
 	}
 
 	initCalendarEvents() {
-		const {
-			onSelect,
-			onClickEntry,
-			onClickEdit,
-			onClickDelete,
-		} = this.props;
-		const calendar = this.calendarRef.current.getInstance();
+		const { onSelect, onClickEntry, onClickEdit, onClickDelete } = this.props
+		const calendar = this.calendarRef.current.getInstance()
 		if (calendar) {
 			calendar.on({
 				clickSchedule: function (e) {
 					if (UtilitiesHelper.isOfType(onClickEntry, "function")) {
-						onClickEntry(e.schedule);
+						onClickEntry(e.schedule)
 					}
 				},
 				beforeCreateSchedule: function (e) {
 					if (UtilitiesHelper.isOfType(onSelect, "function")) {
-						onSelect(e);
+						onSelect(e)
 					}
 				},
 				beforeUpdateSchedule: function (e) {
 					if (UtilitiesHelper.isOfType(onClickEdit, "function")) {
-						onClickEdit(e);
+						onClickEdit(e)
 					}
 				},
 				beforeDeleteSchedule: function (e) {
 					if (UtilitiesHelper.isOfType(onClickDelete, "function")) {
-						onClickDelete(e);
+						onClickDelete(e)
 					}
 				},
-			});
+			})
 		}
 	}
 
 	handleChangeCalendarView = (event, view) => {
 		if (this.calendarRef.current) {
-			const calendarInstance = this.calendarRef.current.getInstance();
-			const rendered_date = calendarInstance.getDate().toDate();
+			const calendarInstance = this.calendarRef.current.getInstance()
+			const rendered_date = calendarInstance.getDate().toDate()
 			this.setState(state => ({
 				view: view,
 				view_title:
 					view === "day"
 						? rendered_date.format(formats.dateformats.date)
 						: view === "week"
-							? rendered_date.format(formats.dateformats.week)
-							: rendered_date.format(formats.dateformats.month),
-			}));
+						? rendered_date.format(formats.dateformats.week)
+						: rendered_date.format(formats.dateformats.month),
+			}))
 		} else {
-			this.setState(state => ({ view: view }));
+			this.setState(state => ({ view: view }))
 		}
-	};
+	}
 
 	handleClickPrevButton = () => {
 		if (this.calendarRef.current) {
-			const calendarInstance = this.calendarRef.current.getInstance();
-			calendarInstance.prev();
-			const rendered_date = calendarInstance.getDate().toDate();
+			const calendarInstance = this.calendarRef.current.getInstance()
+			calendarInstance.prev()
+			const rendered_date = calendarInstance.getDate().toDate()
 			this.setState(state => ({
 				view_title:
 					state.view === "day"
 						? rendered_date.format(formats.dateformats.date)
 						: state.view === "week"
-							? rendered_date.format(formats.dateformats.week)
-							: rendered_date.format(formats.dateformats.month),
-			}));
+						? rendered_date.format(formats.dateformats.week)
+						: rendered_date.format(formats.dateformats.month),
+			}))
 		}
-	};
+	}
 
 	handleClickNextButton = () => {
 		if (this.calendarRef.current) {
-			const calendarInstance = this.calendarRef.current.getInstance();
-			calendarInstance.next();
-			const rendered_date = calendarInstance.getDate().toDate();
+			const calendarInstance = this.calendarRef.current.getInstance()
+			calendarInstance.next()
+			const rendered_date = calendarInstance.getDate().toDate()
 			this.setState(state => ({
 				view_title:
 					state.view === "day"
 						? rendered_date.format(formats.dateformats.date)
 						: state.view === "week"
-							? rendered_date.format(formats.dateformats.week)
-							: rendered_date.format(formats.dateformats.month),
-			}));
+						? rendered_date.format(formats.dateformats.week)
+						: rendered_date.format(formats.dateformats.month),
+			}))
 		}
-	};
+	}
 
 	handleOnEditEntryClick = event => {
 		if (this.calendarRef.current) {
 		}
-	};
+	}
 
 	handleOnDeleteEntryClick = event => {
 		if (this.calendarRef.current) {
 		}
-	};
+	}
 
 	render() {
-		const {
-			height,
-			defaultView,
-			disableDblClick,
-			disableClick,
-			isReadOnly,
-			useDetailPopup,
-			useCreationPopup,
-			scheduleView,
-			taskView,
-		} = this.props;
+		const { height, defaultView, disableDblClick, disableClick, isReadOnly, useDetailPopup, useCreationPopup, scheduleView, taskView } =
+			this.props
 		const {
 			theme,
 			view,
@@ -256,7 +233,7 @@ class CustomCalendar extends React.Component {
 			title_color,
 			subtitle_color,
 			calendarProps,
-		} = this.state;
+		} = this.state
 		const calProps = {
 			height: height + "px",
 			defaultView: defaultView,
@@ -268,16 +245,13 @@ class CustomCalendar extends React.Component {
 			scheduleView: scheduleView,
 			taskView: taskView,
 			...calendarProps,
-		};
+		}
 
 		return (
 			<Card elevation={0}>
 				<CardHeader
 					avatar={
-						<Avatar
-							aria-label={title}
-							style={{ background: icon_color }}
-						>
+						<Avatar aria-label={title} style={{ background: icon_color }}>
 							{icon}
 						</Avatar>
 					}
@@ -287,7 +261,7 @@ class CustomCalendar extends React.Component {
 				<CardContent className="p-0 m-0">
 					<Grid container className="p-0 m-0">
 						<Grid container className="p-0 m-0">
-							<Grid item  sm={6} md={4}>
+							<Grid item sm={6} md={4}>
 								<Tabs
 									value={view}
 									onChange={this.handleChangeCalendarView}
@@ -302,23 +276,19 @@ class CustomCalendar extends React.Component {
 								</Tabs>
 							</Grid>
 
-							<Grid item  sm={6} md={4}>
+							<Grid item sm={6} md={4}>
 								<Typography variant="h3" center>
 									{" "}
 									{view_title}{" "}
 								</Typography>
 							</Grid>
 
-							<Grid item  sm={12} md={4}>
+							<Grid item sm={12} md={4}>
 								<div className="float-right">
-									<IconButton
-										onClick={this.handleClickPrevButton}
-									>
+									<IconButton onClick={this.handleClickPrevButton}>
 										<PrevIcon />
 									</IconButton>
-									<IconButton
-										onClick={this.handleClickNextButton}
-									>
+									<IconButton onClick={this.handleClickNextButton}>
 										<NextIcon />
 									</IconButton>
 								</div>
@@ -326,8 +296,8 @@ class CustomCalendar extends React.Component {
 						</Grid>
 
 						<Grid container className="p-0 m-0">
-							<Grid item  xs={12}>
-								<Calendar
+							<Grid item xs={12}>
+								{/* <Calendar
 									theme={theme}
 									view={view}
 									calendars={calendars}
@@ -335,32 +305,22 @@ class CustomCalendar extends React.Component {
 									schedules={schedules}
 									ref={this.calendarRef}
 									{...calProps}
-								/>
+								/> */}
 							</Grid>
 						</Grid>
 					</Grid>
 				</CardContent>
 				<CardActions>
 					<Grid container className="p-0 m-0">
-						<Grid item  xs={12}>
-							<Typography
-								variant="subtitle2"
-								display="block"
-
-								gutterBottom
-							>
-								{" "}
-								Calendar index{" "}
+						<Grid item xs={12}>
+							<Typography variant="subtitle2" display="block" gutterBottom>
+								Calendar index
 							</Typography>
 						</Grid>
-						<Grid item  xs={12}>
+						<Grid item xs={12}>
 							{calendars.map((calendar, index) => (
 								<Status
-									color={
-										calendar.bgColor
-											? calendar.bgColor
-											: colors.hex.secondary
-									}
+									color={calendar.bgColor ? calendar.bgColor : colors.hex.secondary}
 									text={calendar.name}
 									key={"calendar-" + index}
 								/>
@@ -369,12 +329,11 @@ class CustomCalendar extends React.Component {
 					</Grid>
 				</CardActions>
 			</Card>
-		);
+		)
 	}
 }
 
 CustomCalendar.propTypes = {
-
 	className: PropTypes.string,
 	calendars: PropTypes.array,
 	view: PropTypes.string,
@@ -403,7 +362,7 @@ CustomCalendar.propTypes = {
 	onClickEntry: PropTypes.func,
 	onClickEdit: PropTypes.func,
 	onClickDelete: PropTypes.func,
-};
+}
 
 CustomCalendar.defaultProps = {
 	calendars: [],
@@ -436,6 +395,6 @@ CustomCalendar.defaultProps = {
 	useCreationPopup: false,
 	scheduleView: true,
 	taskView: true,
-};
+}
 
-export default (CustomCalendar);
+export default CustomCalendar

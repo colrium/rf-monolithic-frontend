@@ -1,3 +1,5 @@
+# @format
+
 version: "3.7"
 services:
     rf-fe-preview:
@@ -6,6 +8,8 @@ services:
             dockerfile: Dockerfile.preview
         container_name: rf-fe-preview
         restart: unless-stopped
+        volumes:
+            - ./preview:/usr/share/nginx/html
         networks:
             - proxy-bridge
         ports:

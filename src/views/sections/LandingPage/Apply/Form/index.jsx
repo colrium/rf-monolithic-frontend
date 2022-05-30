@@ -1,9 +1,11 @@
 /** @format */
 
-import React, { useEffect } from "react"
+import React, { useEffect, useCallback } from "react"
 import Grid from "@mui/material/Grid"
 import LoadingButton from "@mui/lab/LoadingButton"
 import Box from "@mui/material/Box"
+import { useTheme } from "@mui/material/styles"
+import MobileStepper from "@mui/material/MobileStepper"
 import Stepper from "@mui/material/Stepper"
 import Step from "@mui/material/Step"
 import StepContent from "@mui/material/StepContent"
@@ -31,22 +33,23 @@ const steps = {
 	location: "Location",
 	education: "Education",
 	resume: "Resume",
-	source: "Source"
+	source: "Source",
 }
 
 const stepsDescriptions = {
-	vacancy: "From the available positions below, select the one that best suits your interests. All job applications made here are anonymous and applicant's user account crredentials will be sent upon successful shortlisting, validation and qualification.",
+	vacancy:
+		"From the available positions below, select the one that best suits your interests. All job applications made here are anonymous and applicant's user account crredentials will be sent upon successful shortlisting, validation and qualification.",
 	personal: "Tell us a little about yourself",
 	location: "Add your administrative boundary details",
 	education: "Whats your education details",
-	resume: "Please upload your resume/CV or any other relevant proffessional documents",
+	resume: "Please upload your Resume/Curriculum Vitae or any other relevant proffessional documents",
 	source: "How did you hear about us",
 }
 
 const stepsKeys = Object.keys(steps)
 
 const ApplicationForm = React.forwardRef((props, ref) => {
-	const {onSubmitSuccess, onSubmitError, ...rest } = props || {}
+	const { onSubmitSuccess, onSubmitError, ...rest } = props || {}
 	const [searchParams, setSearchParams] = useSearchParams()
 	const authSettings = useSelector(state => ({ ...state?.app.settings?.auth }))
 	const { Api } = useNetworkServices()
@@ -55,10 +58,10 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 	const navigate = useNavigate()
 
 	const [state, setState, getState] = useSetState({
-		active_tab: stepsKeys.indexOf(hash ? hash.replace("#", "").trim().toLowerCase() : "vacancy")
+		active_tab: stepsKeys.indexOf(hash ? hash.replace("#", "").trim().toLowerCase() : "vacancy"),
 	})
 
-	const { submit, TextField, Autocomplete, RadioGroup, values, setValue, resetValues, formState } = usePersistentForm({
+	const { submit, TextField, Autocomplete, RadioGroup, getValues, setValue, resetValues, formState } = usePersistentForm({
 		name: `job-application-form`,
 		mode: "onChange",
 		reValidateMode: "onChange",
@@ -69,8 +72,7 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 			if (active_tab < stepsKeys.length - 1) {
 				// setState({ active_tab: active_tab + 1 })
 				navigate(`${pathname}#${stepsKeys[active_tab + 1]}`)
-			}
-			else {
+			} else {
 				return await Api.post("/recruitment/applications", formData)
 					.then(res => {
 						resetValues()
@@ -92,7 +94,6 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 						}
 					})
 			}
-
 		},
 	})
 
@@ -109,6 +110,15 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 		navigate(`${pathname}#${newValue}`)
 	}
 
+	const handleOnClickStep = useCallback(
+		(key, index) => event => {
+			const { active_tab } = getState()
+			if (index < active_tab) {
+				navigate(`${pathname}#${key}`)
+			}
+		},
+		[]
+	)
 
 	return (
 		<Grid container {...rest} component="form" onSubmit={submit} ref={ref}>
@@ -117,6 +127,8 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 					{Object.entries(steps).map(([key, label], index) => (
 						<Step key={key}>
 							<StepLabel
+								className={`cursor-pointer`}
+								onClick={handleOnClickStep(key, index)}
 								optional={
 									<Typography color="text.disabled" variant="caption">
 										{stepsDescriptions[stepsKeys[key]]}
@@ -180,7 +192,7 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 							disabled={!formState.isValid || formState.isSubmitting}
 							endIcon={<ArrowForwardIcon />}
 						>
-							Previous
+							Next
 						</Button>
 					)}
 				</Grid>

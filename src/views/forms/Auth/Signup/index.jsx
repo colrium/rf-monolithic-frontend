@@ -13,9 +13,7 @@ import { useSearchParams, useNavigate } from "react-router-dom"
 import { usePersistentForm, useDidMount, useSetState } from "hooks"
 import { Link } from "react-router-dom"
 
-
 import { useDispatch, useSelector } from "react-redux"
-import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth"
 import { useNetworkServices, useNotificationsQueue } from "contexts"
 import { GoogleLoginButton } from "views/forms/Auth/OAuth"
 
@@ -38,14 +36,12 @@ const SignupForm = React.forwardRef((props, ref) => {
 		strategy: null,
 	})
 
-
-
-	const { submit, TextField, Autocomplete, RadioGroup, values, setValue, resetValues, formState } = usePersistentForm({
+	const { submit, TextField, Autocomplete, RadioGroup, getValues, setValue, resetValues, formState } = usePersistentForm({
 		name: `user-signup-form`,
 		mode: "onChange",
 		reValidateMode: "onChange",
 		// volatile: true,
-		defaultValues: { country: "KE" },
+		defaultValues: { country: "KE", interest: "demo" },
 		onSubmit: async (formData, e) => {
 			return await Api.post("/signup", formData)
 				.then(res => {
@@ -91,30 +87,30 @@ const SignupForm = React.forwardRef((props, ref) => {
 		},
 	})
 
-	const onGoogleSuccess = ({data, res}) => {
+	const onGoogleSuccess = ({ data, res }) => {
 		if (data.interest === "demo") {
-						queueNotification({
-							severity: "success",
-							content: `Signup request successfull! Thank you for your interest in Realfield! We will be in touch shortly to schedule your demo at your convenience. `,
-						})
-					} else if (data.interest === "quote") {
-						queueNotification({
-							severity: "success",
-							content: `Signup request successfull! Thank you for your interest in Realfield! We will be in touch shortly`,
-						})
-						let quoteData = { ...data }
-						delete quoteData.password;
-						delete quoteData.repeat_password
+			queueNotification({
+				severity: "success",
+				content: `Signup request successfull! Thank you for your interest in Realfield! We will be in touch shortly to schedule your demo at your convenience. `,
+			})
+		} else if (data.interest === "quote") {
+			queueNotification({
+				severity: "success",
+				content: `Signup request successfull! Thank you for your interest in Realfield! We will be in touch shortly`,
+			})
+			let quoteData = { ...data }
+			delete quoteData.password
+			delete quoteData.repeat_password
 
-						const newParams = new URLSearchParams(quoteData).toString()
-						navigate(`/compose-project?${newParams}`.toUriWithLandingPagePrefix())
-					} else {
-						queueNotification({
-							severity: "success",
-							content: `Signup request successfull! `,
-						})
-						navigate(`/community`.toUriWithLandingPagePrefix())
-					}
+			const newParams = new URLSearchParams(quoteData).toString()
+			navigate(`/compose-project?${newParams}`.toUriWithLandingPagePrefix())
+		} else {
+			queueNotification({
+				severity: "success",
+				content: `Signup request successfull! `,
+			})
+			navigate(`/community`.toUriWithLandingPagePrefix())
+		}
 	}
 
 	const onGoogleError = ({ data, error }) => {
@@ -466,7 +462,7 @@ const SignupForm = React.forwardRef((props, ref) => {
 							required: "Password is required.",
 							deps: [`password`],
 							validate: {
-								matchesPassword: val => values.password === val || "Should match password",
+								matchesPassword: val => getValues().password === val || "Should match password",
 							},
 						}}
 						fullWidth
@@ -479,7 +475,6 @@ const SignupForm = React.forwardRef((props, ref) => {
 					<RadioGroup
 						name={`interest`}
 						label="Interest"
-						value={values.interest || "demo"}
 						options={{ demo: "Demo", quote: "Quote", community: "Community" }}
 						rules={{
 							required: "Interest is required.",
@@ -507,13 +502,13 @@ const SignupForm = React.forwardRef((props, ref) => {
 				</Grid>
 			</Grid>
 
-			{!String.isEmpty(values.interest) && (
+			{!String.isEmpty(getValues().interest) && (
 				<Grid container>
 					<Grid item xs={12} className="flex flex-col justify-center my-4 items-center">
 						<GoogleLoginButton
 							onSuccess={onGoogleSuccess}
 							onError={onGoogleError}
-							postData={{ interest: values.interest }}
+							postData={{ interest: getValues().interest }}
 							{...googleLoginProps}
 						/>
 					</Grid>

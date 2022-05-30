@@ -1,17 +1,18 @@
-import Box from "@mui/material/Box";
-import { CloudUploadOutlined as CloudUploadIcon } from "@mui/icons-material";
-import Icon from "@mui/material/Icon";
-import { colors } from "assets/jss/app-theme";
-import PreviewList from "components/FileDropZone/PreviewList";
-import Grid from '@mui/material/Grid';
-;
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import FormHelperText from '@mui/material/FormHelperText';
-import Typography from '@mui/material/Typography';
-import PropTypes from "prop-types";
-import React, { memo, useMemo, useCallback, useRef } from "react";
+/** @format */
+
+import Box from "@mui/material/Box"
+import { CloudUploadOutlined as CloudUploadIcon } from "@mui/icons-material"
+import Icon from "@mui/material/Icon"
+import { colors } from "assets/jss/app-theme"
+import PreviewList from "components/FileDropZone/PreviewList"
+import Grid from "@mui/material/Grid"
+import ClickAwayListener from "@mui/material/ClickAwayListener"
+import FormHelperText from "@mui/material/FormHelperText"
+import Typography from "@mui/material/Typography"
+import PropTypes from "prop-types"
+import React, { memo, useMemo, useCallback, useRef } from "react"
 import { useNetworkServices, useNotificationsQueue } from "contexts"
-import { useSetState, useDidUpdate, useDidMount, useForwardedRef, useDeepMemo, useDeepCompareMemoize } from "hooks"
+import { useSetState, useDidUpdate, useDidMount, useForwardedRef, useDerivedState, useDeepCompareMemoize } from "hooks"
 import { useDropArea } from "react-use"
 
 const DropZone = React.forwardRef((props, ref) => {
@@ -52,10 +53,6 @@ const DropZone = React.forwardRef((props, ref) => {
 		...rest
 	} = props
 
-	const [state, setState, getState] = useSetState({
-		fileObjects: [],
-		value: value || defaultValue,
-	})
 	const { queueNotification } = useNotificationsQueue()
 	const handleOnChange = useCallback(
 		(newValue, files) => {
@@ -67,7 +64,6 @@ const DropZone = React.forwardRef((props, ref) => {
 		[onChange]
 	)
 	const isMultiple = useMemo(() => filesLimit > 1, [filesLimit])
-
 
 	const { Api } = useNetworkServices()
 	const inputRef = useForwardedRef(ref)
@@ -87,71 +83,67 @@ const DropZone = React.forwardRef((props, ref) => {
 		})
 	}, [])
 
-	const derivedState = useDeepMemo(() => new Promise(async (resolve, reject) => {
-			let new_value = value
-			let attachments = []
-			let newFileObjects = []
-			if (upload) {
-				if (Array.isArray(value)) {
-					attachments = value
-				}
-				else if (String.isString(value)) {
-					if (isMultiple) {
-						attachments = [...value]
-					} else {
-						attachments = [value]
+	const [state, setState] = useDerivedState(
+		() =>
+			new Promise(async (resolve, reject) => {
+				let new_value = value
+				let attachments = []
+				let newFileObjects = []
+				if (upload) {
+					if (Array.isArray(value)) {
+						attachments = value
+					} else if (String.isString(value)) {
+						if (isMultiple) {
+							attachments = [...value]
+						} else {
+							attachments = [value]
+						}
 					}
-				}
 
-
-				if (Array.isArray(attachments)) {
-					for (var i = 0; i < attachments.length; i++) {
-						const attachment = attachments[i]
-						await getAttachment(attachments[i])
-							.then(resAttachment => {
-								newFileObjects = newFileObjects.concat([{ attachment: resAttachment }])
-							})
-							.catch(err => {
-								if (isMultiple) {
-									new_value = []
-									if (Array.isArray(attachments)) {
-										new_value = attachments.filter(entry => {
-											return attachment !== entry
-										})
-									} else {
+					if (Array.isArray(attachments)) {
+						for (var i = 0; i < attachments.length; i++) {
+							const attachment = attachments[i]
+							await getAttachment(attachments[i])
+								.then(resAttachment => {
+									newFileObjects = newFileObjects.concat([{ attachment: resAttachment }])
+								})
+								.catch(err => {
+									if (isMultiple) {
 										new_value = []
+										if (Array.isArray(attachments)) {
+											new_value = attachments.filter(entry => {
+												return attachment !== entry
+											})
+										} else {
+											new_value = []
+										}
 									}
-								}
-							})
+								})
+						}
 					}
+					resolve({ fileObjects: newFileObjects, value: new_value, loading: false })
+				} else {
+					resolve({ fileObjects: [], value: isMultiple ? [] : null, loading: false })
 				}
-				resolve({ fileObjects: newFileObjects, value: new_value, loading: false })
-			}
-			else {
-				resolve({ fileObjects: [], value: isMultiple? [] : null, loading: false })
-			}
-		}), [value, upload, isMultiple], { fileObjects: [], value: [], loading: true })
+			}),
+		[value, upload, isMultiple],
+		{ fileObjects: [], value: [], loading: true }
+	)
 
-	const derivedStateUpdateCounts = useDeepCompareMemoize(derivedState, true)
+	const derivedStateUpdateCounts = useDeepCompareMemoize(state, true)
 
-	const showDragDrop = Array.isArray(derivedState.value)
-		? derivedState.value.length < filesLimit
+	const showDragDrop = Array.isArray(state.value)
+		? state.value.length < filesLimit
 		: true &&
-		  ((String.isString(derivedState.value) ? derivedState.value.trim().length > 0 && filesLimit === 1 : true) ||
-				Array.isArray(derivedState.value) ||
-				!derivedState.value)
-
-
-
+		  ((String.isString(state.value) ? state.value.trim().length > 0 && filesLimit === 1 : true) ||
+				Array.isArray(state.value) ||
+				!state.value)
 
 	const handleFileUploadSuccess = useCallback(
 		(fileObject, files, file, upload_res) => {
-			console.log(name, "fileObject", fileObject)
-			console.log(name, "upload_res", upload_res)
-			console.log(name, "derivedState", derivedState)
 			var count = 0
 			var message = ""
-			let { fileObjects } = derivedState
+			let { fileObjects } = state
 			let fileObjectIndex = fileObjects.indexOf(fileObject)
 			if (fileObjectIndex !== -1) {
 				fileObjects[fileObjectIndex].progress = false
@@ -182,8 +174,7 @@ const DropZone = React.forwardRef((props, ref) => {
 						timeout: 3000,
 					})
 				}
-			}
-			else {
+			} else {
 				if (isMultiple) {
 					let value_arr = []
 					if (Array.isArray(fileObjects)) {
@@ -206,7 +197,7 @@ const DropZone = React.forwardRef((props, ref) => {
 		(fileObject, file) => e => {
 			var count = 0
 			var message = ""
-			const { fileObjects, value } = derivedState
+			const { fileObjects, value } = state
 			let fileObjectIndex = fileObjects.indexOf(fileObject)
 			let valueIndex = value.indexOf(fileObject?.attachment?._id)
 			queueNotification({
@@ -228,7 +219,7 @@ const DropZone = React.forwardRef((props, ref) => {
 
 	const handleOnDrop = useCallback(
 		files => {
-			const { fileObjects } = derivedState
+			const { fileObjects } = state
 
 			if (fileObjects.length + files.length > filesLimit) {
 				queueNotification({
@@ -305,7 +296,7 @@ const DropZone = React.forwardRef((props, ref) => {
 		fileIndex => event => {
 			event.stopPropagation()
 
-			const { fileObjects, value: stateValue } = derivedState
+			const { fileObjects, value: stateValue } = state
 			const fileObject = fileObjects.filter((file_object, i) => {
 				return i === fileIndex
 			})[0]
@@ -405,10 +396,6 @@ const DropZone = React.forwardRef((props, ref) => {
 		[]
 	)
 
-
-
-
-
 	const [dropAreaBond, dropAreaState] = useDropArea({
 		onFiles: handleOnDrop,
 		onUri: uri => {},
@@ -426,37 +413,44 @@ const DropZone = React.forwardRef((props, ref) => {
 	return (
 		<ClickAwayListener onClickAway={handleOnBlur}>
 			<Box className={`${className ? className : ""} cursor-pointer min-h-20 `}>
-				{derivedState.fileObjects?.length < filesLimit && <Grid container className={"h-full w-full p-0 px-4 py-2"} {...dropAreaBond} onClick={event => handleOnFocus(event, true)}>
-					<Grid item xs={12}>
-						{showDragDrop &&  (
-							<Grid container direction="column" justify="center" alignItems="center">
-								<Typography
-									className={"m-4 text-8xl"}
-									color={dropAreaState?.over ? "primary" : "text.secondary"}
-									fullWidth
-									paragraph
-								>
-									{String.isString(dropzoneIcon) && <Icon> {dropzoneIcon} </Icon>}
-									{React.isValidElement(dropzoneIcon) && dropzoneIcon}
-								</Typography>
+				{state.fileObjects?.length < filesLimit && (
+					<Grid
+						container
+						className={"h-full w-full p-0 px-4 py-2"}
+						{...dropAreaBond}
+						onClick={event => handleOnFocus(event, true)}
+					>
+						<Grid item xs={12}>
+							{showDragDrop && (
+								<Grid container direction="column" justify="center" alignItems="center">
+									<Typography
+										className={"m-4 text-8xl"}
+										color={dropAreaState?.over ? "primary" : "text.secondary"}
+										fullWidth
+										paragraph
+									>
+										{String.isString(dropzoneIcon) && <Icon> {dropzoneIcon} </Icon>}
+										{React.isValidElement(dropzoneIcon) && dropzoneIcon}
+									</Typography>
 
-								<FormHelperText> {dropzoneText} </FormHelperText>
-							</Grid>
-						)}
+									<FormHelperText> {dropzoneText} </FormHelperText>
+								</Grid>
+							)}
+						</Grid>
+						<input
+							{...rest}
+							onChange={handleOnInputChange}
+							type="file"
+							accept={acceptedFiles.join(",")}
+							className="hidden"
+							ref={inputRef}
+						/>
 					</Grid>
-					<input
-						{...rest}
-						onChange={handleOnInputChange}
-						type="file"
-						accept={acceptedFiles.join(",")}
-						className="hidden"
-						ref={inputRef}
-					/>
-				</Grid>}
-				{showPreviews && derivedState.fileObjects?.length > 0 && (
+				)}
+				{showPreviews && state.fileObjects?.length > 0 && (
 					<PreviewList
 						className="p-0"
-						fileObjects={derivedState.fileObjects}
+						fileObjects={state.fileObjects}
 						handleRemove={handleRemove}
 						showFileNames={showFileNamesInPreview}
 						disabled={disabled}
@@ -468,7 +462,6 @@ const DropZone = React.forwardRef((props, ref) => {
 		</ClickAwayListener>
 	)
 })
-
 
 DropZone.defaultProps = {
 	acceptedFiles: ["image/*", "video/*", "audio/*", "application/*"],
@@ -494,33 +487,32 @@ DropZone.defaultProps = {
 	onDelete: () => {},
 }
 DropZone.propTypes = {
-
-    className: PropTypes.string,
-    type: PropTypes.string,
-    name: PropTypes.string,
-    label: PropTypes.string,
-    readOnly: PropTypes.bool,
-    required: PropTypes.bool,
-    disabled: PropTypes.bool,
-    error: PropTypes.bool,
-    helperText: PropTypes.string,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-    upload: PropTypes.bool,
-    uploadData: PropTypes.object,
-    defaultColor: PropTypes.oneOf(colors.names),
-    activeColor: PropTypes.oneOf(colors.names),
-    acceptedFiles: PropTypes.array,
-    filesLimit: PropTypes.number,
-    maxFileSize: PropTypes.number,
-    dropzoneText: PropTypes.string,
-    dropzoneIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-    showPreviews: PropTypes.bool,
-    showPreviewsInDropzone: PropTypes.bool,
-    showFileNamesInPreview: PropTypes.bool,
-    showAlerts: PropTypes.bool,
-    onChange: PropTypes.func,
-    onDrop: PropTypes.func,
-    onDropRejected: PropTypes.func,
-    onDelete: PropTypes.func,
-};
-export default (memo(DropZone));
+	className: PropTypes.string,
+	type: PropTypes.string,
+	name: PropTypes.string,
+	label: PropTypes.string,
+	readOnly: PropTypes.bool,
+	required: PropTypes.bool,
+	disabled: PropTypes.bool,
+	error: PropTypes.bool,
+	helperText: PropTypes.string,
+	value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+	upload: PropTypes.bool,
+	uploadData: PropTypes.object,
+	defaultColor: PropTypes.oneOf(colors.names),
+	activeColor: PropTypes.oneOf(colors.names),
+	acceptedFiles: PropTypes.array,
+	filesLimit: PropTypes.number,
+	maxFileSize: PropTypes.number,
+	dropzoneText: PropTypes.string,
+	dropzoneIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+	showPreviews: PropTypes.bool,
+	showPreviewsInDropzone: PropTypes.bool,
+	showFileNamesInPreview: PropTypes.bool,
+	showAlerts: PropTypes.bool,
+	onChange: PropTypes.func,
+	onDrop: PropTypes.func,
+	onDropRejected: PropTypes.func,
+	onDelete: PropTypes.func,
+}
+export default memo(DropZone)

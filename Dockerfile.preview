@@ -1,4 +1,4 @@
-# production environment
+# Testing environment
 FROM nginx:stable-alpine
 RUN mkdir -p /usr/share/nginx/html/errors
 COPY ./nginx/errors /usr/share/nginx/html/errors

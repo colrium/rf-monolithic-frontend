@@ -21,18 +21,7 @@ const messaging = firebase.messaging();
 
 //messaging.usePublicVapidKey(firebaseWebPushCertificate);
 
-/*messaging.getToken({ vapidKey: firebaseWebPushCertificate }).then((currentToken) => {
-  if (currentToken) {
-    console.log('currentToken', currentToken);
-  } else {
-    // Show permission request UI
-    console.log('No registration token available. Request permission to generate one.');
-    // ...
-  }
-}).catch((err) => {
-  console.log('An error occurred while retrieving token. ', err);
-  // ...
-});*/
+
 
 
 messaging.setBackgroundMessageHandler(function(payload) {
@@ -73,7 +62,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
 //Code for adding event on click of notification
 self.addEventListener('notificationclick', function(event) {
      let url = event.notification.data.url;
-     event.notification.close(); 
+     event.notification.close();
      event.waitUntil(clients.matchAll({type: 'window'}).then( windowClients => {
                // Check if there is already a window/tab open with the target URL
                for (var i = 0; i < windowClients.length; i++) {

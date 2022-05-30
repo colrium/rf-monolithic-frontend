@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 		// 	color: theme.palette.text.primary,
 		// },
 		"&.MuiCard-root": {
-			backgroundColor: theme.palette.text.primary,
+			backgroundColor: "transparent",
 			color: theme.palette.background.paper,
 			/* [theme.breakpoints.down("md")]: {
 				backgroundColor: theme.palette.text.primary,
@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	default: {
 		"&.MuiCard-root": {
-			backgroundColor: theme.palette.text.primary,
+			backgroundColor: "transparent",
 			color: theme.palette.background.paper,
 			/* [theme.breakpoints.down("md")]: {
 				backgroundColor: theme.palette.text.primary,

@@ -1,6 +1,6 @@
 /** @format */
 
-import React from "react"
+import React, { useEffect } from "react"
 import { connect } from "react-redux"
 
 import Fab from "@mui/material/Fab"
@@ -18,16 +18,16 @@ import YouTubeIcon from "@mui/icons-material/YouTube"
 import GooglePlusIcon from "mdi-react/GooglePlusIcon"
 import { colors } from "assets/jss/app-theme"
 import Button from "@mui/material/Button"
-import Grid from '@mui/material/Grid'
+import Grid from "@mui/material/Grid"
 
-import Typography from '@mui/material/Typography'
-import { intercom } from "config"
+import Typography from "@mui/material/Typography"
+import { intercom, google_analytics_id } from "config"
 import PropTypes from "prop-types"
 import Intercom from "react-intercom"
 import { Link } from "react-router-dom"
 import RequestDemoForm from "views/forms/RequestDemoForm"
-import { useClientPositions, useDidMount, useDidUpdate } from "hooks"
-import { useNotificationsQueue, useNetworkServices } from "contexts"
+import { useClientPositions, useDidMount, useDidUpdate, useScript } from "hooks"
+import { useNotificationsQueue, useNetworkServices, useCacheBuster } from "contexts"
 import { Api as ApiService } from "services"
 
 function ScrollTop(props) {
@@ -76,9 +76,32 @@ function Footer(props) {
 		absoluteFooter,
 	} = props
 	const { queueNotification } = useNotificationsQueue()
-
 	const inverseColor = ["inverse", "transparent"].includes(color) ? "default" : "inverse"
+	const googleAnalyticsScript = useScript(`https://www.googletagmanager.com/gtag/js?id=${google_analytics_id}`)
+	const cacheBuster = useCacheBuster()
+	useEffect(() => {
+		if (!cacheBuster.loading && !cacheBuster.isLatestVersion) {
+			if (window.confirm("A new version of this page is available. A page reload is required to continue to the latest version.")) {
+				cacheBuster.emptyCacheStorage()
+				window.location.reload()
+			}
+		}
+	}, [cacheBuster.loading])
+	useEffect(() => {
+		if (googleAnalyticsScript === "ready") {
+			try {
+				window.dataLayer = window.dataLayer || []
+				function gtag() {
+					dataLayer.push(arguments)
+				}
+				gtag("js", new Date())
 
+				gtag("config", google_analytics_id)
+			} catch (error) {
+				console.error(error)
+			}
+		}
+	}, [googleAnalyticsScript])
 	return (
 		<Box
 			className={`w-full pt-8`}

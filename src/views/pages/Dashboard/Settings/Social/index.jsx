@@ -2,18 +2,18 @@
 import React from "react"
 import { connect } from "react-redux"
 import Typography from "@mui/material/Typography"
-import Grid from '@mui/material/Grid'
+import Grid from "@mui/material/Grid"
 import Card from "@mui/material/Card"
 
 import { EventRegister } from "utils"
-import { usePersistentForm, useDidUpdate } from "hooks"
+import { usePersistentForm, useDidMount } from "hooks"
 
 function Widget(props) {
 	const { app } = props
 	let settings = app.settings.social
 	const {
 		TextField,
-		values,
+		observer$,
 		formState: { errors },
 	} = usePersistentForm({
 		name: "social-settings",
@@ -22,52 +22,61 @@ function Widget(props) {
 			...settings,
 		},
 	})
-
-	useDidUpdate(() => {
-		if (JSON.isEmpty(errors)) {
-			EventRegister.emit("change-settings", {
-				social: { ...settings, ...values },
-			})
-		}
-	}, [values, errors, settings])
+	useDidMount(() => {
+		const subscription = observer$.subscribe(formData => {
+			if (JSON.isEmpty(formData.errors)) {
+				EventRegister.emit("change-settings", {
+					social: { ...settings, ...formData.values },
+				})
+			}
+		})
+		return () => subscription.unsubscribe()
+	})
 
 	return (
 		<Card>
-			<Grid container className="px-8">
-				<Grid item  xs={12} className="mb-2">
-					<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
-						Social Networks
-					</Typography>
-				</Grid>
-
-				<Grid container className="px-0">
-					<Grid item  xs={12} className="mb-1">
-						<TextField name="facebook" label="Facebook" />
+			<Grid container className="p-4">
+				<Grid container spacing={2}>
+					<Grid item xs={12} className="pb-2">
+						<Typography variant="h3" sx={{ color: theme => theme.palette.text.disabled }}>
+							Social Links
+						</Typography>
+					</Grid>
+					<Grid item xs={12}>
+						<TextField
+							name="facebook"
+							variant="filled"
+							size="small"
+							margin="dense"
+							size="small"
+							margin="dense"
+							label="Facebook"
+						/>
 					</Grid>
 
-					<Grid item  xs={12} className="mb-1">
-						<TextField name="twitter" label="Twitter" />
+					<Grid item xs={12}>
+						<TextField name="twitter" variant="filled" size="small" margin="dense" label="Twitter" />
 					</Grid>
-					<Grid item  xs={12} className="mb-1">
-						<TextField name="instagram" label="Instagram" />
+					<Grid item xs={12}>
+						<TextField name="instagram" variant="filled" size="small" margin="dense" label="Instagram" />
 					</Grid>
-					<Grid item  xs={12} className="mb-1">
-						<TextField name="youtube" label="Youtube" />
+					<Grid item xs={12}>
+						<TextField name="youtube" variant="filled" size="small" margin="dense" label="Youtube" />
 					</Grid>
-					<Grid item  xs={12} className="mb-1">
-						<TextField name="linkedin" label="Linkedin" />
+					<Grid item xs={12}>
+						<TextField name="linkedin" variant="filled" size="small" margin="dense" label="Linkedin" />
 					</Grid>
-					<Grid item  xs={12} className="mb-1">
-						<TextField name="whatsapp" label="Whatsapp" />
+					<Grid item xs={12}>
+						<TextField name="whatsapp" variant="filled" size="small" margin="dense" label="Whatsapp" />
 					</Grid>
-					<Grid item  xs={12} className="mb-1">
-						<TextField name="instagram" label="Instagram" />
+					<Grid item xs={12}>
+						<TextField name="instagram" variant="filled" size="small" margin="dense" label="Instagram" />
 					</Grid>
-					<Grid item  xs={12} className="mb-1">
-						<TextField name="google_plus" label="Google +" />
+					<Grid item xs={12}>
+						<TextField name="google_plus" variant="filled" size="small" margin="dense" label="Google +" />
 					</Grid>
-					<Grid item  xs={12} className="mb-1">
-						<TextField name="pinterest" label="Pinterest" />
+					<Grid item xs={12}>
+						<TextField name="pinterest" variant="filled" size="small" margin="dense" label="Pinterest" />
 					</Grid>
 				</Grid>
 			</Grid>
