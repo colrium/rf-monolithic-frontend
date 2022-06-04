@@ -129,6 +129,7 @@ const WebSocketService = props => {
 
 	const initializeSubscriptions = useCallback(() => {
 		SocketIO.on("settings", settings => {
+			console.log("SocketIO: settings", settings)
 			dispatch(setSettings(settings))
 		})
 		if (isAuthenticated && !JSON.isEmpty(user)) {

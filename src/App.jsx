@@ -95,19 +95,7 @@ const App = props => {
 		theme
 	)
 
-	useDidMount(() => {
-		try {
-			console.log("supportsFirebase", supportsFirebase)
-			if (Function.isFunction(window?.navigator?.serviceWorker?.register)) {
-				if (supportsFirebase) {
-					// navigator.serviceWorker.register(`${process.env.PUBLIC_URL}/firebase-messaging-sw.js`)
-				}
-				serviceWorker.register()
-			}
-		} catch (error) {
-			console.error(error)
-		}
-	})
+
 
 	return (
 		<CacheBusterProvider>

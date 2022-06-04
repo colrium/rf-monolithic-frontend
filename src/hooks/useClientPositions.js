@@ -13,7 +13,6 @@ import Typography from "@mui/material/Typography"
 import { ThemeProvider } from "@mui/material/styles"
 import { useDidMount, useDidUpdate, useSetState } from "hooks"
 import { theme } from "assets/jss/app-theme"
-import ApiService from "services/Api"
 import { PersonOutlined as UserIcon } from "@mui/icons-material"
 import Button from "@mui/material/Button"
 import Rating from "@mui/material/Rating"
@@ -125,7 +124,8 @@ if (typeof google !== "undefined") {
 
 const ClientInfoWindow = ({ user, position, ...rest }) => {
 	// const { preferences } = useSelector(state => state.app)
-	// const navigate = useNavigate()
+	const {Api} = useNetworkServices()
+
 	return (
 		<ThemeProvider theme={theme}>
 			<Grid container style={{ maxWidth: 300 }}>
@@ -134,7 +134,7 @@ const ClientInfoWindow = ({ user, position, ...rest }) => {
 						<Avatar
 							className="bg-transparent mr-4"
 							alt={user?.first_name}
-							src={ApiService.getAttachmentFileUrl(user?.avatar)}
+							src={Api.getAttachmentFileUrl(user?.avatar)}
 						/>
 					) : (
 						<Avatar className="bg-transparent  mr-4">

@@ -56,7 +56,6 @@ const DropZone = React.forwardRef((props, ref) => {
 	const { queueNotification } = useNotificationsQueue()
 	const handleOnChange = useCallback(
 		(newValue, files) => {
-			console.log("handleOnChange", "newValue", newValue, "files", files)
 			if (Function.isFunction(onChange)) {
 				Promise.all([onChange(newValue)])
 			}
@@ -83,7 +82,7 @@ const DropZone = React.forwardRef((props, ref) => {
 		})
 	}, [])
 
-	const [state, setState] = useDerivedState(
+	const [state, setState, getState] = useDerivedState(
 		() =>
 			new Promise(async (resolve, reject) => {
 				let new_value = value
@@ -130,8 +129,6 @@ const DropZone = React.forwardRef((props, ref) => {
 		{ fileObjects: [], value: [], loading: true }
 	)
 
-	const derivedStateUpdateCounts = useDeepCompareMemoize(state, true)
-
 	const showDragDrop = Array.isArray(state.value)
 		? state.value.length < filesLimit
 		: true &&
@@ -143,7 +140,7 @@ const DropZone = React.forwardRef((props, ref) => {
 		(fileObject, files, file, upload_res) => {
 			var count = 0
 			var message = ""
-			let { fileObjects } = state
+			let { fileObjects } = getState()
 			let fileObjectIndex = fileObjects.indexOf(fileObject)
 			if (fileObjectIndex !== -1) {
 				fileObjects[fileObjectIndex].progress = false
@@ -184,20 +181,22 @@ const DropZone = React.forwardRef((props, ref) => {
 							}
 						}
 					}
+					setState({ fileObjects: fileObjects })
 					handleOnChange(value_arr, fileObjects)
 				} else {
+					setState({ fileObjects: fileObjects })
 					handleOnChange(upload_res?.body?.data?._id, fileObjects)
 				}
 			}
 		},
-		[isMultiple, derivedStateUpdateCounts]
+		[isMultiple]
 	)
 
 	const handleFileUploadError = useCallback(
 		(fileObject, file) => e => {
 			var count = 0
 			var message = ""
-			const { fileObjects, value } = state
+			const { fileObjects, value } = getState()
 			let fileObjectIndex = fileObjects.indexOf(fileObject)
 			let valueIndex = value.indexOf(fileObject?.attachment?._id)
 			queueNotification({
@@ -214,12 +213,12 @@ const DropZone = React.forwardRef((props, ref) => {
 				: null
 			handleOnChange(nextValue, nextFileObjects)
 		},
-		[derivedStateUpdateCounts, isMultiple]
+		[isMultiple]
 	)
 
 	const handleOnDrop = useCallback(
 		files => {
-			const { fileObjects } = state
+			const { fileObjects } = getState()
 
 			if (fileObjects.length + files.length > filesLimit) {
 				queueNotification({
@@ -252,7 +251,7 @@ const DropZone = React.forwardRef((props, ref) => {
 							if (onDrop) {
 								onDrop(file)
 							}
-
+							setState({ fileObjects: prevFileObjects.concat([fileObject]) })
 							if (upload && typeof fileObject.attachment !== "object") {
 								const upload_data = new FormData()
 
@@ -289,14 +288,14 @@ const DropZone = React.forwardRef((props, ref) => {
 				})
 			}
 		},
-		[filesLimit, upload, uploadData, onDrop, derivedStateUpdateCounts]
+		[filesLimit, upload, uploadData, onDrop]
 	)
 
 	const handleRemove = useCallback(
 		fileIndex => event => {
 			event.stopPropagation()
 
-			const { fileObjects, value: stateValue } = state
+			const { fileObjects, value: stateValue } = getState()
 			const fileObject = fileObjects.filter((file_object, i) => {
 				return i === fileIndex
 			})[0]
@@ -331,7 +330,7 @@ const DropZone = React.forwardRef((props, ref) => {
 				Api.delete("/attachments/" + fileObject.attachment._id).catch(err => {})
 			}
 		},
-		[isMultiple, onDelete, derivedStateUpdateCounts]
+		[isMultiple, onDelete]
 	)
 
 	const handleDropRejected = useCallback(

@@ -342,11 +342,9 @@ const ApiSingleton = (function () {
 	}
 
 	function getAttachmentFileUrl(attachment) {
-		return endpoint("/attachments/download/" + (JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment))
-		// return (
-		// 	"https://api.realfield.io/attachments/download/" +
-		// 	(JSON.isJSON(attachment) && "_id" in attachment ? attachment._id : attachment)
-		// )
+		// return endpoint(`/attachments/download/${attachment?._id || attachment}`)
+		return `https://api.realfield.io/attachments/download/${attachment?._id || attachment}`
+
 	}
 
 	function createInstance(config = {}) {

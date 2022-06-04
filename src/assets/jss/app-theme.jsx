@@ -33,8 +33,7 @@ import {
 	linkedinColor,
 } from "config";
 
-import Color from "color";
-
+import Color from "color"
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
 

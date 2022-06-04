@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useCallback, useMemo } from "react"
+import React, { useEffect, useCallback, useMemo, useRef } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { useNetworkState } from "react-use"
 import { baseUrls, client_id, client_secret, environment, authTokenLocation, authTokenName, googleClientId } from "config"
@@ -20,7 +20,6 @@ const NetworkServicesProvider = props => {
 	const preferences = useSelector(state => ({ ...state.app?.preferences }))
 	const settings = useSelector(state => ({ ...state.app?.settings }))
 	const { user, isAuthenticated } = useSelector(state => state.auth)
-
 	const networkState = useNetworkState()
 
 	const handleOnAccessTokenSet = useCallback(token => {
@@ -138,6 +137,7 @@ const NetworkServicesProvider = props => {
 			if (JSON.isJSON(event.detail)) {
 				let eventSettings = Object.entries(event.detail).reduce((allSettings, [key, value]) => {
 					allSettings[key] = value
+					console.log("updateSettings", key, value)
 					updateSettings(key, value).catch(err => {
 						console.error("updatePreferences err", err)
 					})

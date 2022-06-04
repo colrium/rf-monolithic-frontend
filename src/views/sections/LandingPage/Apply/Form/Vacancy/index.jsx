@@ -17,7 +17,7 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 
 
 
-	const vacancyData = useDerivedState(
+	const [vacancyData] = useDerivedState(
 		async () => {
 			let options = await Api.get("/recruitment/vacancies")
 					.then(res => {
@@ -26,7 +26,6 @@ const ApplicationForm = React.forwardRef((props, ref) => {
 							acc[cur._id] = cur.title || cur.position
 							return acc
 						}, {})
-						console.log("ApplicationForm possibilitiesData", possibilitiesData)
 						return possibilitiesData
 					})
 					.catch(err => {
