@@ -20,7 +20,7 @@ class RealfieldDB extends Dexie {
 		try {
 			this.open()
 		} catch (error) {
-			console.log("RealfieldDB open error", error)
+			console.error("RealfieldDB open error", error)
 		}
 	}
 }

@@ -167,8 +167,7 @@ const Conversation = props => {
 	}, [])
 
 	const loadMoreMessages = useCallback((startIndex, stopIndex) => {
-		console.log("loadMoreMessages startIndex", startIndex)
-		console.log("loadMoreMessages stopIndex", stopIndex)
+
 	}, [])
 
 	const handleOnScroll = useCallback(({ clientHeight, scrollHeight, scrollTop }) => {
@@ -331,19 +330,14 @@ const Conversation = props => {
 
 			if (Array.isArray(unreadMessages) && unreadMessages.length > 0) {
 				let updatedUnreadMessages = unreadMessages.reduce((acc, unreadMessage) => {
-					// SocketIO.emit("mark-message-as-received", {
-					// 	message: unreadMessage._id,
-					// })
-					dispatch(ensureMessage({ ...unreadMessage, state: "received" }, false))
+					SocketIO.emit("mark-message-as-received", {
+						message: unreadMessage._id,
+					})
+					// dispatch(ensureMessage({ ...unreadMessage, state: "received" }, false))
 					acc.push({ ...unreadMessage, state: "received" })
 					return acc
 				}, [])
-				console.log("updatedUnreadMessages", updatedUnreadMessages)
-				// try {
-				// 	onMessages(updatedUnreadMessages)
-				// } catch (error) {
-				// 	console.error("Mark all messages as read error", error)
-				// }
+
 			}
 		}
 	}, [conversation, user])
@@ -385,8 +379,6 @@ const Conversation = props => {
 
 	useDidUpdate(() => {
 		if (scrollToBottomRef.current && !!listRef.current && Array.isArray(messages) && messages.length > 0) {
-			console.log("listRef.current", listRef.current)
-			console.log("cellMeasurerCache", cellMeasurerCache)
 			// listRef.current.scrollToRow(messages.length)
 			const scrollToPosition = listRef.current.getOffsetForRow({ alignment: "end", index: messages.length })
 			listRef.current.scrollToPosition(scrollToPosition)

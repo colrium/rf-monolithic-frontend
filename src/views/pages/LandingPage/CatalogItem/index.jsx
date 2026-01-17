@@ -1,8 +1,8 @@
 /** @format */
 
 import { app } from "assets/jss/app-theme";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React from "react";
 
 import RequestError from "views/widgets/Catch/RequestError";
@@ -56,32 +56,32 @@ class Page extends React.Component {
 		const { item, loading, error } = this.state;
 		if (error) {
 			return (
-				<GridContainer
+				<Grid container
 					style={{ minHeight: "90vh" }}
 					className="relative"
 				>
-					<GridItem xs={12} sm={12} md={10} className="m-auto">
+					<Grid item  xs={12} sm={12} md={10} className="m-auto">
 						<RequestError
 							code={error.code ? error.code : 503}
 							description={error.msg}
 						/>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 			);
 		} else {
 			return (
-				<GridContainer
+				<Grid container
 					style={{ minHeight: "90vh" }}
 					className="relative"
 				>
-					<GridItem xs={12} sm={12} md={10} className="m-auto">
+					<Grid item  xs={12} sm={12} md={10} className="m-auto">
 						<CatalogItem
 							item={this.state.item}
 							loading={loading}
 							className="w-full"
 						/>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 			);
 		}
 	}

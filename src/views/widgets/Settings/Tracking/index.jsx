@@ -4,8 +4,8 @@ import { useNetworkServices } from "contexts/NetworkServices"
 
 import Typography from "@mui/material/Typography"
 import { CheckboxInput, RadioInput, TextInput, SelectInput } from "components/FormInputs"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 
 function Widget(props) {
 	/*let [state, setState] = useState(props);
@@ -24,12 +24,12 @@ function Widget(props) {
 	let context_settings = settings.tracking
 
 	return (
-		<GridContainer className="px-2">
-			<GridItem xs={12} className="mb-2">
+		<Grid container className="px-2">
+			<Grid item  xs={12} className="mb-2">
 				<Typography variant="h3"> Location Tracking settings</Typography>
-			</GridItem>
+			</Grid>
 
-			{/* <GridItem xs={12} className="mb-4">
+			{/* <Grid item  xs={12} className="mb-4">
 				<RadioInput
 					name="interval-type"
 					label="Interval type"
@@ -41,10 +41,10 @@ function Widget(props) {
 					error={errors["interval-type"]}
 					required
 				/>
-			</GridItem>
+			</Grid>
 
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<TextInput
 					name="interval"
 					label={"Interval " + (context_settings["interval-type"] === "time" ? "(Seconds)" : "(Meters)")}
@@ -56,9 +56,9 @@ function Widget(props) {
 					error={errors["interval"]}
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<TextInput
 					name="min-positions-per-track"
 					label="Min number of positions per track"
@@ -71,11 +71,11 @@ function Widget(props) {
 					error={errors["min-positions-per-track"]}
 					required
 				/>
-			</GridItem>
+			</Grid>
 
 
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<TextInput
 					name="max-positions-per-track"
 					label="Max number of positions per track"
@@ -88,9 +88,9 @@ function Widget(props) {
 					error={errors["maz-positions-per-track"]}
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<SelectInput
 					name="trackable-time-window"
 					label="Trackable time window"
@@ -101,9 +101,9 @@ function Widget(props) {
 					error={errors["trackable-time-window"]}
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="enforce-context-location-availability"
 					label="Enforce context location availability"
@@ -113,9 +113,9 @@ function Widget(props) {
 					disabled={loading["enforce-context-location-availability"]}
 					error={errors["enforce-context-location-availability"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="enforce-onlocation-actions"
 					label="Enforce onlocation actions"
@@ -125,8 +125,8 @@ function Widget(props) {
 					disabled={loading["enforce-onlocation-actions"]}
 					error={errors["enforce-onlocation-actions"]}
 				/>
-			</GridItem> */}
-		</GridContainer>
+			</Grid> */}
+		</Grid>
 	)
 }
 

@@ -1,35 +1,33 @@
 /** @format */
 
-import React from "react";
-import { BrowserRouter } from "react-router-dom";
-import { connect } from "react-redux";
+import React, { useMemo } from "react"
+import { BrowserRouter } from "react-router-dom"
+import { connect } from "react-redux"
 
-import CacheBuster from 'hoc/CacheBuster';
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-
-import ProgressDialog from "components/ProgressDialog";
-
-import { create as createJss } from "jss";
-import preset from "jss-preset-default";
-import { SheetsRegistry } from "react-jss";
-import { JssProvider } from "react-jss";
-import VendorPrefixer from "jss-plugin-vendor-prefixer";
-import NestedJSS from "jss-plugin-nested";
-import useMediaQuery from '@mui/material/useMediaQuery';
-
-
-
-import { NetworkServicesProvider } from "contexts"
-import CookiesConsentDialog from "views/widgets/CookiesConsentDialog"
+import { ThemeProvider, createTheme } from "@mui/material/styles"
+import { NotificationsQueueProvider } from "contexts/NotificationsQueue"
+import { NetworkServicesProvider, CacheBusterProvider } from "contexts"
+import ProgressDialog from "components/ProgressDialog"
+import compose from "recompose/compose"
+import { create as createJss } from "jss"
+import preset from "jss-preset-default"
+import { SheetsRegistry } from "react-jss"
+import { JssProvider } from "react-jss"
+import VendorPrefixer from "jss-plugin-vendor-prefixer"
+import NestedJSS from "jss-plugin-nested"
+import useMediaQuery from "@mui/material/useMediaQuery"
 
 import appStyle from "assets/jss/appStyle"
 import { theme } from "assets/jss/app-theme"
+import { useDerivedState, useDidMount } from "hooks"
 //
 import Routes from "routes"
-import "assets/css/tui-calendar.min.css"
-import "react-awesome-query-builder/lib/css/styles.css"
+import * as serviceWorker from "./serviceWorker"
 import "react-virtualized/styles.css"
+import "./index.css"
 
 const jss = createJss()
 jss.use(VendorPrefixer(), NestedJSS())
@@ -37,8 +35,8 @@ jss.use(VendorPrefixer(), NestedJSS())
 const setupJss = () => {
 	jss.setup(preset())
 	const sheetsRegistry = new SheetsRegistry()
-	const globalStyleSheet = jss.createStyleSheet({ "@global": { ...appStyle } }).attach()
-	sheetsRegistry.add(globalStyleSheet)
+	// const globalStyleSheet = jss.createStyleSheet({ "@global": { ...appStyle } }).attach()
+	// sheetsRegistry.add(globalStyleSheet)
 	return sheetsRegistry
 }
 
@@ -49,41 +47,77 @@ const App = props => {
 		app: { preferences, initialized },
 	} = props
 	const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
-	const getAppTheme = React.useCallback(() => {
-		let themeMode = prefersDarkMode || preferences.theme === "dark" ? "dark" : "light"
-		let computedTheme = theme
-		computedTheme.palette.mode = themeMode
-		computedTheme.palette.background = {
-			default: themeMode === "dark" ? "#2b2b2b" : "#f5f5f5",
-			paper: themeMode === "dark" ? "#121212" : "#ffffff",
+	const supportsFirebase = useMemo(() => {
+		try {
+			return (
+				!["iPad Simulator", "iPhone Simulator", "iPod Simulator", "iPad", "iPhone", "iPod"].includes(navigator.platform) ||
+				// iPad on iOS 13 detection
+				!(navigator.userAgent.includes("Mac") && "ontouchend" in document)
+			)
+		} catch (error) {
+			return false
 		}
+	}, [])
+	const [evaluatedTheme] = useDerivedState(
+		() => {
+			let themeMode = preferences.theme === "dark" ? "dark" : "light"
+			let computedTheme = theme
+			computedTheme.palette.mode = themeMode
 
-		computedTheme.palette.text = {
-			primary: themeMode === "dark" ? "#ffffff" : "#1a1a1a",
-			contrast: themeMode === "dark" ? "#1a1a1a" : "#ffffff",
-			contrastDark: themeMode === "dark" ? "#ffffff" : "#141414",
-			secondary: themeMode === "dark" ? "#d4d4d4" : "#737373",
-			disabled: "#999999",
-		}
-		return createTheme(computedTheme)
-	}, [prefersDarkMode, preferences.theme])
+			computedTheme.palette.background = {
+				default: themeMode === "dark" ? "#2b2b2b" : "#f3f3f3",
+				paper: themeMode === "dark" ? "#121212" : "#ffffff",
+			}
+
+			computedTheme.palette.text = {
+				primary: themeMode === "dark" ? "#ffffff" : "#424242",
+				contrast: themeMode === "dark" ? "#1a1a1a" : "#ffffff",
+				contrastDark: themeMode === "dark" ? "#ffffff" : "#141414",
+				secondary: themeMode === "dark" ? "#d4d4d4" : "#737373",
+				disabled: "#999999",
+			}
+			const memoizedTheme = createTheme({
+				...computedTheme,
+				components: {
+					MuiFormControl: {
+						styleOverrides: {
+							marginDense: {
+								marginTop: `0px !important`,
+							},
+						},
+					},
+				},
+			})
+
+			return memoizedTheme
+		},
+		[preferences.theme],
+		theme
+	)
+
+
 
 	return (
-		<ThemeProvider theme={getAppTheme()}>
-			<NetworkServicesProvider>
-				<JssProvider jss={jss} registry={sheets}>
-						<BrowserRouter>
-							<Routes />
-						</BrowserRouter>
-				</JssProvider>
-				<CookiesConsentDialog />
-			</NetworkServicesProvider>
-		</ThemeProvider>
+		<CacheBusterProvider>
+			<ThemeProvider theme={evaluatedTheme}>
+				<LocalizationProvider dateAdapter={AdapterDateFns}>
+					<JssProvider jss={jss} registry={sheets}>
+						<NetworkServicesProvider>
+							<NotificationsQueueProvider>
+								<BrowserRouter>
+									<Routes />
+								</BrowserRouter>
+							</NotificationsQueueProvider>
+						</NetworkServicesProvider>
+					</JssProvider>
+				</LocalizationProvider>
+			</ThemeProvider>
+		</CacheBusterProvider>
 	)
 }
 
 const mapStateToProps = state => ({
 	app: state.app,
-});
+})
 
-export default connect(mapStateToProps, {})(App);
+export default compose(connect(mapStateToProps, {}))(App)

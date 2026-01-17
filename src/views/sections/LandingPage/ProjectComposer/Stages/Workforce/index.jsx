@@ -2,14 +2,14 @@
 import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AutoFixHighTwoToneIcon from '@mui/icons-material/AutoFixHighTwoTone';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Grid } from 'components/Virtualized';
+import { Grid as DataGrid } from 'components/Virtualized';
 import ApiService from "services/Api";
 import { usePersistentForm, useDidUpdate, useDidMount, useSetState, useGeojson, useWillUnmount } from "hooks";
 import { useWindowSize, useMeasure } from 'react-use';
@@ -38,7 +38,15 @@ const Stage = (props) => {
     const initialContainerWidth = containerMeasurements.width || (windowWidth * (sm ? 0.95 : 0.75));
     const itemWidth = (initialContainerWidth / no_of_columns) - 4;
 
-    const { Field, values, getValues, setValue, register, formState, handleSubmit } = usePersistentForm({ name: "projectcomposer", defaultValues: { stage: stage, } });
+    const { Field, values, getValues, setValue, register, formState, submit } = usePersistentForm({
+		name: "projectcomposer",
+		defaultValues: { stage: stage },
+		onSubmit: async (formData, e) => {
+			if (Function.isFunction(onSubmit)) {
+				onSubmit(formData, e)
+			}
+		},
+	})
     const stageValues = (JSON.getDeepPropertyValue(`stages.${ stage }`, (values || {})) || {});
     const regions = JSON.getDeepPropertyValue("stages.respondents.regions", values) || [];
     const fielders = JSON.getDeepPropertyValue(`stages.${ stage }.fielders`, values) || [];
@@ -88,27 +96,13 @@ const Stage = (props) => {
 
     }, [fielders]);
 
-    // useDidUpdate( () => {
-    //     const prevState = getPrevState();
-    //     const changes = Object.difference( state, prevState )
-    //     console.log( "useDidUpdate state changes", changes )
-
-    // }, [state] );
-
     useWillUnmount(() => {
         const prevState = getPrevState();
         const changes = Object.difference(state, prevState)
-        // console.log( "useWillUnmount state changes", changes )
         // const {records_chunks, records, loading, containerWidth, columns, selectedRegions, bodyScrollLocked, pagination, ...persistentState} = getState()
         // setValue( `stages.${ stage }.state`, persistentState );
     })
 
-    const submit = useCallback((formValues) => {
-
-        if (Function.isFunction(onSubmit)) {
-            onSubmit(formValues);
-        }
-    }, [onSubmit, stageValues]);
 
     const loadData = useCallback((params = {}, concat = true) => {
         let { columns, records, records_chunks } = getState();
@@ -376,7 +370,6 @@ const Stage = (props) => {
 
 
     const handleOnChangeKeyword = useCallback((keywordVal) => {
-        console.log("handleOnChangeKeyword keywordVal", keywordVal, keyword !== keywordVal && keywordVal && keywordVal.trim().length >= 3)
         const { keyword, loading } = getState()
         if (!loading && keyword !== keywordVal && keywordVal && keywordVal.trim().length >= 3) {
 
@@ -438,7 +431,6 @@ const Stage = (props) => {
         style, }) => {
         const { records, columns } = getState();
         const entry = Array.isArray(records) ? records[index] : false;
-        // console.log( "entryIndex", entryIndex, "columnIndex", columnIndex, "rowIndex", rowIndex)
 
 
         if (!!entry) {
@@ -502,128 +494,117 @@ const Stage = (props) => {
 
 
     const listingRecords = state.records || fielders
-    console.log("state.records", state.records)
     return (
-        <GridContainer
-            className={ "p-0" }
-            sx={ {
-                backgroundColor: (theme) => `${ theme.palette.deep_purple }`,
-            } }
-        >
-            <GridItem xs={ 12 } className={ "p-0" }>
-                <div className={ "w-full" } ref={ measureRef } />
-            </GridItem>
-            <GridItem xs={ 12 } className={ "p-4" }>
-                <Header
-                    regions={ regions }
-                    selectMode={ state.selectMode }
-                    loading={ state.loading }
-                    keyword={ state.keyword || "" }
-                    listingMode={ state.listingMode }
-                    autoSelect={ autoSelect }
-                    tags={ state.tags }
-                    groups={ state.groups }
-                    pagination={ {
-                        pages: state.pages,
-                        page: state.page,
-                        count: state.count,
-                        rpp: state.pagination,
-                    } }
-                    selectedRegions={ state.selectedRegions }
-                    onToggleSelectMode={ handleOnToggleSelectMode }
-                    onChangeSelectedRegions={ handleOnChangeSelectedRegions }
-                    onChangeListingMode={ handleOnChangeListingMode }
-                    onChangeAutoSelect={ handleOnChangeAutoSelect }
-                    onChangeTags={ handleOnChangeTags }
-                    onChangeGroups={ handleOnChangeGroups }
-                    onChangeKeyword={ handleOnChangeKeyword }
-                />
-            </GridItem>
+		<Grid
+			container
+			className={"p-0"}
+			sx={{
+				backgroundColor: theme => `${theme.palette.deep_purple}`,
+			}}
+		>
+			<Grid item xs={12} className={"p-0"}>
+				<div className={"w-full"} ref={measureRef} />
+			</Grid>
+			<Grid item xs={12} className={"p-4"}>
+				<Header
+					regions={regions}
+					selectMode={state.selectMode}
+					loading={state.loading}
+					keyword={state.keyword || ""}
+					listingMode={state.listingMode}
+					autoSelect={autoSelect}
+					tags={state.tags}
+					groups={state.groups}
+					pagination={{
+						pages: state.pages,
+						page: state.page,
+						count: state.count,
+						rpp: state.pagination,
+					}}
+					selectedRegions={state.selectedRegions}
+					onToggleSelectMode={handleOnToggleSelectMode}
+					onChangeSelectedRegions={handleOnChangeSelectedRegions}
+					onChangeListingMode={handleOnChangeListingMode}
+					onChangeAutoSelect={handleOnChangeAutoSelect}
+					onChangeTags={handleOnChangeTags}
+					onChangeGroups={handleOnChangeGroups}
+					onChangeKeyword={handleOnChangeKeyword}
+				/>
+			</Grid>
 
-            { autoSelect && <GridItem xs={ 12 } className="flex flex-col items-center justify-center p-8">
-                <Box
-                    className="h-72 w-72 shadow flex flex-col items-center justify-center rounded-full"
-                    sx={ {
-                        backgroundColor: theme => theme.palette.background.paper
-                    } }
-                >
-                    <AutoFixHighTwoToneIcon
-                        sx={ {
-                            fontSize: "10rem"
-                        } }
+			{autoSelect && (
+				<Grid item xs={12} className="flex flex-col items-center justify-center p-8">
+					<Box
+						className="h-72 w-72 shadow flex flex-col items-center justify-center rounded-full"
+						sx={{
+							backgroundColor: theme => theme.palette.background.paper,
+						}}
+					>
+						<AutoFixHighTwoToneIcon
+							sx={{
+								fontSize: "10rem",
+							}}
+						/>
+					</Box>
+					<Typography className="m-8">Auto Select Workforce</Typography>
+					<Typography className="m-8" variant="body2" color="text.secondary">
+						Realfield will create a workforce for you based on your project's parameters
+					</Typography>
+				</Grid>
+			)}
 
-                    />
-                </Box>
-                <Typography className="m-8">
-                    Auto Select Workforce
-                </Typography>
-                <Typography className="m-8" variant="body2" color="text.secondary">
-                    Realfield will create a workforce for you based on your project's parameters
-                </Typography>
+			{!autoSelect && (
+				<Grid item xs={12} className={"p-0"} onMouseEnter={handleOnMouseEnter} onMouseLeave={handleOnMouseLeave}>
+					<ScrollBars
+						className={"max-h-screen "}
+						onYReachEnd={handleOnScrollbarsYReachEnd}
+						onScrollDown={handleOnScrollbarsScrollDown}
+						ref={scrollContainerRef}
+					>
+						<Grid container className={"p-0"}>
+							<div className={"w-full"} />
+							<Grid item className={"w-full py-2 flex  justify-center items-center"}>
+								{Array.isArray(state.records) && state.containerWidth > 0 && (
+									<DataGrid
+										data={state.records}
+										cellRenderer={cellRenderer}
+										itemWidth={itemWidth}
+										columnCount={no_of_columns}
+										itemHeight={itemHeight}
+									/>
+								)}
+							</Grid>
 
-            </GridItem> }
+							{!state.loading &&
+								(!Array.isArray(state.records) || (Array.isArray(state.records) && state.records.length === 0)) && (
+									<Grid item className="p-8 flex flex-col justify-center items-center">
+										<img
+											alt="Empty state"
+											className={"h-40"}
+											src={ApiService.endpoint("/public/img/empty-state-table.svg")}
+										/>
+										<Typography className={"m-4"} color="text.secondary" variant="body2">
+											No Records found
+										</Typography>
+									</Grid>
+								)}
 
-            { !autoSelect && <GridItem xs={ 12 }
-                className={ "p-0" }
-                onMouseEnter={ handleOnMouseEnter }
-                onMouseLeave={ handleOnMouseLeave }
-            >
-
-                <ScrollBars
-                    className={ "max-h-screen " }
-                    onYReachEnd={ handleOnScrollbarsYReachEnd }
-                    onScrollDown={ handleOnScrollbarsScrollDown }
-                    ref={ scrollContainerRef }
-                >
-                    <GridContainer className={ "p-0" }>
-                        <div className={ "w-full" } />
-                        <GridItem className={ "w-full py-2 flex  justify-center items-center" } >
-                            { Array.isArray(state.records) && state.containerWidth > 0 && <Grid
-                                data={ state.records }
-                                cellRenderer={ cellRenderer }
-                                itemWidth={ itemWidth }
-                                columnCount={ no_of_columns }
-                                itemHeight={ itemHeight }
-
-                            /> }
-                        </GridItem>
-
-
-
-                        { !state.loading && (!Array.isArray(state.records) || (Array.isArray(state.records) && state.records.length === 0)) && <GridItem
-                            className="p-8 flex flex-col justify-center items-center"
-                        >
-                            <img
-                                alt="Empty state"
-                                className={ 'h-40' }
-                                src={ ApiService.endpoint("/public/img/empty-state-table.svg") }
-                            />
-                            <Typography
-                                className={ "m-4" }
-                                color="text.secondary"
-                                variant="body2"
-                            >
-                                No Records found
-                            </Typography>
-                        </GridItem> }
-
-                        { state.loading && <GridItem
-                            className="p-8 flex flex-col justify-center items-center"
-                        >
-                            <CircularProgress color="accent" />
-                        </GridItem> }
-
-
-                    </GridContainer>
-                </ScrollBars>
-            </GridItem> }
-            <GridItem className="flex flex-col items-center  py-8">
-                <Button onClick={ handleSubmit(submit) } disabled={ !isValid } color="accent" variant="contained">
-                    Review Project
-                </Button>
-            </GridItem>
-        </GridContainer>
-    )
+							{state.loading && (
+								<Grid item className="p-8 flex flex-col justify-center items-center">
+									<CircularProgress color="accent" />
+								</Grid>
+							)}
+						</Grid>
+					</ScrollBars>
+				</Grid>
+			)}
+			<Grid item className="flex flex-col items-center  py-8">
+				<Button onClick={submit} disabled={!isValid} color="accent" variant="contained">
+					Review Project
+				</Button>
+			</Grid>
+		</Grid>
+	)
 }
 
 export default React.memo(Stage);

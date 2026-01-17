@@ -1,11 +1,11 @@
 /** @format */
 
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -15,16 +15,16 @@ class AccessDenied extends React.Component {
 		const { icon, title, description, color, link, linkText } = this.props;
 
 		return (
-			<GridContainer
+			<Grid container
 				className="items-center justify-center my-8"
 			>
-				<GridItem  xs={12} >
-					<GridContainer
+				<Grid item   xs={12} >
+					<Grid container
 						className="min-h-full"
 						justify="center"
 						alignItems="center"
 					>
-						<GridItem xs={12} className={"flex justify-center"}>
+						<Grid item  xs={12} className={"flex justify-center"}>
 							<Typography
 								color="error"
 								style={{ fontSize: "12rem" }}
@@ -32,8 +32,8 @@ class AccessDenied extends React.Component {
 							>
 								{icon}
 							</Typography>
-						</GridItem>
-						<GridItem xs={12} className={"flex justify-center"}>
+						</Grid>
+						<Grid item  xs={12} className={"flex justify-center"}>
 							<Typography
 								color={color}
 								variant="h3"
@@ -41,9 +41,9 @@ class AccessDenied extends React.Component {
 							>
 								{title}
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12} className={"flex justify-center"}>
+						<Grid item  xs={12} className={"flex justify-center"}>
 							<Typography
 
 								variant="body1"
@@ -51,9 +51,9 @@ class AccessDenied extends React.Component {
 							>
 								{description}
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12} className={"flex justify-center"}>
+						<Grid item  xs={12} className={"flex justify-center"}>
 							<Link to={link}>
 								<Button
 									variant="text"
@@ -61,10 +61,10 @@ class AccessDenied extends React.Component {
 									{linkText}
 								</Button>
 							</Link>
-						</GridItem>
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+						</Grid>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

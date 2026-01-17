@@ -1,28 +1,19 @@
-import Box from "@mui/material/Box";
-import Snackbar from "@mui/material/Snackbar";
-import { CloudUploadOutlined as CloudUploadIcon } from "@mui/icons-material";
-import Icon from "@mui/material/Icon";
-import Alert from '@mui/material/Alert';
-import { colors } from "assets/jss/app-theme";
-import PreviewList from "components/FileDropZone/PreviewList";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import FormHelperText from '@mui/material/FormHelperText';
-import Typography from "components/Typography";
-import PropTypes from "prop-types";
-import React, { memo, useMemo, useCallback, useRef } from "react";
-import { useNetworkServices } from "contexts"
-import { useSetState, useDidUpdate, useDidMount, useForwardedRef } from "hooks"
+/** @format */
+
+import Box from "@mui/material/Box"
+import { CloudUploadOutlined as CloudUploadIcon } from "@mui/icons-material"
+import Icon from "@mui/material/Icon"
+import { colors } from "assets/jss/app-theme"
+import PreviewList from "components/FileDropZone/PreviewList"
+import Grid from "@mui/material/Grid"
+import ClickAwayListener from "@mui/material/ClickAwayListener"
+import FormHelperText from "@mui/material/FormHelperText"
+import Typography from "@mui/material/Typography"
+import PropTypes from "prop-types"
+import React, { memo, useMemo, useCallback, useRef } from "react"
+import { useNetworkServices, useNotificationsQueue } from "contexts"
+import { useSetState, useDidUpdate, useDidMount, useForwardedRef, useDerivedState, useDeepCompareMemoize } from "hooks"
 import { useDropArea } from "react-use"
-
-
-const MuiAlert = React.forwardRef((props, ref) => {
-    return <Alert elevation = { 6 }
-    variant = "filled" {...props }
-    ref = { ref }
-    />;
-});
 
 const DropZone = React.forwardRef((props, ref) => {
 	const {
@@ -38,6 +29,7 @@ const DropZone = React.forwardRef((props, ref) => {
 		error,
 		variant,
 		label,
+		name,
 		onChange,
 		onDelete,
 		onDrop,
@@ -61,18 +53,16 @@ const DropZone = React.forwardRef((props, ref) => {
 		...rest
 	} = props
 
-	const [state, setState, getState] = useSetState({
-		fileObjects: [],
-		value: value || defaultValue,
-	})
-
+	const { queueNotification } = useNotificationsQueue()
+	const handleOnChange = useCallback(
+		(newValue, files) => {
+			if (Function.isFunction(onChange)) {
+				Promise.all([onChange(newValue)])
+			}
+		},
+		[onChange]
+	)
 	const isMultiple = useMemo(() => filesLimit > 1, [filesLimit])
-	const showDragDrop = Array.isArray(state.value)
-		? state.value.length < filesLimit
-		: true &&
-		  ((String.isString(state.value) ? state.value.trim().length > 0 && filesLimit === 1 : true) ||
-				Array.isArray(state.value) ||
-				!state.value)
 
 	const { Api } = useNetworkServices()
 	const inputRef = useForwardedRef(ref)
@@ -92,58 +82,59 @@ const DropZone = React.forwardRef((props, ref) => {
 		})
 	}, [])
 
-	const getAttachments = useCallback(() => {
-		return new Promise(async (resolve, reject) => {
-			const { fileObjects } = getState()
-			let new_value = value
-			let attachments = []
-			let newFileObjects = []
-			if (value && upload) {
-				if (isMultiple) {
-					attachments = [...value]
-				} else {
-					attachments = [value]
-				}
-
-				if (Array.isArray(fileObjects)) {
-					newFileObjects = fileObjects.map((fileObject, index) => {
-						if (fileObject.attachment) {
-							if (fileObject.progress) {
-								return fileObject
-							} else if (fileObject.attachment._id != undefined && attachments.includes(fileObject.attachment._id)) {
-								attachments.removeItem(fileObject.attachment._id)
-								return fileObject
-							}
-						} else if (fileObject.progress) {
-							return fileObject
+	const [state, setState, getState] = useDerivedState(
+		() =>
+			new Promise(async (resolve, reject) => {
+				let new_value = value
+				let attachments = []
+				let newFileObjects = []
+				if (upload) {
+					if (Array.isArray(value)) {
+						attachments = value
+					} else if (String.isString(value)) {
+						if (isMultiple) {
+							attachments = [...value]
+						} else {
+							attachments = [value]
 						}
-					})
-				}
-				if (Array.isArray(attachments)) {
-					for (var i = 0; i < attachments.length; i++) {
-						const attachment = attachments[i]
-						await getAttachment(attachments[i])
-							.then(resAttachment => {
-								newFileObjects = newFileObjects.concat([{ attachment: resAttachment }])
-							})
-							.catch(err => {
-								if (isMultiple) {
-									new_value = []
-									if (Array.isArray(attachments)) {
-										new_value = attachments.filter(entry => {
-											return attachment !== entry
-										})
-									} else {
-										new_value = []
-									}
-								}
-							})
 					}
+
+					if (Array.isArray(attachments)) {
+						for (var i = 0; i < attachments.length; i++) {
+							const attachment = attachments[i]
+							await getAttachment(attachments[i])
+								.then(resAttachment => {
+									newFileObjects = newFileObjects.concat([{ attachment: resAttachment }])
+								})
+								.catch(err => {
+									if (isMultiple) {
+										new_value = []
+										if (Array.isArray(attachments)) {
+											new_value = attachments.filter(entry => {
+												return attachment !== entry
+											})
+										} else {
+											new_value = []
+										}
+									}
+								})
+						}
+					}
+					resolve({ fileObjects: newFileObjects, value: new_value, loading: false })
+				} else {
+					resolve({ fileObjects: [], value: isMultiple ? [] : null, loading: false })
 				}
-				resolve({ fileObjects: newFileObjects, value: new_value })
-			}
-		})
-	}, [value, upload, isMultiple])
+			}),
+		[value, upload, isMultiple],
+		{ fileObjects: [], value: [], loading: true }
+	)
+
+	const showDragDrop = Array.isArray(state.value)
+		? state.value.length < filesLimit
+		: true &&
+		  ((String.isString(state.value) ? state.value.trim().length > 0 && filesLimit === 1 : true) ||
+				Array.isArray(state.value) ||
+				!state.value)
 
 	const handleFileUploadSuccess = useCallback(
 		(fileObject, files, file, upload_res) => {
@@ -164,27 +155,37 @@ const DropZone = React.forwardRef((props, ref) => {
 							}
 						}
 					}
-					setState({
-						fileObjects: fileObjects,
-						value: value_arr,
-					})
+					handleOnChange(value_arr, fileObjects)
 				} else {
-					setState({
-						value: upload_res.body.data._id,
-						fileObjects: fileObjects,
-					})
+					handleOnChange(upload_res?.body?.data?._id, fileObjects)
 				}
 
 				message += (message.length > 0 ? "<br />" : "") + `File ${file.name} successfully uploaded. `
 				count++ //
 				if (count === files.length) {
 					// display message when the last one fires
-					// setState({
-					// 	openSnackBar: true,
-					// 	snackbarMessage: message,
-					// 	snackbarColor:
-					// 		"inverse",
-					// });
+					queueNotification({
+						content: message,
+						severity: "success",
+						priority: 1,
+						timeout: 3000,
+					})
+				}
+			} else {
+				if (isMultiple) {
+					let value_arr = []
+					if (Array.isArray(fileObjects)) {
+						for (let j = 0; j < fileObjects.length; j++) {
+							if (fileObjects[j].attachment) {
+								value_arr.push(fileObjects[j].attachment._id)
+							}
+						}
+					}
+					setState({ fileObjects: fileObjects })
+					handleOnChange(value_arr, fileObjects)
+				} else {
+					setState({ fileObjects: fileObjects })
+					handleOnChange(upload_res?.body?.data?._id, fileObjects)
 				}
 			}
 		},
@@ -195,17 +196,24 @@ const DropZone = React.forwardRef((props, ref) => {
 		(fileObject, file) => e => {
 			var count = 0
 			var message = ""
-			const { fileObjects } = getState()
+			const { fileObjects, value } = getState()
 			let fileObjectIndex = fileObjects.indexOf(fileObject)
-
-			setState(prevState => ({
-				fileObjects: prevState.fileObjects.remove(fileObjectIndex),
-				openSnackBar: true,
-				snackbarMessage: `File ${file.name} upload failed. `,
-				snackbarColor: "error",
-			}))
+			let valueIndex = value.indexOf(fileObject?.attachment?._id)
+			queueNotification({
+				content: `File ${file.name} upload failed. `,
+				severity: "error",
+				priority: 1,
+				timeout: 3000,
+			})
+			const nextValue = isMultiple ? (Array.isArray(value) ? value.filter((entry, index) => index !== valueIndex) : []) : null
+			const nextFileObjects = isMultiple
+				? Array.isArray(fileObjects)
+					? fileObjects.filter((entry, index) => index !== fileObjectIndex)
+					: []
+				: null
+			handleOnChange(nextValue, nextFileObjects)
 		},
-		[]
+		[isMultiple]
 	)
 
 	const handleOnDrop = useCallback(
@@ -213,10 +221,10 @@ const DropZone = React.forwardRef((props, ref) => {
 			const { fileObjects } = getState()
 
 			if (fileObjects.length + files.length > filesLimit) {
-				setState({
-					openSnackBar: true,
-					snackbarMessage: `Maximum allowed number of files exceeded. Only ${filesLimit} allowed`,
-					snackbarColor: "error",
+				queueNotification({
+					content: `Maximum allowed number of files exceeded. Only ${filesLimit} allowed`,
+					severity: "error",
+					timeout: 3000,
 				})
 			} else {
 				var count = 0
@@ -240,11 +248,10 @@ const DropZone = React.forwardRef((props, ref) => {
 								data: event.target.result,
 								progress: upload ? true : false,
 							}
-							setState({ fileObjects: prevFileObjects.concat([fileObject]) })
 							if (onDrop) {
 								onDrop(file)
 							}
-
+							setState({ fileObjects: prevFileObjects.concat([fileObject]) })
 							if (upload && typeof fileObject.attachment !== "object") {
 								const upload_data = new FormData()
 
@@ -261,16 +268,17 @@ const DropZone = React.forwardRef((props, ref) => {
 									.catch(handleFileUploadError(fileObject, file))
 							} else {
 								if (onChange) {
-									onChange(files)
+									handleOnChange(files)
 								}
 								message += `File ${file.name} successfully added. `
 								count++ //
 								if (count === files.length) {
 									// display message when the last one fires
-									setState({
-										openSnackBar: true,
-										snackbarMessage: message,
-										snackbarColor: "inverse",
+									queueNotification({
+										content: message,
+										severity: "success",
+										priority: 1,
+										timeout: 3000,
 									})
 								}
 							}
@@ -293,8 +301,6 @@ const DropZone = React.forwardRef((props, ref) => {
 			})[0]
 
 			if (fileObject.attachment) {
-				//fileObjects[fileIndex].progress = true;
-				//setState({ fileObjects: fileObjects });
 				let newfileObjects = []
 				let newValue = []
 				if (isMultiple) {
@@ -314,17 +320,14 @@ const DropZone = React.forwardRef((props, ref) => {
 						newValue = null
 					}
 				}
-
-				setState({
-					fileObjects: newfileObjects,
-					value: newValue,
-					openSnackBar: true,
-					snackbarMessage: "Attached file " + fileObject.attachment.name + " deleted",
-					snackbarColor: "secondary",
+				queueNotification({
+					content: `Attached file ${fileObject.attachment.name}  deleted`,
+					severity: "warning",
+					priority: 1,
+					timeout: 3000,
 				})
+				handleOnChange(newValue, newfileObjects)
 				Api.delete("/attachments/" + fileObject.attachment._id).catch(err => {})
-			} else {
-				setState(prevState => ({ fileObjects: prevState.fileObjects.remove(fileIndex) }))
 			}
 		},
 		[isMultiple, onDelete]
@@ -345,28 +348,14 @@ const DropZone = React.forwardRef((props, ref) => {
 			if (onDropRejected) {
 				onDropRejected(rejectedFiles, evt)
 			}
-			setState({
-				openSnackBar: true,
-				snackbarMessage: message,
-				snackbarColor: "error",
+			queueNotification({
+				content: message,
+				severity: "error",
+				priority: 1,
+				timeout: 3000,
 			})
 		},
 		[onDropRejected, acceptedFiles, maxFileSize]
-	)
-
-	const onCloseSnackbar = useCallback(() => {
-		setState({
-			openSnackBar: false,
-		})
-	}, [])
-
-	const triggerOnChange = useCallback(
-		newValue => {
-			if (Function.isFunction(onChange)) {
-				Promise.all([onChange(newValue)])
-			}
-		},
-		[onChange]
 	)
 
 	const handleOnFocus = useCallback(
@@ -406,20 +395,6 @@ const DropZone = React.forwardRef((props, ref) => {
 		[]
 	)
 
-	useDidUpdate(() => {
-		triggerOnChange(state.value)
-	}, [state.value])
-
-	useDidMount(() => {
-		getAttachments()
-			.then(res => {
-				setState(res)
-			})
-			.catch(error => {
-				console.error("Get Attachments error", error)
-			})
-	}, [])
-
 	const [dropAreaBond, dropAreaState] = useDropArea({
 		onFiles: handleOnDrop,
 		onUri: uri => {},
@@ -436,71 +411,56 @@ const DropZone = React.forwardRef((props, ref) => {
 
 	return (
 		<ClickAwayListener onClickAway={handleOnBlur}>
-			<Box
-				className={`${className ? className : ""} cursor-pointer min-h-20 `}
-				{...dropAreaBond}
-				onClick={event => handleOnFocus(event, true)}
-			>
-				<GridContainer className={"h-full w-full p-0 px-4 py-2"}>
-					<GridItem xs={12}>
-						{showDragDrop && (
-							<GridContainer direction="column" justify="center" alignItems="center">
-								<Typography
-									className={"m-4 text-8xl"}
-									color={dropAreaState?.over ? "primary" : "text.secondary"}
-									fullWidth
-									paragraph
-								>
-									{String.isString(dropzoneIcon) && <Icon> {dropzoneIcon} </Icon>}
-									{React.isValidElement(dropzoneIcon) && dropzoneIcon}
-								</Typography>
-
-								<FormHelperText> {dropzoneText} </FormHelperText>
-							</GridContainer>
-						)}
-
-						{showPreviews && (
-							<PreviewList
-								className="p-0"
-								fileObjects={state.fileObjects}
-								handleRemove={handleRemove}
-								showFileNames={showFileNamesInPreview}
-								disabled={disabled}
-								title={label}
-							/>
-						)}
-					</GridItem>
-					<input
-						{...rest}
-						onChange={handleOnInputChange}
-						type="file"
-						accept={acceptedFiles.join(",")}
-						className="hidden"
-						ref={inputRef}
-					/>
-				</GridContainer>
-
-				{/* <FormHelperText error={Boolean(error)}> {helperText} </FormHelperText> */}
-				{showAlerts && (
-					<Snackbar
-						anchorOrigin={{
-							vertical: "bottom",
-							horizontal: "right",
-						}}
-						open={state.openSnackBar}
-						autoHideDuration={6000}
-						onClose={onCloseSnackbar}
+			<Box className={`${className ? className : ""} cursor-pointer min-h-20 `}>
+				{state.fileObjects?.length < filesLimit && (
+					<Grid
+						container
+						className={"h-full w-full p-0 px-4 py-2"}
+						{...dropAreaBond}
+						onClick={event => handleOnFocus(event, true)}
 					>
-						<MuiAlert onClose={onCloseSnackbar} color={state.snackbarColor || "secondary"} sx={{ width: "100%" }}>
-							{state.snackbarMessage || ""}{" "}
-						</MuiAlert>
-					</Snackbar>
+						<Grid item xs={12}>
+							{showDragDrop && (
+								<Grid container direction="column" justify="center" alignItems="center">
+									<Typography
+										className={"m-4 text-8xl"}
+										color={dropAreaState?.over ? "primary" : "text.secondary"}
+										fullWidth
+										paragraph
+									>
+										{String.isString(dropzoneIcon) && <Icon> {dropzoneIcon} </Icon>}
+										{React.isValidElement(dropzoneIcon) && dropzoneIcon}
+									</Typography>
+
+									<FormHelperText> {dropzoneText} </FormHelperText>
+								</Grid>
+							)}
+						</Grid>
+						<input
+							{...rest}
+							onChange={handleOnInputChange}
+							type="file"
+							accept={acceptedFiles.join(",")}
+							className="hidden"
+							ref={inputRef}
+						/>
+					</Grid>
 				)}
+				{showPreviews && state.fileObjects?.length > 0 && (
+					<PreviewList
+						className="p-0"
+						fileObjects={state.fileObjects}
+						handleRemove={handleRemove}
+						showFileNames={showFileNamesInPreview}
+						disabled={disabled}
+						title={label}
+					/>
+				)}
+				{/* <FormHelperText error={Boolean(error)}> {helperText} </FormHelperText> */}
 			</Box>
 		</ClickAwayListener>
 	)
 })
-
 
 DropZone.defaultProps = {
 	acceptedFiles: ["image/*", "video/*", "audio/*", "application/*"],
@@ -526,33 +486,32 @@ DropZone.defaultProps = {
 	onDelete: () => {},
 }
 DropZone.propTypes = {
-
-    className: PropTypes.string,
-    type: PropTypes.string,
-    name: PropTypes.string,
-    label: PropTypes.string,
-    readOnly: PropTypes.bool,
-    required: PropTypes.bool,
-    disabled: PropTypes.bool,
-    error: PropTypes.bool,
-    helperText: PropTypes.string,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-    upload: PropTypes.bool,
-    uploadData: PropTypes.object,
-    defaultColor: PropTypes.oneOf(colors.names),
-    activeColor: PropTypes.oneOf(colors.names),
-    acceptedFiles: PropTypes.array,
-    filesLimit: PropTypes.number,
-    maxFileSize: PropTypes.number,
-    dropzoneText: PropTypes.string,
-    dropzoneIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-    showPreviews: PropTypes.bool,
-    showPreviewsInDropzone: PropTypes.bool,
-    showFileNamesInPreview: PropTypes.bool,
-    showAlerts: PropTypes.bool,
-    onChange: PropTypes.func,
-    onDrop: PropTypes.func,
-    onDropRejected: PropTypes.func,
-    onDelete: PropTypes.func,
-};
-export default (memo(DropZone));
+	className: PropTypes.string,
+	type: PropTypes.string,
+	name: PropTypes.string,
+	label: PropTypes.string,
+	readOnly: PropTypes.bool,
+	required: PropTypes.bool,
+	disabled: PropTypes.bool,
+	error: PropTypes.bool,
+	helperText: PropTypes.string,
+	value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+	upload: PropTypes.bool,
+	uploadData: PropTypes.object,
+	defaultColor: PropTypes.oneOf(colors.names),
+	activeColor: PropTypes.oneOf(colors.names),
+	acceptedFiles: PropTypes.array,
+	filesLimit: PropTypes.number,
+	maxFileSize: PropTypes.number,
+	dropzoneText: PropTypes.string,
+	dropzoneIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+	showPreviews: PropTypes.bool,
+	showPreviewsInDropzone: PropTypes.bool,
+	showFileNamesInPreview: PropTypes.bool,
+	showAlerts: PropTypes.bool,
+	onChange: PropTypes.func,
+	onDrop: PropTypes.func,
+	onDropRejected: PropTypes.func,
+	onDelete: PropTypes.func,
+}
+export default memo(DropZone)

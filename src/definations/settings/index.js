@@ -8,7 +8,7 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 	SettingsOutlined as DefinationContextIcon,
 } from "@mui/icons-material";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import React from "react";
 import { Link } from "react-router-dom";
 

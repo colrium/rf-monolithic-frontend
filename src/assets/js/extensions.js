@@ -1,39 +1,11 @@
 /** @format */
 
-import lodash, { debounce, throttle, isEqual, get } from "lodash";
-import lodash_inflection from "lodash-inflection";
+import lodash, { debounce, throttle, isEqual, get, memoize } from "lodash"
+import lodash_inflection from "lodash-inflection"
 const { v4: uuidv4 } = require("uuid")
 import { dashboardBaseUri, landingPageBaseUri, baseUrls, surpressed_logs } from "config"
 
 lodash.mixin(lodash_inflection)
-
-/*const console_warn = console.warn;
-console.warn = function surpressWarnings(msg) {
-	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
-
-	if (!supressedLogs.some(entry => msg.includes(entry))) {
-		console_warn.apply(console, arguments);
-	}
-};
-const console_error = console.error;
-console.error = function surpressErrors(msg) {
-	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
-
-	if (!supressedLogs.some(entry => msg.includes(entry))) {
-		console_error.apply(console, arguments);
-	}
-};
-const console_log = console.log;
-console.log = function surpressLogs(msg) {
-	const supressedLogs = Array.isArray(surpressed_logs)? surpressed_logs : [];
-
-	if (!supressedLogs.some(entry => msg.includes(entry))) {
-		console_log.apply(console, arguments);
-	}
-};*/
-
-//Type Extensions
-// Warn if overriding existing method
 
 String.isString = function (input) {
 	return input !== undefined && input !== null ? input.constructor === String : false
@@ -69,7 +41,21 @@ String.prototype.capitalize = function () {
 		.join(" ")
 	return result
 }
+String.htmlToText = function (htmlText) {
+	let targetStr = htmlText
+	if (String.isString(targetStr)) {
+		targetStr = targetStr.replace("<img .*?alt=[\"']?([^\"']*)[\"']?.*?/?>", "$1") /* Use image alt text. */
+		targetStr = targetStr.replace("<a .*?href=[\"']?([^\"']*)[\"']?.*?>(.*)</a>", "$2 [$1]") /* Convert links to something useful */
+		// targetStr = targetStr.replace("<(/p|/div|/h\\d|br)\\w?/?>", "\n")
+		targetStr = targetStr.replace(
+			/<(p|div|h1|h2|h3|h4|h5|h6|br).?>(.*?)(<\/(p|div|h1|h2|h3|h4|h5|h6|br).*?>)(?!\\n.*)/gi,
+			"$2\n"
+		) /* Let's try to keep vertical whitespace intact. */
+		targetStr = targetStr.replace(/<[^>]+>/g, "") /* Remove the rest of the tags. */
+	}
 
+	return targetStr
+}
 String.prototype.replaceAll = function (search, replacement) {
 	var target = this
 	return target.replace(new RegExp(search, "g"), replacement)
@@ -117,14 +103,7 @@ String.containsUrl = function (target) {
 	}
 	return false
 }
-String.highlightContainedUrls = function (target, element = "a") {
-	if (String.isString(target)) {
-		let containedUrls = target.match(
-			new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_])?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?")
-		)
-		console.log("highlightContainedUrls containedUrls", containedUrls)
-	}
-}
+
 String.getContainedUrl = function (target) {
 	let containedUrl = target.match(
 		new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_])?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?")
@@ -136,205 +115,155 @@ String.getContainedUrl = function (target) {
 }
 
 String.prototype.truncate = function (size, ellipsis = "...") {
-	let target = this;
+	let target = this
 	if (target.length > size) {
-		return target.substring(0, size) + ellipsis;
+		return target.substring(0, size) + ellipsis
 	}
-	return target;
-};
+	return target
+}
 
-String.prototype.shorten = String.prototype.truncate;
-
+String.prototype.shorten = String.prototype.truncate
 
 String.prototype.toUriWithDashboardPrefix = function () {
-	let target = this;
-	let uriWithBaseRoute = dashboardBaseUri.startsWith("/")
-		? dashboardBaseUri
-		: "/" + dashboardBaseUri;
-	uriWithBaseRoute += dashboardBaseUri.endsWith("/")
-		? dashboardBaseUri.substring(0, dashboardBaseUri.length - 2)
-		: "";
-	uriWithBaseRoute += target.startsWith("/") ? target : "/" + target;
-	return uriWithBaseRoute;
-};
+	let target = this
+	let uriWithBaseRoute = dashboardBaseUri.startsWith("/") ? dashboardBaseUri : "/" + dashboardBaseUri
+	uriWithBaseRoute += dashboardBaseUri.endsWith("/") ? dashboardBaseUri.substring(0, dashboardBaseUri.length - 2) : ""
+	uriWithBaseRoute += target.startsWith("/") ? target : "/" + target
+	return uriWithBaseRoute
+}
 
 String.prototype.toUriWithLandingPagePrefix = function () {
-	let target = this;
-	let uriWithBaseRoute = landingPageBaseUri.startsWith("/")
-		? landingPageBaseUri
-		: "/" + landingPageBaseUri;
-	uriWithBaseRoute += landingPageBaseUri.endsWith("/")
-		? landingPageBaseUri.substring(0, landingPageBaseUri.length - 2)
-		: "";
-	uriWithBaseRoute += target.startsWith("/") ? target : "/" + target;
-	return uriWithBaseRoute;
-};
+	let target = this
+	let uriWithBaseRoute = landingPageBaseUri.startsWith("/") ? landingPageBaseUri : "/" + landingPageBaseUri
+	uriWithBaseRoute += landingPageBaseUri.endsWith("/") ? landingPageBaseUri.substring(0, landingPageBaseUri.length - 2) : ""
+	uriWithBaseRoute += target.startsWith("/") ? target : "/" + target
+	return uriWithBaseRoute
+}
 
 String.prototype.toUriApiPrefix = function () {
-	let target = this;
+	let target = this
 	let apiBaseUrl = baseUrls.api
-	let uriWithBaseRoute = apiBaseUrl;
-	uriWithBaseRoute += apiBaseUrl.endsWith("/")
-		? apiBaseUrl.substring(0, apiBaseUrl.length - 2)
-		: "";
-	uriWithBaseRoute += target.startsWith("/") ? target : "/" + target;
-	return uriWithBaseRoute;
-};
+	let uriWithBaseRoute = apiBaseUrl
+	uriWithBaseRoute += apiBaseUrl.endsWith("/") ? apiBaseUrl.substring(0, apiBaseUrl.length - 2) : ""
+	uriWithBaseRoute += target.startsWith("/") ? target : "/" + target
+	return uriWithBaseRoute
+}
 
 String.prototype.singularize = function () {
-	var target = this;
-	return lodash.singularize(target);
-};
+	var target = this
+	return lodash.singularize(target)
+}
 
 String.prototype.translate = function (lang = "en") {
-	var target = this;
-	if (lang = "en") {
-		return target;
+	var target = this
+	if ((lang = "en")) {
+		return target
 	}
-	return "";
-};
+	return ""
+}
 
 String.prototype.pluralize = function () {
-	var target = this;
-	return lodash.pluralize(target);
-};
+	var target = this
+	return lodash.pluralize(target)
+}
 
 String.prototype.variablelize = function (connector = "_") {
 	//
-	var target = this;
-	target = target.replaceAll(/([A-Z])/g, " $1");
-	target = target.trim();
-	target = target.replaceAll(/\s\s+/g, " ");
-	target = target.replaceAll(" ", connector);
-	return target.toLowerCase();
-};
+	var target = this
+	target = target.replaceAll(/([A-Z])/g, " $1")
+	target = target.trim()
+	target = target.replaceAll(/\s\s+/g, " ")
+	target = target.replaceAll(" ", connector)
+	return target.toLowerCase()
+}
 
 String.prototype.humanize = function () {
-	var target = this;
+	var target = this
 	return target
 		.replace(/([A-Z])/g, " $1")
 		.trim()
 		.replace(/^[\s_]+|[\s_]+$/g, "")
 		.replace(/[_\s]+/g, " ")
 		.replace(/^[a-z]/, function (m) {
-			return m.toUpperCase();
-		});
-};
+			return m.toUpperCase()
+		})
+}
 
 String.prototype.hasHTML = function () {
-	var target = this;
-	return /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/.test(target);
-};
+	var target = this
+	return /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/.test(target)
+}
 
 String.isUrl = function (target, protocol = true) {
 	if (String.isString(target)) {
 		if (protocol) {
-			return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(
-				target
-			);
+			return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(target)
 		} else {
-			return /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi.test(
-				target
-			);
+			return /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi.test(target)
 		}
 	}
-	return false;
-};
+	return false
+}
 
 String.isEmpty = function (target) {
 	if (String.isString(target)) {
-		return target.trim().length > 0 ? false : true;
+		return target.trim().length > 0 ? false : true
 	}
-	return true;
-};
-
-
+	return true
+}
 
 Boolean.isBoolean = function (input) {
-	return input !== undefined && input !== null
-		? input.constructor === Boolean
-		: false;
-};
+	return input !== undefined && input !== null ? input.constructor === Boolean : false
+}
 
 Function.isFunction = function (input) {
-	return input !== undefined && input !== null
-		? input.constructor === Function || typeof input === "function"
-		: false;
-};
+	return input !== undefined && input !== null ? input.constructor === Function || typeof input === "function" : false
+}
 
 Function.sleep = function (milliseconds) {
-	const date = Date.now();
-	let currentDate = null;
+	const date = Date.now()
+	let currentDate = null
 	do {
-		currentDate = Date.now();
-	} while (currentDate - date < milliseconds);
-};
+		currentDate = Date.now()
+	} while (currentDate - date < milliseconds)
+}
 // Returns a function, that, when invoked, will only be triggered at most once
 // during a given window of time. Normally, the throttled function will run
 // as much as it can, without ever going more than once per `wait` duration;
 // but if you'd like to disable the execution on the leading edge, pass
 // `{leading: false}`. To disable execution on the trailing edge, ditto.
 
-if (Function.throttle) {}
-//Function.throttle = throttle;
-Function.throttle = (func, wait, options) => {
-	var context, args, result;
-	var timeout = null;
-	var previous = 0;
-	if (!options) options = { leading: false, trailing: true };
-	var later = function () {
-		previous = options.leading === false ? 0 : Date.now();
-		timeout = null;
-		result = func.apply(context, args);
-		if (!timeout) context = args = null;
-	};
-	return function () {
-		var now = Date.now();
-		if (!previous && options.leading === false) previous = now;
-		var remaining = wait - (now - previous);
-		context = this;
-		args = arguments;
-		if (remaining <= 0 || remaining > wait) {
-			if (timeout) {
-				clearTimeout(timeout);
-				timeout = null;
-			}
-			previous = now;
-			result = func.apply(context, args);
-			if (!timeout) context = args = null;
-		} else if (!timeout && options.trailing !== false) {
-			timeout = setTimeout(later, remaining);
-		}
-		return result;
-	};
-};
-
-Function.debounce = debounce;
+Function.throttle = throttle
+Function.debounce = debounce
+Function.memoize = memoize
 
 Function.createThrottle = function (max) {
-	if (typeof max !== 'number') {
-		throw new TypeError('`createThrottle` expects a valid Number')
+	if (typeof max !== "number") {
+		throw new TypeError("`createThrottle` expects a valid Number")
 	}
 
 	let cur = 0
 	const queue = []
-	function throttle (fn) {
+	function throttle(fn) {
 		return new Promise((resolve, reject) => {
-			function handleFn () {
+			function handleFn() {
 				if (cur < max) {
 					throttle.current = ++cur
-					let resolveFn = Function.isFunction(fn) ? fn() : fn;
-					Promise.all([resolveFn]).then(resolveArr => {
-						resolve(resolveArr[0]);
-					}).catch(err => {
-						reject(err)
-					}).finally(() => {
-						//
-						throttle.current = --cur
-						if (queue.length > 0) {
-							queue.shift()()
-						}
-					});
+					let resolveFn = Function.isFunction(fn) ? fn() : fn
+					Promise.all([resolveFn])
+						.then(resolveArr => {
+							resolve(resolveArr[0])
+						})
+						.catch(err => {
+							reject(err)
+						})
+						.finally(() => {
+							//
+							throttle.current = --cur
+							if (queue.length > 0) {
+								queue.shift()()
+							}
+						})
 				} else {
 					queue.push(handleFn)
 				}
@@ -351,540 +280,489 @@ Function.createThrottle = function (max) {
 	return throttle
 }
 
-
-if (Number.isNumber) {}
+if (Number.isNumber) {
+}
 Number.isNumber = function (input) {
-	return input !== undefined && input !== null
-		? input.constructor === Number && input !== NaN
-		: false;
-};
+	return input !== undefined && input !== null ? input.constructor === Number && input !== NaN : false
+}
 
-if (Error.isError) {}
+if (Error.isError) {
+}
 Error.isError = function (input) {
-	return input !== undefined && input !== null
-		? input instanceof Error
-		: false;
-};
+	return input !== undefined && input !== null ? input instanceof Error : false
+}
 
-if (RegExp.isRegExp) {}
+if (RegExp.isRegExp) {
+}
 RegExp.isRegExp = function (input) {
-	return input !== undefined && input !== null
-		? input.constructor === RegExp
-		: false;
-};
+	return input !== undefined && input !== null ? input.constructor === RegExp : false
+}
 
 //Number Extensions
-if (Number.isFloat) {}
+if (Number.isFloat) {
+}
 Number.isFloat = function (input) {
-	return input !== undefined && input !== null && input !== NaN
-		? /[-+]?(?:\d*\.\d+\.?\d*)(?:[eE][-+]?\d+)?/gim.test(input)
-		: false;
-};
+	return input !== undefined && input !== null && input !== NaN ? /[-+]?(?:\d*\.\d+\.?\d*)(?:[eE][-+]?\d+)?/gim.test(input) : false
+}
 
-if (Number.isInt) {}
+if (Number.isInt) {
+}
 Number.isInt = function (input) {
-	return input !== undefined && input !== null && input !== NaN
-		? /^[-+]?(\d*)?\d+$/gim.test(input)
-		: false;
-};
+	return input !== undefined && input !== null && input !== NaN ? /^[-+]?(\d*)?\d+$/gim.test(input) : false
+}
 
-if (Number.parseNumber) {}
+if (Number.parseNumber) {
+}
 Number.parseNumber = function (input, fallback = null) {
 	if (Number.isFloat(input)) {
-		return parseFloat(input);
+		return parseFloat(input)
 	} else if (Number.isInt(input)) {
-		return parseInt(input);
+		return parseInt(input)
 	} else {
-		return fallback;
+		return fallback
 	}
-};
+}
 
 //String Extensions
-if (Number.parseNumber) {}
 Number.getRandomInt = function (min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-if (Array.prototype.remove) {}
+	return Math.floor(Math.random() * (max - min + 1)) + min
+}
+if (Array.prototype.remove) {
+}
 Array.prototype.remove = function (from, to) {
-	var rest = this.slice((to || from) + 1 || this.length);
-	this.length = from < 0 ? this.length + from : from;
-	this.push.apply(this, rest);
+	var rest = this.slice((to || from) + 1 || this.length)
+	this.length = from < 0 ? this.length + from : from
+	this.push.apply(this, rest)
 	//return this.push.apply(this, rest);
-	return this;
-};
+	return this
+}
 
 Array.isEmpty = function (target) {
 	if (Array.isArray(target)) {
-		return target.length === 0;
+		return target.length === 0
 	}
-	return true;
-};
+	return true
+}
 
 Array.prototype.shuffle = function () {
-	var i = this.length, j, temp;
+	var i = this.length,
+		j,
+		temp
 	if (i == 0) {
-		return this;
+		return this
 	}
 	while (--i) {
-		j = Math.floor(Math.random() * (i + 1));
+		j = Math.floor(Math.random() * (i + 1))
 		temp = this[i]
-		this[i] = this[j];
-		this[j] = temp;
+		this[i] = this[j]
+		this[j] = temp
 	}
-	return this;
-};
+	return this
+}
 
 Array.prototype.removeAtIndex = function (index) {
-	var target = this;
-	target.splice(index, 1);
-	return target;
-};
+	var target = this
+	target.splice(index, 1)
+	return target
+}
 
 Array.prototype.removeItem = function () {
 	var what,
 		a = arguments,
 		L = a.length,
-		ax;
-	var target = this;
+		ax
+	var target = this
 	while (L && this.length) {
-		what = a[--L];
+		what = a[--L]
 		while ((ax = this.indexOf(what)) !== -1) {
-			target = target.filter(item => item !== what);
+			target = target.filter(item => item !== what)
 		}
 	}
-	return target;
-};
-
-
+	return target
+}
 
 Array.prototype.unique = function () {
-	var prims = { "boolean": {}, "number": {}, "string": {} }, objs = [];
+	var prims = { boolean: {}, number: {}, string: {} },
+		objs = []
 	return this.filter(function (item) {
-		var type = typeof item;
+		var type = typeof item
 		if (type in prims) {
-			return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+			return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true)
+		} else {
+			return objs.indexOf(item) >= 0 ? false : objs.push(item)
 		}
-		else {
-			return objs.indexOf(item) >= 0 ? false : objs.push(item);
-		}
-	});
-};
+	})
+}
 
 //Most frequent element
 Array.prototype.mode = function () {
-	var target = this;
-	return target.sort((a, b) =>
-		target.filter(v => v === a).length
-		- target.filter(v => v === b).length
-	).pop();
-};
+	var target = this
+	return target.sort((a, b) => target.filter(v => v === a).length - target.filter(v => v === b).length).pop()
+}
 
 //Chunks
 Array.prototype.chunks = function (chunk = 1) {
-	var target = this;
-	var i, j;
-	var chunked = [];
+	var target = this
+	var i, j
+	var chunked = []
 	for (i = 0, j = target.length; i < j; i += chunk) {
-		chunked.push(target.slice(i, i + chunk));
+		chunked.push(target.slice(i, i + chunk))
 	}
-	return chunked;
-};
+	return chunked
+}
 
 Array.prototype.toCSV = function (filename = String.uid(25), columns = false) {
-	var target = this;
-	filename = filename.endsWith(".csv") ? filename : (filename + ".csv");
-
+	var target = this
+	filename = filename.endsWith(".csv") ? filename : filename + ".csv"
 
 	var processRow = function (row) {
-		var finalVal = '';
+		var finalVal = ""
 		if (JSON.isJSON(row)) {
 			if (!columns && JSON.isJSON(target[0])) {
-				let headerKeys = Object.keys(target[0]);
-				let newRow = {};
+				let headerKeys = Object.keys(target[0])
+				let newRow = {}
 				headerKeys.map(headerKey => {
-					newRow[headerKey] = row[headerKey];
-				});
-				row = Object.values(newRow);
+					newRow[headerKey] = row[headerKey]
+				})
+				row = Object.values(newRow)
+			} else {
+				row = Object.values(row)
 			}
-			else {
-				row = Object.values(row);
-			}
-
 		}
 
 		for (var j = 0; j < row.length; j++) {
-			var innerValue = row[j] === null || row[j] === undefined ? '' : JSON.stringify(row[j]);
+			var innerValue = row[j] === null || row[j] === undefined ? "" : JSON.stringify(row[j])
 			if (row[j] instanceof Date) {
-				innerValue = row[j].toLocaleString();
+				innerValue = row[j].toLocaleString()
+			} else if (row[j] instanceof Object) {
+				innerValue = JSON.stringify(row[j])
 			}
-			else if (row[j] instanceof Object) {
-				innerValue = JSON.stringify(row[j]);
-			};
 			//var result = innerValue.replace(/"/g, '""');
-			var result = innerValue;
+			var result = innerValue
 
 			if (result.search(/(,|\n)/g) >= 0) {
 				//result = '"' + result + '"';
-				result = '"' + result + '"';
+				result = '"' + result + '"'
 			}
 			if (j > 0) {
-				finalVal += ',';
+				finalVal += ","
 			}
-			finalVal += result;
-
+			finalVal += result
 		}
 
-		return finalVal + '\n';
-	};
+		return finalVal + "\n"
+	}
 
-	var csvFile = '';
+	var csvFile = ""
 	for (var i = 0; i < target.length; i++) {
-		csvFile += processRow(target[i]);
+		csvFile += processRow(target[i])
 	}
 
-	var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
-	if (navigator.msSaveBlob) { // IE 10+
-		navigator.msSaveBlob(blob, filename);
-	}
-	else {
-		var link = document.createElement("a");
-		if (link.download !== undefined) { // feature detection
-			// Browsers that support HTML5 download attribute
-			var url = URL.createObjectURL(blob);
-			link.setAttribute("href", url);
-			link.setAttribute("download", filename);
-			link.style.visibility = 'hidden';
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
+	var blob = new Blob([csvFile], { type: "text/csv;charset=utf-8;" })
+	try {
+		if (navigator.msSaveBlob) {
+			// IE 10+
+			navigator.msSaveBlob(blob, filename)
+		} else {
+			var link = document.createElement("a")
+			if (link.download !== undefined) {
+				// feature detection
+				// Browsers that support HTML5 download attribute
+				var url = URL.createObjectURL(blob)
+				link.setAttribute("href", url)
+				link.setAttribute("download", filename)
+				link.style.visibility = "hidden"
+				document.body.appendChild(link)
+				link.click()
+				document.body.removeChild(link)
+			}
 		}
-	}
-};
-
+	} catch (error) {}
+}
 
 Array.prototype.equals = function (array) {
 	// if the other array is a falsy value, return
-	if (!array) return false;
+	if (!array) return false
 
 	// compare lengths - can save a lot of time
-	if (this.length != array.length) return false;
+	if (this.length != array.length) return false
 
 	for (var i = 0, l = this.length; i < l; i++) {
 		// Check if we have nested arrays
 		if (this[i] instanceof Array && array[i] instanceof Array) {
 			// recurse into the nested arrays
-			if (!this[i].equals(array[i])) return false;
+			if (!this[i].equals(array[i])) return false
 		} else if (this[i] != array[i]) {
 			// Warning - two different object instances will never be equal: {x:20} != {x:20}
-			return false;
+			return false
 		}
 	}
-	return true;
-};
+	return true
+}
 // Hide method from for-in loops
-Object.defineProperty(Array.prototype, "equals", { enumerable: false });
+Object.defineProperty(Array.prototype, "equals", { enumerable: false })
 
 Object.size = function (obj) {
 	var size = 0,
-		key;
+		key
 	for (key in obj) {
-		if (obj.hasOwnProperty(key)) size++;
+		if (obj.hasOwnProperty(key)) size++
 	}
-	return size;
-};
+	return size
+}
 
 Object.difference = function (a, b, comprehensive = true) {
 	var result = {
 		differences: [],
 		missing_from_first: [],
 		missing_from_second: [],
-	};
+	}
 	if (JSON.isJSON(a) && JSON.isJSON(b)) {
 		lodash.reduce(
 			a,
 			function (result, value, key) {
 				if (b.hasOwnProperty(key)) {
 					if (lodash.isEqual(value, b[key])) {
-						return result;
+						return result
 					} else {
-						if (
-							typeof a[key] != typeof {} ||
-							typeof b[key] != typeof {}
-						) {
+						if (typeof a[key] != typeof {} || typeof b[key] != typeof {}) {
 							//dead end.
-							result.differences.push(key);
-							return result;
+							result.differences.push(key)
+							return result
 						} else {
-							var deeper = Object.difference(a[key], b[key]);
+							var deeper = Object.difference(a[key], b[key])
 							result.differences = result.differences.concat(
 								lodash.map(deeper.differences, sub_path => {
-									return key + "." + sub_path;
+									return key + "." + sub_path
 								})
-							);
+							)
 							if (comprehensive) {
 								result.missing_from_second = result.missing_from_second.concat(
-									lodash.map(
-										deeper.missing_from_second,
-										sub_path => {
-											return key + "." + sub_path;
-										}
-									)
-								);
+									lodash.map(deeper.missing_from_second, sub_path => {
+										return key + "." + sub_path
+									})
+								)
 
 								result.missing_from_first = result.missing_from_first.concat(
-									lodash.map(
-										deeper.missing_from_first,
-										sub_path => {
-											return key + "." + sub_path;
-										}
-									)
-								);
+									lodash.map(deeper.missing_from_first, sub_path => {
+										return key + "." + sub_path
+									})
+								)
 							}
 
-							return result;
+							return result
 						}
 					}
 				} else {
 					if (comprehensive) {
-						result.missing_from_second.push(key);
+						result.missing_from_second.push(key)
 					}
-					return result;
+					return result
 				}
 			},
 			result
-		);
+		)
 
 		lodash.reduce(
 			b,
 			function (result, value, key) {
 				if (JSON.isJSON(a)) {
 					if (a.hasOwnProperty(key)) {
-						return result;
+						return result
 					} else {
 						if (comprehensive) {
-							result.missing_from_first.push(key);
+							result.missing_from_first.push(key)
 						}
-						return result;
+						return result
 					}
 				} else {
-					return result;
+					return result
 				}
 			},
 			result
-		);
+		)
 		if (comprehensive) {
-			return result;
+			return result
 		} else {
-			return result.differences;
+			return result.differences
 		}
 	} else if (JSON.isJSON(a) && !JSON.isJSON(b)) {
-		let differences = Object.keys(a);
-		result.differences = differences;
-		result.missing_from_second = differences;
+		let differences = Object.keys(a)
+		result.differences = differences
+		result.missing_from_second = differences
 		if (comprehensive) {
-			return result;
+			return result
 		} else {
-			return result.differences;
+			return result.differences
 		}
 	} else if (!JSON.isJSON(a) && JSON.isJSON(b)) {
-		let differences = Object.keys(b);
-		result.differences = differences;
-		result.missing_from_first = differences;
+		let differences = Object.keys(b)
+		result.differences = differences
+		result.missing_from_first = differences
 		if (comprehensive) {
-			return result;
+			return result
 		} else {
-			return result.differences;
+			return result.differences
 		}
 	} else {
 		if (comprehensive) {
-			return result;
+			return result
 		} else {
-			return result.differences;
+			return result.differences
 		}
 	}
-};
-Object.areEqual = isEqual;
-
+}
+Object.areEqual = isEqual
 
 Object.isFunctionalComponent = Component => {
-	return (
-		Function.isFunction(Component) &&
-		!(Component.prototype && Component.prototype.render)
-	);
-};
+	return Function.isFunction(Component) && !(Component.prototype && Component.prototype.render)
+}
 
 Object.isReactComponent = Component => {
-	return (Component.prototype && Component.prototype.render) || Object.isFunctionalComponent(Component);
-};
+	return (Component.prototype && Component.prototype.render) || Object.isFunctionalComponent(Component)
+}
 
 Object.isObject = function (input) {
-	return !!input && typeof input === "object";
-};
+	return !!input && typeof input === "object"
+}
 
 //This is to ensure equating objects doesnt change original
-function parseToJSON (input) {
-	let newObject = {};
+function parseToJSON(input) {
+	let newObject = {}
 	try {
-		newObject = JSON.parse(JSON.stringify(input));
+		newObject = JSON.parse(JSON.stringify(input))
 	} catch (err) {
-		newObject = {};
+		newObject = {}
 	}
-	return newObject;
-};
+	return newObject
+}
 
-Object.toJSON = parseToJSON;
-JSON.fromJSON = parseToJSON;
-JSON.parseJSON = parseToJSON;
+Object.toJSON = parseToJSON
+JSON.fromJSON = parseToJSON
+JSON.parseJSON = parseToJSON
 
 JSON.isJSON = function (input) {
-	return input !== undefined && input !== null
-		? input.constructor === {}.constructor
-		: false;
-};
+	return input !== undefined && input !== null ? input.constructor === {}.constructor : false
+}
 
-
-JSON.areEqual = isEqual;
-JSON.isEqual = isEqual;
+JSON.areEqual = isEqual
+JSON.isEqual = isEqual
 
 JSON.prettyStringify = function (input, spaces = 4) {
-	let spacing = "";
+	let spacing = ""
 	for (var i = 0; i < spaces; i++) {
-		spacing = spacing + " ";
+		spacing = spacing + " "
 	}
-	function syntaxHighlight (json) {
-		json = json
-			.replace(/&/g, "&amp;")
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;");
+	function syntaxHighlight(json) {
+		json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 		return json.replace(
 			/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
 			function (match) {
-				var cls = "text-gray-700";
+				var cls = "text-gray-700"
 				if (/^"/.test(match)) {
 					if (/:$/.test(match)) {
-						cls = "text-red-700";
+						cls = "text-red-700"
 					} else {
-						cls = "text-green-700";
+						cls = "text-green-700"
 					}
 				} else if (/true|false/.test(match)) {
-					cls = "text-blue-600";
+					cls = "text-blue-600"
 				} else if (/null/.test(match)) {
-					cls = "text-gray-500";
+					cls = "text-gray-500"
 				}
 				//return '<span class="' + cls + '">' + match + "</span>";
-				return match;
+				return match
 			}
-		);
+		)
 	}
-	let str = "";
+	let str = ""
 	if (typeof input === "object") {
 		//str = syntaxHighlight(JSON.stringify(input, undefined, spaces));
-		str = JSON.stringify(input);
+		str = JSON.stringify(input)
 		//str = str.replaceAll(spacing, " \t \t ");
 	}
-	return str;
-};
-JSON.readable = function (
-	input,
-	highLightSytax = true,
-	linebreaker = "\n",
-	spacer = "\t"
-) {
-	let str = "";
+	return str
+}
+JSON.readable = function (input, highLightSytax = true, linebreaker = "\n", spacer = "\t") {
+	let str = ""
 	if (JSON.isJSON(input)) {
-		str = str + "Object(" + linebreaker + " " + spacer;
+		str = str + "Object(" + linebreaker + " " + spacer
 		for (let [key, value] of Object.entries(input)) {
-			str =
-				str +
-				" " +
-				linebreaker +
-				" " +
-				spacer +
-				" " +
-				key.humanize() +
-				" = ";
+			str = str + " " + linebreaker + " " + spacer + " " + key.humanize() + " = "
 			if (JSON.isJSON(value)) {
-				str = str + JSON.readable(value);
+				str = str + JSON.readable(value)
 			} else if (Array.isArray(value)) {
-				str = str + "Array(";
-				const last_index = value.length > 0 ? value.length - 1 : 0;
+				str = str + "Array("
+				const last_index = value.length > 0 ? value.length - 1 : 0
 				for (var i = 0; i <= last_index; i++) {
 					if (JSON.isJSON(value[i])) {
-						str =
-							str +
-							JSON.readable(value[i]) +
-							(i < last_index ? ", " : "");
+						str = str + JSON.readable(value[i]) + (i < last_index ? ", " : "")
 					} else {
-						str =
-							str +
-							new String(value) +
-							(i < last_index ? ", " : "");
+						str = str + new String(value) + (i < last_index ? ", " : "")
 					}
 				}
-				str = str + ")";
+				str = str + ")"
 			} else if (Boolean.isBoolean(value)) {
-				str = str + (value ? "Yes" : "No");
+				str = str + (value ? "Yes" : "No")
 			} else {
-				str = str + new String(value);
+				str = str + new String(value)
 			}
-			str = str + linebreaker;
+			str = str + linebreaker
 		}
-		str = str + linebreaker + ")";
+		str = str + linebreaker + ")"
 	}
-	return str;
-};
+	return str
+}
 
-if (JSON.indexOf) {}
+if (JSON.indexOf) {
+}
 
 JSON.positionOfKey = function (object, key) {
-	let position = -1;
+	let position = -1
 	if (JSON.isJSON(object)) {
-		let keys = Object.keys(object);
-		position = keys.indexOf(key);
+		let keys = Object.keys(object)
+		position = keys.indexOf(key)
 	}
-	return position;
-};
+	return position
+}
 
 JSON.keyOf = function (object, value) {
-	let key = null;
+	let key = null
 	if (JSON.isJSON(object)) {
-		let values = Object.values(object);
-		let position = values.indexOf(value);
-		key = position !== -1 ? Object.keys(object)[position] : null;
+		let values = Object.values(object)
+		let position = values.indexOf(value)
+		key = position !== -1 ? Object.keys(object)[position] : null
 	}
-	return key;
-};
+	return key
+}
 
-if (JSON.moveKey) {}
+if (JSON.moveKey) {
+}
 JSON.moveKey = function (object, key, position = 0) {
-	let newObject = {};
+	let newObject = {}
 	if (JSON.isJSON(object)) {
-		newObject = {};
-		let object_keys_arr = Object.keys(object);
-		let current_position = object_keys_arr.indexOf(key);
+		newObject = {}
+		let object_keys_arr = Object.keys(object)
+		let current_position = object_keys_arr.indexOf(key)
 		if (current_position !== -1) {
 			if (current_position === position) {
-				newObject = object;
+				newObject = object
 			} else {
-				let cutOut = object_keys_arr.splice(current_position, 1)[0]; // cut the element at index 'current_position'
-				object_keys_arr.splice(position, 0, cutOut);
+				let cutOut = object_keys_arr.splice(current_position, 1)[0] // cut the element at index 'current_position'
+				object_keys_arr.splice(position, 0, cutOut)
 
-				newObject = {};
+				newObject = {}
 				for (let i = 0; i < object_keys_arr.length; i++) {
-					newObject[object_keys_arr[i]] = object[object_keys_arr[i]];
+					newObject[object_keys_arr[i]] = object[object_keys_arr[i]]
 				}
 			}
 		} else {
-			newObject = object;
+			newObject = object
 		}
 	}
 
-	return newObject;
-};
-
-
-
-
+	return newObject
+}
 
 /**
  * Deep merge two objects.
@@ -892,7 +770,7 @@ JSON.moveKey = function (object, key, position = 0) {
  * @param ...sources
  */
 const deepMerge = function (target, ...sources) {
-	if (!sources.length) return target;
+	if (!sources.length) return target
 	/*
 	sources = JSON.parse(sources);
 	const source = sources.shift(sources);
@@ -910,70 +788,67 @@ const deepMerge = function (target, ...sources) {
 
 	return deepMerge(target, ...sources);*/
 	if (JSON.isJSON(target)) {
-		return lodash.merge(target, ...sources);
+		return lodash.merge(target, ...sources)
 	}
-	return {};
+	return {}
 }
-JSON.merge = deepMerge;
-JSON.deepMerge = deepMerge;
+JSON.merge = deepMerge
+JSON.deepMerge = deepMerge
 
 JSON.updateJSON = function (original = {}, updater = {}) {
-	let newObject = {};
+	let newObject = {}
 	if (JSON.isJSON(original) && JSON.isJSON(updater)) {
-		newObject = JSON.fromJSON(original);
+		newObject = JSON.fromJSON(original)
 
 		for (let [key, value] of Object.entries(original)) {
 			if (key in updater) {
-				newObject[key] = updater[key];
+				newObject[key] = updater[key]
 			}
 		}
 	}
-	return newObject;
-};
+	return newObject
+}
 JSON.removeProperty = function (input, key) {
-	let newObject = {};
+	let newObject = {}
 	if (JSON.isJSON(input)) {
-		newObject = JSON.fromJSON(input);
-		delete newObject[key];
+		newObject = JSON.fromJSON(input)
+		delete newObject[key]
 	}
-	return newObject;
-};
+	return newObject
+}
 
 JSON.isEmpty = function (target) {
 	if (JSON.isJSON(target)) {
-		return Object.keys(target).length > 0 ? false : true;
+		return Object.keys(target).length > 0 ? false : true
 	}
-	return true;
-};
+	return true
+}
 
-JSON.getDeepPropertyValue = function (deepKey, target, defaultValue=undefined) {
-	var value = undefined;
+JSON.getDeepPropertyValue = function (deepKey, target, defaultValue = undefined) {
+	var value = undefined
 	if (String.isString(deepKey) && !String.isEmpty(deepKey) && !JSON.isEmpty(target)) {
-		var deepKeyArr = deepKey.trim().split(".");
-		var obj = target;
-		var lastIndex = deepKeyArr.length - 1;
+		var deepKeyArr = deepKey.trim().split(".")
+		var obj = target
+		var lastIndex = deepKeyArr.length - 1
 		for (var i = 0; i <= lastIndex; i++) {
-
 			if (i < lastIndex) {
 				obj = obj[deepKeyArr[i]]
-				let nextDeepKey = deepKeyArr.slice((i + 1)).join(".");
+				let nextDeepKey = deepKeyArr.slice(i + 1).join(".")
 				if (!JSON.isJSON(obj)) {
 					obj = {}
 				}
-				value = JSON.getDeepPropertyValue(nextDeepKey, obj);
+				value = JSON.getDeepPropertyValue(nextDeepKey, obj)
+			} else {
+				value = obj[deepKeyArr[i]] || defaultValue
 			}
-			else {
-				value = obj[deepKeyArr[i]] || defaultValue;
-			}
-
 		}
 	}
 
-	return value;
-};
+	return value
+}
 
 JSON.setDeepPropertyValue = (deepKey, value, target = {}) => {
-	let newObj = JSON.fromJSON(target);
+	let newObj = JSON.fromJSON(target)
 
 	if (!String.isEmpty(deepKey)) {
 		const [head, ...rest] = deepKey.trim().split(".")
@@ -984,25 +859,19 @@ JSON.setDeepPropertyValue = (deepKey, value, target = {}) => {
 			if (!JSON.isJSON(newObj[head])) {
 				newObj[head] = {}
 			}
-			newObj[head] = JSON.setDeepPropertyValue(
-				rest.join("."),
-				value,
-				newObj[head]
-			)
+			newObj[head] = JSON.setDeepPropertyValue(rest.join("."), value, newObj[head])
 		} else {
 			newObj[head] = value
 		}
 	}
 
-
 	return newObj
-};
-
+}
 
 if (JSON.get) {
 	console.warn("Overrinding existing property JSON.get")
 }
-JSON.get = get;
+JSON.get = get
 
 Date.prototype.format = function (format) {
 	//PHP's date format function Javascript emulation
@@ -1051,211 +920,167 @@ Date.prototype.format = function (format) {
 	U	Seconds since the Unix Epoch (January 1 1970 00:00:00 GMT)	See also time()
 
 	*/
-	var returnStr = "";
-	var replace = Date.replaceChars;
+	var returnStr = ""
+	var replace = Date.replaceChars
 	for (var i = 0; i < format.length; i++) {
-		var curChar = format.charAt(i);
+		var curChar = format.charAt(i)
 		if (i - 1 >= 0 && format.charAt(i - 1) == "\\") {
-			returnStr += curChar;
+			returnStr += curChar
 		} else if (replace[curChar]) {
-			returnStr += replace[curChar].call(this);
+			returnStr += replace[curChar].call(this)
 		} else if (curChar != "\\") {
-			returnStr += curChar;
+			returnStr += curChar
 		}
 	}
-	return returnStr;
-};
+	return returnStr
+}
 
 Date.format = (input, format) => {
-	let result = input;
+	let result = input
 	try {
-		let date = new Date(input);
+		let date = new Date(input)
 		result = date.format(format)
 	} catch (error) {
 		console.error("Date.format error", error)
 	}
 
-	// console.log("Date.format input", input, "result", result)
-	return result;
+	return result
 }
 
 Date.replaceChars = {
-	shortMonths: [
-		"Jan",
-		"Feb",
-		"Mar",
-		"Apr",
-		"May",
-		"Jun",
-		"Jul",
-		"Aug",
-		"Sep",
-		"Oct",
-		"Nov",
-		"Dec",
-	],
-	longMonths: [
-		"January",
-		"February",
-		"March",
-		"April",
-		"May",
-		"June",
-		"July",
-		"August",
-		"September",
-		"October",
-		"November",
-		"December",
-	],
+	shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+	longMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 	shortDays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-	longDays: [
-		"Sunday",
-		"Monday",
-		"Tuesday",
-		"Wednesday",
-		"Thursday",
-		"Friday",
-		"Saturday",
-	],
+	longDays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 
 	// Day
 	d: function () {
-		return (this.getDate() < 10 ? "0" : "") + this.getDate();
+		return (this.getDate() < 10 ? "0" : "") + this.getDate()
 	},
 	D: function () {
-		return Date.replaceChars.shortDays[this.getDay()];
+		return Date.replaceChars.shortDays[this.getDay()]
 	},
 	j: function () {
-		return this.getDate();
+		return this.getDate()
 	},
 	l: function () {
-		return Date.replaceChars.longDays[this.getDay()];
+		return Date.replaceChars.longDays[this.getDay()]
 	},
 	N: function () {
-		return this.getDay() + 1;
+		return this.getDay() + 1
 	},
 	S: function () {
 		return this.getDate() % 10 == 1 && this.getDate() != 11
 			? "st"
 			: this.getDate() % 10 == 2 && this.getDate() != 12
-				? "nd"
-				: this.getDate() % 10 == 3 && this.getDate() != 13
-					? "rd"
-					: "th";
+			? "nd"
+			: this.getDate() % 10 == 3 && this.getDate() != 13
+			? "rd"
+			: "th"
 	},
 	w: function () {
-		return this.getDay();
+		return this.getDay()
 	},
 	z: function () {
-		var d = new Date(this.getFullYear(), 0, 1);
-		return Math.ceil((this - d) / 86400000);
+		var d = new Date(this.getFullYear(), 0, 1)
+		return Math.ceil((this - d) / 86400000)
 	}, // Fixed now
 	// Week
 	W: function () {
-		var d = new Date(this.getFullYear(), 0, 1);
-		return Math.ceil(((this - d) / 86400000 + d.getDay() + 1) / 7);
+		var d = new Date(this.getFullYear(), 0, 1)
+		return Math.ceil(((this - d) / 86400000 + d.getDay() + 1) / 7)
 	}, // Fixed now
 	// Month
 	F: function () {
-		return Date.replaceChars.longMonths[this.getMonth()];
+		return Date.replaceChars.longMonths[this.getMonth()]
 	},
 	m: function () {
-		return (this.getMonth() < 9 ? "0" : "") + (this.getMonth() + 1);
+		return (this.getMonth() < 9 ? "0" : "") + (this.getMonth() + 1)
 	},
 	M: function () {
-		return Date.replaceChars.shortMonths[this.getMonth()];
+		return Date.replaceChars.shortMonths[this.getMonth()]
 	},
 	MMM: function () {
-		return Date.replaceChars.shortMonths[this.getMonth()];
+		return Date.replaceChars.shortMonths[this.getMonth()]
 	},
 	n: function () {
-		return this.getMonth() + 1;
+		return this.getMonth() + 1
 	},
 	t: function () {
-		var d = new Date();
-		return new Date(d.getFullYear(), d.getMonth(), 0).getDate();
+		var d = new Date()
+		return new Date(d.getFullYear(), d.getMonth(), 0).getDate()
 	}, // Fixed now, gets #days of date
 	// Year
 	L: function () {
-		var year = this.getFullYear();
-		return year % 400 == 0 || (year % 100 != 0 && year % 4 == 0);
+		var year = this.getFullYear()
+		return year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)
 	}, // Fixed now
 	o: function () {
-		var d = new Date(this.valueOf());
-		d.setDate(d.getDate() - ((this.getDay() + 6) % 7) + 3);
-		return d.getFullYear();
+		var d = new Date(this.valueOf())
+		d.setDate(d.getDate() - ((this.getDay() + 6) % 7) + 3)
+		return d.getFullYear()
 	}, //Fixed now
 	Y: function () {
-		return this.getFullYear();
+		return this.getFullYear()
 	},
 	yyyy: function () {
-		return this.getFullYear();
+		return this.getFullYear()
 	},
 	y: function () {
-		return ("" + this.getFullYear()).substr(2);
+		return ("" + this.getFullYear()).substr(2)
 	},
 	// Time
 	a: function () {
-		return this.getHours() < 12 ? "am" : "pm";
+		return this.getHours() < 12 ? "am" : "pm"
 	},
 	A: function () {
-		return this.getHours() < 12 ? "AM" : "PM";
+		return this.getHours() < 12 ? "AM" : "PM"
 	},
 	B: function () {
-		return Math.floor(
-			((((this.getUTCHours() + 1) % 24) +
-				this.getUTCMinutes() / 60 +
-				this.getUTCSeconds() / 3600) *
-				1000) /
-			24
-		);
+		return Math.floor(((((this.getUTCHours() + 1) % 24) + this.getUTCMinutes() / 60 + this.getUTCSeconds() / 3600) * 1000) / 24)
 	}, // Fixed now
 	g: function () {
-		return this.getHours() % 12 || 12;
+		return this.getHours() % 12 || 12
 	},
 	G: function () {
-		return this.getHours();
+		return this.getHours()
 	},
 	h: function () {
-		return (
-			((this.getHours() % 12 || 12) < 10 ? "0" : "") +
-			(this.getHours() % 12 || 12)
-		);
+		return ((this.getHours() % 12 || 12) < 10 ? "0" : "") + (this.getHours() % 12 || 12)
 	},
 	H: function () {
-		return (this.getHours() < 10 ? "0" : "") + this.getHours();
+		return (this.getHours() < 10 ? "0" : "") + this.getHours()
 	},
 	i: function () {
-		return (this.getMinutes() < 10 ? "0" : "") + this.getMinutes();
+		return (this.getMinutes() < 10 ? "0" : "") + this.getMinutes()
 	},
 	s: function () {
-		return (this.getSeconds() < 10 ? "0" : "") + this.getSeconds();
+		return (this.getSeconds() < 10 ? "0" : "") + this.getSeconds()
 	},
 	u: function () {
-		var m = this.getMilliseconds();
-		return (m < 10 ? "00" : m < 100 ? "0" : "") + m;
+		var m = this.getMilliseconds()
+		return (m < 10 ? "00" : m < 100 ? "0" : "") + m
 	},
 	// Timezone
 	e: function () {
-		return "Not Yet Supported";
+		return "Not Yet Supported"
 	},
 	I: function () {
-		var DST = null;
+		var DST = null
 		for (var i = 0; i < 12; ++i) {
-			var d = new Date(this.getFullYear(), i, 1);
-			var offset = d.getTimezoneOffset();
+			var d = new Date(this.getFullYear(), i, 1)
+			var offset = d.getTimezoneOffset()
 
 			if (DST === null) {
-				DST = offset;
+				DST = offset
 			} else if (offset < DST) {
-				DST = offset;
-				break;
+				DST = offset
+				break
 			} else if (offset > DST) {
-				break;
+				break
 			}
 		}
-		return (this.getTimezoneOffset() == DST) | 0;
+		return (this.getTimezoneOffset() == DST) | 0
 	},
 	O: function () {
 		return (
@@ -1263,7 +1088,7 @@ Date.replaceChars = {
 			(Math.abs(this.getTimezoneOffset() / 60) < 10 ? "0" : "") +
 			Math.abs(this.getTimezoneOffset() / 60) +
 			"00"
-		);
+		)
 	},
 	P: function () {
 		return (
@@ -1271,106 +1096,105 @@ Date.replaceChars = {
 			(Math.abs(this.getTimezoneOffset() / 60) < 10 ? "0" : "") +
 			Math.abs(this.getTimezoneOffset() / 60) +
 			":00"
-		);
+		)
 	}, // Fixed now
 	T: function () {
-		var m = this.getMonth();
-		this.setMonth(0);
-		var result = this.toTimeString().replace(/^.+ \(?([^\)]+)\)?$/, "$1");
-		this.setMonth(m);
-		return result;
+		var m = this.getMonth()
+		this.setMonth(0)
+		var result = this.toTimeString().replace(/^.+ \(?([^\)]+)\)?$/, "$1")
+		this.setMonth(m)
+		return result
 	},
 	Z: function () {
-		return -this.getTimezoneOffset() * 60;
+		return -this.getTimezoneOffset() * 60
 	},
 	// Full Date/Time
 	c: function () {
-		return this.format("Y-m-d\\TH:i:sP");
+		return this.format("Y-m-d\\TH:i:sP")
 	}, // Fixed now
 	r: function () {
-		return this.toString();
+		return this.toString()
 	},
 	U: function () {
-		return this.getTime() / 1000;
+		return this.getTime() / 1000
 	},
 	since: function () {
-		let startTime = this.getTime();
-		let endTime = performance.now();
-		var timeDiff = endTime - startTime; //in ms
+		let startTime = this.getTime()
+		let endTime = performance.now()
+		var timeDiff = endTime - startTime //in ms
 		// strip the ms
-		timeDiff /= 1000;
+		timeDiff /= 1000
 		// get seconds
-		let seconds = Math.round(timeDiff);
+		let seconds = Math.round(timeDiff)
 
-		function secondsToDHms (secs) {
-			secs = Number(secs);
+		function secondsToDHms(secs) {
+			secs = Number(secs)
 
-			var d = Math.floor(secs / (3600 * 24));
-			var h = Math.floor(secs % (3600 * 24) / 3600);
-			var m = Math.floor(secs % 3600 / 60);
-			var s = Math.floor(secs % 60);
+			var d = Math.floor(secs / (3600 * 24))
+			var h = Math.floor((secs % (3600 * 24)) / 3600)
+			var m = Math.floor((secs % 3600) / 60)
+			var s = Math.floor(secs % 60)
 			return {
 				days: d,
 				hrs: h,
 				mins: m,
 				secs: s,
-			};
+			}
 		}
 
-		return secondsToDHms(seconds);
+		return secondsToDHms(seconds)
 	},
-};
+}
 
 Date.prototype.addDays = function (days) {
-	this.setDate(this.getDate() + days);
-	return this;
-};
+	this.setDate(this.getDate() + days)
+	return this
+}
 
 Date.prototype.addHours = function (hrs) {
-	this.setTime(this.getTime() + hrs * 3600000);
-	return this;
-};
+	this.setTime(this.getTime() + hrs * 3600000)
+	return this
+}
 
 Date.prototype.addMinutes = function (min) {
-	this.setTime(this.getTime() + min * 60000);
-	return this;
-};
+	this.setTime(this.getTime() + min * 60000)
+	return this
+}
 
 Date.prototype.addSeconds = function (sec) {
-	this.setTime(this.getTime() + sec * 1000);
-	return this;
-};
+	this.setTime(this.getTime() + sec * 1000)
+	return this
+}
 
 Date.prototype.addMilliSeconds = function (ms) {
-	this.setTime(this.getTime() + ms);
-	return this;
-};
+	this.setTime(this.getTime() + ms)
+	return this
+}
 
 Date.prototype.minusDays = function (days) {
-	this.setDate(this.getDate() - days);
-	return this;
-};
+	this.setDate(this.getDate() - days)
+	return this
+}
 
 Date.prototype.minusHours = function (hrs) {
-	this.setTime(this.getTime() - hrs * 3600000);
-	return this;
-};
+	this.setTime(this.getTime() - hrs * 3600000)
+	return this
+}
 
 Date.prototype.minusMinutes = function (min) {
-	this.setTime(this.getTime() - min * 60000);
-	return this;
-};
+	this.setTime(this.getTime() - min * 60000)
+	return this
+}
 
 Date.prototype.minusSeconds = function (sec) {
-	this.setTime(this.getTime() - sec * 1000);
-	return this;
-};
+	this.setTime(this.getTime() - sec * 1000)
+	return this
+}
 
 Date.prototype.minusMilliSeconds = function (ms) {
-	this.setTime(this.getTime() - ms);
-	return this;
-};
-
+	this.setTime(this.getTime() - ms)
+	return this
+}
 
 Date.difference = function (date1, date2 = new Date()) {
 	date1 = Date.parseFrom(date1)
@@ -1391,34 +1215,34 @@ Date.difference = function (date1, date2 = new Date()) {
 	}
 
 	if (Date.isDate(date1) && Date.isDate(date2)) {
-		const secondMs = 1000;
-		const minuteMs = secondMs * 60;
-		const hourMs = minuteMs * 60;
-		const dayMs = hourMs * 24;
-		const weekMs = dayMs * 7;
-		const monthMs = dayMs * 30;
-		const yearMs = dayMs * 365;
+		const secondMs = 1000
+		const minuteMs = secondMs * 60
+		const hourMs = minuteMs * 60
+		const dayMs = hourMs * 24
+		const weekMs = dayMs * 7
+		const monthMs = dayMs * 30
+		const yearMs = dayMs * 365
 
-		let differenceMs = date2.getTime() - date1.getTime();
+		let differenceMs = date2.getTime() - date1.getTime()
 		if (differenceMs < 0) {
-			difference.type = "past";
+			difference.type = "past"
 		}
-		differenceMs = differenceMs < 0 ? (0 - differenceMs) : differenceMs
-		var years = Math.floor(differenceMs / 3.154e+10);
-		var durationMinusYears = differenceMs - (years * 3.154e+10);
-		var months = Math.floor(differenceMs / 2.628e+9) % 12;
-		var durationMinusMonths = durationMinusYears - (months * 2.628e+9);
-		var weeks = Math.floor(durationMinusMonths / weekMs);
-		var durationMinusWeeks = durationMinusMonths - (weeks * weekMs);
-		var days = Math.floor(durationMinusWeeks / dayMs);
-		var durationMinusDays = durationMinusWeeks - (days * dayMs);
-		var hours = Math.floor(durationMinusDays / hourMs);
-		var durationMinusHours = durationMinusDays - (hours * hourMs);
-		var minutes = Math.floor(durationMinusHours / hourMs);
-		var durationMinusMinutes = durationMinusHours - (minutes * minuteMs);
-		var seconds = Math.floor(durationMinusMinutes / secondMs);
-		var durationMinusSeconds = durationMinusMinutes - (seconds * secondMs);
-		var milliseconds = durationMinusSeconds;
+		differenceMs = differenceMs < 0 ? 0 - differenceMs : differenceMs
+		var years = Math.floor(differenceMs / 3.154e10)
+		var durationMinusYears = differenceMs - years * 3.154e10
+		var months = Math.floor(differenceMs / 2.628e9) % 12
+		var durationMinusMonths = durationMinusYears - months * 2.628e9
+		var weeks = Math.floor(durationMinusMonths / weekMs)
+		var durationMinusWeeks = durationMinusMonths - weeks * weekMs
+		var days = Math.floor(durationMinusWeeks / dayMs)
+		var durationMinusDays = durationMinusWeeks - days * dayMs
+		var hours = Math.floor(durationMinusDays / hourMs)
+		var durationMinusHours = durationMinusDays - hours * hourMs
+		var minutes = Math.floor(durationMinusHours / hourMs)
+		var durationMinusMinutes = durationMinusHours - minutes * minuteMs
+		var seconds = Math.floor(durationMinusMinutes / secondMs)
+		var durationMinusSeconds = durationMinusMinutes - seconds * secondMs
+		var milliseconds = durationMinusSeconds
 
 		// differenceMs = differenceMs < 0 ? (0 - differenceMs) : differenceMs
 		// var years = Math.floor(differenceMs / yearMs);
@@ -1434,40 +1258,34 @@ Date.difference = function (date1, date2 = new Date()) {
 		// var minutes = Math.floor(differenceMs / minuteMs);
 		// differenceMs = differenceMs - (minutes * minuteMs);
 		// var seconds = Math.floor(differenceMs / secondMs);
-		var milliseconds = differenceMs - (seconds * secondMs);
+		var milliseconds = differenceMs - seconds * secondMs
 
+		difference.value = date2.getTime() - date1.getTime()
 
-
-
-
-		difference.value = date2.getTime() - date1.getTime();
-
-		difference.years = (years);
-		difference.months = (months);
-		difference.weeks = weeks;
-		difference.days = days;
-		difference.hours = (hours);
-		difference.minutes = (minutes);
-		difference.seconds = (seconds);
+		difference.years = years
+		difference.months = months
+		difference.weeks = weeks
+		difference.days = days
+		difference.hours = hours
+		difference.minutes = minutes
+		difference.seconds = seconds
 		difference.milliseconds = milliseconds
 		difference.same_hour = differenceMs <= hourMs
 		difference.same_day = differenceMs <= dayMs && date1.getDay() == date2.getDay()
 		difference.same_month = differenceMs <= monthMs && date1.getMonth() == date2.getMonth()
 	}
 
-
-	return difference;
-};
+	return difference
+}
 Date.prototype.difference = function (targetdate) {
-	return Date.difference(this, targetdate);
-};
+	return Date.difference(this, targetdate)
+}
 
 Date.isDate = function (target) {
-	return target && Object.prototype.toString.call(target) === "[object Date]" && !isNaN(target);
-};
+	return target && Object.prototype.toString.call(target) === "[object Date]" && !isNaN(target)
+}
 
-
-Date.timeago = function (nd, s, suffs={}) {
+Date.timeago = function (nd, s, suffs = {}) {
 	let suffixes = { past: " ago", future: " from now", ...suffs }
 	var o = {
 		second: 1000,
@@ -1481,9 +1299,7 @@ Date.timeago = function (nd, s, suffs={}) {
 	var r = Math.round,
 		dir = suffixes.ago,
 		pl = function (v, n) {
-			return s === undefined
-				? n + " " + v + (n > 1 ? "s" : "") + dir
-				: n + v.substring(0, 1)
+			return s === undefined ? n + " " + v + (n > 1 ? "s" : "") + dir : n + v.substring(0, 1)
 		},
 		ts = Date.now() - new Date(nd).getTime(),
 		ii
@@ -1498,28 +1314,25 @@ Date.timeago = function (nd, s, suffs={}) {
 	return pl(i, r(ts / o[i]))
 }
 
-
 Date.parseFrom = function (input, defaultDate = null) {
-	let date = defaultDate;
+	let date = defaultDate
 	if (!!input) {
 		if (Date.isDate(input)) {
 			date = input
 		}
 		try {
-			let ms = Date.parse(input);
-			date = new Date(ms);
+			let ms = Date.parse(input)
+			date = new Date(ms)
 		} catch (e) {
-			console.error("Date.from error", e);
+			console.error("Date.parseFrom error", e)
 		}
 	}
-	// console.log("Date.from date", date);
-	return date;
-};
+	return date
+}
 
-
-Date.prose = function (input = null, showTime=true, ) {
+Date.prose = function (input = null, showTime = true) {
 	let date = new Date()
-	let dateProse = null;
+	let dateProse = null
 	if (!!input) {
 		if (Date.isDate(input)) {
 			date = input
@@ -1528,48 +1341,28 @@ Date.prose = function (input = null, showTime=true, ) {
 			let ms = Date.parse(input)
 			date = new Date(ms)
 			let difference = Date.difference(date)
-			if (
-				difference.years > 0 ||
-				difference.months > 0 ||
-				difference.weeks > 0
-			) {
-				dateProse = `${Date.format(date, "F d, Y")}${
-					showTime ? Date.format(date, " h:i a") : ""
-				}`
+			if (difference.years > 0 || difference.months > 0 || difference.weeks > 0) {
+				dateProse = `${Date.format(date, "F d, Y")}${showTime ? Date.format(date, " h:i a") : ""}`
 			} else if (difference.days > 1) {
-				dateProse = `${Date.format(date, "l")}${
-					showTime ? Date.format(date, " h:i a") : ""
-				}`
+				dateProse = `${Date.format(date, "l")}${showTime ? Date.format(date, " h:i a") : ""}`
 			} else if (difference.days === 1) {
-				dateProse = `Yesterday${
-					showTime ? Date.format(date, " h:i a") : ""
-				}`
+				dateProse = `Yesterday${showTime ? Date.format(date, " h:i a") : ""}`
 			} else {
-
 				if (date.format("Y M d") !== new Date().format("Y M d")) {
-					// console.log("prose date ", date)
-					// console.log("prose difference ", difference)
-					dateProse = `Yesterday${
-						showTime ? Date.format(date, " h:i a") : ""
-					}`
+					dateProse = `Yesterday${showTime ? Date.format(date, " h:i a") : ""}`
+				} else {
+					dateProse = `Today${showTime ? Date.format(date, " h:i a") : ""}`
 				}
-				else {
-					dateProse = `Today${
-						showTime ? Date.format(date, " h:i a") : ""
-					}`
-				}
-
 			}
 		} catch (e) {
-			console.error("Date.from error", e)
+			console.error("Date.prose error", e)
 		}
 	}
 
 	return dateProse
 }
 
-
-Event.isEvent = (a) => {
+Event.isEvent = a => {
 	let txt,
 		es = false
 	txt = Object.prototype.toString.call(a).split("").reverse().join("")

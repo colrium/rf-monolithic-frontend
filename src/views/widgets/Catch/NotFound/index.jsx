@@ -1,9 +1,9 @@
 /** @format */
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import LazyImage from "components/LazyImage";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import React from "react";
 
 import { Api as ApiService } from "services";
@@ -13,14 +13,14 @@ class NotFound extends React.Component {
 		const { image = ("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/not_found.svg"), title, description, color } = this.props;
 
 		return (
-			<GridContainer
+			<Grid container
 				direction="row"
 				justify="center"
 				alignItems="center"
 				className="h-full"
 			>
-				<GridItem xs={12} md={8} lg={6}>
-					<GridContainer
+				<Grid item  xs={12} md={8} lg={6}>
+					<Grid container
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -30,9 +30,9 @@ class NotFound extends React.Component {
 							style={{ width: "50%" }}
 							src={image}
 						/>
-					</GridContainer>
+					</Grid>
 
-					<GridContainer
+					<Grid container
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -40,9 +40,9 @@ class NotFound extends React.Component {
 						<Typography variant="h1" color={color}>
 							{title}
 						</Typography>
-					</GridContainer>
+					</Grid>
 
-					<GridContainer
+					<Grid container
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -50,9 +50,9 @@ class NotFound extends React.Component {
 						<Typography variant="body1" color={color}>
 							{description}
 						</Typography>
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

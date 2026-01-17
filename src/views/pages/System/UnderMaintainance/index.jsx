@@ -3,9 +3,9 @@
 
 import { app } from "assets/jss/app-theme";
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React from "react";
 //Context Views Imports
@@ -25,14 +25,14 @@ class Page extends React.Component {
 	render() {
 
 		return (
-			<GridContainer
+			<Grid container
 				direction="row"
 				justify="center"
 				alignItems="center"
 				style={{ height: "80vh" }}
 			>
-				<GridItem xs={12} md={8} lg={6}>
-					<GridContainer
+				<Grid item  xs={12} md={8} lg={6}>
+					<Grid container
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -43,9 +43,9 @@ class Page extends React.Component {
 						>
 							Resource Under Development
 						</Typography>
-					</GridContainer>
+					</Grid>
 
-					<GridContainer
+					<Grid container
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -56,9 +56,9 @@ class Page extends React.Component {
 							style={{ width: "80%" }}
 							src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/under_development.svg")}
 						/>
-					</GridContainer>
+					</Grid>
 
-					<GridContainer
+					<Grid container
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -67,9 +67,9 @@ class Page extends React.Component {
 							We are still developing this resource, please check
 							back soon
 						</Typography>
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

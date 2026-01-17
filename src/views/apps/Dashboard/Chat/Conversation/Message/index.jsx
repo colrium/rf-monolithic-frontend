@@ -385,21 +385,29 @@ const Message = React.forwardRef((props, ref) => {
 
 					{!messageDeleted && (
 						<Stack className="flex flex-col" ref={visibilityRef}>
+							{contentHasUrl && (
+								<LinkPreview
+									width="100%"
+									height={linkHeight}
+									className="p-0"
+									imageHeight={10}
+									descriptionLength={100}
+									url={String.getContainedUrl(message.content)[0]}
+									openInNewTab
+								/>
+							)}
 							<Stack direction="row" spacing={2} className="p-0 max-w-full ">
-								<Stack direction="column" className={`m-0 p-0 max-w-full flex flex-col ${contentHasUrl ? "pt-1" : ""}`}>
-									{contentHasUrl && (
-										<LinkPreview
-											width="100%"
-											height={linkHeight}
-											className="p-0"
-											imageHeight={10}
-											descriptionLength={100}
-											url={String.getContainedUrl(message.content)[0]}
-											openInNewTab
-										/>
-									)}
+								<Stack direction="column" className={`m-0 p-0 flex-1 flex flex-col  ${contentHasUrl ? "pt-1" : ""}`}>
 									<Typography variant="body1" color="textPrimary" component="div" className="flex-1 leading-normal">
-										<Linkify properties={{ className: `text-blue-500` }}>{content}</Linkify>
+										<Linkify
+											properties={{
+												href: Linkify.MATCH,
+												key: "LINKIFY_KEY_#",
+												className: `text-blue-500`,
+											}}
+										>
+											{content}
+										</Linkify>
 									</Typography>
 									{/* <Linkify className="flex-1 leading-normal">{content}</Linkify> */}
 								</Stack>

@@ -1,10 +1,10 @@
 /** @format */
 
 import Check from "@mui/icons-material/Check";
-import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 
 
@@ -12,14 +12,14 @@ class Step extends React.Component {
 	render() {
 		const { onComplete, onCancel } = this.props;
 		return (
-			<GridContainer className="p-0 m-0 inline-block h-auto">
-				<GridContainer className="p-0 m-0">
-					<GridItem xs={12}>
+			<Grid container className="p-0 m-0 inline-block h-auto">
+				<Grid container className="p-0 m-0">
+					<Grid item  xs={12}>
 						<Typography variant="h3" className="primary_text">
 							Commission your survey with Realfield!
 						</Typography>
-					</GridItem>
-					<GridItem xs={12}>
+					</Grid>
+					<Grid item  xs={12}>
 						<Typography
 							variant="body1"
 							className="default_text mb-4"
@@ -43,11 +43,11 @@ class Step extends React.Component {
 							then sit back, relax and let us do the heavy
 							lifting.
 						</Typography>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
-				<GridContainer className="p-0 m-0">
-					<GridItem xs={12} md={6}>
+				<Grid container className="p-0 m-0">
+					<Grid item  xs={12} md={6}>
 						<Button
 							onClick={onComplete}
 							className="sm:w-full md:w-auto "
@@ -56,9 +56,9 @@ class Step extends React.Component {
 						>
 							<Check /> Lets get started
 						</Button>
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} md={6}>
+					<Grid item  xs={12} md={6}>
 						<Button
 							onClick={onCancel}
 							className="sm:w-full md:w-auto float-right"
@@ -67,9 +67,9 @@ class Step extends React.Component {
 						>
 							<Check /> Request Proposal
 						</Button>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

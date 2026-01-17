@@ -66,7 +66,6 @@ function Chat(props) {
 							item.started_by?._id === user?._id))
 			)
 			.last()
-		// console.log("Chat existingConversation", existingConversation)
 		if (!!existingConversation) {
 			dispatch(setActiveConversation(existingConversation))
 			setState({ loading: false })
@@ -122,7 +121,6 @@ function Chat(props) {
 
 	useEffect(() => {
 		if (!String.isEmpty(withRecipient)) {
-			console.log("searchParams", searchParams)
 			handleWithRecipient(withRecipient)
 
 		}

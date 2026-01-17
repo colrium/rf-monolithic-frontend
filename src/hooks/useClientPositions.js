@@ -1,24 +1,24 @@
 /** @format */
+/*global google*/
 
 import { useCallback, useRef } from "react"
 import { useMap, useGeolocation } from "react-use"
 import { useNetworkServices } from "contexts"
 import { useSelector } from "react-redux"
 import ReactDOMServer from "react-dom/server"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from "@mui/material/Grid"
+
 import Avatar from "@mui/material/Avatar"
 import Typography from "@mui/material/Typography"
 import { ThemeProvider } from "@mui/material/styles"
 import { useDidMount, useDidUpdate, useSetState } from "hooks"
 import { theme } from "assets/jss/app-theme"
-import ApiService from "services/Api"
 import { PersonOutlined as UserIcon } from "@mui/icons-material"
 import Button from "@mui/material/Button"
 import Rating from "@mui/material/Rating"
 import { useSearchParams, useNavigate } from "react-router-dom"
 
-if (!!google) {
+if (typeof google !== "undefined") {
 	google.maps.Marker.prototype.animateTo = function (newPosition, options) {
 		var defaultOptions = {
 			duration: 1000,
@@ -122,19 +122,19 @@ if (!!google) {
 	}
 }
 
-
 const ClientInfoWindow = ({ user, position, ...rest }) => {
 	// const { preferences } = useSelector(state => state.app)
-	// const navigate = useNavigate()
+	const {Api} = useNetworkServices()
+
 	return (
 		<ThemeProvider theme={theme}>
-			<GridContainer style={{ maxWidth: 300 }}>
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+			<Grid container style={{ maxWidth: 300 }}>
+				<Grid item xs={12} className={"flex flex-row items-center"}>
 					{user?.avatar ? (
 						<Avatar
 							className="bg-transparent mr-4"
 							alt={user?.first_name}
-							src={ApiService.getAttachmentFileUrl(user?.avatar)}
+							src={Api.getAttachmentFileUrl(user?.avatar)}
 						/>
 					) : (
 						<Avatar className="bg-transparent  mr-4">
@@ -142,51 +142,51 @@ const ClientInfoWindow = ({ user, position, ...rest }) => {
 						</Avatar>
 					)}
 					<Typography variant="h5">{user?.first_name}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Gender:
 					</Typography>
 					<Typography variant="body1">{user?.gender ? user?.gender : "Unspecified"}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Course of Study:
 					</Typography>
 					<Typography variant="body1">{user?.course ? user?.course : "Unspecified"}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Tasks Completed:
 					</Typography>
 					<Typography variant="body1">{user?.noof_completed_tasks ? user?.noof_completed_tasks : "0"}</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center"}>
+				<Grid item xs={12} className={"flex flex-row items-center"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Uncompleted Tasks:
 					</Typography>
 					<Typography variant="body1">{user?.noof_uncompleted_tasks ? user?.noof_uncompleted_tasks : "0"}</Typography>
-				</GridItem>
-				<GridItem xs={12} className={"flex flex-col"}>
+				</Grid>
+				<Grid item xs={12} className={"flex flex-col"}>
 					<Typography className="mx-2 font-bold" variant="body1">
 						Rating
 					</Typography>
 					<Rating name="read-only" value={user?.rating ? user?.rating : 4} readOnly />
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className={"flex flex-row items-center justify-center"}>
+				<Grid item xs={12} className={"flex flex-row items-center justify-center"}>
 					<Button
 						href={("/messaging/conversations?with=" + user?.email_address).toUriWithDashboardPrefix()}
 						style={{ background: "#8C189B", color: "#FFFFFF" }}
 					>
 						Message Me
 					</Button>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		</ThemeProvider>
 	)
 }
@@ -276,7 +276,6 @@ const useClientPositions = options => {
 	const handleOnClientPositions = useCallback(
 		clientPositions => {
 			// reset()
-			console.log("handleOnClientPositions clientPositions", clientPositions)
 			if (Array.isArray(clientPositions)) {
 				clientPositions.map(clientPosition => handleOnClientPosition(clientPosition))
 			}
@@ -292,13 +291,18 @@ const useClientPositions = options => {
 		[markers, googleMap]
 	)
 
-	const handleOnSocketIOConnect = useCallback(
-		socket => {
-			// console.log("handleOnSocketIOConnect socket.id", socket.id)
-			SocketIO.emit("get-client-positions", { ...filter })
-		},
-		[filter]
-	)
+	const handleOnSocketIOConnect = useCallback(() => {
+		SocketIO.emit("get-client-positions", { ...filter })
+	}, [filter])
+	const handleOnSocketIODisconnect = useCallback(() => {
+		const currentState = getState()
+		Object.entries(currentState).map(([id, value]) => {
+			if (value.marker instanceof google.maps.Marker) {
+				value.marker.setMap(null)
+			}
+		})
+		setState({})
+	}, [])
 
 	const handleOnUserPresenceChanged = useCallback(({ user, presence }) => {
 		const position = get(user)
@@ -314,9 +318,9 @@ const useClientPositions = options => {
 	}, [])
 
 	useDidMount(() => {
-		var geolocationInterval = setInterval(() => {
-			handleOnGeoLocation({ longitude: 36.746521 + Math.random() * 0.001, latitude: -1.164471 + Math.random() * 0.001 })
-		}, 5000)
+		// var geolocationInterval = setInterval(() => {
+		// 	handleOnGeoLocation({ longitude: 36.746521 + Math.random() * 0.001, latitude: -1.164471 + Math.random() * 0.001 })
+		// }, 5000)
 		SocketIO.on("clients-positions", handleOnClientPositions)
 		SocketIO.on("new-client-position", handleOnClientPosition)
 		SocketIO.on("client-position-changed", handleOnClientPosition)
@@ -331,9 +335,9 @@ const useClientPositions = options => {
 		}
 
 		SocketIO.on("connect", handleOnSocketIOConnect)
+		SocketIO.on("disconnect", handleOnSocketIODisconnect)
 
 		return () => {
-			clearInterval(geolocationInterval)
 			SocketIO.off("clients-positions", handleOnClientPositions)
 			SocketIO.off("new-client-position", handleOnClientPosition)
 			SocketIO.off("client-position-changed", handleOnClientPosition)
@@ -356,8 +360,6 @@ const useClientPositions = options => {
 	}, [])
 
 	useDidUpdate(() => {
-		// SocketIO.emit("get-client-positions", { ...filter })
-
 		if (!geoLocation.loading) {
 			handleOnGeoLocation(geoLocation)
 		}

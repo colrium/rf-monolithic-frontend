@@ -79,7 +79,6 @@ const CustomRoute = React.forwardRef((props, ref) => {
 		}
 	})
 
-	console.log("routeElement", routeElement)
 	return <Route {...rest} element={routeElement} />
 });
 const mapStateToProps = state => ({

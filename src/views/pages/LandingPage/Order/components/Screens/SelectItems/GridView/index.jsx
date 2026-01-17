@@ -1,9 +1,9 @@
 /** @format */
 
 import Skeleton from '@mui/material/Skeleton';
-import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+;
 import LazyImage from "components/LazyImage";
 import ScrollBars from "components/ScrollBars";
 import React from "react";
@@ -72,10 +72,10 @@ class GridView extends React.Component {
 
 	render() {
 		return (
-			<GridContainer className="p-0 m-0">
+			<Grid container className="p-0 m-0">
 				{this.state.loading && (
-					<GridContainer className="flex-10">
-						<GridItem xs={12} md={6} lg={4}>
+					<Grid container className="flex-10">
+						<Grid item  xs={12} md={6} lg={4}>
 							<div className="bg-white shadow-xl rounded-lg flex flex-col overflow-hidden">
 								<Skeleton
 									variant="rect"
@@ -110,8 +110,8 @@ class GridView extends React.Component {
 									className="mt-8 mb-6 mx-auto rounded"
 								/>
 							</div>
-						</GridItem>
-						<GridItem xs={12} md={6} lg={4}>
+						</Grid>
+						<Grid item  xs={12} md={6} lg={4}>
 							<div className="bg-white shadow-xl rounded-lg flex flex-col overflow-hidden">
 								<Skeleton
 									variant="rect"
@@ -146,8 +146,8 @@ class GridView extends React.Component {
 									className="mt-8 mb-6 mx-auto rounded"
 								/>
 							</div>
-						</GridItem>
-						<GridItem xs={12} md={6} lg={4}>
+						</Grid>
+						<Grid item  xs={12} md={6} lg={4}>
 							<div className="bg-white shadow-xl rounded-lg flex flex-col overflow-hidden">
 								<Skeleton
 									variant="rect"
@@ -182,17 +182,17 @@ class GridView extends React.Component {
 									className="mt-8 mb-6 mx-auto rounded"
 								/>
 							</div>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 				)}
 
 				{!this.state.loading && Array.isArray(this.state.retailitems) && (
 					<ScrollBars className="flex-10 overflow-x-hidden overflow-y-scroll">
-						<GridContainer className="p-4 m-0">
+						<Grid container className="p-4 m-0">
 							{this.state.retailitems.map(
 								(retailitem, cursor) =>
 									retailitem.available && (
-										<GridItem
+										<Grid item
 											xs={12}
 											md={6}
 											lg={4}
@@ -260,13 +260,13 @@ class GridView extends React.Component {
 													</Button>
 												</div>
 											</div>
-										</GridItem>
+										</Grid>
 									)
 							)}
-						</GridContainer>
+						</Grid>
 					</ScrollBars>
 				)}
-			</GridContainer>
+			</Grid>
 		);
 	}
 }

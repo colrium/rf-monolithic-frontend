@@ -1,15 +1,19 @@
+# @format
+
 version: "3.7"
 services:
-    rf-fe-landingpage-production:
+    rf-fe-production:
         build:
             context: .
             dockerfile: Dockerfile.production
         container_name: rf-fe-production
         restart: unless-stopped
-        volumes:
-            - ./nginx:/nginx
+        # volumes:
+        #     - ./production:/usr/share/nginx/html
         networks:
             - proxy-bridge
+        ports:
+            - "5002:80"
 
 networks:
     proxy-bridge:

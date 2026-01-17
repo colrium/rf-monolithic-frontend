@@ -1,21 +1,18 @@
 /** @format */
-import React from "react";
-import { connect } from "react-redux";
-import Typography from "@mui/material/Typography";
-import { RadioInput, SelectInput } from "components/FormInputs";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import React from "react"
+import { connect } from "react-redux"
+import Typography from "@mui/material/Typography"
+import { RadioInput, SelectInput } from "components/FormInputs"
+import Grid from "@mui/material/Grid"
 import { EventRegister } from "utils"
-import { usePersistentForm, useDidUpdate } from "hooks"
-import { locales } from "config";
-
+import { usePersistentForm, useDidMount } from "hooks"
+import { locales } from "config"
 
 function Widget({ preferences }) {
-
 	const {
 		RadioGroup,
 		Autocomplete,
-		values,
+		observer$,
 		formState: { errors },
 	} = usePersistentForm({
 		name: "default-preferences",
@@ -25,22 +22,20 @@ function Widget({ preferences }) {
 			locale: preferences.locale || "en",
 		},
 	})
-
-
-	useDidUpdate(() => {
-		if (JSON.isEmpty(errors)) {
-			EventRegister.emit("change-preferences", { ...values })
-		}
-	}, [values])
-
+	useDidMount(() => {
+		const subscription = observer$.subscribe(formData => {
+			EventRegister.emit("change-preferences", { ...formData.values })
+		})
+		return () => subscription.unsubscribe()
+	})
 
 	return (
-		<GridContainer className="px-2">
-			<GridItem xs={12} className="mb-2">
+		<Grid container className="px-2">
+			<Grid item xs={12} className="mb-2">
 				<Typography variant="h3"> Preferences</Typography>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item xs={12} className="mb-4">
 				<RadioGroup
 					name="theme"
 					label="Theme"
@@ -49,9 +44,9 @@ function Widget({ preferences }) {
 						required: true,
 					}}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item xs={12} className="mb-4">
 				<Autocomplete
 					name="locale"
 					label="Locale"
@@ -60,12 +55,12 @@ function Widget({ preferences }) {
 						required: true,
 					}}
 				/>
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 }
 const mapStateToProps = state => ({
 	preferences: state.app.preferences || {},
 })
 
-export default (connect(mapStateToProps, {})(React.memo(Widget)));
+export default connect(mapStateToProps, {})(React.memo(Widget))

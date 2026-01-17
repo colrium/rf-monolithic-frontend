@@ -1,11 +1,11 @@
 /** @format */
 
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -15,20 +15,20 @@ class RequestError extends React.Component {
 		const { icon, code, title, description, color, link } = this.props;
 
 		return (
-			<GridContainer
+			<Grid container
 				direction="row"
 				justify="center"
 				alignItems="center"
 				className="h-full"
 			>
-				<GridItem className="h-full" xs={12} md={8} lg={6}>
-					<GridContainer
+				<Grid item  className="h-full" xs={12} md={8} lg={6}>
+					<Grid container
 						className="h-full"
 						direction="column"
 						justify="center"
 						alignItems="center"
 					>
-						<GridItem xs={12}>
+						<Grid item  xs={12}>
 							<Typography
 								color="error"
 								className="text-6xl"
@@ -37,8 +37,8 @@ class RequestError extends React.Component {
 							>
 								{icon}
 							</Typography>
-						</GridItem>
-						<GridItem xs={12}>
+						</Grid>
+						<Grid item  xs={12}>
 							<Typography
 								color="grey"
 								className="text-3xl"
@@ -47,8 +47,8 @@ class RequestError extends React.Component {
 							>
 								{code}
 							</Typography>
-						</GridItem>
-						<GridItem xs={12}>
+						</Grid>
+						<Grid item  xs={12}>
 							<Typography
 								color={color}
 								variant="h4"
@@ -56,9 +56,9 @@ class RequestError extends React.Component {
 							>
 								{title}
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12}>
+						<Grid item  xs={12}>
 							<Typography
 
 								variant="body1"
@@ -66,9 +66,9 @@ class RequestError extends React.Component {
 							>
 								{description}
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12}>
+						<Grid item  xs={12}>
 							<Typography
 								color="error"
 								variant="body1"
@@ -86,10 +86,10 @@ class RequestError extends React.Component {
 									</Button>{" "}
 								</Link>
 							</Typography>
-						</GridItem>
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+						</Grid>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

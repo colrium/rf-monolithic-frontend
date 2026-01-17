@@ -7,7 +7,7 @@ import Stepper from "@mui/material/Stepper";
 import ArrowDown from "@mui/icons-material/ArrowDownward";
 import ArrowUp from "@mui/icons-material/ArrowUpward";
 import Check from "@mui/icons-material/Check";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from "react";
 
 

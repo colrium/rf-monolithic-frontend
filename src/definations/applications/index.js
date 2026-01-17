@@ -10,14 +10,14 @@ import {
 } from "@mui/icons-material";
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import React, { useEffect, useState, useCallback } from "react";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Link } from "react-router-dom";
 import { CountriesHelper, UtilitiesHelper } from "utils/Helpers";
-
+import Api from "services/Api";
 import { useGooglePlaces, useGeoLocation } from "hooks"
 import { JSONViewDialog } from "components/JSONView"
 import { connect } from "react-redux"
@@ -27,7 +27,13 @@ import compose from "recompose/compose"
 import { apiCallRequest, setEmailingCache, clearEmailingCache, closeDialog, openDialog } from "state/actions"
 
 let currentDate = new Date()
-
+let contryCodeNames = {
+	ET: "Ethiopia",
+	KE: "Kenya",
+	RW: "Rwanda",
+	TZ: "Tanzania",
+	UG: "Uganda",
+}
 const ConvertToUserIconAction = props => {
 	const {
 		data: application,
@@ -354,8 +360,8 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
-						}
+							// inputRoot: "inverse",
+						},
 					},
 				},
 				reference: {
@@ -381,11 +387,10 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					},
 				},
-
 			},
 
 			/*honorific: {
@@ -405,7 +410,6 @@ export default {
 					type: "text",
 					required: true,
 					size: 6,
-
 				},
 			},
 
@@ -417,7 +421,6 @@ export default {
 					default: "",
 					required: true,
 					size: 6,
-
 				},
 			},
 
@@ -429,7 +432,6 @@ export default {
 					type: "email",
 					default: "",
 					required: true,
-
 				},
 			},
 
@@ -440,7 +442,6 @@ export default {
 					type: "phone",
 					default: "",
 					required: false,
-
 				},
 			},
 
@@ -452,7 +453,7 @@ export default {
 					default: "",
 					required: false,
 					props: {
-						freeSolo: true,
+						// freeSolo: true,
 					},
 				},
 				possibilities: {
@@ -475,11 +476,11 @@ export default {
 						maxDate: new Date().setFullYear(currentDate.getFullYear() - 18),
 						format: "DD/MM/YYYY",
 						margin: "dense",
-						InputProps: {
-							classes: {
-								root: "inverse",
-							}
-						}
+						// InputProps: {
+						// 	classes: {
+						// 		root: "inverse",
+						// 	}
+						// }
 					},
 				},
 			},
@@ -491,7 +492,6 @@ export default {
 					type: "text",
 					default: "",
 					required: false,
-
 				},
 			},
 
@@ -506,14 +506,12 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					},
 				},
-				possibilities: CountriesHelper.names(),
+				possibilities: contryCodeNames,
 			},
-
-
 
 			administrative_level_1: {
 				type: "string",
@@ -522,25 +520,36 @@ export default {
 					type: "select",
 					required: true,
 					props: {
-						freeSolo: true,
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					},
 				},
 				possibilities: async (values, user) => {
-					//
-					if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
-						// return await CountriesHelper.administrative_features_options(values.country, 1).then(data => { return data }).catch(err => { return {} });
+					if (!String.isEmpty(values?.country)) {
+						return await Api.get("/geography/boundaries", {
+							params: {
+								admin_level_0: contryCodeNames[values.country],
+								pagination: "-1",
+								admin_level: 1,
+								fields: "name",
+							},
+						})
+							.then(res => {
+								let possibilitiesData = {}
+								if (Array.isArray(res?.body?.data)) {
+									possibilitiesData = res.body.data.reduce((acc, curr) => (acc[curr.name] = curr.name), {})
+								}
+								return possibilitiesData
+							})
+							.catch(err => {
+								return {}
+							})
 					}
-					return {};
-
-				}
-
+					return {}
+				},
 			},
-
-
 
 			administrative_level_2: {
 				type: "string",
@@ -553,21 +562,34 @@ export default {
 						freeSolo: true,
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
-					}
+					},
 				},
 				possibilities: async (values, user) => {
-					// if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_1)) {
-					// 	return await CountriesHelper.administrative_features_options(values.country, 2, values.administrative_level_1).then(data => {
-					// 		return data;
-					// 	}).catch(err => {
-					// 		return {};
-					// 	});
-					// }
-					return {};
-
-				}
+					if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_1)) {
+						return await Api.get("/geography/boundaries", {
+							params: {
+								admin_level_0: values.country,
+								admin_level_1: values.administrative_level_1,
+								admin_level: "2",
+								pagination: "-1",
+								fields: "name",
+							},
+						})
+							.then(res => {
+								let possibilitiesData = {}
+								if (Array.isArray(res?.body?.data)) {
+									possibilitiesData = res.body.data.reduce((acc, curr) => (acc[curr.name] = curr.name), {})
+								}
+								return possibilitiesData
+							})
+							.catch(err => {
+								return {}
+							})
+					}
+					return {}
+				},
 			},
 
 			administrative_level_3: {
@@ -580,10 +602,9 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
-					}
-
+					},
 				},
 				possibilities: async (values, user) => {
 					// if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.administrative_level_2)) {
@@ -593,9 +614,8 @@ export default {
 					// 		return {};
 					// 	});
 					// }
-					return {};
-
-				}
+					return {}
+				},
 			},
 			region: {
 				type: "string",
@@ -607,7 +627,7 @@ export default {
 						freeSolo: true,
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
 					},
 				},
@@ -616,13 +636,9 @@ export default {
 					// if (JSON.isJSON(values) && !String.isEmpty(values.country)) {
 					// 	return await CountriesHelper.administrative_features_options(values.country, 1).then(data => { return data }).catch(err => { return {} });
 					// }
-					return {};
-
-				}
-
+					return {}
+				},
 			},
-
-
 
 			subcounty: {
 				type: "string",
@@ -635,9 +651,9 @@ export default {
 						freeSolo: true,
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
-					}
+					},
 				},
 				possibilities: async (values, user) => {
 					// if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.region)) {
@@ -647,9 +663,8 @@ export default {
 					// 		return {};
 					// 	});
 					// }
-					return {};
-
-				}
+					return {}
+				},
 			},
 
 			ward: {
@@ -662,10 +677,9 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
+							// inputRoot: "inverse",
 						},
-					}
-
+					},
 				},
 				possibilities: async (values, user) => {
 					// if (JSON.isJSON(values) && !String.isEmpty(values.country) && !String.isEmpty(values.subcounty)) {
@@ -675,9 +689,8 @@ export default {
 					// 		return {};
 					// 	});
 					// }
-					return {};
-
-				}
+					return {}
+				},
 			},
 
 			locale: {
@@ -687,7 +700,6 @@ export default {
 					type: "text",
 					default: "",
 					required: false,
-
 				},
 			},
 
@@ -701,8 +713,8 @@ export default {
 					props: {
 						margin: "dense",
 						classes: {
-							inputRoot: "inverse",
-						}
+							// inputRoot: "inverse",
+						},
 					},
 				},
 				possibilities: {
@@ -721,7 +733,6 @@ export default {
 					type: "text",
 					default: "",
 					required: true,
-
 				},
 			},
 
@@ -732,7 +743,6 @@ export default {
 					type: "text",
 					default: "",
 					required: true,
-
 				},
 			},
 
@@ -744,21 +754,19 @@ export default {
 					default: "",
 					required: false,
 					rich_text: true,
-
 				},
 				restricted: {
 					display: (entry, user) => {
-						return true;
+						return true
 					},
 					input: (values, user) => {
-						if (user) {
-							return !user?.isAdmin;
-						}
-						return true;
+						// if (user) {
+						// 	return !user?.isAdmin;
+						// }
+						return false
 					},
 				},
 			},
-
 
 			bio: {
 				type: "string",
@@ -770,18 +778,16 @@ export default {
 				},
 				restricted: {
 					display: (entry, user) => {
-
-						return true;
+						return true
 					},
 					input: (values, user) => {
-						if (user) {
-							return !user?.isAdmin;
-						}
-						return true;
+						// if (user) {
+						// 	return !user?.isAdmin;
+						// }
+						return false
 					},
 				},
 			},
-
 
 			avatar: {
 				type: "string",
@@ -790,18 +796,17 @@ export default {
 					type: "file",
 					props: {
 						acceptedFiles: ["image/*"],
-						dropzoneText:
-							"Click to select file \n OR \n Drag & drop your selfie here",
+						dropzoneText: "Click to select file \n OR \n Drag & drop your selfie here",
 						filesLimit: 1,
 						dropzoneIcon: "portrait",
-						containerStyle: {
-							background: "#FFFFFF"
-						}
+						// containerStyle: {
+						// 	background: "#FFFFFF"
+						// }
 					},
 				},
 				reference: {
 					name: "attachments",
-					service_query: {pagination: -1, },
+					service_query: { pagination: -1 },
 					resolves: {
 						value: "_id",
 						display: {
@@ -819,23 +824,18 @@ export default {
 				input: {
 					type: "file",
 					props: {
-						acceptedFiles: [
-							"image/*",
-							"video/*",
-							"audio/*",
-							"application/*",
-						],
+						acceptedFiles: ["image/*", "video/*", "audio/*", "application/*"],
 						dropzoneText: "Click to select file \n OR \n Drag & drop your Resume here",
 						filesLimit: 1,
 						dropzoneIcon: "insert_drive_file",
-						containerStyle: {
-							background: "#FFFFFF"
-						}
+						// containerStyle: {
+						// 	background: "#FFFFFF"
+						// }
 					},
 				},
 				reference: {
 					name: "attachments",
-					service_query: {pagination: -1, },
+					service_query: { pagination: -1 },
 					resolves: {
 						value: "_id",
 						display: {
@@ -854,18 +854,17 @@ export default {
 					size: 12,
 					props: {
 						acceptedFiles: ["image/*"],
-						dropzoneText:
-							"Click to select file \n OR \n Drag & drop your Copy of Government ID here",
+						dropzoneText: "Click to select file \n OR \n Drag & drop your Copy of Government ID here",
 						filesLimit: 1,
 						dropzoneIcon: "credit_card",
-						containerStyle: {
-							background: "#FFFFFF"
-						}
+						// containerStyle: {
+						// 	background: "#FFFFFF"
+						// }
 					},
 				},
 				reference: {
 					name: "attachments",
-					service_query: {pagination: -1, },
+					service_query: { pagination: -1 },
 					resolves: {
 						value: "_id",
 						display: {
@@ -885,30 +884,29 @@ export default {
 					props: {
 						freeSolo: true,
 						margin: "dense",
-						classes: {
-							inputRoot: "inverse",
-						},
+						// classes: {
+						// 	// inputRoot: "inverse",
+						// },
 					},
 				},
 				possibilities: (values, user) => {
 					let sources = {
-						"Twitter": "Twitter",
-						"Facebook": "Facebook",
-						"Instagram": "Instagram",
-						"LinkedIn": "LinkedIn",
-						"WhatsApp": "WhatsApp",
+						Twitter: "Twitter",
+						Facebook: "Facebook",
+						Instagram: "Instagram",
+						LinkedIn: "LinkedIn",
+						WhatsApp: "WhatsApp",
 						"University Career department": "University Career department",
 						"Job Websites": "Job Websites",
 						"Word of mouth": "Word of mouth",
 					}
 					if (JSON.isJSON(values) && values.country === "KE") {
-						sources["Ajira"] = "Ajira";
+						sources["Ajira"] = "Ajira"
 					}
 
-					return sources;
+					return sources
 				},
 			},
-
 		},
 		identity: {
 			primary: ["title"],
@@ -925,43 +923,41 @@ export default {
 	},
 	access: {
 		restricted: user => {
-			return user?.role !== "admin" && user?.role !== "collector";
+			return user?.role !== "admin" && user?.role !== "collector"
 		},
 		view: {
 			summary: user => {
-				return false;
+				return false
 			},
 			all: user => {
-
-				return user?.role === "admin" || user?.role === "collector";
+				return user?.role === "admin" || user?.role === "collector"
 			},
 			single: (user, record) => {
 				if (user) {
-					if (user?.role==="admin") {
-						return true;
+					if (user?.role === "admin") {
+						return true
 					}
 					if (record) {
-						return record?.user?._id === user?._id || record?.user === user?._id;
+						return record?.user?._id === user?._id || record?.user === user?._id
 					}
-					return false;
+					return false
 				}
-				return false;
+				return false
 			},
 		},
 
-
 		actions: {
 			view: {
-				restricted: user => (user?.role !== "admin" && user?.role !== "collector"),
+				restricted: user => user?.role !== "admin" && user?.role !== "collector",
 				uri: entry => {
-					return "applications/view/" + entry?._id;
+					return "applications/view/" + entry?._id
 				},
 				Icon: OpenInNewIcon,
 				label: "View",
 				className: "text-green-500",
 			},
 			create: {
-				restricted: user => (user?.role !== "admin"),
+				restricted: user => user?.role !== "admin",
 				uri: "applications/add".toUriWithDashboardPrefix(),
 				Icon: AddIcon,
 				label: "Add new",
@@ -969,22 +965,18 @@ export default {
 				isFreeAction: true,
 			},
 			update: {
-				restricted: user => (user?.role !== "admin"),
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return (
-						"applications/edit/" + entry?._id
-					).toUriWithDashboardPrefix();
+					return ("applications/edit/" + entry?._id).toUriWithDashboardPrefix()
 				},
 				Icon: EditIcon,
 				label: "Edit",
 				className: "text-blue-500",
 			},
 			create_application_user: {
-				restricted: user => (user?.role !== "admin"),
+				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return (
-						"applications/" + entry?._id + "/user/create"
-					).toUriWithDashboardPrefix();
+					return ("applications/" + entry?._id + "/user/create").toUriWithDashboardPrefix()
 				},
 				Component: ConvertToUserIconActionComponent,
 				label: "User Account",
@@ -992,18 +984,18 @@ export default {
 			delete: {
 				restricted: user => {
 					if (user) {
-						return false;
+						return false
 					}
-					return true;
+					return true
 				},
 				uri: entry => {
-					return ("answers/delete/" + entry?._id).toUriWithDashboardPrefix();
+					return ("answers/delete/" + entry?._id).toUriWithDashboardPrefix()
 				},
 				Icon: DeleteIcon,
 				className: "text-red-500",
 				label: "Delete",
-				confirmationRequired: true
+				confirmationRequired: true,
 			},
 		},
 	},
-};
+}

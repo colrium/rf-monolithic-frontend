@@ -46,7 +46,7 @@ export default function fetchMessages(conversation, query = {}, preserve = true)
 				throw "Unauthorized"
 			}
 		} catch (error) {
-			// console.log("fetchMessages try error", error)
+			console.error("fetchMessages try error", error)
 		}
 	}
 }

@@ -11,8 +11,8 @@ import {
 	BasicConfig,
 	Utils as QbUtils,
 } from "./lib";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import NestedMenuItem from "components/NestedMenuItem";
 import MaterialConfig from "./lib/config/material";
 import { TextInput, SelectInput } from "components/FormInputs";
@@ -119,19 +119,13 @@ const FieldsSelectComponent = memo(props => {
 		/>
 	);
 });
-// Choose your skin (ant/material/vanilla):
-// console.log("MaterialConfig", MaterialConfig);
 const InitialConfig = {
 	...MaterialConfig,
 	settings: {
 		...MaterialConfig.settings,
-		renderProvider: ({ children, ...rest }) => (
-			<ThemeProvider {...rest} theme={theme}>
-				{children}
-			</ThemeProvider>
-		),
+		renderProvider: ({ children, ...rest }) => <ThemeProvider theme={theme}>{children}</ThemeProvider>,
 		renderField: props => {
-			return <FieldsSelectComponent {...props} />;
+			return <FieldsSelectComponent {...props} />
 		},
 	},
 	widgets: {
@@ -139,12 +133,11 @@ const InitialConfig = {
 		select: {
 			...MaterialConfig.widgets.select,
 			factory: props => {
-			 	return <SelectWidgetComponent {...props} />;
+				return <SelectWidgetComponent {...props} />
 			},
 		},
 	},
-};
-// console.log("MaterialConfig", MaterialConfig);
+}
 // You can load query value from your backend storage (for saving see `Query.onChange()`)
 const queryValue = { id: QbUtils.uuid(), type: "group" };
 let onChangeFired = false;
@@ -390,29 +383,25 @@ const QueryBuilder = memo(props => {
 		};
 
 	return (
-		<form
-			className={"p-0 flex " + (className ? " " + className : "")}
-			onSubmit={handleOnSubmit(internalValue)}>
-			<Accordion
-				expanded={showBuilder}
-				className={"flex-grow"}
-				elevation={0}>
+		<form className={"p-0 flex " + (className ? " " + className : "")} onSubmit={handleOnSubmit(internalValue)}>
+			<Accordion expanded={showBuilder} className={"flex-grow"} elevation={0}>
 				<AccordionSummary
 					expandIcon={
 						<Tooltip title="Toggle Query Builder">
 							<IconButton
 								disabled={!builder}
 								onClick={() => setShowBuilder(!showBuilder)}
-								color={showBuilder ? "secondary" : "default"}>
+								color={showBuilder ? "secondary" : "default"}
+							>
 								<TuneIcon fontSize="small" />
 							</IconButton>
 						</Tooltip>
 					}
 					aria-controls="panelqb-content"
 					id="panelqb-header"
-					className={"bg-transparent"}>
-					<GridContainer
-						className={"flex flex-row justify-center items-center"}>
+					className={"bg-transparent"}
+				>
+					<Grid container className={"flex flex-row justify-center items-center"}>
 						{search && (
 							<Tooltip title="Enter Search Query">
 								<TextInput
@@ -422,9 +411,7 @@ const QueryBuilder = memo(props => {
 										endAdornment: (
 											<InputAdornment position="end">
 												<Tooltip title="Search">
-													<IconButton
-														type="submit"
-														size="small">
+													<IconButton type="submit" size="small">
 														<SearchIcon fontSize="small" />{" "}
 													</IconButton>
 												</Tooltip>
@@ -439,28 +426,17 @@ const QueryBuilder = memo(props => {
 							</Tooltip>
 						)}
 						<Tooltip title="Populate and Resolve IDs">
-							<IconButton
-								className={
-									internalValue.populate
-										? "accent-text mx-1"
-										: "mx-1"
-								}
-								onClick={handleOnPopulateChange}>
+							<IconButton className={internalValue.populate ? "accent-text mx-1" : "mx-1"} onClick={handleOnPopulateChange}>
 								<AccountTreeIcon fontSize="small" />
 							</IconButton>
 						</Tooltip>
 						{sort && (
 							<Tooltip title="Sort">
 								<IconButton
-									disabled={
-										false /*JSON.isEmpty(internalValue?.config?.fields?? {})*/
-									}
-									className={
-										Boolean(internalValue.sort)
-											? "accent-text"
-											: ""
-									}
-									onClick={handleOnSortBtnClick}>
+									disabled={false /*JSON.isEmpty(internalValue?.config?.fields?? {})*/}
+									className={Boolean(internalValue.sort) ? "accent-text" : ""}
+									onClick={handleOnSortBtnClick}
+								>
 									<SortIcon fontSize="small" />
 								</IconButton>
 							</Tooltip>
@@ -471,16 +447,13 @@ const QueryBuilder = memo(props => {
 							anchorEl={sortMenuAnchorEl}
 							keepMounted
 							open={Boolean(sortMenuAnchorEl)}
-							onClose={() => setSortMenuAnchorEl(null)}>
-							{Object.entries(
-								internalValue?.config?.fields ?? {}
-							).map(([field_name, field_props]) => (
+							onClose={() => setSortMenuAnchorEl(null)}
+						>
+							{Object.entries(internalValue?.config?.fields ?? {}).map(([field_name, field_props]) => (
 								<NestedMenuItem
 									label={field_props.label}
 									parentMenuOpen={Boolean(sortMenuAnchorEl)}
-									selected={(
-										internalValue.sort ?? ""
-									).includes(field_name)}
+									selected={(internalValue.sort ?? "").includes(field_name)}
 									MenuProps={
 										{
 											/*anchorOrigin: {
@@ -495,58 +468,34 @@ const QueryBuilder = memo(props => {
 									}
 									leftIcon={null}
 									rightIcon={
-										(internalValue.sort ?? "").includes(
-											"-" + field_name
-										) ? (
-											<ArrowDownwardIcon
-												fontSize="small"
-												className="ml-1"
-											/>
-										) : (internalValue.sort ?? "").includes(
-												field_name
-										  ) ? (
-											<ArrowUpwardIcon
-												fontSize="small"
-												className="ml-1"
-											/>
+										(internalValue.sort ?? "").includes("-" + field_name) ? (
+											<ArrowDownwardIcon fontSize="small" className="ml-1" />
+										) : (internalValue.sort ?? "").includes(field_name) ? (
+											<ArrowUpwardIcon fontSize="small" className="ml-1" />
 										) : null
 									}
 									key={"sort-field-" + field_name}
-									button>
-									<MenuItem disabled>
-										{field_props.label}
-									</MenuItem>
+								>
+									<MenuItem disabled>{field_props.label}</MenuItem>
 									<MenuItem
-										onClick={handleOnSortByClick(
-											field_name,
-											"asc"
-										)}
+										onClick={handleOnSortByClick(field_name, "asc")}
 										selected={
-											!(
-												internalValue.sort ?? ""
-											).includes("-" + field_name) &&
-											(internalValue.sort ?? "").includes(
-												field_name
-											)
+											!(internalValue.sort ?? "").includes("-" + field_name) &&
+											(internalValue.sort ?? "").includes(field_name)
 										}
-										button>
+									>
 										Ascending
 									</MenuItem>
 									<MenuItem
-										onClick={handleOnSortByClick(
-											field_name,
-											"desc"
-										)}
-										selected={(
-											internalValue.sort ?? ""
-										).includes("-" + field_name)}
-										button>
+										onClick={handleOnSortByClick(field_name, "desc")}
+										selected={(internalValue.sort ?? "").includes("-" + field_name)}
+									>
 										Descending
 									</MenuItem>
 								</NestedMenuItem>
 							))}
 						</Menu>
-					</GridContainer>
+					</Grid>
 				</AccordionSummary>
 				<AccordionDetails elevation={0}>
 					<Query
@@ -558,7 +507,7 @@ const QueryBuilder = memo(props => {
 				</AccordionDetails>
 			</Accordion>
 		</form>
-	);
+	)
 });
 
 

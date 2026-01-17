@@ -37,7 +37,7 @@ const variantIcon = {
 	info: InfoIcon,
 };
 
-function CustomSnackbarContent(props) {
+const CustomSnackbarContent = React.forwardRef((props, ref) => {
 	const { classes, className, message, onClose, color, ...other } = props;
 	const Icon = variantIcon[color] ? variantIcon[color] : InfoIcon;
 	const textColorClass = ["white", "inverse", "transparent"].includes(color)
@@ -74,21 +74,11 @@ function CustomSnackbarContent(props) {
 					<CloseIcon className={classes?.icon} />
 				</IconButton>,
 			]}
+			ref={ref}
 			{...other}
 		/>
 	);
-}
+})
 
-CustomSnackbarContent.defaultProps = {
-	color: "inverse",
-};
 
-CustomSnackbarContent.propTypes = {
-
-	className: PropTypes.string,
-	message: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
-	onClose: PropTypes.func,
-	color: PropTypes.oneOf(colors.names).isRequired,
-};
-
-export default (CustomSnackbarContent);
+export default React.memo(CustomSnackbarContent);

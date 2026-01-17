@@ -1,35 +1,44 @@
 /** @format */
-import { useRef, useCallback, useMemo } from "react"
+import useSetState from "./useSetState"
 import useDidUpdate from "./useDidUpdate"
 import useDidMount from "./useDidMount"
-function isPrimitive(val) {
-	return val == null || /^[sbn]/.test(typeof val)
-}
+import useDeepCompareMemoize from "./useDeepCompareMemoize"
+function checkDeps(deps, name) {
+	const reactHookName = `React.useDeepMemo`
 
-function checkDeps(deps) {
-	if (!deps || !deps.length) {
-		throw new Error("useDidUpdate should not be used with no dependencies. Use useEffect instead.")
-	}
-	if (deps.every(isPrimitive)) {
-		throw new Error("useDidUpdate should not be used with dependencies that are all primitive values. Use useEffect instead.")
+	if (!deps) {
+		throw new Error(`${name} should not be used with no dependencies. Use ${reactHookName} instead.`)
 	}
 }
 
-function useDeepCompareMemoize(value) {
-	const ref = useRef([...value])
-	const signalRef = useRef(0)
-
-	if (!Object.areEqual(value)) {
-		ref.current = value
-		signalRef.current += 1
+const useDeepMemo = (cb, deps, defaultValue: null) => {
+	const [state, setState] = useSetState({ value: defaultValue })
+	const updateCounts = useDeepCompareMemoize(deps, true)
+	if (process.env.NODE_ENV !== "production") {
+		checkDeps(deps, "useDeepMemo")
 	}
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	return useMemo(() => signalRef.current, [signalRef.current])
-}
+	const applyCallback = async () => {
+		if (Function.isFunction(cb)) {
+			const nextValue = await cb()
+			// console.log("useDeepMemo updateCounts", updateCounts, "nextValue", nextValue)
+			setState({ value: nextValue })
+		} else {
+			throw new Error("useDeepMemo: callback is not a function")
+		}
+	}
+	useDidMount(() => {
+		//
+		applyCallback()
+	})
 
-const useDeepMemo = (cb, deps) => {
-	return useMemo(() => cb(deps), [useDeepCompareMemoize(deps)])
+	useDidUpdate(() => {
+		//
+		// console.log("useDeepMemo updateCounts", updateCounts)
+		applyCallback()
+	}, [updateCounts])
+
+	return state.value
 }
 
 export default useDeepMemo

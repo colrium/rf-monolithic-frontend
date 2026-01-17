@@ -90,17 +90,11 @@ export const onMessage = async (message, newIncoming = false) => {
 
 				const difference = Object.difference(message, dexieDBEntry)
 
-				// console.log("message conversation", conversation)
-				// console.log("message difference?.differences", difference)
 				if (
 					!JSON.isEmpty(conversation) /*  &&
 					((Array.isArray(difference?.differences) && (difference?.differences > 0 || !JSON.isEmpty(dexieDBEntry))) ||
 						!Array.isArray(difference?.differences)) */
 				) {
-					// console.log("nextDexieDBEntry", nextDexieDBEntry)
-					// console.log("dexieDBEntry", dexieDBEntry)
-					// console.log("message difference?.differences", difference)
-
 					dexieDB.messages.put(nextDexieDBEntry)
 				}
 				if (!JSON.isEmpty(conversation) && newIncoming) {
@@ -135,7 +129,6 @@ export const onMessage = async (message, newIncoming = false) => {
 					}
 				})
 			}
-			// console.log("onMessage dexieDBEntry", dexieDBEntry)
 		} catch (error) {
 			console.error("onMessage error", error)
 		}

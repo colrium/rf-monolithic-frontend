@@ -1,0 +1,32 @@
+[
+		{
+			"key": "vacancy",
+			"label": "Select Position",
+			"description": "From the available positions below, select the one that best suits your interests. All job applications made here are anonymous and applicant's user account crredentials will be sent upon successful shortlisting, validation and qualification."
+		},
+		{
+			"key": "personal",
+			"label": "Add Personal Info",
+			"description": "Tell us a little about yourself"
+		},
+		{
+			"key": "location",
+			"label": "Location Details",
+			"description": "Select your administrative locations details"
+		},
+		{
+			"key": "education",
+			"label": "Education Details",
+			"description": "Whats your education level and details?"
+		},
+		{
+			"key": "documents",
+			"label": "Documents",
+			"description": "Please upload your Resume/Curriculum Vitae and other relevant proffessional/identification documents"
+		},
+		{
+			"key": "source",
+			"label": "Source",
+			"description": "How did you hear about us?"
+		}
+]

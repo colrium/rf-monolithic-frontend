@@ -122,7 +122,6 @@ const GoogleMap = React.forwardRef((props, ref) => {
 					new google.maps.event.trigger(polylinesRef.current[index], "click")
 				}
 
-				// console.log("applyEntrySelection elementBounds", elementBounds);
 				//
 			} else if (type === "circle" && !!circlesRef.current[index]) {
 				if (!!google) {
@@ -209,8 +208,6 @@ const GoogleMap = React.forwardRef((props, ref) => {
 					})
 					closeInfoWindow()
 				})
-				// console.log("infoWindow", infoWindow)
-				// console.log("ReactDOMServer.renderToStaticMarkup(infoWindow)", ReactDOMServer.renderToStaticMarkup(infoWindow))
 				return mapElement
 			})
 			if (circlesRef.current.length > 0 && !!circlesRef.current[0].getBounds && !!googlemapRef.current) {
@@ -387,8 +384,6 @@ const GoogleMap = React.forwardRef((props, ref) => {
 	const handleOnMapLoad = useCallback(
 		googlemap => {
 			googlemapRef.current = googlemap
-			// google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
-			// console.log("useDidMount JSON.stringify(geoLocation, null, 2)", JSON.stringify(geoLocation, null, 2))
 			if (Function.isFunction(onMapLoad)) {
 				onMapLoad(googlemap)
 			}

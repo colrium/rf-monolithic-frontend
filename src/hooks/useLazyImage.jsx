@@ -41,7 +41,6 @@ const useLazyImage = props => {
 					}
 
 					objectUrlRef.current = URL.createObjectURL(await cachedResponse.clone().blob())
-					console.log("objectUrlRef.current", objectUrlRef.current)
 
 					return objectUrlRef.current
 				})
@@ -91,17 +90,15 @@ const useLazyImage = props => {
 			imageRef.current.onerror = onImageError
 			getSrcImage(imgSrc)
 				.then(cachedSrc => {
-					console.log("loadImage cachedSrc", cachedSrc)
 					setState({
 						loading: false,
 						error: null,
 						src: cachedSrc,
 					})
-
 					imageRef.current.src = cachedSrc
 				})
 				.catch(error => {
-					console.log("loadImage error", error)
+					console.error("loadImage error", error)
 					setState({
 						loading: false,
 						error: error,

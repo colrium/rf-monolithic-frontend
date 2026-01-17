@@ -23,7 +23,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AutoComplete from "components/AutoComplete";
 import DynamicField from "components/DynamicInput";
 import FileDropZone from "components/FileDropZone";
-import GridContainer from "components/Grid/GridContainer";
+import Grid from '@mui/material/Grid';
 import TransferList from "components/TransferList";
 import GoogleMap from "components/GoogleMap";
 
@@ -44,34 +44,34 @@ export const DateInput = ({
 	value,
 	className,
 	defaultValue,
+	inputVariant,
+	margin,
 	...rest
 }) => {
 	const [inputValue, setInputValue] = useState(value ? value : defaultValue);
 	return (
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
-
-
 			<DatePicker
 				onChange={async input_value => {
-					let value = input_value._d;
-					setInputValue(value);
+					let value = input_value._d
+					setInputValue(value)
 
 					if (Function.isFunction(onChange)) {
 						if (onChange.length === 0) {
-							onChange();
+							onChange()
 						} else if (onChange.length === 1) {
-							onChange(value);
+							onChange(value)
 						} else {
-							onChange(value, input_value);
+							onChange(value, input_value)
 						}
 					}
 				}}
 				value={value || defaultValue || null}
-				renderInput={(params) => <TextField {...params} />}
+				renderInput={params => <TextField fullWidth margin={margin} variant={inputVariant} {...params} />}
 				{...rest}
 			/>
 		</LocalizationProvider>
-	);
+	)
 };
 
 export const StaticDateInput = ({
@@ -315,7 +315,7 @@ export const SliderInput = ({
 			: Number.parseNumber(defaultValue, null)
 	);
 	return (
-		<GridContainer className="m-0 p-0">
+		<Grid container className="m-0 p-0">
 			<Typography id={name + "-slider"} gutterBottom>
 				{label}
 			</Typography>
@@ -343,7 +343,7 @@ export const SliderInput = ({
 				}}
 				{...rest}
 			/>
-		</GridContainer>
+		</Grid>
 	);
 };
 

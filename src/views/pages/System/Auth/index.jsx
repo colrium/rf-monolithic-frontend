@@ -4,9 +4,9 @@ import Hidden from "@mui/material/Hidden";
 import Box from "@mui/material/Box"
 import { app } from "assets/jss/app-theme";
 import classNames from "classnames";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 import { makeStyles } from '@mui/styles';
 import AnimatedChevronMap from "views/widgets/AnimatedChevronMap";
@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
 		padding: "0",
 		margin: "0",
 		overflow: "auto",
+		background: theme.palette.background.default,
 	},
 	login_container: {
 		padding: "0",
@@ -73,10 +74,10 @@ const AuthPage = (props) => {
 
 	return (
 		<div>
-			<GridContainer className={classes?.root}>
-				<GridContainer className={classes?.login_container}>
+			<Grid container className={classes?.root}>
+				<Grid container className={classes?.login_container}>
 					<Hidden smDown>
-						<GridItem
+						<Grid item
 							xs={12}
 							sm={12}
 							md={7}
@@ -87,16 +88,16 @@ const AuthPage = (props) => {
 									theme.palette.secondary.light,
 							}}
 						>
-							<GridContainer
+							<Grid container
 								className={classes?.info_container}
 								direction="row"
 								justify="center"
 								alignItems="center"
 							>
-								<GridContainer
+								<Grid container
 									className={classes?.info_content}
 								>
-									<GridItem
+									<Grid item
 										xs={12}
 										className={classes?.info_map_container}
 									>
@@ -109,22 +110,13 @@ const AuthPage = (props) => {
 													"linear-gradient(to right, #8C189B, #6a0f75)",
 											}}
 										/>
-									</GridItem>
-
-									<GridItem xs={12}>
-										<Typography
-											className={"w-full text-center"}
-											variant="h5"
-										>
-											realfield.io
-										</Typography>
-									</GridItem>
-								</GridContainer>
-							</GridContainer>
-						</GridItem>
+									</Grid>
+								</Grid>
+							</Grid>
+						</Grid>
 					</Hidden>
 
-					<GridItem
+					<Grid item
 						xs={12}
 						sm={12}
 						md={5}
@@ -154,9 +146,9 @@ const AuthPage = (props) => {
 							</Link>
 							<Outlet />
 						</Box>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 			<Intercom appID={intercom.app.id} {...intercom.app.user} />
 		</div>
 	)

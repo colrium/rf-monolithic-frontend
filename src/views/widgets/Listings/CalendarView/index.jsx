@@ -4,12 +4,13 @@ import { Icon } from "@mui/material";
 
 //
 import Calendar from "components/Calendar";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import ProgressIndicator from "components/ProgressIndicator";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React from "react";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen"
 //Redux imports
 import { connect } from "react-redux";
 import compose from "recompose/compose";
@@ -220,140 +221,71 @@ class CalendarView extends React.Component {
 	render() {
 
 		return (
-			<GridContainer>
+			<Grid container>
 				{this.state.defination && (
-					<GridItem className="p-0 m-0" xs={12}>
+					<Grid item className="p-0 m-0" xs={12}>
 						{this.state.loading ? (
-							<GridContainer
-								justify="center"
-								alignItems="center"
-							>
-								<GridItem xs={1}>
-									<ProgressIndicator
-										size={24}
-										thickness={4}
-										color="secondary"
-										disableShrink
-									/>
-								</GridItem>
-							</GridContainer>
+							<Grid container justify="center" alignItems="center">
+								<Grid item xs={1}>
+									<ProgressIndicator size={24} thickness={4} color="secondary" disableShrink />
+								</Grid>
+							</Grid>
 						) : (
-							<GridContainer className="p-0 m-0">
+							<Grid container className="p-0 m-0">
 								{this.state.load_error ? (
-									<GridContainer>
-										<GridItem xs={12}>
-											<Typography
-												color="error"
-												variant="h1"
-																								fullWidth
-											>
-												<Icon fontSize="large">
-													error
-												</Icon>
+									<Grid container>
+										<Grid item xs={12}>
+											<Typography color="error" variant="h1" fullWidth>
+												<Icon fontSize="large">error</Icon>
 											</Typography>
-										</GridItem>
-										<GridItem xs={12}>
-											<Typography
-												color="error"
-												variant="body1"
-																								fullWidth
-											>
+										</Grid>
+										<Grid item xs={12}>
+											<Typography color="error" variant="body1" fullWidth>
 												An error occured.
 												<br />
-												Status Code :{" "}
-												{this.state.load_error.code}
+												Status Code : {this.state.load_error.code}
 												<br />
 												{this.state.load_error.msg}
 											</Typography>
-										</GridItem>
-									</GridContainer>
+										</Grid>
+									</Grid>
 								) : (
-									<GridContainer className="p-0 m-0">
-										<GridItem className="p-0 m-0" xs={12}>
-											{Array.isArray(
-												this.state.records
-											) &&
-												this.state.records.length > 0 ? (
-												<GridContainer className="p-0 m-0">
-													<GridItem xs={12}>
+									<Grid container className="p-0 m-0">
+										<Grid item className="p-0 m-0" xs={12}>
+											{Array.isArray(this.state.records) && this.state.records.length > 0 ? (
+												<Grid container className="p-0 m-0">
+													<Grid item xs={12}>
 														<Calendar
-															icon={
-																this.state
-																	.defination
-																	.icon
-															}
-															title={
-																this.state
-																	.defination
-																	.label
-															}
-															title_color={
-																this.state
-																	.defination
-																	.color
-															}
-															icon_color={
-																this.state
-																	.defination
-																	.color
-															}
+															icon={this.state.defination.icon}
+															title={this.state.defination.label}
+															title_color={this.state.defination.color}
+															icon_color={this.state.defination.color}
 															subtitle=""
-															calendars={
-																this.state.calendars
-															}
+															calendars={this.state.calendars}
 															view="month"
-															schedules={
-																this.state
-																	.records
-															}
-															onClickEdit={
-																this
-																	.handleEditItem
-															}
-															onClickDelete={
-																this
-																	.handleDeleteItemConfirm
-															}
+															schedules={this.state.records}
+															onClickEdit={this.handleEditItem}
+															onClickDelete={this.handleDeleteItemConfirm}
 														/>
-													</GridItem>
-												</GridContainer>
+													</Grid>
+												</Grid>
 											) : (
-												<GridContainer
-													className="p-0 m-0"
-													justify="center"
-													alignItems="center"
-												>
-													<img
-														alt="Empty list"
-														className={"m-8 w-9/12"}
-														src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/empty-state-table.svg")}
-													/>
-													<Typography
-														className={"mt-4"}
-														color="grey"
-														variant="body2"
-																												fullWidth
-													>
-														No{" "}
-														{this.state.defination
-															.label
-															? this.state
-																.defination
-																.label
-															: "Records"}{" "}
-														found
+												<Grid container className="p-0 m-0 flex flex-col justify-center items-center">
+													<FolderOpenIcon className="text-9xl" />
+													<Typography className={"mt-4"} color="grey" variant="body2" fullWidth>
+														No {this.state.defination.label ? this.state.defination.label : "Records"} found
 													</Typography>
-												</GridContainer>
+												</Grid>
 											)}
-										</GridItem>
-									</GridContainer>
+										</Grid>
+									</Grid>
 								)}
-							</GridContainer>
+							</Grid>
 						)}
-					</GridItem>
+					</Grid>
 				)}
-			</GridContainer>
-		);
+			</Grid>
+		)
 	}
 }
 CalendarView.propTypes = {

@@ -5,13 +5,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import CartIcon from "@mui/icons-material/ShoppingCartOutlined";
-import Avatar from "components/Avatar";
-import Button from "components/Button";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
 import { TextInput } from "components/FormInputs";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import LazyImage from "components/LazyImage";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from "react";
 
 import { connect } from "react-redux";
@@ -199,15 +199,15 @@ function Widget(props) {
 
 	if (cart.entries.length > 0) {
 		return (
-			<GridContainer className={"px-4" + (className ? " " + className : "")}>
-				<GridItem xs={12} sm={12} className="mb-4">
+			<Grid container className={"px-4" + (className ? " " + className : "")}>
+				<Grid item  xs={12} sm={12} className="mb-4">
 					<Typography variant="h4"> Cart </Typography>
 					<Button color="warning" className="mt-2 w-auto" onClick={confirmEmptyCart}>
 						{" "}
 						Remove all{" "}
 					</Button>
-				</GridItem>
-				<GridItem xs={12} className="p-0 m-0">
+				</Grid>
+				<Grid item  xs={12} className="p-0 m-0">
 					<List className="w-full">
 						{cart.entries.map((entry, index) => {
 							let { item } = entry
@@ -231,26 +231,26 @@ function Widget(props) {
 									<ListItemText
 										primary={item.name}
 										secondary={
-											<GridContainer className="p-0">
-												<GridItem xs={12} className="m-0 p-0">
+											<Grid container className="p-0">
+												<Grid item  xs={12} className="m-0 p-0">
 													<Typography component="span" variant="body2" className="w-full " color="grey">
 														{" "}
 														{item.description}{" "}
 													</Typography>
-												</GridItem>
-												<GridItem xs={12} className="m-0 mt-2 p-0">
+												</Grid>
+												<Grid item  xs={12} className="m-0 mt-2 p-0">
 													<Typography component="span" variant="body2" className="inline">
 														{" "}
 														Cost: {item.cost}{" "}
 													</Typography>
-												</GridItem>
-												<GridItem xs={12} className="m-0 mt-2 p-0">
+												</Grid>
+												<Grid item  xs={12} className="m-0 mt-2 p-0">
 													<Typography component="span" variant="body2" className="inline">
 														{" "}
 														Options: {entry.options_cost}{" "}
 													</Typography>
-												</GridItem>
-												<GridItem xs={12} className="m-0 mt-2 p-0">
+												</Grid>
+												<Grid item  xs={12} className="m-0 mt-2 p-0">
 													<Button
 														color="warning"
 														onClick={event => confirmRemoveFromCart(entry)}
@@ -259,18 +259,18 @@ function Widget(props) {
 														{" "}
 														Remove{" "}
 													</Button>
-												</GridItem>
-											</GridContainer>
+												</Grid>
+											</Grid>
 										}
 									/>
 								</ListItem>
 							)
 						})}
 					</List>
-				</GridItem>
-				<GridItem xs={12} className="p-2">
-					<GridContainer className="p-0">
-						<GridItem xs={12} sm={12} md={6} className="mb-2">
+				</Grid>
+				<Grid item  xs={12} className="p-2">
+					<Grid container className="p-0">
+						<Grid item  xs={12} sm={12} md={6} className="mb-2">
 							<TextInput
 								type="text"
 								label="Order Note"
@@ -282,9 +282,9 @@ function Widget(props) {
 								onChange={value => setOrderNote(value)}
 								helperText="Leave a note with your order"
 							/>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12} sm={12} md={6} className="mb-4 flex flex-col">
+						<Grid item  xs={12} sm={12} md={6} className="mb-4 flex flex-col">
 							<Typography component="span" variant="h2" className="text-right">
 								<span className="text-gray-500 mr-2 text-base">{cart.currency}</span>
 								<span className="text-3xl">{cart.total}</span>
@@ -295,11 +295,11 @@ function Widget(props) {
 								<span className="text-gray-500 mr-2 text-xs">{cart.currency}</span>
 								<span className="text-sm">{cart.options_total}</span>
 							</Typography>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 
-					<GridContainer className="p-0">
-						<GridItem xs={12} sm={12} className="mb-2">
+					<Grid container className="p-0">
+						<Grid item  xs={12} sm={12} className="mb-2">
 							<Button
 								color="primary"
 								className=" w-auto"
@@ -311,32 +311,32 @@ function Widget(props) {
 								{" "}
 								Proceed to Checkout{" "}
 							</Button>
-						</GridItem>
-						<GridItem xs={12} sm={12} className="mb-4">
+						</Grid>
+						<Grid item  xs={12} sm={12} className="mb-4">
 							<Typography component="span" variant="body2" className="w-full text-right text-gray-700">
 								{" "}
 								Shipping & taxes calculated at checkout{" "}
 							</Typography>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 					<LoginDialog open={loginDialogOpen} onLogin={proceedToCheckout} title="Login to Proceed" />
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		)
 	} else {
 		return (
-			<GridContainer className={"px-4" + (className ? " " + className : "")}>
-				<GridItem xs={12} className="p-0 m-0 my-20 text-center">
+			<Grid container className={"px-4" + (className ? " " + className : "")}>
+				<Grid item  xs={12} className="p-0 m-0 my-20 text-center">
 					<CartIcon className="text-6xl m-auto text-gray-500" />
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 m-0">
+				<Grid item  xs={12} className="p-0 m-0">
 					<Typography component="span" variant="subtitle1" className="w-full text-center text-gray-500">
 						{" "}
 						Your Cart is empty{" "}
 					</Typography>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		)
 	}
 }

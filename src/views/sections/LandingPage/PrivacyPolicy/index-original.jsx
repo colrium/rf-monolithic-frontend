@@ -1,8 +1,8 @@
 import React from "react";
 
 
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from '@mui/material/Typography';
 import Section from "components/Section";
 import { connect } from "react-redux";
@@ -50,14 +50,14 @@ const SectionComponent = (props) => {
 
 	return (
 		<Section className={"p-0 min-h-screen"} id="why-us" >
-			<GridContainer className={"p-0"}>
+			<Grid container className={"p-0"}>
 
 
-				<GridItem xs={12} className="p-0 flex flex-col items-center  py-4">
+				<Grid item  xs={12} className="p-0 flex flex-col items-center  py-4">
 					<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/realfield/logo-black.svg")} className="sm:w-5/6 md:w-4/6 lg:w-1/3 h-auto" />
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-4">
+				<Grid item  xs={12} className="p-0 py-4">
 					<Typography variant="subtitle1" paragraph>
 						Privacy Policy (September 2020)
 					</Typography>
@@ -105,27 +105,27 @@ const SectionComponent = (props) => {
 					<Typography variant="body1" paragraph>
 						We process the following categories of personal data for the purposes set out.
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 					<Typography variant="body1" paragraph>
 						Processing Purpose
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 					<Typography variant="body1" paragraph>
 						Category of Information Processed
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
+				<Grid item  xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
 					<Typography variant="body2" paragraph>
 						Sales and Marketing
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 
 					<Typography variant="body2" paragraph>
 						<ul className="list-disc px-4">
@@ -136,15 +136,15 @@ const SectionComponent = (props) => {
 							<li>Postal addresses</li>
 						</ul>
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
+				<Grid item  xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
 					<Typography variant="body2" paragraph>
 						Executing Projects
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 
 					<Typography variant="body2" paragraph>
 						<ul className="list-disc px-4">
@@ -153,15 +153,15 @@ const SectionComponent = (props) => {
 							<li>Contact phone numbers</li>
 						</ul>
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
+				<Grid item  xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
 					<Typography variant="body2" paragraph>
 						Research Efforts
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 
 					<Typography variant="body2" paragraph>
 						<ul className="list-disc px-4">
@@ -170,16 +170,16 @@ const SectionComponent = (props) => {
 							<li>Scripts / assignments</li>
 						</ul>
 					</Typography>
-				</GridItem>
+				</Grid>
 
 
-				<GridItem xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
+				<Grid item  xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
 					<Typography variant="body2" paragraph>
 						Hosting and Promoting Events
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 
 					<Typography variant="body2" paragraph>
 						<ul className="list-disc px-4">
@@ -187,16 +187,16 @@ const SectionComponent = (props) => {
 
 						</ul>
 					</Typography>
-				</GridItem>
+				</Grid>
 
 
-				<GridItem xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
+				<Grid item  xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
 					<Typography variant="body2" paragraph>
 						General Office Administration and Accounting
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 
 					<Typography variant="body2" paragraph>
 						<ul className="list-disc px-4">
@@ -207,16 +207,16 @@ const SectionComponent = (props) => {
 							<li>Data associated with accounts receivable or accounts payable.</li>
 						</ul>
 					</Typography>
-				</GridItem>
+				</Grid>
 
 
-				<GridItem xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
+				<Grid item  xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
 					<Typography variant="body2" paragraph>
 						HR Administration and Management of Sub Vendors
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 
 					<Typography variant="body2" paragraph>
 						<ul className="list-disc px-4">
@@ -229,15 +229,15 @@ const SectionComponent = (props) => {
 							<li>CVs</li>
 						</ul>
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
+				<Grid item  xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
 					<Typography variant="body2" paragraph>
 						Health and Safety
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 
 					<Typography variant="body2" paragraph>
 						<ul className="list-disc px-4">
@@ -245,24 +245,24 @@ const SectionComponent = (props) => {
 							<li>Accident reports, including details of injuries and contact information for injured parties or witnesses</li>
 						</ul>
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
+				<Grid item  xs={12} sm={6} className="p-0 flex flex-col justify-center py-4 pr-4">
 					<Typography variant="body2" paragraph>
 						Website Performance Management and Security
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} sm={6} className="p-0 py-4">
+				<Grid item  xs={12} sm={6} className="p-0 py-4">
 
 					<Typography variant="body2" paragraph>
 						<ul className="list-disc px-4">
 							<li>IP Addresses (in server log files)</li>
 						</ul>
 					</Typography>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} className="p-0 py-4">
+				<Grid item  xs={12} className="p-0 py-4">
 					<Typography variant="subtitle1" paragraph>
 						Cookies
 					</Typography>
@@ -411,10 +411,10 @@ const SectionComponent = (props) => {
 
 
 
-				</GridItem>
+				</Grid>
 
 
-			</GridContainer>
+			</Grid>
 
 		</Section>
 	);

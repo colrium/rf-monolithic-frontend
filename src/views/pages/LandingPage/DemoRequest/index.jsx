@@ -1,8 +1,8 @@
 /** @format */
 
 import { app } from "assets/jss/app-theme.jsx";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React from "react";
 import { connect } from "react-redux";
 import { withTheme } from '@mui/styles';
@@ -36,18 +36,18 @@ class Page extends React.Component {
 	render() {
 		const { classes, auth, theme, device, ...rest } = this.props;
 		return (
-			<GridContainer
+			<Grid container
 				className={classes?.root + " sm:px-4 md:px-32"}
 				direction="column"
 				alignItems="center"
 				justify="center"
 			>
-				<GridContainer className={"p-0"}>
-					<GridItem xs={12} sm={12} md={12} className={"p-0"}>
+				<Grid container className={"p-0"}>
+					<Grid item  xs={12} sm={12} md={12} className={"p-0"}>
 						<DemoRequestSection />
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

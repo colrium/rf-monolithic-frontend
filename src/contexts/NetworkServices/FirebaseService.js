@@ -3,14 +3,14 @@
 import React, { useRef, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { initializeApp } from "firebase/app"
-import { getFirestore, collection, doc, setDoc, getDocs, getDoc, updateDoc } from "firebase/firestore/lite"
+import { getAuth } from "firebase/auth"
+import { getFirestore, collection, doc, setDoc, getDocs, getDoc, updateDoc } from "firebase/firestore"
 import { setCurrentUser, ensureMessage, setSettings } from "state/actions"
 import { firebase as firebaseConfig, firebaseWebPushCertificate } from "config"
 import { getMessaging, getToken, onMessage } from "firebase/messaging"
-import Api from "services/Api"
 import { EventRegister } from "utils"
 import { useDidMount, useSetState, useDidUpdate } from "hooks"
-import { usePermission } from "react-use"
+import { Api } from "services"
 
 const FirebaseService = props => {
 	const { children } = props
@@ -20,9 +20,8 @@ const FirebaseService = props => {
 	const { user, isAuthenticated } = useSelector(state => state.auth)
 	const appRef = useRef(initializeApp(firebaseConfig))
 	const firestoreRef = useRef(getFirestore(appRef.current))
-	const messagingRef = useRef(getMessaging())
-	// messagingRef.current.usePublicVapidKey(firebaseWebPushCertificate)
-	const notificationPermission = usePermission({ name: "notification" })
+	const authRef = useRef(getAuth(appRef.current))
+	const messagingRef = useRef(getMessaging(appRef.current))
 	const [state, setState, getState] = useSetState({
 		token: null,
 		tokens: [],
@@ -119,59 +118,31 @@ const FirebaseService = props => {
 
 	const registerClientToken = useCallback(
 		async (userId, token) => {
-			if (!String.isEmpty(userId) && !String.isEmpty(token)) {
-				return await getFirestoreDoc("users", userId)
-					.then(async querySnapshot => {
-						let tokens = [token]
-						let saveToken = true
-						if (querySnapshot) {
-							let querySnapshotDoc = querySnapshot.data()
+			let tokens = [token]
+			if (!JSON.isEmpty(user) && !String.isEmpty(userId) && !String.isEmpty(token)) {
+				let saveToken = true
+				if (Array.isArray(user?.tokens)) {
+					let token_exists = user.tokens.indexOf(token) > -1
+					if (!token_exists) {
+						tokens = [...user.tokens, token]
+					}
+					saveToken = !token_exists
+				} else {
+					saveToken = true
+				}
+				////
 
-							// querySnapshot.docChanges().forEach(change => {
-							// 	if (isAuthenticated && user?._id === userId) {
-							// 		if (change.type === "modified") {
-							// 			console.log("User modified: ", change.doc.data())
-							// 		}
-							// 		if (change.type === "removed") {
-							// 			console.log("User modified: ", change.doc.data())
-							// 		}
-							// 	}
-							// })
-							////
-
-							if (querySnapshotDoc) {
-								if (Array.isArray(querySnapshotDoc?.tokens)) {
-									let token_exists = false
-									querySnapshotDoc.tokens.map(token_entry => {
-										if (token_entry === token && !token_exists) {
-											token_exists = true
-										} else {
-											tokens.push(token_entry)
-										}
-									})
-									saveToken = !token_exists
-								}
-							} else {
-								saveToken = true
-							}
-						} else {
-							saveToken = true
-						}
-						////
-
-						if (saveToken) {
-							putFirestoreDoc("users", userId, {
-								...user,
-								tokens: tokens,
-							}).catch(error => console.error("registerClientToken putFirestoreDoc error", error))
-						}
-						return tokens
-					})
-					.catch(err => {
-						//
-						console.error("registerClientToken getFirestoreDoc error", err)
-						return []
-					})
+				if (saveToken) {
+					putFirestoreDoc("users", userId, {
+						...user,
+						tokens: tokens,
+					}).then(res=> console.log("FirebaseService registerClientToken res", res)).catch(error => console.error("registerClientToken putFirestoreDoc error", error))
+					dispatch(setCurrentUser({ ...user, tokens }))
+					/* Api.post("/profile", {tokens: tokens}).then(res=> console.log("FirebaseService registerClientToken res", res)).catch(err => {
+						console.log("FirebaseService registerClientToken err", err)
+					}) */
+				}
+				return tokens
 			} else {
 				return []
 			}
@@ -205,7 +176,6 @@ const FirebaseService = props => {
 
 	const onMessageHandler = useCallback(
 		async payload => {
-			console.log("onFirebaseMessageHandler payload", payload)
 			if (isAuthenticated) {
 				const { data } = payload
 				if (data.event_name === "new-message" || data.event_name === "message-sent") {
@@ -234,21 +204,6 @@ const FirebaseService = props => {
 	const observeUserChanges = useCallback(
 		user => {
 			if (isAuthenticated) {
-				db.collection("cities")
-					.where("state", "==", "CA")
-					.onSnapshot(querySnapshot => {
-						querySnapshot.docChanges().forEach(change => {
-							if (change.type === "added") {
-								console.log("New city: ", change.doc.data())
-							}
-							if (change.type === "modified") {
-								console.log("Modified city: ", change.doc.data())
-							}
-							if (change.type === "removed") {
-								console.log("Removed city: ", change.doc.data())
-							}
-						})
-					})
 			}
 		},
 		[isAuthenticated]
@@ -274,8 +229,11 @@ const FirebaseService = props => {
 		app: appRef.current,
 		firestore: firestoreRef.current,
 		messaging: messagingRef.current,
+		auth: authRef.current,
 		getFirestoreDoc: getFirestoreDoc,
 		putFirestoreDoc: putFirestoreDoc,
+		config: firebaseConfig,
+		webPushCertificate: firebaseWebPushCertificate,
 	})
 }
 

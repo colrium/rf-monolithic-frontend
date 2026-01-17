@@ -3,8 +3,8 @@ import { connect } from "react-redux"
 
 import Typography from "@mui/material/Typography"
 import { TextInput, CheckboxInput } from "components/FormInputs"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 
 function Widget(props) {
 
@@ -15,12 +15,12 @@ function Widget(props) {
 	let context_settings = settings.mail
 
 	return (
-		<GridContainer className="px-2">
-			<GridItem xs={12} className="mb-2">
+		<Grid container className="px-2">
+			<Grid item  xs={12} className="mb-2">
 				<Typography variant="h3"> Outgoing Mail SMTP Settings</Typography>
-			</GridItem>
+			</Grid>
 
-			{/* <GridItem xs={12}>
+			{/* <Grid item  xs={12}>
 				<TextInput
 					name="smtp_host"
 					label="Host"
@@ -33,9 +33,9 @@ function Widget(props) {
 					validate
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12}>
+			<Grid item  xs={12}>
 				<TextInput
 					name="smtp_port"
 					label="Port"
@@ -48,9 +48,9 @@ function Widget(props) {
 					validate
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12}>
+			<Grid item  xs={12}>
 				<CheckboxInput
 					name="smtp_tls_ssl"
 					label="TLS/SSL"
@@ -61,9 +61,9 @@ function Widget(props) {
 					validate
 					error={errors["smtp_tls_ssl"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12}>
+			<Grid item  xs={12}>
 				<TextInput
 					name="smtp_user"
 					label="User"
@@ -78,9 +78,9 @@ function Widget(props) {
 					validate
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12}>
+			<Grid item  xs={12}>
 				<TextInput
 					name="smtp_password"
 					label="Password"
@@ -96,9 +96,9 @@ function Widget(props) {
 					validate
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12}>
+			<Grid item  xs={12}>
 				<TextInput
 					name="smtp_sender_name"
 					label="Sender Name"
@@ -111,8 +111,8 @@ function Widget(props) {
 					placeholder={"Name of Sender"}
 					validate
 				/>
-			</GridItem> */}
-		</GridContainer>
+			</Grid> */}
+		</Grid>
 	)
 }
 

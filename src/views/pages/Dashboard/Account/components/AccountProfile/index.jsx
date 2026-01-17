@@ -2,13 +2,12 @@
 
 // Material helpers
 import { LinearProgress, Typography } from "@mui/material";
-
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Card from "@mui/material/Card"
+import CardHeader from "@mui/material/CardHeader"
+import CardContent from "@mui/material/CardContent"
+import Grid from '@mui/material/Grid';
+;
 // Shared components
-import Portlet from "components/Portlet";
-import PortletContent from "components/Portlet/Content";
-import PortletFooter from "components/Portlet/Footer";
 import UsersDefination from "definations/users";
 import React, { Component } from "react";
 //Redux imports
@@ -79,8 +78,8 @@ class AccountProfile extends Component {
 		const { className, auth } = this.props;
 
 		return (
-			<Portlet className={className}>
-				<PortletContent>
+			<Card className={className}>
+				<CardContent>
 					<div className={"mt-4"}>
 						<Typography variant="body1">
 							Profile Completeness: 70%
@@ -88,8 +87,8 @@ class AccountProfile extends Component {
 						<LinearProgress value={70} variant="determinate" />
 					</div>
 
-					<GridContainer>
-						<GridItem xs={12}>
+					<Grid container>
+						<Grid item  xs={12}>
 							<BaseForm
 								defination={UsersDefination}
 								onSubmit={this.handleProfileFormSubmit}
@@ -102,11 +101,10 @@ class AccountProfile extends Component {
 								show_title={false}
 								onSubmitSuccessMessage="Profile changes saved"
 							/>
-						</GridItem>
-					</GridContainer>
-				</PortletContent>
-				<PortletFooter></PortletFooter>
-			</Portlet>
+						</Grid>
+					</Grid>
+				</CardContent>
+			</Card>
 		);
 	}
 }

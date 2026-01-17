@@ -10,7 +10,7 @@ import {
 	FileDownloadOutlined as FileDownloadIcon,
 } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import * as definations from "definations";
 import React from "react";
 import { Link } from "react-router-dom";

@@ -4,8 +4,8 @@ import React from "react";
 import { colors } from "assets/jss/app-theme.jsx";
 import Button from '@mui/material/Button';
 import Section from "components/Section";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Typography from '@mui/material/Typography';
 import { connect } from "react-redux";
 import { withTheme } from '@mui/styles';
@@ -40,8 +40,8 @@ const SectionComponent = (props) => {
 
 	return (
 		<Section className={"p-0 py-16"} id="products" title="Products">
-			<GridContainer className={"p-0"}>
-				<GridItem xs={12} md={12} className="p-0 mb-2 md:p-0">
+			<Grid container className={"p-0"}>
+				<Grid item  xs={12} md={12} className="p-0 mb-2 md:p-0">
 					<Typography variant="subtitle2" color={"textSecondary"} className="font-black" paragraph>
 						Realfield supplies high quality, primary citizen and consumer data, both quantitative and qualitative, collected through observation, interviews, questionnaires, schedules, and experiments.
 					</Typography>
@@ -58,10 +58,10 @@ const SectionComponent = (props) => {
 						We supply our data through two primary products, Surveys and Queries.
 					</Typography>
 
-				</GridItem>
+				</Grid>
 
 
-				<GridItem xs={12} md={6} className="p-0 md:pr-2 my-8">
+				<Grid item  xs={12} md={6} className="p-0 md:pr-2 my-8">
 					<Card className={"primary h-48 shadow-2xl"}>
 						<CardContent className={classes?.cardContent}>
 							<Typography color="inherit" variant="h3" paragraph>
@@ -73,9 +73,9 @@ const SectionComponent = (props) => {
 							</Typography>
 						</CardContent>
 					</Card>
-				</GridItem>
+				</Grid>
 
-				<GridItem xs={12} md={6} className="p-0 md:pl-2 my-8">
+				<Grid item  xs={12} md={6} className="p-0 md:pl-2 my-8">
 					<Card className={"secondary h-48 shadow-2xl"}>
 						<CardContent className={classes?.cardContent}>
 							<Typography color="inherit" variant="h3" paragraph>
@@ -87,9 +87,9 @@ const SectionComponent = (props) => {
 							</Typography>
 						</CardContent>
 					</Card>
-				</GridItem>
-				<GridItem xs={12} md={12} className="p-0 my-4">
-					<GridContainer className={"p-0 flex sm:flex-col md:flex-row sm:items-center md:justify-center"}>
+				</Grid>
+				<Grid item  xs={12} md={12} className="p-0 my-4">
+					<Grid container className={"p-0 flex sm:flex-col md:flex-row sm:items-center md:justify-center"}>
 						<Link to={"/home#commission-a-survey".toUriWithLandingPagePrefix()} color="inherit" className={"my-4 mx-2"}>
 							<Button
 								variant="contained"
@@ -109,10 +109,10 @@ const SectionComponent = (props) => {
 								Request demo
 							</Button>
 						</Link>
-					</GridContainer>
-				</GridItem>
+					</Grid>
+				</Grid>
 
-				<GridItem xs={12} md={12} className="p-0 my-8">
+				<Grid item  xs={12} md={12} className="p-0 my-8">
 					<Typography color="textSecondary" variant="h3" paragraph>
 						Data for Research, Analysis & Insights
 					</Typography>
@@ -120,11 +120,11 @@ const SectionComponent = (props) => {
 					<Typography color="textSecondary" variant="subtitle2" paragraph>
 						At Realfield we view data as a commodity. We value each piece of data we collect on your behalf however you choose to analyse it, and for whatever research area or sector you work in. Brilliant insights need brilliant data.
 					</Typography>
-				</GridItem>
+				</Grid>
 
 
 
-				<GridItem xs={12} md={12} className="p-0 mb-2">
+				<Grid item  xs={12} md={12} className="p-0 mb-2">
 					<Accordion>
 						<AccordionSummary
 							expandIcon={<ExpandMoreIcon />}
@@ -134,8 +134,8 @@ const SectionComponent = (props) => {
 							<Typography variant="h5">Academic Research</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
-							<GridContainer className={"p-0"}>
-								<GridItem xs={12} className={"p-0"}>
+							<Grid container className={"p-0"}>
+								<Grid item  xs={12} className={"p-0"}>
 
 									<Typography variant="body1" className="mb-4" paragraph>
 										Academic learning permeates all aspects of our society and drives innovation and growth. Primary research is the foundation of discovery, experimentation, and learning and is powered by primary data; data that is uniquely sourced to address the questions asked through the research. For years, professional academics and students alike would conduct their own fieldwork to gather primary data, but that is becoming increasingly difficult. Travel is expensive and the data collection process itself is costly and time consuming.
@@ -156,8 +156,8 @@ const SectionComponent = (props) => {
 									<Typography variant="body1" className="accent-text font-semibold" paragraph>
 										Use our Survey product for primary data collection or try Queries – it’s ideal for grant applications, validating research design or academic papers!
 									</Typography>
-								</GridItem>
-							</GridContainer>
+								</Grid>
+							</Grid>
 						</AccordionDetails>
 					</Accordion>
 
@@ -170,8 +170,8 @@ const SectionComponent = (props) => {
 							<Typography variant="h5">Market Research [Public and Private Sectors]</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
-							<GridContainer className={"p-0"}>
-								<GridItem xs={12} className={"p-0"}>
+							<Grid container className={"p-0"}>
+								<Grid item  xs={12} className={"p-0"}>
 
 									<Typography variant="body1" className="mb-4 font-bold" paragraph>
 										Private Sector
@@ -214,8 +214,8 @@ const SectionComponent = (props) => {
 									<Typography variant="body1" className="accent-text font-semibold" paragraph>
 										Use our Survey product for primary data or try Queries for conducting rapid assessments, guiding intervention design or undertaking Monitoring and Evaluation for your project!
 									</Typography>
-								</GridItem>
-							</GridContainer>
+								</Grid>
+							</Grid>
 						</AccordionDetails>
 					</Accordion>
 
@@ -229,8 +229,8 @@ const SectionComponent = (props) => {
 							<Typography variant="h5">Digital Research</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
-							<GridContainer className={"p-0"}>
-								<GridItem xs={12} className={"p-0 mb-4"}>
+							<Grid container className={"p-0"}>
+								<Grid item  xs={12} className={"p-0 mb-4"}>
 
 									<Typography variant="body1" paragraph>
 										The emerging AI industry relies on data. And it needs lots of it. Data that is collected systematically, consistently, reliably, and ethically, over time. In short, projects using advanced statistical analyses and machine learning depend on accurate, reliably collected, annotated, labelled data.
@@ -251,9 +251,9 @@ const SectionComponent = (props) => {
 									<Typography variant="body1" className="accent-text font-semibold" paragraph>
 										Use our Survey product for primary data collection or try Queries – it’s ideal for grant applications, validating research design or academic papers!
 									</Typography>
-								</GridItem>
+								</Grid>
 
-								<GridItem xs={12} className="p-0 mb-2">
+								<Grid item  xs={12} className="p-0 mb-2">
 									<Typography variant="body1" className="font-black" paragraph>
 										What kind of data can Realfield supply?
 									</Typography>
@@ -264,14 +264,14 @@ const SectionComponent = (props) => {
 										<li className={"mb-4 text-sm font-normal"}><span className="font-black">Audio </span>data that is collected as utterances, time stamped, and categorized by region and dialect</li>
 										<li className={"mb-4 text-sm font-normal"}><span className="font-black">Video </span>for training data for machine learning combining the best of audio and image annotation practices.</li>
 									</ol>
-								</GridItem>
-							</GridContainer>
+								</Grid>
+							</Grid>
 						</AccordionDetails>
 					</Accordion>
-				</GridItem>
+				</Grid>
 
 				<Hidden smDown>
-					<GridItem xs={12} md={12} className="p-0  pt-8 pb-12">
+					<Grid item  xs={12} md={12} className="p-0  pt-8 pb-12">
 						<Typography color="textSecondary" variant="h3" paragraph>
 							Process
 						</Typography>
@@ -280,17 +280,17 @@ const SectionComponent = (props) => {
 							In the past, data collection was time consuming and expensive. Realfield’s pioneering process for ethically collecting robust face-to-face and primary data changes all of that.
 						</Typography>
 
-						<GridContainer className="p-0">
-							<GridItem xs={12} className="p-0 pt-8 md:px-32 flex flex-row items-center justify-center">
+						<Grid container className="p-0">
+							<Grid item  xs={12} className="p-0 pt-8 md:px-32 flex flex-row items-center justify-center">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process1.png")} className="w-32 h-auto" alt="process1" />
 								<Typography color="textSecondary" variant="h5" className="md:ml-12 flex-1" paragraph>
 									<span>To </span> <span className="secondary-text">get started</span><span>, just sign up to meet your Realfield <br /> Data Collection Supervisor!</span>
 								</Typography>
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 
-						<GridContainer className="p-0">
-							<GridItem xs={12} className="p-0 md:pr-32 flex flex-row items-center justify-start">
+						<Grid container className="p-0">
+							<Grid item  xs={12} className="p-0 md:pr-32 flex flex-row items-center justify-start">
 								<div className="flex flex-col md:pr-2">
 									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12" />
 									<Typography color="secondary" variant="body1" className="my-2 uppercase font-black" paragraph>
@@ -304,18 +304,18 @@ const SectionComponent = (props) => {
 
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process2.png")} className="w-32 h-auto" alt="process2" />
 
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={12} className="p-0 md:px-32 flex flex-row items-center justify-center">
+							<Grid item  xs={12} className="p-0 md:px-32 flex flex-row items-center justify-center">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process3.png")} className="w-32 h-auto" alt="process3" />
 
 								<Typography color="textSecondary" variant="body1" className="md:ml-12 flex-1 text-xl font-bold">
 									<span>Next, we’ll</span> <span className="secondary-text">schedule </span> <span>collection start to ensure your timelines are met.</span>
 								</Typography>
 
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={12} className="p-0  md:px-32 flex flex-row items-center ">
+							<Grid item  xs={12} className="p-0  md:px-32 flex flex-row items-center ">
 
 
 								<Typography color="textSecondary" variant="body1" className="md:mr-12 flex-1 text-xl font-bold">
@@ -324,12 +324,12 @@ const SectionComponent = (props) => {
 
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process4.png")} className="w-32 h-auto" alt="process4" />
 
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 
 
-						<GridContainer className="p-0 ">
-							<GridItem xs={12} className="p-0 md:pr-32 flex flex-row items-center justify-center">
+						<Grid container className="p-0 ">
+							<Grid item  xs={12} className="p-0 md:pr-32 flex flex-row items-center justify-center">
 								<div className="flex flex-col pr-2">
 									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-auto md:mr-2" />
 									<Typography color="secondary" variant="body1" className="uppercase font-black">
@@ -349,11 +349,11 @@ const SectionComponent = (props) => {
 								</Typography>
 
 
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 
-						<GridContainer className="p-0">
-							<GridItem xs={12} className="p-0 pr-32 flex flex-row items-center justify-center">
+						<Grid container className="p-0">
+							<Grid item  xs={12} className="p-0 pr-32 flex flex-row items-center justify-center">
 								<div className="flex flex-col pr-2">
 									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-auto md:mr-2" />
 									<Typography color="secondary" variant="body1" className="uppercase font-black">
@@ -369,22 +369,22 @@ const SectionComponent = (props) => {
 								</Typography>
 
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process6.png")} className="w-32 h-auto" alt="process6" />
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={12} className="p-0 md:px-32 flex flex-row items-center justify-center">
+							<Grid item  xs={12} className="p-0 md:px-32 flex flex-row items-center justify-center">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process7.png")} className="w-32 h-auto" alt="process7" />
 
 								<Typography color="textSecondary" variant="body1" className="md:mx-12 text-xl font-bold">
 									<span className="secondary-text">Data Quality </span> <span>and </span> <span className="secondary-text">ethical data </span> <span>collection are central to our mission to provide you with the data you need, real time.</span>
 								</Typography>
-							</GridItem>
-						</GridContainer>
-					</GridItem>
+							</Grid>
+						</Grid>
+					</Grid>
 				</Hidden>
 
 
 				<Hidden mdUp>
-					<GridItem xs={12} md={12} className="p-0  pt-8 pb-12" id="products-process">
+					<Grid item  xs={12} md={12} className="p-0  pt-8 pb-12" id="products-process">
 						<Typography color="textSecondary" variant="h3" paragraph>
 							Process
 						</Typography>
@@ -393,119 +393,119 @@ const SectionComponent = (props) => {
 							In the past, data collection was time consuming and expensive. Realfield’s pioneering process for ethically collecting robust face-to-face and primary data changes all of that.
 						</Typography>
 
-						<GridContainer className="p-0">
-							<GridItem xs={3} className="p-0">
+						<Grid container className="p-0">
+							<Grid item  xs={3} className="p-0">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process1.png")} className="w-16 h-auto" alt="process1" />
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={9} className="p-0 flex flex-col items-center">
+							<Grid item  xs={9} className="p-0 flex flex-col items-center">
 								<Typography color="textSecondary" variant="h5" paragraph>
 									<span>To </span> <span className="secondary-text">get started</span><span>, just sign up to meet your Realfield <br /> Data Collection Supervisor!</span>
 								</Typography>
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 
-						<GridContainer className="p-0 pt-8">
-							<GridItem xs={3} className="p-0 flex flex-row items-center">
+						<Grid container className="p-0 pt-8">
+							<Grid item  xs={3} className="p-0 flex flex-row items-center">
 								<div className="flex flex-col pr-2">
 									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/1_Blue_BG.png")} className="w-12 h-12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={9} className="p-0 flex flex-row items-center">
+							<Grid item  xs={9} className="p-0 flex flex-row items-center">
 								<Typography color="secondary" variant="subtitle2" className="my-2 uppercase font-black" paragraph>
 									Day 1
 								</Typography>
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={12} className="p-0  py-4 flex flex-row items-center ">
+							<Grid item  xs={12} className="p-0  py-4 flex flex-row items-center ">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process2.png")} className="w-16 h-auto" alt="process5" />
 
 
 								<Typography color="textSecondary" variant="body1" className="flex-1 ml-4 text-xl font-bold">
 									<span>Outline and </span> <span className="secondary-text">discuss </span> <span>your data requirements to make your project a success.</span>
 								</Typography>
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={12} className="p-0 py-4 flex flex-row items-center ">
+							<Grid item  xs={12} className="p-0 py-4 flex flex-row items-center ">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process3.png")} className="w-16 h-auto" alt="process4" />
 
 								<Typography color="textSecondary" variant="body1" className="ml-4 flex-1 text-xl font-bold">
 									<span>Next, we’ll</span> <span className="secondary-text">schedule </span> <span>collection start to ensure your timelines are met.</span>
 								</Typography>
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={12} className="p-0 py-4 flex flex-row items-center ">
+							<Grid item  xs={12} className="p-0 py-4 flex flex-row items-center ">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process4.png")} className="w-16 h-auto" alt="process4" />
 
 								<Typography color="textSecondary" variant="body1" className="ml-4 flex-1 text-xl font-bold">
 									<span className="secondary-text">Choose </span><span>your </span> <span className="secondary-text">field team. </span> <span>You can select your own field team, or we can assign one for you that best suits your research design.</span>
 								</Typography>
-							</GridItem>
+							</Grid>
 
 
-						</GridContainer>
+						</Grid>
 
-						<GridContainer className="p-0 pt-8">
-							<GridItem xs={3} className="p-0 flex flex-row items-center justify-start">
+						<Grid container className="p-0 pt-8">
+							<Grid item  xs={3} className="p-0 flex flex-row items-center justify-start">
 								<div className="flex flex-col md:pr-2">
 									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/2_Blue_BG.png")} className="w-12 h-12" />
 
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={9} className="p-0 flex flex-row items-center">
+							<Grid item  xs={9} className="p-0 flex flex-row items-center">
 								<Typography color="secondary" variant="subtitle2" className="my-2 uppercase font-black" paragraph>
 									Day 1 (a little later...)
 								</Typography>
-							</GridItem>
+							</Grid>
 
 
-							<GridItem xs={12} className="p-0 flex flex-row items-center ">
+							<Grid item  xs={12} className="p-0 flex flex-row items-center ">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process5.png")} className="w-16 h-auto" alt="process5" />
 
 
 								<Typography color="textSecondary" variant="body1" className="flex-1 ml-4 text-xl font-bold">
 									<span className="secondary-text">Observe </span><span>your field team at work through our dashboard and </span> <span className="secondary-text">engage </span> <span>with your collection supervisor at any time to check on progress, </span> <span className="secondary-text">monitor</span> <span>the collection process or <span className="secondary-text">revise</span> your collection strategy.</span>
 								</Typography>
-							</GridItem>
-						</GridContainer>
+							</Grid>
+						</Grid>
 
 
-						<GridContainer className="p-0 pt-8 ">
-							<GridItem xs={3} className="p-0 flex flex-row items-center justify-start">
+						<Grid container className="p-0 pt-8 ">
+							<Grid item  xs={3} className="p-0 flex flex-row items-center justify-start">
 								<div className="flex flex-col md:pr-2">
 									<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/Blue_BG/3_Blue_BG.png")} className="w-12 h-12" />
 								</div>
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={9} className="p-0 flex flex-row items-center">
+							<Grid item  xs={9} className="p-0 flex flex-row items-center">
 								<Typography color="secondary" variant="subtitle2" className="my-2 uppercase font-black" paragraph>
 									Day 1 (shortly after...)
 								</Typography>
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={12} className="p-0 py-4 flex flex-row items-center ">
+							<Grid item  xs={12} className="p-0 py-4 flex flex-row items-center ">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process3.png")} className="w-16 h-auto" alt="process4" />
 								<Typography color="textSecondary" variant="body1" className="ml-4 flex-1 text-xl font-bold">
 									<span>Your data will be uploaded in real time onto the </span> <span className="secondary-text">dashboard </span> <span>for review or download it to analyse at your convenience.</span>
 								</Typography>
-							</GridItem>
+							</Grid>
 
-							<GridItem xs={12} className="p-0 py-4 flex flex-row items-center ">
+							<Grid item  xs={12} className="p-0 py-4 flex flex-row items-center ">
 								<img src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/img/realfield/process/process7.png")} className="w-16 h-auto" alt="process5" />
 
 
 								<Typography color="textSecondary" variant="body1" className="flex-1 ml-4 text-xl font-bold">
 									<span className="secondary-text">Data Quality </span> <span>and </span> <span className="secondary-text">ethical data </span> <span>collection are central to our mission to provide you with the data you need, real time.</span>
 								</Typography>
-							</GridItem>
-						</GridContainer>
-					</GridItem>
+							</Grid>
+						</Grid>
+					</Grid>
 				</Hidden>
 
 
-			</GridContainer>
+			</Grid>
 		</Section>
 	);
 }

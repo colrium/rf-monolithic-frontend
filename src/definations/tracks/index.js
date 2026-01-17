@@ -10,10 +10,10 @@ import {
 	PersonOutlined as UserIcon,
 	PersonPinOutlined as DefinationContextIcon,
 } from "@mui/icons-material";
-import Avatar from "components/Avatar";
-import Button from "components/Button";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
 import Status from "components/Status";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import React from "react";
 import { Link } from "react-router-dom";
 import ApiService from "services/Api";

@@ -1,5 +1,5 @@
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
@@ -31,11 +31,11 @@ class Page extends Component {
 		const { classes } = this.props;
 
 		return (
-			<GridContainer className="m-0 p-0">
-				<GridItem xs={12}>
+			<Grid container className="m-0 p-0">
+				<Grid item  xs={12}>
 					<ChatApp />
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 }

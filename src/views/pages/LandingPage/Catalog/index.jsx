@@ -1,8 +1,8 @@
 /** @format */
 
 import { app } from "assets/jss/app-theme";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React from "react";
 
 import CatalogView from "views/widgets/Ecommerce/Catalog";
@@ -19,11 +19,11 @@ class Page extends React.Component {
 	render() {
 		const { classes, ...rest } = this.props;
 		return (
-			<GridContainer style={{ minHeight: "90vh" }} className="relative">
-				<GridItem xs={12} sm={12} md={10} className="m-auto">
+			<Grid container style={{ minHeight: "90vh" }} className="relative">
+				<Grid item  xs={12} sm={12} md={10} className="m-auto">
 					<CatalogView className="w-full" />
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 }

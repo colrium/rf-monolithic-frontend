@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useCallback, useRef, useEffect } from "react"
+import React, { useCallback, useRef } from "react"
 import Grid from "@mui/material/Grid"
 import { useSelector, useDispatch } from "react-redux"
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon"
@@ -9,9 +9,7 @@ import IconButton from "@mui/material/IconButton"
 import Paper from "@mui/material/Paper"
 import Box from "@mui/material/Box"
 import CloseIcon from "@mui/icons-material/Close"
-import SpeedDial from "@mui/material/SpeedDial"
 import ImageIcon from "@mui/icons-material/Image"
-import SpeedDialAction from "@mui/material/SpeedDialAction"
 import VideocamIcon from "@mui/icons-material/Videocam"
 import HeadphonesIcon from "@mui/icons-material/Headphones"
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile"
@@ -21,10 +19,8 @@ import ClickAwayListener from "@mui/material/ClickAwayListener"
 import EmojiPicker from "emoji-picker-react"
 import LinkPreview from "components/LinkPreview"
 import { useDidMount, useDidUpdate, useSetState, usePersistentForm } from "hooks"
-
+import { useNetworkServices } from "contexts/NetworkServices"
 import { getIndexOfConversation } from "state/actions"
-
-import { EventRegister } from "utils"
 
 const messageTypes = {
 	image: {
@@ -98,7 +94,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 
 	const conversationRef = useRef(conversation)
 
-	const { handleSubmit, TextField, FilePicker, values, setValue, getValues, resetValues } = usePersistentForm({
+	const { handleSubmit, TextField, FilePicker, setValue, getValues, resetValues } = usePersistentForm({
 		// name: `compose-message-${conversation?.uuid || conversation?._id || "new"}`,
 		name: `compose-message`,
 		defaultValues: {
@@ -114,15 +110,16 @@ const MessageComposer = React.forwardRef((props, ref) => {
 			// conversation_uuid: conversation?.uuid,
 		},
 	})
+	const values = getValues()
 	const inputRef = useRef(null)
 	const isTypingRef = useRef(false)
 	const [state, setState, getState] = useSetState({
 		emojiPickerOpen: false,
 		filePickerOpen: false,
 		typePickerOpen: false,
-		type: "text"
+		type: "text",
 	})
-
+	const { SocketIO } = useNetworkServices()
 	const onEmojiClick = useCallback(
 		(event, emojiObject) => {
 			const cursor = inputRef.current.selectionStart
@@ -142,49 +139,45 @@ const MessageComposer = React.forwardRef((props, ref) => {
 	}
 
 	const handleOnPickType = messageType => () => {
-		setState({ typePickerOpen: false, filePickerOpen: true, "type": messageType })
+		setState({ typePickerOpen: false, filePickerOpen: true, type: messageType })
 		setValue("type", messageType)
 	}
 
-	const handleOnSubmit = useCallback(() => {
-		let content = inputRef.current.value || ""
-		content = content.trim()
-		const {type} = getState()
-		let form_values = {
-			...getValues(),
-			type: type,
-			sender: auth.user?._id,
-			// conversation: conversation?._id || conversation,
-			// conversation_uuid: conversation?.uuid || conversation,
-			content: content,
-		}
-		// if (["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && Array.isEmpty(form_values.attachments)) {
-		// 	form_values.type = "text"
-		// 	setValue("type", "text")
-		// }
-
-
-		console.log("form_values", form_values)
-		const submittable =
-			(form_values.type === "text" && !String.isEmpty(content)) ||
-			(["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && !Array.isEmpty(form_values.attachments))
-
-		if (Function.isFunction(onSubmit) && submittable) {
-			try {
-				onSubmit(form_values)
-				// if (!!inputRef.current) {
-				// 	inputRef.current.value = ""
-				// }
-
-				resetValues()
-				setState({ emojiPickerOpen: false, filePickerOpen: false, typePickerOpen: false, type: "text" })
-				setValue("type", "text")
-				setValue("attachments", [])
-			} catch (error) {
-				resetValues()
+	const handleOnSubmit = useCallback(
+		event => {
+			let content = inputRef.current.value || ""
+			content = content.trim()
+			const { type } = getState()
+			let form_values = {
+				...getValues(),
+				type: type,
+				sender: auth.user?._id,
+				// conversation: conversation?._id || conversation,
+				// conversation_uuid: conversation?.uuid || conversation,
+				content: content,
 			}
-		}
-	}, [values, onSubmit, conversation, auth])
+			const submittable =
+				(form_values.type === "text" && !String.isEmpty(content)) ||
+				(["image", "audio", "video", "file"].indexOf(form_values.type) !== -1 && !Array.isEmpty(form_values.attachments))
+
+			if (Function.isFunction(onSubmit) && submittable) {
+				try {
+					onSubmit(form_values)
+					// if (!!inputRef.current) {
+					// 	inputRef.current.value = ""
+					// }
+
+					resetValues()
+					setState({ emojiPickerOpen: false, filePickerOpen: false, typePickerOpen: false, type: "text" })
+					setValue("type", "text")
+					setValue("attachments", [])
+				} catch (error) {
+					resetValues()
+				}
+			}
+		},
+		[values, onSubmit, conversation, auth]
+	)
 
 	const handleOnContentInputKeyDown = useCallback(event => {
 		if (event.key === "Enter" && !event.altKey && !event.ctrlKey && !event.shiftKey) {
@@ -215,7 +208,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 	const handleOnStartedTyping = useCallback(() => {
 		if (!isTypingRef.current) {
 			isTypingRef.current = true
-			EventRegister.emit("compose-message-started", {
+			SocketIO.emit("started-typing-message", {
 				conversation: conversationRef.current.uuid || conversationRef.current._id,
 				user: auth.user._id,
 			})
@@ -225,7 +218,7 @@ const MessageComposer = React.forwardRef((props, ref) => {
 	const handleOnStoppedTyping = useCallback(() => {
 		if (isTypingRef.current) {
 			isTypingRef.current = false
-			EventRegister.emit("compose-message-stopped", {
+			SocketIO.emit("stopped-typing-message", {
 				conversation: conversationRef.current.uuid || conversationRef.current._id,
 				user: auth.user?._id,
 			})

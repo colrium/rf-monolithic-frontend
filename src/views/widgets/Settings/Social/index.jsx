@@ -3,8 +3,8 @@ import { connect } from "react-redux"
 
 import Typography from "@mui/material/Typography"
 import { TextInput } from "components/FormInputs"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 
 const socialMedias = {
 	facebook: "Facebook",
@@ -19,13 +19,13 @@ const socialMedias = {
 
 function Widget(props) {
 	return (
-		<GridContainer className="px-2">
-			<GridItem xs={12} className="mb-2">
+		<Grid container className="px-2">
+			<Grid item  xs={12} className="mb-2">
 				<Typography variant="h3"> Social media</Typography>
-			</GridItem>
+			</Grid>
 
 			{/*Object.entries(socialMedias).map(([key, value], index) => (
-				<GridItem xs={12} className="mb-4" key={"social-" + index}>
+				<Grid item  xs={12} className="mb-4" key={"social-" + index}>
 					<TextInput
 						name={key}
 						label={value}
@@ -36,9 +36,9 @@ function Widget(props) {
 						disabled={loading[key]}
 						error={errors[key]}
 					/>
-				</GridItem>
+				</Grid>
 			))*/}
-		</GridContainer>
+		</Grid>
 	)
 }
 

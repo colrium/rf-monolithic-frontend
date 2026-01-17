@@ -13,11 +13,11 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 	ReceiptOutlined as DefinationContextIcon,
 } from "@mui/icons-material";
-import Avatar from "components/Avatar";
-import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import { formats } from "config/data";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
@@ -75,8 +75,8 @@ export default {
 							calendarId: "orders",
 							title: entry.reference,
 							body: ReactDOMServer.renderToStaticMarkup(
-								<GridContainer>
-									<GridItem xs={12}>
+								<Grid container>
+									<Grid item  xs={12}>
 										{entry.status && (
 											<Typography
 												variant="body2"
@@ -136,8 +136,8 @@ export default {
 												)}
 											</Typography>
 										)}
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							),
 							category: "time",
 							dueDateClass: "",

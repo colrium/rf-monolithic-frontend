@@ -2,9 +2,9 @@
 
 
 import GoogleMap from "components/GoogleMap";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
@@ -190,13 +190,13 @@ class GoogleMapView extends React.Component {
 	render() {
 		const { googleMapProps, api, defination } = this.props;
 		return (
-			<GridContainer className={`p-0`}>
-				<GridItem className="p-0 m-0" xs={12}>
-					<GridContainer className="p-0 m-0">
-						<GridContainer className="p-0 m-0">
-							<GridItem className="p-0 m-0" xs={12}>
-								<GridContainer className="p-0 m-0">
-									<GridItem xs={12} className="p-0 m-0">
+			<Grid container className={`p-0`}>
+				<Grid item  className="p-0 m-0" xs={12}>
+					<Grid container className="p-0 m-0">
+						<Grid container className="p-0 m-0">
+							<Grid item  className="p-0 m-0" xs={12}>
+								<Grid container className="p-0 m-0">
+									<Grid item  xs={12} className="p-0 m-0">
 										<GoogleMap
 											defaultZoom={12}
 											zoom={12}
@@ -226,13 +226,13 @@ class GoogleMapView extends React.Component {
 											}
 											showCurrentPosition={true}
 										/>
-									</GridItem>
-								</GridContainer>
-							</GridItem>
-						</GridContainer>
+									</Grid>
+								</Grid>
+							</Grid>
+						</Grid>
 						{(api ? api.complete && api.error : false) && (
-							<GridContainer>
-								<GridItem xs={12}>
+							<Grid container>
+								<Grid item  xs={12}>
 									<Typography
 										color="error"
 										variant="body2"
@@ -241,12 +241,12 @@ class GoogleMapView extends React.Component {
 										{"An error occured. \n " +
 											api.error.msg}
 									</Typography>
-								</GridItem>
-							</GridContainer>
+								</Grid>
+							</Grid>
 						)}
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

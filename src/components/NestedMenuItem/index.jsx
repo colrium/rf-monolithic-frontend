@@ -152,7 +152,6 @@ const NestedMenuItem = React.forwardRef((props, ref) => {
 });
 
 NestedMenuItem.propTypes = {
-
 	parentMenuOpen: PropTypes.bool,
 	component: PropTypes.element,
 	label: PropTypes.node,
@@ -160,6 +159,5 @@ NestedMenuItem.propTypes = {
 	leftIcon: PropTypes.node,
 	ContainerProps: PropTypes.object,
 	MenuProps: PropTypes.object,
-	button: PropTypes.bool,
-};
+}
 export default (React.memo(NestedMenuItem));

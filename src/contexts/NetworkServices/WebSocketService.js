@@ -81,7 +81,7 @@ const WebSocketService = props => {
 	const handleOnMessageSent = useCallback(
 		async message => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onMessage(message)
+				// onMessage(message)
 			}
 		},
 		[user, isAuthenticated]
@@ -100,7 +100,7 @@ const WebSocketService = props => {
 	const handleOnNewMessage = useCallback(
 		async message => {
 			if (isAuthenticated && !JSON.isEmpty(user)) {
-				onMessage(message, true)
+				// onMessage(message, true)
 				SocketIO.emit("mark-message-as-received", {
 					message: message._id || message.uuid,
 				})
@@ -120,7 +120,6 @@ const WebSocketService = props => {
 
 	const handleOnInbox = useCallback(
 		async conversations => {
-			// console.log("onInbox conversations", conversations)
 			if (isAuthenticated && !JSON.isEmpty(user)) {
 				onInbox(conversations)
 			}
@@ -130,9 +129,11 @@ const WebSocketService = props => {
 
 	const initializeSubscriptions = useCallback(() => {
 		SocketIO.on("settings", settings => {
+			console.log("SocketIO: settings", settings)
 			dispatch(setSettings(settings))
 		})
 		if (isAuthenticated && !JSON.isEmpty(user)) {
+
 			SocketIO.on("presence-changed", handleOnPresenceChanged)
 			SocketIO.on("user-changed-presence", handleOnUserChangedPresence)
 
@@ -140,8 +141,8 @@ const WebSocketService = props => {
 			SocketIO.on("message-marked-as-received", handleOnMessageMarkedAsReceived)
 			SocketIO.on("message-deleted-for-all", handleOnMessageDeletedForAll)
 			SocketIO.on("message-deleted-for-user", handleOnMessageDeletedForUser)
-			SocketIO.on("message-sent", handleOnMessageSent)
-			SocketIO.on("new-message", handleOnNewMessage)
+			// SocketIO.on("message-sent", handleOnMessageSent)
+			// SocketIO.on("new-message", handleOnNewMessage)
 			SocketIO.on("preferences", preferences => {
 				dispatch(setPreferences(preferences))
 			})
@@ -165,7 +166,6 @@ const WebSocketService = props => {
 				if (!JSON.isEmpty(data)) {
 					handleOnNewConversation(data)
 				}
-				console.error("create-conversation-error data", data)
 			})
 			if (SocketIO.connected) {
 				SocketIO.emit("get-preferences", {})

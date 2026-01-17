@@ -112,7 +112,6 @@ const Contacts = props => {
 		// 	itemSizeRef.current = itemSize
 		// }
 		onUnselectEventRef.current = EventRegister.on("clear-contacts-selection", event => {
-			console.log("clear-contacts-selection called event", event)
 			setState({
 				selections: [],
 			})
@@ -144,7 +143,6 @@ const Contacts = props => {
 		event => {
 			event.preventDefault()
 			const {loading} = getState()
-			console.log("onSearchFormSubmit searchInputRef.current.val", searchInputRef.current.value)
 			if (!loading && !String.isEmpty(searchInputRef.current?.value)) {
 				setState({ loading: true })
 				Api.get("/contacts", { params: { ...queryRef.current, q: searchInputRef.current.value } })
@@ -152,7 +150,6 @@ const Contacts = props => {
 						const {
 							body: { data, page, pages, count },
 						} = res
-						console.log("onSearchFormSubmit res", res)
 						setState(prevState => ({ loading: false /* pagination: { ...prevState.pagination, page, pages, count }  */ }))
 						onContacts(data)
 					})
@@ -172,8 +169,6 @@ const Contacts = props => {
 	const handleOnScroll = useCallback(
 		({ clientHeight, scrollHeight, scrollTop }) => {
 			const {loading, pagination, keyword } = getState()
-			console.log("handleOnScroll pagination", pagination)
-			console.log("handleOnScroll loading", loading)
 			if (!loading) {
 				const scrollBottom = Math.round(scrollHeight - scrollTop) - Math.round(clientHeight)
 				scrollToBottomRef.current = scrollBottom <= itemSizeRef.current
@@ -188,7 +183,6 @@ const Contacts = props => {
 						const {body: {data, page, pages, count}} = res
 						setState(prevState => ({ loading: false, pagination: { ...prevState.pagination, page, pages, count } }))
 						onContacts(data)
-						console.log("handleOnScroll res", res)
 					}).catch(error => {
 						console.error("On Contacts Scroll error", error)
 						setState({ loading: false })

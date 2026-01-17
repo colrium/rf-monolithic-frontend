@@ -3,8 +3,8 @@
 
 import classNames from "classnames";
 import { CheckboxInput, DateInput, FileInput, MapInput, RadioInput, SelectInput, TextInput, WysiwygInput } from "components/FormInputs";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -158,7 +158,7 @@ class GenerationView extends React.Component {
 				JSON.isJSON(possibilities)
 			) {
 				return (
-					<GridItem
+					<Grid item
 						xs={12}
 						md={Number.parseNumber(size, 12)}
 						key={
@@ -187,11 +187,11 @@ class GenerationView extends React.Component {
 							{...rest}
 							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>
+					</Grid>
 				);
 			} else if (["email", "number", "phone", "text"].includes(type)) {
 				return (
-					<GridItem
+					<Grid item
 						xs={12}
 						md={Number.parseNumber(size, 12)}
 						key={
@@ -210,11 +210,11 @@ class GenerationView extends React.Component {
 							{...rest}
 							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>
+					</Grid>
 				);
 			} else if (type === "textarea") {
 				return (
-					<GridItem
+					<Grid item
 						xs={12}
 						md={Number.parseNumber(size, 12)}
 						key={
@@ -235,11 +235,11 @@ class GenerationView extends React.Component {
 							{...rest}
 							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>
+					</Grid>
 				);
 			} else if (type === "checkbox") {
 				return (
-					<GridItem
+					<Grid item
 						xs={12}
 						md={Number.parseNumber(size, 12)}
 						key={
@@ -256,11 +256,11 @@ class GenerationView extends React.Component {
 							{...rest}
 							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>
+					</Grid>
 				);
 			} else if (type === "radio") {
 				return (
-					<GridItem
+					<Grid item
 						xs={12}
 						md={Number.parseNumber(size, 12)}
 						key={
@@ -277,11 +277,11 @@ class GenerationView extends React.Component {
 							{...rest}
 							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>
+					</Grid>
 				);
 			} else if (type === "file") {
 				return (
-					<GridItem
+					<Grid item
 						xs={12}
 						md={Number.parseNumber(size, 12)}
 						key={
@@ -298,11 +298,11 @@ class GenerationView extends React.Component {
 							{...rest}
 							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>
+					</Grid>
 				);
 			} else if (type === "date") {
 				return (
-					<GridItem
+					<Grid item
 						xs={12}
 						md={Number.parseNumber(size, 12)}
 						key={
@@ -324,11 +324,11 @@ class GenerationView extends React.Component {
 							{...rest}
 							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>
+					</Grid>
 				);
 			} else if (type === "map") {
 				return (
-					<GridItem
+					<Grid item
 						xs={12}
 						md={Number.parseNumber(size, 12)}
 						key={
@@ -345,11 +345,11 @@ class GenerationView extends React.Component {
 							{...rest}
 							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>
+					</Grid>
 				);
 			} else if (type === "wysiwyg") {
 				return (
-					<GridItem
+					<Grid item
 						xs={12}
 						md={Number.parseNumber(size, 12)}
 						key={
@@ -367,7 +367,7 @@ class GenerationView extends React.Component {
 							{...rest}
 							{...(JSON.isJSON(props) ? props : {})}
 						/>
-					</GridItem>
+					</Grid>
 				);
 			}
 		} else {
@@ -380,23 +380,23 @@ class GenerationView extends React.Component {
 			? properties.value
 			: [];
 		return (
-			<GridItem
+			<Grid item
 				xs={12}
 				md={Number.isNumber(properties.size) ? properties.size : 12}
 				className="p-0"
 				key={"group-" + name}
 			>
-				<GridContainer className="m-0">
+				<Grid container className="m-0">
 					{" "}
 					{properties.label + (properties.required ? "*" : "")}{" "}
-				</GridContainer>
-				<GridContainer className="p-0 m-0">
+				</Grid>
+				<Grid container className="p-0 m-0">
 					{group_inputs.length > 0 &&
 						group_inputs.map((field_obj, field_index) =>
 							this.renderInputField(field_obj)
 						)}
-				</GridContainer>
-			</GridItem>
+				</Grid>
+			</Grid>
 		);
 	}
 
@@ -414,13 +414,13 @@ class GenerationView extends React.Component {
 			[className]: className,
 		});
 		return (
-			<GridContainer className={rootClassName}>
+			<Grid container className={rootClassName}>
 				{Object.entries(
 					this.state.blueprint
 				).map(([name, properties], cursor) =>
 					this.renderInput(name, properties)
 				)}
-			</GridContainer>
+			</Grid>
 		);
 	}
 }

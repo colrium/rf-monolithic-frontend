@@ -5,7 +5,7 @@ import CloseSideBarIcon from '@mui/icons-material/MenuOpen';
 import OpenSideBarIcon from "@mui/icons-material/Menu";
 import classNames from "classnames";
 import SnackbarContent from "components/Snackbar/SnackbarContent";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import { notifications as notificationsDefination } from "definations";
 import Icon from '@mdi/react'
 import { mdiBellOutline } from '@mdi/js';
@@ -18,10 +18,9 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import { withTheme } from '@mui/styles';
-import Avatar from "components/Avatar";
+import Avatar from "@mui/material/Avatar";
 import ApiService from "services/Api";
 import { PersonOutlined as UserIcon } from "@mui/icons-material";
-import NotificationsPopup from "./NotificationsPopup"
 import MessagingIcon from "./MessagingIcon"
 import { logout, setCurrentUser } from "state/actions";
 import { ServiceDataHelper } from "utils/Helpers"
@@ -70,14 +69,14 @@ class Topbar extends Component {
 		this.onCloseUserPresenceMenu = this.onCloseUserPresenceMenu.bind(this)
 		this.onChangeUserPresenceMenu = this.onChangeUserPresenceMenu.bind(this)
 
-		this.initSocketActionsListener()
+
 	}
 
 	componentDidMount() {
 		let { dashboard } = this.props
-
 		this.signal = true
 		this.mounted = true
+		this.initSocketActionsListener()
 		//
 	}
 
@@ -136,7 +135,9 @@ class Topbar extends Component {
 			auth,
 			setCurrentUser,
 		} = this.props
-		this.state.serverConnected = SocketIO.connected
+		this.setState({
+			serverConnected: SocketIO.connected,
+		})
 		SocketIO.on("connect", () => {
 			this.setState({
 				connectionSnackBarOpen: false,
@@ -482,7 +483,6 @@ class Topbar extends Component {
 
 							)*/}
 							<MessagingIcon />
-							<NotificationsPopup />
 
 							<Menu
 								id="user-presence-menu"
@@ -497,7 +497,7 @@ class Topbar extends Component {
 								<MenuItem
 									classes={{
 										root:
-											"opacity-100 inverse-text " +
+											"opacity-100 " +
 											(this.state.serverConnected
 												? auth.user?.presence === "online"
 													? "bg-green-700"
@@ -508,7 +508,7 @@ class Topbar extends Component {
 									}}
 									disabled
 								>
-									<Typography color="inherit" variant="subtitle1">
+									<Typography color="inverse" variant="subtitle1">
 										{auth.user?.first_name + " " + auth.user?.last_name}
 									</Typography>
 								</MenuItem>
@@ -557,7 +557,7 @@ class Topbar extends Component {
 
 				{/* <Notification title="test notification"/> */}
 
-				<Snackbar
+				{/* <Snackbar
 					anchorOrigin={{
 						vertical: "top",
 						horizontal: "center",
@@ -587,7 +587,7 @@ class Topbar extends Component {
 						color="inverse"
 						message={this.state.notificationSnackBarMessage}
 					/>
-				</Snackbar>
+				</Snackbar> */}
 			</Box>
 		)
 	}

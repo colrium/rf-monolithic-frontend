@@ -13,9 +13,18 @@ const MessagingIcon = () => {
 	const unreadCount = useLiveQuery(
 		() =>
 			dexieDB.messages.filter(
-					item =>
-						item.state === "sent" /*  || item.state === "received" || item.state === "partially-received" */ &&
-						item.sender !== auth.user?._id
+				item => {
+						let isUnread =
+							item.state === "sent" /*  || item.state === "received" || item.state === "partially-received" */ &&
+							item.sender !== auth.user?._id
+
+					if (isUnread && Array.isArray(item.reads) && item.reads.indexOf(auth.user) !== -1) {
+						isUnread = false
+					}
+
+						return isUnread
+					}
+
 				)
 				.count(),
 		[auth],
@@ -23,8 +32,8 @@ const MessagingIcon = () => {
 	)
 	return (
 		<Link className={"cursor-pointer md:mx-2"} to={"/messaging/conversations".toUriWithDashboardPrefix()}>
-			<IconButton>
-				<Badge  invisible={unreadCount === 0} badgeContent={unreadCount} color="primary">
+			<IconButton color="inherit">
+				<Badge invisible={unreadCount === 0} badgeContent={unreadCount} color="primary">
 					<ForumOutlinedIcon />
 				</Badge>
 			</IconButton>

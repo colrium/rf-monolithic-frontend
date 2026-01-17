@@ -3,17 +3,17 @@ import { connect } from "react-redux"
 
 import Typography from "@mui/material/Typography"
 import { CheckboxInput } from "components/FormInputs"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 
 function Widget(props) {
 	return (
-		<GridContainer className="px-2">
-			<GridItem xs={12} className="mb-2">
+		<Grid container className="px-2">
+			<Grid item  xs={12} className="mb-2">
 				<Typography variant="h3"> Reading settings</Typography>
-			</GridItem>
+			</Grid>
 
-			{/* <GridItem xs={12} className="mb-4">
+			{/* <Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="enable-blog"
 					label="Enable blog"
@@ -23,9 +23,9 @@ function Widget(props) {
 					disabled={loading["enable-blog"]}
 					error={errors["enable-blog"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="enable-press"
 					label="Enable press"
@@ -35,9 +35,9 @@ function Widget(props) {
 					disabled={loading["enable-press"]}
 					error={errors["enable-press"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="enable-faq"
 					label="Enable FAQ"
@@ -47,8 +47,8 @@ function Widget(props) {
 					disabled={loading["enable-faq"]}
 					error={errors["enable-faq"]}
 				/>
-			</GridItem> */}
-		</GridContainer>
+			</Grid> */}
+		</Grid>
 	)
 }
 

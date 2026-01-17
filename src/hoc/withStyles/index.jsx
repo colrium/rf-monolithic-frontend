@@ -18,7 +18,6 @@ const withStyles = styles => Component => {
 		React.forwardRef((props, ref) => (
 			<Component {...props} classes={classes} ref={ref} />
 		));
-	console.log("withStyles classes", getclasses(styles));
 	return componentWithStyles(Component, getclasses());
 };
 

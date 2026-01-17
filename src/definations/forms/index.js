@@ -11,7 +11,7 @@ import {
 import { UtilitiesHelper } from "utils/Helpers";
 import * as definations from "definations";
 import { Link } from "react-router-dom";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 
 export default {
 	name: "forms",

@@ -2,8 +2,8 @@
 
 import IconButton from "@mui/material/IconButton";
 import BackIcon from "@mui/icons-material/ArrowBack";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React from "react";
 import { connect } from "react-redux";
 import { addToCart, closeDialog, openDialog, removeFromCart } from "state/actions";
@@ -76,20 +76,20 @@ class Widget extends React.Component {
 
 	render() {
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridContainer className="p-0 m-0">
+			<Grid container className="p-0 m-0">
+				<Grid container className="p-0 m-0">
 					{!["gridview"].includes(this.state.view) && (
-						<GridItem xs={6} className="float-left">
+						<Grid item  xs={6} className="float-left">
 							<IconButton
 								aria-label="back"
 								onClick={this.handleOnBackClick}
 							>
 								<BackIcon fontSize="inherit" />
 							</IconButton>
-						</GridItem>
+						</Grid>
 					)}
-				</GridContainer>
-				<GridContainer className="p-0 m-0">
+				</Grid>
+				<Grid container className="p-0 m-0">
 					{this.state.view === "gridview" && (
 						<GridView
 							onItemSelect={this.handleOnItemSelect}
@@ -102,8 +102,8 @@ class Widget extends React.Component {
 							item={this.state.context}
 						/>
 					)}
-				</GridContainer>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 }

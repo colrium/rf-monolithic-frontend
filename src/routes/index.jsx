@@ -41,6 +41,7 @@ import SignupForm from "views/forms/Auth/Signup"
 import DashboardPreferences from "views/pages/Dashboard/Preferences"
 import DashboardSettings from "views/pages/Dashboard/Settings"
 import DashboardRecordForm from "views/pages/Dashboard/RecordForm"
+import DashboardContext from "views/pages/Dashboard/Context"
 import DashboardRecordsListing from "views/pages/Dashboard/RecordsListing"
 import DashboardRecordView from "views/pages/Dashboard/RecordView"
 import DashboardAccount from "views/pages/Dashboard/Account"
@@ -50,6 +51,9 @@ import DashboardHome from "views/pages/Dashboard/Home"
 import ChatApp from "views/apps/Dashboard/Chat"
 import ChatContacts from "views/apps/Dashboard/Chat/Contacts"
 import ChatConversations from "views/apps/Dashboard/Chat/Conversations"
+
+import { Posts, Post } from "views/sections/LandingPage/Blog"
+import CommunityPage from "views/pages/LandingPage/Community"
 
 const RouteComponentPlaceHolder = () => <ProgressIndicator type="logo" size={200} />
 const contexts = [
@@ -101,7 +105,6 @@ const RoutesComponent = () => {
 					/>
 				}
 			>
-				<Route path={"/*".toUriWithLandingPagePrefix()} element={<NotFound />} />
 				<Route exact path={"/home".toUriWithLandingPagePrefix()} element={<LandingHomePage />} />
 
 				<Route exact path={"/recruitment".toUriWithLandingPagePrefix()} element={<LandingRecruitmentPage />} />
@@ -122,7 +125,13 @@ const RoutesComponent = () => {
 				<Route exact path={"/ethical-principles".toUriWithLandingPagePrefix()} element={<LandingEthicalPrinciples />} />
 				<Route exact path={"/thankyou".toUriWithLandingPagePrefix()} element={<LandingThankyou />} />
 				<Route exact path={"/request-demo".toUriWithLandingPagePrefix()} element={<LandingDemoRequest />} />
-				<Route exact path={"/start-project".toUriWithLandingPagePrefix()} element={<LandingProjectComposer />} />
+				<Route exact path={"/compose-project".toUriWithLandingPagePrefix()} element={<LandingProjectComposer />} />
+				<Route exact path={"/community".toUriWithLandingPagePrefix()} element={<CommunityPage />}>
+					<Route path={"/community/".toUriWithLandingPagePrefix()} element={<Posts />} />
+					<Route path={"/community/posts".toUriWithLandingPagePrefix()} element={<Posts />} />
+					<Route path={"/community/posts/:id".toUriWithLandingPagePrefix()} element={<Post />} />
+					<Route path={"/community/post/:id".toUriWithLandingPagePrefix()} element={<Post />} />
+				</Route>
 				<Route path={"*".toUriWithLandingPagePrefix()} element={<NotFound />} />
 			</Route>
 
@@ -150,52 +159,42 @@ const RoutesComponent = () => {
 			>
 				<Route path={"/home".toUriWithDashboardPrefix()} element={<DashboardHome />} />
 				<Route exact path={"/calendar".toUriWithDashboardPrefix()} element={<DashboardRecordsListing context="events" />} />
-
 				<Route exact path={"/messaging".toUriWithDashboardPrefix()} element={<ChatApp />}>
 					<Route index path={"/messaging/conversations".toUriWithDashboardPrefix()} element={<ChatConversations />} />
 					<Route index path={"/messaging/contacts".toUriWithDashboardPrefix()} element={<ChatContacts />} />
 					<Route index path={"/messaging/".toUriWithDashboardPrefix()} element={<ChatConversations />} />
 					<Route index path={"/messaging/*".toUriWithDashboardPrefix()} element={<ChatConversations />} />
 				</Route>
-
 				<Route exact path={"/messages".toUriWithDashboardPrefix()} element={<DashboardMessaging />} />
+
 				{contexts.map((context, cursor) => (
 					<Route
 						exact
-						path={context.toUriWithDashboardPrefix()}
-						element={<DashboardRecordsListing context={context} />}
+						path={`${context}`.toUriWithDashboardPrefix()}
+						element={<DashboardContext context={context} />}
 						key={"context-route-" + context}
-					/>
+					>
+						<Route
+							path={`${context}/view/:id`.toUriWithDashboardPrefix()}
+							element={<DashboardRecordView context={context} />}
+						/>
+						<Route
+							exact
+							path={`${context}/edit/:id`.toUriWithDashboardPrefix()}
+							element={<DashboardRecordForm context={context} />}
+						/>
+						<Route path={`${context}/add`.toUriWithDashboardPrefix()} element={<DashboardRecordForm context={context} />} />
+						<Route path={`${context}/new`.toUriWithDashboardPrefix()} element={<DashboardRecordForm context={context} />} />
+						<Route
+							index
+							path={`${context}/*`.toUriWithDashboardPrefix()}
+							element={<DashboardRecordsListing context={context} />}
+						/>
+					</Route>
 				))}
-
-				{contexts.map((context, cursor) => (
-					<Route
-						path={`${context}/view/:id`.toUriWithDashboardPrefix()}
-						element={<DashboardRecordView context={context} />}
-						key={"context-view-route-" + context}
-					/>
-				))}
-
-				{contexts.map((context, cursor) => (
-					<Route
-						path={`${context}/add`.toUriWithDashboardPrefix()}
-						element={<DashboardRecordForm context={context} />}
-						key={"context-add-route-" + context}
-					/>
-				))}
-
-				{contexts.map((context, cursor) => (
-					<Route
-						path={`${context}/edit/:id`.toUriWithDashboardPrefix()}
-						element={<DashboardRecordForm context={context} />}
-						key={"context-edit-route-" + context}
-					/>
-				))}
-
 				<Route path={"/account".toUriWithDashboardPrefix()} element={<DashboardAccount />} />
 				<Route path={"/preferences".toUriWithDashboardPrefix()} element={<DashboardPreferences />} />
 				<Route path={"/settings".toUriWithDashboardPrefix()} element={<DashboardSettings />} />
-
 				<Route path={"/*".toUriWithDashboardPrefix()} element={<NotFound />} />
 			</Route>
 			<Route

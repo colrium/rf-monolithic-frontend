@@ -10,7 +10,7 @@ const useGoogleMapsApi = (apiKey = undefined) => {
 			setGoogleApi(window.google);
 			return;
 		}
-		const src = "https://maps.googleapis.com/maps/api/js?key=" + (apiKey || google_maps_api_key) + "&libraries=geometry,drawing,places";
+		const src = `https://maps.googleapis.com/maps/api/js?key=${(apiKey || google_maps_api_key)}&libraries=geometry,drawing,places`;
 
 		const existingScript = initialized.find(el => el.src === src);
 

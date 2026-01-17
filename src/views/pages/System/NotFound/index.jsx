@@ -3,9 +3,9 @@
 
 import { app } from "assets/jss/app-theme";
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
@@ -22,12 +22,12 @@ class Page extends React.Component {
 	render() {
 
 		return (
-			<GridContainer
+			<Grid container
 				className="flex flex-row justify-center items-center"
 				style={{ height: "80vh" }}
 			>
-				<GridItem xs={12} md={8} lg={6}>
-					<GridContainer
+				<Grid item  xs={12} md={8} lg={6}>
+					<Grid container
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -38,9 +38,9 @@ class Page extends React.Component {
 							style={{ width: "50%" }}
 							src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/not_found.svg")}
 						/>
-					</GridContainer>
+					</Grid>
 
-					<GridContainer
+					<Grid container
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -51,9 +51,9 @@ class Page extends React.Component {
 						>
 							404
 						</Typography>
-					</GridContainer>
+					</Grid>
 
-					<GridContainer
+					<Grid container
 						direction="column"
 						justify="center"
 						alignItems="center"
@@ -64,9 +64,9 @@ class Page extends React.Component {
 						>
 							Page Not Found
 						</Typography>
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

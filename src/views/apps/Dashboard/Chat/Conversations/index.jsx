@@ -75,7 +75,6 @@ const Conversations = props => {
 	const rowRenderer = useCallback(
 		({ data: indexData, index, isScrolling, key, parent, style }) => {
 			const { selected, focused } = getState()
-			// console.log("data", data)
 			return (
 				<CellMeasurer cache={cellMeasurerCache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
 					{({ measure, registerChild }) => (
@@ -97,7 +96,6 @@ const Conversations = props => {
 	)
 	useDidMount(() => {
 		const onClearConversationsSelection = EventRegister.on("clear-conversation-selection", event => {
-			console.log("clear-conversation-selection called event", event)
 			setState({
 				focused: -1,
 			})

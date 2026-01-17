@@ -1,5 +1,7 @@
-import React, { useCallback } from "react";
-import { Controller } from "react-hook-form";
+/** @format */
+
+import React, { useCallback } from "react"
+import { Controller } from "react-hook-form"
 import Stack from "@mui/material/Stack"
 import Checkbox from "@mui/material/Checkbox"
 import FormLabel from "@mui/material/FormLabel"
@@ -32,10 +34,9 @@ const Field = React.forwardRef((props, ref) => {
 			if (Function.isFunction(defaultOnChange)) {
 				defaultOnChange(e.target.checked)
 			}
-			if (Function.isFunction(onChange)) {
-				onChange(e)
-			}
-
+			// if (Function.isFunction(onChange)) {
+			// 	onChange(e)
+			// }
 		},
 		[onChange]
 	)
@@ -46,19 +47,12 @@ const Field = React.forwardRef((props, ref) => {
 				return render(params)
 			}
 			const {
-				field: {
-					onChange: fieldOnChange,
-					value: fieldValue,
-					ref: fieldRef,
-					...fieldParams
-				},
+				field: { onChange: fieldOnChange, value: fieldValue, ref: fieldRef, ...fieldParams },
 				fieldState: { isTouched, invalid, isDirty, error },
 			} = params
 			return (
 				<FormControl component="fieldset" variant="standard">
-					{!!title && (
-						<FormLabel component="legend">{title}</FormLabel>
-					)}
+					{!!title && <FormLabel component="legend">{title}</FormLabel>}
 					<FormGroup>
 						<FormControlLabel
 							control={
@@ -66,12 +60,8 @@ const Field = React.forwardRef((props, ref) => {
 									{...fieldParams}
 									checked={!!fieldValue}
 									onChange={handleOnChange(fieldOnChange)}
-									disabled={
-										disabled || formState.isSubmitting
-									}
-									color={
-										invalid ? "error" : color || "primary"
-									}
+									disabled={disabled || formState.isSubmitting}
+									color={invalid ? "error" : color || "primary"}
 									ref={ref || fieldRef}
 									{...rest}
 								/>
@@ -109,4 +99,4 @@ const Field = React.forwardRef((props, ref) => {
 	)
 })
 
-export default React.memo(Field);
+export default React.memo(Field)

@@ -1,8 +1,8 @@
 /** @format */
 
 import { app } from "assets/jss/app-theme";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React from "react";
 
 import ApplySection from "views/sections/LandingPage/Apply";
@@ -17,14 +17,14 @@ class Page extends React.Component {
 	render() {
 		const { classes, ...rest } = this.props;
 		return (
-			<GridContainer
+			<Grid container
 				style={{ minHeight: "90vh" }}
-				className={"p-0 px-4 md:px-32"}
+				className={"p-0"}
 			>
-				<GridItem xs={12} md={11} className={"p-0"}>
+				<Grid item  xs={12} className={"p-0"}>
 					<ApplySection />
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 }

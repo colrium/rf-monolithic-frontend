@@ -5,12 +5,12 @@ import { Icon } from "@mui/material";
 import AccessErrorIcon from "@mui/icons-material/WarningRounded";
 //
 import { colors } from "assets/jss/app-theme";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import ProgressIndicator from "components/ProgressIndicator";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 //
 import * as definations from "definations";
 import React, {useCallback} from "react";
@@ -65,24 +65,24 @@ const  Page = props => {
 	}, [id, service])
 
 	return (
-		<GridContainer>
-			<GridItem xs={12}>
+		<Grid container>
+			<Grid item  xs={12}>
 				{state.loading ? (
-					<GridContainer justify="center" alignItems="center">
-						<GridItem xs={1}>
+					<Grid container justify="center" alignItems="center">
+						<Grid item  xs={1}>
 							<ProgressIndicator
 								size={24}
 								thickness={4}
 								color="secondary"
 								disableShrink
 							/>
-						</GridItem>
-					</GridContainer>
+						</Grid>
+					</Grid>
 				) : (
-					<GridContainer className="p-0 m-0">
+					<Grid container className="p-0 m-0">
 						{state.load_error ? (
-							<GridContainer>
-								<GridItem xs={12}>
+							<Grid container>
+								<Grid item  xs={12}>
 									<Typography
 										color="error"
 										variant="h1"
@@ -90,8 +90,8 @@ const  Page = props => {
 									>
 										<Icon fontSize="large">error</Icon>
 									</Typography>
-								</GridItem>
-								<GridItem xs={12}>
+								</Grid>
+								<Grid item  xs={12}>
 									<Typography
 										color="error"
 										variant="body1"
@@ -104,17 +104,17 @@ const  Page = props => {
 										<br />
 										{state.load_error.msg}
 									</Typography>
-								</GridItem>
-							</GridContainer>
+								</Grid>
+							</Grid>
 						) : (
-							<GridContainer>
+							<Grid container>
 								{forbidden && (
-									<GridContainer
+									<Grid container
 										direction="column"
 										justify="center"
 										alignItems="center"
 									>
-										<GridItem xs={12}>
+										<Grid item  xs={12}>
 											<Typography
 												color="error"
 												variant="h1"
@@ -122,8 +122,8 @@ const  Page = props => {
 											>
 												<AccessErrorIcon />
 											</Typography>
-										</GridItem>
-										<GridItem xs={12}>
+										</Grid>
+										<Grid item  xs={12}>
 											<Typography
 												color="grey"
 												variant="h3"
@@ -131,9 +131,9 @@ const  Page = props => {
 											>
 												Access Denied!
 											</Typography>
-										</GridItem>
+										</Grid>
 
-										<GridItem xs={12}>
+										<Grid item  xs={12}>
 											<Typography
 												variant="body1"
 												fullWidth
@@ -145,9 +145,9 @@ const  Page = props => {
 												administrator for further
 												details.
 											</Typography>
-										</GridItem>
+										</Grid>
 
-										<GridItem xs={12}>
+										<Grid item  xs={12}>
 											<Typography
 												color="error"
 												variant="body1"
@@ -172,13 +172,13 @@ const  Page = props => {
 													</Link>
 												)}
 											</Typography>
-										</GridItem>
-									</GridContainer>
+										</Grid>
+									</Grid>
 								)}
 
 								{!forbidden && (
-									<GridContainer className="p-0 m-0">
-										<GridItem className="p-0 m-0" xs={12}>
+									<Grid container className="p-0 m-0">
+										<Grid item  className="p-0 m-0" xs={12}>
 											{state.record && (
 												<RecordView
 													defination={defination}
@@ -186,15 +186,15 @@ const  Page = props => {
 													record={state.record}
 												/>
 											)}
-										</GridItem>
-									</GridContainer>
+										</Grid>
+									</Grid>
 								)}
-							</GridContainer>
+							</Grid>
 						)}
-					</GridContainer>
+					</Grid>
 				)}
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 
 }

@@ -2,6 +2,7 @@
 **/node_modules
 **/npm-debug.log
 *package-lock*
+*yarn.lock*
 *Dockerfile*
 *README.md*
 *docker-compose*

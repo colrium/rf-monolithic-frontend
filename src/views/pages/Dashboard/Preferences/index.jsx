@@ -2,8 +2,8 @@
 
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import React, { useCallback, useEffect } from "react"
 import { connect } from "react-redux";
 import { appendNavHistory } from "state/actions"
@@ -20,7 +20,7 @@ import { useLocation } from "react-router-dom";
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
 	return (
-		<GridContainer
+		<Grid container
 			component="div"
 			role="tabpanel"
 			hidden={value !== index}
@@ -30,11 +30,11 @@ function TabPanel(props) {
 			{...other}
 		>
 			{value === index && (
-				<GridItem xs={12} className="p-0">
+				<Grid item  xs={12} className="p-0">
 					{children}
-				</GridItem>
+				</Grid>
 			)}
-		</GridContainer>
+		</Grid>
 	);
 }
 
@@ -70,23 +70,12 @@ const Page = (props) => {
 
 
 
-	useEffect(() =>{
-		console.log("navHistory", navHistory)
-		if (appendNavHistory && location) {
-			appendNavHistory({
-				name: "preferences",
-				uri: location.pathname,
-				title: "Preferences",
-				view: state.active_tab,
-			})
-		}
-	}, [])
 
 
 
 	return (
-		<GridContainer className="px-2 pt-8">
-			<GridItem
+		<Grid container className="px-2 pt-8">
+			<Grid item
 				xs={12}
 				md={tabs_orientation === "vertical" ? 3 : 12}
 				lg={tabs_orientation === "vertical" ? 2 : 12}
@@ -113,9 +102,9 @@ const Page = (props) => {
 						)
 					)}
 				</Tabs>
-			</GridItem>
+			</Grid>
 
-			<GridItem
+			<Grid item
 				xs={12}
 				md={tabs_orientation === "vertical" ? 9 : 12}
 				lg={tabs_orientation === "vertical" ? 10 : 12}
@@ -140,8 +129,8 @@ const Page = (props) => {
 						</TabPanel>
 					)
 				)}
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 }
 

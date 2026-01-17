@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { IconButton } from "@mui/material";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import {
 	SchoolOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,

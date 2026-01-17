@@ -4,12 +4,12 @@ import Hidden from "@mui/material/Hidden";
 
 import { app, colors } from "assets/jss/app-theme";
 import classNames from "classnames";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 
-import SignupForm from "views/forms/Auth/Signup";
+import SignupForm from "views/forms/Auth/Signup"
 import AnimatedChevronMap from "views/widgets/AnimatedChevronMap";
 import { intercom } from "config";
 import Intercom from "react-intercom";
@@ -63,26 +63,26 @@ class SignUp extends React.Component {
 		const { classes } = this.props;
 		return (
 			<div className={"relative h-screen w-screen p-0"}>
-				<GridContainer className={"absolute inset-0 h-screen w-screen overflow-hidden p-0"}>
-					<GridContainer className={classes?.login_container}>
+				<Grid container className={"absolute inset-0 h-screen w-screen overflow-hidden p-0"}>
+					<Grid container className={classes?.login_container}>
 						<Hidden smDown>
-							<GridItem
+							<Grid item
 								xs={12}
 								sm={12}
 								md={7}
 								lg={8}
 								className={classes?.info_wrapper}
 							>
-								<GridContainer
+								<Grid container
 									className={classes?.info_container}
 									direction="row"
 									justify="center"
 									alignItems="center"
 								>
-									<GridContainer
+									<Grid container
 										className={classes?.info_content}
 									>
-										<GridItem
+										<Grid item
 											xs={12}
 											className={
 												classes?.info_map_container
@@ -94,33 +94,33 @@ class SignUp extends React.Component {
 													background: "linear-gradient(to right, #8C189B, #6a0f75)",
 												}}
 											/>
-										</GridItem>
+										</Grid>
 
-										<GridItem xs={12}>
+										<Grid item  xs={12}>
 											<Typography
 																								variant="h5"
 											>
 												realfield.io
 											</Typography>
-										</GridItem>
+										</Grid>
 
-									</GridContainer>
-								</GridContainer>
-							</GridItem>
+									</Grid>
+								</Grid>
+							</Grid>
 						</Hidden>
 
-						<GridItem
+						<Grid item
 							xs={12}
 							sm={12}
 							md={5}
 							lg={4}
 							className={classes?.form_wrapper}
 						>
-							<GridContainer
+							<Grid container
 								justify="center"
 								alignItems="center"
 							>
-								<GridItem xs={12}>
+								<Grid item  xs={12}>
 									<img
 										alt={app.name + " logo"}
 										className={classNames(
@@ -131,14 +131,14 @@ class SignUp extends React.Component {
 									/>
 
 
-								</GridItem>
-								<GridItem xs={12} className={"flex-grow "}>
+								</Grid>
+								<Grid item  xs={12} className={"flex-grow "}>
 									<SignupForm onSignupSuccess={this.onSignupSuccess} />
-								</GridItem>
-							</GridContainer>
-						</GridItem>
-					</GridContainer>
-				</GridContainer>
+								</Grid>
+							</Grid>
+						</Grid>
+					</Grid>
+				</Grid>
 				<Intercom appID={intercom.app.id} {...intercom.app.user} />
 			</div>
 		);

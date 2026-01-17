@@ -9,7 +9,7 @@ import { LabelOutlined as ContextlessNotificationIcon, NotificationsOutlined as 
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import Status from "components/Status";
-import Typography from "components/Typography"
+import Typography from '@mui/material/Typography'
 // Externals
 import PropTypes from "prop-types"
 import React, { Component } from "react"

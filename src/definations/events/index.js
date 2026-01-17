@@ -9,11 +9,11 @@ import {
 	EventOutlined as DefinationContextIcon,
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@mui/icons-material";
-import Avatar from "components/Avatar";
-import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import { formats } from "config/data";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
@@ -75,8 +75,8 @@ export default {
 							calendarId: "events",
 							title: entry.title,
 							body: ReactDOMServer.renderToStaticMarkup(
-								<GridContainer>
-									<GridItem xs={12}>
+								<Grid container>
+									<Grid item  xs={12}>
 										{entry.image && (
 											<Avatar
 												alt={entry.title}
@@ -93,8 +93,8 @@ export default {
 												<DefinationContextIcon />
 											</Avatar>
 										)}
-									</GridItem>
-									<GridItem xs={12}>
+									</Grid>
+									<Grid item  xs={12}>
 										{entry.subject && (
 											<Typography
 												variant="body2"
@@ -183,8 +183,8 @@ export default {
 												)}
 											</Typography>
 										)}
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							),
 							category: "time",
 							dueDateClass: "",

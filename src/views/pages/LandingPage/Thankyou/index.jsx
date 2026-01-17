@@ -2,9 +2,9 @@
 
 import ThankyouIcon from "@mui/icons-material/ThumbUpOutlined";
 import { app } from "assets/jss/app-theme";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 import { connect } from "react-redux";
 import { resetEcommerce } from "state/actions"
@@ -32,8 +32,8 @@ class Page extends React.Component {
 	render() {
 		const { classes, ...rest } = this.props
 		return (
-			<GridContainer className="relative min-h-screen">
-				<GridItem xs={12} sm={10} md={8} className="m-auto">
+			<Grid container className="relative min-h-screen">
+				<Grid item  xs={12} sm={10} md={8} className="m-auto">
 					<Typography variant="h1" className="w-full text-center mb-16">
 						{" "}
 						<ThankyouIcon className="text-6xl m-auto text-gray-500" />
@@ -46,8 +46,8 @@ class Page extends React.Component {
 						{" "}
 						You order was placed.{" "}
 					</Typography>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		)
 	}
 }

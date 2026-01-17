@@ -4,15 +4,15 @@
 import { colors } from "assets/jss/app-theme";
 import classNames from "classnames";
 import Color from "color";
-import Card from "components/Card";
-import CardActions from "components/Card/CardActions";
-import CardContent from "components/Card/CardContent";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Grid from '@mui/material/Grid';
+;
 //
 import { withTheme } from '@mui/styles';
 import LazyModule from "components/LazyModule";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import * as definations from "definations"
 import PropTypes from "prop-types"
 import React, { Component } from "react"
@@ -83,13 +83,13 @@ class Overview extends Component {
 		const rootClassName = classNames(`p-0`, className)
 
 		return (
-			<GridContainer className={rootClassName}>
+			<Grid container className={rootClassName}>
 				{Object.entries(definations).map(
 					([name, defination], index) =>
 						!defination.access.restricted(auth.user) &&
 						defination.access.view.summary(auth.user) &&
 						contexts.includes(name) && (
-							<GridItem xs={12} md={gridSize} key={name + "-aggregates"}>
+							<Grid item className="p-2"  xs={12} md={gridSize} key={name + "-aggregates"}>
 								<Card
 									className="rounded p-0"
 									style={{
@@ -171,10 +171,10 @@ class Overview extends Component {
 										</Typography>
 									</CardActions>
 								</Card>
-							</GridItem>
+							</Grid>
 						)
 				)}
-			</GridContainer>
+			</Grid>
 		)
 	}
 }

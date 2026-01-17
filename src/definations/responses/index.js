@@ -1,5 +1,5 @@
 /** @format */
-
+import ReactJson from "react-json-view";
 import { IconButton } from "@mui/material";
 import {
 	Add as AddIcon,
@@ -8,12 +8,12 @@ import {
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@mui/icons-material";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import React, { useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
 import { context_country_data } from "config/data";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import ApiService from "services/Api";
 import compose from "recompose/compose";
 import { connect } from "react-redux";
@@ -69,11 +69,11 @@ const CountSummaryGraph = (props) => {
 	}, [isAuthenticated]);
 
 	return (
-		<GridContainer>
-			<GridItem>
+		<Grid container className="w-full">
+			<Grid item xs={12}>
 				{report && <Bar data={{ labels: report.labels, datasets: [{ label: "Responses count by date", data: report.data, backgroundColor: "#00AF41", hoverBackgroundColor: "#76C4D5", }] }} />}
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 }
 const DashboardCountGraph = compose(
@@ -527,6 +527,17 @@ export default {
 						return true;
 					},
 				},
+				tableProps: {
+					render: (entry) => {
+						return (<ReactJson
+							name={false}
+							src={entry?.response_form_value || {}}
+							enableClipboard
+							displayDataTypes={false}
+							collapsed
+						/>)
+					}
+				}
 
 			},
 			coordinates: {
@@ -549,6 +560,17 @@ export default {
 						return true;
 					},
 				},
+				tableProps: {
+					render: (entry) => {
+						return (<ReactJson
+							name={false}
+							src={entry?.coordinates || []}
+							enableClipboard
+							displayDataTypes={false}
+							collapsed
+						/>)
+					}
+				}
 			},
 			submitter: {
 				type: "string",

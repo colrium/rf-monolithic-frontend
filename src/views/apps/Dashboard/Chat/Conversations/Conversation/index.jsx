@@ -21,7 +21,7 @@ import DoneAllIcon from "@mui/icons-material/DoneAll"
 import ScheduleIcon from "@mui/icons-material/Schedule"
 import Icon from "@mdi/react"
 import { mdiImage, mdiVolumeHigh, mdiVideo, mdiPaperclip, mdiDotsHorizontal } from "@mdi/js"
-import { useDidMount, useDeepMemo, useSetState, useDidUpdate } from "hooks"
+import { useDidMount, useDerivedState, useSetState, useDidUpdate } from "hooks"
 import dexieDB from "config/dexie/database"
 import { useLiveQuery } from "dexie-react-hooks"
 
@@ -70,78 +70,96 @@ const Conversation = React.forwardRef((props, ref) => {
 				.equalsIgnoreCase(conversationID)
 				.or("conversation_uuid")
 				.equalsIgnoreCase(conversationID)
-				.and(
-					item =>
+				.and(item => {
+					let isUnread =
 						item.state === "sent" /*  || item.state === "received" || item.state === "partially-received" */ &&
 						item.sender !== auth.user?._id
-				)
+
+					if (isUnread && Array.isArray(item.reads) && item.reads.indexOf(auth.user) !== -1) {
+						isUnread = false
+					}
+
+					return isUnread
+				})
 				.count(),
 		[conversationID, auth],
 		0
 	)
 
-	const details = useDeepMemo(() => {
-		let primaryText = ""
-		let chatUser = false
-		let avatar = false
-		let last_message_content = false
-		let last_message_deleted = false
-		let last_message_sender_name = false
-		if (lastMessage) {
-			last_message_content = lastMessage.content
-			if (lastMessage?.sender === auth.user?._id || lastMessage?.sender?._id === auth.user?._id) {
-				last_message_sender_name = "You"
-			} else if (data?.owner === lastMessage?.sender) {
-				last_message_sender_name = data.started_by.first_name
-			} else {
-				if (Array.isArray(data?.participants)) {
-					data?.participants.map(participant => {
-						if (participant._id === lastMessage.sender) {
-							last_message_sender_name = participant.first_name
-						}
-					})
-				}
-			}
-			if (
-				(lastMessage?.state === "deleted-for-sender" &&
-					(lastMessage?.sender._id === auth.user?._id || lastMessage?.sender === auth.user?._id)) ||
-				lastMessage?.state === "deleted-for-all"
-			) {
-				last_message_deleted = true
-			}
-		}
-		if (data?.type == "individual") {
-			let chat_owner_id = data?.owner?._id || data?.owner
-
-			if (auth.user?._id === chat_owner_id) {
-				if (Array.isArray(data?.participants)) {
-					if (data?.participants.length > 0) {
-						chatUser = data?.participants[0]
-						primaryText = data?.participants[0].first_name + " " + data?.participants[0].last_name
-						avatar = data?.participants[0].avatar
+	const [details] = useDerivedState(
+		() => {
+			let primaryText = ""
+			let chatUser = false
+			let avatar = false
+			let last_message_content = false
+			let last_message_deleted = false
+			let last_message_sender_name = false
+			if (lastMessage) {
+				last_message_content = lastMessage.content
+				if (lastMessage?.sender === auth.user?._id || lastMessage?.sender?._id === auth.user?._id) {
+					last_message_sender_name = "You"
+				} else if (data?.owner === lastMessage?.sender) {
+					last_message_sender_name = data.started_by.first_name
+				} else {
+					if (Array.isArray(data?.participants)) {
+						data?.participants.map(participant => {
+							if (participant._id === lastMessage.sender) {
+								last_message_sender_name = participant.first_name
+							}
+						})
 					}
 				}
-			} else {
-				if (data?.started_by) {
-					chatUser = data?.started_by
-					primaryText = data?.started_by?.first_name + " " + data?.started_by?.last_name
-					avatar = data?.started_by?.avatar
+				if (
+					(lastMessage?.state === "deleted-for-sender" &&
+						(lastMessage?.sender._id === auth.user?._id || lastMessage?.sender === auth.user?._id)) ||
+					lastMessage?.state === "deleted-for-all"
+				) {
+					last_message_deleted = true
 				}
 			}
-		} else if (data?.type == "group") {
-			primaryText = data?.group_name
-			avatar = data?.group_avatar
+			if (data?.type == "individual") {
+				let chat_owner_id = data?.owner?._id || data?.owner
+
+				if (auth.user?._id === chat_owner_id) {
+					if (Array.isArray(data?.participants)) {
+						if (data?.participants.length > 0) {
+							chatUser = data?.participants[0]
+							primaryText = data?.participants[0].first_name + " " + data?.participants[0].last_name
+							avatar = data?.participants[0].avatar
+						}
+					}
+				} else {
+					if (data?.started_by) {
+						chatUser = data?.started_by
+						primaryText = data?.started_by?.first_name + " " + data?.started_by?.last_name
+						avatar = data?.started_by?.avatar
+					}
+				}
+			} else if (data?.type == "group") {
+				primaryText = data?.group_name
+				avatar = data?.group_avatar
+			}
+			return {
+				primaryText: `${!String.isEmpty(primaryText) ? primaryText : "Unknown"}`.capitalize(),
+				avatar: avatar,
+				owner: chatUser,
+				lastMessage: lastMessage,
+				lastMessageContent: last_message_content,
+				lastMessageDeleted: last_message_deleted,
+				lastMessageSenderName: last_message_sender_name,
+			}
+		},
+		[data, lastMessage],
+		{
+			primaryText: `Unknown`,
+			avatar: null,
+			owner: null,
+			lastMessage: null,
+			lastMessageContent: null,
+			lastMessageDeleted: null,
+			lastMessageSenderName: null,
 		}
-		return {
-			primaryText: `${!String.isEmpty(primaryText) ? primaryText : "Unknown"}`.capitalize(),
-			avatar: avatar,
-			owner: chatUser,
-			lastMessage: lastMessage,
-			lastMessageContent: last_message_content,
-			lastMessageDeleted: last_message_deleted,
-			lastMessageSenderName: last_message_sender_name,
-		}
-	}, [data, lastMessage])
+	)
 
 	return (
 		<ListItemButton
@@ -167,14 +185,14 @@ const Conversation = React.forwardRef((props, ref) => {
 						// 		? "bg-orange-500"
 						// 		: "bg-gray-500",
 						dot:
-							details.owner?.presence === "online"
+							details?.owner?.presence === "online"
 								? "bg-green-600"
-								: details.owner?.presence == "away"
+								: details?.owner?.presence == "away"
 								? "bg-orange-500"
 								: "hidden",
 					}}
 				>
-					{details.avatar && (
+					{details?.avatar && (
 						<Avatar
 							src={ApiService.getAttachmentFileUrl(details.avatar)}
 							alt={details.primaryText}
@@ -185,7 +203,7 @@ const Conversation = React.forwardRef((props, ref) => {
 							}}
 						/>
 					)}
-					{!details.avatar && (
+					{!details?.avatar && (
 						<Avatar
 							sx={{
 								backgroundColor: theme => theme.palette.action.selected,
@@ -203,7 +221,7 @@ const Conversation = React.forwardRef((props, ref) => {
 				className="flex flex-col justify-center"
 				primary={
 					<Typography variant="body1" color="textPrimary" className={"capitalize font-bold"}>
-						{details.primaryText}
+						{details?.primaryText}
 					</Typography>
 				}
 				secondary={

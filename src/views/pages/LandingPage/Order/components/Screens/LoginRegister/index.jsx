@@ -1,8 +1,8 @@
 /** @format */
 
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 
 import LoginForm from "views/forms/Auth/Login";
@@ -11,24 +11,24 @@ class Step extends React.Component {
 	render() {
 		const { onComplete } = this.props;
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridContainer>
-					<GridItem xs={12}>
+			<Grid container className="p-0 m-0">
+				<Grid container>
+					<Grid item  xs={12}>
 						<Typography
 							variant="h3"
 							className="primary_text"
 													>
 							Login
 						</Typography>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
-				<GridContainer className="flex justify-center">
-					<GridItem xs={12} md={6}>
+				<Grid container className="flex justify-center">
+					<Grid item  xs={12} md={6}>
 						<LoginForm onLogin={onComplete} />
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

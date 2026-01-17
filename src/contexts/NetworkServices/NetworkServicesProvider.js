@@ -1,38 +1,31 @@
-import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNetworkState, useCookie } from "react-use"
-import { firebase as firebaseConfig, baseUrls, client_id, client_secret, environment, authTokenLocation, authTokenName } from "config"
-import FirebaseService from "./FirebaseService"
-import WebSocketService from "./WebSocketService"
+/** @format */
 
+import React, { useEffect, useCallback, useMemo, useRef } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { useNetworkState } from "react-use"
+import { baseUrls, client_id, client_secret, environment, authTokenLocation, authTokenName, googleClientId } from "config"
+//
+import WebSocketService from "./WebSocketService"
 import NetworkServicesContext from "./NetworkServicesContext"
 import { setAuthenticated, setCurrentUser, setToken, clearAppState, setPreferences, setSettings } from "state/actions"
-// import { FirebaseAppProvider, FirestoreProvider } from "reactfire"
+import * as definations from "definations"
 import Api from "services/Api"
 import { EventRegister } from "utils"
 import { useDidMount } from "hooks"
 
 const NetworkServicesProvider = props => {
 	const { children, notificationType, ...rest } = props
-	const [authCookie, updateAuthCookie, deleteAuthCookie] = useCookie(authTokenName)
-	const [authTypeCookie, updateAuthTypeCookie, deleteAuthTypeCookie] = useCookie(`${authTokenName}_type`)
-	const [authRefreshTokenCookie, updateRefreshTokenCookie, deleteRefreshTokenCookie] = useCookie(`${authTokenName}_refresh_token`)
 
 	const dispatch = useDispatch()
 	const preferences = useSelector(state => ({ ...state.app?.preferences }))
 	const settings = useSelector(state => ({ ...state.app?.settings }))
 	const { user, isAuthenticated } = useSelector(state => state.auth)
-
 	const networkState = useNetworkState()
 
-	const handleOnAccessTokenSet = useCallback(({ detail: token }) => {
+	const handleOnAccessTokenSet = useCallback(token => {
 		const { access_token, token_type, refresh_token } = token || {}
 		if (authTokenLocation === "redux") {
 			dispatch(setToken(token || {}))
-		} else {
-			updateAuthCookie(access_token)
-			updateAuthTypeCookie(token_type)
-			updateRefreshTokenCookie(refresh_token)
 		}
 	}, [])
 
@@ -40,18 +33,19 @@ const NetworkServicesProvider = props => {
 		if (authTokenLocation === "redux") {
 			dispatch(setToken({}))
 		}
-		deleteAuthCookie()
-		deleteAuthTypeCookie()
-		deleteRefreshTokenCookie()
 	}, [])
 
 	const handleOnLogin = useCallback(event => {
-		console.log("handleOnLogin event.detail", event.detail)
-		const { profile } = { ...event.detail }
+		const { profile, token } = { ...event.detail }
 		if (JSON.isJSON(profile)) {
 			dispatch(setCurrentUser(profile))
 		}
 		dispatch(setAuthenticated(true))
+		EventRegister.emit("notification", {
+			severity: "success",
+			title: `Login successful!`,
+			content: `Welcome back ${profile.first_name || ""} ${profile.last_name || ""}!`,
+		})
 	}, [])
 
 	const handleOnLogout = useCallback(() => {
@@ -106,15 +100,7 @@ const NetworkServicesProvider = props => {
 	)
 
 	const initializeAuthSubscriptions = useCallback(() => {
-		//Api.logout();
-		if (isAuthenticated && !String.isEmpty(authCookie) && !String.isEmpty(authTypeCookie)) {
-			Api.setAccessToken({
-				access_token: authCookie,
-				token_type: authTypeCookie,
-				refresh_token: authRefreshTokenCookie,
-			})
-		}
-		const onAccessTokenSetListener = EventRegister.on("access-token-set", handleOnAccessTokenSet)
+		const onAccessTokenSetListener = EventRegister.on("access-token-set", event => handleOnAccessTokenSet(event.detail))
 		const onAccessTokenUnsetListener = EventRegister.on("access-token-unset", handleOnAccessTokenUnset)
 		const onLoginListener = EventRegister.on("login", handleOnLogin)
 		const onLogoutListener = EventRegister.on("logout", handleOnLogout)
@@ -128,7 +114,6 @@ const NetworkServicesProvider = props => {
 
 	const initializePreferencesSubscriptions = useCallback(() => {
 		const onChangePreferencesSubscription = EventRegister.on("change-preferences", event => {
-			// console.log("change-preferences event.detail", event.detail)
 			if (JSON.isJSON(event.detail)) {
 				let eventPreferences = Object.entries(event.detail).reduce((allPreferences, [key, value]) => {
 					allPreferences[key] = value
@@ -149,10 +134,10 @@ const NetworkServicesProvider = props => {
 
 	const initializeSettingsSubscriptions = useCallback(() => {
 		const onChangeSettingSubscription = EventRegister.on("change-settings", event => {
-			// console.log("change-settings event.detail", event.detail)
 			if (JSON.isJSON(event.detail)) {
 				let eventSettings = Object.entries(event.detail).reduce((allSettings, [key, value]) => {
 					allSettings[key] = value
+					console.log("updateSettings", key, value)
 					updateSettings(key, value).catch(err => {
 						console.error("updatePreferences err", err)
 					})
@@ -179,25 +164,15 @@ const NetworkServicesProvider = props => {
 			removeSettingsSubscritions()
 		}
 	})
-
-	useDidMount(() => {
-		// console.log("networkState", networkState)
-	})
-
 	return (
-		<FirebaseService>
-			{Firebase => (
-				<WebSocketService>
-					{SocketIO => (
-						<NetworkServicesContext.Provider value={{ SocketIO, Api, network: networkState, Firebase }} {...rest}>
-							{/* <FirebaseAppProvider firebaseConfig={firebaseConfig}>{children}</FirebaseAppProvider> */}
-							{children}
-						</NetworkServicesContext.Provider>
-					)}
-				</WebSocketService>
+		<WebSocketService>
+			{SocketIO => (
+				<NetworkServicesContext.Provider value={{ SocketIO, Api, network: networkState, definations }} {...rest}>
+					{children}
+				</NetworkServicesContext.Provider>
 			)}
-		</FirebaseService>
+		</WebSocketService>
 	)
 }
 
-export default React.memo(NetworkServicesProvider, (prevProps, nextProps) => true)
+export default NetworkServicesProvider

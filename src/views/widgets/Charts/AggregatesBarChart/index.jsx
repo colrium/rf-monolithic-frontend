@@ -5,16 +5,17 @@ import { Menu, MenuItem } from "@mui/material";
 
 import { MoreVert as AggregateMenuIcon } from "@mui/icons-material";
 import { colors } from "assets/jss/app-theme";
-import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import PropTypes from "prop-types";
 import React from "react";
 import { defaults, Bar } from "react-chartjs-2";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { apiCallRequest } from "state/actions";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen"
 
 //
 import ApiService from "services/Api";
@@ -303,172 +304,110 @@ class AggregatesBarChart extends React.Component {
 		} = this.props;
 
 		return (
-			!JSON.isEmpty(defination) && <GridContainer className={className + " p-0 m-0"}>
-				<GridItem xs={12} className="p-0 m-0">
-					<GridContainer className="p-0 m-0">
-						<GridContainer className="p-0 m-0">
-							{(showMenu || showTitle) && (
-								<GridItem xs={12}>
-									<GridContainer>
-										{showTitle && !showMenu && (
-											<GridItem xs={12}>
-												<Typography
+			!JSON.isEmpty(defination) && (
+				<Grid container className={className + " p-0 m-0"}>
+					<Grid item xs={12} className="p-0 m-0">
+						<Grid container className="p-0 m-0">
+							<Grid container className="p-0 m-0">
+								{(showMenu || showTitle) && (
+									<Grid item xs={12}>
+										<Grid container>
+											{showTitle && !showMenu && (
+												<Grid item xs={12}>
+													<Typography variant="body1" fullWidth>
+														{defination.scope.columns[this.state.aggregate]
+															? defination.scope.columns[this.state.aggregate].label
+															: "Unknown"}{" "}
+														Aggregate
+													</Typography>
+												</Grid>
+											)}
 
-													variant="body1"
-													fullWidth
-																									>
-													{defination.scope.columns[
-														this.state.aggregate
-													]
-														? defination.scope
-															.columns[
-															this.state
-																.aggregate
-														].label
-														: "Unknown"}{" "}
-													Aggregate
-												</Typography>
-											</GridItem>
-										)}
-
-										{dynamic && showMenu && (
-											<GridItem
-												className="p-0 m-0"
-												xs={12}
-											>
-												<Button
-													aria-controls="aggregate-menu"
-													aria-haspopup="true"
-													onClick={
-														this
-															.handleShowAggregateMenu
-													}
-
-													className="float-right"
-													size="md"
-													aria-label="Aggregate Menu"
-
-												>
-													{defination.scope?.columns[
-														this.state.aggregate
-													]
-														? defination.scope
-															.columns[
-															this.state
-																.aggregate
-														].label
-														: "Unknown"}{" "}
-													Aggregate
-													<AggregateMenuIcon />
-												</Button>
-												<Menu
-													id="surveys-aggregate-menu"
-													anchorEl={
-														this.state
-															.aggregateMenuEl
-													}
-													keepMounted
-													open={Boolean(
-														this.state
-															.aggregateMenuEl
-													)}
-													onClose={
-														this
-															.handleCloseAggregateMenu
-													}
-												>
-													{this.aggregatables.map(
-														(
-															aggregatable,
-															index
-														) => (
+											{dynamic && showMenu && (
+												<Grid item className="p-0 m-0" xs={12}>
+													<Button
+														aria-controls="aggregate-menu"
+														aria-haspopup="true"
+														onClick={this.handleShowAggregateMenu}
+														className="float-right"
+														size="md"
+														aria-label="Aggregate Menu"
+													>
+														{defination.scope?.columns[this.state.aggregate]
+															? defination.scope.columns[this.state.aggregate].label
+															: "Unknown"}{" "}
+														Aggregate
+														<AggregateMenuIcon />
+													</Button>
+													<Menu
+														id="surveys-aggregate-menu"
+														anchorEl={this.state.aggregateMenuEl}
+														keepMounted
+														open={Boolean(this.state.aggregateMenuEl)}
+														onClose={this.handleCloseAggregateMenu}
+													>
+														{this.aggregatables.map((aggregatable, index) => (
 															<MenuItem
-																onClick={this.handleAggregateMenuItemClick(
-																	aggregatable.name
-																)}
-																key={
-																	"aggregate_" +
-																	aggregatable.name
-																}
+																onClick={this.handleAggregateMenuItemClick(aggregatable.name)}
+																key={"aggregate_" + aggregatable.name}
 															>
-																{aggregatable.label +
-																	" Aggregate"}
+																{aggregatable.label + " Aggregate"}
 															</MenuItem>
-														)
-													)}
-												</Menu>
-											</GridItem>
-										)}
-									</GridContainer>
-								</GridItem>
-							)}
-
-							<GridItem className="p-0 m-0" xs={12}>
-								{Array.isArray(this.state.chart_data.labels) &&
-									this.state.chart_data.labels.length > 0 ? (
-									<Bar
-										data={this.state.chart_data}
-										options={{
-											maintainAspectRatio: false,
-											scales: {
-												yAxes: [{
-													ticks: {
-														beginAtZero: true
-													}
-												}]
-											},
-										}}
-									/>
-								) : (
-									<GridContainer
-										className="p-0 m-0"
-										justify="center"
-										alignItems="center"
-									>
-										<img
-											alt="Empty Aggregates"
-											className={"m-8 w-9/12"}
-											src={("https://realfield.nyc3.cdn.digitaloceanspaces.com/public/img/empty-state-table.svg")}
-										/>
-										<Typography
-											className={"mt-4"}
-											color="grey"
-											variant="body2"
-																						fullWidth
-										>
-											No{" "}
-											{defination.scope.columns[
-												this.state.aggregate
-											]
-												? defination.scope.columns[
-													this.state.aggregate
-												].label
-												: ""}{" "}
-											Aggregates
-										</Typography>
-									</GridContainer>
+														))}
+													</Menu>
+												</Grid>
+											)}
+										</Grid>
+									</Grid>
 								)}
-							</GridItem>
-						</GridContainer>
 
-						{api.complete && api.error && (
-							<GridContainer>
-								<GridItem xs={12}>
-									<Typography
-										color="error"
-										variant="body2"
-																				fullWidth
-									>
-										{"An error occured. \n " +
-											api.error.msg}
-									</Typography>
-								</GridItem>
-							</GridContainer>
-						)}
-					</GridContainer>
-				</GridItem>
-			</GridContainer>
-		);
+								<Grid item className="p-0 m-0" xs={12}>
+									{Array.isArray(this.state.chart_data.labels) && this.state.chart_data.labels.length > 0 ? (
+										<Bar
+											data={this.state.chart_data}
+											options={{
+												maintainAspectRatio: false,
+												scales: {
+													yAxes: [
+														{
+															ticks: {
+																beginAtZero: true,
+															},
+														},
+													],
+												},
+											}}
+										/>
+									) : (
+										<Grid container className="p-0 m-0 flex flex-col justify-center items-center">
+											<FolderOpenIcon className="text-9xl" />
+
+											<Typography className={"mt-4"} color="grey" variant="body2" fullWidth>
+												No{" "}
+												{defination.scope.columns[this.state.aggregate]
+													? defination.scope.columns[this.state.aggregate].label
+													: ""}{" "}
+												Aggregates
+											</Typography>
+										</Grid>
+									)}
+								</Grid>
+							</Grid>
+
+							{api.complete && api.error && (
+								<Grid container>
+									<Grid item xs={12}>
+										<Typography color="error" variant="body2" fullWidth>
+											{"An error occured. \n " + api.error.msg}
+										</Typography>
+									</Grid>
+								</Grid>
+							)}
+						</Grid>
+					</Grid>
+				</Grid>
+			)
+		)
 	}
 }
 

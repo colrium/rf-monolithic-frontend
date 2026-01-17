@@ -1,16 +1,46 @@
 import TextField from '@mui/material/TextField';
+import Box from "@mui/material/Box"
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from "@mui/material/IconButton"
 import React, { useCallback, useRef, useMemo } from "react";
 import debounce from 'lodash/debounce';
-import {useSetState, useDidMount, useDidUpdate, useMark} from "hooks";
-import {useUpdate} from 'react-use';
+import InputAdornment from "@mui/material/InputAdornment"
+import Checkbox from "@mui/material/Checkbox"
+import {useSetState, useDidMount, useDidUpdate, useMark, useDeepMemo} from "hooks";
+import CheckIcon from "@mui/icons-material/Check"
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank"
+import CheckBoxIcon from "@mui/icons-material/CheckBox"
 
+const icon = <CheckBoxOutlineBlankIcon color="transparent" fontSize="inherit" />
+const checkedIcon = <CheckIcon fontSize="inherit" />
 
 
 
 function CustomAutocomplete(props) {
-	const { className, disabled, multiple, loading, onChange, label, required, variant, margin, size, max, excludeValidation, min, validate, validator, onValidityChange, helperText, onOpen, onClose, touched, invalid, isClearable, error, value, options, freeSolo, ...rest } = props
+	const {
+		className,
+		multiple,
+		name,
+		onChange,
+		value,
+		options,
+		label,
+		freeSolo,
+		required,
+		variant,
+		margin,
+		size,
+		loading,
+		disabled,
+		helperText,
+		error,
+		isOptionEqualToValue,
+		getOptionSelected,
+		getOptionLabel,
+		endAdornment,
+		...rest
+	} = props
 
 	const [state, setState, getState] = useSetState({
 		open: false,
@@ -19,287 +49,289 @@ function CustomAutocomplete(props) {
 		disabled: false,
 		loading: false,
 	});
-	const update = useUpdate();
-	const optionsRef = useRef([]);
-	const valueRef = useRef([]);
 
+	const defaultInputValue = multiple ? [] : null
 
-	const parseInputOptions = async (targetOptions)=>{
-		let parsedOptions = Array.isArray(targetOptions)? targetOptions : [];
-		if (Function.isFunction(targetOptions)) {
-			parsedOptions = await Promise.all([targetOptions()]).then(res => {
-				return res[0]
-			}).catch(error => {
-				setState({loading: false, error: error?.toString? error.toString() : JSON.stringify(error)});
-				return []
-			})
-		}
-
-		if (String.isString(targetOptions) && !String.isEmpty(targetOptions)) {
-			try {
-				parsedOptions=JSON.parse(targetOptions);
-			} catch (error) {
-				console.log(" error", error)
-				setState({error: error?.toString? error.toString() : JSON.stringify(error)});
+	const isOptionInValue = useCallback(
+		(option, val) => {
+			if (Function.isFunction(isOptionEqualToValue)) {
+				return isOptionEqualToValue(option, val)
 			}
-		}
-
-		if (JSON.isJSON(targetOptions)) {
-			parsedOptions = Object.entries(targetOptions).reduce((currentValue, [value, label])=> currentValue.concat([{value, label}]), [])
-		}
-		return parsedOptions;
-
-	}
-
-	const parseInputValue = useCallback( (target)=>{
-		return new Promise((resolve, reject) => {
-			let parsedValue = [];
-			let targetValues = [];
-			if (Array.isArray(target)) {
-				targetValues = [...target]
-			}
-			else if (!!target && !Array.isArray(target)) {
-				targetValues = [target]
-			}
-
-			parsedValue = optionsRef.current.reduce((currentParsedValue, entry) => {
-					// console.log("parseInputValue entry", entry)
-						if (JSON.isJSON(entry)) {
-							let entryValues = Object.values(entry);
-							targetValues.map(targetValueEntry => {
-								if (Object.areEqual(entry, targetValueEntry) || entryValues.indexOf(targetValueEntry) !== -1) {
-									currentParsedValue.push(entry)
-								}
-							});
+			else {
+				let valEntries = []
+				if (Array.isArray(val)) {
+					valEntries = val.reduce((acc, curr) => {
+						if (curr.value) {
+							acc.push(curr.value)
+						} else {
+							acc.push(curr)
 						}
-						else {
-							targetValues.map(targetValueEntry => {
-								if (Object.areEqual(entry, targetValueEntry)) {
-									currentParsedValue.push(entry)
-								}
-							});
-						}
-						return currentParsedValue
-			}, []);
+						return acc
+					}, [])
+				} else if (JSON.isJSON(val) && "value" in val) {
+					valEntries.push(val.value)
+				}
+				// console.log(name, "isOptionInValue valEntries", valEntries)
+				// console.log("isOptionInValue option", option)
+				// // // console.log("isOptionInValue val", val)
+				// console.log("isOptionInValue valEntries.indexOf(option?.value) !== -1", valEntries.indexOf(option?.value) !== -1)
+				return valEntries.indexOf(option?.value) !== -1 || (valEntries.indexOf(option) === -1 && freeSolo)
+			}
+
+		},
+		[isOptionEqualToValue, freeSolo]
+	)
+
+	const inputOptions = useDeepMemo(
+		async () => {
+			let parsedOptions = Array.isArray(options) ? options : []
+			if (Function.isFunction(options)) {
+				parsedOptions = await Promise.all([options()])
+					.then(res => {
+						return res[0]
+					})
+					.catch(error => {
+						return []
+					})
+			}
+
+			if (String.isString(options) && !String.isEmpty(options)) {
+				try {
+					parsedOptions = JSON.parse(options)
+				} catch (error) {
+					// setState({ error: error?.toString ? error.toString() : JSON.stringify(error) })
+				}
+			}
+
+			if (JSON.isJSON(options)) {
+				parsedOptions = Object.entries(options).reduce(
+					(currentValue, [value, label]) => currentValue.concat([{ value, label }]),
+					[]
+				)
+			}
+			return parsedOptions
+		},
+		[options],
+		[]
+	)
+
+
+
+	const inputValue = useDeepMemo(
+		() => {
+			let parsedValue = []
+			let targetValues = []
+			if (Array.isArray(value)) {
+				targetValues = [...value]
+			} else if (!!value && !Array.isArray(value)) {
+				targetValues = [value]
+			}
+
+			if (Array.isArray(targetValues)) {
+				parsedValue = inputOptions.reduce((currentParsedValue, entry) => {
+					if (isOptionInValue(entry, targetValues)) {
+						currentParsedValue.push(entry)
+					}
+					return currentParsedValue
+				}, [])
+			}
 
 			if (!multiple) {
 				if (parsedValue.length > 0) {
 					parsedValue = parsedValue[0]
+				} else {
+					// parsedValue = inputOptions || null
+					parsedValue = []
 				}
-				else{
-					parsedValue = optionsRef.current[0] || null
-				}
+			} else if (!Array.isArray(parsedValue)) {
+				parsedValue = []
 			}
 
-			resolve(parsedValue);
+			return parsedValue
+		},
+		[multiple, value, inputOptions],
+		defaultInputValue
+	)
 
-		})
+	const isOptionSelected = useCallback(
+		(option, val) => {
+			if (Function.isFunction(getOptionSelected)) {
+				return getOptionSelected(option, val)
+			} else {
+				let valEntries = []
+				if (Array.isArray(val)) {
+					valEntries = val.reduce((acc, curr) => {
+						if (curr.value) {
+							acc.push(curr.value)
+						} else {
+							acc.push(curr)
+						}
+						return acc
+					}, [])
+				} else if (JSON.isJSON(val) && "value" in val) {
+					valEntries.push(val.value)
+				}
+				return valEntries.indexOf(option?.value) !== -1 || (valEntries.indexOf(option) === -1 && freeSolo)
+			}
+		},
+		[getOptionSelected, freeSolo]
+	)
+
+	const getLabelOfOption = useCallback(
+		option => {
+			if (Function.isFunction(getOptionLabel)) {
+				return getOptionLabel(option)
+			} else {
+				if (JSON.isJSON(option)) {
+					return option.label || option.value || ""
+				} else {
+					let label = ""
+					for (var i = 0; i < inputOptions.length; i++) {
+						if (inputOptions[i].value === option || inputOptions[i].value === option?.value) {
+							label = inputOptions[i].label || inputOptions[i].value || ""
+							break
+						}
+					}
+					return label
+				}
+			}
+		},
+		[getOptionLabel, inputOptions]
+	)
 
 
-	}, [multiple]);
 
 
 
-	const handleOnOpen = useCallback(() => {
-		if (Function.isFunction(onOpen)) {
-			onOpen();
-		}
-	}, [onOpen]);
+
 
 	const handleOnChange = useCallback((event, newValue, reason) => {
 		if (Function.isFunction(onChange)) {
-			if (onChange.length > 1) {
-				onChange(event, newValue, reason)
-			}
-			else{
-				let onChangeValue = newValue?.value || newValue
+			let onChangeValue = newValue?.value || newValue || null
 
-				if (multiple) {
-					onChangeValue = Array.isArray(value)
-						? value.concat([newValue?.value || newValue])
-						: [newValue?.value || newValue]
-					valueRef.current = Array.isArray(valueRef.current)
-						? valueRef.current.concat([newValue])
-						: [newValue]
-				} else {
-					valueRef.current = newValue
+			if (multiple) {
+				if (Array.isArray(newValue)) {
+					onChangeValue = newValue.map(entry => entry.value || entry)
 				}
+			}
+			if (onChange.length === 3) {
+				onChange(event, onChangeValue, reason)
+			}
+			else if (onChange.length === 2) {
+				onChange(event, onChangeValue)
+			} else {
 				onChange(onChangeValue)
 			}
 		}
 	}, [onChange, multiple, value]);
 
-	const handleOnClose = useCallback(() => {
-		const {open} = getState()
-		if (open) {
-			setState({open: false})
-		}
-		if (Function.isFunction(onClose)) {
-			onClose();
-		}
-	}, [onClose]);
 
-
-
-	useDidUpdate(() => {
-		parseInputOptions(options).then(parsedOptions => {
-			optionsRef.current = parsedOptions;
-			update();
-			setState({error: false})
-			parseInputValue(value).then(parsedValue => {
-				valueRef.current = parsedValue;
-				update()
-			}).catch(error=> {
-				setState({error: error?.toString? error.toString() : JSON.stringify(error)})
-			})
-		}).finally(()=> update())
-	}, [options]);
-
-	useDidUpdate(() => {
-		parseInputValue(value).then(parsedValue => {
-			valueRef.current = parsedValue;
-			update()
-		});
-	}, [value]);
-
-	useDidMount(() => {
-		parseInputOptions(options).then(parsedOptions => {
-			optionsRef.current = parsedOptions;
-			update()
-			parseInputValue(value).then(parsedValue => {
-				valueRef.current = parsedValue;
-				update()
-			}).catch(error=> {
-				setState({error: error?.toString? error.toString() : JSON.stringify(error)})
-			})
-
-		}).catch(error=> {
-			setState({error: error?.toString? error.toString() : JSON.stringify(error)})
-		})
-
-	});
 
 	const inputRequired = useMemo(() => {
 		if (required) {
-			return ((freeSolo && String.isEmpty(valueRef.current)) || ((!multiple && !valueRef.current) || (multiple && Array.isArray(valueRef.current) && valueRef.current.length === 0)))
+			return (
+				(freeSolo && String.isEmpty(inputValue)) ||
+				(!multiple && !inputValue) ||
+				(multiple && Array.isArray(inputValue) && inputValue.length === 0)
+			)
 		}
-		return false;
+		return false
+	}, [required, freeSolo, multiple, inputValue])
 
-	}, [required, freeSolo, multiple])
+
 
 	let debouncedFreeSoloOnChange;
 
 
 
-
 	return (
 		<Autocomplete
-			className={"flex-1 my-0" + (className ? (" " + className) : "")}
+			className={"flex-1 my-0" + (className ? " " + className : "")}
 			multiple={multiple}
-			margin={margin}
-			size={size}
-			filterSelectedOptions={true}
-			getOptionLabel={(option) => {
-				if (JSON.isJSON(option)) {
-					return option.label ? option.label : "";
-				}
-				else {
-					let label = "";
-					for (var i = 0; i < optionsRef.current.length; i++) {
-						if (optionsRef.current[i].value === option || optionsRef.current[i].value === option?.value) {
-							label = optionsRef.current[i].label;
-							break;
-						}
-					}
-					return label;
-				}
-			}}
-			getOptionSelected={(option, currentValue) => {
-				if (option && currentValue) {
-					return option.value == currentValue.value;
-				}
-				return false;
-			}}
+			filterSelectedOptions={false}
+			isOptionEqualToValue={isOptionInValue}
+			getOptionLabel={getLabelOfOption}
+			getOptionSelected={isOptionSelected}
+			renderOption={({ className: optionClassName, ...optionProps }, option, { selected }) => (
+				<li className={`${optionClassName} p-1 py-1 h-auto `} {...optionProps}>
+					<Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+					{option.label || option.value || "Option"}
+				</li>
+			)}
+			renderInput={params => (
+				<TextField
+					{...params}
+					label={label}
+					variant={variant || "filled"}
+					margin={margin}
+					size={size}
+					InputLabelProps={{
+						...params.InputLabelProps,
+						shrink:
+							multiple && inputValue.length > 0
+								? true
+								: JSON.isJSON(params.InputLabelProps)
+								? params.InputLabelProps.shrink
+								: state.open,
+					}}
+					inputProps={{
+						...params.inputProps,
+						autoComplete: String.uid(11),
+						required: inputRequired,
+						// value: freeSolo && String.isString(inputValue) ? inputValue : params.inputProps.value,
+						// onBlur: event => {
+						// 	event.persist()
+						// 	if (freeSolo) {
+						// 		if (!debouncedFreeSoloOnChange) {
+						// 			debouncedFreeSoloOnChange = debounce(() => {
+						// 				let new_value = event.target.value
+						// 				try {
+						// 					inputValue = new_value
 
-			renderInput={(params) => {
-				return (
-					<TextField
-						label={label}
-						variant={variant || "filled"}
-						margin={margin}
-						size={size}
-						{...params}
-						InputLabelProps={{
-							...params.InputLabelProps,
-							shrink: multiple && valueRef.current.length > 0 ? true : (JSON.isJSON(params.InputLabelProps) ? params.InputLabelProps.shrink : state.open),
-						}}
-						inputProps={{
-							...params.inputProps,
-							autoComplete: String.uid(11),
-							required: inputRequired,
-							value: freeSolo && String.isString(valueRef.current) ? valueRef.current : (params.inputProps.value),
-							onBlur: (event) => {
-								event.persist();
-								if (freeSolo) {
-									if (!debouncedFreeSoloOnChange) {
-										debouncedFreeSoloOnChange = debounce(() => {
-											let new_value = event.target.value;
-											try {
-												let inputOptionsStr = JSON.stringify(optionsRef.current);
-												valueRef.current = new_value
+						// 					params.inputProps.onBlur(event)
+						// 				} catch (err) {}
+						// 			}, 300)
+						// 		}
 
-												params.inputProps.onBlur(event);
-											} catch (err) {
-
-											}
-										}, 300);
-									}
-
-									debouncedFreeSoloOnChange();
-								}
-								else {
-									params.inputProps.onBlur(event);
-								}
-
-							}
-						}}
-						InputProps={{
-							...params.InputProps,
-							autocomplete: 'none',
-							endAdornment: (
-								<React.Fragment>
-									{loading ? <CircularProgress color="inherit" size={"1.2rem"} /> : params.InputProps.endAdornment}
-								</React.Fragment>
-							),
-						}}
-						error={Boolean(error)}
-						helperText={helperText}
-						onFocus={() => setState({open: true})}
-						onBlur={() => setState({open: false})}
-						required={required}
-						disabled={disabled}
-					/>
-				);
-			}}
+						// 		debouncedFreeSoloOnChange()
+						// 	} else {
+						// 		params.inputProps.onBlur(event)
+						// 	}
+						// },
+					}}
+					InputProps={{
+						...params.InputProps,
+						autocomplete: "none",
+						endAdornment: (
+							<Box className="flex flex-row items-center">
+								{loading && (
+									<IconButton aria-label="loading-indicator" edge="start" color="secondary" className="-mt-4">
+										<CircularProgress color="inherit" size={16} />
+									</IconButton>
+								)}
+								{params.InputProps.endAdornment}
+							</Box>
+						),
+					}}
+					error={Boolean(error)}
+					helperText={helperText}
+					disabled={disabled}
+				/>
+			)}
 			fullWidth
+			loading={loading}
 			{...rest}
 			onChange={handleOnChange}
-			open={state.open}
-			onOpen={handleOnOpen}
-			onClose={handleOnClose}
-			value={freeSolo && String.isString(valueRef.current) ? null : valueRef.current}
-			options={optionsRef.current}
-			loading={state.loading || loading}
-			freeSolo={freeSolo}
-
+			value={freeSolo && String.isString(inputValue) ? null : inputValue}
+			options={inputOptions}
 		/>
-	);
+	)
 }
 
 
 CustomAutocomplete.defaultProps = {
 	multiple: false,
-	isClearable: true,
+	isClearable: false,
 	variant: "filled",
 	label: "Select",
 	margin: "dense",
@@ -307,6 +339,10 @@ CustomAutocomplete.defaultProps = {
 	options: [],
 	loading: false,
 	disabled: false,
-	value: undefined,
-};
-export default React.memo(CustomAutocomplete);
+	value: null,
+	forcePopupIcon: true,
+	openOnFocus: true,
+	noOptionsText: "No options available",
+	disableClearable: true,
+}
+export default CustomAutocomplete;

@@ -9,14 +9,14 @@ import {
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@mui/icons-material";
 import DefinationContextIcon from "@mui/icons-material/WorkOutlineOutlined";
-import Avatar from "components/Avatar";
-import Badge from "components/Badge";
-import Button from "components/Button";
+import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import Button from "@mui/material/Button";
 import GoogleMap from "components/GoogleMap";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import Status from "components/Status";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import { formats } from "config/data";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -38,7 +38,7 @@ import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import CircularProgress from "@mui/material/CircularProgress";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import { DataGrid } from "@material-ui/data-grid";
+import DataTable from "components/DataTable"
 import ReactJsonView from "react-json-view";
 
 function Alert(props) {
@@ -77,13 +77,13 @@ const renderResponseSummaryRow = data => props => {
 	const { index, ...rest } = props;
 
 	return (
-		<ListItem button {...rest} key={index}>
+		<ListItem {...rest} key={index}>
 			<ListItemText primary={Object.keys(data)[index]} />
 			<ListItemSecondaryAction>
 				<Typography>{Object.values(data)[index]}</Typography>
 			</ListItemSecondaryAction>
 		</ListItem>
-	);
+	)
 };
 
 const TextResponseSummaryDataGrid = React.memo(props => {
@@ -105,9 +105,9 @@ const TextResponseSummaryDataGrid = React.memo(props => {
 
 	return (
 		<div style={{ height: 300, width: "100%" }}>
-			<DataGrid rows={rows} columns={columns} />
+			{/* <DataTable rows={rows} columns={columns} /> */}
 		</div>
-	);
+	)
 });
 
 const CardViewBody = React.memo(props => {
@@ -147,8 +147,8 @@ const CardViewBody = React.memo(props => {
 		loadResponsesSummary();
 	}, []);
 	return (
-		<GridContainer className="p-0 m-0">
-			<GridItem className="p-0 m-0" xs={12}>
+		<Grid container className="p-0 m-0">
+			<Grid item  className="p-0 m-0" xs={12}>
 				<GoogleMap
 					circles={[
 						{
@@ -319,9 +319,9 @@ const CardViewBody = React.memo(props => {
 					selectedEntryType={"circle"}
 					selectedEntry={0}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="p-4">
+			<Grid item  xs={12} className="p-4">
 				<Typography component="div" variant="body2" paragraph>
 					Survey
 				</Typography>
@@ -419,19 +419,19 @@ const CardViewBody = React.memo(props => {
 				<Typography component="div" variant="body1" paragraph>
 					{entry.focus_radius + " " + entry.focus_radius_metric}
 				</Typography>
-			</GridItem>
-			<GridContainer className={"mt-8"}>
-				<GridItem xs={12}>
+			</Grid>
+			<Grid container className={"mt-8"}>
+				<Grid item  xs={12}>
 					<Typography variant="subtitle1">
 						{" "}
 						Responses Summary
 					</Typography>
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 
 			{loadingSummary && (
-				<GridContainer className={"mt-8"}>
-					<GridItem
+				<Grid container className={"mt-8"}>
+					<Grid item
 						className={"flex flex-col justify-center items-center"}
 						xs={12}>
 						<CircularProgress
@@ -442,12 +442,12 @@ const CardViewBody = React.memo(props => {
 							{" "}
 							Loading Responses Summary...
 						</Typography>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 			)}
 			{summaryError && (
-				<GridContainer className={"mt-8"}>
-					<GridItem
+				<Grid container className={"mt-8"}>
+					<Grid item
 						className={"flex flex-col justify-center items-center"}
 						xs={12}>
 						<ErrorOutlineIcon
@@ -459,28 +459,28 @@ const CardViewBody = React.memo(props => {
 							{" "}
 							Something went wrong. {JSON.stringify(summaryError)}
 						</Typography>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 			)}
 			{commissionFormSummary && !loadingSummary && (
-				<GridContainer className={"mb-8"}>
-					<GridItem xs={12}>
+				<Grid container className={"mb-8"}>
+					<Grid item  xs={12}>
 						<Alert severity="warning">
 							This is an automated report based on raw data
 							submitted to this project. Please conduct proper
 							data cleaning prior to using the graphs and figures
 							used on this page.
 						</Alert>
-					</GridItem>
-					<GridContainer className={"mb-8"}>
+					</Grid>
+					<Grid container className={"mb-8"}>
 						{Object.entries(commissionFormSummary).map(
 							([key, value]) =>
 								!JSON.isEmpty(value) &&
 								commissionFormSummaryLabels[key] &&
 								commissionFormSummaryTypes[key] && (
-									<GridItem xs={12}>
-										<GridContainer className={"mb-8"}>
-											<GridItem xs={12}>
+									<Grid item  xs={12}>
+										<Grid container className={"mb-8"}>
+											<Grid item  xs={12}>
 												<Typography
 													variant="subtitle2"
 													className={
@@ -493,9 +493,9 @@ const CardViewBody = React.memo(props => {
 														]
 													}
 												</Typography>
-											</GridItem>
+											</Grid>
 
-											<GridItem xs={12}>
+											<Grid item  xs={12}>
 												{commissionFormSummaryTypes[
 													key
 												] === "select_one" && (
@@ -549,15 +549,15 @@ const CardViewBody = React.memo(props => {
 																	}]
 																}}
 															/>)*/}
-											</GridItem>
-										</GridContainer>
-									</GridItem>
+											</Grid>
+										</Grid>
+									</Grid>
 								)
 						)}
-					</GridContainer>
-				</GridContainer>
+					</Grid>
+				</Grid>
 			)}
-		</GridContainer>
+		</Grid>
 	);
 });
 
@@ -613,15 +613,15 @@ export default {
 						),
 						subtitle: (
 							<React.Fragment>
-								<GridContainer className={"p-0"}>
-									<GridItem xs={12}>
+								<Grid container className={"p-0"}>
+									<Grid item  xs={12}>
 										<Typography
 											variant="subtitle2"
 											paragraph>
 											{entry.requirements}
 										</Typography>
-									</GridItem>
-									<GridItem xs={12}>
+									</Grid>
+									<Grid item  xs={12}>
 										{entry.status && (
 											<Status
 												color={
@@ -632,8 +632,8 @@ export default {
 												}
 											/>
 										)}
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							</React.Fragment>
 						),
 						body: (
@@ -1442,15 +1442,15 @@ export default {
 							);
 						} catch (err) {
 							return (
-								<GridContainer>
-									<GridItem className="py-0 flex-col">
+								<Grid container>
+									<Grid item  className="py-0 flex-col">
 										<Typography
 											className="px-2"
 											variant="body2">
 											{"" + err}
 										</Typography>
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							);
 						}
 					},

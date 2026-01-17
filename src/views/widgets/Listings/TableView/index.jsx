@@ -5,13 +5,12 @@ import Chip from "@mui/material/Chip";
 import Menu from "@mui/material/Menu";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import MenuItem from "@mui/material/MenuItem";
-import Avatar from "components/Avatar";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Avatar from "@mui/material/Avatar";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import { formats } from "config/data";
-import MUIDataTable from "mui-datatables";
 import PropTypes from "prop-types";
 import React, { useCallback } from "react";
 import { connect } from "react-redux";
@@ -271,13 +270,21 @@ const TableView = props => {
 		// });
 	}, [defination]);
 
-	const loadData = useCallback(() => {
-		if (!!defination && defination?.endpoint) {
-				setState({ loading: true, load_error: false });
-				Api.get(defination.endpoint, {params: {...queryRef.current}})
+	const loadData = useCallback(
+		(reset = false) => {
+			if (!!defination && defination?.endpoint) {
+				setState(prevState => ({
+					loading: true,
+					load_error: false,
+					data: reset ? [] : prevState.data,
+					pages: reset ? 1 : prevState.pages,
+					page: reset ? 0 : prevState.page,
+					count: reset ? 0 : prevState.count,
+				}))
+				Api.get(defination.endpoint, { params: { ...queryRef.current } })
 					.then(res => {
-						const {sort} = {...queryRef.current};
-						const { data, pages, page, count } = {...res?.body};
+						const { sort } = { ...queryRef.current }
+						const { data, pages, page, count } = { ...res?.body }
 						//
 
 						setState({
@@ -287,46 +294,47 @@ const TableView = props => {
 							page,
 							count,
 							sort: sort,
-						});
+						})
 						if (Function.isFunction(onLoadData)) {
-							onLoadData(data, queryRef.current);
+							onLoadData(data, queryRef.current)
 						}
 					})
 					.catch(e => {
 						setState({
 							load_error: e,
 							loading: false,
-						});
-					});
-
-		} else {
-			setState({
-				data: [],
-				load_error: { msg: "No Context defination or provided" },
-				loading: false,
-			});
-		}
-	}, [onLoadData, defination]);
+						})
+					})
+			} else {
+				setState({
+					data: [],
+					load_error: { msg: "No Context defination or provided" },
+					loading: false,
+				})
+			}
+		},
+		[onLoadData, defination]
+	)
 
 	useDidMount(() => {
-		parseColumns();
-		loadData();
-	});
+		parseColumns()
+		loadData(false)
+	})
 
 	useDidUpdate(() => {
-		queryRef.current = {...queryRef.current, ...query}
-		loadData();
-	}, [query]);
+		queryRef.current = { ...queryRef.current, ...query }
+		loadData(false)
+	}, [query])
 
-
-
-	// console.log(" data", data)
-	// console.log(" pagination", pagination)
+	useDidUpdate(() => {
+		parseColumns()
+		loadData(true)
+	}, [defination])
 
 
 	return (
-		<GridContainer className={"p-0"}>
-			<GridItem className="p-0 m-0" xs={12}>
+		<Grid container className={"p-0"}>
+			<Grid item  className="p-0 m-0" xs={12}>
 				<DataTable
 					rows={Array.isArray(state.data) ? state.data : []}
 					totalCount={state.count}
@@ -338,7 +346,6 @@ const TableView = props => {
 						loadData()
 					}}
 					onRowsPerPageChange={event => {
-						// console.log("event", event)
 						queryRef.current = { ...queryRef.current, rpp: event?.target?.value || 10, pagination: event?.target?.value || 10 }
 						loadData()
 					}}
@@ -347,8 +354,8 @@ const TableView = props => {
 					page={state.page - 1}
 					rowsPerPage={queryRef.current?.rpp || queryRef.current?.pagination || 10}
 				/>
-			</GridItem>
-		</GridContainer>
+			</Grid>
+		</Grid>
 	)
 };
 TableView.propTypes = {

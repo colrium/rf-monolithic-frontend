@@ -13,14 +13,7 @@ import Typography from "@mui/material/Typography"
 import { Link } from "react-router-dom"
 
 const AuthForm = React.forwardRef((props, ref) => {
-	const {
-		email,
-		code,
-		onSubmit,
-		onSubmitSuccess,
-		onSubmitError,
-		...rest
-	} = props || {}
+	const { email, code, onSubmit, onSubmitSuccess, onSubmitError, ...rest } = props || {}
 
 	const { Api } = useNetworkServices()
 
@@ -30,14 +23,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 		showEmail: true,
 		showCode: true,
 	})
-	const {
-		submit,
-		TextField,
-		values,
-		setValue,
-		resetValues,
-		formState,
-	} = usePersistentForm({
+	const { submit, TextField, getValues, setValue, resetValues, formState } = usePersistentForm({
 		name: `reset-password-auth-form`,
 		volatile: true,
 		defaultValues: {
@@ -50,9 +36,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 					setState({
 						submitting: false,
 						error: false,
-						alert:
-							res.message ||
-							"Your password has been reset successfully",
+						alert: res.message || "Your password has been reset successfully",
 					})
 					resetValues()
 					if (Function.isFunction(onSubmitSuccess)) {
@@ -74,16 +58,20 @@ const AuthForm = React.forwardRef((props, ref) => {
 		},
 	})
 
+	const values = getValues()
+
 	const applyQueryParams = useCallback(() => {
-		let queryParams = (
-			window.location.search.match(
-				new RegExp("([^?=&]+)(=([^&]*))?", "g")
-			) || []
-		).reduce(function (result, each, n, every) {
+		let queryParams = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function (
+			result,
+			each,
+			n,
+			every
+		) {
 			let [key, value] = each.split("=")
 			result[key] = value
 			return result
-		}, {})
+		},
+		{})
 		if ("e" in queryParams || "email" in queryParams) {
 			let email = queryParams.e || queryParams.email
 			if (email !== values.email) {
@@ -97,7 +85,6 @@ const AuthForm = React.forwardRef((props, ref) => {
 			let code = queryParams.c || queryParams.code
 			if (code !== values.code) {
 				setValue("code", code)
-
 			}
 			if (!String.isEmpty(code)) {
 				setState({ showCode: false })
@@ -109,8 +96,6 @@ const AuthForm = React.forwardRef((props, ref) => {
 		applyQueryParams()
 		// resetValues()
 	})
-
-	// console.log("formState.errors", formState.errors)
 
 	return (
 		<Grid container {...rest} component="form" onSubmit={submit} ref={ref}>
@@ -167,20 +152,14 @@ const AuthForm = React.forwardRef((props, ref) => {
 					placeholder="New Password"
 					rules={{
 						validate: {
-							isRequired: val =>
-								!String.isEmpty(val) || "Password is required.",
-							isLongEnough: val =>
-								/^.{8,}$/.test(val) ||
-								"Password should be atleast 8 characters long.",
+							isRequired: val => !String.isEmpty(val) || "Password is required.",
+							isLongEnough: val => /^.{8,}$/.test(val) || "Password should be atleast 8 characters long.",
 							hasUppercase: val =>
-								new RegExp("^(?=.*[A-Z]).{8,}$").test(val) ||
-								"Password should include atleast 1 uppercase letter.",
+								new RegExp("^(?=.*[A-Z]).{8,}$").test(val) || "Password should include atleast 1 uppercase letter.",
 							hasLowercase: val =>
-								new RegExp("^(?=.*[a-z]).{8,}$").test(val) ||
-								"Password should include atleast 1 lowercase letter.",
+								new RegExp("^(?=.*[a-z]).{8,}$").test(val) || "Password should include atleast 1 lowercase letter.",
 							hasDigit: val =>
-								new RegExp("^(?=.*[0-9]).{8,}$").test(val) ||
-								"Password should include atleast 1 lowercase letter.",
+								new RegExp("^(?=.*[0-9]).{8,}$").test(val) || "Password should include atleast 1 lowercase letter.",
 						},
 					}}
 					className="mb-4"
@@ -197,16 +176,10 @@ const AuthForm = React.forwardRef((props, ref) => {
 					rules={{
 						deps: ["password"],
 						validate: {
-							isRequired: val =>
-								!String.isEmpty(val) ||
-								"Repeat password is required.",
+							isRequired: val => !String.isEmpty(val) || "Repeat password is required.",
 							isLongEnough: val =>
-								(String.isString(val) &&
-									val.trim().length >= 8) ||
-								"Repeat password should be atleast 8 characters long.",
-							matchesPassword: val =>
-								val === values.password ||
-								"Repeat password does not match password",
+								(String.isString(val) && val.trim().length >= 8) || "Repeat password should be atleast 8 characters long.",
+							matchesPassword: val => val === values.password || "Repeat password does not match password",
 						},
 					}}
 					className="mb-4"
@@ -216,11 +189,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 				/>
 			</Grid>
 			<Grid item xs={12} className="mb-4"></Grid>
-			<Grid
-				item
-				xs={12}
-				className="flex flex-row justify-center items-center mb-4"
-			>
+			<Grid item xs={12} className="flex flex-row justify-center items-center mb-4">
 				<LoadingButton
 					disabled={!formState.isValid || formState.isSubmitting}
 					loading={formState.isSubmitting}

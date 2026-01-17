@@ -13,10 +13,8 @@ import Alert from "@mui/material/Alert"
 import Typography from "@mui/material/Typography"
 import { Link } from "react-router-dom"
 
-
 const AuthForm = React.forwardRef((props, ref) => {
-	const { email, onSubmit, onSubmitSuccess, onSubmitError, ...rest } =
-		props || {}
+	const { email, onSubmit, onSubmitSuccess, onSubmitError, ...rest } = props || {}
 
 	const { Api } = useNetworkServices()
 
@@ -24,15 +22,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 		submitting: false,
 		alert: false,
 	})
-	const {
-		submit,
-		TextField,
-		values,
-		setValue,
-		resetValues,
-		formState,
-		...formRest
-	} = usePersistentForm({
+	const { submit, TextField, getValues, setValue, resetValues, formState, ...formRest } = usePersistentForm({
 		name: `forgot-password-auth-form`,
 		defaultValues: {
 			email: email || "",
@@ -44,9 +34,7 @@ const AuthForm = React.forwardRef((props, ref) => {
 					setState({
 						submitting: false,
 						error: false,
-						alert:
-							res.message ||
-							"An email has been sent to your email with password reset resources",
+						alert: res.message || "An email has been sent to your email with password reset resources",
 					})
 					resetValues()
 					if (Function.isFunction(onSubmitSuccess)) {
@@ -68,16 +56,20 @@ const AuthForm = React.forwardRef((props, ref) => {
 		},
 	})
 
+	const values = getValues()
+
 	const applyQueryParams = useCallback(() => {
-		let queryParams = (
-			window.location.search.match(
-				new RegExp("([^?=&]+)(=([^&]*))?", "g")
-			) || []
-		).reduce(function (result, each, n, every) {
+		let queryParams = (window.location.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []).reduce(function (
+			result,
+			each,
+			n,
+			every
+		) {
 			let [key, value] = each.split("=")
 			result[key] = value
 			return result
-		}, {})
+		},
+		{})
 		if ("e" in queryParams || "email" in queryParams) {
 			let email = queryParams.e || queryParams.email
 			if (email !== values.email) {
@@ -89,7 +81,6 @@ const AuthForm = React.forwardRef((props, ref) => {
 	useDidMount(() => {
 		applyQueryParams()
 		resetValues()
-
 	})
 
 	return (
@@ -117,16 +108,10 @@ const AuthForm = React.forwardRef((props, ref) => {
 					required
 					validate
 					disabled={state.submitting}
-					helperText={
-						"Enter your email address to initiate your account's password reset."
-					}
+					helperText={"Enter your email address to initiate your account's password reset."}
 				/>
 			</Grid>
-			<Grid
-				item
-				xs={12}
-				className="flex flex-row justify-center items-center mb-4"
-			>
+			<Grid item xs={12} className="flex flex-row justify-center items-center mb-4">
 				<LoadingButton
 					disabled={!formState.isValid || formState.isSubmitting}
 					loading={formState.isSubmitting}
@@ -145,30 +130,21 @@ const AuthForm = React.forwardRef((props, ref) => {
 					color: theme => theme.palette.secondary.main,
 				}}
 			>
-				<Link
-					className="no-underline text-current p-2 px-4 my-2 rounded transition-all duration-200 hover:bg-gray-800 hover:bg-opacity-5 focus:bg-gray-800 focus:bg-opacity-20 ease-in-out"
-					to="/auth/login"
-				>
-					Back to Login
+				<Link to="/auth/login">
+					<Button variant="text" className="capitalize rounded-full px-8 my-4">
+						Back to Login
+					</Button>
 				</Link>
 			</Grid>
 
-			<Grid
-				item
-				xs={12}
-				className="flex flex-col justify-center items-center"
-				sx={{
-					color: theme => theme.palette.secondary.main,
-				}}
-			>
+			<Grid item xs={12} className="flex flex-col justify-center items-center">
 				<Typography color="action.disabled" variant="body2">
 					already received password reset code?
 				</Typography>
-				<Link
-					className="no-underline text-current p-2 px-4 my-2 rounded transition-all duration-200 hover:bg-gray-800 hover:bg-opacity-5 focus:bg-gray-800 focus:bg-opacity-20 ease-in-out"
-					to="/auth/reset-password"
-				>
-					Reset password
+				<Link to="/auth/reset-password">
+					<Button variant="text" className="capitalize rounded-full px-8 my-4">
+						Reset password
+					</Button>
 				</Link>
 			</Grid>
 			<Snackbar
@@ -191,6 +167,6 @@ const AuthForm = React.forwardRef((props, ref) => {
 			</Snackbar>
 		</Grid>
 	)
-});
+})
 
 export default React.memo(AuthForm)

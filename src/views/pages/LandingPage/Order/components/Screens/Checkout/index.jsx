@@ -1,10 +1,10 @@
 /** @format */
 
 import Check from "@mui/icons-material/Check";
-import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 import ApiService from "services/Api";
 
@@ -51,17 +51,17 @@ class Step extends React.Component {
 	render() {
 		const { onComplete, onCancel } = this.props;
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridContainer>
-					<GridItem xs={12}>
+			<Grid container className="p-0 m-0">
+				<Grid container>
+					<Grid item  xs={12}>
 						<Typography variant="h3" className="primary_text">
 							Checkout
 						</Typography>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
-				<GridContainer className="flex justify-center">
-					<GridItem xs={12}>
+				<Grid container className="flex justify-center">
+					<Grid item  xs={12}>
 						<div className="panel flex flex-col md:flex-row mb-8 shadow-lg">
 							<div className="panel-left w-full md:w-2/3 bg-white rounded-l">
 								<form action="#">
@@ -122,11 +122,11 @@ class Step extends React.Component {
 								</div>
 							</div>
 						</div>
-					</GridItem>
-				</GridContainer>
+					</Grid>
+				</Grid>
 
-				<GridContainer className="p-4">
-					<GridItem xs={12} md={6} className="flex justify-start">
+				<Grid container className="p-4">
+					<Grid item  xs={12} md={6} className="flex justify-start">
 						<form action={this.state.gatewayData.ipn} method="post">
 							{Object.entries(this.state.gatewayData).map(
 								([name, value], cursor) =>
@@ -143,15 +143,15 @@ class Step extends React.Component {
 								<Check /> Complete Order
 							</Button>
 						</form>
-					</GridItem>
-					<GridItem xs={12} md={6} className="flex justify-end">
+					</Grid>
+					<Grid item  xs={12} md={6} className="flex justify-end">
 						<Button onClick={onCancel} color="inverse" round>
 							{" "}
 							Go back{" "}
 						</Button>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

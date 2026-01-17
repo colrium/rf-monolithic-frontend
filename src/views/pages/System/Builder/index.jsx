@@ -3,8 +3,8 @@
 
 import { colors } from "assets/jss/app-theme";
 //
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import PropTypes from "prop-types";
 import React from "react";
 //Redux imports
@@ -48,12 +48,12 @@ class Page extends React.Component {
 	render() {
 		const { auth } = this.props;
 		return (
-			<GridContainer >
-				<GridItem xs={12}>
+			<Grid container >
+				<Grid item  xs={12}>
 					{!auth.user?.isAdmin && <AccessDenied />}
 					{auth.user?.isAdmin && <BuilderIO />}
-				</GridItem>
-			</GridContainer>
+				</Grid>
+			</Grid>
 		);
 	}
 }

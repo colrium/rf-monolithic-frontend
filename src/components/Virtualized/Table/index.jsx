@@ -103,7 +103,6 @@ const VirtualizedTable = props => {
 			const row = rows[index];
 
 			prepareRow(row);
-			// console.log("cell style", style);
 			return (
 				<TableRow
 					{...row.getRowProps({

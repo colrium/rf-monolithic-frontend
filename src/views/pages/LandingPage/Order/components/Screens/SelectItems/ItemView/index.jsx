@@ -1,12 +1,12 @@
 /** @format */
 
 import Chip from "@mui/material/Chip";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import { DynamicInput } from "components/FormInputs";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
+import Grid from '@mui/material/Grid';
+;
 import LazyImage from "components/LazyImage";
-import Typography from "components/Typography";
+import Typography from '@mui/material/Typography';
 import React from "react";
 import ApiService from "services/Api";
 
@@ -138,17 +138,17 @@ class ItemView extends React.Component {
 	render() {
 		const { item, options_cost } = this.state;
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridItem xs={12} md={4} className="p-0 m-0">
-					<GridContainer className="p-0 m-0">
-						<GridItem xs={12}>
+			<Grid container className="p-0 m-0">
+				<Grid item  xs={12} md={4} className="p-0 m-0">
+					<Grid container className="p-0 m-0">
+						<Grid item  xs={12}>
 							<Typography variant="h3" gutterBottom>
 								{item.name}
 							</Typography>
-						</GridItem>
+						</Grid>
 
 						{item.cost > 0 && JSON.isJSON(item.currency) && (
-							<GridItem xs={12}>
+							<Grid item  xs={12}>
 								<span className="text-2xl text-gray-500">
 									{item.currency.html_symbol}
 								</span>
@@ -156,11 +156,11 @@ class ItemView extends React.Component {
 									{(item.cost > 0 ? item.cost : 0) +
 										options_cost}
 								</span>
-							</GridItem>
+							</Grid>
 						)}
 
 						{
-							<GridItem xs={12}>
+							<Grid item  xs={12}>
 								<span className="text-gray-500 mr-2">
 									Variants price:
 								</span>
@@ -173,16 +173,16 @@ class ItemView extends React.Component {
 										" " +
 										options_cost}
 								</span>
-							</GridItem>
+							</Grid>
 						}
 
-						<GridItem xs={12}>
+						<Grid item  xs={12}>
 							<Typography variant="body1" gutterBottom>
 								{item.description}
 							</Typography>
-						</GridItem>
+						</Grid>
 
-						<GridItem xs={12}>
+						<Grid item  xs={12}>
 							{item.item_type === "service" && (
 								<Chip
 									className="m-1"
@@ -245,11 +245,11 @@ class ItemView extends React.Component {
 									))}{" "}
 								</div>
 							)}
-						</GridItem>
-					</GridContainer>
-				</GridItem>
-				<GridItem xs={12} md={8} className="p-0 m-0">
-					<GridContainer className="p-0 m-0 flex flex-col">
+						</Grid>
+					</Grid>
+				</Grid>
+				<Grid item  xs={12} md={8} className="p-0 m-0">
+					<Grid container className="p-0 m-0 flex flex-col">
 						<div className="p-2 w-full flex-grow">
 							<LazyImage
 								className="w-full h-auto"
@@ -281,12 +281,12 @@ class ItemView extends React.Component {
 								</div>
 							)}
 						</div>
-					</GridContainer>
-				</GridItem>
+					</Grid>
+				</Grid>
 
-				<GridContainer className="px-0 m-0">
+				<Grid container className="px-0 m-0">
 					{JSON.isJSON(item.variants) && JSON.isJSON(item.variants) && (
-						<GridItem xs={12} className="px-0 m-0">
+						<Grid item  xs={12} className="px-0 m-0">
 							<DynamicInput
 								label="Variants"
 								mode="generation"
@@ -299,10 +299,10 @@ class ItemView extends React.Component {
 								variant="outlined"
 								error={this.state.variantsError}
 							/>
-						</GridItem>
+						</Grid>
 					)}
 
-					<GridItem xs={12} className="px-0 m-0">
+					<Grid item  xs={12} className="px-0 m-0">
 						<Button
 							color="primary"
 							onClick={this.handleOnItemAdd}
@@ -311,9 +311,9 @@ class ItemView extends React.Component {
 							{" "}
 							Add to cart{" "}
 						</Button>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

@@ -4,10 +4,10 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Check from "@mui/icons-material/Check";
-import Button from "components/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Typography from "components/Typography";
+import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+;
+import Typography from '@mui/material/Typography';
 import React from "react";
 import { connect } from "react-redux";
 
@@ -37,9 +37,9 @@ class Widget extends React.Component {
 	render() {
 		let { checkout_data, cart, auth } = this.props;
 		return (
-			<GridContainer className="p-0 m-0">
-				<GridContainer className="flex justify-center">
-					<GridItem xs={12}>
+			<Grid container className="p-0 m-0">
+				<Grid container className="flex justify-center">
+					<Grid item  xs={12}>
 						<div className="panel flex flex-col md:flex-row mb-8">
 							<div className="panel-left w-full md:w-4/5 bg-white rounded-l">
 								<h1 className="text-3xl font-normal p-10 border-b border-solid border-grey-light">
@@ -49,8 +49,8 @@ class Widget extends React.Component {
 									Order: {checkout_data.oid}
 								</h3>
 
-								<GridContainer>
-									<GridItem xs={12}>
+								<Grid container>
+									<Grid item  xs={12}>
 										<List className="w-full">
 											{cart.entries.map(
 												(entry, index) => {
@@ -72,8 +72,8 @@ class Widget extends React.Component {
 																	item.name
 																}
 																secondary={
-																	<GridContainer className="p-0">
-																		<GridItem
+																	<Grid container className="p-0">
+																		<Grid item
 																			xs={
 																				12
 																			}
@@ -90,8 +90,8 @@ class Widget extends React.Component {
 																					item.description
 																				}{" "}
 																			</Typography>
-																		</GridItem>
-																		<GridItem
+																		</Grid>
+																		<Grid item
 																			xs={
 																				12
 																			}
@@ -108,8 +108,8 @@ class Widget extends React.Component {
 																					item.cost
 																				}{" "}
 																			</Typography>
-																		</GridItem>
-																	</GridContainer>
+																		</Grid>
+																	</Grid>
 																}
 															/>
 														</ListItem>
@@ -117,8 +117,8 @@ class Widget extends React.Component {
 												}
 											)}
 										</List>
-									</GridItem>
-								</GridContainer>
+									</Grid>
+								</Grid>
 							</div>
 							<div className="panel-right w-full md:w-1/3 bg-gray-400 relative rounded-r">
 								<div className="p-10">
@@ -157,9 +157,9 @@ class Widget extends React.Component {
 								</form>
 							</div>
 						</div>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		);
 	}
 }

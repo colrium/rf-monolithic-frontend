@@ -3,17 +3,17 @@ import { connect } from "react-redux"
 
 import Typography from "@mui/material/Typography"
 import { CheckboxInput, TextInput } from "components/FormInputs"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 
 function Widget(props) {
 	return (
-		<GridContainer className="px-2">
-			<GridItem xs={12} className="mb-2">
+		<Grid container className="px-2">
+			<Grid item  xs={12} className="mb-2">
 				<Typography variant="h3"> Mobile application settings</Typography>
-			</GridItem>
+			</Grid>
 
-			{/* <GridItem xs={12} className="mb-4">
+			{/* <Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="enabled"
 					label="Enabled"
@@ -23,9 +23,9 @@ function Widget(props) {
 					disabled={loading["enabled"]}
 					error={errors["enabled"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="show-message"
 					label="Show message"
@@ -35,9 +35,9 @@ function Widget(props) {
 					disabled={loading["show-message"]}
 					error={errors["show-message"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<TextInput
 					name="message"
 					label="Message"
@@ -50,9 +50,9 @@ function Widget(props) {
 					disabled={loading["message"]}
 					error={errors["message"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="commission-embarkment"
 					label="Commission Embarkment enabled"
@@ -62,9 +62,9 @@ function Widget(props) {
 					disabled={loading["commission-embarkment"]}
 					error={errors["commission-embarkment"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="response-submission"
 					label="Response submission enabled"
@@ -74,9 +74,9 @@ function Widget(props) {
 					disabled={loading["response-submission"]}
 					error={errors["response-submission"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="user-registration"
 					label="User registration enabled"
@@ -86,9 +86,9 @@ function Widget(props) {
 					disabled={loading["user-registration"]}
 					error={errors["user-registration"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="new-logins"
 					label="New logins enabled"
@@ -98,9 +98,9 @@ function Widget(props) {
 					disabled={loading["new-logins"]}
 					error={errors["new-logins"]}
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<CheckboxInput
 					name="oath2-logins"
 					label="OAth-2.0 logins enabled"
@@ -110,8 +110,8 @@ function Widget(props) {
 					disabled={loading["oath2-logins"]}
 					error={errors["oath2-logins"]}
 				/>
-			</GridItem> */}
-		</GridContainer>
+			</Grid> */}
+		</Grid>
 	)
 }
 

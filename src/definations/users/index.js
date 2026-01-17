@@ -6,7 +6,7 @@ import {
 	PeopleOutlined as DefinationContextIcon,
 	PersonOutlined as EntryIcon,
 } from "@mui/icons-material";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { CountriesHelper } from "utils/Helpers";
@@ -16,8 +16,8 @@ import IconButton from "@mui/material/IconButton";
 import { withTheme } from '@mui/styles';
 import MailOutlineIcon from "@mui/icons-material/MailOutline"
 import { connect } from "react-redux"
-import Typography from "components/Typography"
-import Avatar from "components/Avatar"
+import Typography from '@mui/material/Typography'
+import Avatar from "@mui/material/Avatar"
 import ApiService from "services/Api"
 
 const presences = {

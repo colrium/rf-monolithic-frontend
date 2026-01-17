@@ -1,50 +1,50 @@
 /** @format */
 import React from "react"
-import { connect } from "react-redux";
-import { Typography } from "@mui/material";
-import GridContainer from "components/Grid/GridContainer";
-import Card from "components/Card";
-import GridItem from "components/Grid/GridItem";
+import { connect } from "react-redux"
+import { Typography } from "@mui/material"
+import Grid from "@mui/material/Grid"
+import Card from "@mui/material/Card"
 import { EventRegister } from "utils"
-import { usePersistentForm, useDidUpdate } from "hooks"
+import { usePersistentForm, useDidMount } from "hooks"
 
-function Widget (props) {
-	const { preferences } = props;
-	const { TextField, Autocomplete, values, formState: {errors} } = usePersistentForm({
+function Widget(props) {
+	const { preferences } = props
+	const {
+		TextField,
+		Autocomplete,
+		observer$,
+		formState: { errors },
+	} = usePersistentForm({
 		name: "data-preferences",
 		volatile: true,
 		defaultValues: {
 			pagination: 10,
 			defaultMapZoom: 15,
-			...preferences.data
+			...preferences.data,
 		},
 	})
-
-	useDidUpdate(() => {
-		if (JSON.isEmpty(errors)) {
-			let data_values = { ...values }
+	useDidMount(() => {
+		const subscription = observer$.subscribe(formData => {
+			let data_values = { ...formData.values }
 			data_values.pagination = parseInt(data_values.pagination)
 			data_values.defaultMapZoom = parseInt(data_values.defaultMapZoom)
 			EventRegister.emit("change-preferences", { data: data_values })
-		}
-
-	}, [values])
-
+		})
+		return () => subscription.unsubscribe()
+	})
 
 	return (
 		<Card elevation={0}>
-			<GridContainer className="px-2">
-				<GridItem xs={12} className="mb-2">
-					<Typography variant="h3">
-						Display and Visualization
-					</Typography>
-				</GridItem>
+			<Grid container className="px-2">
+				<Grid item xs={12} className="mb-2">
+					<Typography variant="h3">Display and Visualization</Typography>
+				</Grid>
 
-				<GridContainer className="px-0">
-					<GridItem xs={12} className="mb-2">
+				<Grid container className="px-0">
+					<Grid item xs={12} className="mb-2">
 						<Typography variant="h5">Data</Typography>
-					</GridItem>
-					<GridItem xs={12} className="mb-2">
+					</Grid>
+					<Grid item xs={12} className="mb-2">
 						<Autocomplete
 							name="pagination"
 							label="Records per Page"
@@ -61,35 +61,28 @@ function Widget (props) {
 							}}
 							rules={{
 								validate: {
-									isSet: val =>
-										val === "-1" ||
-										val >= 5 ||
-										"Value is Required",
+									isSet: val => val === "-1" || val >= 5 || "Value is Required",
 								},
 							}}
 						/>
-					</GridItem>
+					</Grid>
 
-					<GridItem xs={12} className="mb-4">
+					<Grid item xs={12} className="mb-4">
 						<TextField
 							name="defaultMapZoom"
 							label="Default Map Zoom"
 							type="number"
 							rules={{
 								validate: {
-									isAboveMin: val =>
-										val >= 5 ||
-										"Value should be greater than or equal to 5 ",
-									isBelowMax: val =>
-										val <= 25 ||
-										"Value should be greater than or equal to 5 ",
+									isAboveMin: val => val >= 5 || "Value should be greater than or equal to 5 ",
+									isBelowMax: val => val <= 25 || "Value should be greater than or equal to 5 ",
 								},
 								valueAsNumber: true,
 							}}
 						/>
-					</GridItem>
-				</GridContainer>
-			</GridContainer>
+					</Grid>
+				</Grid>
+			</Grid>
 		</Card>
 	)
 }
@@ -97,4 +90,4 @@ const mapStateToProps = state => ({
 	preferences: state.app.preferences || {},
 })
 
-export default connect(mapStateToProps, {})(React.memo(Widget));
+export default connect(mapStateToProps, {})(React.memo(Widget))

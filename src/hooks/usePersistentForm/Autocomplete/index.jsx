@@ -1,30 +1,12 @@
-import React, { useCallback } from "react";
-import { Controller } from "react-hook-form";
+/** @format */
+
+import React, { useCallback } from "react"
+import { Controller } from "react-hook-form"
 import AutoComplete from "components/AutoComplete"
-import {
-	CircularProgress,
-	IconButton,
-	InputAdornment,
-	TextField,
-	InputBase,
-	FormHelperText,
-	Stack,
-} from "@mui/material"
+import { FormHelperText, Stack } from "@mui/material"
 
 const Field = React.forwardRef((props, ref) => {
-	const {
-		name,
-		control,
-		defaultValue,
-		value,
-		rules,
-		shouldUnregister,
-		onChange,
-		disabled,
-		render,
-		helperText,
-		...rest
-	} = props
+	const { name, control, defaultValue, value, rules, shouldUnregister, onChange, disabled, render, helperText, sx, ...rest } = props
 
 	const formState = control._formState
 	const handleOnChange = useCallback(
@@ -35,15 +17,14 @@ const Field = React.forwardRef((props, ref) => {
 			if (Function.isFunction(onChange)) {
 				onChange(e)
 			}
-
 		},
 		[onChange]
 	)
 
 	const renderField = useCallback(
 		params => {
-			if (Function.isFunction(render)) {
-				return render(params)
+			if (Function.isFunction(props.render)) {
+				return props.render(params)
 			}
 			const {
 				field: { onChange: fieldOnChange, ...fieldParams },
@@ -52,29 +33,29 @@ const Field = React.forwardRef((props, ref) => {
 			return (
 				<AutoComplete
 					onChange={handleOnChange(fieldOnChange)}
-					disabled={disabled || formState.isSubmitting}
-					error={invalid}
+					disabled={props.disabled || formState.isSubmitting}
+					error={isTouched && !!error?.message}
 					helperText={
 						<Stack className="w-full">
-							{!!error?.message && (
+							{isTouched && !!error?.message && (
 								<FormHelperText component="div" error>
 									{error?.message}
 								</FormHelperText>
 							)}
-							{!!helperText && (
+							{!!props.helperText && (
 								<FormHelperText component="div" error={false}>
-									{helperText}
+									{props.helperText}
 								</FormHelperText>
 							)}
 						</Stack>
 					}
-					{...rest}
+					{...props}
 					{...fieldParams}
 					ref={ref}
 				/>
 			)
 		},
-		[render]
+		[props]
 	)
 
 	return (
@@ -89,4 +70,4 @@ const Field = React.forwardRef((props, ref) => {
 	)
 })
 
-export default React.memo(Field);
+export default React.memo(Field)

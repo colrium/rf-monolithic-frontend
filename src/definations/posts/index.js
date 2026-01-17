@@ -12,7 +12,7 @@ import {
 	EditOutlined as EditIcon,
 	OpenInNewOutlined as OpenInNewIcon,
 } from "@mui/icons-material";
-import Button from "components/Button";
+import Button from "@mui/material/Button";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -45,13 +45,13 @@ export default {
 				},
 				restricted: {
 					display: (values, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user?.isAdmin;
+							return !user?.isAdmin
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -64,13 +64,13 @@ export default {
 				},
 				restricted: {
 					display: (values, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user?.isAdmin;
+							return !user?.isAdmin
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -82,13 +82,13 @@ export default {
 				},
 				restricted: {
 					display: (values, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user?.isAdmin;
+							return !user?.isAdmin
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -127,10 +127,10 @@ export default {
 					required: true,
 				},
 				possibilities: {
-					'auto-draft': "Auto Draft",
-					'draft': "Draft",
-					'published': "Published",
-					'trash': "trash"
+					"auto-draft": "Auto Draft",
+					draft: "Draft",
+					published: "Published",
+					trash: "trash",
 				},
 			},
 
@@ -138,21 +138,21 @@ export default {
 				type: "string",
 				label: "Content",
 				input: {
-					type: "textarea",
+					type: "wysiwyg",
 					required: true,
 					props: {
-						rows: 30,
+						minRows: 30,
 					},
 				},
 				restricted: {
 					display: (values, user) => {
-						return true;
+						return true
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user?.isAdmin;
+							return !user?.isAdmin
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -178,16 +178,16 @@ export default {
 				},
 				restricted: {
 					display: (values, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (values) {
-							return values.context === "category";
+							return values.context === "category"
 						}
 						if (user) {
-							return !user?.isAdmin;
+							return !user?.isAdmin
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -201,43 +201,43 @@ export default {
 					value: (values, user) => {
 						if (values) {
 							if (String.isString(values.title)) {
-								if (values.type.length > 0) {
+								if (values.title?.length > 0) {
 									return values.title
 										.variablelize()
 										.replaceAll("_", "-")
 										.replaceAll("-", " ")
 										.replace(/[^\w\s]/, "")
-										.replaceAll(" ", "-");
+										.replaceAll(" ", "-")
 								}
 							}
 						}
-						return "";
+						return ""
 					},
 					defaultValue: (values, user) => {
 						if (values) {
 							if (String.isString(values.title)) {
-								if (values.type.length > 0) {
-									return values.title
+								if (values.title.length > 0) {
+									return values?.title
 										.variablelize()
 										.replaceAll("_", "-")
 										.replaceAll("-", " ")
 										.replace(/[^\w\s]/, "")
-										.replaceAll(" ", "-");
+										.replaceAll(" ", "-")
 								}
 							}
 						}
-						return "";
+						return ""
 					},
 				},
 				restricted: {
 					display: (values, user) => {
-						return false;
+						return false
 					},
 					input: (values, user) => {
 						if (user) {
-							return !user?.isAdmin;
+							return !user?.isAdmin
 						}
-						return true;
+						return true
 					},
 				},
 			},
@@ -277,8 +277,7 @@ export default {
 						filesLimit: 1,
 						dropzoneText: "Click to select File(s)\n or \n Drag and drop an files here",
 						dropzoneIcon: "attachment",
-					}
-
+					},
 				},
 				reference: {
 					name: "attachments",
@@ -303,12 +302,12 @@ export default {
 					required: true,
 				},
 				possibilities: {
-					'open': "Open to public",
-					'authorized': "Authorized users only",
-					'author': "Author only",
-					'admin': "Administrators only",
-					'non-admin': "Non Administrators only",
-					'customers': "Customers",
+					open: "Open to public",
+					authorized: "Authorized users only",
+					author: "Author only",
+					admin: "Administrators only",
+					"non-admin": "Non Administrators only",
+					customers: "Customers",
 				},
 			},
 		},
@@ -325,15 +324,13 @@ export default {
 		view: {
 			summary: user => !String.isEmpty(user?.role),
 			all: user => !String.isEmpty(user?.role),
-			single: (user) => !String.isEmpty(user?.role),
+			single: user => !String.isEmpty(user?.role),
 		},
 		actions: {
 			view: {
 				restricted: user => String.isEmpty(user?.role),
 				uri: entry => {
-					return (
-						"posts/view/" + entry?._id
-					).toUriWithDashboardPrefix();
+					return ("posts/view/" + entry?._id).toUriWithDashboardPrefix()
 				},
 				Icon: OpenInNewIcon,
 				label: "View",
@@ -350,9 +347,7 @@ export default {
 			update: {
 				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return (
-						"posts/edit/" + entry?._id
-					).toUriWithDashboardPrefix();
+					return ("posts/edit/" + entry?._id).toUriWithDashboardPrefix()
 				},
 				Icon: EditIcon,
 				label: "Edit",
@@ -361,14 +356,13 @@ export default {
 			delete: {
 				restricted: user => user?.role !== "admin",
 				uri: entry => {
-					return ("posts/delete/" + entry?._id).toUriWithDashboardPrefix();
+					return ("posts/delete/" + entry?._id).toUriWithDashboardPrefix()
 				},
 				Icon: DeleteIcon,
 				className: "text-red-500",
 				label: "Delete",
-				confirmationRequired: true
+				confirmationRequired: true,
 			},
 		},
-
 	},
-};
+}

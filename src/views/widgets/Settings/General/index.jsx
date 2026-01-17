@@ -3,17 +3,17 @@ import { connect } from "react-redux"
 
 import Typography from "@mui/material/Typography"
 import { TextInput, RadioInput } from "components/FormInputs"
-import GridContainer from "components/Grid/GridContainer"
-import GridItem from "components/Grid/GridItem"
+import Grid from '@mui/material/Grid'
+
 
 function Widget(props) {
 	return (
-		<GridContainer className="px-2">
-			<GridItem xs={12} className="mb-2">
+		<Grid container className="px-2">
+			<Grid item  xs={12} className="mb-2">
 				<Typography variant="h3"> General settings</Typography>
-			</GridItem>
+			</Grid>
 
-			{/* <GridItem xs={12}>
+			{/* <Grid item  xs={12}>
 				<TextInput
 					name="seo-title"
 					label="SEO title"
@@ -25,9 +25,9 @@ function Widget(props) {
 					error={errors["seo-title"]}
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12}>
+			<Grid item  xs={12}>
 				<TextInput
 					name="seo-tagline"
 					label="SEO tagline"
@@ -41,9 +41,9 @@ function Widget(props) {
 					error={errors["seo-tagline"]}
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12}>
+			<Grid item  xs={12}>
 				<TextInput
 					name="copyright"
 					label="Copyright"
@@ -55,9 +55,9 @@ function Widget(props) {
 					error={errors["copyright"]}
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12}>
+			<Grid item  xs={12}>
 				<TextInput
 					name="trademark"
 					label="Trademark"
@@ -69,9 +69,9 @@ function Widget(props) {
 					error={errors["trademark"]}
 					required
 				/>
-			</GridItem>
+			</Grid>
 
-			<GridItem xs={12} className="mb-4">
+			<Grid item  xs={12} className="mb-4">
 				<RadioInput
 					name="landing-page-routing"
 					label="Landing page routing"
@@ -83,8 +83,8 @@ function Widget(props) {
 					error={errors["landing-page-routing"]}
 					required
 				/>
-			</GridItem> */}
-		</GridContainer>
+			</Grid> */}
+		</Grid>
 	)
 }
 
